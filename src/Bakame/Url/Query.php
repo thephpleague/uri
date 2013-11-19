@@ -32,13 +32,18 @@
 */
 namespace Bakame\Url;
 
+use Countable;
+use ArrayIterator;
+use IteratorAggregate;
+use ArrayAccess;
+
 /**
  *  A Class to manipulate URL Query String component
  *
  * @package Bakame.Url
  *
  */
-class Query
+class Query implements Countable, IteratorAggregate, ArrayAccess
 {
     /**
      * The Query string container
@@ -130,5 +135,35 @@ class Query
         }
 
         return $str;
+    }
+    
+    public function count()
+    {
+        return count($this->data);
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($this->data[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->data[$offset];
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset)
+    {
+        $this->set($offset, null);
     }
 }

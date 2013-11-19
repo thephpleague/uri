@@ -10,6 +10,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $server = array(
             'PHP_SELF' => '',
             'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
             'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,

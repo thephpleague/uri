@@ -47,7 +47,7 @@ class Factory
      * default result from a parse_url execution without error
      * @var array
      */
-    private static $default_url = array(
+    private static $components = array(
         'scheme' => null,
         'user' => null,
         'pass' => null,
@@ -67,23 +67,36 @@ class Factory
      */
     public static function createFromServer(array $server)
     {
-        $requestUri = $server['PHP_SELF'];
-        if (isset($server['REQUEST_URI'])) {
-            $requestUri = $server['REQUEST_URI'];
+        $protocol = '';
+        if (isset($server['SERVER_PROTOCOL'])) {
+            $protocol = explode('/', $server['SERVER_PROTOCOL']);
+            $protocol = strtolower($protocol[0]);
+            if (isset($server['HTTPS']) && 'off' != $server['HTTPS']) {
+                $protocol .= 's';
+            }
+            $protocol .= ':';
         }
-        $https = '';
-        if (array_key_exists('HTTPS', $server) && 'on' == $server['HTTPS']) {
-            $https = 's';
+        $protocol .= '//';
+
+        $host = $server['SERVER_ADDR'];
+        if (isset($server['HTTP_HOST'])) {
+            $host = $server['HTTP_HOST'];
         }
-        $protocol = explode('/', $server['SERVER_PROTOCOL']);
-        $protocol = strtolower($protocol[0]).$https;
+
         $port = '';
         if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
             $port = ':'.$server['SERVER_PORT'];
         }
 
-        $url = parse_url($protocol.'://'.$server['HTTP_HOST'].$port.$requestUri);
-        $url = array_replace(self::$default_url, $url);
+        $requestUri = $server['PHP_SELF'];
+        if (isset($server['REQUEST_URI'])) {
+            $requestUri = $server['REQUEST_URI'];
+        }
+
+        $url = array_merge(
+            self::$components,
+            parse_url($protocol.$host.$port.$requestUri)
+        );
 
         return self::create(
             $url['scheme'],
@@ -95,7 +108,6 @@ class Factory
             $url['query'],
             $url['fragment']
         );
-
     }
 
     /**
@@ -107,12 +119,12 @@ class Factory
      */
     public static function createFromString($url)
     {
-        $res = parse_url($url);
+        $res = @parse_url($url);
         if (false === $res) {
             throw new InvalidArgumentException('Invalid URL given');
         }
-        $url = array_replace(self::$default_url, $res);
-        //FIX FOR PHP 5.4.7- BUG
+        $url = array_merge(self::$components, $res);
+        //FIX FOR PHP 5.4.7- BUGS
         if (null == $url['scheme'] && null == $url['host'] && 0 === strpos($url['path'], '//')) {
             $tmp = substr($url['path'], 2);
             list($url['host'], $url['path']) = explode('/', $tmp, 2);

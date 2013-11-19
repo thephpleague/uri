@@ -147,7 +147,7 @@ class Segment
     {
         $new = (array) $value;
         $old = $this->get();
-        $extra = [];
+        $extra = array();
         if (null !== $valueBefore && count($found = array_keys($old, $valueBefore))) {
             $index = $found[0];
             if (array_key_exists($valueBeforeIndex, $found)) {

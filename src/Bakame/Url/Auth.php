@@ -111,7 +111,7 @@ class Auth
     public function set($name, $value = null)
     {
         if (! is_array($name)) {
-            $name = [$name => $value];
+            $name = array($name => $value);
         }
         foreach ($name as $key => $value) {
             if (array_key_exists($key, $this->data)) {

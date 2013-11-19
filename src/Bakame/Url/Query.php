@@ -90,7 +90,7 @@ class Query
     public function set($name, $value = null)
     {
         if (! is_array($name)) {
-            $name = [$name => $value];
+            $name = array($name => $value);
         }
         $this->data = array_filter($name + $this->data, function ($value) {
             return null !== $value;

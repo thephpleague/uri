@@ -5,39 +5,10 @@ namespace Bakame\Url;
 class UrlTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testCreateFromServer()
-    {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
-            'SERVER_PORT' => 23,
-            'HTTP_HOST' => 'example.com',
-        ];
-        $url = Url::createFromServer($server);
-        $this->assertSame('https://example.com:23', $url->__toString());
-    }
-
-    public function testCreateFromUrl()
-    {
-        $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Url::createFromString($expected);
-        $this->assertSame($expected, $url->__toString());
-    }
-
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testCreateFromUrlKO()
-    {
-        Url::createFromString(new \DateTime);
-    }
-
     public function testGetter()
     {
         $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Url::createFromString($expected);
+        $url = Factory::createFromString($expected);
 
         $this->assertSame(['foo' => 'bar'], $url->getQuery());
         $this->assertSame('bar', $url->getQuery('foo'));
@@ -55,7 +26,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     public function testSetter()
     {
         $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Url::createFromString($expected);
+        $url = Factory::createFromString($expected);
 
         $url
             ->setQuery(['toto' => 'leheros'])
@@ -81,7 +52,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     public function testRemoveInfo()
     {
         $expected = '//john:doe@example.com/foo/bar?foo=bar#content';
-        $url = Url::createFromString($expected);
+        $url = Factory::createFromString($expected);
 
         $url
             ->unsetHost('com')
@@ -100,7 +71,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     public function testClearQuery()
     {
         $expected = '//john:doe@example.com/foo/bar?foo=bar&toto=leheros&bar=baz#content';
-        $url = Url::createFromString($expected);
+        $url = Factory::createFromString($expected);
         $url
             ->unsetHost()
             ->unsetPath()

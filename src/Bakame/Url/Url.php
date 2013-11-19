@@ -7,7 +7,7 @@
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
 * @version 1.0.0
-* @package Entity
+* @package Bakame.url
 *
 * MIT LICENSE
 *
@@ -31,8 +31,6 @@
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 namespace Bakame\Url;
-
-use InvalidArgumentException;
 
 class Url
 {
@@ -77,79 +75,6 @@ class Url
      * @var Bakame\Url\Port
      */
     private $port;
-
-    /**
-     * default result from a parse_url execution without error
-     * @var array
-     */
-    private static $default_url = [
-        'scheme' => null,
-        'user' => null,
-        'pass' => null,
-        'host' => null,
-        'port' => null,
-        'path' => null,
-        'query' => null,
-        'fragment' => null,
-    ];
-
-    /**
-     * Return a instance of Bakame\Url\Url from a server array
-     *
-     * @param array $server the server array
-     *
-     * @return Bakame\Url\Url
-     */
-    public static function createFromServer(array $server)
-    {
-        $requestUri = $server['PHP_SELF'];
-        if (isset($server['REQUEST_URI'])) {
-            $requestUri = $server['REQUEST_URI'];
-        }
-        $https = '';
-        if (array_key_exists('HTTPS', $server) && 'on' == $server['HTTPS']) {
-            $https = 's';
-        }
-        $protocol = explode('/', $server['SERVER_PROTOCOL']);
-        $protocol = strtolower($protocol[0]).$https;
-        $port = '';
-        if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
-            $port = ':'.$server['SERVER_PORT'];
-        }
-
-        return self::createFromString($protocol.'://'.$server['HTTP_HOST'].$port.$requestUri);
-    }
-
-    /**
-     * Return a instance of Bakame\Url\Url from a simple string
-     *
-     * @param array $server the server array
-     *
-     * @return Bakame\Url\Url
-     */
-    public static function createFromString($url)
-    {
-        $res = parse_url($url);
-        if (false === $res) {
-            throw new InvalidArgumentException('Invalid URL given');
-        }
-        $url = array_replace(self::$default_url, $res);
-        //FIX FOR PHP 5.4.7- BUG
-        if (null == $url['scheme'] && null == $url['host'] && 0 === strpos($url['path'], '//')) {
-            $tmp = substr($url['path'], 2);
-            list($url['host'], $url['path']) = explode('/', $tmp, 2);
-        }
-
-        return new static(
-            new Scheme($url['scheme']),
-            new Auth($url['user'], $url['pass']),
-            new Segment($url['host'], '.'),
-            new Port($url['port']),
-            new Segment($url['path'], '/'),
-            new Query($url['query']),
-            new Fragment($url['fragment'])
-        );
-    }
 
     /**
      * The constructor

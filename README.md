@@ -20,7 +20,7 @@ You may install the Bakame Url package with Composer (recommended) or manually.
 System Requirements
 -------------------
 
-You need **PHP >= 5.4.0** to use Bakame Url but the latest stable version of PHP is recommended.
+You need **PHP >= 5.3.0** to use Bakame Url but the latest stable version of PHP is recommended.
 
 Instantiation
 -------------

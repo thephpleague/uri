@@ -18,9 +18,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array('example', 'com'), $url->getHost());
         $this->assertNull($url->getPort());
         $this->assertNull($url->getScheme());
-        $this->assertSame(array('user' => null, 'pass' => null), $url->getAuth());
-        $this->assertNull($url->getAuth('user'));
-        $this->assertNull($url->getAuth('foo'));
+        $this->assertNull($url->getUsername());
+        $this->assertNull($url->getPassword());
     }
 
     public function testSetter()
@@ -34,7 +33,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             ->setPort('443')
             ->setPath('inscription', 'prepend')
             ->setPath('cool')
-            ->setAuth(array('user' => 'john', 'pass' => 'doe'))
+            ->setUsername('john')
+            ->setPassword('doe')
             ->setHost('api', 'prepend')
             ->setHost('uk')
             ->setScheme('https');
@@ -45,7 +45,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array('api', 'example', 'com', 'uk'), $url->getHost());
         $this->assertSame(443, $url->getPort());
         $this->assertSame('https', $url->getScheme());
-        $this->assertSame(array('user' => 'john', 'pass' => 'doe'), $url->getAuth());
+        $this->assertSame('john', $url->getUsername());
+        $this->assertSame('doe', $url->getPassword());
         $this->assertSame('https://john:doe@api.example.com.uk:443/inscription/foo/bar/cool?toto=leheros&foo=bar#top', $url->__toString());
     }
 
@@ -60,8 +61,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             ->unsetPath(array('foo', 'bar'))
             ->setPath(array('user', 'profile'))
             ->unsetQuery('foo')
-            ->unsetAuth('pass')
-            ->setAuth('user', 'jane')
+            ->setPassword(null)
+            ->setUsername('jane')
             ->setQuery('action', 'hello')
             ->setScheme('https');
 
@@ -77,7 +78,8 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             ->unsetPath()
             ->unsetQuery(array('foo', 'toto'))
             ->unsetQuery()
-            ->unsetAuth();
+            ->setUsername(null)
+            ->setPassword(null);
 
         $this->assertSame('//#content', $url->__toString());
     }

@@ -94,8 +94,8 @@ $string = $query->__toString(); // $string is now equals to toto=leheros&foo=bar
 There are six (6) utility class for each URL parts:
 
 * `Bakame\Url\Scheme` Manipulate the `scheme` component
-* `Bakame\Url\Auth` Manipulate the `user` and `pass` component together
-* `Bakame\Url\Segment` Manipulate the `path` and the `host` components **separately** The only difference between the 2 components being the separator used `.` for the `host` and `/` for the `path`. 
+* `Bakame\Url\Auth` Manipulate the `user` and `pass` components **together**
+* `Bakame\Url\Segment` Manipulate the `path` and the `host` components **separately**. The difference between the 2 components is their separator. The `host` component uses the `.` while the `path` component uses the `/`. 
 * `Bakame\Url\Port`  Manipulate the `port` component
 * `Bakame\Url\Query`  Manipulate the `query` component
 * `Bakame\Url\Fragment`  Manipulate the `fragment` component

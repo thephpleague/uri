@@ -116,6 +116,14 @@ class Factory
         if (null == $url['scheme'] && null == $url['host'] && 0 === strpos($url['path'], '//')) {
             $tmp = substr($url['path'], 2);
             list($url['host'], $url['path']) = explode('/', $tmp, 2);
+            if (strpos($url['host'], '@')) {
+                list($auth, $url['host']) = explode('@', $url['host']);
+                $url['user'] = $auth;
+                $url['pass'] = null;
+                if (false !== strpos($auth, ':')) {
+                    list($url['user'], $url['pass']) = explode(':', $auth);
+                }
+            }
         }
 
         return self::create(

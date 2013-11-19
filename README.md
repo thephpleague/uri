@@ -99,3 +99,5 @@ There are six (6) utility class for each URL parts:
 * `Bakame\Url\Port`  Manipulate the `port` component
 * `Bakame\Url\Query`  Manipulate the `query` component
 * `Bakame\Url\Fragment`  Manipulate the `fragment` component
+
+Please refer to each class documentation to see what they can or can not do.

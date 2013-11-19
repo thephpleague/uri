@@ -47,7 +47,7 @@ These 3 methods will all return a valid `Bakame\Url\Url`. This is the main objec
 
 
 Basic Usage
--------------
+------------
 
 Manipulating the Url is simple with chaining, look at the example below:
 
@@ -69,4 +69,33 @@ $url
 echo $url; // will output https://john:doe@api.ejamplo.com:443/linux/windows/iOS?computer=os&foo=bar&bar=baz
 ```
 
-Please don't hesitate to refer to the source to get more advanced feature.
+Advanced Usage
+---------------
+
+The Bakame.url package comes bundle with Utility classes that can help you manipulate a single portion of you url. Let's say that you are only interested in modifying the query string from a given URL. You can proceed like so:
+
+```php 
+use Bakame\Url\Query;
+
+$string = $_SERVER['QUERY_STRING'];
+
+$query = new Query($string);
+
+$query->getQuery(); //will return the data in form of an array
+$query->clearQuery(); //will empty the query string
+$query
+    ->set('toto', 'leheros')
+    ->set(['foo' => 'bar', 'bar' => 'baz']);
+
+$string = $query->__toString(); // $string is now equals to toto=leheros&foo=bar&bar=baz
+
+```
+
+There are six (6) utility class for each URL parts:
+
+* `Bakame\Url\Scheme` Manipulate the `scheme` component
+* `Bakame\Url\Auth` Manipulate the `user` and `pass` component together
+* `Bakame\Url\Segment` Manipulate the `path` and the `host` components **separately** The only difference between the 2 components being the separator used `.` for the `host` and `/` for the `path`. 
+* `Bakame\Url\Port`  Manipulate the `port` component
+* `Bakame\Url\Query`  Manipulate the `query` component
+* `Bakame\Url\Fragment`  Manipulate the `fragment` component

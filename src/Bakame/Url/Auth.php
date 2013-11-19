@@ -7,7 +7,7 @@
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
 * @version 1.0.0
-* @package Entity
+* @package Bakame.url
 *
 * MIT LICENSE
 *

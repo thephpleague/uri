@@ -7,7 +7,7 @@
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
 * @version 1.0.0
-* @package Entity
+* @package Bakame.url
 *
 * MIT LICENSE
 *
@@ -40,7 +40,7 @@ class Query
      */
     private $data = [];
 
-    public function __construct($query)
+    public function __construct($query = '')
     {
         parse_str($query, $res);
         $this->data = $res;

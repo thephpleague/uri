@@ -65,7 +65,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('', $this->segment->__toString());
 
         $this->segment
-            ->set(array('inscription', 'foo', 'bar')
+            ->set(array('inscription', 'foo', 'bar'))
             ->set('john', 'prepend', 'foo', 8)
             ->set('jane', 'prepend', 'bar', 0);
         $this->assertSame('inscription/john/foo/jane/bar', $this->segment->__toString());

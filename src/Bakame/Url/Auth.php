@@ -32,6 +32,12 @@
 */
 namespace Bakame\Url;
 
+/**
+ *  A Class to manipulate URL user and pass components
+ *
+ * @package Bakame.Url
+ *
+ */
 class Auth
 {
     /**

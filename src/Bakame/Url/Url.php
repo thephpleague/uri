@@ -32,6 +32,12 @@
 */
 namespace Bakame\Url;
 
+/**
+ *  A Class to manipulate URLs
+ *
+ * @package Bakame.Url
+ *
+ */
 class Url
 {
     /**

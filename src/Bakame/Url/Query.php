@@ -32,6 +32,12 @@
 */
 namespace Bakame\Url;
 
+/**
+ *  A Class to manipulate URL Query String component
+ *
+ * @package Bakame.Url
+ *
+ */
 class Query
 {
     /**

@@ -34,6 +34,12 @@ namespace Bakame\Url;
 
 use InvalidArgumentException;
 
+/**
+ *  A factory to ease the create of Bakame\Url\Url Object
+ *
+ * @package Bakame.Url
+ *
+ */
 class Factory
 {
 

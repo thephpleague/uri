@@ -32,6 +32,12 @@
 */
 namespace Bakame\Url;
 
+/**
+ *  A Class to manipulate URL scheme component
+ *
+ * @package Bakame.Url
+ *
+ */
 class Scheme
 {
 

@@ -19,7 +19,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $res = $this->segment->get();
         $this->assertInternalType('array', $res);
         $this->assertCount(3, $res);
-        $this->assertSame(['foo', 'bar', 'baz'], $res);
+        $this->assertSame(array('foo', 'bar', 'baz'), $res);
     }
 
     public function testHas()
@@ -65,7 +65,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('', $this->segment->__toString());
 
         $this->segment
-            ->set(['inscription', 'foo', 'bar'])
+            ->set(array('inscription', 'foo', 'bar')
             ->set('john', 'prepend', 'foo', 8)
             ->set('jane', 'prepend', 'bar', 0);
         $this->assertSame('inscription/john/foo/jane/bar', $this->segment->__toString());

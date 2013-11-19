@@ -44,7 +44,7 @@ class Segment
      * Segment Data
      * @var array
      */
-    private $data = [];
+    private $data = array();
 
     public function __construct($str, $separator)
     {
@@ -130,7 +130,7 @@ class Segment
      */
     public function clear()
     {
-        $this->data = [];
+        $this->data = array();
 
         return $this;
     }

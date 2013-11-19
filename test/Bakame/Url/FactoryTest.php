@@ -7,14 +7,14 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromServer()
     {
-        $server = [
+        $server = array(
             'PHP_SELF' => '',
             'REQUEST_URI' => '',
             'HTTPS' => 'on',
             'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
-        ];
+        );
         $url = Factory::createFromServer($server);
         $this->assertSame('https://example.com:23', $url->__toString());
     }

@@ -38,7 +38,10 @@ class Auth
      * Auth Data
      * @var array
      */
-    private $data = ['user' => null, 'pass' => null];
+    private $data = array(
+        'user' => null,
+        'pass' => null
+    );
 
     public function __construct($user = null, $pass = null)
     {
@@ -89,7 +92,10 @@ class Auth
      */
     public function clear()
     {
-        $this->data = ['user' => null, 'pass' => null];
+        $this->data = array(
+            'user' => null,
+            'pass' => null
+        );
 
         return $this;
     }

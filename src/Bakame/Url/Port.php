@@ -67,7 +67,9 @@ class Port
 
             return $this;
         }
-        $this->data = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'default' => 80]]);
+        $this->data = filter_var($value, FILTER_VALIDATE_INT, array(
+            'options' => array('min_range' => 1, 'default' => 80)
+        ));
 
         return $this;
     }

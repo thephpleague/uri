@@ -38,7 +38,7 @@ class Query
      * The Query string container
      * @var array
      */
-    private $data = [];
+    private $data = array();
 
     public function __construct($query = '')
     {
@@ -106,7 +106,7 @@ class Query
      */
     public function clear()
     {
-        $this->data = [];
+        $this->data = array();
 
         return $this;
     }

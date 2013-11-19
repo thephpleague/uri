@@ -112,8 +112,9 @@ class Url
      */
     public function __toString()
     {
-        $url = [];
-        foreach (['scheme', 'auth', 'host', 'port', 'path', 'query', 'fragment'] as $component) {
+        $url = array();
+        $components = array('scheme', 'auth', 'host', 'port', 'path', 'query', 'fragment');
+        foreach ($components as $component) {
             $value = $this->{$component}->__toString();
             if ('path' == $component && ! empty($value)) {
                 $value = '/'.$value;

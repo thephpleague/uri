@@ -41,7 +41,7 @@ class Factory
      * default result from a parse_url execution without error
      * @var array
      */
-    private static $default_url = [
+    private static $default_url = array(
         'scheme' => null,
         'user' => null,
         'pass' => null,
@@ -50,7 +50,7 @@ class Factory
         'path' => null,
         'query' => null,
         'fragment' => null,
-    ];
+    );
 
     /**
      * Return a instance of Bakame\Url\Url from a server array

@@ -32,6 +32,12 @@
 */
 namespace Bakame\Url;
 
+/**
+ *  A Class to manipulate URL fragment component
+ *
+ * @package Bakame.Url
+ *
+ */
 class Fragment
 {
     /**

@@ -1,6 +1,9 @@
 Bakame.url
 ======
 
+[![Build Status](https://travis-ci.org/nyamsprod/Bakame.url.png)](https://travis-ci.org/nyamsprod/Bakame.url)
+
+
 The Bakame Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 
 This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][].

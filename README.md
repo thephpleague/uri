@@ -25,14 +25,7 @@ You need **PHP >= 5.4.0** to use Bakame Url but the latest stable version of PHP
 Instantiation
 -------------
 
-The easiest way to get started is to added `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader
-
-
-Basic Usage
------------
-
-### 1. There are 3 way to instantiate the a new Bakame/Url/Url object provider by the Bakame/Url/Factory Class.
-
+The easiest way to get started is to added `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader. One added to the autoload you can instantiate your url with 3 differents methods as explain below:
 
 ```php
 <?php
@@ -50,11 +43,17 @@ $url = Factory::createFromServer($_SERVER); //don't forget to provide the $_SERV
 $url = Factory::create();
 ```
 
-### 2. now you can manipulate $url as you wish
+These 3 methods will all return a valid `Bakame\Url\Url`. This is the main object we will be using to manipulate the url.
+
+
+Basic Usage
+-------------
+
+Manipulating the Url is simple with chaining, look at the example below:
 
 ```php
-<?php
 
+$url = Factory::createFromString('http://www.example.com');
 $url
     ->setQuery('computer', 'os') //adding on query data
     ->setQuery(['foo' => 'bar', 'bar' => 'baz']) //add more query data using an array

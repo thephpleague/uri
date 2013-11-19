@@ -90,7 +90,7 @@ $query
     ->set('toto', 'leheros')
     ->set(['foo' => 'bar', 'bar' => 'baz']);
 
-$string = $query->__toString(); // $string is now equals to toto=leheros&foo=bar&bar=baz
+$string = $query->__toString(); // $string is now equals to "?toto=leheros&foo=bar&bar=baz"
 
 ```
 

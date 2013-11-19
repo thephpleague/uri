@@ -1,0 +1,22 @@
+{
+    "name": "bakame/url",
+    "type": "library",
+    "description" : "Bakame / Url is a lightweight PHP Url Wrapper library",
+    "keywords": ["php", "url", "parse_url"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name" : "Ignace Nyamagana Butera",
+            "email" : "nyamsprod@gmail.com",
+            "homepage" : "https://github.com/nyamsprod/"
+        }
+    ],
+    "require": {
+        "php" : ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Bakame": "src/" 
+        }
+    }
+}

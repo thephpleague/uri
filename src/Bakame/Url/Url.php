@@ -142,10 +142,31 @@ class Url
     }
 
     /**
+     * return the user value
+     *  
+     * @return string|null
+     */
+    public function getUsername()
+    {
+        return $this->auth->get('user');
+    }
+    
+    /**
+     * return the password value
+     * 
+     * @return string|null
+     */
+    public function getPassword()
+    {
+        return $this->auth->get('pass');
+    }
+
+    /**
      * return the auth values
      * if null returns an array
      * otherwise it returns the specific value
-     *
+     * @deprecated
+     * 
      * @param string|null $key
      *
      * @return string|array
@@ -235,6 +256,8 @@ class Url
     /**
      * set Auth values
      *
+     * @deprecated
+     * 
      * @param mixed  $key   a string OR an array representing the data to be set
      * @param string $value is used $key is not an array is the value a to be set
      *
@@ -244,6 +267,34 @@ class Url
     {
         $this->auth->set($key, $value);
 
+        return $this;
+    }
+
+    /**
+     * set user name
+     * 
+     * @param string|null $value
+     *
+     * @return self
+     */
+    public function setUsername($value = null)
+    {
+        $this->auth->set('user', $value);
+        
+        return $this;
+    }
+
+    /**
+     * set user password
+     * 
+     * @param string|null $value
+     *
+     * @return self
+     */
+    public function setPassword($value = null)
+    {
+        $this->auth->set('pass', $value);
+        
         return $this;
     }
 
@@ -367,6 +418,8 @@ class Url
     }
 
     /**
+     * @deprecated
+     * 
      * Unset Path Values
      * @param mixed $value a string OR an array representing the value to be removed
      *

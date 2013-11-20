@@ -125,12 +125,12 @@ echo count($query); //return the number of property set
 
 There are seven (7) component classes for each URL part:
 
-* `Bakame\Url\Scheme` Manipulate the `scheme` component
-* `Bakame\Url\Auth` Manipulate the `user` and `pass` components **together**
-* `Bakame\Url\Host` Manipulate the `host`
-* `Bakame\Url\Port`  Manipulate the `port` component
-* `Bakame\Url\Path` Manipulate the `path` component
-* `Bakame\Url\Query`  Manipulate the `query` component
-* `Bakame\Url\Fragment`  Manipulate the `fragment` component
+* `Bakame\Url\Components\Scheme` Manipulate the `scheme` component
+* `Bakame\Url\Components\Auth` Manipulate the `user` and `pass` components **together**
+* `Bakame\Url\Components\Components\Host` Manipulate the `host`
+* `Bakame\Url\Components\Port`  Manipulate the `port` component
+* `Bakame\Url\Components\Path` Manipulate the `path` component
+* `Bakame\Url\Components\Query`  Manipulate the `query` component
+* `Bakame\Url\Components\Fragment`  Manipulate the `fragment` component
 
 Please refer to each class documentation to see what they can or can not do.

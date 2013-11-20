@@ -32,13 +32,17 @@
 */
 namespace Bakame\Url\Components;
 
+use Countable;
+use ArrayIterator;
+use IteratorAggregate;
+
 /**
  *  A Class to manipulate URL segment like component
  *
  * @package Bakame.Url
  *
  */
-class Segment
+class Segment implements Countable, IteratorAggregate
 {
     /**
      * Segment separator
@@ -202,6 +206,24 @@ class Segment
         $this->data = array_merge($new, $old);
 
         return $this;
+    }
+
+    /**
+    * Countable Interface
+    * @return integer
+    */
+    public function count()
+    {
+        return count($this->data);
+    }
+
+    /**
+    * IteratorAggregate Interface
+    * @return \ArrayIterator
+    */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
     }
 
     /**

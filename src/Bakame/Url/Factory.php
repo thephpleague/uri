@@ -33,9 +33,16 @@
 namespace Bakame\Url;
 
 use InvalidArgumentException;
+use Bakame\Url\Components\Scheme;
+use Bakame\Url\Components\Auth;
+use Bakame\Url\Components\Host;
+use Bakame\Url\Components\Port;
+use Bakame\Url\Components\Path;
+use Bakame\Url\Components\Query;
+use Bakame\Url\Components\Fragment;
 
 /**
- *  A factory to ease the create of Bakame\Url\Url Object
+ *  A factory to ease the creation of a Bakame\Url\Url Object
  *
  * @package Bakame.Url
  *
@@ -65,7 +72,7 @@ class Factory
      *
      * @return Bakame\Url\Url
      */
-    public static function createFromServer(array $server)
+    public static function createUrlFromServer(array $server)
     {
         $protocol = '';
         if (isset($server['SERVER_PROTOCOL'])) {
@@ -98,7 +105,7 @@ class Factory
             parse_url($protocol.$host.$port.$requestUri)
         );
 
-        return self::create(
+        return self::createUrl(
             $url['scheme'],
             $url['user'],
             $url['pass'],
@@ -117,7 +124,7 @@ class Factory
      *
      * @return Bakame\Url\Url
      */
-    public static function createFromString($url)
+    public static function createUrlFromString($url)
     {
         $res = @parse_url($url);
         if (false === $res) {
@@ -138,7 +145,7 @@ class Factory
             }
         }
 
-        return self::create(
+        return self::createUrl(
             $url['scheme'],
             $url['user'],
             $url['pass'],
@@ -164,7 +171,7 @@ class Factory
      *
      * @return Bakame\Url\Url
      */
-    public static function create(
+    public static function createUrl(
         $scheme = null,
         $user = null,
         $pass = null,
@@ -177,9 +184,9 @@ class Factory
         return new Url(
             new Scheme($scheme),
             new Auth($user, $pass),
-            new Segment($host, '.'),
+            new Host($host),
             new Port($port),
-            new Segment($path, '/'),
+            new Path($path),
             new Query($query),
             new Fragment($fragment)
         );

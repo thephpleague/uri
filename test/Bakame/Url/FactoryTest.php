@@ -16,21 +16,22 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
         );
-        $url = Factory::createFromServer($server);
+        $url = Factory::createUrlFromServer($server);
+
         $this->assertSame('https://example.com:23', $url->__toString());
     }
 
     public function testCreateFromString()
     {
-        $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createFromString($expected);
+        $expected = 'http://example.com:80/foo/bar?foo=bar#content';
+        $url = Factory::createUrlFromString($expected);
         $this->assertSame($expected, $url->__toString());
     }
 
     public function testCreate()
     {
         $expected = 'https://john@example.com/path/to/you?foo=bar#top';
-        $url = Factory::create(
+        $url = Factory::createUrl(
             'https',
             'john',
             null,
@@ -48,7 +49,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO()
     {
-        Factory::createFromString("http://user@:80");
+        Factory::createUrlFromString("http://user@:80");
     }
 
     /**
@@ -56,6 +57,6 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromUrlKO()
     {
-        Factory::createFromString(new \DateTime);
+        Factory::createUrlFromString(new \DateTime);
     }
 }

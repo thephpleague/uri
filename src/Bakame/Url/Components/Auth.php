@@ -30,7 +30,7 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
 
 /**
  *  A Class to manipulate URL user and pass components
@@ -41,91 +41,51 @@ namespace Bakame\Url;
 class Auth
 {
     /**
-     * Auth Data
-     * @var array
+     * username
+     * @var string
      */
-    private $data = array(
-        'user' => null,
-        'pass' => null
-    );
+    private $username;
+
+    /**
+     * username
+     * @var string
+     */
+    private $password;
 
     public function __construct($user = null, $pass = null)
     {
-        $this->data['user'] = $user;
-        $this->data['pass'] = $pass;
+        $this->username = $user;
+        $this->password = $pass;
     }
 
-    /**
-     * get the data
-     * if a key is provided it will return its associated data of null
-     * if not key is provided it will return the whole data
-     *
-     * @param null|string $key
-     *
-     * @return mixed
-     */
-    public function get($key = null)
+    public function getUsername()
     {
-        if (null === $key) {
-            return $this->data;
-        } elseif (array_key_exists($key, $this->data)) {
-            return $this->data[$key];
-        }
-
-        return null;
+        return $this->username;
     }
 
-    /**
-     * remove a given data
-     *
-     * @param  $key can be 'user' OR 'pass'
-     *
-     * @return self
-     */
-    public function remove($key)
+    public function getPassword()
     {
-        if (array_key_exists($key, $this->data)) {
-            $this->data[$key] = null;
-        }
+        return $this->password;
+    }
+
+    public function setUsername($value = null)
+    {
+        $this->username = $value;
 
         return $this;
     }
 
-    /**
-     * Clear the data
-     *
-     * @return self
-     */
+    public function setPassword($value = null)
+    {
+        $this->password = $value;
+
+        return $this;
+    }
+
     public function clear()
     {
-        $this->data = array(
-            'user' => null,
-            'pass' => null
-        );
-
-        return $this;
-    }
-
-    /**
-     * set Query values
-     *
-     * @param mixed  $name  a string OR an array representing the data to be set
-     * @param string $value is used $key is not an array is the value a to be set
-     *
-     * @return self
-     */
-    public function set($name, $value = null)
-    {
-        if (! is_array($name)) {
-            $name = array($name => $value);
-        }
-        foreach ($name as $key => $value) {
-            if (array_key_exists($key, $this->data)) {
-                $this->data[$key] = $value;
-            }
-        }
-
-        return $this;
+         $this->username = null;
+         $this->password = null;
     }
 
     /**
@@ -134,14 +94,10 @@ class Auth
      */
     public function __toString()
     {
-        $user = $this->data['user'];
-        $pass = $this->data['pass'];
+        $user = $this->username;
+        $pass = $this->password;
         if (! empty($pass)) {
             $pass = ':'.$pass;
-        }
-
-        if ($user || $pass) {
-            $pass .= '@';
         }
 
         return $user.$pass;

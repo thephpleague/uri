@@ -1,6 +1,6 @@
 <?php
 
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
 
 class SegmentTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,21 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructor()
     {
-        $res = $this->segment->get();
+        $path = '/foo/bar/baz';
+        $separator = '/';
+        $segment = new Segment($path, $separator);
+        $res = $segment->all();
+        $this->assertInternalType('array', $res);
+        $this->assertCount(3, $res);
+        $this->assertSame(array('foo', 'bar', 'baz'), $res);
+    }
+
+    public function testConstructor2()
+    {
+        $path = '/foo/bar/baz/';
+        $separator = '/';
+        $segment = new Segment($path, $separator);
+        $res = $segment->all();
         $this->assertInternalType('array', $res);
         $this->assertCount(3, $res);
         $this->assertSame(array('foo', 'bar', 'baz'), $res);
@@ -39,7 +53,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->segment
             ->clear()
-            ->get();
+            ->all();
         $this->assertInternalType('array', $res);
         $this->assertCount(0, $res);
     }

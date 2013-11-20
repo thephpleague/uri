@@ -8,14 +8,14 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     public function testGetter()
     {
         $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createFromString($expected);
+        $url = Factory::createUrlFromString($expected);
 
-        $this->assertSame(array('foo' => 'bar'), $url->getQuery());
-        $this->assertSame('bar', $url->getQuery('foo'));
-        $this->assertNull($url->getQuery('barbaz'));
-        $this->assertSame(array('foo', 'bar'), $url->getPath());
+        $this->assertSame(array('foo' => 'bar'), $url->query()->all());
+        $this->assertSame('bar', $url->query()->get('foo'));
+        $this->assertNull($url->query()->get('barbaz'));
+        $this->assertSame(array('foo', 'bar'), $url->path()->all());
         $this->assertSame('content', $url->getFragment());
-        $this->assertSame(array('example', 'com'), $url->getHost());
+        $this->assertSame(array('example', 'com'), $url->host()->all());
         $this->assertNull($url->getPort());
         $this->assertNull($url->getScheme());
         $this->assertNull($url->getUsername());
@@ -25,62 +25,83 @@ class UrlTest extends \PHPUnit_Framework_TestCase
     public function testSetter()
     {
         $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createFromString($expected);
+        $url = Factory::createUrlFromString($expected);
 
+        $url->query()->set(array('toto' => 'leheros'));
+        $url->path()
+            ->set('inscription', 'prepend')
+            ->set('cool');
+        $url->host()
+            ->set('api', 'prepend')
+            ->set('uk');
         $url
-            ->setQuery(array('toto' => 'leheros'))
             ->setFragment('top')
             ->setPort('443')
-            ->setPath('inscription', 'prepend')
-            ->setPath('cool')
             ->setUsername('john')
             ->setPassword('doe')
-            ->setHost('api', 'prepend')
-            ->setHost('uk')
             ->setScheme('https');
 
-        $this->assertSame(array('toto' => 'leheros', 'foo' => 'bar'), $url->getQuery());
-        $this->assertSame(array('inscription', 'foo', 'bar', 'cool'), $url->getPath());
+        $this->assertSame(array('foo' => 'bar', 'toto' => 'leheros'), $url->query()->all());
+        $this->assertSame(array('inscription', 'foo', 'bar', 'cool'), $url->path()->all());
         $this->assertSame('top', $url->getFragment());
-        $this->assertSame(array('api', 'example', 'com', 'uk'), $url->getHost());
+        $this->assertSame(array('api', 'example', 'com', 'uk'), $url->host()->all());
         $this->assertSame(443, $url->getPort());
         $this->assertSame('https', $url->getScheme());
         $this->assertSame('john', $url->getUsername());
         $this->assertSame('doe', $url->getPassword());
-        $this->assertSame('https://john:doe@api.example.com.uk:443/inscription/foo/bar/cool?toto=leheros&foo=bar#top', $url->__toString());
+        $this->assertSame('https://john:doe@api.example.com.uk:443/inscription/foo/bar/cool?foo=bar&toto=leheros#top', $url->__toString());
     }
 
     public function testRemoveInfo()
     {
         $expected = '//john:doe@example.com/foo/bar?foo=bar#content';
-        $url = Factory::createFromString($expected);
+        $url = Factory::createUrlFromString($expected);
+
+        $url->host()
+            ->remove('com')
+            ->set('be');
+
+        $url->path()
+            ->remove(array('foo', 'bar'))
+            ->set(array('user', 'profile'));
+
+        $url->query()
+            ->remove('foo')
+            ->set('action', 'hello');
 
         $url
-            ->unsetHost('com')
-            ->setHost('be')
-            ->unsetPath(array('foo', 'bar'))
-            ->setPath(array('user', 'profile'))
-            ->unsetQuery('foo')
             ->setPassword(null)
+            ->setFragment(null)
             ->setUsername('jane')
-            ->setQuery('action', 'hello')
             ->setScheme('https');
 
-        $this->assertSame('https://jane@example.be/user/profile?action=hello#content', $url->__toString());
+        $this->assertSame('https://jane@example.be/user/profile?action=hello', $url->__toString());
     }
 
-    public function testClearQuery()
+    public function testClear()
     {
         $expected = '//john:doe@example.com/foo/bar?foo=bar&toto=leheros&bar=baz#content';
-        $url = Factory::createFromString($expected);
+        $url = Factory::createUrlFromString($expected);
+        $url->host()->clear();
+        $url->path()->clear();
+        $url->query()->clear();
         $url
-            ->unsetHost()
-            ->unsetPath()
-            ->unsetQuery(array('foo', 'toto'))
-            ->unsetQuery()
-            ->setUsername(null)
-            ->setPassword(null);
+            ->setFragment()
+            ->setUsername()
+            ->setPassword()
+            ->setPort();
 
-        $this->assertSame('//#content', $url->__toString());
+        $this->assertSame('//', $url->__toString());
+    }
+
+    public function testCloning()
+    {
+        $expected = '//example.com/foo/bar?foo=bar#content';
+        $url = Factory::createUrlFromString($expected);
+        $clone = clone $url;
+        $this->assertSame($expected, $clone->__toString());
+        $clone->query()->set('toto', 'malabar');
+        $this->assertCount(2, $clone->query());
+        $this->assertCount(1, $url->query());
     }
 }

@@ -30,66 +30,54 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
+
+use RuntimeException;
 
 /**
- *  A Class to manipulate URL scheme component
+ *  A Class to manipulate URL segment like component
  *
  * @package Bakame.Url
  *
  */
-class Scheme
+class Host extends Segment
 {
 
-    /**
-     * Scheme content
-     * @var string
-     */
-    private $data;
-
-    public function __construct($str = null)
+    public function __construct($str)
     {
-        $this->set($str);
+        parent::__construct($str, '.');
     }
 
     /**
-     * return the scheme content
-     * @return string
-     */
-    public function get()
-    {
-        return $this->data;
-    }
-
-    /**
-     * set the scheme content
-     * @param string $value
+     * Set Host values
+     * @param mixed   $value            a string OR an array representing the data to be inserted
+     * @param string  $position         append or prepend where to insert the data in the host array
+     * @param integer $valueBefore      the data where to append the $value
+     * @param integer $valueBeforeIndex the occurenceIndex of $valueBefore if $valueBefore appears more than once
+     *
+     * @throws RuntimeException If numbers of component exceeds or is equals to 127
+     * @throws RuntimeException If host length exceeds or is equals to 255
      *
      * @return self
      */
-    public function set($value = null)
+    public function set($value, $position = null, $valueBefore = null, $valueBeforeIndex = null)
     {
-        if (null === $value) {
-            $this->data = null;
-
-            return $this;
-        }
-        $this->data = filter_var($value, FILTER_SANITIZE_STRING);
-
-        return $this;
-    }
-
-    /**
-     * format the string representation
-     * @return string
-     */
-    public function __toString()
-    {
-        $str = $this->data;
-        if (! empty($str)) {
-            $str .= ':';
+        if (! is_array($value)) {
+            $value = (array) $value;
         }
 
-        return $str .= '//';
+        if (127 <= (count($this->data) + count($value))) {
+            throw new RuntimeException('Host may have at maximum 127 parts');
+        }
+
+        if (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator) > 255) {
+            throw new RuntimeException('Host may have a maximum of 255 characters');
+        }
+
+        if ('prepend' !== $position) {
+            $position = 'append';
+        }
+
+        return $this->$position($value, $valueBefore, $valueBeforeIndex);
     }
 }

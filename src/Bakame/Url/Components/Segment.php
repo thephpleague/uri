@@ -30,7 +30,7 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
 
 /**
  *  A Class to manipulate URL segment like component
@@ -44,13 +44,13 @@ class Segment
      * Segment separator
      * @var string
      */
-    private $separator;
+    protected $separator;
 
     /**
      * Segment Data
      * @var array
      */
-    private $data = array();
+    protected $data = array();
 
     public function __construct($str, $separator)
     {
@@ -58,6 +58,9 @@ class Segment
         if (! is_null($str)) {
             if ($this->separator == $str[0]) {
                 $str = substr($str, 1);
+            }
+            if ($this->separator == $str[strlen($str)-1]) {
+                $str = substr($str, 0, -1);
             }
             $this->data = explode($this->separator, $str);
         }
@@ -76,9 +79,7 @@ class Segment
     }
 
     /**
-     * get the query data
-     * if a index is provided it will return its associated data of null
-     * if not index is provided it will return the whole data
+     * return the associated data to index or null
      *
      * @param null|integer $index the index
      *
@@ -86,13 +87,21 @@ class Segment
      */
     public function get($index = null)
     {
-        if (null === $index) {
-            return $this->data;
-        } elseif (array_key_exists($index, $this->data)) {
-            return $this->data[$index];
+        if (! array_key_exists($index, $this->data)) {
+            return null;
         }
 
-        return null;
+        return $this->data[$index];
+    }
+
+    /**
+     * return all available data
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $this->data;
     }
 
     /**
@@ -104,9 +113,9 @@ class Segment
      *
      * @return self
      */
-    public function set($value, $position = 'append', $valueBefore = null, $valueBeforeIndex = null)
+    public function set($value, $position = null, $valueBefore = null, $valueBeforeIndex = null)
     {
-        if (! in_array($position, array('append', 'prepend'))) {
+        if ('prepend' !== $position) {
             $position = 'append';
         }
 
@@ -149,10 +158,10 @@ class Segment
      *
      * @return self
      */
-    private function append($value, $valueBefore = null, $valueBeforeIndex = null)
+    protected function append($value, $valueBefore = null, $valueBeforeIndex = null)
     {
         $new = (array) $value;
-        $old = $this->get();
+        $old = $this->all();
         $extra = array();
         if (null !== $valueBefore && count($found = array_keys($old, $valueBefore))) {
             $index = $found[0];
@@ -175,10 +184,10 @@ class Segment
      *
      * @return self
      */
-    private function prepend($value, $valueBefore = null, $valueBeforeIndex = null)
+    protected function prepend($value, $valueBefore = null, $valueBeforeIndex = null)
     {
         $new = (array) $value;
-        $old = $this->get();
+        $old = $this->all();
         if (null !== $valueBefore && count($found = array_keys($old, $valueBefore))) {
             $index = $found[0];
             if (array_key_exists($valueBeforeIndex, $found)) {

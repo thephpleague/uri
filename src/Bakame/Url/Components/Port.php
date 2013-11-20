@@ -30,29 +30,29 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
 
 /**
- *  A Class to manipulate URL fragment component
+ *  A Class to manipulate URL port component
  *
  * @package Bakame.Url
  *
  */
-class Fragment
+class Port
 {
     /**
-     * Fragment content
+     * Port content
      * @var string
      */
     private $data;
 
-    public function __construct($str)
+    public function __construct($str = null)
     {
-        $this->data = $str;
+        $this->set($str);
     }
 
     /**
-     * return the fragment content
+     * get the Port value
      * @return string
      */
     public function get()
@@ -61,13 +61,18 @@ class Fragment
     }
 
     /**
-     * set the fragment content
+     * set the Port value
      * @param string $value
      *
      * @return self
      */
-    public function set($value)
+    public function set($value = null)
     {
+        if (null !== $value) {
+            $value = filter_var($value, FILTER_VALIDATE_INT, array(
+                'options' => array('min_range' => 1, 'default' => 80)
+            ));
+        }
         $this->data = $value;
 
         return $this;
@@ -79,11 +84,6 @@ class Fragment
      */
     public function __toString()
     {
-        $str = $this->data;
-        if (!empty($str)) {
-            $str = '#'.$str;
-        }
-
-        return $str;
+        return $this->data;
     }
 }

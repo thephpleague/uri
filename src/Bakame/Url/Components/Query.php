@@ -30,7 +30,7 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
 
 use Countable;
 use ArrayIterator;
@@ -51,10 +51,18 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     private $data = array();
 
-    public function __construct($query = '')
+    public function __construct($query = null)
     {
-        parse_str($query, $res);
-        $this->data = $res;
+        if (null !== $query) {
+            $res = $query;
+            if (! is_array($query)) {
+                if ('?' == $res[0]) {
+                    $res = substr($res, 1);
+                }
+                parse_str($query, $res);
+            }
+            $this->set($res);
+        }
     }
 
     /**
@@ -66,7 +74,7 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function has($key)
     {
-        return array_key_exists($key, $this->data);
+        return array_key_exists($key, $this->data) && isset($key, $this->data);
     }
 
     /**
@@ -74,38 +82,69 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      * if a key is provided it will return its associated data of null
      * if not key is provided it will return the whole data
      *
-     * @param null|string $key the key
+     * @param string $key the key
      *
      * @return mixed
      */
-    public function get($key = null)
+    public function get($key)
     {
+        if (! $this->has($key)) {
+            return null;
 
-        if (null == $key) {
-            return $this->data;
-        } elseif ($this->has($key)) {
-            return $this->data[$key];
         }
 
-        return null;
+        return $this->data[$key];
+    }
+
+    /**
+     * get the query data
+     * if a key is provided it will return its associated data of null
+     * if not key is provided it will return the whole data
+     *
+     * @param string $key the key
+     *
+     * @return mixed
+     */
+    public function all()
+    {
+        return $this->data;
     }
 
     /**
      * set Query values
      *
-     * @param mixed  $name  a string OR an array representing the data to be set
+     * @param mixed  $key   a string OR an array representing the data to be set
      * @param string $value is used $key is not an array is the value a to be set
      *
      * @return self
      */
-    public function set($name, $value = null)
+    public function set($key, $value = null)
     {
-        if (! is_array($name)) {
-            $name = array($name => $value);
+        if ($key instanceof Query) {
+            $key = $key->all();
+        } elseif (! is_array($key)) {
+            $key = array($key => $value);
         }
-        $this->data = array_filter($name + $this->data, function ($value) {
+        $this->data = array_filter(array_merge($this->data, $key), function ($value) {
             return null !== $value;
         });
+
+        return $this;
+    }
+
+    /**
+     * Remove keys
+     *
+     * @param mixed $key a string OR an array representing the key to be removed from the data
+     *
+     * @return self
+     */
+    public function remove($key)
+    {
+        $key = (array) $key;
+        foreach ($key as $value) {
+            unset($this->data[$value]);
+        }
 
         return $this;
     }
@@ -128,42 +167,67 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function __toString()
     {
-        $str = http_build_query($this->data);
-
-        if (! empty($str)) {
-            $str = '?'.$str;
-        }
-
-        return $str;
+        return  http_build_query($this->data);
     }
-    
+
+    /**
+     * Countable Interface
+     * @return integer
+     */
     public function count()
     {
         return count($this->data);
     }
 
+    /**
+     * IteratorAggregate Interface
+     * @return \ArrayIterator
+     */
     public function getIterator()
     {
         return new ArrayIterator($this->data);
     }
 
+    /**
+     * ArrayAccess Interface has alias
+     * @param string $offset
+     *
+     * @return boolean
+     */
     public function offsetExists($offset)
     {
-        return isset($this->data[$offset]);
+        return $this->has($offset);
     }
 
+    /**
+     * ArrayAccess Interface get alias
+     * @param string $offset
+     *
+     * @return boolean
+     */
     public function offsetGet($offset)
     {
-        return $this->data[$offset];
+        return $this->get($offset);
     }
 
+    /**
+     * ArrayAccess Interface set alias
+     * @param string $offset
+     * @param mixed  $value
+     *
+     */
     public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
     }
 
+    /**
+     * ArrayAccess Interface set alias
+     * @param string $offset
+     *
+     */
     public function offsetUnset($offset)
     {
-        $this->set($offset, null);
+        $this->remove($offset);
     }
 }

@@ -33,6 +33,7 @@
 namespace Bakame\Url\Components;
 
 use Countable;
+use ArrayIterator;
 use IteratorAggregate;
 
 /**

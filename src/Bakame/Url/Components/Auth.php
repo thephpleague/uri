@@ -94,12 +94,11 @@ class Auth
      */
     public function __toString()
     {
-        $user = $this->username;
         $pass = $this->password;
         if (! empty($pass)) {
             $pass = ':'.$pass;
         }
 
-        return $user.$pass;
+        return $this->username.$pass;
     }
 }

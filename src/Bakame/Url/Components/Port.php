@@ -41,7 +41,7 @@ namespace Bakame\Url\Components;
 class Port
 {
     /**
-     * Port content
+     * data
      * @var string
      */
     private $data;
@@ -52,7 +52,7 @@ class Port
     }
 
     /**
-     * get the Port value
+     * return the data
      * @return string
      */
     public function get()
@@ -61,7 +61,7 @@ class Port
     }
 
     /**
-     * set the Port value
+     * set the data
      * @param string $value
      *
      * @return self
@@ -79,7 +79,7 @@ class Port
     }
 
     /**
-     * format the string representation
+     * format the data string representation
      * @return string
      */
     public function __toString()

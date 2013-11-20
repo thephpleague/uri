@@ -40,9 +40,8 @@ namespace Bakame\Url\Components;
  */
 class Scheme
 {
-
     /**
-     * Scheme content
+     * data
      * @var string
      */
     private $data;
@@ -53,7 +52,7 @@ class Scheme
     }
 
     /**
-     * return the scheme content
+     * return the data
      * @return string
      */
     public function get()
@@ -62,7 +61,7 @@ class Scheme
     }
 
     /**
-     * set the scheme content
+     * set the data
      * @param string $value
      *
      * @return self
@@ -78,7 +77,7 @@ class Scheme
     }
 
     /**
-     * format the string representation
+     * format the data string representation
      * @return string
      */
     public function __toString()

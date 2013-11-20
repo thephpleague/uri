@@ -14,6 +14,20 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->segment = new Segment($path, $separator);
     }
 
+
+    public function testCountable()
+    {
+        $this->assertCount(3, $this->segment);
+    }
+
+    public function testIterator()
+    {
+        foreach ($this->segment as $key => $value) {
+            $this->assertSame($value, $this->segment->get($key));
+        }
+    }
+
+
     public function testConstructor()
     {
         $path = '/foo/bar/baz';

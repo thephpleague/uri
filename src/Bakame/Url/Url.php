@@ -111,9 +111,9 @@ class Url
         Fragment $fragment
     ) {
         $this->scheme = $scheme;
+        $this->auth = $auth;
         $this->host = $host;
         $this->port = $port;
-        $this->auth = $auth;
         $this->path = $path;
         $this->query = $query;
         $this->fragment = $fragment;
@@ -142,6 +142,20 @@ class Url
         }
 
         return implode('', $url);
+    }
+
+    /**
+     * To Enable cloning
+     */
+    public function __clone()
+    {
+        $this->scheme = clone $this->scheme;
+        $this->auth = clone $this->auth;
+        $this->host = clone $this->host;
+        $this->port = clone $this->port;
+        $this->path = clone $this->path;
+        $this->query = clone $this->query;
+        $this->fragment = clone $this->fragment;
     }
 
     /**
@@ -235,7 +249,7 @@ class Url
      *
      * @return self
      */
-    public function setPort($value)
+    public function setPort($value = null)
     {
         $this->port->set($value);
 
@@ -260,7 +274,7 @@ class Url
      *
      * @return self
      */
-    public function setFragment($value)
+    public function setFragment($value = null)
     {
         $this->fragment->set($value);
 

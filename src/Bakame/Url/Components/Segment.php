@@ -41,7 +41,7 @@ use IteratorAggregate;
  * @package Bakame.Url
  *
  */
-class Segment implement Countable, IteratorAggregate
+class Segment implements Countable, IteratorAggregate
 {
     /**
      * Segment separator

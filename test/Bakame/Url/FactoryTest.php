@@ -17,12 +17,13 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
             'HTTP_HOST' => 'example.com',
         );
         $url = Factory::createUrlFromServer($server);
+
         $this->assertSame('https://example.com:23', $url->__toString());
     }
 
     public function testCreateFromString()
     {
-        $expected = '//example.com/foo/bar?foo=bar#content';
+        $expected = 'http://example.com:80/foo/bar?foo=bar#content';
         $url = Factory::createUrlFromString($expected);
         $this->assertSame($expected, $url->__toString());
     }

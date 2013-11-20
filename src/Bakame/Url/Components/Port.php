@@ -84,11 +84,6 @@ class Port
      */
     public function __toString()
     {
-        $str = '';
-        if (! empty($this->data)) {
-            $str = ':'.$this->data;
-        }
-
-        return $str;
+        return $this->data;
     }
 }

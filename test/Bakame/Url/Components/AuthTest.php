@@ -15,7 +15,7 @@ class AuthTest extends \PHPUnit_Framework_TestCase
             ->setPassword('maryjane');
 
         $this->assertSame('maryjane', $auth->getPassword());
-        $this->assertSame('jane:maryjane@', $auth->__toString());
+        $this->assertSame('jane:maryjane', $auth->__toString());
     }
 
     public function testRemove()

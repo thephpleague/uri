@@ -82,11 +82,6 @@ class Fragment
      */
     public function __toString()
     {
-        $str = $this->data;
-        if (!empty($str)) {
-            $str = '#'.$str;
-        }
-
-        return $str;
+        return $this->data;
     }
 }

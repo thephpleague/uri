@@ -92,7 +92,9 @@ $urlbis = clone $url; //When cloning the references class will also be clone to 
 Urls Components Classes
 ---------------
 
-The Bakame.url package comes bundle with Utility classes that can help you manipulate a single portion of you url. Let's say that you are only interested in modifying the query string from a given URL. You can proceed like so:
+The `Bakame\Url\Url` is build around components classes that represents each part of a URL. 
+Let's say that you are only interested in modifying the query string from a given URL. 
+You can proceed like so:
 
 ```php 
 use Bakame\Url\Components\Query;
@@ -108,20 +110,10 @@ $query
 $query->get('toto') //will return 'leheros';
 $query->all(); //will return the data in form of an array
 $query->clear(); //will empty the query string
-$string = $query->__toString(); // $string is now equals to "?toto=leheros&foo=bar&bar=baz"
+$string = $query->__toString(); // $string is now equals to "toto=leheros&foo=bar&bar=baz"
 
 ```
-The `Bakame\Url\Components\Query` implements the `Countable`, `IteratorAggrete` and `ArrayAccess` interfaces, so the following is possible:
-
-```php 
-$query['mynameis'] = 'slimshady';
-foreach ($query as $key => $value) {
-    //do something here....
-}
-
-echo count($query); //return the number of property set
-
-```
+The `Bakame\Url\Components\Query` implements the `Countable`, `IteratorAggrete` and `ArrayAccess` interfaces.
 
 There are seven (7) component classes for each URL part:
 

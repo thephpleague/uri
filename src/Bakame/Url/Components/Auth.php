@@ -100,10 +100,6 @@ class Auth
             $pass = ':'.$pass;
         }
 
-        if ($user || $pass) {
-            $pass .= '@';
-        }
-
         return $user.$pass;
     }
 }

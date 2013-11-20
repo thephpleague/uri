@@ -6,7 +6,7 @@
 * @copyright 2013 Ignace Nyamagana Butera
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
-* @version 1.0.0
+* @version 2.0.0
 * @package Bakame.url
 *
 * MIT LICENSE
@@ -120,31 +120,6 @@ class Url
     }
 
     /**
-     * return the string representation for the current URL
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-
-        $url = array();
-        $components = array('scheme', 'auth', 'host', 'port', 'path', 'query', 'fragment');
-        foreach ($components as $component) {
-            $value = $this->{$component}->__toString();
-            switch ($component) {
-                case 'path':
-                    if (! empty($value)) {
-                        $value = '/'.$value;
-                    }
-                    break;
-            }
-            $url[] = $value;
-        }
-
-        return implode('', $url);
-    }
-
-    /**
      * To Enable cloning
      */
     public function __clone()
@@ -156,6 +131,44 @@ class Url
         $this->path = clone $this->path;
         $this->query = clone $this->query;
         $this->fragment = clone $this->fragment;
+    }
+
+    /**
+     * return the string representation for the current URL
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $scheme = $this->scheme->__toString();
+        if (! empty($scheme)) {
+            $scheme .=':';
+        }
+        $scheme .= '//';
+
+        $auth = $this->auth->__toString();
+        if (! empty($auth)) {
+            $auth .='@';
+        }
+        $host = $this->host->__toString();
+        $port = $this->port->__toString();
+        if (! empty($port)) {
+            $port = ':'.$port;
+        }
+        $path = $this->path->__toString();
+        if (! empty($path)) {
+            $path = '/'.$path;
+        }
+        $query = $this->query->__toString();
+        if (! empty($query)) {
+            $query = '?'.$query;
+        }
+        $fragment = $this->fragment->__toString();
+        if (! empty($fragment)) {
+            $fragment = '#'.$fragment;
+        }
+
+        return $scheme.$auth.$host.$port.$path.$query.$fragment;
     }
 
     /**

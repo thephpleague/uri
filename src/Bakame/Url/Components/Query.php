@@ -113,19 +113,19 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
     /**
      * set Query values
      *
-     * @param mixed  $name  a string OR an array representing the data to be set
+     * @param mixed  $key   a string OR an array representing the data to be set
      * @param string $value is used $key is not an array is the value a to be set
      *
      * @return self
      */
-    public function set($name, $value = null)
+    public function set($key, $value = null)
     {
-        if ($name instanceof Query) {
-            $name = $name->all();
-        } elseif (! is_array($name)) {
-            $name = array($name => $value);
+        if ($key instanceof Query) {
+            $key = $key->all();
+        } elseif (! is_array($key)) {
+            $key = array($key => $value);
         }
-        $this->data = array_filter(array_merge($this->data, $name), function ($value) {
+        $this->data = array_filter(array_merge($this->data, $key), function ($value) {
             return null !== $value;
         });
 
@@ -135,15 +135,15 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
     /**
      * Remove keys
      *
-     * @param mixed $name a string OR an array representing the key to be removed from the data
+     * @param mixed $key a string OR an array representing the key to be removed from the data
      *
      * @return self
      */
-    public function remove($name)
+    public function remove($key)
     {
-        $name = (array) $name;
-        foreach ($name as $key) {
-            unset($this->data[$key]);
+        $key = (array) $key;
+        foreach ($key as $value) {
+            unset($this->data[$value]);
         }
 
         return $this;
@@ -167,13 +167,7 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function __toString()
     {
-        $str = http_build_query($this->data);
-
-        if (! empty($str)) {
-            $str = '?'.$str;
-        }
-
-        return $str;
+        return  http_build_query($this->data);
     }
 
     /**
@@ -234,6 +228,6 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        $this->set($offset, null);
+        $this->remove($offset);
     }
 }

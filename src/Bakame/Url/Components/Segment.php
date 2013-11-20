@@ -79,9 +79,7 @@ class Segment
     }
 
     /**
-     * get the query data
-     * if a index is provided it will return its associated data of null
-     * if not index is provided it will return the whole data
+     * return the associated data to index or null
      *
      * @param null|integer $index the index
      *
@@ -96,6 +94,11 @@ class Segment
         return $this->data[$index];
     }
 
+    /**
+     * return all available data
+     *
+     * @return array
+     */
     public function all()
     {
         return $this->data;

@@ -32,6 +32,14 @@
 */
 namespace Bakame\Url;
 
+use Bakame\Url\Components\Scheme;
+use Bakame\Url\Components\Auth;
+use Bakame\Url\Components\Host;
+use Bakame\Url\Components\Port;
+use Bakame\Url\Components\Path;
+use Bakame\Url\Components\Query;
+use Bakame\Url\Components\Fragment;
+
 /**
  *  A Class to manipulate URLs
  *
@@ -41,64 +49,64 @@ namespace Bakame\Url;
 class Url
 {
     /**
-     * User and Passe Manipulation Object
-     * @var Bakame\Url\Auth
-     */
-    private $auth;
-
-    /**
-     * Query Manipulation Object
-     * @var Bakame\Url\Query
-     */
-    private $query;
-
-    /**
-     * Host Manipulation Object
-     * @var Bakame\Url\Host
-     */
-    private $host;
-
-    /**
-     * Path Manipulation Object
-     * @var Bakame\Url\Path
-     */
-    private $path;
-
-    /**
-     * Fragment Manipulation Object
-     * @var Bakame\Url\Fragment
-     */
-    private $fragment;
-
-    /**
      * Scheme Manipulation Object
-     * @var Bakame\Url\Scheme
+     * @var Bakame\Url\Components\Scheme
      */
     private $scheme;
 
     /**
+     * User and Passe Manipulation Object
+     * @var Bakame\Url\Components\Auth
+     */
+    private $auth;
+
+    /**
+     * Host Manipulation Object
+     * @var Bakame\Url\Components\Host
+     */
+    private $host;
+
+    /**
      * Port Manipulation Object
-     * @var Bakame\Url\Port
+     * @var Bakame\Url\Components\Port
      */
     private $port;
+
+    /**
+     * Path Manipulation Object
+     * @var Bakame\Url\Components\Path
+     */
+    private $path;
+
+    /**
+     * Query Manipulation Object
+     * @var Bakame\Url\Components\Query
+     */
+    private $query;
+
+    /**
+     * Fragment Manipulation Object
+     * @var Bakame\Url\Components\Fragment
+     */
+    private $fragment;
 
     /**
      * The constructor
      *
      * @param Scheme   $scheme
      * @param Auth     $auth
-     * @param Segment  $host
+     * @param Host     $host
      * @param Port     $port
-     * @param Segment  $path
+     * @param Path     $path
      * @param Query    $query
      * @param Fragment $fragment
      */
     public function __construct(
         Scheme $scheme,
         Auth $auth,
-        Segment $host,
+        Host $host,
         Port $port,
-        Segment $path,
+        Path $path,
         Query $query,
         Fragment $fragment
     ) {
@@ -118,12 +126,17 @@ class Url
      */
     public function __toString()
     {
+
         $url = array();
         $components = array('scheme', 'auth', 'host', 'port', 'path', 'query', 'fragment');
         foreach ($components as $component) {
             $value = $this->{$component}->__toString();
-            if ('path' == $component && ! empty($value)) {
-                $value = '/'.$value;
+            switch ($component) {
+                case 'path':
+                    if (! empty($value)) {
+                        $value = '/'.$value;
+                    }
+                    break;
             }
             $url[] = $value;
         }
@@ -142,103 +155,6 @@ class Url
     }
 
     /**
-     * return the user value
-     *  
-     * @return string|null
-     */
-    public function getUsername()
-    {
-        return $this->auth->get('user');
-    }
-    
-    /**
-     * return the password value
-     * 
-     * @return string|null
-     */
-    public function getPassword()
-    {
-        return $this->auth->get('pass');
-    }
-
-    /**
-     * return the auth values
-     * if null returns an array
-     * otherwise it returns the specific value
-     * @deprecated
-     * 
-     * @param string|null $key
-     *
-     * @return string|array
-     */
-    public function getAuth($key = null)
-    {
-        return $this->auth->get($key);
-    }
-
-    /**
-     * return the Host values
-     * if key is null returns an array of all values
-     * otherwise it returns the specific value at the given index
-     *
-     * @param string|null $key
-     *
-     * @return string|array
-     */
-    public function getHost($key = null)
-    {
-        return $this->host->get($key);
-    }
-
-    /**
-     * return the Port value
-     *
-     * @return string|null
-     */
-    public function getPort()
-    {
-        return $this->port->get();
-    }
-
-    /**
-     * return the Path values
-     * if key is null returns an array of all values
-     * otherwise it returns the specific value at the given index
-     *
-     * @param string|null $key
-     *
-     * @return string|array
-     */
-    public function getPath($key = null)
-    {
-        return $this->path->get($key);
-    }
-
-    /**
-     * return the Query values
-     * if key is null returns an array of all values
-     * otherwise it returns the specific value at the given index
-     *
-     * @param string|null $key
-     *
-     * @return string|array
-     */
-    public function getQuery($key = null)
-    {
-        return $this->query->get($key);
-    }
-
-    /**
-     * return the Fragment value
-     *
-     * @return string|array
-     */
-    public function getFragment()
-    {
-        return $this->fragment->get();
-    }
-
-    /**
      * set the Scheme value
      * if null the scheme current value is unset
      *
@@ -254,67 +170,61 @@ class Url
     }
 
     /**
-     * set Auth values
+     * return the user value
      *
-     * @deprecated
-     * 
-     * @param mixed  $key   a string OR an array representing the data to be set
-     * @param string $value is used $key is not an array is the value a to be set
-     *
-     * @return self
+     * @return string|null
      */
-    public function setAuth($key, $value = null)
+    public function getUsername()
     {
-        $this->auth->set($key, $value);
-
-        return $this;
+        return $this->auth->getUsername();
     }
 
     /**
      * set user name
-     * 
+     *
      * @param string|null $value
      *
      * @return self
      */
     public function setUsername($value = null)
     {
-        $this->auth->set('user', $value);
-        
+        $this->auth->setUsername($value);
+
         return $this;
     }
 
     /**
+     * return the password value
+     *
+     * @return string|null
+     */
+    public function getPassword()
+    {
+        return $this->auth->getPassword();
+    }
+
+    /**
      * set user password
-     * 
+     *
      * @param string|null $value
      *
      * @return self
      */
     public function setPassword($value = null)
     {
-        $this->auth->set('pass', $value);
-        
+        $this->auth->setPassword($value);
+
         return $this;
     }
 
     /**
-     * Set Host values
-     * @param mixed   $value       a string OR an array representing the data to be inserted
-     * @param string  $position    append or prepend where to insert the data in the host array
-     * @param integer $valueBefore the data where to append the $value
-     * @param integer $valueIndex  the occurenceIndex of $valueBefore if $valueBefore appears more than once
+     * return the Port value
      *
-     * @return self
+     * @return string|null
      */
-    public function setHost($value, $position = 'append', $valueBefore = null, $valueIndex = null)
+    public function getPort()
     {
-        if ('prepend' != $position) {
-            $position = 'append';
-        }
-        $this->host->set($value, $position, $valueBefore, $valueIndex);
-
-        return $this;
+        return $this->port->get();
     }
 
     /**
@@ -333,37 +243,13 @@ class Url
     }
 
     /**
-     * Set Path Values
-     * @param mixed   $value       a string OR an array representing the data to be inserted
-     * @param string  $position    append or prepend where to insert the data in the host array
-     * @param integer $valueBefore the data where to append the $value
-     * @param integer $valueIndex  the occurenceIndex of $valueBefore if $valueBefore appears more than once
+     * return the Fragment value
      *
-     * @return self
+     * @return string|array
      */
-    public function setPath($value, $position = 'append', $valueBefore = null, $valueIndex = null)
+    public function getFragment()
     {
-        if ('prepend' != $position) {
-            $position = 'append';
-        }
-        $this->path->set($value, $position, $valueBefore, $valueIndex);
-
-        return $this;
-    }
-
-    /**
-     * set Query values
-     *
-     * @param mixed  $key   a string OR an array representing the data to be set
-     * @param string $value is used $key is not an array is the value a to be set
-     *
-     * @return self
-     */
-    public function setQuery($key, $value = null)
-    {
-        $this->query->set($key, $value);
-
-        return $this;
+        return $this->fragment->get();
     }
 
     /**
@@ -382,80 +268,32 @@ class Url
     }
 
     /**
-     * Unset Host Values
-     * @param mixed $value a string OR an array representing the value to be removed
+     * return the host component object
      *
-     * @return self
+     * @return \Bakame\Url\Components\Host
      */
-    public function unsetHost($value = null)
+    public function host()
     {
-        if (null === $value) {
-            $this->host->clear();
-
-            return $this;
-        }
-        $this->host->remove($value);
-
-        return $this;
+        return $this->host;
     }
 
     /**
-     * Unset Path Values
-     * @param mixed $value a string OR an array representing the value to be removed
+     * return the path component object
      *
-     * @return self
+     * @return \Bakame\Url\Components\Path
      */
-    public function unsetPath($key = null)
+    public function path()
     {
-        if (null === $key) {
-            $this->path->clear();
-
-            return $this;
-        }
-        $this->path->remove($key);
-
-        return $this;
+        return $this->path;
     }
 
     /**
-     * @deprecated
-     * 
-     * Unset Path Values
-     * @param mixed $value a string OR an array representing the value to be removed
+     * return the query component object
      *
-     * @return self
+     * @return \Bakame\Url\Components\Query
      */
-    public function unsetAuth($key = null)
+    public function query()
     {
-        if (null === $key) {
-            $this->auth->clear();
-
-            return $this;
-        }
-        $this->auth->remove($key);
-
-        return $this;
-    }
-
-    /**
-     * Unset Path Values
-     * @param mixed $value a string OR an array representing the value to be removed
-     *
-     * @return self
-     */
-    public function unsetQuery($key = null)
-    {
-        if (null === $key) {
-            $this->query->clear();
-
-            return $this;
-        } elseif (! is_array($key)) {
-            $this->query->set($key, null);
-
-            return $this;
-        }
-        $this->query->set($key);
-
-        return $this;
+        return $this->query;
     }
 }

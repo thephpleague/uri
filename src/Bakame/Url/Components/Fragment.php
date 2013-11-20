@@ -41,7 +41,7 @@ namespace Bakame\Url\Components;
 class Fragment
 {
     /**
-     * Fragment content
+     * data
      * @var string
      */
     private $data;
@@ -52,7 +52,7 @@ class Fragment
     }
 
     /**
-     * return the fragment content
+     * return the data
      * @return string
      */
     public function get()
@@ -61,7 +61,7 @@ class Fragment
     }
 
     /**
-     * set the fragment content
+     * set the data
      * @param string $value
      *
      * @return self
@@ -77,7 +77,7 @@ class Fragment
     }
 
     /**
-     * format the string representation
+     * format the data string representation:
      * @return string
      */
     public function __toString()

@@ -28,7 +28,7 @@ You need **PHP >= 5.3.0** to use Bakame Url but the latest stable version of PHP
 Instantiation
 -------------
 
-The easiest way to get started is to added `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader. One added to the autoload you can instantiate your url with 3 differents methods as explain below:
+The easiest way to get started is to add `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader. Once added to the autoloader you can instantiate your url with 3 differents methods as explain below:
 
 ```php
 <?php

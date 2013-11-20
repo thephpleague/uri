@@ -66,7 +66,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
             ->set(array('user', 'profile'));
 
         $url->query()
-            ->set('foo')
+            ->remove('foo')
             ->set('action', 'hello');
 
         $url
@@ -86,11 +86,22 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $url->path()->clear();
         $url->query()->clear();
         $url
-            ->setFragment(null)
-            ->setUsername(null)
-            ->setPassword(null)
-            ->setPort(null);
+            ->setFragment()
+            ->setUsername()
+            ->setPassword()
+            ->setPort();
 
         $this->assertSame('//', $url->__toString());
+    }
+
+    public function testCloning()
+    {
+        $expected = '//example.com/foo/bar?foo=bar#content';
+        $url = Factory::createUrlFromString($expected);
+        $clone = clone $url;
+        $this->assertSame($expected, $clone->__toString());
+        $clone->query()->set('toto', 'malabar');
+        $this->assertCount(2, $clone->query());
+        $this->assertCount(1, $url->query());
     }
 }

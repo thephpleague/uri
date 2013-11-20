@@ -68,14 +68,14 @@ class Auth
         return $this->password;
     }
 
-    public function setUsername($value)
+    public function setUsername($value = null)
     {
         $this->username = $value;
 
         return $this;
     }
 
-    public function setPassword($value)
+    public function setPassword($value = null)
     {
         $this->password = $value;
 

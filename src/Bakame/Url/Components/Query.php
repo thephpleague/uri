@@ -74,7 +74,7 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function has($key)
     {
-        return array_key_exists($key, $this->data) && isset($key, $this->data);
+        return isset($this->data[$key]);
     }
 
     /**
@@ -135,15 +135,15 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
     /**
      * Remove keys
      *
-     * @param mixed $key a string OR an array representing the key to be removed from the data
+     * @param mixed $keys a string OR an array representing the key to be removed from the data
      *
      * @return self
      */
-    public function remove($key)
+    public function remove($keys)
     {
-        $key = (array) $key;
-        foreach ($key as $value) {
-            unset($this->data[$value]);
+        $keys = (array) $keys;
+        foreach ($keys as $key) {
+            unset($this->data[$key]);
         }
 
         return $this;

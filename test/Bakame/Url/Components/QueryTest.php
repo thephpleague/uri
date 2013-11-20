@@ -4,7 +4,6 @@ namespace Bakame\Url\Components;
 
 class QueryTest extends \PHPUnit_Framework_TestCase
 {
-
     private $query;
 
     public function setUp()
@@ -28,6 +27,12 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         foreach ($this->query as $key => $value) {
             $this->assertSame($value, $this->query[$key]);
         }
+    }
+
+    public function testSet()
+    {
+        $this->query->set(new Query('?toto=thehero&tata=thevillain'));
+        $this->assertCount(4, $this->query);
     }
 
     public function testArrayAccess()

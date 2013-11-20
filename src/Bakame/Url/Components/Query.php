@@ -120,12 +120,31 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
      */
     public function set($name, $value = null)
     {
-        if (! is_array($name)) {
+        if ($name instanceof Query) {
+            $name = $name->all();
+        } elseif (! is_array($name)) {
             $name = array($name => $value);
         }
         $this->data = array_filter(array_merge($this->data, $name), function ($value) {
             return null !== $value;
         });
+
+        return $this;
+    }
+
+    /**
+     * Remove keys
+     *
+     * @param mixed $name a string OR an array representing the key to be removed from the data
+     *
+     * @return self
+     */
+    public function remove($name)
+    {
+        $name = (array) $name;
+        foreach ($name as $key) {
+            unset($this->data[$key]);
+        }
 
         return $this;
     }

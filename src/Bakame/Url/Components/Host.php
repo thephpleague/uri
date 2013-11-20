@@ -62,15 +62,11 @@ class Host extends Segment
      */
     public function set($value, $position = null, $valueBefore = null, $valueBeforeIndex = null)
     {
-        if (! is_array($value)) {
-            $value = (array) $value;
-        }
+        $value = (array) $value;
 
         if (127 <= (count($this->data) + count($value))) {
             throw new RuntimeException('Host may have at maximum 127 parts');
-        }
-
-        if (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator) > 255) {
+        } elseif (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator) > 255) {
             throw new RuntimeException('Host may have a maximum of 255 characters');
         }
 

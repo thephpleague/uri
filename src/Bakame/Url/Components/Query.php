@@ -121,7 +121,7 @@ class Query implements Countable, IteratorAggregate, ArrayAccess
     public function set($key, $value = null)
     {
         if ($key instanceof Query) {
-            $key = $key->all();
+            $key = $key->data;
         } elseif (! is_array($key)) {
             $key = array($key => $value);
         }

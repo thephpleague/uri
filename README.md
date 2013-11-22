@@ -103,13 +103,13 @@ $string = $_SERVER['QUERY_STRING'];
 
 $query = new Query($string);
 
+$query->clear(); //will empty the query string
 $query
-    ->set('toto', 'leheros')
-    ->set(['foo' => 'bar', 'bar' => 'baz']);
+    ->set('toto', 'leheros') //setting a single value
+    ->set(['foo' => 'bar', 'bar' => 'baz']); //setting multiple values using an array or another Query instance
 
 $query->get('toto') //will return 'leheros';
 $query->all(); //will return the data in form of an array
-$query->clear(); //will empty the query string
 $string = $query->__toString(); // $string is now equals to "toto=leheros&foo=bar&bar=baz"
 
 ```
@@ -119,7 +119,7 @@ There are seven (7) component classes for each URL part:
 
 * `Bakame\Url\Components\Scheme` Manipulate the `scheme` component
 * `Bakame\Url\Components\Auth` Manipulate the `user` and `pass` components **together**
-* `Bakame\Url\Components\Components\Host` Manipulate the `host`
+* `Bakame\Url\Components\Host` Manipulate the `host`
 * `Bakame\Url\Components\Port`  Manipulate the `port` component
 * `Bakame\Url\Components\Path` Manipulate the `path` component
 * `Bakame\Url\Components\Query`  Manipulate the `query` component

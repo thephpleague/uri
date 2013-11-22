@@ -40,12 +40,12 @@ use RuntimeException;
  * @package Bakame.Url
  *
  */
-class Host extends Segment
+class Host extends AbstractSegment
 {
 
     public function __construct($str)
     {
-        parent::__construct($str, '.');
+        $this->init($str, '.');
     }
 
     /**

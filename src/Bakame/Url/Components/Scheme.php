@@ -69,7 +69,12 @@ class Scheme
     public function set($value = null)
     {
         if (null !== $value) {
-            $value = filter_var($value, FILTER_SANITIZE_STRING);
+            $value = filter_var($value, FILTER_VALIDATE_REGEXP, array(
+                'options' => array(
+                    'regexp' => '/^http(s?)$/',
+                    'default' => null
+                )
+            ));
         }
         $this->data = $value;
 

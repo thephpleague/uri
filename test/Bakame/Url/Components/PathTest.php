@@ -2,7 +2,7 @@
 
 namespace Bakame\Url\Components;
 
-class SegmentTest extends \PHPUnit_Framework_TestCase
+class PathTest extends \PHPUnit_Framework_TestCase
 {
 
     private $segment;
@@ -11,9 +11,8 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/foo/bar/baz';
         $separator = '/';
-        $this->segment = new Segment($path, $separator);
+        $this->segment = new Path($path, $separator);
     }
-
 
     public function testCountable()
     {
@@ -27,12 +26,11 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-
     public function testConstructor()
     {
         $path = '/foo/bar/baz';
         $separator = '/';
-        $segment = new Segment($path, $separator);
+        $segment = new Path($path, $separator);
         $res = $segment->all();
         $this->assertInternalType('array', $res);
         $this->assertCount(3, $res);
@@ -43,7 +41,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/foo/bar/baz/';
         $separator = '/';
-        $segment = new Segment($path, $separator);
+        $segment = new Path($path, $separator);
         $res = $segment->all();
         $this->assertInternalType('array', $res);
         $this->assertCount(3, $res);

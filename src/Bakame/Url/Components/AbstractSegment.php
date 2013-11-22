@@ -42,7 +42,7 @@ use IteratorAggregate;
  * @package Bakame.Url
  *
  */
-class Segment implements Countable, IteratorAggregate
+abstract class AbstractSegment implements Countable, IteratorAggregate
 {
     /**
      * Segment separator
@@ -56,7 +56,7 @@ class Segment implements Countable, IteratorAggregate
      */
     protected $data = array();
 
-    public function __construct($str, $separator)
+    protected function init($str, $separator)
     {
         $this->separator = $separator;
         if (! is_null($str)) {

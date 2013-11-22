@@ -104,4 +104,10 @@ class UrlTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $clone->query());
         $this->assertCount(1, $url->query());
     }
+
+    public function testScheme()
+    {
+        $url = Factory::createUrlFromString('svn://example.com/foo/bar?foo=bar#content');
+        $this->assertNull($url->getScheme());
+    }
 }

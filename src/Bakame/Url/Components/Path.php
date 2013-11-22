@@ -38,10 +38,10 @@ namespace Bakame\Url\Components;
  * @package Bakame.Url
  *
  */
-class Path extends Segment
+class Path extends AbstractSegment
 {
     public function __construct($str)
     {
-        parent::__construct($str, '/');
+        $this->init($str, '/');
     }
 }

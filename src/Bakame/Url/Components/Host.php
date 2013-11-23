@@ -32,7 +32,7 @@
 */
 namespace Bakame\Url\Components;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  *  A Class to manipulate URL segment like component
@@ -65,9 +65,9 @@ class Host extends AbstractSegment
         $value = (array) $value;
 
         if (127 <= (count($this->data) + count($value))) {
-            throw new RuntimeException('Host may have at maximum 127 parts');
-        } elseif (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator) > 255) {
-            throw new RuntimeException('Host may have a maximum of 255 characters');
+            throw new InvalidArgumentException('Host may have at maximum 127 parts');
+        } elseif (225 <= (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator))) {
+            throw new InvalidArgumentException('Host may have a maximum of 255 characters');
         }
 
         if ('prepend' !== $position) {

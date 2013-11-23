@@ -165,17 +165,17 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
     protected function append($value, $valueBefore = null, $valueBeforeIndex = null)
     {
         $new = (array) $value;
-        $old = $this->all();
-        $extra = array();
-        if (null !== $valueBefore && count($found = array_keys($old, $valueBefore))) {
+        $before = $this->data;
+        $after = array();
+        if (null !== $valueBefore && count($found = array_keys($before, $valueBefore))) {
             $index = $found[0];
             if (array_key_exists($valueBeforeIndex, $found)) {
                 $index = $found[$valueBeforeIndex];
             }
-            $extra = array_slice($old, $index+1);
-            $old = array_slice($old, 0, $index+1);
+            $after = array_slice($before, $index+1);
+            $before = array_slice($before, 0, $index+1);
         }
-        $this->data = array_merge($old, $new, $extra);
+        $this->data = array_merge($before, $new, $after);
 
         return $this;
     }
@@ -190,20 +190,18 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
      */
     protected function prepend($value, $valueBefore = null, $valueBeforeIndex = null)
     {
+        $before = array();
         $new = (array) $value;
-        $old = $this->all();
-        if (null !== $valueBefore && count($found = array_keys($old, $valueBefore))) {
+        $after = $this->data;
+        if (null !== $valueBefore && count($found = array_keys($after, $valueBefore))) {
             $index = $found[0];
             if (array_key_exists($valueBeforeIndex, $found)) {
                 $index = $found[$valueBeforeIndex];
             }
-            $extra = array_slice($old, $index);
-            $old = array_slice($old, 0, $index);
-            $this->data = array_merge($old, $new, $extra);
-
-            return $this;
+            $before = array_slice($after, 0, $index);
+            $after = array_slice($after, $index);
         }
-        $this->data = array_merge($new, $old);
+        $this->data = array_merge($before, $new, $after);
 
         return $this;
     }

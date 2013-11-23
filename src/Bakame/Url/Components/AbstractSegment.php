@@ -164,7 +164,7 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
      */
     protected function append($value, $valueBefore = null, $valueBeforeIndex = null)
     {
-        $new = (array) $value;
+        $value = (array) $value;
         $before = $this->data;
         $after = array();
         if (null !== $valueBefore && count($found = array_keys($before, $valueBefore))) {
@@ -175,7 +175,7 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
             $after = array_slice($before, $index+1);
             $before = array_slice($before, 0, $index+1);
         }
-        $this->data = array_merge($before, $new, $after);
+        $this->data = array_merge($before, $value, $after);
 
         return $this;
     }
@@ -190,8 +190,8 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
      */
     protected function prepend($value, $valueBefore = null, $valueBeforeIndex = null)
     {
+        $value = (array) $value;
         $before = array();
-        $new = (array) $value;
         $after = $this->data;
         if (null !== $valueBefore && count($found = array_keys($after, $valueBefore))) {
             $index = $found[0];
@@ -201,7 +201,7 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
             $before = array_slice($after, 0, $index);
             $after = array_slice($after, $index);
         }
-        $this->data = array_merge($before, $new, $after);
+        $this->data = array_merge($before, $value, $after);
 
         return $this;
     }

@@ -71,7 +71,7 @@ class Scheme
         if (null !== $value) {
             $value = filter_var($value, FILTER_VALIDATE_REGEXP, array(
                 'options' => array(
-                    'regexp' => '/^http(s?)$/',
+                    'regexp' => '/^http(s?)$/i',
                     'default' => null
                 )
             ));

@@ -40,6 +40,7 @@ use Bakame\Url\Components\Port;
 use Bakame\Url\Components\Path;
 use Bakame\Url\Components\Query;
 use Bakame\Url\Components\Fragment;
+use Bakame\Url\Components\Url;
 
 /**
  *  A factory to ease the creation of a Bakame\Url\Url Object

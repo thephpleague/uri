@@ -30,15 +30,7 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
-
-use Bakame\Url\Components\Scheme;
-use Bakame\Url\Components\Auth;
-use Bakame\Url\Components\Host;
-use Bakame\Url\Components\Port;
-use Bakame\Url\Components\Path;
-use Bakame\Url\Components\Query;
-use Bakame\Url\Components\Fragment;
+namespace Bakame\Url\Components;
 
 /**
  *  A Class to manipulate URLs

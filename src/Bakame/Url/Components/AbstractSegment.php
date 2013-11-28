@@ -168,7 +168,7 @@ abstract class AbstractSegment implements Countable, IteratorAggregate
         $before = $this->data;
         $after = array();
         if (null !== $valueBefore && count($found = array_keys($before, $valueBefore))) {
-            $index = $found[0];
+            $index = $found[count($found)-1];
             if (array_key_exists($valueBeforeIndex, $found)) {
                 $index = $found[$valueBeforeIndex];
             }

@@ -1,4 +1,4 @@
-vendor/
-build/
-docs/
+vendor
+build
+docs
 composer.lock

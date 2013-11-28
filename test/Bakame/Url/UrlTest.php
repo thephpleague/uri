@@ -1,6 +1,8 @@
 <?php
 
-namespace Bakame\Url;
+namespace Bakame\Url\Components;
+
+use Bakame\Url\Factory;
 
 class UrlTest extends \PHPUnit_Framework_TestCase
 {

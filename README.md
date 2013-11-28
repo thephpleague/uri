@@ -2,9 +2,7 @@ Bakame.url
 ======
 
 [![Build Status](https://travis-ci.org/nyamsprod/Bakame.url.png)](https://travis-ci.org/nyamsprod/Bakame.url)
-
 [![Total Downloads](https://poser.pugx.org/bakame/Url/downloads.png)](https://packagist.org/packages/bakame/Url)
-
 [![Latest Stable Version](https://poser.pugx.org/bakame/Url/v/stable.png)](https://packagist.org/packages/bakame/Url)
 
 The Bakame Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 

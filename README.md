@@ -12,21 +12,18 @@ This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][].
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
-Getting Started
-===============
-
 Install
 -------
 
 You may install the Bakame Url package with Composer (recommended) or manually.
 
 System Requirements
--------------------
+-------
 
 You need **PHP >= 5.3.0** to use Bakame Url but the latest stable version of PHP is recommended.
 
 Instantiation
--------------
+-------
 
 The easiest way to get started is to add `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader. Once added to the autoloader you can instantiate your url with 3 differents methods as explain below:
 
@@ -49,8 +46,8 @@ $url = Factory::createUrl();
 These 3 methods will all return a valid `Bakame\Url\Url` object. This is the main object we will be using to manipulate the url.
 
 
-Basic Usage
-------------
+Usage
+-------
 
 Manipulating the Url is simple with chaining, look at the example below:
 
@@ -90,7 +87,7 @@ $urlbis = clone $url; //When cloning the references class will also be clone to 
 ```
 
 Urls Components Classes
----------------
+-------
 
 The `Bakame\Url\Url` is build around components classes that represents each part of a URL. 
 Let's say that you are only interested in modifying the query string from a given URL. 
@@ -126,3 +123,20 @@ There are seven (7) component classes for each URL part:
 * `Bakame\Url\Components\Fragment`  Manipulate the `fragment` component
 
 Please refer to each class documentation to see what they can or can not do.
+
+Testing
+-------
+
+``` bash
+$ phpunit
+```
+
+Contributing
+-------
+
+Please see [CONTRIBUTING](https://github.com/nyamsprod/Bakame.url/blob/master/CONTRIBUTING.md) for details.
+
+Credits
+-------
+
+- [nyamsprod](https://github.com/nyamsprod)

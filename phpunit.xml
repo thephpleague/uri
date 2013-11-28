@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="test/bootstrap.php"
+<phpunit bootstrap="vendor/autoload.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          colors="true"
@@ -12,21 +12,14 @@
          stopOnFailure="false">
     
     <testsuites>
-        <testsuite>
-            <directory>test/</directory>
+        <testsuite name="Bakame Url Test Suite">
+            <directory>test/Bakame</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>./</directory>
-            <exclude>
-                <directory>./test</directory>
-                <directory>./vendor</directory>
-                <directory>./Example</directory>
-                <directory>./build</directory>
-                <file>./example.php</file>
-            </exclude>
+            <directory suffix=".php">src/Bakame</directory>
         </whitelist>
     </filter>
 

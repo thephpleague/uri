@@ -66,7 +66,10 @@ class Host extends AbstractSegment
 
         if (127 <= (count($this->data) + count($value))) {
             throw new InvalidArgumentException('Host may have at maximum 127 parts');
-        } elseif (225 <= (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + strlen($this->separator))) {
+        } elseif (225 <= (strlen($this->__toString())
+            + strlen(implode($this->separator, $value))
+            + strlen($this->separator))
+        ) {
             throw new InvalidArgumentException('Host may have a maximum of 255 characters');
         }
 

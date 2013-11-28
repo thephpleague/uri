@@ -6,7 +6,7 @@
 * @copyright 2013 Ignace Nyamagana Butera
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
-* @version 1.0.0
+* @version 2.1.2
 * @package Bakame.url
 *
 * MIT LICENSE
@@ -66,10 +66,7 @@ class Host extends AbstractSegment
 
         if (127 <= (count($this->data) + count($value))) {
             throw new InvalidArgumentException('Host may have at maximum 127 parts');
-        } elseif (225 <= (strlen($this->__toString())
-            + strlen(implode($this->separator, $value))
-            + strlen($this->separator))
-        ) {
+        } elseif (225 <= (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + 1)) {
             throw new InvalidArgumentException('Host may have a maximum of 255 characters');
         }
 

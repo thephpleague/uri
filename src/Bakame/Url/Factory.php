@@ -6,7 +6,7 @@
 * @copyright 2013 Ignace Nyamagana Butera
 * @link https://github.com/nyamsprod/Bakame.url
 * @license http://opensource.org/licenses/MIT
-* @version 1.0.0
+* @version 2.1.2
 * @package Bakame.url
 *
 * MIT LICENSE

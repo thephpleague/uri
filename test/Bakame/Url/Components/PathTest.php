@@ -82,10 +82,10 @@ class PathTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('toto/toto/foo/bar/baz/toto', $this->segment->__toString());
 
         $this->segment->set('toto', 'sdfqsdfsd', 'toto');
-        $this->assertSame('toto/toto/toto/foo/bar/baz/toto', $this->segment->__toString());
+        $this->assertSame('toto/toto/foo/bar/baz/toto/toto', $this->segment->__toString());
 
         $this->segment->set('toto', 'sdfqsdfsd', 'toto', 3);
-        $this->assertSame('toto/toto/toto/foo/bar/baz/toto/toto', $this->segment->__toString());
+        $this->assertSame('toto/toto/foo/bar/baz/toto/toto/toto', $this->segment->__toString());
 
         $this->segment->clear();
         $this->assertSame('', $this->segment->__toString());

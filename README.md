@@ -139,4 +139,4 @@ Please see [CONTRIBUTING](https://github.com/nyamsprod/Bakame.url/blob/master/CO
 Credits
 -------
 
-- [nyamsprod](https://github.com/nyamsprod)
+- [ignace nyamagana butera](https://github.com/nyamsprod)

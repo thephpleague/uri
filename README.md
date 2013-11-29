@@ -18,6 +18,15 @@ Install
 
 You may install the Bakame Url package with Composer (recommended) or manually.
 
+```json
+{
+    "require": {
+        "bakame/url": "2.*"
+    }
+}
+```
+
+
 System Requirements
 -------
 

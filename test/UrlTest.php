@@ -1,6 +1,6 @@
 <?php
 
-namespace Bakame\Url\Components;
+namespace Bakame\Url\Test;
 
 use Bakame\Url\Factory;
 

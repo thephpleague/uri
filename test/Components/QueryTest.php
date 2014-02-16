@@ -1,8 +1,11 @@
 <?php
 
-namespace Bakame\Url\Components;
+namespace Bakame\Url\Test\Components;
 
-class QueryTest extends \PHPUnit_Framework_TestCase
+use Bakame\Url\Components\Query;
+use PHPUnit_Framework_TestCase;
+
+class QueryTest extends PHPUnit_Framework_TestCase
 {
     private $query;
 

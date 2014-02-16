@@ -1,8 +1,11 @@
 <?php
 
-namespace Bakame\Url\Components;
+namespace Bakame\Url\Test\Components;
 
-class PathTest extends \PHPUnit_Framework_TestCase
+use Bakame\Url\Components\Path;
+use PHPUnit_Framework_TestCase;
+
+class PathTest extends PHPUnit_Framework_TestCase
 {
 
     private $segment;

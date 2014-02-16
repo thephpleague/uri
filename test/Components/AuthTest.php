@@ -1,8 +1,11 @@
 <?php
 
-namespace Bakame\Url\Components;
+namespace Bakame\Url\Test\Components;
 
-class AuthTest extends \PHPUnit_Framework_TestCase
+use Bakame\Url\Components\Auth;
+use PHPUnit_Framework_TestCase;
+
+class AuthTest extends PHPUnit_Framework_TestCase
 {
 
     public function testGetterSetter()

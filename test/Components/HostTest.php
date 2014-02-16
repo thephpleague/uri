@@ -1,8 +1,11 @@
 <?php
 
-namespace Bakame\Url\Components;
+namespace Bakame\Url\Test\Components;
 
-class HostTest extends \PHPUnit_Framework_TestCase
+use Bakame\Url\Components\Host;
+use PHPUnit_Framework_TestCase;
+
+class HostTest extends PHPUnit_Framework_TestCase
 {
 
     private $host;

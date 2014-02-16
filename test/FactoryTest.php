@@ -1,8 +1,14 @@
 <?php
 
-namespace Bakame\Url;
+namespace Bakame\Url\Test;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase
+use Bakame\Url\Factory;
+use DateTime;
+use PHPUnit_Framework_TestCase;
+
+date_default_timezone_set('UTC');
+
+class FactoryTest extends PHPUnit_Framework_TestCase
 {
 
     public function testCreateFromServer()
@@ -57,6 +63,6 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateFromUrlKO()
     {
-        Factory::createUrlFromString(new \DateTime);
+        Factory::createUrlFromString(new DateTime);
     }
 }

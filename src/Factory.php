@@ -132,6 +132,7 @@ class Factory
         }
         $url = array_merge(self::$components, $res);
         //FIX FOR PHP 5.4.7- BUGS
+        //@codeCoverageIgnoreStart
         if (null == $url['scheme'] && null == $url['host'] && 0 === strpos($url['path'], '//')) {
             $tmp = substr($url['path'], 2);
             list($url['host'], $url['path']) = explode('/', $tmp, 2);
@@ -144,7 +145,7 @@ class Factory
                 }
             }
         }
-
+        //@codeCoverageIgnoreEnd
         return self::createUrl(
             $url['scheme'],
             $url['user'],

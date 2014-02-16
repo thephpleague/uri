@@ -7,9 +7,9 @@ Bakame.url
 
 The Bakame Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 
-This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][].
+This package is compliant with [PSR-1][], [PSR-2][], and [PSR-4][].
 
-[PSR-0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
@@ -35,7 +35,7 @@ You need **PHP >= 5.3.0** to use Bakame Url but the latest stable version of PHP
 Instantiation
 -------
 
-The easiest way to get started is to add `'/path/to/Bakame/Entity/src'` to your PSR-0 compliant Autoloader. Once added to the autoloader you can instantiate your url with 3 differents methods as explain below:
+The easiest way to get started is to add `'/path/to/Bakame.url/src'` to your PSR-4 compliant Autoloader. Once added to the autoloader you can instantiate your url with 3 differents methods as explain below:
 
 ```php
 <?php

@@ -16,8 +16,9 @@
         "php" : ">=5.3.0"
     },
     "autoload": {
-        "psr-0": {
-            "Bakame": ["src", "test"]
+        "psr-4": {
+            "Bakame\\Url\\": "src",
+            "Bakame\\Url\\Test\\": "test"
         }
     }
 }

@@ -1,9 +1,10 @@
 League.url
 ======
 
-[![Build Status](https://travis-ci.org/nyamsprod/League.url.png)](https://travis-ci.org/nyamsprod/League.url)
-[![Total Downloads](https://poser.pugx.org/League/Url/downloads.png)](https://packagist.org/packages/League/Url)
-[![Latest Stable Version](https://poser.pugx.org/League/Url/v/stable.png)](https://packagist.org/packages/League/Url)
+[![Build Status](https://travis-ci.org/thephpleague/url.png?branch=master)](https://travis-ci.org/thephpleague/url)
+[![Coverage Status](https://coveralls.io/repos/thephpleague/url/badge.png)](https://coveralls.io/r/thephpleague/url)
+[![Total Downloads](https://poser.pugx.org/league/url/downloads.png)](https://packagist.org/packages/league/url)
+[![Latest Stable Version](https://poser.pugx.org/league/url/v/stable.png)](https://packagist.org/packages/league/url)
 
 The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 
@@ -144,9 +145,10 @@ $ phpunit
 Contributing
 -------
 
-Please see [CONTRIBUTING](https://github.com/nyamsprod/League.url/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/thephpleague/url/blob/master/CONTRIBUTING.md) for details.
 
 Credits
 -------
 
 - [ignace nyamagana butera](https://github.com/nyamsprod)
+- [All Contributors](https://github.com/thephpleague/url/graphs/contributors)

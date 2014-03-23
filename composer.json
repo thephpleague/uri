@@ -1,7 +1,7 @@
 {
-    "name": "bakame/url",
+    "name": "league/url",
     "type": "library",
-    "description" : "Bakame / Url is a lightweight PHP Url Wrapper library",
+    "description" : "league\\url is a lightweight PHP Url Wrapper library",
     "keywords": ["php", "url", "parse_url"],
     "license": "MIT",
     "authors": [
@@ -15,10 +15,20 @@
     "require": {
         "php" : ">=5.3.0"
     },
+    "require-dev": {
+        "phpunit/phpunit" : "*"
+    },
     "autoload": {
         "psr-4": {
-            "Bakame\\Url\\": "src",
-            "Bakame\\Url\\Test\\": "test"
+            "League\\Url\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "League\\Url\\Test\\": "test"
+        }
+    },
+    "replace": {
+        "bakame/url": "*"
     }
 }

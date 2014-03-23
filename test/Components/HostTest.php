@@ -1,8 +1,8 @@
 <?php
 
-namespace Bakame\Url\Test\Components;
+namespace League\Url\Test\Components;
 
-use Bakame\Url\Components\Host;
+use League\Url\Components\Host;
 use PHPUnit_Framework_TestCase;
 
 class HostTest extends PHPUnit_Framework_TestCase

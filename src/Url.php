@@ -1,13 +1,13 @@
 <?php
 /**
-* Bakame.url - A lightweight Url Parser library
+* League.url - A lightweight Url Parser library
 *
 * @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2013 Ignace Nyamagana Butera
-* @link https://github.com/nyamsprod/Bakame.url
+* @copyright 2014 Ignace Nyamagana Butera
+* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
-* @version 2.1.2
-* @package Bakame.url
+* @version 3.0.0
+* @package League.url
 *
 * MIT LICENSE
 *
@@ -30,63 +30,63 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace League\Url;
 
-use Bakame\Url\Components\Scheme;
-use Bakame\Url\Components\Auth;
-use Bakame\Url\Components\Host;
-use Bakame\Url\Components\Port;
-use Bakame\Url\Components\Path;
-use Bakame\Url\Components\Query;
-use Bakame\Url\Components\Fragment;
+use League\Url\Components\Scheme;
+use League\Url\Components\Auth;
+use League\Url\Components\Host;
+use League\Url\Components\Port;
+use League\Url\Components\Path;
+use League\Url\Components\Query;
+use League\Url\Components\Fragment;
 
 /**
  *  A Class to manipulate URLs
  *
- * @package Bakame.Url
+ * @package League.Url
  *
  */
 class Url
 {
     /**
      * Scheme Manipulation Object
-     * @var Bakame\Url\Components\Scheme
+     * @var League\Url\Components\Scheme
      */
     private $scheme;
 
     /**
      * User and Passe Manipulation Object
-     * @var Bakame\Url\Components\Auth
+     * @var League\Url\Components\Auth
      */
     private $auth;
 
     /**
      * Host Manipulation Object
-     * @var Bakame\Url\Components\Host
+     * @var League\Url\Components\Host
      */
     private $host;
 
     /**
      * Port Manipulation Object
-     * @var Bakame\Url\Components\Port
+     * @var League\Url\Components\Port
      */
     private $port;
 
     /**
      * Path Manipulation Object
-     * @var Bakame\Url\Components\Path
+     * @var League\Url\Components\Path
      */
     private $path;
 
     /**
      * Query Manipulation Object
-     * @var Bakame\Url\Components\Query
+     * @var League\Url\Components\Query
      */
     private $query;
 
     /**
      * Fragment Manipulation Object
-     * @var Bakame\Url\Components\Fragment
+     * @var League\Url\Components\Fragment
      */
     private $fragment;
 
@@ -297,7 +297,7 @@ class Url
     /**
      * return the host component object
      *
-     * @return \Bakame\Url\Components\Host
+     * @return \League\Url\Components\Host
      */
     public function host()
     {
@@ -307,7 +307,7 @@ class Url
     /**
      * return the path component object
      *
-     * @return \Bakame\Url\Components\Path
+     * @return \League\Url\Components\Path
      */
     public function path()
     {
@@ -317,7 +317,7 @@ class Url
     /**
      * return the query component object
      *
-     * @return \Bakame\Url\Components\Query
+     * @return \League\Url\Components\Query
      */
     public function query()
     {

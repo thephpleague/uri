@@ -1,8 +1,8 @@
 <?php
 
-namespace Bakame\Url\Test\Components;
+namespace League\Url\Test\Components;
 
-use Bakame\Url\Components\Auth;
+use League\Url\Components\Auth;
 use PHPUnit_Framework_TestCase;
 
 class AuthTest extends PHPUnit_Framework_TestCase

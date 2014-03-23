@@ -1,8 +1,8 @@
 <?php
 
-namespace Bakame\Url\Test;
+namespace League\Url\Test;
 
-use Bakame\Url\Factory;
+use League\Url\Factory;
 
 class UrlTest extends \PHPUnit_Framework_TestCase
 {

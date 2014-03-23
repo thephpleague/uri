@@ -1,8 +1,8 @@
 <?php
 
-namespace Bakame\Url\Test\Components;
+namespace League\Url\Test\Components;
 
-use Bakame\Url\Components\Path;
+use League\Url\Components\Path;
 use PHPUnit_Framework_TestCase;
 
 class PathTest extends PHPUnit_Framework_TestCase

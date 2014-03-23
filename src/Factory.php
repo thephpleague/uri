@@ -1,13 +1,13 @@
 <?php
 /**
-* Bakame.url - A lightweight Url Parser library
+* League.url - A lightweight Url Parser library
 *
 * @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2013 Ignace Nyamagana Butera
-* @link https://github.com/nyamsprod/Bakame.url
+* @copyright 2014 Ignace Nyamagana Butera
+* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
-* @version 2.1.2
-* @package Bakame.url
+* @version 3.0.0
+* @package League.url
 *
 * MIT LICENSE
 *
@@ -30,21 +30,21 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url;
+namespace League\Url;
 
 use InvalidArgumentException;
-use Bakame\Url\Components\Scheme;
-use Bakame\Url\Components\Auth;
-use Bakame\Url\Components\Host;
-use Bakame\Url\Components\Port;
-use Bakame\Url\Components\Path;
-use Bakame\Url\Components\Query;
-use Bakame\Url\Components\Fragment;
+use League\Url\Components\Scheme;
+use League\Url\Components\Auth;
+use League\Url\Components\Host;
+use League\Url\Components\Port;
+use League\Url\Components\Path;
+use League\Url\Components\Query;
+use League\Url\Components\Fragment;
 
 /**
- *  A factory to ease the creation of a Bakame\Url\Url Object
+ *  A factory to ease the creation of a League\Url\Url Object
  *
- * @package Bakame.Url
+ * @package League.Url
  *
  */
 class Factory
@@ -66,11 +66,11 @@ class Factory
     );
 
     /**
-     * Return a instance of Bakame\Url\Url from a server array
+     * Return a instance of League\Url\Url from a server array
      *
      * @param array $server the server array
      *
-     * @return Bakame\Url\Url
+     * @return League\Url\Url
      */
     public static function createUrlFromServer(array $server)
     {
@@ -118,11 +118,11 @@ class Factory
     }
 
     /**
-     * Return a instance of Bakame\Url\Url from a simple string
+     * Return a instance of League\Url\Url from a simple string
      *
      * @param string $url
      *
-     * @return Bakame\Url\Url
+     * @return League\Url\Url
      */
     public static function createUrlFromString($url)
     {
@@ -159,7 +159,7 @@ class Factory
     }
 
     /**
-     * Create a new Instance of Bakame\Url\Url
+     * Create a new Instance of League\Url\Url
      *
      * @param string $scheme   url scheme
      * @param string $user     url user
@@ -170,7 +170,7 @@ class Factory
      * @param string $query    url query
      * @param string $fragment url fragment
      *
-     * @return Bakame\Url\Url
+     * @return League\Url\Url
      */
     public static function createUrl(
         $scheme = null,

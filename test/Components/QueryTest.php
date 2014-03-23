@@ -1,8 +1,8 @@
 <?php
 
-namespace Bakame\Url\Test\Components;
+namespace League\Url\Test\Components;
 
-use Bakame\Url\Components\Query;
+use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
 
 class QueryTest extends PHPUnit_Framework_TestCase

@@ -1,13 +1,13 @@
 <?php
 /**
-* Bakame.url - A lightweight Url Parser library
+* League.url - A lightweight Url Parser library
 *
 * @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2013 Ignace Nyamagana Butera
-* @link https://github.com/nyamsprod/Bakame.url
+* @copyright 2014 Ignace Nyamagana Butera
+* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
-* @version 2.1.2
-* @package Bakame.url
+* @version 3.0.0
+* @package League.url
 *
 * MIT LICENSE
 *
@@ -30,7 +30,7 @@
 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-namespace Bakame\Url\Components;
+namespace League\Url\Components;
 
 use Countable;
 use ArrayIterator;
@@ -40,7 +40,7 @@ use ArrayAccess;
 /**
  *  A Class to manipulate URL Query String component
  *
- * @package Bakame.Url
+ * @package League.Url
  *
  */
 class Query implements Countable, IteratorAggregate, ArrayAccess

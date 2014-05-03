@@ -16,7 +16,7 @@
         "php" : ">=5.3.0"
     },
     "require-dev": {
-        "phpunit/phpunit" : "*"
+        "phpunit/phpunit" : "~4.0"
     },
     "autoload": {
         "psr-4": {
@@ -30,5 +30,10 @@
     },
     "replace": {
         "bakame/url": "*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        }
     }
 }

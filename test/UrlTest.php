@@ -1,115 +1,195 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Url\test;
 
-use League\Url\Factory;
+use League\Url\Url;
+use PHPUnit_Framework_TestCase;
+use StdClass;
+use ArrayIterator;
 
-class UrlTest extends \PHPUnit_Framework_TestCase
+class UrlTest extends PHPUnit_Framework_TestCase
 {
+    private $url;
 
-    public function testGetter()
+    public function setUp()
     {
-        $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createUrlFromString($expected);
-
-        $this->assertSame(array('foo' => 'bar'), $url->query()->all());
-        $this->assertSame('bar', $url->query()->get('foo'));
-        $this->assertNull($url->query()->get('barbaz'));
-        $this->assertSame(array('foo', 'bar'), $url->path()->all());
-        $this->assertSame('content', $url->getFragment());
-        $this->assertSame(array('example', 'com'), $url->host()->all());
-        $this->assertNull($url->getPort());
-        $this->assertNull($url->getScheme());
-        $this->assertNull($url->getUsername());
-        $this->assertNull($url->getPassword());
+        $this->url = new Url('https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
     }
 
-    public function testSetter()
+    public function testCreateFromServer()
     {
-        $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createUrlFromString($expected);
+        $server = array(
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+            'HTTP_HOST' => 'example.com',
+        );
 
-        $url->query()->set(array('toto' => 'leheros'));
-        $url->path()
-            ->set('inscription', 'prepend')
-            ->set('cool');
-        $url->host()
-            ->set('api', 'prepend')
-            ->set('uk');
-        $url
-            ->setFragment('top')
-            ->setPort('443')
-            ->setUsername('john')
-            ->setPassword('doe')
-            ->setScheme('https');
-
-        $this->assertSame(array('foo' => 'bar', 'toto' => 'leheros'), $url->query()->all());
-        $this->assertSame(array('inscription', 'foo', 'bar', 'cool'), $url->path()->all());
-        $this->assertSame('top', $url->getFragment());
-        $this->assertSame(array('api', 'example', 'com', 'uk'), $url->host()->all());
-        $this->assertSame(443, $url->getPort());
-        $this->assertSame('https', $url->getScheme());
-        $this->assertSame('john', $url->getUsername());
-        $this->assertSame('doe', $url->getPassword());
-        $this->assertSame('https://john:doe@api.example.com.uk:443/inscription/foo/bar/cool?foo=bar&toto=leheros#top', $url->__toString());
+        $this->assertSame('https://example.com:23/', (string) Url::createFromServer($server));
     }
 
-    public function testRemoveInfo()
+    public function testConstructor()
     {
-        $expected = '//john:doe@example.com/foo/bar?foo=bar#content';
-        $url = Factory::createUrlFromString($expected);
-
-        $url->host()
-            ->remove('com')
-            ->set('be');
-
-        $url->path()
-            ->remove(array('foo', 'bar'))
-            ->set(array('user', 'profile'));
-
-        $url->query()
-            ->remove('foo')
-            ->set('action', 'hello');
-
-        $url
-            ->setPassword(null)
-            ->setFragment(null)
-            ->setUsername('jane')
-            ->setScheme('https');
-
-        $this->assertSame('https://jane@example.be/user/profile?action=hello', $url->__toString());
+        $expected = 'http://example.com:80/foo/bar?foo=bar#content';
+        $this->assertSame($expected, (string) new Url($expected));
+        $this->assertSame('//example.com/', (string) new Url('example.com'));
+        $this->assertSame('//example.com/', (string) new Url('//example.com'));
+        $this->assertSame('/path/to/url.html', (string) new Url('/path/to/url.html'));
+        $this->assertSame('//login@example.com/', (string) new Url('login@example.com/'));
+        $this->assertSame('//login:pass@example.com/', (string) new Url('login:pass@example.com/'));
+        $this->assertSame('http://login:pass@example.com/', (string) new Url('http://login:pass@example.com/'));
     }
 
-    public function testClear()
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromInvalidUrlKO()
     {
-        $expected = '//john:doe@example.com/foo/bar?foo=bar&toto=leheros&bar=baz#content';
-        $url = Factory::createUrlFromString($expected);
-        $url->host()->clear();
-        $url->path()->clear();
-        $url->query()->clear();
-        $url
-            ->setFragment()
-            ->setUsername()
-            ->setPassword()
-            ->setPort();
-
-        $this->assertSame('//', $url->__toString());
+        new Url("http://user@:80");
     }
 
-    public function testCloning()
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testCreateFromUrlKO()
     {
-        $expected = '//example.com/foo/bar?foo=bar#content';
-        $url = Factory::createUrlFromString($expected);
-        $clone = clone $url;
-        $this->assertSame($expected, $clone->__toString());
-        $clone->query()->set('toto', 'malabar');
-        $this->assertCount(2, $clone->query());
-        $this->assertCount(1, $url->query());
+        new Url(new StdClass);
     }
 
-    public function testScheme()
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadHostCharacters()
     {
-        $url = Factory::createUrlFromString('svn://example.com/foo/bar?foo=bar#content');
-        $this->assertNull($url->getScheme());
+        $this->url->setHost('_bad.host.com');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadHostLength()
+    {
+        $host = implode('', array_fill(0, 23, 'banana'));
+        $this->url->appendHost($host, 'secure');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testTooManyHostlabel()
+    {
+        $host = array_fill(0, 128, 'a');
+        $this->url->setHost($host);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testHosttooLong()
+    {
+        $host = array_fill(0, 23, 'banana-slip');
+        $this->url->setHost($host);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testBadPath()
+    {
+        $this->url->setPath(new StdClass);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testBadScheme()
+    {
+        new Url('ftp://example.com');
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testQuery()
+    {
+        $this->assertSame('kingkong=toto&john=doe+the+john', $this->url->modifyQuery(array('john' => 'doe the john'))->getQuery());
+        $this->assertSame('kingkong=toto&john=doe+the+john', $this->url->modifyQuery(new ArrayIterator(array('john' => 'doe the john')))->getQuery());
+        $this->assertSame('kingkong=tata', $this->url->modifyQuery('?kingkong=tata')->getQuery());
+        $this->assertSame('kingkong=toto', $this->url->modifyQuery('')->getQuery());
+        $this->assertNull($this->url->setQuery(null)->getQuery());
+        $this->assertSame('ali=baba', $this->url->setQuery(array('ali' => 'baba'))->getQuery());
+        $this->assertSame('kingkong=toto', $this->url->getQuery());
+        $this->url->modifyQuery(new StdClass);
+    }
+
+    public function testPath()
+    {
+        $this->assertSame('master/test/query.php', $this->url->prependPath('master')->getPath());
+        $this->assertSame('query.php', $this->url->removePath('test')->getPath());
+        $this->assertSame('test/query.php', $this->url->removePath('toto')->getPath());
+        $this->assertSame('test/sullivent/query.php', $this->url->appendPath('sullivent', 'test')->getPath());
+        $this->assertSame('shop/checkout', $this->url->setPath('/shop/checkout')->getPath());
+        $this->assertSame('shop/rev%20iew', $this->url->setPath(['shop', 'rev iew'])->getPath());
+        $this->assertNull($this->url->setPath(null)->getPath());
+        $this->assertSame('test/query.php', $this->url->getPath());
+
+        $this->assertSame('test/sullivent/wacowski/query.php', $this->url->appendPath(new ArrayIterator(array('sullivent', 'wacowski')), 'test')->getPath());
+
+        $url = $this->url
+            ->prependPath('master')
+            ->prependPath('master');
+
+        $this->assertSame('master/slave/master/test/query.php', $url->appendPath('slave', 'master', 0)->getPath());
+
+        $url = $this->url
+            ->appendPath('master', 'test')
+            ->appendPath('master', 'test');
+
+        $this->assertSame('test/slave/master/master/query.php', $url->prependPath('slave', 'master', 0)->getPath());
+    }
+
+    public function testHost()
+    {
+        $this->assertSame('master.secure.example.com', $this->url->prependHost('master')->getHost());
+        $this->assertSame('example.com', $this->url->removeHost('secure')->getHost());
+        $this->assertSame('secure.example.com', $this->url->removeHost('toto')->getHost());
+        $this->assertSame('secure.shop.example.com', $this->url->appendHost('shop', 'secure')->getHost());
+        $this->assertSame('shop.fremium.com', $this->url->setHost('.shop.fremium.com')->getHost());
+        $this->assertSame('shop.premium.org', $this->url->setHost(array('shop', 'premium', 'org'))->getHost());
+        $this->assertSame('shop.premium.org', $this->url->setHost(new ArrayIterator(array('shop', 'premium', 'org')))->getHost());
+        $this->assertNull($this->url->setHost(null)->getHost());
+        $this->assertSame('secure.example.com', $this->url->getHost());
+    }
+
+    public function testParse()
+    {
+        $expected = array (
+            'scheme' => 'https',
+            'user' => 'login',
+            'pass' => 'pass',
+            'host' => 'secure.example.com',
+            'port' => 443,
+            'path' => 'test/query.php',
+            'query' => 'kingkong=toto',
+            'fragment' => 'doc3',
+        );
+        $this->assertSame($expected, $this->url->parse());
+        $this->assertSame(Url::PHP_QUERY_RFC1738, $this->url->getEncodingType());
+        $this->assertSame(Url::PHP_QUERY_RFC3986, $this->url->setEncodingType(Url::PHP_QUERY_RFC3986)->getEncodingType());
+        $this->assertSame(Url::PHP_QUERY_RFC1738, $this->url->setEncodingType('toto')->getEncodingType());
+    }
+
+    public function testOtherComponents()
+    {
+        $this->assertSame('https://sullivent:wacowski@secure.example.com:443/test/query.php?kingkong=toto#doc3', (string) $this->url->setUser('sullivent')->setPass('wacowski'));
+        $this->assertSame('http://login:pass@secure.example.com/test/query.php?kingkong=toto#doc3', (string) $this->url->setScheme('http')->setPort(null));
+        $this->assertSame('https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#payment', (string) $this->url->setFragment('payment'));
+        $this->assertSame('login', $this->url->getUser());
+        $this->assertSame('pass', $this->url->getPass());
+        $this->assertSame(443, $this->url->getPort());
+        $this->assertSame('doc3', $this->url->getFragment());
     }
 }

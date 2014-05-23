@@ -132,7 +132,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame('test/query.php', $this->url->removePath('toto')->getPath());
         $this->assertSame('test/sullivent/query.php', $this->url->appendPath('sullivent', 'test')->getPath());
         $this->assertSame('shop/checkout', $this->url->setPath('/shop/checkout')->getPath());
-        $this->assertSame('shop/rev%20iew', $this->url->setPath(['shop', 'rev iew'])->getPath());
+        $this->assertSame('shop/rev%20iew', $this->url->setPath(array('shop', 'rev iew'))->getPath());
         $this->assertNull($this->url->setPath(null)->getPath());
         $this->assertSame('test/query.php', $this->url->getPath());
 

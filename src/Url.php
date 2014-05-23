@@ -361,12 +361,11 @@ final class Url extends Validation
      */
     public function getQuery()
     {
-        $res = self::encode($this->query, $this->encoding_type);
-        if (empty($res)) {
-            $res = null;
+        if (! $this->query) {
+            return null;
         }
 
-        return $res;
+        return self::encode($this->query, $this->encoding_type);
     }
 
     /**

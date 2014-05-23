@@ -49,7 +49,7 @@ abstract class Validation
     protected static function validateEncodingType($encoding_type)
     {
         static $arr = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
-        if (isset($arr[(int) $encoding_type])) {
+        if (isset($arr[$encoding_type])) {
             return $encoding_type;
         }
 
@@ -225,51 +225,52 @@ abstract class Validation
     /**
      * Append some data to a given array
      *
-     * @param array   $data         the original array
+     * @param array   $left         the original array
      * @param array   $value        the data to prepend
      * @param string  $whence       the value of the data to prepend before
      * @param integer $whence_index the occurence index for $whence
      *
      * @return array
      */
-    protected static function appendSegment(array $data, array $value, $whence = null, $whence_index = null)
+    protected static function appendSegment(array $left, array $value, $whence = null, $whence_index = null)
     {
-        $after = array();
-        if (null !== $whence && count($found = array_keys($data, $whence))) {
-            $index = $found[count($found)-1];
+        $right = array();
+        if (null !== $whence && count($found = array_keys($left, $whence))) {
+            array_reverse($found);
+            $index = $found[0];
             if (array_key_exists($whence_index, $found)) {
                 $index = $found[$whence_index];
             }
-            $after = array_slice($data, $index+1);
-            $data = array_slice($data, 0, $index+1);
+            $right = array_slice($left, $index+1);
+            $left = array_slice($left, 0, $index+1);
         }
 
-        return array_merge($data, $value, $after);
+        return array_merge($left, $value, $right);
     }
 
     /**
      * Prepend some data to a given array
      *
-     * @param array   $data         the original array
+     * @param array   $right        the original array
      * @param array   $value        the data to prepend
      * @param string  $whence       the value of the data to prepend before
      * @param integer $whence_index the occurence index for $whence
      *
      * @return array
      */
-    protected static function prependSegment(array $data, array $value, $whence = null, $whence_index = null)
+    protected static function prependSegment(array $right, array $value, $whence = null, $whence_index = null)
     {
-        $before = array();
-        if (null !== $whence && count($found = array_keys($data, $whence))) {
+        $left = array();
+        if (null !== $whence && count($found = array_keys($right, $whence))) {
             $index = $found[0];
             if (array_key_exists($whence_index, $found)) {
                 $index = $found[$whence_index];
             }
-            $before = array_slice($data, 0, $index);
-            $data = array_slice($data, $index);
+            $left = array_slice($right, 0, $index);
+            $right = array_slice($right, $index);
         }
 
-        return array_merge($before, $value, $data);
+        return array_merge($left, $value, $right);
     }
 
     /**

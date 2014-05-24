@@ -67,7 +67,8 @@ final class Url extends Validation
     /**
      * The constructor
      *
-     * @param string  $url           an URL
+     * @param mixed  $url           an URL as a string or 
+     *                              as an object that implement the __toString method
      * @param integer $encoding_type the RFC to follow when encoding the query string
      *
      * @throws RuntimeException If the URL can not be parse

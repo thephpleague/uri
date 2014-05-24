@@ -2,9 +2,10 @@
 
 namespace League\Url;
 
+use Closure;
+use Traversable;
 use InvalidArgumentException;
 use RuntimeException;
-use Traversable;
 
 abstract class Validation
 {
@@ -103,15 +104,15 @@ abstract class Validation
     /**
      * Validate data before insertion into a URL segment based component
      *
-     * @param mixed  $data     the data to insert
-     * @param string $callback a callable function to be called to parse
-     *                         a given string into the corrseponding component
+     * @param mixed    $data     the data to insert
+     * @param \Closure $callback a callable function to be called to parse
+     *                           a given string into the corrseponding component
      *
      * @return array
      *
      * @throws RuntimeException if the data is not valid
      */
-    protected static function validateComponent($data, $callback)
+    protected static function validateComponent($data, Closure $callback)
     {
         if (is_null($data)) {
             return array();

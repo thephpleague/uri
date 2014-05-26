@@ -35,7 +35,7 @@ abstract class Validation
      */
     public function get()
     {
-        if (is_null($this->data)) {
+        if (is_null($this->data) || ! $this->data) {
             return null;
         }
         return $this->__toString();

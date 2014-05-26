@@ -113,7 +113,7 @@ class Query extends AbstractComponent implements ComponentInterface
      *
      * @return string
      */
-    protectedfunction encode(array $str, $encoding_type)
+    protected function encode(array $str, $encoding_type)
     {
         if (defined('PHP_QUERY_RFC3986')) {
             return http_build_query($str, '', '&', $encoding_type);

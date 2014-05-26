@@ -2,7 +2,8 @@
 
 namespace League\Url\test;
 
-use League\Url\Url;
+use League\Url\Factory;
+use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
 use StdClass;
 use ArrayIterator;
@@ -13,7 +14,12 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = new Url('https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
+        $this->url = Factory::createFromString('https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
+    }
+
+    public function tearDown()
+    {
+        $this->url = null;
     }
 
     public function testCreateFromServer()
@@ -28,19 +34,19 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'HTTP_HOST' => 'example.com',
         );
 
-        $this->assertSame('https://example.com:23/', (string) Url::createFromServer($server));
+        $this->assertSame('https://example.com:23/', (string) Factory::createFromServer($server));
     }
 
     public function testConstructor()
     {
         $expected = 'http://example.com:80/foo/bar?foo=bar#content';
-        $this->assertSame($expected, (string) new Url($expected));
-        $this->assertSame('//example.com/', (string) new Url('example.com'));
-        $this->assertSame('//example.com/', (string) new Url('//example.com'));
-        $this->assertSame('/path/to/url.html', (string) new Url('/path/to/url.html'));
-        $this->assertSame('//login@example.com/', (string) new Url('login@example.com/'));
-        $this->assertSame('//login:pass@example.com/', (string) new Url('login:pass@example.com/'));
-        $this->assertSame('http://login:pass@example.com/', (string) new Url('http://login:pass@example.com/'));
+        $this->assertSame($expected, (string) Factory::createFromString($expected));
+        $this->assertSame('//example.com/', (string) Factory::createFromString('example.com'));
+        $this->assertSame('//example.com/', (string) Factory::createFromString('//example.com'));
+        $this->assertSame('/path/to/url.html', (string) Factory::createFromString('/path/to/url.html'));
+        $this->assertSame('//login@example.com/', (string) Factory::createFromString('login@example.com/'));
+        $this->assertSame('//login:pass@example.com/', (string) Factory::createFromString('login:pass@example.com/'));
+        $this->assertSame('http://login:pass@example.com/', (string) Factory::createFromString('http://login:pass@example.com/'));
     }
 
     /**
@@ -48,7 +54,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO()
     {
-        new Url("http://user@:80");
+        Factory::createFromString("http://user@:80");
     }
 
     /**
@@ -56,7 +62,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromUrlKO()
     {
-        new Url(new StdClass);
+        Factory::createFromString(new StdClass);
     }
 
     /**
@@ -107,7 +113,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testBadScheme()
     {
-        new Url('ftp://example.com');
+        Factory::createFromString('ftp://example.com');
     }
 
     /**
@@ -167,19 +173,19 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function testParse()
     {
         $expected = array (
-            'scheme' => 'https',
-            'user' => 'login',
-            'pass' => 'pass',
-            'host' => 'secure.example.com',
-            'port' => 443,
-            'path' => 'test/query.php',
-            'query' => 'kingkong=toto',
-            'fragment' => 'doc3',
+            'scheme' => $this->url->getScheme(),
+            'user' => $this->url->getUser(),
+            'pass' => $this->url->getPass(),
+            'host' => $this->url->getHost(),
+            'port' => $this->url->getPort(),
+            'path' => $this->url->getPath(),
+            'query' => $this->url->getQuery(),
+            'fragment' => $this->url->getFragment(),
         );
         $this->assertSame($expected, $this->url->parse());
-        $this->assertSame(Url::PHP_QUERY_RFC1738, $this->url->getEncodingType());
-        $this->assertSame(Url::PHP_QUERY_RFC3986, $this->url->setEncodingType(Url::PHP_QUERY_RFC3986)->getEncodingType());
-        $this->assertSame(Url::PHP_QUERY_RFC1738, $this->url->setEncodingType('toto')->getEncodingType());
+        $this->assertSame(Query::PHP_QUERY_RFC1738, $this->url->getEncodingType());
+        $this->assertSame(Query::PHP_QUERY_RFC3986, $this->url->setEncodingType(Query::PHP_QUERY_RFC3986)->getEncodingType());
+        $this->assertSame(Query::PHP_QUERY_RFC1738, $this->url->setEncodingType('toto')->getEncodingType());
     }
 
     public function testOtherComponents()

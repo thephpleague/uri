@@ -18,13 +18,6 @@ abstract class AbstractStringComponent extends Validation implements ComponentIn
         $this->set($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function set($data)
-    {
-        $this->data = $this->validate($data);
-    }
 
     /**
      * {@inheritdoc}

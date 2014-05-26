@@ -186,7 +186,7 @@ final class Url
      */
     public function getUser()
     {
-        return $this->user->__toString();
+        return $this->user->get();
     }
 
     /**
@@ -211,7 +211,7 @@ final class Url
      */
     public function getPass()
     {
-        return $this->pass->__toString();
+        return $this->pass->get();
     }
 
     /**
@@ -236,7 +236,7 @@ final class Url
      */
     public function getPort()
     {
-        return $this->port->__toString();
+        return $this->port->get();
     }
 
     /**
@@ -261,7 +261,7 @@ final class Url
      */
     public function getScheme()
     {
-        return $this->scheme->__toString();
+        return $this->scheme->get();
     }
 
     /**
@@ -286,7 +286,7 @@ final class Url
      */
     public function getFragment()
     {
-        return $this->fragment->__toString();
+        return $this->fragment->get();
     }
 
     /**
@@ -336,7 +336,7 @@ final class Url
      */
     public function getQuery()
     {
-        return $this->query->__toString();
+        return $this->query->get();
     }
 
     /**
@@ -376,7 +376,7 @@ final class Url
      */
     public function getHost()
     {
-        return $this->host->__toString();
+        return $this->host->get();
     }
 
     /**
@@ -450,7 +450,7 @@ final class Url
      */
     public function getPath()
     {
-        return $this->path->__toString();
+        return $this->path->get();
     }
 
     /**
@@ -510,14 +510,14 @@ final class Url
     public function parse()
     {
         return array(
-            'scheme' => $this->scheme->__toString(),
-            'user' => $this->user->__toString(),
-            'pass' => $this->pass->__toString(),
-            'host' => $this->host->__toString(),
-            'port' => $this->port->__toString(),
-            'path' => $this->path->__toString(),
-            'query' => $this->query->__toString(),
-            'fragment' => $this->fragment->__toString(),
+            'scheme' => $this->scheme->get(),
+            'user' => $this->user->get(),
+            'pass' => $this->pass->get(),
+            'host' => $this->host->get(),
+            'port' => $this->port->get(),
+            'path' => $this->path->get(),
+            'query' => $this->query->get(),
+            'fragment' => $this->fragment->get(),
         );
     }
 }

@@ -9,6 +9,6 @@ class Port extends AbstractStringComponent implements ComponentInterface
      */
     public function validate($data)
     {
-        return self::validatePort($data);
+        return $this->validatePort($data);
     }
 }

@@ -18,24 +18,6 @@ abstract class AbstractComponent extends Validation implements IteratorAggregate
     protected $data = array();
 
     /**
-     * The Constructor
-     * @param mixed $data The data to add
-     */
-    public function __construct($data = null)
-    {
-        $this->set($data);
-    }
-
-    /**
-     * Set the container data
-     * @param mixed $data The data to add
-     */
-    public function set($data)
-    {
-        $this->data = $this->validate($data);
-    }
-
-    /**
      * IteratorAggregate Interface method
      *
      * @return ArrayIterator

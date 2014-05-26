@@ -6,9 +6,17 @@ interface ComponentInterface
 {
     /**
      * Set the component data
+     *
      * @param mixed $data data to be added
      */
     public function set($data);
+
+    /**
+     * Get the component data
+     *
+     * @param string|null
+     */
+    public function get();
 
     /**
      * Component validation method Validation

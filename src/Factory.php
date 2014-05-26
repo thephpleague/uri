@@ -21,7 +21,7 @@ class Factory
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromString($url, $encoding_type = Query::PHP_QUERY_RFC1738)
+    public static function createFromString($url, $encoding_type = Query::PHP_QUERY_RFC1738)
     {
         $url = (string) $url;
         $url = trim($url);

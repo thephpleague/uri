@@ -3,135 +3,113 @@
 namespace League\Url;
 
 use RuntimeException;
+use League\Url\Components\Scheme;
+use League\Url\Components\Component;
+use League\Url\Components\Host;
+use League\Url\Components\Port;
+use League\Url\Components\Path;
+use League\Url\Components\Query;
 
-final class Url extends Validation
+final class Url
 {
     /**
     * User
     *
-    * @var string
+    * @var League\Url\Components\Component Object
     */
     private $user;
 
     /**
     * Pass
     *
-    * @var string
+    * @var League\Url\Components\Component Object
     */
     private $pass;
 
     /**
     * Scheme
     *
-    * @var string
+    * @var League\Url\Components\Scheme Object
     */
     private $scheme;
 
     /**
      * Port
      *
-     * @var integer
+     *@var League\Url\Components\Port Object
      */
     private $port;
 
     /**
      * Fragment
-     * @var string
+     *
+     * @var League\Url\Components\Component Object
      */
-    private $fragment = '';
+    private $fragment;
 
     /**
      * Host
-     * @var array
+     *
+     * @var League\Url\Components\Host Object
      */
-    private $host = array();
+    private $host;
 
     /**
      * Path
-     * @var array
+     *
+     * @var League\Url\Components\Path Object
      */
-    private $path = array();
+    private $path;
 
     /**
      * Query
-     * @var array
+     *
+     * @var League\Url\Components\Query Object
      */
-    private $query = array();
-
-    /**
-     * Query
-     * @var array
-     */
-    private $encoding_type = self::PHP_QUERY_RFC1738;
+    private $query;
 
     /**
      * The constructor
      *
-     * @param mixed  $url           an URL as a string or 
-     *                              as an object that implement the __toString method
+     * @param mixed   $url           an URL as a string or
+     *                               as an object that implement the __toString method
      * @param integer $encoding_type the RFC to follow when encoding the query string
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function __construct($url, $encoding_type = self::PHP_QUERY_RFC1738)
-    {
-        $url = (string) $url;
-        $url = trim($url);
-        $components = @parse_url($url);
-
-        if (false === $components) {
-            throw new RuntimeException('The given URL could not be parse');
-        }
-
-        $components = self::sanitizeComponents($components);
-        $this->encoding_type = self::validateEncodingType($encoding_type);
-        $this->scheme = self::validateScheme($components['scheme']);
-        $this->user = self::sanitizeComponent($components['user']);
-        $this->pass = self::sanitizeComponent($components['pass']);
-        $this->host = self::validateHost($components['host']);
-        $this->port = self::validatePort($components['port']);
-        $this->path = self::validateSegment($components['path'], '/');
-        $this->query = self::validateQuery($components['query']);
-        $this->fragment = self::sanitizeComponent($components['fragment']);
+    public function __construct(
+        Scheme $scheme,
+        Component $user,
+        Component $pass,
+        Host $host,
+        Port $port,
+        Path $path,
+        Query $query,
+        Component $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->user = $user;
+        $this->pass = $pass;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
     }
 
     /**
-     * Return a instance of UrlImmutable from a server array
-     *
-     * @param array   $server        the server array
-     * @param integer $encoding_type the RFC to follow when encoding the query string
-     *
-     * @return self
+     * To Enable cloning
      */
-    public static function createFromServer(array $server, $encoding_type = self::PHP_QUERY_RFC1738)
+    public function __clone()
     {
-        $scheme = '';
-        if (isset($server['SERVER_PROTOCOL'])) {
-            $scheme = explode('/', $server['SERVER_PROTOCOL']);
-            $scheme = strtolower($scheme[0]);
-            if (isset($server['HTTPS']) && 'off' != $server['HTTPS']) {
-                $scheme .= 's';
-            }
-            $scheme .= ':';
-        }
-        $scheme .= '//';
-
-        $host = $server['SERVER_ADDR'];
-        if (isset($server['HTTP_HOST'])) {
-            $host = $server['HTTP_HOST'];
-        }
-
-        $port = '';
-        if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
-            $port = ':'.$server['SERVER_PORT'];
-        }
-
-        $request = $server['PHP_SELF'];
-        if (isset($server['REQUEST_URI'])) {
-            $request = $server['REQUEST_URI'];
-        }
-
-        return new static($scheme.$host.$port.$request, $encoding_type);
+        $this->scheme = clone $this->scheme;
+        $this->user = clone $this->user;
+        $this->pass = clone $this->pass;
+        $this->host = clone $this->host;
+        $this->port = clone $this->port;
+        $this->path = clone $this->path;
+        $this->query = clone $this->query;
+        $this->fragment = clone $this->fragment;
     }
 
     /**
@@ -141,14 +119,14 @@ final class Url extends Validation
      */
     public function __toString()
     {
-        $scheme = $this->getScheme();
-        $user = $this->getUser();
-        $pass = $this->getPass();
-        $host = $this->getHost();
-        $port = $this->getPort();
-        $path = $this->getPath();
-        $query = $this->getQuery();
-        $fragment = $this->getFragment();
+        $scheme = $this->scheme->__toString();
+        $user = $this->user->__toString();
+        $pass = $this->pass->__toString();
+        $host = $this->host->__toString();
+        $port = $this->port->__toString();
+        $path = $this->path->__toString();
+        $query = $this->query->__toString();
+        $fragment = $this->fragment->__toString();
 
         //Url reconstruction
         if (!empty($scheme)) {
@@ -196,7 +174,7 @@ final class Url extends Validation
     public function setUser($str)
     {
         $clone = clone $this;
-        $clone->user = self::sanitizeComponent($str);
+        $clone->user->set($str);
 
         return $clone;
     }
@@ -208,7 +186,7 @@ final class Url extends Validation
      */
     public function getUser()
     {
-        return $this->user;
+        return $this->user->__toString();
     }
 
     /**
@@ -221,7 +199,7 @@ final class Url extends Validation
     public function setPass($str)
     {
         $clone = clone $this;
-        $clone->pass = self::sanitizeComponent($str);
+        $clone->pass->set($str);
 
         return $clone;
     }
@@ -233,7 +211,7 @@ final class Url extends Validation
      */
     public function getPass()
     {
-        return $this->pass;
+        return $this->pass->__toString();
     }
 
     /**
@@ -246,7 +224,7 @@ final class Url extends Validation
     public function setPort($value)
     {
         $clone = clone $this;
-        $clone->port = self::validatePort($value);
+        $clone->port->set($value);
 
         return $clone;
     }
@@ -258,7 +236,7 @@ final class Url extends Validation
      */
     public function getPort()
     {
-        return $this->port;
+        return $this->port->__toString();
     }
 
     /**
@@ -271,7 +249,7 @@ final class Url extends Validation
     public function setScheme($value)
     {
         $clone = clone $this;
-        $clone->scheme = strtolower(self::validateScheme($value));
+        $clone->scheme->set($value);
 
         return $clone;
     }
@@ -283,7 +261,7 @@ final class Url extends Validation
      */
     public function getScheme()
     {
-        return $this->scheme;
+        return $this->scheme->__toString();
     }
 
     /**
@@ -296,7 +274,7 @@ final class Url extends Validation
     public function setFragment($str)
     {
         $clone = clone $this;
-        $clone->fragment = self::sanitizeComponent($str);
+        $clone->fragment->set($str);
 
         return $clone;
     }
@@ -308,7 +286,7 @@ final class Url extends Validation
      */
     public function getFragment()
     {
-        return $this->fragment;
+        return $this->fragment->__toString();
     }
 
     /**
@@ -321,7 +299,7 @@ final class Url extends Validation
     public function setEncodingType($encoding_type)
     {
         $clone = clone $this;
-        $clone->encoding_type = self::validateEncodingType($encoding_type);
+        $clone->query->setEncodingType($encoding_type);
 
         return $clone;
     }
@@ -333,7 +311,7 @@ final class Url extends Validation
      */
     public function getEncodingType()
     {
-        return $this->encoding_type;
+        return $this->query->getEncodingType();
     }
 
     /**
@@ -345,12 +323,8 @@ final class Url extends Validation
      */
     public function setQuery($data)
     {
-        $res = array();
-        if (! is_null($data)) {
-            $res = self::validateQuery($data);
-        }
         $clone = clone $this;
-        $clone->query = $res;
+        $clone->query->set($data);
 
         return $clone;
     }
@@ -362,11 +336,7 @@ final class Url extends Validation
      */
     public function getQuery()
     {
-        if (! $this->query) {
-            return null;
-        }
-
-        return self::encode($this->query, $this->encoding_type);
+        return $this->query->__toString();
     }
 
     /**
@@ -379,7 +349,7 @@ final class Url extends Validation
     public function modifyQuery($data)
     {
         $clone = clone $this;
-        $clone->query = array_merge($this->query, self::validateQuery($data));
+        $clone->query->modify($data);
 
         return $clone;
     }
@@ -394,7 +364,7 @@ final class Url extends Validation
     public function setHost($data)
     {
         $clone = clone $this;
-        $clone->host =self::validateHost($data, $this->host);
+        $clone->host->set($data);
 
         return $clone;
     }
@@ -406,12 +376,7 @@ final class Url extends Validation
      */
     public function getHost()
     {
-        $res = implode('.', $this->host);
-        if (empty($res)) {
-            $res = null;
-        }
-
-        return $res;
+        return $this->host->__toString();
     }
 
     /**
@@ -426,12 +391,7 @@ final class Url extends Validation
     public function prependHost($data, $whence = null, $whence_index = null)
     {
         $clone = clone $this;
-        $clone->host = self::prependSegment(
-            $this->host,
-            self::validateHost($data, $this->host),
-            $whence,
-            $whence_index
-        );
+        $clone->host->prepend($data, $whence, $whence_index);
 
         return $clone;
     }
@@ -448,12 +408,7 @@ final class Url extends Validation
     public function appendHost($data, $whence = null, $whence_index = null)
     {
         $clone = clone $this;
-        $clone->host = self::appendSegment(
-            $this->host,
-            self::validateHost($data, $this->host),
-            $whence,
-            $whence_index
-        );
+        $clone->host->append($data, $whence, $whence_index);
 
         return $clone;
     }
@@ -468,7 +423,7 @@ final class Url extends Validation
     public function removeHost($data)
     {
         $clone = clone $this;
-        $clone->host = self::removeSegment($this->host, $data, '.');
+        $clone->host->remove($data);
 
         return $clone;
     }
@@ -483,7 +438,7 @@ final class Url extends Validation
     public function setPath($data)
     {
         $clone = clone $this;
-        $clone->path = self::validateSegment($data, '/');
+        $clone->path->set($data);
 
         return $clone;
     }
@@ -495,12 +450,7 @@ final class Url extends Validation
      */
     public function getPath()
     {
-        $res = implode('/', str_replace(' ', '%20', $this->path));
-        if (empty($res)) {
-            $res = null;
-        }
-
-        return $res;
+        return $this->path->__toString();
     }
 
     /**
@@ -515,12 +465,7 @@ final class Url extends Validation
     public function prependPath($data, $whence = null, $whence_index = null)
     {
         $clone = clone $this;
-        $clone->path = self::prependSegment(
-            $this->path,
-            self::validateSegment($data, '/'),
-            $whence,
-            $whence_index
-        );
+        $clone->path->prepend($data, $whence, $whence_index);
 
         return $clone;
     }
@@ -537,12 +482,7 @@ final class Url extends Validation
     public function appendPath($data, $whence = null, $whence_index = null)
     {
         $clone = clone $this;
-        $clone->path = self::appendSegment(
-            $this->path,
-            self::validateSegment($data, '/'),
-            $whence,
-            $whence_index
-        );
+        $clone->path->append($data, $whence, $whence_index);
 
         return $clone;
     }
@@ -557,7 +497,7 @@ final class Url extends Validation
     public function removePath($data)
     {
         $clone = clone $this;
-        $clone->path = self::removeSegment($this->path, $data, '/');
+        $clone->path->remove($data);
 
         return $clone;
     }
@@ -570,14 +510,14 @@ final class Url extends Validation
     public function parse()
     {
         return array(
-            'scheme' => $this->getScheme(),
-            'user' => $this->getUser(),
-            'pass' => $this->getPass(),
-            'host' => $this->getHost(),
-            'port' => $this->getPort(),
-            'path' => $this->getPath(),
-            'query' => $this->getQuery(),
-            'fragment' => $this->getFragment(),
+            'scheme' => $this->scheme->__toString(),
+            'user' => $this->user->__toString(),
+            'pass' => $this->pass->__toString(),
+            'host' => $this->host->__toString(),
+            'port' => $this->port->__toString(),
+            'path' => $this->path->__toString(),
+            'query' => $this->query->__toString(),
+            'fragment' => $this->fragment->__toString(),
         );
     }
 }

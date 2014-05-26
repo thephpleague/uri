@@ -4,12 +4,14 @@ namespace League\Url\Components;
 
 class Path extends AbstractComponent implements ComponentInterface
 {
+    protected $delimiter = '/';
+
     /**
      * {@inheritdoc}
      */
     public function validate($data)
     {
-        return self::validateSegment($data, '/');
+        return $this->validateSegment($data, $this->delimiter);
     }
 
     /**
@@ -17,9 +19,9 @@ class Path extends AbstractComponent implements ComponentInterface
      */
     public function __toString()
     {
-        $res = implode('/', str_replace(' ', '%20', $this->data));
+        $res = implode($this->delimiter, str_replace(' ', '%20', $this->data));
         if (empty($res)) {
-            $res = null;
+            $res = '';
         }
 
         return $res;
@@ -34,9 +36,9 @@ class Path extends AbstractComponent implements ComponentInterface
      */
     public function append($data, $whence = null, $whence_index = null)
     {
-        $this->data = self::appendSegment(
+        $this->data = $this->appendSegment(
             $this->data,
-            self::validateSegment($data, '/'),
+            $this->validateSegment($data, $this->delimiter),
             $whence,
             $whence_index
         );
@@ -51,24 +53,11 @@ class Path extends AbstractComponent implements ComponentInterface
      */
     public function prepend($data, $whence = null, $whence_index = null)
     {
-        $this->data = self::prependSegment(
+        $this->data = $this->prependSegment(
             $this->data,
-            self::validateSegment($data, '/'),
+            $this->validateSegment($data, $this->delimiter),
             $whence,
             $whence_index
         );
-    }
-
-    /**
-     * Append some data to a given array
-     *
-     * @param array $data the data to remove
-     */
-    public function remove($data)
-    {
-        $data = self::removeSegment($this->data, $data, '/');
-        if (! is_null($data)) {
-            $this->set($data);
-        }
     }
 }

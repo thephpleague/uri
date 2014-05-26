@@ -6,6 +6,6 @@ class Component extends AbstractStringComponent implements ComponentInterface
 {
     public function validate($data)
     {
-        return self::sanitizeComponent($data);
+        return $this->sanitizeComponent($data);
     }
 }

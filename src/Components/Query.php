@@ -23,23 +23,6 @@ class Query extends AbstractComponent implements ComponentInterface
     protected $encoding_type = self::PHP_QUERY_RFC1738;
 
     /**
-     * Validate the Query String Encoding Mode
-     *
-     * @param integer $encoding_type
-     *
-     * @return integer
-     */
-    protected static function validateEncodingType($encoding_type)
-    {
-        static $arr = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
-        if (isset($arr[$encoding_type])) {
-            return $encoding_type;
-        }
-
-        return self::PHP_QUERY_RFC1738;
-    }
-
-    /**
      * The Constructor
      *
      * @param mixed   $data          can be string, array or Traversable
@@ -52,13 +35,33 @@ class Query extends AbstractComponent implements ComponentInterface
         parent::__construct($data);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         if (! $this->data) {
-            return null;
+            return '';
         }
 
-        return self::encode($this->data, $this->encoding_type);
+        return $this->encode($this->data, $this->encoding_type);
+    }
+
+    /**
+     * Validate the Query String Encoding Mode
+     *
+     * @param integer $encoding_type
+     *
+     * @return integer
+     */
+    protected function validateEncodingType($encoding_type)
+    {
+        static $arr = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
+        if (isset($arr[$encoding_type])) {
+            return $encoding_type;
+        }
+
+        return self::PHP_QUERY_RFC1738;
     }
 
     /**
@@ -68,7 +71,7 @@ class Query extends AbstractComponent implements ComponentInterface
      */
     public function setEncodingType($encoding_type)
     {
-        $this->encoding_type = self::validateEncodingType($encoding_type);
+        $this->encoding_type = $this->validateEncodingType($encoding_type);
     }
 
     /**
@@ -92,7 +95,7 @@ class Query extends AbstractComponent implements ComponentInterface
      */
     public function validate($data)
     {
-        return self::validateComponent($data, function ($str) {
+        return $this->validateComponent($data, function ($str) {
             if ('?' == $str[0]) {
                 $str = substr($str, 1);
             }
@@ -110,7 +113,7 @@ class Query extends AbstractComponent implements ComponentInterface
      *
      * @return string
      */
-    protected static function encode(array $str, $encoding_type)
+    protectedfunction encode(array $str, $encoding_type)
     {
         if (defined('PHP_QUERY_RFC3986')) {
             return http_build_query($str, '', '&', $encoding_type);
@@ -123,6 +126,27 @@ class Query extends AbstractComponent implements ComponentInterface
         return str_replace(array('%E7', '+'), array('~', '%20'), $query);
     }
 
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            throw new InvalidArgumentException('offset can not be null');
+        }
+        $this->data[$offset] = $value;
+    }
+
+    public function remove($data)
+    {
+        if (is_string($data) || (is_object($data) && method_exists($data, '__toString'))) {
+            $data = array((string) $data);
+        }
+        if (!is_array($data) && !$data instanceof Traversable) {
+            throw new InvalidArgumentException('your input should be iterable');
+        }
+        foreach ($data as $offset) {
+            unset($this->data[$offset]);
+        }
+    }
+
     /**
      * Update the Query String Data
      *
@@ -133,11 +157,4 @@ class Query extends AbstractComponent implements ComponentInterface
         $this->data = array_merge($this->data, $this->validate($data));
     }
 
-    public function offsetSet($offset, $value)
-    {
-        if (is_null($offset)) {
-            throw new InvalidArgumentException('offset can not be null');
-        }
-        $this->data[$offset] = $value;
-    }
 }

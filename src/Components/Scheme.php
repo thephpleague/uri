@@ -9,6 +9,6 @@ class Scheme extends AbstractStringComponent implements ComponentInterface
      */
     public function validate($data)
     {
-        return self::validateScheme($data);
+        return $this->validateScheme($data);
     }
 }

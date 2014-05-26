@@ -9,7 +9,52 @@ use RuntimeException;
 abstract class Validation
 {
 
+    protected $delimiter;
+
     abstract public function validate($data);
+
+    /**
+     * The Constructor
+     * @param mixed $data The data to add
+     */
+    public function __construct($data = null)
+    {
+        $this->set($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set($data)
+    {
+        $this->data = $this->validate($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get()
+    {
+        if (is_null($this->data)) {
+            return null;
+        }
+        return $this->__toString();
+    }
+
+    /**
+     * Remove part of the URL host component
+     *
+     * @param mixed $data the path data can be a array or a string
+     *
+     * @return self
+     */
+    public function remove($data)
+    {
+        $data = $this->fetchRemoveSegment($this->data, $data, $this->delimiter);
+        if (! is_null($data)) {
+            $this->set($data);
+        }
+    }
 
     /**
      * Validate data before insertion into a URL segment based component
@@ -22,7 +67,7 @@ abstract class Validation
      *
      * @throws RuntimeException if the data is not valid
      */
-    protected static function validateComponent($data, Closure $callback)
+    protected function validateComponent($data, Closure $callback)
     {
         if (is_null($data)) {
             return array();
@@ -51,9 +96,9 @@ abstract class Validation
      *
      * @return integer|null
      */
-    protected static function validatePort($str)
+    protected function validatePort($str)
     {
-        $str = self::sanitizeComponent($str);
+        $str = $this->sanitizeComponent($str);
         if (is_null($str)) {
             return $str;
         }
@@ -70,9 +115,9 @@ abstract class Validation
      *
      * @return string|null
      */
-    protected static function validateScheme($str)
+    protected function validateScheme($str)
     {
-        $str = self::sanitizeComponent($str);
+        $str = $this->sanitizeComponent($str);
         if (is_null($str)) {
             return $str;
         }
@@ -98,9 +143,9 @@ abstract class Validation
      *
      * @throws RuntimeException if the data is not valid
      */
-    protected static function validateSegment($data, $delimiter)
+    protected function validateSegment($data, $delimiter)
     {
-        return self::validateComponent($data, function ($str) use ($delimiter) {
+        return $this->validateComponent($data, function ($str) use ($delimiter) {
             if ($delimiter == $str[0]) {
                 $str = substr($str, 1);
             }
@@ -119,7 +164,7 @@ abstract class Validation
      *
      * @return array
      */
-    protected static function appendSegment(array $left, array $value, $whence = null, $whence_index = null)
+    protected function appendSegment(array $left, array $value, $whence = null, $whence_index = null)
     {
         $right = array();
         if (null !== $whence && count($found = array_keys($left, $whence))) {
@@ -145,7 +190,7 @@ abstract class Validation
      *
      * @return array
      */
-    protected static function prependSegment(array $right, array $value, $whence = null, $whence_index = null)
+    protected function prependSegment(array $right, array $value, $whence = null, $whence_index = null)
     {
         $left = array();
         if (null !== $whence && count($found = array_keys($right, $whence))) {
@@ -169,10 +214,10 @@ abstract class Validation
      *
      * @return string|null
      */
-    protected static function removeSegment(array $data, $value, $delimiter)
+    protected function fetchRemoveSegment(array $data, $value, $delimiter)
     {
         $segment = implode($delimiter, $data);
-        $part = implode($delimiter, self::validateSegment($value, $delimiter));
+        $part = implode($delimiter, $this->validateSegment($value, $delimiter));
         $pos = strpos($segment, $part);
         if (false === $pos) {
             return null;
@@ -188,7 +233,7 @@ abstract class Validation
      *
      * @return string|null
      */
-    protected static function sanitizeComponent($str)
+    protected function sanitizeComponent($str)
     {
         if (is_null($str)) {
             return $str;

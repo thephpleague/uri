@@ -157,5 +157,4 @@ class Query extends AbstractComponent implements ComponentInterface
     {
         $this->data = array_merge($this->data, $this->validate($data));
     }
-
 }

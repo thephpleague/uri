@@ -2,6 +2,7 @@
 
 namespace League\Url\Components;
 
+use Traversable;
 use InvalidArgumentException;
 
 class Query extends AbstractComponent implements ComponentInterface

@@ -1,22 +1,24 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url\Components;
 
 use Traversable;
 use InvalidArgumentException;
+use RuntimeException;
+use League\Url\Interfaces\QueryInterface;
 
-class Query extends AbstractComponent implements ComponentInterface
+class Query extends AbstractSegment implements QueryInterface
 {
-    /**
-     * encode query string according to RFC 1738
-     */
-    const PHP_QUERY_RFC1738 = 1;
-
-    /**
-     * encode query string according to RFC 3986
-     */
-    const PHP_QUERY_RFC3986 = 2;
-
     /**
      * Query encoding type
      * @var array
@@ -39,13 +41,21 @@ class Query extends AbstractComponent implements ComponentInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function get()
     {
         if (! $this->data) {
-            return '';
+            return null;
         }
 
         return $this->encode($this->data, $this->encoding_type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return str_replace(null, '', $this->get());
     }
 
     /**
@@ -86,13 +96,7 @@ class Query extends AbstractComponent implements ComponentInterface
     }
 
     /**
-     * Validate data before insertion into a URL query component
-     *
-     * @param mixed $data the data to insert
-     *
-     * @return array
-     *
-     * @throws RuntimeException If the data can not be converted to array
+     * {@inheritdoc}
      */
     public function validate($data)
     {
@@ -127,6 +131,9 @@ class Query extends AbstractComponent implements ComponentInterface
         return str_replace(array('%E7', '+'), array('~', '%20'), $query);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -135,26 +142,19 @@ class Query extends AbstractComponent implements ComponentInterface
         $this->data[$offset] = $value;
     }
 
-    public function remove($data)
-    {
-        if (is_string($data) || (is_object($data) && method_exists($data, '__toString'))) {
-            $data = array((string) $data);
-        }
-        if (!is_array($data) && !$data instanceof Traversable) {
-            throw new InvalidArgumentException('your input should be iterable');
-        }
-        foreach ($data as $offset) {
-            unset($this->data[$offset]);
-        }
-    }
-
     /**
-     * Update the Query String Data
-     *
-     * @param mixed $data the data to update
+     * {@inheritdoc}
      */
     public function modify($data)
     {
         $this->data = array_merge($this->data, $this->validate($data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($data)
+    {
+        throw new RuntimeException('This method is not supported');
     }
 }

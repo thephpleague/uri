@@ -1,6 +1,16 @@
 <?php
-
-namespace League\Url\Components;
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
+namespace League\Url\Interfaces;
 
 interface ComponentInterface
 {
@@ -17,13 +27,6 @@ interface ComponentInterface
      * @param string|null
      */
     public function get();
-
-    /**
-     * Component validation method Validation
-     *
-     * @param mixed $data data to be evaluated
-     */
-    public function validate($data);
 
     /**
      * String representation of an URL component

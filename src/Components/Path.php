@@ -1,15 +1,28 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url\Components;
 
-class Path extends AbstractComponent implements ComponentInterface
+use League\Url\Interfaces\SegmentInterface;
+
+class Path extends AbstractSegment implements SegmentInterface
 {
+
     protected $delimiter = '/';
 
     /**
      * {@inheritdoc}
      */
-    public function validate($data)
+    protected function validate($data)
     {
         return $this->validateSegment($data, $this->delimiter);
     }
@@ -17,22 +30,25 @@ class Path extends AbstractComponent implements ComponentInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function get()
     {
-        $res = implode($this->delimiter, str_replace(' ', '%20', $this->data));
-        if (empty($res)) {
-            $res = '';
+        if (! $this->data) {
+            return null;
         }
 
-        return $res;
+        return implode($this->delimiter, str_replace(' ', '%20', $this->data));
     }
 
     /**
-     * Append some data to a given array
-     *
-     * @param array   $data         the data to append
-     * @param string  $whence       the value of the data to prepend before
-     * @param integer $whence_index the occurence index for $whence
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function append($data, $whence = null, $whence_index = null)
     {
@@ -45,11 +61,7 @@ class Path extends AbstractComponent implements ComponentInterface
     }
 
     /**
-     * Prepend some data to a given array
-     *
-     * @param array   $data         the data to prepend
-     * @param string  $whence       the value of the data to prepend before
-     * @param integer $whence_index the occurence index for $whence
+     * {@inheritdoc}
      */
     public function prepend($data, $whence = null, $whence_index = null)
     {

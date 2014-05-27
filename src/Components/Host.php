@@ -1,10 +1,21 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url\Components;
 
 use InvalidArgumentException;
+use League\Url\Interfaces\SegmentInterface;
 
-class Host extends AbstractComponent implements ComponentInterface
+class Host extends AbstractSegment implements SegmentInterface
 {
 
     protected $delimiter = '.';
@@ -19,7 +30,7 @@ class Host extends AbstractComponent implements ComponentInterface
      *
      * @throws InvalidArgumentException If the added is invalid
      */
-    public function validate($data, array $host = array())
+    protected function validate($data, array $host = array())
     {
         $data = $this->validateSegment($data, $this->delimiter);
         $imploded = implode($this->delimiter, $data);
@@ -42,24 +53,25 @@ class Host extends AbstractComponent implements ComponentInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function get()
     {
-        $res = implode($this->delimiter, $this->data);
-        if (empty($res)) {
-            $res = '';
+        if (! $this->data) {
+            return null;
         }
 
-        return $res;
+        return implode($this->delimiter, $this->data);
     }
 
     /**
-     * Prepend the URL host component
-     *
-     * @param mixed   $data         the host data can be a array or a string
-     * @param string  $whence       where the data should be prepended to
-     * @param integer $whence_index the recurrence index of $whence
-     *
-     * @return self
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function prepend($data, $whence = null, $whence_index = null)
     {
@@ -72,13 +84,7 @@ class Host extends AbstractComponent implements ComponentInterface
     }
 
     /**
-     * Append the URL host component
-     *
-     * @param mixed   $data         the host data can be a array or a string
-     * @param string  $whence       where the data should be appended to
-     * @param integer $whence_index the recurrence index of $whence
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function append($data, $whence = null, $whence_index = null)
     {

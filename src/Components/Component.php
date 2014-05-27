@@ -56,7 +56,9 @@ class Component implements ComponentInterface
     }
 
     /**
-     * {@inheritdoc}
+     * The Constructor
+     *
+     * @param mixed $data the component data
      */
     public function __construct($data = null)
     {

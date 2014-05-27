@@ -34,6 +34,6 @@ class Scheme extends Component
             throw new RuntimeException('This class only deals with http URL');
         }
 
-        return $data;
+        return strtolower($data);
     }
 }

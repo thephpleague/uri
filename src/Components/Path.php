@@ -42,19 +42,11 @@ class Path extends AbstractSegment implements SegmentInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
-    {
-        return str_replace(null, '', $this->get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function append($data, $whence = null, $whence_index = null)
     {
         $this->data = $this->appendSegment(
             $this->data,
-            $this->validateSegment($data, $this->delimiter),
+            $this->validate($data),
             $whence,
             $whence_index
         );
@@ -67,7 +59,7 @@ class Path extends AbstractSegment implements SegmentInterface
     {
         $this->data = $this->prependSegment(
             $this->data,
-            $this->validateSegment($data, $this->delimiter),
+            $this->validate($data),
             $whence,
             $whence_index
         );

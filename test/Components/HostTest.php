@@ -27,6 +27,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         }
         unset($host[0]);
         $this->assertNull($host[0]);
+        $this->assertSame(array(1 => 'bar'), $host->toArray());
         $host['toto'] = 'comment ça va';
     }
 }

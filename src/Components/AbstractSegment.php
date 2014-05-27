@@ -38,17 +38,6 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     protected $delimiter;
 
     /**
-     * Validate a component
-     *
-     * @param mixed $data the component value to be validate
-     *
-     * @return string|null
-     *
-     * @throws InvalidArgumentException If The data is invalid
-     */
-    abstract protected function validate($data);
-
-    /**
      * The Constructor
      * @param mixed $data The data to add
      */
@@ -74,13 +63,35 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     }
 
     /**
-     * Return the component as an array
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray()
     {
         return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function contains($value)
+    {
+        $res = array_search($value, $this->data, true);
+        if (false === $res) {
+            return null;
+        }
+
+        return $res;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($data)
+    {
+        $data = $this->fetchRemainingSegment($this->data, $data);
+        if (! is_null($data)) {
+            $this->set($data);
+        }
     }
 
     /**
@@ -147,6 +158,17 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
 
         return null;
     }
+
+    /**
+     * Validate a component
+     *
+     * @param mixed $data the component value to be validate
+     *
+     * @return string|null
+     *
+     * @throws \InvalidArgumentException If The data is invalid
+     */
+    abstract protected function validate($data);
 
     /**
      * Validate data before insertion into a URL segment based component
@@ -267,26 +289,12 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     {
         $segment = implode($this->delimiter, $data);
         $part = implode($this->delimiter, $this->validate($value));
-        $pos = strpos($segment, $part);
-        if (false === $pos) {
+        if (! preg_match('@(:?^|\/)'.preg_quote($part, '@').'@', $segment, $matches, PREG_OFFSET_CAPTURE)) {
             return null;
         }
 
-        return substr($segment, 0, $pos).substr($segment, $pos + strlen($part));
-    }
+        $pos = $matches[0][1];
 
-    /**
-     * Remove part of the URL host component
-     *
-     * @param mixed $data the path data can be a array or a string
-     *
-     * @return self
-     */
-    public function remove($data)
-    {
-        $data = $this->fetchRemainingSegment($this->data, $data);
-        if (! is_null($data)) {
-            $this->set($data);
-        }
+        return substr($segment, 0, $pos).substr($segment, $pos + strlen($part) + 1);
     }
 }

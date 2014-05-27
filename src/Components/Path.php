@@ -16,16 +16,10 @@ use League\Url\Interfaces\SegmentInterface;
 
 class Path extends AbstractSegment implements SegmentInterface
 {
-
-    protected $delimiter = '/';
-
     /**
      * {@inheritdoc}
      */
-    protected function validate($data)
-    {
-        return $this->validateSegment($data, $this->delimiter);
-    }
+    protected $delimiter = '/';
 
     /**
      * {@inheritdoc}
@@ -63,5 +57,13 @@ class Path extends AbstractSegment implements SegmentInterface
             $whence,
             $whence_index
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function validate($data)
+    {
+        return $this->validateSegment($data, $this->delimiter);
     }
 }

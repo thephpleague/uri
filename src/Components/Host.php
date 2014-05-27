@@ -18,37 +18,10 @@ use League\Url\Interfaces\SegmentInterface;
 class Host extends AbstractSegment implements SegmentInterface
 {
 
-    protected $delimiter = '.';
-
     /**
-     * Validate Host data before insertion into a URL host component
-     *
-     * @param mixed $data the data to insert
-     * @param array $host an array representation of a host component
-     *
-     * @return array
-     *
-     * @throws InvalidArgumentException If the added is invalid
+     * {@inheritdoc}
      */
-    protected function validate($data, array $host = array())
-    {
-        $data = $this->validateSegment($data, $this->delimiter);
-        $imploded = implode($this->delimiter, $data);
-        if (127 <= (count($host) + count($data))) {
-            throw new InvalidArgumentException('Host may have at maximum 127 parts');
-        } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
-            throw new InvalidArgumentException('Host may have a maximum of 255 characters');
-        } elseif (strpos($imploded, ' ') !== false || strpos($imploded, '_') !== false) {
-            throw new InvalidArgumentException('Invalid Characters used to create your host');
-        }
-        foreach ($data as $value) {
-            if (strlen($value) > 63) {
-                throw new InvalidArgumentException('each label host must have a maximum of 63 characters');
-            }
-        }
-
-        return $data;
-    }
+    protected $delimiter = '.';
 
     /**
      * {@inheritdoc}
@@ -86,5 +59,35 @@ class Host extends AbstractSegment implements SegmentInterface
             $whence,
             $whence_index
         );
+    }
+
+    /**
+     * Validate Host data before insertion into a URL host component
+     *
+     * @param mixed $data the data to insert
+     * @param array $host an array representation of a host component
+     *
+     * @return array
+     *
+     * @throws InvalidArgumentException If the added is invalid
+     */
+    protected function validate($data, array $host = array())
+    {
+        $data = $this->validateSegment($data, $this->delimiter);
+        $imploded = implode($this->delimiter, $data);
+        if (127 <= (count($host) + count($data))) {
+            throw new InvalidArgumentException('Host may have at maximum 127 parts');
+        } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
+            throw new InvalidArgumentException('Host may have a maximum of 255 characters');
+        } elseif (strpos($imploded, ' ') !== false || strpos($imploded, '_') !== false) {
+            throw new InvalidArgumentException('Invalid Characters used to create your host');
+        }
+        foreach ($data as $value) {
+            if (strlen($value) > 63) {
+                throw new InvalidArgumentException('each label host must have a maximum of 63 characters');
+            }
+        }
+
+        return $data;
     }
 }

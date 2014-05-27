@@ -24,38 +24,6 @@ class Component implements ComponentInterface
     protected $data;
 
     /**
-     * Validate a component
-     *
-     * @param mixed $data the component value to be validate
-     *
-     * @return string|null
-     *
-     * @throws InvalidArgumentException If The data is invalid
-     */
-    protected function validate($data)
-    {
-        return $this->sanitizeComponent($data);
-    }
-
-    /**
-     * Sanitize a string component
-     *
-     * @param mixed $str
-     *
-     * @return string|null
-     */
-    protected function sanitizeComponent($str)
-    {
-        if (is_null($str)) {
-            return $str;
-        }
-        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
-        $str = trim($str);
-
-        return $str;
-    }
-
-    /**
      * The Constructor
      *
      * @param mixed $data the component data
@@ -91,5 +59,37 @@ class Component implements ComponentInterface
     public function __toString()
     {
         return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * Validate a component
+     *
+     * @param mixed $data the component value to be validate
+     *
+     * @return string|null
+     *
+     * @throws InvalidArgumentException If The data is invalid
+     */
+    protected function validate($data)
+    {
+        return $this->sanitizeComponent($data);
+    }
+
+    /**
+     * Sanitize a string component
+     *
+     * @param mixed $str
+     *
+     * @return string|null
+     */
+    protected function sanitizeComponent($str)
+    {
+        if (is_null($str)) {
+            return $str;
+        }
+        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
+        $str = trim($str);
+
+        return $str;
     }
 }

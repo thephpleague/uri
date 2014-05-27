@@ -12,7 +12,7 @@
 */
 namespace League\Url\Interfaces;
 
-interface QueryInterface extends ComponentInterface
+interface QueryInterface extends ComponentArrayInterface
 {
     /**
      * encode query string according to RFC 1738
@@ -30,4 +30,18 @@ interface QueryInterface extends ComponentInterface
      * @param mixed $data the data can be a array, a Traversable or a string
      */
     public function modify($data);
+
+    /**
+     * Set the Query String encoding type (see {@link http_build_query})
+     *
+     * @param integer $encoding_type
+     */
+    public function setEncodingType($encoding_type);
+
+    /**
+     * return the current Encoding type value
+     *
+     * @return integer
+     */
+    public function getEncodingType();
 }

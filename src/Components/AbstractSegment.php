@@ -1,17 +1,52 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url\Components;
 
 use Closure;
-use Traversable;
+use IteratorAggregate;
+use Countable;
+use ArrayIterator;
+use ArrayAccess;
+use InvalidArgumentException;
 use RuntimeException;
+use Traversable;
 
-abstract class Validation
+abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAccess
 {
+    /**
+     * container holder
+     *
+     * @var array
+     */
+    protected $data = array();
 
+    /**
+     * segment delimiter
+     *
+     * @var string
+     */
     protected $delimiter;
 
-    abstract public function validate($data);
+    /**
+     * Validate a component
+     *
+     * @param mixed $data the component value to be validate
+     *
+     * @return string|null
+     *
+     * @throws InvalidArgumentException If The data is invalid
+     */
+    abstract protected function validate($data);
 
     /**
      * The Constructor
@@ -31,29 +66,68 @@ abstract class Validation
     }
 
     /**
-     * {@inheritdoc}
+     * IteratorAggregate Interface method
+     *
+     * @return ArrayIterator
      */
-    public function get()
+    public function getIterator()
     {
-        if (is_null($this->data) || ! $this->data) {
-            return null;
-        }
-        return $this->__toString();
+        return new ArrayIterator($this->data);
     }
 
     /**
-     * Remove part of the URL host component
+     * Countable Interface method
      *
-     * @param mixed $data the path data can be a array or a string
-     *
-     * @return self
+     * @return integer
      */
-    public function remove($data)
+    public function count()
     {
-        $data = $this->fetchRemoveSegment($this->data, $data, $this->delimiter);
-        if (! is_null($data)) {
-            $this->set($data);
+        return count($this->data);
+    }
+
+    /**
+     * ArrayAccess Interface method
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->data[$offset]);
+    }
+
+    /**
+     * ArrayAccess Interface method
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            $this->data[] = $value;
+
+            return;
         }
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, array('min_range' => 0));
+        if (false === $offset) {
+            throw new InvalidArgumentException('Offset must be an integer');
+        }
+        $this->data[$offset] = (string) $value;
+    }
+
+    /**
+     * ArrayAccess Interface method
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->data[$offset]);
+    }
+
+    /**
+     * ArrayAccess Interface method
+     */
+    public function offsetGet($offset)
+    {
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
+        }
+
+        return null;
     }
 
     /**
@@ -87,50 +161,6 @@ abstract class Validation
         }
 
         return $data;
-    }
-
-    /**
-     * Validate the URL Port component
-     *
-     * @param integer $str
-     *
-     * @return integer|null
-     */
-    protected function validatePort($str)
-    {
-        $str = $this->sanitizeComponent($str);
-        if (is_null($str)) {
-            return $str;
-        }
-
-        return filter_var($str, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1, 'default' => null)
-        ));
-    }
-
-    /**
-     * Validate the URL Scheme component
-     *
-     * @param string $str
-     *
-     * @return string|null
-     */
-    protected function validateScheme($str)
-    {
-        $str = $this->sanitizeComponent($str);
-        if (is_null($str)) {
-            return $str;
-        }
-
-        $str = filter_var($str, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^http(s?)$/i')
-        ));
-
-        if (! $str) {
-            throw new RuntimeException('This class only deals with http URL');
-        }
-
-        return $str;
     }
 
     /**
@@ -227,20 +257,17 @@ abstract class Validation
     }
 
     /**
-     * Sanitize a string component
+     * Remove part of the URL host component
      *
-     * @param mixed $str
+     * @param mixed $data the path data can be a array or a string
      *
-     * @return string|null
+     * @return self
      */
-    protected function sanitizeComponent($str)
+    public function remove($data)
     {
-        if (is_null($str)) {
-            return $str;
+        $data = $this->fetchRemoveSegment($this->data, $data, $this->delimiter);
+        if (! is_null($data)) {
+            $this->set($data);
         }
-        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
-        $str = trim($str);
-
-        return $str;
     }
 }

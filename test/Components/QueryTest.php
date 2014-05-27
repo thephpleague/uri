@@ -29,4 +29,13 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertNull($query['toto']);
         $query[] = 'comment ça va';
     }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testRemove()
+    {
+        $query = new Query(null);
+        $query->remove('toto');
+    }
 }

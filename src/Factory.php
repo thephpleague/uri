@@ -1,5 +1,15 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url;
 
 use RuntimeException;
@@ -10,10 +20,15 @@ use League\Url\Components\Port;
 use League\Url\Components\Path;
 use League\Url\Components\Query;
 
+/**
+ * A Factory to ease League\Url\Url Object instantiation
+ *
+ * @package League.url
+ */
 class Factory
 {
     /**
-     * The constructor
+     * Return a instance of Url from a string
      *
      * @param mixed   $url           an URL as a string or
      *                               as an object that implement the __toString method
@@ -46,7 +61,7 @@ class Factory
     }
 
     /**
-     * Return a instance of UrlImmutable from a server array
+     * Return a instance of Url from a server array
      *
      * @param array   $server        the server array
      * @param integer $encoding_type the RFC to follow when encoding the query string

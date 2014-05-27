@@ -1,5 +1,15 @@
 <?php
-
+/**
+* This file is part of the League.url library
+*
+* @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
+* @version 3.0.0
+* @package League.url
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 namespace League\Url;
 
 use RuntimeException;
@@ -10,6 +20,11 @@ use League\Url\Components\Port;
 use League\Url\Components\Path;
 use League\Url\Components\Query;
 
+/**
+ * A Immutable Class to manipulate URLs
+ *
+ * @package League.url
+ */
 final class Url
 {
     /**

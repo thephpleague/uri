@@ -19,7 +19,7 @@ class Scheme extends Component
     /**
      * {@inheritdoc}
      */
-    public function validate($data)
+    protected function validate($data)
     {
         $data = parent::validate($data);
         if (is_null($data)) {

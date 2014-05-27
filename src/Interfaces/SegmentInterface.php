@@ -12,7 +12,7 @@
 */
 namespace League\Url\Interfaces;
 
-interface SegmentInterface extends ComponentInterface
+interface SegmentInterface extends ComponentArrayInterface
 {
     /**
      * Append data to the component

@@ -21,9 +21,17 @@ class Query extends AbstractSegment implements QueryInterface
 {
     /**
      * Query encoding type
-     * @var array
+     *
+     * @var integer
      */
     protected $encoding_type = self::PHP_QUERY_RFC1738;
+
+    /**
+     * Possible encoding type list
+     *
+     * @var array
+     */
+    protected $encoding_list = array();
 
     /**
      * The Constructor
@@ -34,8 +42,25 @@ class Query extends AbstractSegment implements QueryInterface
      */
     public function __construct($data, $encoding_type = self::PHP_QUERY_RFC1738)
     {
+        $this->encoding_list = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
         $this->setEncodingType($encoding_type);
         $this->set($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEncodingType($encoding_type)
+    {
+        $this->encoding_type = $this->validateEncodingType($encoding_type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEncodingType()
+    {
+        return $this->encoding_type;
     }
 
     /**
@@ -51,6 +76,22 @@ class Query extends AbstractSegment implements QueryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function modify($data)
+    {
+        $this->data = array_merge($this->data, $this->validate($data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($data)
+    {
+        throw new RuntimeException('This method is not supported');
+    }
+
+    /**
      * Validate the Query String Encoding Mode
      *
      * @param integer $encoding_type
@@ -59,8 +100,7 @@ class Query extends AbstractSegment implements QueryInterface
      */
     protected function validateEncodingType($encoding_type)
     {
-        static $arr = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
-        if (isset($arr[$encoding_type])) {
+        if (isset($this->encoding_list[$encoding_type])) {
             return $encoding_type;
         }
 
@@ -68,29 +108,9 @@ class Query extends AbstractSegment implements QueryInterface
     }
 
     /**
-     * Set the Query String encoding type (see {@link http_build_query})
-     *
-     * @param integer $encoding_type
-     */
-    public function setEncodingType($encoding_type)
-    {
-        $this->encoding_type = $this->validateEncodingType($encoding_type);
-    }
-
-    /**
-     * return the current Encoding type value
-     *
-     * @return integer
-     */
-    public function getEncodingType()
-    {
-        return $this->encoding_type;
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function validate($data)
+    protected function validate($data)
     {
         return $this->validateComponent($data, function ($str) {
             if ('?' == $str[0]) {
@@ -132,21 +152,5 @@ class Query extends AbstractSegment implements QueryInterface
             throw new InvalidArgumentException('offset can not be null');
         }
         $this->data[$offset] = $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function modify($data)
-    {
-        $this->data = array_merge($this->data, $this->validate($data));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($data)
-    {
-        throw new RuntimeException('This method is not supported');
     }
 }

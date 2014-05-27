@@ -27,6 +27,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         }
         unset($query['toto']);
         $this->assertNull($query['toto']);
+        $this->assertSame(array('foo' => 'bar'), $query->toArray());
         $query[] = 'comment ça va';
     }
 

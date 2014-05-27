@@ -66,6 +66,24 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * Return the component as an array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->data;
+    }
+
+    /**
      * IteratorAggregate Interface method
      *
      * @return ArrayIterator
@@ -139,7 +157,7 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
      *
      * @return array
      *
-     * @throws RuntimeException if the data is not valid
+     * @throws \RuntimeException if the data is not valid
      */
     protected function validateComponent($data, Closure $callback)
     {
@@ -171,7 +189,7 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
      *
      * @return array
      *
-     * @throws RuntimeException if the data is not valid
+     * @throws \RuntimeException if the data is not valid
      */
     protected function validateSegment($data, $delimiter)
     {
@@ -238,16 +256,17 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     /**
      * Remove some data from a given array
      *
-     * @param array  $data      the original array
-     * @param mixed  $value     the data to be removed (can be an array or a single segment)
-     * @param string $delimiter the segment delimiter
+     * @param array $data  the original array
+     * @param mixed $value the data to be removed (can be an array or a single segment)
      *
      * @return string|null
+     *
+     * @throws \RuntimeException If $value is invalid
      */
-    protected function fetchRemoveSegment(array $data, $value, $delimiter)
+    protected function fetchRemainingSegment(array $data, $value)
     {
-        $segment = implode($delimiter, $data);
-        $part = implode($delimiter, $this->validateSegment($value, $delimiter));
+        $segment = implode($this->delimiter, $data);
+        $part = implode($this->delimiter, $this->validate($value));
         $pos = strpos($segment, $part);
         if (false === $pos) {
             return null;
@@ -265,7 +284,7 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
      */
     public function remove($data)
     {
-        $data = $this->fetchRemoveSegment($this->data, $data, $this->delimiter);
+        $data = $this->fetchRemainingSegment($this->data, $data);
         if (! is_null($data)) {
             $this->set($data);
         }

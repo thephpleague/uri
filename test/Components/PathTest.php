@@ -27,6 +27,7 @@ class PathTest extends PHPUnit_Framework_TestCase
         }
         unset($path[0]);
         $this->assertNull($path[0]);
+        $this->assertSame(array(1 => 'bar'), $path->toArray());
         $path['toto'] = 'comment ça va';
     }
 }

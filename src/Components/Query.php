@@ -35,7 +35,7 @@ class Query extends AbstractSegment implements QueryInterface
     public function __construct($data, $encoding_type = self::PHP_QUERY_RFC1738)
     {
         $this->setEncodingType($encoding_type);
-        parent::__construct($data);
+        $this->set($data);
     }
 
     /**
@@ -48,14 +48,6 @@ class Query extends AbstractSegment implements QueryInterface
         }
 
         return $this->encode($this->data, $this->encoding_type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return str_replace(null, '', $this->get());
     }
 
     /**
@@ -123,7 +115,7 @@ class Query extends AbstractSegment implements QueryInterface
         if (defined('PHP_QUERY_RFC3986')) {
             return http_build_query($str, '', '&', $encoding_type);
         }
-        $query = http_build_query($str);
+        $query = http_build_query($str, '', '&');
         if (self::PHP_QUERY_RFC3986 != $encoding_type) {
             return $query;
         }

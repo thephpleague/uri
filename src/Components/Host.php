@@ -65,14 +65,6 @@ class Host extends AbstractSegment implements SegmentInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
-    {
-        return str_replace(null, '', $this->get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function prepend($data, $whence = null, $whence_index = null)
     {
         $this->data = $this->prependSegment(

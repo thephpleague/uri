@@ -12,7 +12,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $query = new Query(null);
+        $query = new Query;
         $query['toto'] = 'leheros';
         $this->assertNull($query['tata']);
         $this->assertSame('leheros', $query['toto']);
@@ -32,11 +32,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException BadMethodCallException
      */
     public function testRemove()
     {
-        $query = new Query(null);
+        $query = new Query;
         $query->remove('toto');
     }
 

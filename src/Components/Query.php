@@ -14,7 +14,7 @@ namespace League\Url\Components;
 
 use Traversable;
 use InvalidArgumentException;
-use RuntimeException;
+use BadMethodCallException;
 use League\Url\Interfaces\QueryInterface;
 
 /**
@@ -45,7 +45,7 @@ class Query extends AbstractSegment implements QueryInterface
      *                               object convertible into Query String
      * @param integer $encoding_type specify the RFC to follow when using __toString
      */
-    public function __construct($data, $encoding_type = self::PHP_QUERY_RFC1738)
+    public function __construct($data = null, $encoding_type = self::PHP_QUERY_RFC1738)
     {
         $this->encoding_list = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
         $this->setEncodingType($encoding_type);
@@ -105,7 +105,7 @@ class Query extends AbstractSegment implements QueryInterface
      */
     public function remove($data)
     {
-        throw new RuntimeException('This method is not supported');
+        throw new BadMethodCallException('This method is not supported');
     }
 
     /**

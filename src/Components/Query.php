@@ -17,6 +17,11 @@ use InvalidArgumentException;
 use RuntimeException;
 use League\Url\Interfaces\QueryInterface;
 
+/**
+ *  A class to manipulate URL Query component
+ *
+ *  @package League.url
+ */
 class Query extends AbstractSegment implements QueryInterface
 {
     /**
@@ -66,6 +71,18 @@ class Query extends AbstractSegment implements QueryInterface
     /**
      * {@inheritdoc}
      */
+    public function set($data)
+    {
+        $this->data = array_filter($this->validate($data), function ($value) {
+            $value = trim($value);
+
+            return null !== $value && '' !== $value;
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get()
     {
         if (! $this->data) {
@@ -80,7 +97,7 @@ class Query extends AbstractSegment implements QueryInterface
      */
     public function modify($data)
     {
-        $this->data = array_merge($this->data, $this->validate($data));
+        $this->set(array_merge($this->data, $this->validate($data)));
     }
 
     /**

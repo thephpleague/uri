@@ -1,6 +1,6 @@
 tools:
     php_code_coverage:
-        test_command: "phpunit -c test/"
+        test_command: "phpunit"
         filter:
             paths: ["src/*"]
     php_sim:

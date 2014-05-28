@@ -12,7 +12,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $host = new Host(null);
+        $host = new Host;
         $host[] = 'leheros';
         $this->assertNull($host[5]);
         $this->assertSame('leheros', $host[0]);

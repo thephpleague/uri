@@ -12,7 +12,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $path = new Path(null);
+        $path = new Path;
         $path[] = 'leheros';
         $this->assertNull($path[5]);
         $this->assertSame('leheros', $path[0]);

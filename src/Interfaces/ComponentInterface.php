@@ -36,4 +36,11 @@ interface ComponentInterface
      * @return string
      */
     public function __toString();
+
+    /**
+     * component representation of an URL component
+     *
+     * @return string
+     */
+    public function getUriComponent();
 }

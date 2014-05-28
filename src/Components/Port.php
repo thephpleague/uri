@@ -28,4 +28,17 @@ class Port extends Component
             'options' => array('min_range' => 1, 'default' => null)
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value = ':'.$value;
+        }
+
+        return $value;
+    }
 }

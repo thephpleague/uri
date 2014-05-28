@@ -41,4 +41,17 @@ class Scheme extends Component
 
         return strtolower($data);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value .=':';
+        }
+
+        return $value;
+    }
 }

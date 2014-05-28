@@ -2,7 +2,7 @@ before_commands:
     - composer install --dev
 tools:
     php_code_coverage:
-        test_commend: "phpunit"
+        test_command: "phpunit"
         filter:
             paths: ["src/*"]
     php_cpd:

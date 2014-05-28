@@ -1,6 +1,12 @@
+before_commands:
+    - composer install --dev
 tools:
     php_code_coverage:
-        test_command: "phpunit"
+        test_commend: "phpunit"
+        filter:
+            paths:["src/*"]
+    php_cpd:
+        enabled: true
         filter:
             paths: ["src/*"]
     php_sim:

@@ -36,7 +36,10 @@ class Query extends AbstractSegment implements QueryInterface
      *
      * @var array
      */
-    protected $encoding_list = array();
+    protected $encoding_list = array(
+        self::PHP_QUERY_RFC3986 => 1,
+        self::PHP_QUERY_RFC1738 => 1
+    );
 
     /**
      * The Constructor
@@ -47,7 +50,6 @@ class Query extends AbstractSegment implements QueryInterface
      */
     public function __construct($data = null, $encoding_type = self::PHP_QUERY_RFC1738)
     {
-        $this->encoding_list = array(self::PHP_QUERY_RFC3986 => 1, self::PHP_QUERY_RFC1738 => 1);
         $this->setEncodingType($encoding_type);
         $this->set($data);
     }

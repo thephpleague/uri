@@ -18,18 +18,22 @@ interface ComponentInterface
      * Set the component data
      *
      * @param mixed $data data to be added
+     *
+     * @return void
      */
     public function set($data);
 
     /**
      * Get the component data
      *
-     * @param string|null
+     * @return null|string
      */
     public function get();
 
     /**
      * String representation of an URL component
+     *
+     * @return string
      */
     public function __toString();
 }

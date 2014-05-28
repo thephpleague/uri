@@ -28,6 +28,8 @@ interface QueryInterface extends ComponentArrayInterface
      * modify/update a Query component
      *
      * @param mixed $data the data can be a array, a Traversable or a string
+     *
+     * @return void
      */
     public function modify($data);
 
@@ -35,6 +37,8 @@ interface QueryInterface extends ComponentArrayInterface
      * Set the Query String encoding type (see {@link http_build_query})
      *
      * @param integer $encoding_type
+     *
+     * @return void
      */
     public function setEncodingType($encoding_type);
 

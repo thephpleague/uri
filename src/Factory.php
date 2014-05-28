@@ -30,9 +30,10 @@ class Factory
     /**
      * Return a instance of Url from a string
      *
-     * @param mixed   $url           an URL as a string or
-     *                               as an object that implement the __toString method
+     * @param mixed   $url           a string or an object that implement the __toString method
      * @param integer $encoding_type the RFC to follow when encoding the query string
+     *
+     * @return \League\Url\Url
      *
      * @throws RuntimeException If the URL can not be parse
      */
@@ -66,7 +67,9 @@ class Factory
      * @param array   $server        the server array
      * @param integer $encoding_type the RFC to follow when encoding the query string
      *
-     * @return self
+     * @return \League\Url\Url
+     *
+     * @throws RuntimeException If the URL can not be parse
      */
     public static function createFromServer(array $server, $encoding_type = Query::PHP_QUERY_RFC1738)
     {
@@ -91,7 +94,10 @@ class Factory
             $port = ':'.$server['SERVER_PORT'];
         }
 
-        $request = $server['PHP_SELF'];
+        $request = '/';
+        if (isset($server['PHP_SELF'])) {
+            $request = $server['PHP_SELF'];
+        }
         if (isset($server['REQUEST_URI'])) {
             $request = $server['REQUEST_URI'];
         }

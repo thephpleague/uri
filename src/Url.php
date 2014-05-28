@@ -85,14 +85,14 @@ final class Url
     /**
      * The Constructor
      *
-     * @param League\Url\Components\Scheme    $scheme   Url Scheme object
-     * @param League\Url\Components\Component $user     Url Component object
-     * @param League\Url\Components\Component $pass     Url Component object
-     * @param League\Url\Components\Host      $host     Url Host object
-     * @param League\Url\Components\Port      $port     Url Port object
-     * @param League\Url\Components\Path      $path     Url Path object
-     * @param League\Url\Components\Query     $query    Url Query object
-     * @param League\Url\Components\Component $fragment Url Component object
+     * @param {@link Scheme}    $scheme   Url Scheme object
+     * @param {@link Component} $user     Url Component object
+     * @param {@link Component} $pass     Url Component object
+     * @param {@link Host}      $host     Url Host object
+     * @param {@link Port}      $port     Url Port object
+     * @param {@link Path}      $path     Url Path object
+     * @param {@link Query}     $query    Url Query object
+     * @param {@link Component} $fragment Url Component object
      */
     public function __construct(
         Scheme $scheme,
@@ -136,34 +136,24 @@ final class Url
      */
     public function __toString()
     {
-        $scheme = $this->scheme->__toString();
-        $user = $this->user->__toString();
-        $pass = $this->pass->__toString();
-        $host = $this->host->__toString();
-        $port = $this->port->__toString();
-        $path = $this->path->__toString();
-        $query = $this->query->__toString();
-        $fragment = $this->fragment->__toString();
-
-        if ('' != $scheme) {
-            $scheme .= ':';
-        }
+        $scheme = $this->scheme->getUriComponent();
+        $user = $this->user->getUriComponent();
+        $pass = $this->pass->getUriComponent();
+        $host = $this->host->getUriComponent();
+        $port = $this->port->getUriComponent();
+        $path = $this->path->getUriComponent();
+        $query = $this->query->getUriComponent();
+        $fragment = $this->fragment->getUriComponent();
 
         if ('' != $pass) {
             $pass = ':'.$pass;
         }
+
         $user .= $pass;
         if ('' != $user) {
             $user .='@';
         }
 
-        if ('' != $port) {
-            $port = ':'.$port;
-        }
-
-        if ('' != $query) {
-            $query = '?'.$query;
-        }
         if ('' != $fragment) {
             $fragment = '#'.$fragment;
         }
@@ -198,7 +188,7 @@ final class Url
     /**
      * get the URL user component
      *
-     * @return \League\Url\Components\Component object
+     * @return {@link Component}
      */
     public function getUser()
     {
@@ -223,7 +213,7 @@ final class Url
     /**
      * Return the current URL pass component
      *
-     * @return \League\Url\Components\Component object
+     * @return {@link Component}
      */
     public function getPass()
     {
@@ -248,7 +238,7 @@ final class Url
     /**
      * Return the URL Port component
      *
-     * @return \League\Url\Components\Port object
+     * @return {@link Port}
      */
     public function getPort()
     {
@@ -273,7 +263,7 @@ final class Url
     /**
      * return the URL scheme component
      *
-     * @return \League\Url\Components\Scheme object
+     * @return {@link Scheme}
      */
     public function getScheme()
     {
@@ -298,7 +288,7 @@ final class Url
     /**
      * return the URL fragment component
      *
-     * @return \League\Url\Components\Component object
+     * @return {@link Component}
      */
     public function getFragment()
     {
@@ -350,7 +340,7 @@ final class Url
     /**
      * Return the current URL query component
      *
-     * @return \League\Url\Components\Query object
+     * @return {@link Query}
      */
     public function getQuery()
     {
@@ -390,7 +380,7 @@ final class Url
     /**
      * Return the current Host component
      *
-     * @return \League\Url\Components\Host object
+     * @return {@link Host}
      */
     public function getHost()
     {
@@ -464,7 +454,7 @@ final class Url
     /**
      * return the URL current path
      *
-     * @return \League\Url\Components\Path object
+     * @return {@link Path}
      */
     public function getPath()
     {

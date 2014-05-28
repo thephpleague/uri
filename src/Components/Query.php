@@ -97,6 +97,19 @@ class Query extends AbstractSegment implements QueryInterface
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value = '?'.$value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function modify($data)
     {
         $this->set(array_merge($this->data, $this->validate($data)));

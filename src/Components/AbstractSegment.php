@@ -70,6 +70,14 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->data;

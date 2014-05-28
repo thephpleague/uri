@@ -67,6 +67,14 @@ class Component implements ComponentInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
      * Validate a component
      *
      * @param mixed $data the component value to be validate

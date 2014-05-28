@@ -56,8 +56,9 @@ $url = Url::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 `League\Url` is a Immutable Value Object:
 
 * The object implements the `__toString` method to enable accessing the string representation of the URL;
-* Everytime you modify the object property you create a new object. This means that you can easily manipulating the Url with chaining without modifying the original object.
-* The getter methods return clone object to avoid modifying directly the parent object.
+* Everytime the object needs to return an object or modify a property you return a clone of that object:
+	* you can easily manipulating the url with chaining without modifying the original object.
+	* you avoid modifying directly the parent object without notice.
 
 ```php
 $url = new Url::createFromString('http://www.example.com');
@@ -71,7 +72,8 @@ $port->set(80); //
 echo (string) $port; //echo 80;
 echo $port->getPor()->__toString() // echo 443; 
 ```
-At any given time you can specify the encoding type to be used for the query string using the `getEncodingType` method like below:
+
+You can specify the encoding type to be used for the query string when using the Factory methods `createFromString` and `createFromServer` or when using the `setEncodingType` method like below:
 
 ```php
 
@@ -105,7 +107,7 @@ Of note:
 * The `$whence` argument specify where to include the appended data;
 * The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
 
-*When using the `remove*` methods and the pattern is present multiple times only the first match found is removed* 
+*When using the `removePath` and the `removeHost` methods, if the pattern is present multiple times only the first match found is removed* 
 
 ```php
 $url3 = $url2->modifyQuery(['query' => 'value']);
@@ -113,28 +115,28 @@ echo $url3 //output https://john:doe@www.example.com:443/?query=value
 echo $url2; //remains https://john:doe@www.example.com:443/
 ```
 
-Everytime you acces a `League\Url\Url` object getter method it will return one of the following component class.
-
 ## Components classes
 
-Each URL is composed of up to 8 components which are represented by 4 classes. All classes implements the  
-`League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
+Except for `encodingType`, everytime you acces a `League\Url\Url` object getter method it will return one of the following component class. Each `League\Url\Url` object is composed of 8 URL components object composed of 4 classes. 
 
-* `get()`: returns null if the class is empty or its string representation
+All component classes implements the  `League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
+
 * `set($data)`: set the component data
+* `get()`: returns null if the class is empty or its string representation
 * `__toString`: return the string representation of the component if the data is null then the method output an empty string.
+* `getUriComponent`: return an alter string representation to ease URL representation.
 
 ### The `Component` class
 
-This classes manage the `user`, `pass`, `fragment` components. the data provided to the `set` method can be a string representation of the component or `null`.
+This class manages the `user`, `pass`, `fragment` components. The data provided to the `set` method can be a string representation of the component or `null`.
 
 ### The `Port` and `Scheme` classes
 
-These classes manage the URL port and schemes component. They extends the `Component` class and differs only by the way they validate the data when using the `set` method.
+These classes manage the URL port and scheme component. They extend the `Component` class and only differ when validating the object data.
 
-## The complex Component Classes
+## Complex Components Classes
 
-Complex component classes implements the following interfaces:
+Complex component classes implement the following interfaces:
 
 * `Countable`
 * `IteratorAggregate`
@@ -144,15 +146,43 @@ Complex component classes implements the following interfaces:
 The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
 
 * `toArray`: will return an array representation of the component;
-* `contains`: will detect the offset of a given value or return null if the value was not found in the component. Of note: If the value appears more that once, only the first offset found will be return.
+* `contains`: will detect the offset of a given value or return `null` if the value was not found in the component. Of note: If the value appears more that once, only the first offset found will be return.
+
+### The `Query` class
+
+This class manage the URL query component and implements the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
+
+* `modify($data)`: update the component data;
+
+Example using the `League\Url\Components\Query` object:
+
+```php
+use League\Url\Components\Query;
+
+$query = new Query;
+$query['foo'] = 'bar';
+$query['baz'] = 'troll';
+foreach ($query as $offset => $value) {
+	echo "$offset => $value".PHP_EOL;
+}
+//will echo 
+// foo => bar
+// baz => troll
+
+$offset = $query->contains('troll');
+//$offset equels 'baz'
+
+echo count($query); //will return 2;
+echo (string) $query; //will display foo=bar&baz=troll;
+```
 
 ### The `Path` and `Host` classes
 
 These classes manage the URL port and schemes component. They only differs in the way they validate the data they receive. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
 
-* `append($data, $whence = null, $whence_index = null)`: adds some data into the component after a specific point;
-* `prepend($data, $whence = null, $whence_index = null)`: adds some data into the component before a specific point;
-* `remove($data)`: remove some data from the component;
+* `append($data, $whence = null, $whence_index = null)`: append data into the component;
+* `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
+* `remove($data)`: remove data from the component;
 
 Example using the `League\Url\Components\Path` object:
 
@@ -189,34 +219,6 @@ $path->prepend('bar', 'troll', 1);
 echo $path->get(); //will display bar/leheros/troll/bar/troll
 $path->remove('troll/bar');
 echo (string) $path; //will display bar/leheros/troll
-```
-
-### The `Query` class
-
-This class manage the URL query component and implements the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
-
-* `modify($data)`: update the component data;
-
-Example using the `League\Url\Components\Query` object:
-
-```php
-use League\Url\Components\Query;
-
-$query = new Query;
-$query['foo'] = 'bar';
-$query['baz'] = 'troll';
-foreach ($query as $offset => $value) {
-	echo "$offset => $value".PHP_EOL;
-}
-//will echo 
-// foo => bar
-// baz => troll
-
-$offset = $query->contains('troll');
-//$offset equels 'baz'
-
-echo count($query); //will return 2;
-echo (string) $query; //will display foo=bar&baz=troll;
 ```
 
 Testing

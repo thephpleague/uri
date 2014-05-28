@@ -38,10 +38,10 @@ The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR
 ```php
 <?php
 
-use League\Url\Url;
+use League\Url\Factory as Url;
 
 //Method 1 : from a given string
-$url = new Url('http://www.example.com'); // you've created a new Url object from this string 
+$url = new Url::createFromString('http://www.example.com'); // you've created a new Url object from this string 
 
 //Method 2: from the current PHP page
 $url = Url::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
@@ -52,13 +52,13 @@ $url = Url::createFromServer($_SERVER); //don't forget to provide the $_SERVER a
 Usage
 -------
 
-League\Url is a Immutable Value Object everytime you modify the object property you create a new object. 
+`League\Url` is a Immutable Value Object everytime you modify the object property you create a new object. 
 
 You can easily manipulating the Url with chaining like below :
 
 ```php
 
-$url = new Url('http://www.example.com');
+$url = new Url::createFromString('http://www.example.com');
 
 $url2 = $url->setUser('john')->setPass('doe')->setPort(443)->setScheme('https');
 echo $url2; //output https://john:doe@www.example.com:443/
@@ -69,28 +69,46 @@ echo $url3 //output https://john:doe@www.example.com:443/?query=value
 echo $url2; //remains https://john:doe@www.example.com:443/
 ```
 
-For each component there is a specific setter:
+For each component there is a specific setter and getter:
 
-* `setScheme($scheme)` : set the URL Scheme component can be null but **only accept (http, https or `null`)**
-* `setUser($user)` : set the URL User component can be null
-* `setPass($pass)` : set the URL Password component can be null
-* `setFragment($fragment)` : set the URL Fragment component can be null
-
-For the more complex component, in addition to the usual setter you can manipulate the exisiting component
-more easily
-
-* `setQuery($data)` : set the URL Query componentobject
-* `modifyQuery($data)` : update the URL Query component 
-
+* `setScheme($data)` : set the URL Scheme component **only accept (http, https)**
+* `getScheme()` : returns a `League\Url\Components\Scheme` object
+* `setUser($data)` : set the URL User component
+* `getUser()` : returns a `League\Url\Components\Component` object
+* `setPass($data)` : set the URL Password component
+* `getPass()` : returns a `League\Url\Components\Scheme` object
 * `setHost($data)` : set the URL Host component
+* `getHost()` : returns a `League\Url\Components\Component` object
+* `setPath($data)` : set the URL Path component
+* `getPath()` : returns a `League\Url\Components\Scheme` object
+* `setQuery($data)` : set the URL Query componentobject
+* `getQuery()` : returns a `League\Url\Components\Query` object
+* `setFragment($data)` : set the URL Fragment component
+* `getFragment()` : returns a `League\Url\Components\Component` object
+
+Of note: 
+
+* The `$data` argument can be null or a valid component string. For complex components like `Host`, `Path` and `Query` `$data` can also be an array or a `Traversable` object;
+* All the getter return a `League\Interfaces\ComponentInterface` object. this means they all provide:
+	* a `get` method;
+	* a `set` method;
+	* implements the `__toString` method;
+* To keep the object Immutable the return object from the getters method are all clones, **so manipulating them separately won't affect the original object.**
+
+**Tips:** Nothing prevents you from setting back your manipulated object to the main URL using the setters methods
+
+For the more complex component, in addition to the setter you can manipulate the exisiting component
+more easily with the following methods:
+
 * `appendHost($data, $whence = null, $whence_index = null)` : append Host info to the component
 * `prependHost($data, $whence = null, $whence_index = null)` : prepend Host info to the component
 * `removeHost($data)` : remove Host info from the component
 
-* `setPath($data)` : set the URL Path component
 * `appendPath($data, $whence = null, $whence_index = null)` : append Path info to the component
 * `prependPath($data, $whence = null, $whence_index = null)` : prepend Path info to the component
 * `removePath($data)` : remove Path info from the component
+
+* `modifyQuery($data)` : update the URL Query component 
 
 Of note:
 
@@ -98,7 +116,7 @@ Of note:
 * The `$whence` argument specify where to include the appended data;
 * The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
  
-*When removing Host or Path, when the pattern is present multiple times only the first match found is removed*  
+*When removing `Host` or `Path`, when the pattern is present multiple times only the first match found is removed*  
 
 Testing
 -------

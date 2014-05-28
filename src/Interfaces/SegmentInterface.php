@@ -20,6 +20,8 @@ interface SegmentInterface extends ComponentArrayInterface
      * @param mixed   $data         the data can be a array, a Traversable or a string
      * @param string  $whence       where the data should be prepended to
      * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return void
      */
     public function append($data, $whence = null, $whence_index = null);
 
@@ -29,6 +31,8 @@ interface SegmentInterface extends ComponentArrayInterface
      * @param mixed   $data         the data can be a array, a Traversable or a string
      * @param string  $whence       where the data should be prepended to
      * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return void
      */
     public function prepend($data, $whence = null, $whence_index = null);
 
@@ -36,6 +40,8 @@ interface SegmentInterface extends ComponentArrayInterface
      * Remove part of the component
      *
      * @param mixed $data the data can be a array, a Traversable or a string
+     *
+     * @return void
      */
     public function remove($data);
 }

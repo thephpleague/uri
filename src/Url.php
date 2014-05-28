@@ -12,7 +12,6 @@
 */
 namespace League\Url;
 
-use RuntimeException;
 use League\Url\Components\Scheme;
 use League\Url\Components\Component;
 use League\Url\Components\Host;
@@ -84,13 +83,16 @@ final class Url
     private $query;
 
     /**
-     * The constructor
+     * The Constructor
      *
-     * @param mixed   $url           an URL as a string or
-     *                               as an object that implement the __toString method
-     * @param integer $encoding_type the RFC to follow when encoding the query string
-     *
-     * @throws RuntimeException If the URL can not be parse
+     * @param League\Url\Components\Scheme    $scheme   Url Scheme object
+     * @param League\Url\Components\Component $user     Url Component object
+     * @param League\Url\Components\Component $pass     Url Component object
+     * @param League\Url\Components\Host      $host     Url Host object
+     * @param League\Url\Components\Port      $port     Url Port object
+     * @param League\Url\Components\Path      $path     Url Path object
+     * @param League\Url\Components\Query     $query    Url Query object
+     * @param League\Url\Components\Component $fragment Url Component object
      */
     public function __construct(
         Scheme $scheme,
@@ -143,36 +145,35 @@ final class Url
         $query = $this->query->__toString();
         $fragment = $this->fragment->__toString();
 
-        //Url reconstruction
-        if (!empty($scheme)) {
+        if ('' != $scheme) {
             $scheme .= ':';
         }
 
-        if (!empty($pass)) {
+        if ('' != $pass) {
             $pass = ':'.$pass;
         }
         $user .= $pass;
-        if (!empty($user)) {
+        if ('' != $user) {
             $user .='@';
         }
 
-        if (!empty($port)) {
+        if ('' != $port) {
             $port = ':'.$port;
         }
 
-        if (!empty($query)) {
+        if ('' != $query) {
             $query = '?'.$query;
         }
-        if (!empty($fragment)) {
+        if ('' != $fragment) {
             $fragment = '#'.$fragment;
         }
 
-        if (!empty($host) || !empty($scheme)) {
+        if ('' != $host || '' != $scheme) {
             $scheme .= '//';
         }
 
         $domain = $scheme.$user.$host.$port;
-        if (!empty($path) || !empty($domain)) {
+        if ('' != $path || '' != $domain) {
             $path = '/'.$path;
         }
 

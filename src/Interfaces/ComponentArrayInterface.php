@@ -28,7 +28,7 @@ interface ComponentArrayInterface extends ComponentInterface
      *
      * @param mixed $value
      *
-     * @return string|null
+     * @return null|string
      */
     public function contains($value);
 }

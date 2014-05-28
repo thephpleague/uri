@@ -21,7 +21,7 @@ use League\Url\Components\Path;
 use League\Url\Components\Query;
 
 /**
- * A Immutable Class to manipulate URLs
+ * A Immutable Value Object class to manipulate URLs
  *
  * @package League.url
  */
@@ -197,11 +197,11 @@ final class Url
     /**
      * get the URL user component
      *
-     * @return string
+     * @return \League\Url\Components\Component object
      */
     public function getUser()
     {
-        return $this->user->get();
+        return clone $this->user;
     }
 
     /**
@@ -222,11 +222,11 @@ final class Url
     /**
      * Return the current URL pass component
      *
-     * @return string
+     * @return \League\Url\Components\Component object
      */
     public function getPass()
     {
-        return $this->pass->get();
+        return clone $this->pass;
     }
 
     /**
@@ -247,11 +247,11 @@ final class Url
     /**
      * Return the URL Port component
      *
-     * @return integer
+     * @return \League\Url\Components\Port object
      */
     public function getPort()
     {
-        return $this->port->get();
+        return clone $this->port;
     }
 
     /**
@@ -272,11 +272,11 @@ final class Url
     /**
      * return the URL scheme component
      *
-     * @return string
+     * @return \League\Url\Components\Scheme object
      */
     public function getScheme()
     {
-        return $this->scheme->get();
+        return clone $this->scheme;
     }
 
     /**
@@ -297,11 +297,11 @@ final class Url
     /**
      * return the URL fragment component
      *
-     * @return string
+     * @return \League\Url\Components\Component object
      */
     public function getFragment()
     {
-        return $this->fragment->get();
+        return clone $this->fragment;
     }
 
     /**
@@ -326,7 +326,9 @@ final class Url
      */
     public function getEncodingType()
     {
-        return $this->query->getEncodingType();
+        $clone = clone $this;
+
+        return $clone->query->getEncodingType();
     }
 
     /**
@@ -347,11 +349,11 @@ final class Url
     /**
      * Return the current URL query component
      *
-     * @return string
+     * @return \League\Url\Components\Query object
      */
     public function getQuery()
     {
-        return $this->query->get();
+        return clone $this->query;
     }
 
     /**
@@ -387,11 +389,11 @@ final class Url
     /**
      * Return the current Host component
      *
-     * @return string
+     * @return \League\Url\Components\Host object
      */
     public function getHost()
     {
-        return $this->host->get();
+        return clone $this->host;
     }
 
     /**
@@ -461,11 +463,11 @@ final class Url
     /**
      * return the URL current path
      *
-     * @return string
+     * @return \League\Url\Components\Path object
      */
     public function getPath()
     {
-        return $this->path->get();
+        return clone $this->path;
     }
 
     /**

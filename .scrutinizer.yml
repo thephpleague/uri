@@ -4,7 +4,7 @@ tools:
     php_code_coverage:
         test_commend: "phpunit"
         filter:
-            paths:["src/*"]
+            paths: ["src/*"]
     php_cpd:
         enabled: true
         filter:

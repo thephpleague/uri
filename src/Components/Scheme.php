@@ -14,6 +14,11 @@ namespace League\Url\Components;
 
 use RuntimeException;
 
+/**
+ *  A class to manipulate URL Scheme component
+ *
+ *  @package League.url
+ */
 class Scheme extends Component
 {
     /**

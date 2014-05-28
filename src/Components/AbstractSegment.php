@@ -21,6 +21,11 @@ use InvalidArgumentException;
 use RuntimeException;
 use Traversable;
 
+/**
+ *  A class to manipulate URL Segment like components
+ *
+ *  @package League.url
+ */
 abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAccess
 {
     /**

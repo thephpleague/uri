@@ -14,6 +14,11 @@ namespace League\Url\Components;
 
 use League\Url\Interfaces\SegmentInterface;
 
+/**
+ *  A class to manipulate URL Path component
+ *
+ *  @package League.url
+ */
 class Path extends AbstractSegment implements SegmentInterface
 {
     /**

@@ -183,6 +183,6 @@ class Query extends AbstractSegment implements QueryInterface
         if (is_null($offset)) {
             throw new InvalidArgumentException('offset can not be null');
         }
-        $this->data[$offset] = $value;
+        $this->modify(array($offset => $value));
     }
 }

@@ -171,6 +171,25 @@ final class Url
     }
 
     /**
+     * Return a array representation of the URL
+     *
+     * @return array similar to PHP internal function {@link parse_url}
+     */
+    public function parse()
+    {
+        return array(
+            'scheme' => $this->scheme->get(),
+            'user' => $this->user->get(),
+            'pass' => $this->pass->get(),
+            'host' => $this->host->get(),
+            'port' => $this->port->get(),
+            'path' => $this->path->get(),
+            'query' => $this->query->get(),
+            'fragment' => $this->fragment->get(),
+        );
+    }
+
+    /**
      * Set the URL user component
      *
      * @param string $str
@@ -508,24 +527,5 @@ final class Url
         $clone->path->remove($data);
 
         return $clone;
-    }
-
-    /**
-     * Return a array representation of the URL
-     *
-     * @return array similar to PHP internal function {@link parse_url}
-     */
-    public function parse()
-    {
-        return array(
-            'scheme' => $this->scheme->get(),
-            'user' => $this->user->get(),
-            'pass' => $this->pass->get(),
-            'host' => $this->host->get(),
-            'port' => $this->port->get(),
-            'path' => $this->path->get(),
-            'query' => $this->query->get(),
-            'fragment' => $this->fragment->get(),
-        );
     }
 }

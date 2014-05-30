@@ -42,10 +42,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testContains()
     {
-        $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3));
-        $this->assertNull($query->contains('foo'));
-        $this->assertSame('foo', $query->contains('bar'));
-        $this->assertNull($query->contains('3'));
-        $this->assertSame('lol', $query->contains(3));
+        $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll'));
+        $this->assertCount(0, $query->fetchKeys('foo'));
+        $this->assertSame(array('foo'), $query->fetchKeys('bar'));
+        $this->assertCount(0, $query->fetchKeys('3'));
+        $this->assertSame(array('lol'), $query->fetchKeys(3));
+        $this->assertSame(array('baz', 'toto'), $query->fetchKeys('troll'));
     }
 }

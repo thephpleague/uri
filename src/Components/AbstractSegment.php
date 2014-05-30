@@ -86,14 +86,9 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     /**
      * {@inheritdoc}
      */
-    public function contains($value)
+    public function fetchKeys($value)
     {
-        $res = array_search($value, $this->data, true);
-        if (false === $res) {
-            return null;
-        }
-
-        return $res;
+        return array_keys($this->data, $value, true);
     }
 
     /**

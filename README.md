@@ -89,42 +89,14 @@ echo $url2; //output http://www.example.com?query=toto%20le%20heros
 echo $url; //remains http://www.example.com?query=toto+le+heros
 ```
 
-To ease manipulating complex component like the `host`, the `path` and/or the `query` the following methods where added:
-
-* `appendHost($data, $whence = null, $whence_index = null)` : append Host info to the component
-* `prependHost($data, $whence = null, $whence_index = null)` : prepend Host info to the component
-* `removeHost($data)` : remove Host info from the component
-
-* `appendPath($data, $whence = null, $whence_index = null)` : append Path info to the component
-* `prependPath($data, $whence = null, $whence_index = null)` : prepend Path info to the component
-* `removePath($data)` : remove Path info from the component
-
-* `modifyQuery($data)` : update the URL Query component 
-
-Of note:
-
-* The `$data` argument can be null, a valid component string, an array or a `Traversable` object;
-* The `$whence` argument specify where to include the appended data;
-* The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
-
-*When using the `removePath` and the `removeHost` methods, if the pattern is present multiple times only the first match found is removed* 
-
-```php
-$url3 = $url2->modifyQuery(['query' => 'value']);
-echo $url3 //output https://john:doe@www.example.com:443/?query=value
-echo $url2; //remains https://john:doe@www.example.com:443/
-```
-
 ## Components classes
 
-Except for `encodingType`, everytime you acces a `League\Url\Url` object getter method it will return one of the following component class. Each `League\Url\Url` object is composed of 8 URL components object composed of 4 classes. 
-
-All component classes implements the  `League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
+Except for `encodingType`, everytime you acces a `League\Url\Url` object getter method it will return one of the following component class. All component classes implements the  `League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
 
 * `set($data)`: set the component data
-* `get()`: returns null if the class is empty or its string representation
-* `__toString`: return the string representation of the component if the data is null then the method output an empty string.
-* `getUriComponent`: return an alter string representation to ease URL representation.
+* `get()`: returns `null` if the class is empty or its string representation
+* `__toString()`: return a typecast string representation of the component.
+* `getUriComponent()`: return an altered string representation to ease URL representation.
 
 ### The `Component` class
 
@@ -132,7 +104,7 @@ This class manages the `user`, `pass`, `fragment` components. The data provided 
 
 ### The `Port` and `Scheme` classes
 
-These classes manage the URL port and scheme component. They extend the `Component` class and only differ when validating the object data.
+These classes manage the URL port and scheme component. They extend the `Component` class and  differ on data validation.
 
 ## Complex Components Classes
 
@@ -145,8 +117,8 @@ Complex component classes implement the following interfaces:
 
 The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
 
-* `toArray`: will return an array representation of the component;
-* `contains`: will detect the offset of a given value or return `null` if the value was not found in the component. Of note: If the value appears more that once, only the first offset found will be return.
+* `toArray()`: will return an array representation of the component;
+* `fetchKeys($value)`: will return an array containing all the offset which contains the given value. If the value is not found the `array` is empty.
 
 ### The `Query` class
 
@@ -169,8 +141,8 @@ foreach ($query as $offset => $value) {
 // foo => bar
 // baz => troll
 
-$offset = $query->contains('troll');
-//$offset equels 'baz'
+$found = $query->fetchKeys('troll');
+//$found equals array(0 => 'baz')
 
 echo count($query); //will return 2;
 echo (string) $query; //will display foo=bar&baz=troll;
@@ -178,11 +150,19 @@ echo (string) $query; //will display foo=bar&baz=troll;
 
 ### The `Path` and `Host` classes
 
-These classes manage the URL port and schemes component. They only differs in the way they validate the data they receive. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
+These classes manage the URL port and scheme components. They only differs in the way they validate their data. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
 
 * `append($data, $whence = null, $whence_index = null)`: append data into the component;
 * `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
 * `remove($data)`: remove data from the component;
+
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, an array or a `Traversable` object;
+* The `$whence` argument specify where to include the appended data;
+* The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
+
+*When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
 
 Example using the `League\Url\Components\Path` object:
 
@@ -201,8 +181,8 @@ foreach ($path as $offset => $value) {
 
 $path->append('leheros/troll', 'bar');
 
-$offset = $path->contains('troll');
-//$offset equels '2'
+$found = $path->fetchKeys('troll');
+//$found equals array(0 => '2');
 
 echo count($path); //will return 4;
 echo (string) $path; //will display bar/leheros/troll/troll
@@ -219,6 +199,34 @@ $path->prepend('bar', 'troll', 1);
 echo $path->get(); //will display bar/leheros/troll/bar/troll
 $path->remove('troll/bar');
 echo (string) $path; //will display bar/leheros/troll
+```
+
+To ease manipulating complex component like the `host`, the `path` and/or the `query` the following methods where added to `League\Url\Url`:
+
+* `appendHost($data, $whence = null, $whence_index = null)`
+* `prependHost($data, $whence = null, $whence_index = null)`
+* `removeHost($data)`
+* `appendPath($data, $whence = null, $whence_index = null)`
+* `prependPath($data, $whence = null, $whence_index = null)`
+* `removePath($data)`
+* `modifyQuery($data)`
+
+These methods proxy the internal component methods but return a full clone `League\Url\Url` object. 
+
+```php
+$url3 = $url2->modifyQuery(array('query' => 'value'));
+echo $url3 //output https://john:doe@www.example.com:443/?query=value
+echo $url2; //remains https://john:doe@www.example.com:443/
+
+//You could do the same using the following logic.
+
+$query = $url2->getQuery();
+$query->modify(array('query' => 'value'));
+$url3 = $url2->setQuery($query);
+
+echo $url3 //output https://john:doe@www.example.com:443/?query=value
+echo $url2; //remains https://john:doe@www.example.com:443/
+
 ```
 
 Testing

@@ -31,15 +31,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query[] = 'comment ça va';
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
-    public function testRemove()
-    {
-        $query = new Query;
-        $query->remove('toto');
-    }
-
     public function testContains()
     {
         $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll'));

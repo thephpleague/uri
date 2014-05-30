@@ -67,14 +67,14 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function testCreateFromServerWithoutRequestUri()
     {
         $server = array(
-            'PHP_SELF' => '/toto/?foo=bar',
+            'PHP_SELF' => '/toto?foo=bar',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
             'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         );
 
-        $this->assertSame('https://127.0.0.1:23/toto/?foo=bar', (string) Factory::createFromServer($server));
+        $this->assertSame('https://127.0.0.1:23/toto?foo=bar', (string) Factory::createFromServer($server));
 
         $server = array(
             'SERVER_ADDR' => '127.0.0.1',

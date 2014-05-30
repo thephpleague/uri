@@ -73,6 +73,23 @@ class Factory
      */
     public static function createFromServer(array $server, $encoding_type = Query::PHP_QUERY_RFC1738)
     {
+        $scheme = self::fetchServerScheme($server);
+        $host =  self::fetchServerHost($server);
+        $port = self::fetchServerPort($server);
+        $request = self::fetchServerRequestUri($server);
+
+        return self::createFromString($scheme.$host.$port.$request, $encoding_type);
+    }
+
+    /**
+     * Return the Server URL scheme component
+     *
+     * @param array $server the server array
+     *
+     * @return string
+     */
+    protected static function fetchServerScheme(array $server)
+    {
         $scheme = '';
         if (isset($server['SERVER_PROTOCOL'])) {
             $scheme = explode('/', $server['SERVER_PROTOCOL']);
@@ -82,27 +99,61 @@ class Factory
             }
             $scheme .= ':';
         }
-        $scheme .= '//';
 
-        $host = $server['SERVER_ADDR'];
+        return $scheme.'//';
+    }
+
+    /**
+     * Return the Server URL host component
+     *
+     * @param array $server the server array
+     *
+     * @return string
+     */
+    protected static function fetchServerHost(array $server)
+    {
         if (isset($server['HTTP_HOST'])) {
-            $host = $server['HTTP_HOST'];
+            return $server['HTTP_HOST'];
+        } elseif (isset($server['SERVER_ADDR'])) {
+            return $server['SERVER_ADDR'];
         }
 
+        throw new RuntimeException('Host could not be detected');
+    }
+
+    /**
+     * Return the Server URL port component
+     *
+     * @param array $server the server array
+     *
+     * @return string
+     */
+    protected static function fetchServerPort(array $server)
+    {
         $port = '';
         if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
             $port = ':'.$server['SERVER_PORT'];
         }
 
-        $request = '/';
-        if (isset($server['PHP_SELF'])) {
-            $request = $server['PHP_SELF'];
-        }
+        return $port;
+    }
+
+    /**
+     * Return the Server URL Request Uri component
+     *
+     * @param array $server the server array
+     *
+     * @return string
+     */
+    protected static function fetchServerRequestUri(array $server)
+    {
         if (isset($server['REQUEST_URI'])) {
-            $request = $server['REQUEST_URI'];
+            return $server['REQUEST_URI'];
+        } elseif (isset($server['PHP_SELF'])) {
+            return $server['PHP_SELF'];
         }
 
-        return self::createFromString($scheme.$host.$port.$request, $encoding_type);
+        return '/';
     }
 
     /**

@@ -12,29 +12,16 @@
 */
 namespace League\Url\Components;
 
-use Closure;
-use IteratorAggregate;
-use Countable;
 use ArrayIterator;
-use ArrayAccess;
 use InvalidArgumentException;
-use RuntimeException;
-use Traversable;
 
 /**
  *  A class to manipulate URL Segment like components
  *
  *  @package League.url
  */
-abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAccess
+abstract class AbstractSegment extends AbstractArray
 {
-    /**
-     * container holder
-     *
-     * @var array
-     */
-    protected $data = array();
-
     /**
      * segment delimiter
      *
@@ -65,30 +52,6 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     public function __toString()
     {
         return str_replace(null, '', $this->get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchKeys($value)
-    {
-        return array_keys($this->data, $value, true);
     }
 
     /**
@@ -125,14 +88,6 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     /**
      * ArrayAccess Interface method
      */
-    public function offsetExists($offset)
-    {
-        return isset($this->data[$offset]);
-    }
-
-    /**
-     * ArrayAccess Interface method
-     */
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -148,26 +103,6 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
     }
 
     /**
-     * ArrayAccess Interface method
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->data[$offset]);
-    }
-
-    /**
-     * ArrayAccess Interface method
-     */
-    public function offsetGet($offset)
-    {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
-        }
-
-        return null;
-    }
-
-    /**
      * Validate a component
      *
      * @param mixed $data the component value to be validate
@@ -177,39 +112,6 @@ abstract class AbstractSegment implements IteratorAggregate, Countable, ArrayAcc
      * @throws \InvalidArgumentException If The data is invalid
      */
     abstract protected function validate($data);
-
-    /**
-     * Validate data before insertion into a URL segment based component
-     *
-     * @param mixed    $data     the data to insert
-     * @param \Closure $callback a callable function to be called to parse
-     *                           a given string into the corrseponding component
-     *
-     * @return array
-     *
-     * @throws \RuntimeException if the data is not valid
-     */
-    protected function validateComponent($data, Closure $callback)
-    {
-        if (is_null($data)) {
-            return array();
-        } elseif ($data instanceof Traversable) {
-            return iterator_to_array($data);
-        } elseif (is_string($data) || (is_object($data)) && (method_exists($data, '__toString'))) {
-            $data = (string) $data;
-            $data = trim($data);
-            if ('' == $data) {
-                return array();
-            }
-            $data = $callback($data);
-        }
-
-        if (! is_array($data)) {
-            throw new RuntimeException('Your submitted data could not be converted into a proper array');
-        }
-
-        return $data;
-    }
 
     /**
      * Validate data before insertion into a URL segment based component

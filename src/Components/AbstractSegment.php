@@ -112,7 +112,10 @@ abstract class AbstractSegment extends AbstractArray
      */
     protected function validateSegment($data, $delimiter)
     {
-        return $this->validateComponent($data, function ($str) use ($delimiter) {
+        return $this->convertToArray($data, function ($str) use ($delimiter) {
+            if ('' == $str) {
+                return array();
+            }
             if ($delimiter == $str[0]) {
                 $str = substr($str, 1);
             }

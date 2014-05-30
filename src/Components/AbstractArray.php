@@ -103,8 +103,13 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
         return null;
     }
 
+    public static function isStringable($data)
+    {
+        return is_string($data) || (is_object($data)) && (method_exists($data, '__toString'));
+    }
+
     /**
-     * Validate data before insertion into a URL segment based component
+     * convert a given data into an array
      *
      * @param mixed    $data     the data to insert
      * @param \Closure $callback a callable function to be called to parse
@@ -114,18 +119,15 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
      *
      * @throws \RuntimeException if the data is not valid
      */
-    protected function validateComponent($data, Closure $callback)
+    protected function convertToArray($data, Closure $callback)
     {
         if (is_null($data)) {
             return array();
         } elseif ($data instanceof Traversable) {
             return iterator_to_array($data);
-        } elseif (is_string($data) || (is_object($data)) && (method_exists($data, '__toString'))) {
+        } elseif (self::isStringable($data)) {
             $data = (string) $data;
             $data = trim($data);
-            if ('' == $data) {
-                return array();
-            }
             $data = $callback($data);
         }
 

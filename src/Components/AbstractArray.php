@@ -37,22 +37,6 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
     /**
      * {@inheritdoc}
      */
-    public function __toString()
-    {
-        return str_replace(null, '', $this->get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;

@@ -58,7 +58,7 @@ $url = Url::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 * The object implements the `__toString` method to enable accessing the string representation of the URL;
 * Everytime the object needs to return an object or modify a property you return a clone of that object:
 	* you can easily manipulating the url with chaining without modifying the original object.
-	* you avoid modifying directly the parent object without notice.
+	* you can not modify the object property without notice.
 
 ```php
 $url = new Url::createFromString('http://www.example.com');
@@ -70,7 +70,7 @@ echo $url; //remains http://www.example.com/
 $port = $url2->getPort(); //$port is a clone object of the $url2->port private property.
 $port->set(80); //
 echo (string) $port; //echo 80;
-echo $port->getPor()->__toString() // echo 443; 
+echo $port->getPort()->__toString() // echo 443; 
 ```
 
 You can specify the encoding type to be used for the query string when using the Factory methods `createFromString` and `createFromServer` or when using the `setEncodingType` method like below:

@@ -35,6 +35,55 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertSame('https://example.com:23/', (string) Factory::createFromServer($server));
+
+        $server = array(
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+        );
+
+        $this->assertSame('https://127.0.0.1:23/', (string) Factory::createFromServer($server));
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testFailCreateFromServerWithoutHost()
+    {
+        $server = array(
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+        );
+
+        Factory::createFromServer($server);
+    }
+
+    public function testCreateFromServerWithoutRequestUri()
+    {
+        $server = array(
+            'PHP_SELF' => '/toto/?foo=bar',
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+        );
+
+        $this->assertSame('https://127.0.0.1:23/toto/?foo=bar', (string) Factory::createFromServer($server));
+
+        $server = array(
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+        );
+
+        $this->assertSame('https://127.0.0.1:23/', (string) Factory::createFromServer($server));
     }
 
     public function testConstructor()

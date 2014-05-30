@@ -22,7 +22,7 @@ use League\Url\Interfaces\QueryInterface;
  *
  *  @package League.url
  */
-class Query extends AbstractSegment implements QueryInterface
+class Query extends AbstractArray implements QueryInterface
 {
     /**
      * Query encoding type

@@ -143,7 +143,10 @@ class Query extends AbstractArray implements QueryInterface
      */
     protected function validate($data)
     {
-        return $this->validateComponent($data, function ($str) {
+        return $this->convertToArray($data, function ($str) {
+            if ('' == $str) {
+                return array();
+            }
             if ('?' == $str[0]) {
                 $str = substr($str, 1);
             }

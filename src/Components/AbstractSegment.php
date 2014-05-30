@@ -12,7 +12,6 @@
 */
 namespace League\Url\Components;
 
-use ArrayIterator;
 use InvalidArgumentException;
 
 /**
@@ -57,32 +56,20 @@ abstract class AbstractSegment extends AbstractArray
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function remove($data)
     {
         $data = $this->fetchRemainingSegment($this->data, $data);
         if (! is_null($data)) {
             $this->set($data);
         }
-    }
-
-    /**
-     * IteratorAggregate Interface method
-     *
-     * @return ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /**
-     * Countable Interface method
-     *
-     * @return integer
-     */
-    public function count()
-    {
-        return count($this->data);
     }
 
     /**

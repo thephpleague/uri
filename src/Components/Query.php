@@ -14,7 +14,6 @@ namespace League\Url\Components;
 
 use Traversable;
 use InvalidArgumentException;
-use BadMethodCallException;
 use League\Url\Interfaces\QueryInterface;
 
 /**
@@ -97,6 +96,14 @@ class Query extends AbstractArray implements QueryInterface
     /**
      * {@inheritdoc}
      */
+    public function __toString()
+    {
+        return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
         $value = $this->__toString();
@@ -113,14 +120,6 @@ class Query extends AbstractArray implements QueryInterface
     public function modify($data)
     {
         $this->set(array_merge($this->data, $this->validate($data)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($data)
-    {
-        throw new BadMethodCallException('This method is not supported');
     }
 
     /**

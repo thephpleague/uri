@@ -78,7 +78,9 @@ class Factory
         $port = self::fetchServerPort($server);
         $request = self::fetchServerRequestUri($server);
 
-        return self::createFromString($scheme.$host.$port.$request, $encoding_type);
+        $url = $scheme.$host.$port.$request;
+
+        return self::createFromString($url, $encoding_type);
     }
 
     /**
@@ -176,19 +178,24 @@ class Factory
             'fragment' => null,
         ), $components);
 
-        if (!is_null($components['scheme'])
+        $components = self::formatAuthComponent($components);
+
+        return self::formatPathComponent($components);
+    }
+
+    /**
+     * Reformat the component according to the path content
+     *
+     * @param array $components the result from parse_url
+     *
+     * @return array
+     */
+    protected static function formatPathComponent(array $components)
+    {
+        if (is_null($components['scheme'])
             && is_null($components['host'])
             && !empty($components['path'])
-            && strpos($components['path'], '@') !== false
         ) {
-            $tmp = explode('@', $components['path'], 2);
-            $components['user'] = $components['scheme'];
-            $components['pass'] = $tmp[0];
-            $components['path'] = $tmp[1];
-            $components['scheme'] = null;
-        }
-
-        if (is_null($components['scheme']) && is_null($components['host']) && !empty($components['path'])) {
             $tmp = $components['path'];
             if (0 === strpos($tmp, '//')) {
                 $tmp = substr($tmp, 2);
@@ -199,14 +206,52 @@ class Factory
             if (isset($res[1])) {
                 $components['path'] = $res[1];
             }
-            if (strpos($components['host'], '@')) {
-                list($auth, $components['host']) = explode('@', $components['host']);
-                $components['user'] = $auth;
-                $components['pass'] = null;
-                if (false !== strpos($auth, ':')) {
-                    list($components['user'], $components['pass']) = explode(':', $auth);
-                }
+            $components = self::formatHostComponent($components);
+        }
+
+        return $components;
+    }
+
+    /**
+     * Reformat the component according to the host content
+     *
+     * @param array $components the result from parse_url
+     *
+     * @return array
+     */
+    protected static function formatHostComponent(array $components)
+    {
+        if (strpos($components['host'], '@')) {
+            list($auth, $components['host']) = explode('@', $components['host']);
+            $components['user'] = $auth;
+            $components['pass'] = null;
+            if (false !== strpos($auth, ':')) {
+                list($components['user'], $components['pass']) = explode(':', $auth);
             }
+        }
+
+        return $components;
+    }
+
+    /**
+     * Reformat the component according to the auth content
+     *
+     * @param array $components the result from parse_url
+     *
+     * @return array
+     */
+    protected static function formatAuthComponent(array $components)
+    {
+        if (!is_null($components['scheme'])
+            && is_null($components['host'])
+            && !empty($components['path'])
+            && strpos($components['path'], '@') !== false
+        ) {
+            $tmp = explode('@', $components['path'], 2);
+            $components['user'] = $components['scheme'];
+            $components['pass'] = $tmp[0];
+            $components['path'] = $tmp[1];
+            $components['scheme'] = null;
         }
 
         return $components;

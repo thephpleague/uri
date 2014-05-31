@@ -146,18 +146,18 @@ class Query extends AbstractArray implements QueryInterface
     /**
      * Url encode the query string
      *
-     * @param array   $str           the array to encode as a query string
-     * @param integer $encoding_type the encoding RFC followed
+     * @param array   $str      the array to encode as a query string
+     * @param integer $enc_type the encoding RFC followed
      *
      * @return string
      */
-    protected function encode(array $str, $encoding_type)
+    protected function encode(array $str, $enc_type)
     {
         if (defined('PHP_QUERY_RFC3986')) {
-            return http_build_query($str, '', '&', $encoding_type);
+            return http_build_query($str, '', '&', $enc_type);
         }
         $query = http_build_query($str, '', '&');
-        if (self::PHP_QUERY_RFC3986 != $encoding_type) {
+        if (self::PHP_QUERY_RFC3986 != $enc_type) {
             return $query;
         }
 

@@ -98,13 +98,17 @@ Except for `encodingType`, everytime you acces a `League\Url\Url` object getter 
 * `__toString()`: return a typecast string representation of the component.
 * `getUriComponent()`: return an altered string representation to ease URL representation.
 
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, or an object implementing the `__toString` method;
+
 ### The `Component` class
 
 This class manages the `user`, `pass`, `fragment` components. The data provided to the `set` method can be a string representation of the component or `null`.
 
 ### The `Port` and `Scheme` classes
 
-These classes manage the URL port and scheme component. They extend the `Component` class and  differ on data validation.
+These classes manage the URL port and scheme component. They extend the `Component` class and differ on data validation.
 
 ## Complex Components Classes
 
@@ -125,6 +129,13 @@ The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\C
 This class manage the URL query component and implements the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
 
 * `modify($data)`: update the component data;
+* `setEncodingType($enc_type)`: set the encoding rule to applied 
+* `getEncodingType()`: get the current encoding rule 
+
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
+* `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `QueryInterface::PHP_QUERY_RFC3968` or `QueryInterface::PHP_QUERY_RFC17328`
 
 Example using the `League\Url\Components\Query` object:
 
@@ -134,6 +145,7 @@ use League\Url\Components\Query;
 $query = new Query;
 $query['foo'] = 'bar';
 $query['baz'] = 'troll';
+$query['toto'] = 'le heros';
 foreach ($query as $offset => $value) {
 	echo "$offset => $value".PHP_EOL;
 }
@@ -144,13 +156,15 @@ foreach ($query as $offset => $value) {
 $found = $query->fetchKeys('troll');
 //$found equals array(0 => 'baz')
 
-echo count($query); //will return 2;
-echo (string) $query; //will display foo=bar&baz=troll;
+echo count($query); //will return 3;
+echo (string) $query; //will display foo=bar&baz=troll&toto=le+heros;
+$query->setEncodingType(Query::PHP_QUERY_RFC3968); //for PHP 5.3
+echo (string) $query; //will display foo=bar&baz=troll&toto=le%20heros;
 ```
 
 ### The `Path` and `Host` classes
 
-These classes manage the URL port and scheme components. They only differs in the way they validate their data. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
+These classes manage the URL path and host components. They only differs in the way they validate their data. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
 
 * `append($data, $whence = null, $whence_index = null)`: append data into the component;
 * `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
@@ -158,7 +172,7 @@ These classes manage the URL port and scheme components. They only differs in th
 
 Of note:
 
-* The `$data` argument can be `null`, a valid component string, an array or a `Traversable` object;
+* The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
 * The `$whence` argument specify where to include the appended data;
 * The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
 

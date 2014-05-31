@@ -225,7 +225,7 @@ To ease manipulating complex component like the `host`, the `path` and/or the `q
 * `removePath($data)`
 * `modifyQuery($data)`
 
-These methods proxy the internal component methods but return a full clone `League\Url\Url` object. 
+These methods are proxies to the internal component method but return a full clone `League\Url\Url` object. 
 
 ```php
 $url3 = $url2->modifyQuery(array('query' => 'value'));

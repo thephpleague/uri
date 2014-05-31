@@ -333,9 +333,7 @@ final class Url
      */
     public function getEncodingType()
     {
-        $clone = clone $this;
-
-        return $clone->query->getEncodingType();
+        return $this->query->getEncodingType();
     }
 
     /**

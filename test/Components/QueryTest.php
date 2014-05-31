@@ -31,7 +31,32 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query[] = 'comment ça va';
     }
 
-    public function testContains()
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testEnctype()
+    {
+        $query = new Query;
+        $this->assertSame(Query::PHP_QUERY_RFC1738, $query->getEncodingType());
+        $query->setEncodingType(Query::PHP_QUERY_RFC3986);
+        $this->assertSame(Query::PHP_QUERY_RFC3986, $query->getEncodingType());
+        $query->setEncodingType(34);
+    }
+
+    /**
+     * @requires PHP 5.4
+     * @expectedException InvalidArgumentException
+     */
+    public function testEnctypePHP54()
+    {
+        $query = new Query;
+        $this->assertSame(PHP_QUERY_RFC1738, $query->getEncodingType());
+        $query->setEncodingType(PHP_QUERY_RFC3986);
+        $this->assertSame(PHP_QUERY_RFC3986, $query->getEncodingType());
+        $query->setEncodingType(34);
+    }
+
+    public function testFetchKeys()
     {
         $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll'));
         $this->assertCount(0, $query->fetchKeys('foo'));

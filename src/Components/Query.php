@@ -43,7 +43,7 @@ class Query extends AbstractArray implements QueryInterface
     /**
      * The Constructor
      *
-     * @param mixed   $data          can be string, array or Traversable
+     * @param mixed $data can be string, array or Traversable
      *                               object convertible into Query String
      * @param integer $encoding_type specify the RFC to follow when using __toString
      */
@@ -56,9 +56,12 @@ class Query extends AbstractArray implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function setEncodingType($encoding_type)
+    public function setEncodingType($enc_type)
     {
-        $this->encoding_type = $this->validateEncodingType($encoding_type);
+        if (! isset($this->encoding_list[$enc_type])) {
+            throw new InvalidArgumentException('Invalid value for the encoding type');
+        }
+        $this->encoding_type = $enc_type;
     }
 
     /**
@@ -120,22 +123,6 @@ class Query extends AbstractArray implements QueryInterface
     public function modify($data)
     {
         $this->set(array_merge($this->data, $this->validate($data)));
-    }
-
-    /**
-     * Validate the Query String Encoding Mode
-     *
-     * @param integer $encoding_type
-     *
-     * @return integer
-     */
-    protected function validateEncodingType($encoding_type)
-    {
-        if (isset($this->encoding_list[$encoding_type])) {
-            return $encoding_type;
-        }
-
-        return self::PHP_QUERY_RFC1738;
     }
 
     /**

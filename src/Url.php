@@ -12,12 +12,9 @@
 */
 namespace League\Url;
 
-use League\Url\Components\Scheme;
-use League\Url\Components\Component;
-use League\Url\Components\Host;
-use League\Url\Components\Port;
-use League\Url\Components\Path;
-use League\Url\Components\Query;
+use League\Url\Interfaces\QueryInterface;
+use League\Url\Interfaces\SegmentInterface;
+use League\Url\Interfaces\ComponentInterface;
 
 /**
  * A Immutable Value Object class to manipulate URLs
@@ -27,82 +24,82 @@ use League\Url\Components\Query;
 final class Url
 {
     /**
+    * Scheme
+    *
+    * @var{@link Scheme}  Object
+    */
+    private $scheme;
+
+    /**
     * User
     *
-    * @var League\Url\Components\Component Object
+    * @var {@link ComponentInterface} Object
     */
     private $user;
 
     /**
     * Pass
     *
-    * @var League\Url\Components\Component Object
+    * @var {@link ComponentInterface} Object
     */
     private $pass;
 
     /**
-    * Scheme
-    *
-    * @var League\Url\Components\Scheme Object
-    */
-    private $scheme;
-
-    /**
-     * Port
-     *
-     *@var League\Url\Components\Port Object
-     */
-    private $port;
-
-    /**
-     * Fragment
-     *
-     * @var League\Url\Components\Component Object
-     */
-    private $fragment;
-
-    /**
      * Host
      *
-     * @var League\Url\Components\Host Object
+     * @var {@link SegmentInterface} Object
      */
     private $host;
 
     /**
+     * Port
+     *
+     *@var {@link Port} Object
+     */
+    private $port;
+
+    /**
      * Path
      *
-     * @var League\Url\Components\Path Object
+     * @var {@link SegmentInterface} Object
      */
     private $path;
 
     /**
      * Query
      *
-     * @var League\Url\Components\Query Object
+     * @var {@link QueryInterface} Object
      */
     private $query;
 
     /**
+     * Fragment
+     *
+     * @var {@link ComponentInterface} Object
+     */
+    private $fragment;
+
+    /**
      * The Constructor
      *
-     * @param {@link Scheme}    $scheme   Url Scheme object
-     * @param {@link Component} $user     Url Component object
-     * @param {@link Component} $pass     Url Component object
-     * @param {@link Host}      $host     Url Host object
-     * @param {@link Port}      $port     Url Port object
-     * @param {@link Path}      $path     Url Path object
-     * @param {@link Query}     $query    Url Query object
-     * @param {@link Component} $fragment Url Component object
+     * @param {@link Scheme}             $scheme   Url Scheme object
+     * @param {@link ComponentInterface} $user     Url Component object
+     * @param {@link ComponentInterface} $pass     Url Component object
+     * @param {@link SegmentInterface}   $host     Url Host object
+     * @param {@link Port}               $port     Url Port object
+     * @param {@link SegmentInterface}   $path     Url Path object
+     * @param {@link QueryInterface}     $query    Url Query object
+     * @param {@link ComponentInterface} $fragment Url Component object
      */
     public function __construct(
-        Scheme $scheme,
-        Component $user,
-        Component $pass,
-        Host $host,
-        Port $port,
-        Path $path,
-        Query $query,
-        Component $fragment
+        ComponentInterface $scheme,
+        ComponentInterface $user,
+        ComponentInterface $pass,
+        SegmentInterface $host,
+        ComponentInterface $port,
+        SegmentInterface $path,
+        QueryInterface $query,
+        ComponentInterface $fragment
     ) {
         $this->scheme = $scheme;
         $this->user = $user;

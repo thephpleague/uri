@@ -26,7 +26,7 @@ final class Url
     /**
     * Scheme
     *
-    * @var{@link Scheme}  Object
+    * @var{@link ComponentInterface}  Object
     */
     private $scheme;
 
@@ -54,7 +54,7 @@ final class Url
     /**
      * Port
      *
-     *@var {@link Port} Object
+     *@var {@link ComponentInterface} Object
      */
     private $port;
 
@@ -82,11 +82,11 @@ final class Url
     /**
      * The Constructor
      *
-     * @param {@link Scheme}             $scheme   Url Scheme object
+     * @param {@link ComponentInterface} $scheme   Url Scheme object
      * @param {@link ComponentInterface} $user     Url Component object
      * @param {@link ComponentInterface} $pass     Url Component object
      * @param {@link SegmentInterface}   $host     Url Host object
-     * @param {@link Port}               $port     Url Port object
+     * @param {@link ComponentInterface} $port     Url Port object
      * @param {@link SegmentInterface}   $path     Url Path object
      * @param {@link QueryInterface}     $query    Url Query object
      * @param {@link ComponentInterface} $fragment Url Component object

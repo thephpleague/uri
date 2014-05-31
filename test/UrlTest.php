@@ -232,6 +232,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'fragment' => $this->url->getFragment()->get(),
         );
         $this->assertSame($expected, $this->url->parse());
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testEncodingType()
+    {
         $this->assertSame(Query::PHP_QUERY_RFC1738, $this->url->getEncodingType());
         $this->assertSame(Query::PHP_QUERY_RFC3986, $this->url->setEncodingType(Query::PHP_QUERY_RFC3986)->getEncodingType());
         $this->assertSame(Query::PHP_QUERY_RFC1738, $this->url->setEncodingType('toto')->getEncodingType());

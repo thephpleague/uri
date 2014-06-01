@@ -94,6 +94,6 @@ class Host extends AbstractSegment implements SegmentInterface
             throw new InvalidArgumentException('each label host must have a maximum of 63 characters');
         }
 
-        return $data;
+        return $this->sanitizeComponent($data);
     }
 }

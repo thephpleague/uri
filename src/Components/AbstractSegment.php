@@ -42,7 +42,9 @@ abstract class AbstractSegment extends AbstractArray
      */
     public function set($data)
     {
-        $this->data = $this->validate($data);
+        $this->data = array_filter($this->validate($data), function ($value) {
+            return ! is_null($value) && '' != $value;
+        });
     }
 
     /**
@@ -73,12 +75,40 @@ abstract class AbstractSegment extends AbstractArray
     }
 
     /**
+     * Sanitize a string component
+     *
+     * @param mixed $str
+     *
+     * @return string|null
+     */
+    protected function sanitizeComponent($str)
+    {
+        if (is_null($str)) {
+            return $str;
+        } elseif (is_array($str)) {
+            foreach ($str as &$value) {
+                $value = $this->sanitizeComponent($value);
+            }
+            unset($value);
+
+            return $str;
+        }
+
+        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
+        $str = trim($str);
+
+        return $str;
+    }
+
+    /**
      * ArrayAccess Interface method
      */
     public function offsetSet($offset, $value)
     {
+        $data = $this->data;
         if (is_null($offset)) {
-            $this->data[] = $value;
+            $data[] = $value;
+            $this->set($data);
 
             return;
         }
@@ -86,7 +116,8 @@ abstract class AbstractSegment extends AbstractArray
         if (false === $offset) {
             throw new InvalidArgumentException('Offset must be an integer');
         }
-        $this->data[$offset] = (string) $value;
+        $data[$offset] = $value;
+        $this->set($data);
     }
 
     /**

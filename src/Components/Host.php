@@ -1,79 +1,99 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url\Components;
 
 use InvalidArgumentException;
+use League\Url\Interfaces\SegmentInterface;
 
 /**
- *  A Class to manipulate URL segment like component
+ *  A class to manipulate URL Host component
  *
- * @package League.Url
- *
+ *  @package League.url
  */
-class Host extends AbstractSegment
+class Host extends AbstractSegment implements SegmentInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $delimiter = '.';
 
-    public function __construct($str)
+    /**
+     * {@inheritdoc}
+     */
+    public function get()
     {
-        $this->init($str, '.');
+        if (! $this->data) {
+            return null;
+        }
+
+        return implode($this->delimiter, $this->data);
     }
 
     /**
-     * Set Host values
-     * @param mixed   $value            a string OR an array representing the data to be inserted
-     * @param string  $position         append or prepend where to insert the data in the host array
-     * @param integer $valueBefore      the data where to append the $value
-     * @param integer $valueBeforeIndex the occurenceIndex of $valueBefore if $valueBefore appears more than once
-     *
-     * @throws RuntimeException If numbers of component exceeds or is equals to 127
-     * @throws RuntimeException If host length exceeds or is equals to 255
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function set($value, $position = null, $valueBefore = null, $valueBeforeIndex = null)
+    public function prepend($data, $whence = null, $whence_index = null)
     {
-        $value = (array) $value;
+        $this->data = $this->prependSegment(
+            $this->data,
+            $this->validate($data, $this->data),
+            $whence,
+            $whence_index
+        );
+    }
 
-        if (127 <= (count($this->data) + count($value))) {
+    /**
+     * {@inheritdoc}
+     */
+    public function append($data, $whence = null, $whence_index = null)
+    {
+        $this->data = $this->appendSegment(
+            $this->data,
+            $this->validate($data, $this->data),
+            $whence,
+            $whence_index
+        );
+    }
+
+    /**
+     * Validate Host data before insertion into a URL host component
+     *
+     * @param mixed $data the data to insert
+     * @param array $host an array representation of a host component
+     *
+     * @return array
+     *
+     * @throws InvalidArgumentException If the added is invalid
+     */
+    protected function validate($data, array $host = array())
+    {
+        $data = $this->validateSegment($data, $this->delimiter);
+        $imploded = implode($this->delimiter, $data);
+        if (127 <= (count($host) + count($data))) {
             throw new InvalidArgumentException('Host may have at maximum 127 parts');
-        } elseif (225 <= (strlen($this->__toString()) + strlen(implode($this->separator, $value)) + 1)) {
+        } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
             throw new InvalidArgumentException('Host may have a maximum of 255 characters');
+        } elseif (strpos($imploded, ' ') !== false || strpos($imploded, '_') !== false) {
+            throw new InvalidArgumentException('Invalid Characters used to create your host');
         }
 
-        if ('prepend' !== $position) {
-            $position = 'append';
+        $res = array_filter($data, function ($value) {
+            return 63 < strlen($value);
+        });
+        if (count($res)) {
+            throw new InvalidArgumentException('each label host must have a maximum of 63 characters');
         }
 
-        return $this->$position($value, $valueBefore, $valueBeforeIndex);
+        return $this->sanitizeComponent($data);
     }
 }

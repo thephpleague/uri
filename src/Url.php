@@ -1,117 +1,109 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url;
 
-use League\Url\Components\Scheme;
-use League\Url\Components\Auth;
-use League\Url\Components\Host;
-use League\Url\Components\Port;
-use League\Url\Components\Path;
-use League\Url\Components\Query;
-use League\Url\Components\Fragment;
+use League\Url\Interfaces\QueryInterface;
+use League\Url\Interfaces\SegmentInterface;
+use League\Url\Interfaces\ComponentInterface;
 
 /**
- *  A Class to manipulate URLs
+ * A Immutable Value Object class to manipulate URLs
  *
- * @package League.Url
- *
+ * @package League.url
  */
-class Url
+final class Url
 {
     /**
-     * Scheme Manipulation Object
-     * @var League\Url\Components\Scheme
-     */
+    * Scheme
+    *
+    * @var{@link ComponentInterface}  Object
+    */
     private $scheme;
 
     /**
-     * User and Passe Manipulation Object
-     * @var League\Url\Components\Auth
-     */
-    private $auth;
+    * User
+    *
+    * @var {@link ComponentInterface} Object
+    */
+    private $user;
 
     /**
-     * Host Manipulation Object
-     * @var League\Url\Components\Host
+    * Pass
+    *
+    * @var {@link ComponentInterface} Object
+    */
+    private $pass;
+
+    /**
+     * Host
+     *
+     * @var {@link SegmentInterface} Object
      */
     private $host;
 
     /**
-     * Port Manipulation Object
-     * @var League\Url\Components\Port
+     * Port
+     *
+     *@var {@link ComponentInterface} Object
      */
     private $port;
 
     /**
-     * Path Manipulation Object
-     * @var League\Url\Components\Path
+     * Path
+     *
+     * @var {@link SegmentInterface} Object
      */
     private $path;
 
     /**
-     * Query Manipulation Object
-     * @var League\Url\Components\Query
+     * Query
+     *
+     * @var {@link QueryInterface} Object
      */
     private $query;
 
     /**
-     * Fragment Manipulation Object
-     * @var League\Url\Components\Fragment
+     * Fragment
+     *
+     * @var {@link ComponentInterface} Object
      */
     private $fragment;
 
     /**
-     * The constructor
+     * The Constructor
      *
-     * @param Scheme   $scheme
-     * @param Auth     $auth
-     * @param Host     $host
-     * @param Port     $port
-     * @param Path     $path
-     * @param Query    $query
-     * @param Fragment $fragment
+     * @param {@link ComponentInterface} $scheme   Url Scheme object
+     * @param {@link ComponentInterface} $user     Url Component object
+     * @param {@link ComponentInterface} $pass     Url Component object
+     * @param {@link SegmentInterface}   $host     Url Host object
+     * @param {@link ComponentInterface} $port     Url Port object
+     * @param {@link SegmentInterface}   $path     Url Path object
+     * @param {@link QueryInterface}     $query    Url Query object
+     * @param {@link ComponentInterface} $fragment Url Component object
      */
     public function __construct(
-        Scheme $scheme,
-        Auth $auth,
-        Host $host,
-        Port $port,
-        Path $path,
-        Query $query,
-        Fragment $fragment
+        ComponentInterface $scheme,
+        ComponentInterface $user,
+        ComponentInterface $pass,
+        SegmentInterface $host,
+        ComponentInterface $port,
+        SegmentInterface $path,
+        QueryInterface $query,
+        ComponentInterface $fragment
     ) {
         $this->scheme = $scheme;
-        $this->auth = $auth;
+        $this->user = $user;
+        $this->pass = $pass;
         $this->host = $host;
         $this->port = $port;
         $this->path = $path;
@@ -125,7 +117,8 @@ class Url
     public function __clone()
     {
         $this->scheme = clone $this->scheme;
-        $this->auth = clone $this->auth;
+        $this->user = clone $this->user;
+        $this->pass = clone $this->pass;
         $this->host = clone $this->host;
         $this->port = clone $this->port;
         $this->path = clone $this->path;
@@ -140,187 +133,394 @@ class Url
      */
     public function __toString()
     {
-        $scheme = $this->scheme->__toString();
-        if (! empty($scheme)) {
-            $scheme .=':';
-        }
-        $scheme .= '//';
+        $scheme = $this->scheme->getUriComponent();
+        $user = $this->user->getUriComponent();
+        $pass = $this->pass->getUriComponent();
+        $host = $this->host->getUriComponent();
+        $port = $this->port->getUriComponent();
+        $path = $this->path->getUriComponent();
+        $query = $this->query->getUriComponent();
+        $fragment = $this->fragment->getUriComponent();
 
-        $auth = $this->auth->__toString();
-        if (! empty($auth)) {
-            $auth .='@';
+        if ('' != $pass) {
+            $pass = ':'.$pass;
         }
-        $host = $this->host->__toString();
-        $port = $this->port->__toString();
-        if (! empty($port)) {
-            $port = ':'.$port;
+
+        $user .= $pass;
+        if ('' != $user) {
+            $user .='@';
         }
-        $path = $this->path->__toString();
-        if (! empty($path)) {
-            $path = '/'.$path;
-        }
-        $query = $this->query->__toString();
-        if (! empty($query)) {
-            $query = '?'.$query;
-        }
-        $fragment = $this->fragment->__toString();
-        if (! empty($fragment)) {
+
+        if ('' != $fragment) {
             $fragment = '#'.$fragment;
         }
 
-        return $scheme.$auth.$host.$port.$path.$query.$fragment;
+        if ('' != $host || '' != $scheme) {
+            $scheme .= '//';
+        }
+
+        $domain = $scheme.$user.$host.$port;
+        if ('' != $path || '' != $domain) {
+            $path = '/'.$path;
+        }
+
+        return $domain.$path.$query.$fragment;
     }
 
     /**
-     * return the scheme value
+     * Return a array representation of the URL
      *
-     * @return string
+     * @return array similar to PHP internal function {@link parse_url}
      */
-    public function getScheme()
+    public function parse()
     {
-        return $this->scheme->get();
+        return array(
+            'scheme' => $this->scheme->get(),
+            'user' => $this->user->get(),
+            'pass' => $this->pass->get(),
+            'host' => $this->host->get(),
+            'port' => $this->port->get(),
+            'path' => $this->path->get(),
+            'query' => $this->query->get(),
+            'fragment' => $this->fragment->get(),
+        );
     }
 
     /**
-     * set the Scheme value
-     * if null the scheme current value is unset
+     * Set the URL user component
+     *
+     * @param string $str
+     *
+     * @return self
+     */
+    public function setUser($str)
+    {
+        $clone = clone $this;
+        $clone->user->set($str);
+
+        return $clone;
+    }
+
+    /**
+     * get the URL user component
+     *
+     * @return {@link Component}
+     */
+    public function getUser()
+    {
+        return clone $this->user;
+    }
+
+    /**
+     * Set the URL pass component
+     *
+     * @param string $str
+     *
+     * @return self
+     */
+    public function setPass($str)
+    {
+        $clone = clone $this;
+        $clone->pass->set($str);
+
+        return $clone;
+    }
+
+    /**
+     * Return the current URL pass component
+     *
+     * @return {@link Component}
+     */
+    public function getPass()
+    {
+        return clone $this->pass;
+    }
+
+    /**
+     * Set the URL port component
      *
      * @param string $value
      *
      * @return self
      */
-    public function setScheme($value = null)
+    public function setPort($value)
     {
-        $this->scheme->set($value);
+        $clone = clone $this;
+        $clone->port->set($value);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * return the user value
+     * Return the URL Port component
      *
-     * @return string|null
-     */
-    public function getUsername()
-    {
-        return $this->auth->getUsername();
-    }
-
-    /**
-     * set user name
-     *
-     * @param string|null $value
-     *
-     * @return self
-     */
-    public function setUsername($value = null)
-    {
-        $this->auth->setUsername($value);
-
-        return $this;
-    }
-
-    /**
-     * return the password value
-     *
-     * @return string|null
-     */
-    public function getPassword()
-    {
-        return $this->auth->getPassword();
-    }
-
-    /**
-     * set user password
-     *
-     * @param string|null $value
-     *
-     * @return self
-     */
-    public function setPassword($value = null)
-    {
-        $this->auth->setPassword($value);
-
-        return $this;
-    }
-
-    /**
-     * return the Port value
-     *
-     * @return string|null
+     * @return {@link Port}
      */
     public function getPort()
     {
-        return $this->port->get();
+        return clone $this->port;
     }
 
     /**
-     * set the Port value
-     * if null the Port current value is unset
+     * Set the URL scheme component
      *
      * @param string $value
      *
      * @return self
      */
-    public function setPort($value = null)
+    public function setScheme($value)
     {
-        $this->port->set($value);
+        $clone = clone $this;
+        $clone->scheme->set($value);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * return the Fragment value
+     * return the URL scheme component
      *
-     * @return string|array
+     * @return {@link Scheme}
+     */
+    public function getScheme()
+    {
+        return clone $this->scheme;
+    }
+
+    /**
+     * Set the URL Fragment component
+     *
+     * @param string $str
+     *
+     * @return self
+     */
+    public function setFragment($str)
+    {
+        $clone = clone $this;
+        $clone->fragment->set($str);
+
+        return $clone;
+    }
+
+    /**
+     * return the URL fragment component
+     *
+     * @return {@link Component}
      */
     public function getFragment()
     {
-        return $this->fragment->get();
+        return clone $this->fragment;
     }
 
     /**
-     * set the Fragment value
-     * if null the Port current value is unset
+     * Set the Query String encoding type (see {@link http_build_query})
      *
-     * @param string $value
+     * @param integer $encoding_type
      *
      * @return self
      */
-    public function setFragment($value = null)
+    public function setEncodingType($encoding_type)
     {
-        $this->fragment->set($value);
+        $clone = clone $this;
+        $clone->query->setEncodingType($encoding_type);
 
-        return $this;
+        return $clone;
     }
 
     /**
-     * return the host component object
+     * return the current Encoding type value
      *
-     * @return \League\Url\Components\Host
+     * @return integer
      */
-    public function host()
+    public function getEncodingType()
     {
-        return $this->host;
+        return $this->query->getEncodingType();
     }
 
     /**
-     * return the path component object
+     * Set the URL query component
      *
-     * @return \League\Url\Components\Path
+     * @param mixed $data the data to be added to the query component
+     *
+     * @return self
      */
-    public function path()
+    public function setQuery($data)
     {
-        return $this->path;
+        $clone = clone $this;
+        $clone->query->set($data);
+
+        return $clone;
     }
 
     /**
-     * return the query component object
+     * Return the current URL query component
      *
-     * @return \League\Url\Components\Query
+     * @return {@link Query}
      */
-    public function query()
+    public function getQuery()
     {
-        return $this->query;
+        return clone $this->query;
+    }
+
+    /**
+     * Replace the current URL query component
+     *
+     * @param mixed $data the data to be replaced
+     *
+     * @return self
+     */
+    public function modifyQuery($data)
+    {
+        $clone = clone $this;
+        $clone->query->modify($data);
+
+        return $clone;
+    }
+
+    /**
+     * Set the URL host component
+     *
+     * @param mixed $data the host data can be a array or a string
+     *
+     * @return self
+     */
+    public function setHost($data)
+    {
+        $clone = clone $this;
+        $clone->host->set($data);
+
+        return $clone;
+    }
+
+    /**
+     * Return the current Host component
+     *
+     * @return {@link Host}
+     */
+    public function getHost()
+    {
+        return clone $this->host;
+    }
+
+    /**
+     * Prepend the URL host component
+     *
+     * @param mixed   $data         the host data can be a array or a string
+     * @param string  $whence       where the data should be prepended to
+     * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return self
+     */
+    public function prependHost($data, $whence = null, $whence_index = null)
+    {
+        $clone = clone $this;
+        $clone->host->prepend($data, $whence, $whence_index);
+
+        return $clone;
+    }
+
+    /**
+     * Append the URL host component
+     *
+     * @param mixed   $data         the host data can be a array or a string
+     * @param string  $whence       where the data should be appended to
+     * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return self
+     */
+    public function appendHost($data, $whence = null, $whence_index = null)
+    {
+        $clone = clone $this;
+        $clone->host->append($data, $whence, $whence_index);
+
+        return $clone;
+    }
+
+    /**
+     * Remove part of the URL host component
+     *
+     * @param mixed $data the path data can be a array or a string
+     *
+     * @return self
+     */
+    public function removeHost($data)
+    {
+        $clone = clone $this;
+        $clone->host->remove($data);
+
+        return $clone;
+    }
+
+    /**
+     * Set the URL path component
+     *
+     * @param mixed $data the host data can be a array or a string
+     *
+     * @return self
+     */
+    public function setPath($data)
+    {
+        $clone = clone $this;
+        $clone->path->set($data);
+
+        return $clone;
+    }
+
+    /**
+     * return the URL current path
+     *
+     * @return {@link Path}
+     */
+    public function getPath()
+    {
+        return clone $this->path;
+    }
+
+    /**
+     * Prepend the URL path component
+     *
+     * @param mixed   $data         the path data can be a array or a string
+     * @param string  $whence       where the data should be prepended to
+     * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return self
+     */
+    public function prependPath($data, $whence = null, $whence_index = null)
+    {
+        $clone = clone $this;
+        $clone->path->prepend($data, $whence, $whence_index);
+
+        return $clone;
+    }
+
+    /**
+     * Append the URL path component
+     *
+     * @param mixed   $data         the path data can be a array or a string
+     * @param string  $whence       where the data should be appended to
+     * @param integer $whence_index the recurrence index of $whence
+     *
+     * @return self
+     */
+    public function appendPath($data, $whence = null, $whence_index = null)
+    {
+        $clone = clone $this;
+        $clone->path->append($data, $whence, $whence_index);
+
+        return $clone;
+    }
+
+    /**
+     * Remove part of the URL path component
+     *
+     * @param mixed $data the path data can be a array or a string
+     *
+     * @return self
+     */
+    public function removePath($data)
+    {
+        $clone = clone $this;
+        $clone->path->remove($data);
+
+        return $clone;
     }
 }

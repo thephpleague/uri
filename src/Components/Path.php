@@ -1,47 +1,77 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\SegmentInterface;
+
 /**
- *  A Class to manipulate URL segment like component
+ *  A class to manipulate URL Path component
  *
- * @package League.Url
- *
+ *  @package League.url
  */
-class Path extends AbstractSegment
+class Path extends AbstractSegment implements SegmentInterface
 {
-    public function __construct($str)
+    /**
+     * {@inheritdoc}
+     */
+    protected $delimiter = '/';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get()
     {
-        $this->init($str, '/');
+        if (! $this->data) {
+            return null;
+        }
+
+        return implode($this->delimiter, str_replace(' ', '%20', $this->data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function append($data, $whence = null, $whence_index = null)
+    {
+        $this->data = $this->appendSegment(
+            $this->data,
+            $this->validate($data),
+            $whence,
+            $whence_index
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prepend($data, $whence = null, $whence_index = null)
+    {
+        $this->data = $this->prependSegment(
+            $this->data,
+            $this->validate($data),
+            $whence,
+            $whence_index
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function validate($data)
+    {
+        $data = $this->validateSegment($data, $this->delimiter);
+        $data = $this->sanitizeComponent($data);
+
+        return $data;
     }
 }

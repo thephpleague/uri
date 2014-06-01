@@ -1,233 +1,177 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url\Components;
 
-use Countable;
-use ArrayIterator;
-use IteratorAggregate;
-use ArrayAccess;
+use Traversable;
+use InvalidArgumentException;
+use League\Url\Interfaces\QueryInterface;
 
 /**
- *  A Class to manipulate URL Query String component
+ *  A class to manipulate URL Query component
  *
- * @package League.Url
- *
+ *  @package League.url
  */
-class Query implements Countable, IteratorAggregate, ArrayAccess
+class Query extends AbstractArray implements QueryInterface
 {
     /**
-     * The Query string container
+     * Query encoding type
+     *
+     * @var integer
+     */
+    protected $encoding_type = self::PHP_QUERY_RFC1738;
+
+    /**
+     * Possible encoding type list
+     *
      * @var array
      */
-    private $data = array();
+    protected $encoding_list = array(
+        self::PHP_QUERY_RFC3986 => 1,
+        self::PHP_QUERY_RFC1738 => 1
+    );
 
-    public function __construct($query = null)
+    /**
+     * The Constructor
+     *
+     * @param mixed $data can be string, array or Traversable
+     *                               object convertible into Query String
+     * @param integer $encoding_type specify the RFC to follow when using __toString
+     */
+    public function __construct($data = null, $encoding_type = self::PHP_QUERY_RFC1738)
     {
-        if (null !== $query) {
-            $res = $query;
-            if (! is_array($query)) {
-                if ('?' == $res[0]) {
-                    $res = substr($res, 1);
-                }
-                parse_str($query, $res);
-            }
-            $this->set($res);
+        $this->setEncodingType($encoding_type);
+        $this->set($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEncodingType($enc_type)
+    {
+        if (! isset($this->encoding_list[$enc_type])) {
+            throw new InvalidArgumentException('Invalid value for the encoding type');
         }
+        $this->encoding_type = $enc_type;
     }
 
     /**
-     * does the key exists in the query
-     *
-     * @param string $key
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
-    public function has($key)
+    public function getEncodingType()
     {
-        return isset($this->data[$key]);
+        return $this->encoding_type;
     }
 
     /**
-     * get the query data
-     * if a key is provided it will return its associated data of null
-     * if not key is provided it will return the whole data
-     *
-     * @param string $key the key
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function get($key)
+    public function set($data)
     {
-        if (! $this->has($key)) {
-            return null;
+        $this->data = array_filter($this->validate($data), function ($value) {
+            $value = trim($value);
 
-        }
-
-        return $this->data[$key];
-    }
-
-    /**
-     * get the query data
-     * if a key is provided it will return its associated data of null
-     * if not key is provided it will return the whole data
-     *
-     * @param string $key the key
-     *
-     * @return mixed
-     */
-    public function all()
-    {
-        return $this->data;
-    }
-
-    /**
-     * set Query values
-     *
-     * @param mixed  $key   a string OR an array representing the data to be set
-     * @param string $value is used $key is not an array is the value a to be set
-     *
-     * @return self
-     */
-    public function set($key, $value = null)
-    {
-        if ($key instanceof Query) {
-            $key = $key->data;
-        } elseif (! is_array($key)) {
-            $key = array($key => $value);
-        }
-        $this->data = array_filter(array_merge($this->data, $key), function ($value) {
-            return null !== $value;
+            return null !== $value && '' !== $value;
         });
-
-        return $this;
     }
 
     /**
-     * Remove keys
-     *
-     * @param mixed $keys a string OR an array representing the key to be removed from the data
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function remove($keys)
+    public function get()
     {
-        $keys = (array) $keys;
-        foreach ($keys as $key) {
-            unset($this->data[$key]);
+        if (! $this->data) {
+            return null;
         }
 
-        return $this;
+        return $this->encode($this->data, $this->encoding_type);
     }
 
     /**
-     * Clear the query data
-     *
-     * @return self
-     */
-    public function clear()
-    {
-        $this->data = array();
-
-        return $this;
-    }
-
-    /**
-     * format the string representation
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString()
     {
-        return  http_build_query($this->data);
+        return str_replace(null, '', $this->get());
     }
 
     /**
-     * Countable Interface
-     * @return integer
+     * {@inheritdoc}
      */
-    public function count()
+    public function getUriComponent()
     {
-        return count($this->data);
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value = '?'.$value;
+        }
+
+        return $value;
     }
 
     /**
-     * IteratorAggregate Interface
-     * @return \ArrayIterator
+     * {@inheritdoc}
      */
-    public function getIterator()
+    public function modify($data)
     {
-        return new ArrayIterator($this->data);
+        $this->set(array_merge($this->data, $this->validate($data)));
     }
 
     /**
-     * ArrayAccess Interface has alias
-     * @param string $offset
+     * {@inheritdoc}
+     */
+    protected function validate($data)
+    {
+        return $this->convertToArray($data, function ($str) {
+            if ('' == $str) {
+                return array();
+            }
+            if ('?' == $str[0]) {
+                $str = substr($str, 1);
+            }
+            parse_str($str, $arr);
+
+            return $arr;
+        });
+    }
+
+    /**
+     * Url encode the query string
      *
-     * @return boolean
+     * @param array   $str      the array to encode as a query string
+     * @param integer $enc_type the encoding RFC followed
+     *
+     * @return string
      */
-    public function offsetExists($offset)
+    protected function encode(array $str, $enc_type)
     {
-        return $this->has($offset);
+        if (defined('PHP_QUERY_RFC3986')) {
+            return http_build_query($str, '', '&', $enc_type);
+        }
+        $query = http_build_query($str, '', '&');
+        if (self::PHP_QUERY_RFC3986 != $enc_type) {
+            return $query;
+        }
+
+        return str_replace(array('%E7', '+'), array('~', '%20'), $query);
     }
 
     /**
-     * ArrayAccess Interface get alias
-     * @param string $offset
-     *
-     * @return boolean
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * ArrayAccess Interface set alias
-     * @param string $offset
-     * @param mixed  $value
-     *
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
-    }
-
-    /**
-     * ArrayAccess Interface set alias
-     * @param string $offset
-     *
-     */
-    public function offsetUnset($offset)
-    {
-        $this->remove($offset);
+        if (is_null($offset)) {
+            throw new InvalidArgumentException('offset can not be null');
+        }
+        $this->modify(array($offset => $value));
     }
 }

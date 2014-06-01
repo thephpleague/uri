@@ -1,235 +1,231 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url\Components;
 
-use Countable;
-use ArrayIterator;
-use IteratorAggregate;
+use InvalidArgumentException;
 
 /**
- *  A Class to manipulate URL segment like component
+ *  A class to manipulate URL Segment like components
  *
- * @package League.Url
- *
+ *  @package League.url
  */
-abstract class AbstractSegment implements Countable, IteratorAggregate
+abstract class AbstractSegment extends AbstractArray
 {
     /**
-     * Segment separator
+     * segment delimiter
+     *
      * @var string
      */
-    protected $separator;
+    protected $delimiter;
 
     /**
-     * Segment Data
-     * @var array
+     * The Constructor
+     * @param mixed $data The data to add
      */
-    protected $data = array();
-
-    protected function init($str, $separator)
+    public function __construct($data = null)
     {
-        $this->separator = $separator;
-        if (! is_null($str)) {
-            if ($this->separator == $str[0]) {
-                $str = substr($str, 1);
-            }
-            if ($this->separator == $str[strlen($str)-1]) {
-                $str = substr($str, 0, -1);
-            }
-            $this->data = explode($this->separator, $str);
-        }
+        $this->set($data);
     }
 
     /**
-     * check if the value is present in the Segment data
-     *
-     * @param string $name the value to check
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
-    public function has($name)
+    public function set($data)
     {
-        return in_array($name, $this->data);
-    }
-
-    /**
-     * return the associated data to index or null
-     *
-     * @param null|integer $index the index
-     *
-     * @return mixed
-     */
-    public function get($index = null)
-    {
-        if (! array_key_exists($index, $this->data)) {
-            return null;
-        }
-
-        return $this->data[$index];
-    }
-
-    /**
-     * return all available data
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Set Host values
-     * @param mixed   $value            a string OR an array representing the data to be inserted
-     * @param string  $position         append or prepend where to insert the data in the host array
-     * @param integer $valueBefore      the data where to append the $value
-     * @param integer $valueBeforeIndex the occurenceIndex of $valueBefore if $valueBefore appears more than once
-     *
-     * @return self
-     */
-    public function set($value, $position = null, $valueBefore = null, $valueBeforeIndex = null)
-    {
-        if ('prepend' !== $position) {
-            $position = 'append';
-        }
-
-        return $this->$position($value, $valueBefore, $valueBeforeIndex);
-    }
-
-    /**
-     * remove values from the segment
-     * @param mixed $value a string OR an array representing the data to be removed
-     *
-     * @return self
-     */
-    public function remove($name)
-    {
-        $name = (array) $name;
-        $this->data = array_filter($this->data, function ($value) use ($name) {
-            return ! in_array($value, $name);
+        $this->data = array_filter($this->validate($data), function ($value) {
+            return ! is_null($value) && '' != $value;
         });
-
-        return $this;
     }
 
     /**
-     * Clear segment data
-     *
-     * @return self
-     */
-    public function clear()
-    {
-        $this->data = array();
-
-        return $this;
-    }
-
-    /**
-     * append values to Segment
-     * @param mixed   $value            a string OR an array representing the data to be inserted
-     * @param integer $valueBefore      the data where to append the $value
-     * @param integer $valueBeforeIndex the occurenceIndex of $valueBefore if $valueBefore appears more than once
-     *
-     * @return self
-     */
-    protected function append($value, $valueBefore = null, $valueBeforeIndex = null)
-    {
-        $value = (array) $value;
-        $before = $this->data;
-        $after = array();
-        if (null !== $valueBefore && count($found = array_keys($before, $valueBefore))) {
-            $index = $found[count($found)-1];
-            if (array_key_exists($valueBeforeIndex, $found)) {
-                $index = $found[$valueBeforeIndex];
-            }
-            $after = array_slice($before, $index+1);
-            $before = array_slice($before, 0, $index+1);
-        }
-        $this->data = array_merge($before, $value, $after);
-
-        return $this;
-    }
-
-    /**
-     * prepend values to Segment
-     * @param mixed   $value            a string OR an array representing the data to be inserted
-     * @param integer $valueBefore      the data where to append the $value
-     * @param integer $valueBeforeIndex the occurenceIndex of $valueBefore if $valueBefore appears more than once
-     *
-     * @return self
-     */
-    protected function prepend($value, $valueBefore = null, $valueBeforeIndex = null)
-    {
-        $value = (array) $value;
-        $before = array();
-        $after = $this->data;
-        if (null !== $valueBefore && count($found = array_keys($after, $valueBefore))) {
-            $index = $found[0];
-            if (array_key_exists($valueBeforeIndex, $found)) {
-                $index = $found[$valueBeforeIndex];
-            }
-            $before = array_slice($after, 0, $index);
-            $after = array_slice($after, $index);
-        }
-        $this->data = array_merge($before, $value, $after);
-
-        return $this;
-    }
-
-    /**
-    * Countable Interface
-    * @return integer
-    */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-    * IteratorAggregate Interface
-    * @return \ArrayIterator
-    */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /**
-     * format the string representation
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString()
     {
-        return implode($this->separator, $this->data);
+        return str_replace(null, '', $this->get());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($data)
+    {
+        $data = $this->fetchRemainingSegment($this->data, $data);
+        if (! is_null($data)) {
+            $this->set($data);
+        }
+    }
+
+    /**
+     * Sanitize a string component
+     *
+     * @param mixed $str
+     *
+     * @return string|null
+     */
+    protected function sanitizeComponent($str)
+    {
+        if (is_null($str)) {
+            return $str;
+        } elseif (is_array($str)) {
+            foreach ($str as &$value) {
+                $value = $this->sanitizeComponent($value);
+            }
+            unset($value);
+
+            return $str;
+        }
+
+        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
+        $str = trim($str);
+
+        return $str;
+    }
+
+    /**
+     * ArrayAccess Interface method
+     */
+    public function offsetSet($offset, $value)
+    {
+        $data = $this->data;
+        if (is_null($offset)) {
+            $data[] = $value;
+            $this->set($data);
+
+            return;
+        }
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, array('min_range' => 0));
+        if (false === $offset) {
+            throw new InvalidArgumentException('Offset must be an integer');
+        }
+        $data[$offset] = $value;
+        $this->set($data);
+    }
+
+    /**
+     * Validate a component
+     *
+     * @param mixed $data the component value to be validate
+     *
+     * @return string|null
+     *
+     * @throws \InvalidArgumentException If The data is invalid
+     */
+    abstract protected function validate($data);
+
+    /**
+     * Validate data before insertion into a URL segment based component
+     *
+     * @param mixed  $data      the data to insert
+     * @param string $delimiter a single character delimiter
+     *
+     * @return array
+     *
+     * @throws \RuntimeException if the data is not valid
+     */
+    protected function validateSegment($data, $delimiter)
+    {
+        return $this->convertToArray($data, function ($str) use ($delimiter) {
+            if ('' == $str) {
+                return array();
+            }
+            if ($delimiter == $str[0]) {
+                $str = substr($str, 1);
+            }
+
+            return explode($delimiter, $str);
+        });
+    }
+
+    /**
+     * Append some data to a given array
+     *
+     * @param array   $left         the original array
+     * @param array   $value        the data to prepend
+     * @param string  $whence       the value of the data to prepend before
+     * @param integer $whence_index the occurence index for $whence
+     *
+     * @return array
+     */
+    protected function appendSegment(array $left, array $value, $whence = null, $whence_index = null)
+    {
+        $right = array();
+        if (null !== $whence && count($found = array_keys($left, $whence))) {
+            array_reverse($found);
+            $index = $found[0];
+            if (array_key_exists($whence_index, $found)) {
+                $index = $found[$whence_index];
+            }
+            $right = array_slice($left, $index+1);
+            $left = array_slice($left, 0, $index+1);
+        }
+
+        return array_merge($left, $value, $right);
+    }
+
+    /**
+     * Prepend some data to a given array
+     *
+     * @param array   $right        the original array
+     * @param array   $value        the data to prepend
+     * @param string  $whence       the value of the data to prepend before
+     * @param integer $whence_index the occurence index for $whence
+     *
+     * @return array
+     */
+    protected function prependSegment(array $right, array $value, $whence = null, $whence_index = null)
+    {
+        $left = array();
+        if (null !== $whence && count($found = array_keys($right, $whence))) {
+            $index = $found[0];
+            if (array_key_exists($whence_index, $found)) {
+                $index = $found[$whence_index];
+            }
+            $left = array_slice($right, 0, $index);
+            $right = array_slice($right, $index);
+        }
+
+        return array_merge($left, $value, $right);
+    }
+
+    /**
+     * Remove some data from a given array
+     *
+     * @param array $data  the original array
+     * @param mixed $value the data to be removed (can be an array or a single segment)
+     *
+     * @return string|null
+     *
+     * @throws \RuntimeException If $value is invalid
+     */
+    protected function fetchRemainingSegment(array $data, $value)
+    {
+        $segment = implode($this->delimiter, $data);
+        $part = implode($this->delimiter, $this->validate($value));
+        if (! preg_match('@(:?^|\/)'.preg_quote($part, '@').'@', $segment, $matches, PREG_OFFSET_CAPTURE)) {
+            return null;
+        }
+
+        $pos = $matches[0][1];
+
+        return substr($segment, 0, $pos).substr($segment, $pos + strlen($part) + 1);
     }
 }

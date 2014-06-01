@@ -1,92 +1,57 @@
 <?php
 /**
-* League.url - A lightweight Url Parser library
+* This file is part of the League.url library
 *
-* @author Ignace Nyamagana Butera <nyamsprod@gmail.com>
-* @copyright 2014 Ignace Nyamagana Butera
-* @link https://github.com/thephpleague/url
 * @license http://opensource.org/licenses/MIT
+* @link https://github.com/thephpleague/url/
 * @version 3.0.0
 * @package League.url
 *
-* MIT LICENSE
-*
-* Permission is hereby granted, free of charge, to any person obtaining
-* a copy of this software and associated documentation files (the
-* "Software"), to deal in the Software without restriction, including
-* without limitation the rights to use, copy, modify, merge, publish,
-* distribute, sublicense, and/or sell copies of the Software, and to
-* permit persons to whom the Software is furnished to do so, subject to
-* the following conditions:
-*
-* The above copyright notice and this permission notice shall be
-* included in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
 */
 namespace League\Url\Components;
 
+use RuntimeException;
+
 /**
- *  A Class to manipulate URL scheme component
+ *  A class to manipulate URL Scheme component
  *
- * @package League.Url
- *
+ *  @package League.url
  */
-class Scheme
+class Scheme extends Component
 {
     /**
-     * data
-     * @var string
+     * {@inheritdoc}
      */
-    private $data;
-
-    public function __construct($str = null)
+    protected function validate($data)
     {
-        $this->set($str);
-    }
-
-    /**
-     * return the data
-     * @return string
-     */
-    public function get()
-    {
-        return $this->data;
-    }
-
-    /**
-     * set the data
-     * @param string $value
-     *
-     * @return self
-     */
-    public function set($value = null)
-    {
-        if (null !== $value) {
-            $value = filter_var($value, FILTER_VALIDATE_REGEXP, array(
-                'options' => array(
-                    'regexp' => '/^http(s?)$/i',
-                    'default' => null
-                )
-            ));
+        $data = parent::validate($data);
+        if (is_null($data)) {
+            return $data;
         }
-        $this->data = $value;
 
-        return $this;
+        $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
+            'options' => array('regexp' => '/^http(s?)$/i')
+        ));
+
+        if (! $data) {
+            throw new RuntimeException('This class only deals with http URL');
+        }
+
+        return strtolower($data);
     }
 
     /**
-     * format the data string representation
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString()
+    public function getUriComponent()
     {
-        return $this->data;
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value .=':';
+        }
+
+        return $value;
     }
 }

@@ -1,105 +1,73 @@
 <?php
 
-namespace League\Url\Test\Components;
+namespace League\Url\test;
 
-use League\Url\Components\Path;
 use PHPUnit_Framework_TestCase;
+use League\Url\Components\Path;
 
 class PathTest extends PHPUnit_Framework_TestCase
 {
-
-    private $segment;
-
-    public function setUp()
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testArrayAccess()
     {
-        $path = '/foo/bar/baz';
-        $separator = '/';
-        $this->segment = new Path($path, $separator);
-    }
-
-    public function testCountable()
-    {
-        $this->assertCount(3, $this->segment);
-    }
-
-    public function testIterator()
-    {
-        foreach ($this->segment as $key => $value) {
-            $this->assertSame($value, $this->segment->get($key));
+        $path = new Path;
+        $path[] = 'leheros';
+        $this->assertNull($path[5]);
+        $this->assertSame('leheros', $path[0]);
+        $this->assertSame('leheros', (string) $path);
+        $path[0] = 'levilain';
+        $path[1] = 'bar';
+        $this->assertTrue(isset($path[1]));
+        $this->assertCount(2, $path);
+        $this->assertSame('levilain/bar', (string) $path);
+        foreach ($path as $offset => $value) {
+            $this->assertSame($value, $path[$offset]);
         }
+        unset($path[0]);
+        $this->assertNull($path[0]);
+        $this->assertSame(array(1 => 'bar'), $path->toArray());
+        $path['toto'] = 'comment ça va';
     }
 
-    public function testConstructor()
+    public function testRemove()
     {
-        $path = '/foo/bar/baz';
-        $separator = '/';
-        $segment = new Path($path, $separator);
-        $res = $segment->all();
-        $this->assertInternalType('array', $res);
-        $this->assertCount(3, $res);
-        $this->assertSame(array('foo', 'bar', 'baz'), $res);
+        $path = new Path('/toto/le/heros/masson');
+        $path->remove('toto');
+        $this->assertSame('le/heros/masson', (string) $path);
+        $path->remove('ros/masson');
+        $this->assertSame('le/heros/masson', (string) $path);
+        $path->remove('asson');
+        $this->assertSame('le/heros/masson', (string) $path);
+        $path->remove('/heros/masson');
+        $this->assertSame('le', (string) $path);
+        $path = new Path('/toto/le/heros/masson');
+        $path->remove('le/heros');
+        $this->assertSame('toto/masson', (string) $path);
     }
 
-    public function testConstructor2()
+    public function testContains1()
     {
-        $path = '/foo/bar/baz/';
-        $separator = '/';
-        $segment = new Path($path, $separator);
-        $res = $segment->all();
-        $this->assertInternalType('array', $res);
-        $this->assertCount(3, $res);
-        $this->assertSame(array('foo', 'bar', 'baz'), $res);
+        $path = new Path(array('bar', 'troll', 3));
+        $this->assertCount(0, $path->fetchKeys('foo'));
     }
 
-    public function testHas()
+    public function testContains2()
     {
-        $this->assertTrue($this->segment->has('foo'));
-        $this->assertFalse($this->segment->has('toto'));
+        $path = new Path(array('bar', 'troll', 3));
+        $this->assertSame(array(0), $path->fetchKeys('bar'));
     }
 
-    public function testGet()
+    public function testContains3()
     {
-        $res = $this->segment->get(0);
-        $this->assertSame('foo', $res);
-        $this->assertNull($this->segment->get('foo'));
+        $path = new Path(array('bar', 3, 'troll', 3));
+        $this->assertCount(2, $path->fetchKeys('3'));
     }
 
-    public function testClear()
+    public function testContains4()
     {
-        $res = $this->segment
-            ->clear()
-            ->all();
-        $this->assertInternalType('array', $res);
-        $this->assertCount(0, $res);
-    }
-
-    public function testSet()
-    {
-        $this->segment->set('toto');
-        $this->assertSame('foo/bar/baz/toto', $this->segment->__toString());
-
-        $this->segment->set('toto', 'prepend');
-        $this->assertSame('toto/foo/bar/baz/toto', $this->segment->__toString());
-
-        $this->segment->set('toto', 'prepend', 'toto');
-        $this->assertSame('toto/toto/foo/bar/baz/toto', $this->segment->__toString());
-
-        $this->segment->set('toto', 'sdfqsdfsd', 'toto');
-        $this->assertSame('toto/toto/foo/bar/baz/toto/toto', $this->segment->__toString());
-
-        $this->segment->set('toto', 'sdfqsdfsd', 'toto', 3);
-        $this->assertSame('toto/toto/foo/bar/baz/toto/toto/toto', $this->segment->__toString());
-
-        $this->segment->clear();
-        $this->assertSame('', $this->segment->__toString());
-
-        $this->segment
-            ->set(array('inscription', 'foo', 'bar'))
-            ->set('john', 'prepend', 'foo', 8)
-            ->set('jane', 'prepend', 'bar', 0);
-        $this->assertSame('inscription/john/foo/jane/bar', $this->segment->__toString());
-
-        $this->segment->remove('bar');
-        $this->assertSame('inscription/john/foo/jane', $this->segment->__toString());
+        $path = new Path(array('bar', 'troll', 3));
+        $this->assertSame(array(2), $path->fetchKeys('3'));
     }
 }

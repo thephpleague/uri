@@ -1,21 +1,18 @@
-League.url
-======
+# League.url
+
 
 [![Build Status](https://travis-ci.org/thephpleague/url.png?branch=master)](https://travis-ci.org/thephpleague/url)
 [![Coverage Status](https://coveralls.io/repos/thephpleague/url/badge.png)](https://coveralls.io/r/thephpleague/url)
-[![Total Downloads](https://poser.pugx.org/league/url/downloads.png)](https://packagist.org/packages/league/url)
-[![Latest Stable Version](https://poser.pugx.org/league/url/v/stable.png)](https://packagist.org/packages/league/url)
 
 The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 
-This package is compliant with [PSR-1][], [PSR-2][], and [PSR-4][].
+This package is compliant with [PSR-2][], and [PSR-4][].
 
 [PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
-[PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
-Install
--------
+## Install
+
 
 You may install the League Url package with Composer (recommended) or manually.
 
@@ -28,112 +25,223 @@ You may install the League Url package with Composer (recommended) or manually.
 ```
 
 
-System Requirements
--------
+## System Requirements
 
 You need **PHP >= 5.3.0** to use League Url but the latest stable version of PHP is recommended.
 
-Instantiation
--------
+## Instantiation
 
-The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR-4 compliant Autoloader. Once added to the autoloader you can instantiate your url with 3 differents methods as explain below:
+The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR-4 compliant Autoloader. Once added to the autoloader you can easily instantiate your url:
 
 ```php
 <?php
 
-
-use League\Url\Factory;
+use League\Url\Factory as Url;
+use League\Url\Interfaces\QueryInterface; //For PHP 5.3 backward compatibility
 
 //Method 1 : from a given string
-$url = Factory::createUrlFromString('http://www.example.com'); // you've created a new Url object from this string 
+$url = new Url::createFromString('http://www.example.com');
+$url = new Url::createFromString('http://www.example.com', QueryInterface::PHP_QUERY_RFC3968);
 
 //Method 2: from the current PHP page
-$url = Factory::createUrlFromServer($_SERVER); //don't forget to provide the $_SERVER array
-
-//Method 3: a "naked" URL
-$url = Factory::createUrl();
+$url = Url::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
+// in PHP5.4+ you can directly use PHP internal constant
+$url = Url::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 ```
 
-These 3 methods will all return a valid `League\Url\Url` object. This is the main object we will be using to manipulate the url.
+`$url` is a valid `League\Url\Url` object. This is the main value object we will be using to manipulate the url.
 
+## Usage
 
-Usage
--------
+`League\Url` is a Immutable Value Object:
 
-Manipulating the Url is simple with chaining, look at the example below:
+* The object implements the `__toString` method to enable accessing the string representation of the URL;
+* Everytime the object needs to return an object or modify a property you return a clone of that object:
+	* you can easily manipulating the url with chaining without modifying the original object.
+	* you can not modify the object property without notice.
+
+```php
+$url = new Url::createFromString('http://www.example.com');
+
+$url2 = $url->setUser('john')->setPass('doe')->setPort(443)->setScheme('https');
+echo $url2; //output https://john:doe@www.example.com:443/
+echo $url; //remains http://www.example.com/
+
+$port = $url2->getPort(); //$port is a clone object of the $url2->port private property.
+$port->set(80); //
+echo (string) $port; //echo 80;
+echo $port->getPort()->__toString() // echo 443; 
+```
+
+You can specify the encoding type to be used for the query string when using the Factory methods `createFromString` and `createFromServer` or when using the `setEncodingType` method like below:
 
 ```php
 
-$url = Factory::createFromString('http://www.example.com');
+use `League\Url\Interface\QueryInterface`;
 
-$url
-    ->setUsername('john') //adding username information
-    ->setPassword('doe') //adding password information
-    ->setScheme('https')
-    ->setPort(443);
+$url = new Url::createFromString(
+	'http://www.example.com?query=toto+le+heros',
+	QueryInterface::PHP_QUERY_RFC17328
+);
+
+$url2 = $url->setEncodingType(QueryInterface::PHP_QUERY_RFC3968);
+echo $url2; //output http://www.example.com?query=toto%20le%20heros
+echo $url; //remains http://www.example.com?query=toto+le+heros
 ```
-For the more complex component `League\Url\Url` returns a more specific class dedicated to manipulate them.
+
+## Components classes
+
+Except for `encodingType`, everytime you acces a `League\Url\Url` object getter method it will return one of the following component class. All component classes implements the  `League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
+
+* `set($data)`: set the component data
+* `get()`: returns `null` if the class is empty or its string representation
+* `__toString()`: return a typecast string representation of the component.
+* `getUriComponent()`: return an altered string representation to ease URL representation.
+
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, or an object implementing the `__toString` method;
+
+### The `Component` class
+
+This class manages the `user`, `pass`, `fragment` components. The data provided to the `set` method can be a string representation of the component or `null`.
+
+### The `Port` and `Scheme` classes
+
+These classes manage the URL port and scheme component. They extend the `Component` class and differ on data validation.
+
+## Complex Components Classes
+
+Complex component classes implement the following interfaces:
+
+* `Countable`
+* `IteratorAggregate`
+* `ArrayAccess`
+* `League\Interfaces\ComponentArrayInterface`
+
+The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
+
+* `toArray()`: will return an array representation of the component;
+* `fetchKeys($value)`: will return an array containing all the offset which contains the given value. If the value is not found the `array` is empty.
+
+### The `Query` class
+
+This class manage the URL query component and implements the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
+
+* `modify($data)`: update the component data;
+* `setEncodingType($enc_type)`: set the encoding rule to applied 
+* `getEncodingType()`: get the current encoding rule 
+
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
+* `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `QueryInterface::PHP_QUERY_RFC3968` or `QueryInterface::PHP_QUERY_RFC17328`
+
+Example using the `League\Url\Components\Query` object:
 
 ```php
-$query = $url->query(); //return a League\Url\Components\Query
-$query
-    ->set('computer', 'os') //adding on query data
-    ->set(['foo' => 'bar', 'bar' => 'baz']); //add more query data using an array
-
-$path = $url->path(); //return a League\Url\Components\Path
-$path
-    ->set('windows') //add a directory path named 'windows' at the end of the URL path
-    ->set('linux', 'prepend', 'windows') //adding linux directory path before 'window'
-    ->set('iOS', 'append', 'windows');  //adding iOS directory path after 'window'
-
-$host = $url->host(); //return a League\Url\Components\Host
-$host
-    ->clear() //remove any host information if present
-    ->set(['api', 'ejamplo', 'com']);
-
-echo $url; // will output https://john:doe@api.ejamplo.com:443/linux/windows/iOS?computer=os&foo=bar&bar=baz
-
-$urlbis = clone $url; //When cloning the references class will also be clone to dereference the 2 classes.
-
-```
-
-Urls Components Classes
--------
-
-The `League\Url` library relies on components classes that represents each part of a URL. 
-Let's say that you are only interested in modifying the query string from a given URL. 
-You can proceed like so:
-
-```php 
 use League\Url\Components\Query;
 
-$string = $_SERVER['QUERY_STRING'];
+$query = new Query;
+$query['foo'] = 'bar';
+$query['baz'] = 'troll';
+$query['toto'] = 'le heros';
+foreach ($query as $offset => $value) {
+	echo "$offset => $value".PHP_EOL;
+}
+//will echo 
+// foo => bar
+// baz => troll
 
-$query = new Query($string);
+$found = $query->fetchKeys('troll');
+//$found equals array(0 => 'baz')
 
-$query->clear(); //will empty the query string
-$query
-    ->set('toto', 'leheros') //setting a single value
-    ->set(['foo' => 'bar', 'bar' => 'baz']); //setting multiple values using an array or another Query instance
+echo count($query); //will return 3;
+echo (string) $query; //will display foo=bar&baz=troll&toto=le+heros;
+$query->setEncodingType(Query::PHP_QUERY_RFC3968); //for PHP 5.3
+echo (string) $query; //will display foo=bar&baz=troll&toto=le%20heros;
+```
 
-$query->get('toto') //will return 'leheros';
-$query->all(); //will return the data in form of an array
-$string = $query->__toString(); // $string is now equals to "toto=leheros&foo=bar&bar=baz"
+### The `Path` and `Host` classes
+
+These classes manage the URL path and host components. They only differs in the way they validate their data. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
+
+* `append($data, $whence = null, $whence_index = null)`: append data into the component;
+* `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
+* `remove($data)`: remove data from the component;
+
+Of note:
+
+* The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
+* The `$whence` argument specify where to include the appended data;
+* The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
+
+*When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+
+Example using the `League\Url\Components\Path` object:
+
+```php
+use League\Url\Components\Path;
+
+$path = new Path;
+$path[] = 'bar';
+$path[] = 'troll';
+foreach ($path as $offset => $value) {
+	echo "$offset => $value".PHP_EOL;
+}
+//will echo 
+// 0 => bar
+// 1 => troll
+
+$path->append('leheros/troll', 'bar');
+
+$found = $path->fetchKeys('troll');
+//$found equals array(0 => '2');
+
+echo count($path); //will return 4;
+echo (string) $path; //will display bar/leheros/troll/troll
+var_export($path->toArray())
+//will display
+// array(
+//    0 => 'bar',
+//    1 => 'toto',
+//    2 => 'troll',
+//    3 => 'troll'
+// )
+
+$path->prepend('bar', 'troll', 1);
+echo $path->get(); //will display bar/leheros/troll/bar/troll
+$path->remove('troll/bar');
+echo (string) $path; //will display bar/leheros/troll
+```
+
+To ease manipulating complex component like the `host`, the `path` and/or the `query` the following methods where added to `League\Url\Url`:
+
+* `appendHost($data, $whence = null, $whence_index = null)`
+* `prependHost($data, $whence = null, $whence_index = null)`
+* `removeHost($data)`
+* `appendPath($data, $whence = null, $whence_index = null)`
+* `prependPath($data, $whence = null, $whence_index = null)`
+* `removePath($data)`
+* `modifyQuery($data)`
+
+These methods are proxies to the internal component method but return a full clone `League\Url\Url` object. 
+
+```php
+$url3 = $url2->modifyQuery(array('query' => 'value'));
+echo $url3 //output https://john:doe@www.example.com:443/?query=value
+echo $url2; //remains https://john:doe@www.example.com:443/
+
+//You could do the same using the following logic.
+
+$query = $url2->getQuery();
+$query->modify(array('query' => 'value'));
+$url3 = $url2->setQuery($query);
+
+echo $url3 //output https://john:doe@www.example.com:443/?query=value
+echo $url2; //remains https://john:doe@www.example.com:443/
 
 ```
-The `League\Url\Components\Query` implements the `Countable`, `IteratorAggrete` and `ArrayAccess` interfaces.
-
-There are seven (7) component classes for each URL part:
-
-* `League\Url\Components\Scheme` Manipulate the `scheme` component
-* `League\Url\Components\Auth` Manipulate the `user` and `pass` components **together**
-* `League\Url\Components\Host` Manipulate the `host`
-* `League\Url\Components\Port`  Manipulate the `port` component
-* `League\Url\Components\Path` Manipulate the `path` component
-* `League\Url\Components\Query`  Manipulate the `query` component
-* `League\Url\Components\Fragment`  Manipulate the `fragment` component
-
-Please refer to each class documentation to see what they can or can not do.
 
 Testing
 -------

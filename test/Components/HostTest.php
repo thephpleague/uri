@@ -1,60 +1,33 @@
 <?php
 
-namespace League\Url\Test\Components;
+namespace League\Url\test;
 
-use League\Url\Components\Host;
 use PHPUnit_Framework_TestCase;
+use League\Url\Components\Host;
 
 class HostTest extends PHPUnit_Framework_TestCase
 {
-
-    private $host;
-
-    public function setUp()
-    {
-        $path = 'foo.example.com';
-        $this->host = new Host($path);
-    }
-
-    public function testConstructor()
-    {
-        $res = $this->host->all();
-        $this->assertInternalType('array', $res);
-        $this->assertCount(3, $res);
-        $this->assertSame(array('foo', 'example', 'com'), $res);
-    }
-
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
-    public function testSetTooLongParts()
+    public function testArrayAccess()
     {
-        $this->host->set(array(
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf',
-            'fsdfqffqsfqfqsfqsfqsfqsfqfqfqsfqsdfqsdf'
-        ));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetTooManyPars()
-    {
-        $test = array_fill(0, 130, 'foo');
-        $this->host->set($test);
+        $host = new Host;
+        $host[] = 'leheros';
+        $this->assertNull($host[5]);
+        $this->assertSame('leheros', $host[0]);
+        $this->assertSame('leheros', (string) $host);
+        $host[0] = 'levilain';
+        $host[1] = 'bar';
+        $this->assertTrue(isset($host[1]));
+        $this->assertCount(2, $host);
+        $this->assertSame('levilain.bar', (string) $host);
+        foreach ($host as $offset => $value) {
+            $this->assertSame($value, $host[$offset]);
+        }
+        unset($host[0]);
+        $this->assertNull($host[0]);
+        $this->assertSame(array(1 => 'bar'), $host->toArray());
+        $host['toto'] = 'comment ça va';
     }
 }

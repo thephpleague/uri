@@ -125,7 +125,7 @@ abstract class AbstractSegment extends AbstractArray
      *
      * @param mixed $data the component value to be validate
      *
-     * @return string|null
+     * @return array
      *
      * @throws \InvalidArgumentException If The data is invalid
      */

@@ -30,14 +30,14 @@ class Factory
     /**
      * Return a instance of Url from a string
      *
-     * @param mixed   $url           a string or an object that implement the __toString method
-     * @param integer $encoding_type the RFC to follow when encoding the query string
+     * @param mixed   $url      a string or an object that implement the __toString method
+     * @param integer $enc_type the RFC to follow when encoding the query string
      *
      * @return \League\Url\Url
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromString($url, $encoding_type = Query::PHP_QUERY_RFC1738)
+    public static function createFromString($url, $enc_type = Query::PHP_QUERY_RFC1738)
     {
         $url = (string) $url;
         $url = trim($url);
@@ -56,7 +56,7 @@ class Factory
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),
-            new Query($components['query'], $encoding_type),
+            new Query($components['query'], $enc_type),
             new Component($components['fragment'])
         );
     }
@@ -64,14 +64,14 @@ class Factory
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server        the server array
-     * @param integer $encoding_type the RFC to follow when encoding the query string
+     * @param array   $server   the server array
+     * @param integer $enc_type the RFC to follow when encoding the query string
      *
      * @return \League\Url\Url
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromServer(array $server, $encoding_type = Query::PHP_QUERY_RFC1738)
+    public static function createFromServer(array $server, $enc_type = Query::PHP_QUERY_RFC1738)
     {
         $scheme = self::fetchServerScheme($server);
         $host =  self::fetchServerHost($server);
@@ -80,7 +80,7 @@ class Factory
 
         $url = $scheme.$host.$port.$request;
 
-        return self::createFromString($url, $encoding_type);
+        return self::createFromString($url, $enc_type);
     }
 
     /**

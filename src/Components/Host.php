@@ -66,28 +66,6 @@ class Host extends AbstractSegment implements SegmentInterface
     }
 
     /**
-     * Validate a host label against its requirement
-     * @param string $str the label to validate
-     *
-     * @return string
-     *
-     * @throws InvalidArgumentException If the label does not match Host requirement
-     */
-    protected function validateLabel($str)
-    {
-        if (preg_match('/^[0-9a-z-]{1,63}$/i', $str)
-            && strpos($str, '-') !== 0
-            && strrpos($str, '-') !== strlen($str)-1
-        ) {
-            return $str;
-        }
-
-        throw new InvalidArgumentException(
-            'You label is invalid check its length and/or its characters'
-        );
-    }
-
-    /**
      * Validate Host data before insertion into a URL host component
      *
      * @param mixed $data the data to insert
@@ -100,10 +78,12 @@ class Host extends AbstractSegment implements SegmentInterface
     protected function validate($data, array $host = array())
     {
         $data = $this->validateSegment($data, $this->delimiter);
-        $data = filter_var($data, FILTER_CALLBACK, array(
-            'options' => array($this, 'validateLabel'),
-            'flags' => FILTER_REQUIRE_ARRAY
-        ));
+        $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
+        if (count($res)) {
+            throw new InvalidArgumentException(
+                'Invalid host label, check its length and/or its characters'
+            );
+        }
 
         $imploded = implode($this->delimiter, $data);
         if (127 <= (count($host) + count($data))) {

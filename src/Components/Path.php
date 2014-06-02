@@ -70,8 +70,7 @@ class Path extends AbstractSegment implements SegmentInterface
     protected function validate($data)
     {
         $data = $this->validateSegment($data, $this->delimiter);
-        $data = $this->sanitizeComponent($data);
 
-        return $data;
+        return $this->sanitizeValue($data);
     }
 }

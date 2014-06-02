@@ -81,13 +81,13 @@ abstract class AbstractSegment extends AbstractArray
      *
      * @return string|null
      */
-    protected function sanitizeComponent($str)
+    protected function sanitizeValue($str)
     {
         if (is_null($str)) {
             return $str;
         } elseif (is_array($str)) {
             foreach ($str as &$value) {
-                $value = $this->sanitizeComponent($value);
+                $value = $this->sanitizeValue($value);
             }
             unset($value);
 

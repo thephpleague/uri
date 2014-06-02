@@ -90,9 +90,21 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $expected = 'http://example.com:80/foo/bar?foo=bar#content';
         $this->assertSame($expected, (string) Factory::createFromString($expected));
+    }
+
+    public function testConstructor2()
+    {
         $this->assertSame('//example.com/', (string) Factory::createFromString('example.com'));
         $this->assertSame('//example.com/', (string) Factory::createFromString('//example.com'));
+    }
+
+    public function testConstructor3()
+    {
         $this->assertSame('/path/to/url.html', (string) Factory::createFromString('/path/to/url.html'));
+    }
+
+    public function testConstructor4()
+    {
         $this->assertSame('//login@example.com/', (string) Factory::createFromString('login@example.com/'));
         $this->assertSame('//login:pass@example.com/', (string) Factory::createFromString('login:pass@example.com/'));
         $this->assertSame('http://login:pass@example.com/', (string) Factory::createFromString('http://login:pass@example.com/'));

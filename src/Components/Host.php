@@ -66,6 +66,28 @@ class Host extends AbstractSegment implements SegmentInterface
     }
 
     /**
+     * Validate a host label against its requirement
+     * @param string $str the label to validate
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException If the label does not match Host requirement
+     */
+    protected function validateLabel($str)
+    {
+        if (preg_match('/^[0-9a-z-]{1,63}$/i', $str)
+            && strpos($str, '-') !== 0
+            && strrpos($str, '-') !== strlen($str)-1
+        ) {
+            return $str;
+        }
+
+        throw new InvalidArgumentException(
+            'You label is invalid check its length and/or its characters'
+        );
+    }
+
+    /**
      * Validate Host data before insertion into a URL host component
      *
      * @param mixed $data the data to insert
@@ -78,22 +100,16 @@ class Host extends AbstractSegment implements SegmentInterface
     protected function validate($data, array $host = array())
     {
         $data = $this->validateSegment($data, $this->delimiter);
-        $res = preg_grep('/^([0-9a-z\.-]+)$/i', $data, PREG_GREP_INVERT);
-        if (count($res)) {
-            throw new InvalidArgumentException('Invalid Characters used to create your host');
-        }
+        $data = filter_var($data, FILTER_CALLBACK, array(
+            'options' => array($this, 'validateLabel'),
+            'flags' => FILTER_REQUIRE_ARRAY
+        ));
 
         $imploded = implode($this->delimiter, $data);
         if (127 <= (count($host) + count($data))) {
             throw new InvalidArgumentException('Host may have at maximum 127 parts');
         } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
             throw new InvalidArgumentException('Host may have a maximum of 255 characters');
-        }
-        $res = array_filter($data, function ($value) {
-            return 63 < strlen($value);
-        });
-        if (count($res)) {
-            throw new InvalidArgumentException('each label host must have a maximum of 63 characters');
         }
 
         return $this->sanitizeValue($data);

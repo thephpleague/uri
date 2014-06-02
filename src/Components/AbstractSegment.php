@@ -75,17 +75,15 @@ abstract class AbstractSegment extends AbstractArray
     }
 
     /**
-     * Sanitize a string component
+     * Sanitize a string component recursively
      *
      * @param mixed $str
      *
-     * @return string|null
+     * @return mixed
      */
     protected function sanitizeValue($str)
     {
-        if (is_null($str)) {
-            return $str;
-        } elseif (is_array($str)) {
+        if (is_array($str)) {
             foreach ($str as &$value) {
                 $value = $this->sanitizeValue($value);
             }

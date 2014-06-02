@@ -98,6 +98,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame('//example.com/', (string) Factory::createFromString('//example.com'));
     }
 
+    public function testSameValueAs()
+    {
+        $url1 = Factory::createFromString('example.com');
+        $url2 = Factory::createFromString('//example.com');
+        $this->assertTrue($url1->sameValueAs($url2));
+    }
+
     public function testConstructor3()
     {
         $this->assertSame('/path/to/url.html', (string) Factory::createFromString('/path/to/url.html'));

@@ -35,7 +35,7 @@ class Path extends AbstractSegment implements SegmentInterface
             return null;
         }
 
-        return implode($this->delimiter, str_replace(' ', '%20', $this->data));
+        return implode($this->delimiter, array_map('rawurlencode', $this->data));
     }
 
     /**

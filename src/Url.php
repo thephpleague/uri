@@ -188,6 +188,18 @@ final class Url implements EncodingInterface
     }
 
     /**
+     * Compare two Url object and tells whether they can be considered equal
+     *
+     * @param \League\Url\Url $url
+     *
+     * @return boolean
+     */
+    public function sameValueAs(Url $url)
+    {
+        return $url->__toString() == $this->__toString();
+    }
+
+    /**
      * Set the URL user component
      *
      * @param string $str

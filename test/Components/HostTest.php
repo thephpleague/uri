@@ -30,4 +30,13 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(1 => 'bar'), $host->toArray());
         $host['toto'] = 'comment ça va';
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testHostStatus()
+    {
+        $host = new Host;
+        $host[] = 're view';
+    }
 }

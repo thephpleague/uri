@@ -78,15 +78,17 @@ class Host extends AbstractSegment implements SegmentInterface
     protected function validate($data, array $host = array())
     {
         $data = $this->validateSegment($data, $this->delimiter);
+        $res = preg_grep('/^([0-9a-z\.-]+)$/i', $data, PREG_GREP_INVERT);
+        if (count($res)) {
+            throw new InvalidArgumentException('Invalid Characters used to create your host');
+        }
+
         $imploded = implode($this->delimiter, $data);
         if (127 <= (count($host) + count($data))) {
             throw new InvalidArgumentException('Host may have at maximum 127 parts');
         } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
             throw new InvalidArgumentException('Host may have a maximum of 255 characters');
-        } elseif (strpos($imploded, ' ') !== false || strpos($imploded, '_') !== false) {
-            throw new InvalidArgumentException('Invalid Characters used to create your host');
         }
-
         $res = array_filter($data, function ($value) {
             return 63 < strlen($value);
         });

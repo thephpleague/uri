@@ -15,13 +15,14 @@ namespace League\Url;
 use League\Url\Interfaces\QueryInterface;
 use League\Url\Interfaces\SegmentInterface;
 use League\Url\Interfaces\ComponentInterface;
+use League\Url\Interfaces\EncodingInterface;
 
 /**
  * A Immutable Value Object class to manipulate URLs
  *
  * @package League.url
  */
-final class Url
+final class Url implements EncodingInterface
 {
     /**
     * Scheme

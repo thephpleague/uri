@@ -36,17 +36,16 @@ The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR
 ```php
 <?php
 
-use League\Url\Factory as Url;
-use League\Url\Interfaces\QueryInterface; //For PHP 5.3 backward compatibility
-
+use League\Url\Factory;
+use League\Url\Url;
 //Method 1 : from a given string
-$url = new Url::createFromString('http://www.example.com');
-$url = new Url::createFromString('http://www.example.com', QueryInterface::PHP_QUERY_RFC3968);
+$url = new Factory::createFromString('http://www.example.com');
+$url = new Factory::createFromString('http://www.example.com', Url::PHP_QUERY_RFC3968);
 
 //Method 2: from the current PHP page
-$url = Url::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
+$url = Factory::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
 // in PHP5.4+ you can directly use PHP internal constant
-$url = Url::createFromServer($_SERVER, PHP_QUERY_RFC3968);
+$url = Factory::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 ```
 
 `$url` is a valid `League\Url\Url` object. This is the main value object we will be using to manipulate the url.
@@ -61,7 +60,7 @@ $url = Url::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 	* you can not modify the object property without notice.
 
 ```php
-$url = new Url::createFromString('http://www.example.com');
+$url = new Factory::createFromString('http://www.example.com');
 
 $url2 = $url->setUser('john')->setPass('doe')->setPort(443)->setScheme('https');
 echo $url2; //output https://john:doe@www.example.com:443/
@@ -73,21 +72,25 @@ echo (string) $port; //echo 80;
 echo $port->getPort()->__toString() // echo 443; 
 ```
 
+The `League\Url` also implements the `League\Interfaces\EncodingInterface` and provides methods to specify how to encode the query string:
+
+	* `setEncodingType($enc_type)`: set the encoding rule to applied 
+	* `getEncodingType()`: get the current encoding rule 
+
 You can specify the encoding type to be used for the query string when using the Factory methods `createFromString` and `createFromServer` or when using the `setEncodingType` method like below:
 
 ```php
 
-use `League\Url\Interface\QueryInterface`;
-
-$url = new Url::createFromString(
+$url = new Factory::createFromString(
 	'http://www.example.com?query=toto+le+heros',
-	QueryInterface::PHP_QUERY_RFC17328
+	Url::PHP_QUERY_RFC17328
 );
 
-$url2 = $url->setEncodingType(QueryInterface::PHP_QUERY_RFC3968);
+$url2 = $url->setEncodingType(Url::PHP_QUERY_RFC3968);
 echo $url2; //output http://www.example.com?query=toto%20le%20heros
 echo $url; //remains http://www.example.com?query=toto+le+heros
 ```
+Of note, `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `EncodingInterface::PHP_QUERY_RFC3968` or `EncodingInterface::PHP_QUERY_RFC17328`.
 
 ## Components classes
 
@@ -126,16 +129,20 @@ The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\C
 
 ### The `Query` class
 
-This class manage the URL query component and implements the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
+This class manage the URL query component and implements:
+* the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
 
-* `modify($data)`: update the component data;
-* `setEncodingType($enc_type)`: set the encoding rule to applied 
-* `getEncodingType()`: get the current encoding rule 
+	* `modify($data)`: update the component data;
+
+* the `League\Interfaces\EncodingInterface` by providing the following methods:
+
+	* `setEncodingType($enc_type)`: set the encoding rule to applied 
+	* `getEncodingType()`: get the current encoding rule 
 
 Of note:
 
 * The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
-* `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `QueryInterface::PHP_QUERY_RFC3968` or `QueryInterface::PHP_QUERY_RFC17328`
+
 
 Example using the `League\Url\Components\Query` object:
 

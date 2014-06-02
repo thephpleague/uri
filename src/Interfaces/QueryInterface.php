@@ -15,16 +15,6 @@ namespace League\Url\Interfaces;
 interface QueryInterface extends ComponentArrayInterface
 {
     /**
-     * encode query string according to RFC 1738
-     */
-    const PHP_QUERY_RFC1738 = 1;
-
-    /**
-     * encode query string according to RFC 3986
-     */
-    const PHP_QUERY_RFC3986 = 2;
-
-    /**
      * modify/update a Query component
      *
      * @param mixed $data the data can be a array, a Traversable or a string
@@ -32,20 +22,4 @@ interface QueryInterface extends ComponentArrayInterface
      * @return void
      */
     public function modify($data);
-
-    /**
-     * Set the Query String encoding type (see {@link http_build_query})
-     *
-     * @param integer $encoding_type
-     *
-     * @return void
-     */
-    public function setEncodingType($encoding_type);
-
-    /**
-     * return the current Encoding type value
-     *
-     * @return integer
-     */
-    public function getEncodingType();
 }

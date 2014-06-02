@@ -15,13 +15,14 @@ namespace League\Url\Components;
 use Traversable;
 use InvalidArgumentException;
 use League\Url\Interfaces\QueryInterface;
+use League\Url\Interfaces\EncodingInterface;
 
 /**
  *  A class to manipulate URL Query component
  *
  *  @package League.url
  */
-class Query extends AbstractArray implements QueryInterface
+class Query extends AbstractArray implements QueryInterface, EncodingInterface
 {
     /**
      * Query encoding type
@@ -43,13 +44,14 @@ class Query extends AbstractArray implements QueryInterface
     /**
      * The Constructor
      *
-     * @param mixed $data can be string, array or Traversable
-     *                               object convertible into Query String
-     * @param integer $encoding_type specify the RFC to follow when using __toString
+     * @param mixed   $data     can be string, array or Traversable
+     *                          object convertible into Query String
+     * @param integer $enc_type specify the RFC to follow when converting
+     *                          the data to string
      */
-    public function __construct($data = null, $encoding_type = self::PHP_QUERY_RFC1738)
+    public function __construct($data = null, $enc_type = self::PHP_QUERY_RFC1738)
     {
-        $this->setEncodingType($encoding_type);
+        $this->setEncodingType($enc_type);
         $this->set($data);
     }
 

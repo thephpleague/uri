@@ -39,4 +39,37 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host = new Host;
         $host[] = 're view';
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadHostCharacters()
+    {
+        new Host('_bad.host.com');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testBadHostLength()
+    {
+        $host = new Host('secure.example.com');
+        $host->append(implode('', array_fill(0, 23, 'banana')), 'secure');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testTooManyHostlabel()
+    {
+        new Host(array_fill(0, 128, 'a'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testHosttooLong()
+    {
+        new Host(array_fill(0, 23, 'banana-slip'));
+    }
 }

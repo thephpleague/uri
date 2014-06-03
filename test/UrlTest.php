@@ -139,49 +139,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testBadHostCharacters()
-    {
-        $this->url->setHost('_bad.host.com');
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testBadHostLength()
-    {
-        $host = implode('', array_fill(0, 23, 'banana'));
-        $this->url->appendHost($host, 'secure');
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testTooManyHostlabel()
-    {
-        $host = array_fill(0, 128, 'a');
-        $this->url->setHost($host);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testHosttooLong()
-    {
-        $host = array_fill(0, 23, 'banana-slip');
-        $this->url->setHost($host);
-    }
-
-    /**
-     * @expectedException RuntimeException
-     */
-    public function testBadPath()
-    {
-        $this->url->setPath(new StdClass);
-    }
-
-    /**
      * @expectedException RuntimeException
      */
     public function testBadScheme()

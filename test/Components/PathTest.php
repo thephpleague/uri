@@ -2,6 +2,7 @@
 
 namespace League\Url\test;
 
+use StdClass;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Path;
 
@@ -69,5 +70,13 @@ class PathTest extends PHPUnit_Framework_TestCase
     {
         $path = new Path(array('bar', 'troll', 3));
         $this->assertSame(array(2), $path->fetchKeys('3'));
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testBadPath()
+    {
+        new Path(new StdClass);
     }
 }

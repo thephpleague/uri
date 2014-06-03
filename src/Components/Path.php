@@ -41,6 +41,19 @@ class Path extends AbstractSegment implements SegmentInterface
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value = '/'.$value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function append($data, $whence = null, $whence_index = null)
     {
         $this->data = $this->appendSegment(

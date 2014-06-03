@@ -13,27 +13,12 @@
 namespace League\Url\Components;
 
 /**
- *  A class to manipulate URL Port component
+ *  A class to manipulate URL Fragment component
  *
  *  @package League.url
  */
-class Port extends AbstractComponent
+class Fragment extends AbstractComponent
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function validate($data)
-    {
-        $data = parent::validate($data);
-        if (is_null($data)) {
-            return $data;
-        }
-
-        return filter_var($data, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1, 'default' => null)
-        ));
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -41,7 +26,7 @@ class Port extends AbstractComponent
     {
         $value = $this->__toString();
         if ('' != $value) {
-            $value = ':'.$value;
+            $value = '#'.$value;
         }
 
         return $value;

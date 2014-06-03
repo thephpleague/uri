@@ -13,26 +13,12 @@
 namespace League\Url\Components;
 
 /**
- *  A class to manipulate URL Port component
+ *  A class to manipulate URL Pass component
  *
  *  @package League.url
  */
-class Port extends AbstractComponent
+class Pass extends AbstractComponent
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function validate($data)
-    {
-        $data = parent::validate($data);
-        if (is_null($data)) {
-            return $data;
-        }
-
-        return filter_var($data, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1, 'default' => null)
-        ));
-    }
 
     /**
      * {@inheritdoc}

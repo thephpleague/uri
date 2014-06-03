@@ -14,11 +14,13 @@ namespace League\Url;
 
 use RuntimeException;
 use League\Url\Components\Scheme;
-use League\Url\Components\Component;
+use League\Url\Components\User;
+use League\Url\Components\Pass;
 use League\Url\Components\Host;
 use League\Url\Components\Port;
 use League\Url\Components\Path;
 use League\Url\Components\Query;
+use League\Url\Components\Fragment;
 
 /**
  * A Factory to ease League\Url\Url Object instantiation
@@ -51,13 +53,13 @@ class Factory
 
         return new Url(
             new Scheme($components['scheme']),
-            new Component($components['user']),
-            new Component($components['pass']),
+            new User($components['user']),
+            new Pass($components['pass']),
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),
             new Query($components['query'], $enc_type),
-            new Component($components['fragment'])
+            new Fragment($components['fragment'])
         );
     }
 

@@ -143,26 +143,18 @@ final class Url implements EncodingInterface
         $query = $this->query->getUriComponent();
         $fragment = $this->fragment->getUriComponent();
 
-        if ('' != $pass) {
-            $pass = ':'.$pass;
-        }
-
         $user .= $pass;
         if ('' != $user) {
-            $user .='@';
+            $user .= '@';
         }
 
-        if ('' != $fragment) {
-            $fragment = '#'.$fragment;
-        }
-
-        if ('' != $host || '' != $scheme) {
-            $scheme .= '//';
+        if ('' != $host && '' == $scheme) {
+            $scheme = '//';
         }
 
         $domain = $scheme.$user.$host.$port;
-        if ('' != $path || '' != $domain) {
-            $path = '/'.$path;
+        if ('' == $path && '' != $domain) {
+            $path = '/';
         }
 
         return $domain.$path.$query.$fragment;

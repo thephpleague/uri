@@ -19,7 +19,7 @@ use League\Url\Interfaces\ComponentInterface;
  *
  *  @package  League.url
  */
-class Component implements ComponentInterface
+abstract class AbstractComponent implements ComponentInterface
 {
     /**
      * The component data

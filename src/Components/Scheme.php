@@ -19,7 +19,7 @@ use RuntimeException;
  *
  *  @package League.url
  */
-class Scheme extends Component
+class Scheme extends AbstractComponent
 {
     /**
      * {@inheritdoc}
@@ -49,7 +49,7 @@ class Scheme extends Component
     {
         $value = $this->__toString();
         if ('' != $value) {
-            $value .=':';
+            $value .= '://';
         }
 
         return $value;

@@ -1,7 +1,7 @@
 {
     "name": "league/url",
     "type": "library",
-    "description" : "league\\url is a lightweight PHP Url Wrapper library",
+    "description" : "League/url is a lightweight PHP Url Wrapper library",
     "keywords": ["php", "url", "parse_url"],
     "license": "MIT",
     "authors": [

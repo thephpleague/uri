@@ -78,7 +78,7 @@ echo $port->getPort()->__toString() // echo 443;
 ```
 ### Parsing the URL
 
-Once instantited, the object can return its parse info using the `parse` method which returns an array similar to php `parse_url` function. 
+Once instantited, the object can return its components using the `parse` method. This methods returns an associated array similar to php `parse_url` returned object. 
 
 ```php
 $url = new Factory::createFromString('http://www.example.com?foo=bar');
@@ -283,7 +283,9 @@ $path->remove('troll/bar');
 echo (string) $path; //will display bar/leheros/troll
 ```
 
-To ease manipulating complex component like the `host`, the `path` and/or the `query` the following methods where added to `League\Url\Url`:
+## Manipulating URL components
+
+In addition to the setter method for each URL component and for the URL query encoding type, the following methods where added to `League\Url\Url` To ease manipulating complex component like the `host`, the `path` and/or the `query` :
 
 * `appendHost($data, $whence = null, $whence_index = null)`
 * `prependHost($data, $whence = null, $whence_index = null)`
@@ -293,7 +295,7 @@ To ease manipulating complex component like the `host`, the `path` and/or the `q
 * `removePath($data)`
 * `modifyQuery($data)`
 
-These methods are proxies to the internal component method but return a full clone `League\Url\Url` object. 
+These methods are proxies to the internal component method but like all setters, they return a fully clone `League\Url\Url` object. 
 
 ```php
 $url3 = $url2->modifyQuery(array('query' => 'value'));

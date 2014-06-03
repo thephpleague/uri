@@ -4,9 +4,69 @@ namespace League\Url\test;
 
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Query;
+use ArrayIterator;
+use StdClass;
 
 class QueryTest extends PHPUnit_Framework_TestCase
 {
+    protected $query;
+
+    public function setUp()
+    {
+        $this->query = new Query('?kingkong=toto');
+    }
+
+    public function testModifyWithArray()
+    {
+        $this->query->modify(array('john' => 'doe the john'));
+        $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->query);
+    }
+
+    public function testModifyWithArrayIterator()
+    {
+        $this->query->modify(new ArrayIterator(array('john' => 'doe the john')));
+        $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->query);
+    }
+
+    public function testModifyWithString()
+    {
+        $this->query->modify('?kingkong=tata');
+        $this->assertSame('kingkong=tata', (string) $this->query);
+    }
+
+    public function testModifyWithEmptyString()
+    {
+        $this->query->modify('');
+        $this->assertSame('kingkong=toto', (string) $this->query);
+    }
+
+    public function testModifyWithRemoveArg()
+    {
+        $this->query->modify(array('kingkong' => null));
+        $this->assertSame('', (string) $this->query);
+    }
+
+    public function testSetterWithNull()
+    {
+        $this->query->set(null);
+        $this->assertNull($this->query->get());
+        $this->assertSame('', (string) $this->query);
+    }
+
+    public function testSetterWithArray()
+    {
+        $this->query->set(array('ali' => 'baba'));
+        $this->assertSame('ali=baba', (string) $this->query);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testFailmodify()
+    {
+        $this->query->modify(new StdClass);
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */

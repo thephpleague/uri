@@ -12,6 +12,8 @@
 */
 namespace League\Url\Components;
 
+use RuntimeException;
+
 /**
  *  A class to manipulate URL Port component
  *
@@ -29,9 +31,15 @@ class Port extends AbstractComponent
             return $data;
         }
 
-        return filter_var($data, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1, 'default' => null)
+        $data = filter_var($data, FILTER_VALIDATE_INT, array(
+            'options' => array('min_range' => 1)
         ));
+
+        if (! $data) {
+            throw new RuntimeException('A port must be a valid positif integer');
+        }
+
+        return (int) $data;
     }
 
     /**

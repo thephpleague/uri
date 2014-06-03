@@ -164,7 +164,7 @@ echo $scheme->__toString(); //will echo 'https'
 echo $scheme->getUriComponent(); //will echo 'https://'
 
 ```
-The URL components that solely relies on this behaviour are:
+The URL components that only implement this interface are:
 
 * `scheme` with the `League\Url\Components\Scheme`;
 * `user` with the `League\Url\Components\User`;

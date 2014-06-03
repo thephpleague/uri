@@ -99,13 +99,14 @@ var_export($url->parse());
 
 The `League\Url\Url` also implements the `League\Interfaces\EncodingInterface` and provides methods to specify how to encode the query string:
 
-	* `setEncodingType($enc_type)`: set the encoding rule to apply
-	* `getEncodingType()`: get the current encoding rule id
+* `setEncodingType($enc_type)`: set the encoding rule to apply
+* `getEncodingType()`: get the current encoding rule id
 
 You can specify the encoding type to be used for the URL query string with the following methods:
-	* the `League\Url\Factory::createFromString`
-	* the `League\Url\Factory::createFromServer`
-	* the `League\Url\Url::setEncodingType` 
+
+* the `League\Url\Factory::createFromString`
+* the `League\Url\Factory::createFromServer`
+* the `League\Url\Url::setEncodingType` 
 
 ```php
 
@@ -122,7 +123,7 @@ Of note, `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328`
 
 ### Comparing two `League\Url\Url` object
 
-To enable object comparison we have a `League\Url\Url::sameValueAs` which can behave in strict or non stric method. This depends on how you have defined the `League\Url\Url::encodingType` property.
+To enable object comparison we have a `League\Url\Url::sameValueAs` which can behave in strict or non strict mode. In strict mode the encoding type used for the query string representation is taken into account.
 ```php
     $url1 = Factory::createFromString('example.com');
     $url2 = Factory::createFromString('//example.com');
@@ -165,11 +166,11 @@ echo $scheme->getUriComponent(); //will echo 'https://'
 ```
 The URL components that solely relies on this behaviour are:
 
-	* `scheme` with the `League\Url\Components\Scheme`;
-	* `user` with the `League\Url\Components\User`;
-	* `pass` with the `League\Url\Components\Pass`;
-	* `port` with the `League\Url\Components\Port`;
-	* `fragment` with the `League\Url\Components\Fragment`;
+* `scheme` with the `League\Url\Components\Scheme`;
+* `user` with the `League\Url\Components\User`;
+* `pass` with the `League\Url\Components\Pass`;
+* `port` with the `League\Url\Components\Port`;
+* `fragment` with the `League\Url\Components\Fragment`;
 
 The classes differ on how they validate the data and/or on how they format the component string.
 
@@ -198,13 +199,14 @@ This class manage the URL query component and implements the following interface
 
 	* `modify($data)`: update the component data;
 
+By default, the `Query` class encode its members using the RFC #1738
+
 Example using the `League\Url\Components\Query` object:
 
 ```php
 use League\Url\Components\Query;
 
-$query = new Query;
-$query['foo'] = 'bar';
+$query = new Query('foo=bar', PHP_QUERY_RFC1738); //in PHP5.4+
 $query['baz'] = 'troll';
 $query['toto'] = 'le heros';
 foreach ($query as $offset => $value) {
@@ -213,6 +215,7 @@ foreach ($query as $offset => $value) {
 //will echo 
 // foo => bar
 // baz => troll
+// toto => le heros
 
 $query->modify(array('foo' => 'baz', 'toto' => null));
 //by setting toto to null

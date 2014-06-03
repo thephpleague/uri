@@ -37,10 +37,10 @@ The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR
 <?php
 
 use League\Url\Factory;
-use League\Url\Url;
+use League\Url\Interfaces\EncodingInterface; //needed only in PHP5.3
 //Method 1 : from a given string
 $url = new Factory::createFromString('http://www.example.com');
-$url = new Factory::createFromString('http://www.example.com', Url::PHP_QUERY_RFC3968);
+$url = new Factory::createFromString('http://www.example.com', EncodingInterface::PHP_QUERY_RFC3968);
 
 //Method 2: from the current PHP page
 $url = Factory::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
@@ -52,6 +52,8 @@ $url = Factory::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 
 ## Usage
 
+### Immutable Object
+
 `League\Url` is a Immutable Value Object:
 
 * The object implements the `__toString` method to enable accessing the string representation of the URL;
@@ -61,8 +63,11 @@ $url = Factory::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 
 ```php
 $url = new Factory::createFromString('http://www.example.com');
-
-$url2 = $url->setUser('john')->setPass('doe')->setPort(443)->setScheme('https');
+$url2 = $url
+		->setUser('john')
+		->setPass('doe')
+		->setPort(443)
+		->setScheme('https');
 echo $url2; //output https://john:doe@www.example.com:443/
 echo $url; //remains http://www.example.com/
 
@@ -71,51 +76,106 @@ $port->set(80); //
 echo (string) $port; //echo 80;
 echo $port->getPort()->__toString() // echo 443; 
 ```
+### Parsing the URL
 
-The `League\Url` also implements the `League\Interfaces\EncodingInterface` and provides methods to specify how to encode the query string:
+Once instantited, the object can return its parse info using the `parse` method which returns an array similar to php `parse_url` function. 
 
-	* `setEncodingType($enc_type)`: set the encoding rule to applied 
-	* `getEncodingType()`: get the current encoding rule 
+```php
+$url = new Factory::createFromString('http://www.example.com?foo=bar');
+var_export($url->parse()); 
+// will output the following array:
+// array(
+//     'scheme' => 'http',
+//     'user' => null,
+//     'pass' => null,
+//     'host' => 'www.example.com',
+//     'path' => null,
+//     'query' => 'foo=bar',
+//     'fragment' => null,
+// );
+```
 
-You can specify the encoding type to be used for the query string when using the Factory methods `createFromString` and `createFromServer` or when using the `setEncodingType` method like below:
+### Setting URL Query component encoding style
+
+The `League\Url\Url` also implements the `League\Interfaces\EncodingInterface` and provides methods to specify how to encode the query string:
+
+	* `setEncodingType($enc_type)`: set the encoding rule to apply
+	* `getEncodingType()`: get the current encoding rule id
+
+You can specify the encoding type to be used for the URL query string with the following methods:
+	* the `League\Url\Factory::createFromString`
+	* the `League\Url\Factory::createFromServer`
+	* the `League\Url\Url::setEncodingType` 
 
 ```php
 
 $url = new Factory::createFromString(
 	'http://www.example.com?query=toto+le+heros',
-	Url::PHP_QUERY_RFC17328
+	EncodingInterface::PHP_QUERY_RFC17328 // in PHP 5.3
 );
 
-$url2 = $url->setEncodingType(Url::PHP_QUERY_RFC3968);
+$url2 = $url->setEncodingType(PHP_QUERY_RFC3968); // in PHP 5.4+
 echo $url2; //output http://www.example.com?query=toto%20le%20heros
 echo $url; //remains http://www.example.com?query=toto+le+heros
 ```
 Of note, `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `EncodingInterface::PHP_QUERY_RFC3968` or `EncodingInterface::PHP_QUERY_RFC17328`.
 
-## Components classes
+### Comparing two `League\Url\Url` object
 
-Except for `encodingType`, everytime you acces a `League\Url\Url` object getter method it will return one of the following component class. All component classes implements the  `League\Interfaces\ComponentInterface` which means that you can interact with the classes with the following public method:
+To enable object comparison we have a `League\Url\Url::sameValueAs` which can behave in strict or non stric method. This depends on how you have defined the `League\Url\Url::encodingType` property.
+```php
+    $url1 = Factory::createFromString('example.com');
+    $url2 = Factory::createFromString('//example.com');
+    $url3 = Factory::createFromString('//example.com?foo=toto+le+heros', Query::PHP_QUERY_RFC3986);
+    $url4 = Factory::createFromString('//example.com?foo=toto+le+heros');
+    $url1->sameValueAs($url2); //will return true
+    $url3->sameValueAs($url2); //will return false
+    $url3->sameValueAs($url4); //will return true
+    $url3->sameValueAs($url4, true); //will return false 
+    								 //because we specify a strict comparaison between the 2 objects.
+```
+
+## URL components classes
+
+Except for the `League\Url\Url::encodingType` property, everytime you acces a `League\Url\Url` getter method it return a clone of the given property class. 
+
+For each URL component exists a component class that implements the `League\Interfaces\ComponentInterface` so each class has the following public methods:
 
 * `set($data)`: set the component data
-* `get()`: returns `null` if the class is empty or its string representation
+* `get()`: returns `null` if the class data is empty or its string representation
 * `__toString()`: return a typecast string representation of the component.
 * `getUriComponent()`: return an altered string representation to ease URL representation.
 
 Of note:
 
-* The `$data` argument can be `null`, a valid component string, or an object implementing the `__toString` method;
+* The `$data` argument can be:
+	* `null`;
+	* a valid component string for the specified URL component;
+	* an object implementing the `__toString` method;
 
-### The `Component` class
+```php
+use League\Url\Components\Scheme;
 
-This class manages the `user`, `pass`, `fragment` components. The data provided to the `set` method can be a string representation of the component or `null`.
+$scheme = new Scheme;
+$scheme->get(); //will return null since no scheme was set
+$scheme->set('https');
+echo $scheme->__toString(); //will echo 'https'
+echo $scheme->getUriComponent(); //will echo 'https://'
 
-### The `Port` and `Scheme` classes
+```
+The URL components that solely relies on this behaviour are:
 
-These classes manage the URL port and scheme component. They extend the `Component` class and differ on data validation.
+	* `scheme` with the `League\Url\Components\Scheme`;
+	* `user` with the `League\Url\Components\User`;
+	* `pass` with the `League\Url\Components\Pass`;
+	* `port` with the `League\Url\Components\Port`;
+	* `fragment` with the `League\Url\Components\Fragment`;
+
+The classes differ on how they validate the data and/or on how they format the component string.
 
 ## Complex Components Classes
 
-Complex component classes implement the following interfaces:
+Classes that deal with Url complex component (ie: `host`, `path`, `query`) implement the following interfaces:
 
 * `Countable`
 * `IteratorAggregate`
@@ -125,24 +185,18 @@ Complex component classes implement the following interfaces:
 The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
 
 * `toArray()`: will return an array representation of the component;
-* `fetchKeys($value)`: will return an array containing all the offset which contains the given value. If the value is not found the `array` is empty.
+* `fetchKeys($value)`: will return an array containing all the offset which contains the given value. If the value is not found then an empty `array` is returned.
+
+*Of note: The `$data` argument for the `set` method can also be an `array` or a `Traversable` object.*
 
 ### The `Query` class
 
-This class manage the URL query component and implements:
+This class manage the URL query component and implements the following interfaces:
+
+* the `League\Interfaces\EncodingInterface`;
 * the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
 
 	* `modify($data)`: update the component data;
-
-* the `League\Interfaces\EncodingInterface` by providing the following methods:
-
-	* `setEncodingType($enc_type)`: set the encoding rule to applied 
-	* `getEncodingType()`: get the current encoding rule 
-
-Of note:
-
-* The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
-
 
 Example using the `League\Url\Components\Query` object:
 
@@ -160,13 +214,18 @@ foreach ($query as $offset => $value) {
 // foo => bar
 // baz => troll
 
+$query->modify(array('foo' => 'baz', 'toto' => null));
+//by setting toto to null
+//you remove the toto argument from the query_string
+
 $found = $query->fetchKeys('troll');
 //$found equals array(0 => 'baz')
 
-echo count($query); //will return 3;
-echo (string) $query; //will display foo=bar&baz=troll&toto=le+heros;
+echo count($query); //will return 2;
+echo (string) $query; //will display foo=baz&baz=troll;
 $query->setEncodingType(Query::PHP_QUERY_RFC3968); //for PHP 5.3
-echo (string) $query; //will display foo=bar&baz=troll&toto=le%20heros;
+$query->modify(array('toto' => 'le gentil'));
+echo (string) $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 ```
 
 ### The `Path` and `Host` classes
@@ -182,8 +241,7 @@ Of note:
 * The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
 * The `$whence` argument specify where to include the appended data;
 * The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
-
-*When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+* When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
 
 Example using the `League\Url\Components\Path` object:
 
@@ -239,7 +297,7 @@ $url3 = $url2->modifyQuery(array('query' => 'value'));
 echo $url3 //output https://john:doe@www.example.com:443/?query=value
 echo $url2; //remains https://john:doe@www.example.com:443/
 
-//You could do the same using the following logic.
+//is equivalent to:
 
 $query = $url2->getQuery();
 $query->modify(array('query' => 'value'));

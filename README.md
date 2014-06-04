@@ -2,7 +2,9 @@
 
 
 [![Build Status](https://travis-ci.org/thephpleague/url.png?branch=master)](https://travis-ci.org/thephpleague/url)
-[![Coverage Status](https://coveralls.io/repos/thephpleague/url/badge.png)](https://coveralls.io/r/thephpleague/url)
+[![Code Coverage](https://scrutinizer-ci.com/g/thephpleague/url/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/thephpleague/url/?branch=master)
+[![Total Downloads](https://poser.pugx.org/league/url/downloads.png)](https://packagist.org/packages/league/url)
+[![Latest Stable Version](https://poser.pugx.org/league/url/v/stable.png)](https://packagist.org/packages/league/url)
 
 The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 
@@ -13,8 +15,7 @@ This package is compliant with [PSR-2][], and [PSR-4][].
 
 ## Install
 
-
-You may install the League Url package with Composer (recommended) or manually.
+Via Composer:
 
 ```json
 {
@@ -24,10 +25,9 @@ You may install the League Url package with Composer (recommended) or manually.
 }
 ```
 
-
 ## System Requirements
 
-You need **PHP >= 5.3.0** to use League Url but the latest stable version of PHP is recommended.
+You need **PHP >= 5.3.0** to use `League\Url` but the latest stable version of PHP is recommended.
 
 ## Instantiation
 
@@ -35,6 +35,8 @@ The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR
 
 ```php
 <?php
+
+require 'vendor/autoload.php' //when using composer
 
 use League\Url\Factory;
 use League\Url\Interfaces\EncodingInterface; //needed only in PHP5.3
@@ -57,7 +59,7 @@ $url = Factory::createFromServer($_SERVER, PHP_QUERY_RFC3968);
 `League\Url` is a Immutable Value Object:
 
 * The object implements the `__toString` method to enable accessing the string representation of the URL;
-* Everytime the object needs to return an object or modify a property you return a clone of that object:
+* Everytime the object needs to return or to modify a property you return a clone of the modified object or of the property object:
 	* you can easily manipulating the url with chaining without modifying the original object.
 	* you can not modify the object property without notice.
 
@@ -78,7 +80,7 @@ echo $port->getPort()->__toString() // echo 443;
 ```
 ### Parsing the URL
 
-Once instantited, the object can return its components using the `parse` method. This methods returns an associated array similar to php `parse_url` returned object. 
+Once created, the object can return its components using the `parse` method. This methods returns an associated array similar to php `parse_url` returned object. 
 
 ```php
 $url = new Factory::createFromString('http://www.example.com?foo=bar');
@@ -97,16 +99,17 @@ var_export($url->parse());
 
 ### Setting URL Query component encoding style
 
-The `League\Url\Url` also implements the `League\Interfaces\EncodingInterface` and provides methods to specify how to encode the query string:
-
-* `setEncodingType($enc_type)`: set the encoding rule to apply
-* `getEncodingType()`: get the current encoding rule id
+The `League\Url\Url` implements the `League\Interfaces\EncodingInterface`, this interface provides methods and constant values to specify how to encode the query string:
+* `EncodingInterface::PHP_QUERY_RFC3968` constant specify to encode the query following the RFC #3968
+* `EncodingInterface::PHP_QUERY_RFC1738` constant specify to encode the query following the RFC #1738
+* `setEncodingType($enc_type)`: set the encoding constant
+* `getEncodingType()`: get the current encoding constant used
 
 You can specify the encoding type to be used for the URL query string with the following methods:
 
-* the `League\Url\Factory::createFromString`
-* the `League\Url\Factory::createFromServer`
-* the `League\Url\Url::setEncodingType` 
+* the `League\Url\Factory::createFromString($url, $enc_type = EncodingInterface::PHP_QUERY_RFC1738)`
+* the `League\Url\Factory::createFromServer(array $server, $enc_type = EncodingInterface::PHP_QUERY_RFC1738)`
+* the `League\Url\Url::setEncodingType($enc_type)`
 
 ```php
 
@@ -121,9 +124,18 @@ echo $url; //remains http://www.example.com?query=toto+le+heros
 ```
 Of note, `$enc_type` value is either `PHP_QUERY_RFC3968` or `PHP_QUERY_RFC17328` but for backward compatibility in PHP 5.3 you can use `EncodingInterface::PHP_QUERY_RFC3968` or `EncodingInterface::PHP_QUERY_RFC17328`.
 
-### Comparing two `League\Url\Url` object
+### Url output
 
-To enable object comparison we have a `League\Url\Url::sameValueAs` which can behave in strict or non strict mode. In strict mode the encoding type used for the query string representation is taken into account.
+To get the string representation of the given URL you need to invoke the `__toString()` method. But note that for Url without path a `/` representing the default path will be added if needed.
+
+```php
+$url = new Factory::createFromString('http://www.example.com#fragment');
+echo (string) $url; //will output 'http://www.example.com/#fragment' notice the trailing slash added
+```
+
+### Comparing `League\Url\Url` objects
+
+To enable object comparison we have a `League\Url\Url::sameValueAs` method which can behave in strict or non strict mode. In strict mode the encoding type used for the query string representation is taken into account.
 ```php
     $url1 = Factory::createFromString('example.com');
     $url2 = Factory::createFromString('//example.com');
@@ -132,8 +144,7 @@ To enable object comparison we have a `League\Url\Url::sameValueAs` which can be
     $url1->sameValueAs($url2); //will return true
     $url3->sameValueAs($url2); //will return false
     $url3->sameValueAs($url4); //will return true
-    $url3->sameValueAs($url4, true); //will return false 
-    								 //because we specify a strict comparaison between the 2 objects.
+    $url3->sameValueAs($url4, true); //will return false <- this is a strict comparaison
 ```
 
 ## URL components classes
@@ -323,10 +334,15 @@ $ phpunit
 Contributing
 -------
 
-Please see [CONTRIBUTING](https://github.com/thephpleague/url/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Credits
 -------
 
 - [ignace nyamagana butera](https://github.com/nyamsprod)
-- [All Contributors](https://github.com/thephpleague/url/graphs/contributors)
+- [All Contributors](graphs/contributors)
+
+License
+-------
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

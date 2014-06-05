@@ -197,7 +197,7 @@ Classes that deal with Url complex component (ie: `host`, `path`, `query`) imple
 The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
 
 * `toArray()`: will return an array representation of the component;
-* `fetchKeys($value)`: will return an array containing all the offset which contains the given value. If the value is not found then an empty `array` is returned.
+* `keys()`: will return all the keys or a subset of the keys of an array if a value is given.
 
 *Of note: The `$data` argument for the `set` method can also be an `array` or a `Traversable` object.*
 

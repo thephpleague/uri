@@ -45,9 +45,14 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
     /**
      * {@inheritdoc}
      */
-    public function fetchKeys($value)
+    public function keys()
     {
-        return array_keys($this->data, $value, true);
+        $args = func_get_args();
+        if (! $args) {
+            return array_keys($this->data);
+        }
+
+        return array_keys($this->data, $args[0], true);
     }
 
     /**

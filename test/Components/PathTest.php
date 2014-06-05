@@ -48,28 +48,14 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('toto/masson', (string) $path);
     }
 
-    public function testContains1()
-    {
-        $path = new Path(array('bar', 'troll', 3));
-        $this->assertCount(0, $path->fetchKeys('foo'));
-    }
-
-    public function testContains2()
-    {
-        $path = new Path(array('bar', 'troll', 3));
-        $this->assertSame(array(0), $path->fetchKeys('bar'));
-    }
-
-    public function testContains3()
+    public function testKeys()
     {
         $path = new Path(array('bar', 3, 'troll', 3));
-        $this->assertCount(2, $path->fetchKeys('3'));
-    }
-
-    public function testContains4()
-    {
-        $path = new Path(array('bar', 'troll', 3));
-        $this->assertSame(array(2), $path->fetchKeys('3'));
+        $this->assertCount(4, $path->keys());
+        $this->assertCount(0, $path->keys('foo'));
+        $this->assertSame(array(0), $path->keys('bar'));
+        $this->assertCount(2, $path->keys('3'));
+        $this->assertSame(array(1, 3), $path->keys('3'));
     }
 
     /**

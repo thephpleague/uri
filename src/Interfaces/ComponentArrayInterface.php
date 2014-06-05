@@ -14,7 +14,6 @@ namespace League\Url\Interfaces;
 
 interface ComponentArrayInterface extends ComponentInterface
 {
-
     /**
      * Return the component as an array
      *
@@ -23,12 +22,9 @@ interface ComponentArrayInterface extends ComponentInterface
     public function toArray();
 
     /**
-     * Return the index for a given $value if it is present in the Segment
-     * or null
-     *
-     * @param mixed $value
+     * Return all the keys or a subset of the keys of an array
      *
      * @return array
      */
-    public function fetchKeys($value);
+    public function keys();
 }

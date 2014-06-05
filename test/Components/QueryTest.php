@@ -116,13 +116,13 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query->setEncodingType(34);
     }
 
-    public function testFetchKeys()
+    public function testKeys()
     {
         $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll'));
-        $this->assertCount(0, $query->fetchKeys('foo'));
-        $this->assertSame(array('foo'), $query->fetchKeys('bar'));
-        $this->assertCount(0, $query->fetchKeys('3'));
-        $this->assertSame(array('lol'), $query->fetchKeys(3));
-        $this->assertSame(array('baz', 'toto'), $query->fetchKeys('troll'));
+        $this->assertCount(0, $query->keys('foo'));
+        $this->assertSame(array('foo'), $query->keys('bar'));
+        $this->assertCount(0, $query->keys('3'));
+        $this->assertSame(array('lol'), $query->keys(3));
+        $this->assertSame(array('baz', 'toto'), $query->keys('troll'));
     }
 }

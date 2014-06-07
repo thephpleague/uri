@@ -39,7 +39,7 @@ class Factory
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromString($url, $enc_type = Query::PHP_QUERY_RFC1738)
+    public static function createFromString($url, $enc_type = PHP_QUERY_RFC1738)
     {
         $url = (string) $url;
         $url = trim($url);
@@ -73,7 +73,7 @@ class Factory
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromServer(array $server, $enc_type = Query::PHP_QUERY_RFC1738)
+    public static function createFromServer(array $server, $enc_type = PHP_QUERY_RFC1738)
     {
         $scheme = self::fetchServerScheme($server);
         $host =  self::fetchServerHost($server);

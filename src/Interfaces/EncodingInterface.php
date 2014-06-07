@@ -15,16 +15,6 @@ namespace League\Url\Interfaces;
 interface EncodingInterface
 {
     /**
-     * encode query string according to RFC 1738
-     */
-    const PHP_QUERY_RFC1738 = 1;
-
-    /**
-     * encode query string according to RFC 3986
-     */
-    const PHP_QUERY_RFC3986 = 2;
-
-    /**
      * Set the Query String encoding type (see {@link http_build_query})
      *
      * @param integer $encoding_type
@@ -39,4 +29,9 @@ interface EncodingInterface
      * @return integer
      */
     public function getEncodingType();
+}
+
+if (! defined('PHP_QUERY_RFC1738')) {
+    define('PHP_QUERY_RFC1738', 1);
+    define('PHP_QUERY_RFC3986', 2);
 }

@@ -31,7 +31,9 @@ interface EncodingInterface
     public function getEncodingType();
 }
 
+//@codeCoverageIgnoreStart
 if (! defined('PHP_QUERY_RFC1738')) {
     define('PHP_QUERY_RFC1738', 1);
     define('PHP_QUERY_RFC3986', 2);
 }
+//@codeCoverageIgnoreEnd

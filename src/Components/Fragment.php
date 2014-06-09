@@ -22,6 +22,16 @@ class Fragment extends AbstractComponent
     /**
      * {@inheritdoc}
      */
+    public function __toString()
+    {
+        $value = parent::__toString();
+
+        return rawurlencode($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
         $value = $this->__toString();

@@ -148,15 +148,32 @@ class Query extends AbstractArray implements QueryInterface, EncodingInterface
     /**
      * Url encode the query string
      *
-     * @param array   $str      the array to encode as a query string
+     * @param array   $arr      the array to encode as a query string
      * @param integer $enc_type the encoding RFC followed
      *
      * @return string
      */
-    protected function encode(array $str, $enc_type)
+    protected function encode(array $arr, $enc_type)
     {
-        $query = http_build_query($str, '', '&');
-        if (PHP_QUERY_RFC3986 != $enc_type) {
+        if (5 == PHP_MAJOR_VERSION && 4 > PHP_MINOR_VERSION) {
+            return $this->encodePHP53($arr, $enc_type);
+        }
+
+        return http_build_query($arr, '', '&', $enc_type);
+    }
+
+    /**
+     * Url encode the query string for PHP5.3
+     *
+     * @param array   $arr      the array to encode as a query string
+     * @param integer $enc_type the encoding RFC followed
+     *
+     * @return string
+     */
+    protected function encodePHP53(array $arr, $enc_type)
+    {
+        $query = http_build_query($arr, '', '&');
+        if (PHP_QUERY_RFC1738 == $enc_type) {
             return $query;
         }
 

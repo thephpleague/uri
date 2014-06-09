@@ -53,7 +53,9 @@ The second argument `$enc_type` specifies how to encode the URL query component 
 * `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
 * `PHP_QUERY_RFC3968`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
 
-`$url` is a valid `League\Url\Url` object. This is the main value object we will be using to manipulate the url. By default if no `$enc_type` argument is given, the URL query component is encoded using RFC 1738
+By default if no `$enc_type` argument is given, the URL query component is encoded using RFC 1738.
+
+`$url` is a valid `League\Url\Url` object. This is the main value object we will be using to manipulate the url.
 
 ## Usage
 

@@ -42,9 +42,9 @@ abstract class AbstractSegment extends AbstractArray
      */
     public function set($data)
     {
-        $this->data = array_filter($this->validate($data), function ($value) {
+        $this->data = array_values(array_filter($this->validate($data), function ($value) {
             return ! is_null($value) && '' != $value;
-        });
+        }));
     }
 
     /**

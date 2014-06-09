@@ -68,6 +68,25 @@ By default if no `$enc_type` argument is given, the URL query component is encod
 	* you can easily manipulating the url with chaining without modifying the original object.
 	* you can not modify the object property without notice.
 
+Using the following setter methods you can set each URL component independently:
+
+* `League\Url\Url::getScheme($data)` 
+* `League\Url\Url::getUser($data)`
+* `League\Url\Url::getPass($data)`
+* `League\Url\Url::getHost($data)`
+* `League\Url\Url::getPort($data)`
+* `League\Url\Url::getPath($data)`
+* `League\Url\Url::getQuery($data)`
+* `League\Url\Url::getFragment($data)`
+
+Of note:
+
+* The `$data` argument can be:
+	* `null`;
+	* a valid component string for the specified URL component;
+	* an object implementing the `__toString` method;
+	* for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
+
 ```php
 $url = new Factory::createFromString('http://www.example.com');
 $new_url = $url
@@ -87,6 +106,7 @@ echo $port->getPort(); // echo 443;
 ### Setting URL Query component encoding style
 
 The `League\Url\Url` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
+
 * `setEncodingType($enc_type)`: set the encoding constant
 * `getEncodingType()`: get the current encoding constant used
 
@@ -129,26 +149,34 @@ $url = new Factory::createFromString('http://www.example.com#fragment');
 echo $url; //will output 'http://www.example.com/#fragment' notice the trailing slash added
 ```
 
-### Comparing `League\Url\Url` objects
+### Objects comparison 
 
-To enable object comparison we have a `League\Url\Url::sameValueAs` method which can behave in strict or non strict mode. In strict mode the encoding type used for the query string representation is taken into account.
+You can compare 2 `League\Url\Url` object using the `League\Url\Url::sameValueAs` method. The object comparison is encoding type independent.
 
 ```php
-    $url1 = Factory::createFromString('example.com');
-    $url2 = Factory::createFromString('//example.com');
-    $url3 = Factory::createFromString('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
-    $url4 = Factory::createFromString('//example.com?foo=toto+le+heros');
-    $url1->sameValueAs($url2); //will return true
-    $url3->sameValueAs($url2); //will return false
-    $url3->sameValueAs($url4); //will return true
-    $url3->sameValueAs($url4, true); //will return false <- this is a strict comparaison
+    $original_url = Factory::createFromString('example.com');
+    $new_url = Factory::createFromString('//example.com');
+    $alternate_url = Factory::createFromString('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
+    $another_url = Factory::createFromString('//example.com?foo=toto+le+heros');
+    $original_url->sameValueAs($new_url); //will return true
+    $alternate_url->sameValueAs($new_url); //will return false
+    $alternate_url->sameValueAs($another_url); //will return true
 ```
 
 ## URL components classes
 
-Except for the `League\Url\Url::encodingType` property, everytime you acces a `League\Url\Url` getter method it returns a clone of the given property class. 
+Each URL component is an object on its on. Everytime you acces one of them from the `League\Url\Url` object it returns a clone of the given class. The following method were set:
 
-For each URL component exists a component class that implements the `League\Interfaces\ComponentInterface` so each class has the following public methods:
+* `League\Url\Url::getScheme()` 
+* `League\Url\Url::getUser()`
+* `League\Url\Url::getPass()`
+* `League\Url\Url::getHost()`
+* `League\Url\Url::getPort()`
+* `League\Url\Url::getPath()`
+* `League\Url\Url::getQuery()`
+* `League\Url\Url::getFragment()`
+
+Each component class implements the `League\Interfaces\ComponentInterface` with the following public methods:
 
 * `set($data)`: set the component data
 * `get()`: returns `null` if the class data is empty or its string representation
@@ -171,7 +199,7 @@ $scheme->set('https');
 echo $scheme->__toString(); //will echo 'https'
 echo $scheme->getUriComponent(); //will echo 'https://'
 ```
-The URL components that only implement this interface are:
+The URL components that **only** implement this interface are:
 
 * `scheme` with the `League\Url\Components\Scheme`;
 * `user` with the `League\Url\Components\User`;

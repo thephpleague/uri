@@ -19,7 +19,7 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('leheros', $path[0]);
         $this->assertSame('leheros', (string) $path);
         $path[0] = 'levilain';
-        $path[1] = 'bar';
+        $path[23] = 'bar';
         $this->assertTrue(isset($path[1]));
         $this->assertCount(2, $path);
         $this->assertSame('levilain/bar', (string) $path);

@@ -134,14 +134,44 @@ final class Url implements EncodingInterface
      */
     public function __toString()
     {
+        $uri = $this->getUri();
+        $domain = $this->getDomain();
+        $glue = '';
+        if (0 !== strpos($uri, '/') && '' != $domain) {
+            $glue = '/';
+        }
+
+        return $domain.$glue.$uri;
+    }
+
+    /**
+     * return the string representation for the current URL
+     * not including scheme, user, pass, host and port.
+     *
+     * @return string
+     */
+    public function getUri()
+    {
+        $path = $this->path->getUriComponent();
+        $query = $this->query->getUriComponent();
+        $fragment = $this->fragment->getUriComponent();
+
+        return $path.$query.$fragment;
+    }
+
+    /**
+     * return the string representation for the current URL
+     * not including path, query and fragment.
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
         $scheme = $this->scheme->getUriComponent();
         $user = $this->user->getUriComponent();
         $pass = $this->pass->getUriComponent();
         $host = $this->host->getUriComponent();
         $port = $this->port->getUriComponent();
-        $path = $this->path->getUriComponent();
-        $query = $this->query->getUriComponent();
-        $fragment = $this->fragment->getUriComponent();
 
         $user .= $pass;
         if ('' != $user) {
@@ -152,12 +182,7 @@ final class Url implements EncodingInterface
             $scheme = '//';
         }
 
-        $domain = $scheme.$user.$host.$port;
-        if ('' == $path && '' != $domain) {
-            $path = '/';
-        }
-
-        return $domain.$path.$query.$fragment;
+        return $scheme.$user.$host.$port;
     }
 
     /**

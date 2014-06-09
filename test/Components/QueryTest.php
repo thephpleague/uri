@@ -96,10 +96,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testEnctype()
     {
-        $query = new Query;
+        $query = new Query('foo=bar&toto=le+heros');
         $this->assertSame(PHP_QUERY_RFC1738, $query->getEncodingType());
+        $this->assertSame('foo=bar&toto=le+heros', $query->__toString());
         $query->setEncodingType(PHP_QUERY_RFC3986);
         $this->assertSame(PHP_QUERY_RFC3986, $query->getEncodingType());
+        $this->assertSame('foo=bar&toto=le%20heros', $query->__toString());
         $query->setEncodingType(34);
     }
 

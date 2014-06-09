@@ -107,7 +107,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($url1->sameValueAs($url2));
         $this->assertFalse($url3->sameValueAs($url2));
         $this->assertTrue($url3->sameValueAs($url4));
-        $this->assertFalse($url3->sameValueAs($url4, true));
     }
 
     public function testConstructor3()

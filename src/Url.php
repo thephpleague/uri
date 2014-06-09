@@ -186,16 +186,12 @@ final class Url implements EncodingInterface
      *
      * @return boolean
      */
-    public function sameValueAs(Url $url, $strict = false)
+    public function sameValueAs(Url $url)
     {
-        if (! $strict) {
-            $this_url = $this->setEncodingType(PHP_QUERY_RFC1738)->__toString();
-            $that_url = $url->setEncodingType(PHP_QUERY_RFC1738)->__toString();
+        $this_url = $this->setEncodingType(PHP_QUERY_RFC1738)->__toString();
+        $that_url = $url->setEncodingType(PHP_QUERY_RFC1738)->__toString();
 
-            return  $this_url == $that_url;
-        }
-
-        return $this->__toString() == $url->__toString();
+        return  $this_url == $that_url;
     }
 
     /**

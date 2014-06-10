@@ -311,5 +311,4 @@ abstract class AbstractUrl implements UrlInterface, EncodingInterface
      * @return {@link SegmentInterface}
      */
     abstract public function getPath();
-
 }

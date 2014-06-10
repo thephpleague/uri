@@ -29,6 +29,13 @@ abstract class AbstractSegment extends AbstractArray
     protected $delimiter;
 
     /**
+     * regex to remove data
+     *
+     * @var string
+     */
+    protected $regexStart = '@(:?^|\/)';
+
+    /**
      * The Constructor
      * @param mixed $data The data to add
      */
@@ -218,7 +225,7 @@ abstract class AbstractSegment extends AbstractArray
     {
         $segment = implode($this->delimiter, $data);
         $part = implode($this->delimiter, $this->validate($value));
-        if (! preg_match('@(:?^|\/)'.preg_quote($part, '@').'@', $segment, $matches, PREG_OFFSET_CAPTURE)) {
+        if (! preg_match($this->regexStart.preg_quote($part, '@').'@', $segment, $matches, PREG_OFFSET_CAPTURE)) {
             return null;
         }
 

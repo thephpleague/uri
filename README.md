@@ -107,10 +107,11 @@ Using the following setter methods you can set each URL component independently 
 * `League\Url\Url::setFragment($data)`
 
 The `$data` argument can be:
-	* `null`;
-	* a valid component string for the specified URL component;
-	* an object implementing the `__toString` method;
-	* for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
+
+* `null`;
+* a valid component string for the specified URL component;
+* an object implementing the `__toString` method;
+* for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
 ```php
 $url = new Factory::createFromString('http://www.example.com');
@@ -127,25 +128,21 @@ For complex URLs components additionals methods were added to update an already 
 * `appendHost($data, $whence = null, $whence_index = null)`
 * `prependHost($data, $whence = null, $whence_index = null)`
 * `removeHost($data)`
-
 * `appendPath($data, $whence = null, $whence_index = null)`
 * `prependPath($data, $whence = null, $whence_index = null)`
 * `removePath($data)`
-
 * `modifyQuery($data)`
 
 The `$data` argument can be
 
-	* `null`;
-	* a valid component string;
-	* a object implementing the `__toString` method;
-	* an `array` or a `Traversable` object;
+* `null`;
+* a valid component string;
+* a object implementing the `__toString` method;
+* an `array` or a `Traversable` object;
 
-The `$whence` argument specify the string segment where `$data` will be included from;
-
-The `$whence_index` argument specify the `$whence` index if `$whence` is present more than once;
-
-When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+The `$whence` argument specify the string segment where `$data` will be included from.
+The `$whence_index` argument specify the `$whence` index if `$whence` is present more than once.
+When using the `remove` method, if the pattern is present multiple times only the first match found is removed.
 
 ```php
 $url3 = $url2->modifyQuery(array('query' => 'value'));
@@ -186,10 +183,10 @@ Each URL component is an object on its on. When accessing them from the `League\
 
 ```php
 $url = new Factory::createFromString('https://www.example.com:443');
-$port = $url->getPort(); //$port is a clone object of the $url->port.
+$port = $url->getPort(); //$port is a clone object of the URL port component.
 $port->set(80);
-echo $port; //echo 80;
-echo $url->getPort(); // remains echo 443;
+echo $port; // output 80;
+echo $url->getPort(); // remains 443;
 ```
 
 Each component class implements the `League\Interfaces\ComponentInterface` with the following public methods:

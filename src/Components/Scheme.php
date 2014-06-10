@@ -32,7 +32,7 @@ class Scheme extends AbstractComponent
         }
 
         $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^http(s?)$/i')
+            'options' => array('regexp' => '/^(ht|f)tp(s?)$/i')
         ));
 
         if (! $data) {

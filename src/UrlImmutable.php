@@ -13,12 +13,38 @@
 namespace League\Url;
 
 /**
- * A class to manipulate URLs
+ * A Immutable Value Object class to manipulate URLs
  *
  * @package League.url
  */
-class Url extends AbstractUrl
+final class UrlImmutable extends AbstractUrl
 {
+    /**
+     * To Enable cloning
+     */
+    public function __clone()
+    {
+        $this->scheme = clone $this->scheme;
+        $this->user = clone $this->user;
+        $this->pass = clone $this->pass;
+        $this->host = clone $this->host;
+        $this->port = clone $this->port;
+        $this->path = clone $this->path;
+        $this->query = clone $this->query;
+        $this->fragment = clone $this->fragment;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEncodingType($encoding_type)
+    {
+        $clone = clone $this;
+        $clone->query->setEncodingType($encoding_type);
+
+        return $clone;
+    }
+
     /**
      * Set the URL user component
      *
@@ -28,19 +54,20 @@ class Url extends AbstractUrl
      */
     public function setUser($data)
     {
-        $this->user->set($data);
+        $clone = clone $this;
+        $clone->user->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * get the URL user component
      *
-     * @return {@link Component}
+     * @return {@link ComponentInterface}
      */
     public function getUser()
     {
-        return $this->user;
+        return clone $this->user;
     }
 
     /**
@@ -52,67 +79,70 @@ class Url extends AbstractUrl
      */
     public function setPass($data)
     {
-        $this->pass->set($data);
+        $clone = clone $this;
+        $clone->pass->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * Return the current URL pass component
      *
-     * @return {@link Component}
+     * @return {@link ComponentInterface}
      */
     public function getPass()
     {
-        return $this->pass;
+        return clone $this->pass;
     }
 
     /**
      * Set the URL port component
      *
-     * @param string $data
+     * @param string $value
      *
      * @return self
      */
-    public function setPort($data)
+    public function setPort($value)
     {
-        $this->port->set($data);
+        $clone = clone $this;
+        $clone->port->set($value);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * Return the URL Port component
      *
-     * @return {@link Port}
+     * @return {@link ComponentInterface}
      */
     public function getPort()
     {
-        return $this->port;
+        return clone $this->port;
     }
 
     /**
      * Set the URL scheme component
      *
-     * @param string $data
+     * @param string $value
      *
      * @return self
      */
-    public function setScheme($data)
+    public function setScheme($value)
     {
-        $this->scheme->set($data);
+        $clone = clone $this;
+        $clone->scheme->set($value);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * return the URL scheme component
      *
-     * @return {@link Scheme}
+     * @return {@link ComponentInterface}
      */
     public function getScheme()
     {
-        return $this->scheme;
+        return clone $this->scheme;
     }
 
     /**
@@ -124,29 +154,20 @@ class Url extends AbstractUrl
      */
     public function setFragment($data)
     {
-        $this->fragment->set($data);
+        $clone = clone $this;
+        $clone->fragment->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * return the URL fragment component
      *
-     * @return {@link Component}
+     * @return {@link ComponentInterface}
      */
     public function getFragment()
     {
-        return $this->fragment;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setEncodingType($encoding_type)
-    {
-        $this->query->setEncodingType($encoding_type);
-
-        return $this;
+        return clone $this->fragment;
     }
 
     /**
@@ -158,19 +179,20 @@ class Url extends AbstractUrl
      */
     public function setQuery($data)
     {
-        $this->query->set($data);
+        $clone = clone $this;
+        $clone->query->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * Return the current URL query component
      *
-     * @return {@link Query}
+     * @return {@link QueryInterface}
      */
     public function getQuery()
     {
-        return $this->query;
+        return clone $this->query;
     }
 
     /**
@@ -182,19 +204,20 @@ class Url extends AbstractUrl
      */
     public function setHost($data)
     {
-        $this->host->set($data);
+        $clone = clone $this;
+        $clone->host->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * Return the current Host component
      *
-     * @return {@link Host}
+     * @return {@link ComponentSegmentInterface}
      */
     public function getHost()
     {
-        return $this->host;
+        return clone $this->host;
     }
 
     /**
@@ -206,18 +229,19 @@ class Url extends AbstractUrl
      */
     public function setPath($data)
     {
-        $this->path->set($data);
+        $clone = clone $this;
+        $clone->path->set($data);
 
-        return $this;
+        return $clone;
     }
 
     /**
      * return the URL current path
      *
-     * @return {@link Path}
+     * @return {@link ComponentSegmentInterface}
      */
     public function getPath()
     {
-        return $this->path;
+        return clone $this->path;
     }
 }

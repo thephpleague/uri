@@ -164,10 +164,12 @@ abstract class AbstractUrl implements UrlInterface, EncodingInterface
      */
     public function sameValueAs(UrlInterface $url)
     {
-        $this_url = $this->setEncodingType(PHP_QUERY_RFC1738)->__toString();
-        $that_url = $url->setEncodingType(PHP_QUERY_RFC1738)->__toString();
+        $this_url = clone $this;
+        $that_url = clone $url;
+        $this_url = $this_url->setEncodingType(PHP_QUERY_RFC1738);
+        $that_url = $that_url->setEncodingType(PHP_QUERY_RFC1738);
 
-        return  $this_url == $that_url;
+        return  $this_url->__toString() == $that_url->__toString();
     }
 
     /**

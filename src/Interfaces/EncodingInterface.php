@@ -19,7 +19,7 @@ interface EncodingInterface
      *
      * @param integer $encoding_type
      *
-     * @return void
+     * @return League\Url\Interfaces\EncodingInterface
      */
     public function setEncodingType($encoding_type);
 

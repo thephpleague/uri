@@ -141,7 +141,9 @@ The `$data` argument can be
 * an `array` or a `Traversable` object;
 
 The `$whence` argument specify the string segment where `$data` will be included from.
+
 The `$whence_index` argument specify the `$whence` index if `$whence` is present more than once.
+
 When using the `remove` method, if the pattern is present multiple times only the first match found is removed.
 
 ```php

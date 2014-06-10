@@ -32,14 +32,15 @@ class Factory
     /**
      * Return a instance of Url from a string
      *
-     * @param mixed   $url      a string or an object that implement the __toString method
-     * @param integer $enc_type the RFC to follow when encoding the query string
+     * @param mixed   $url          a string or an object that implement the __toString method
+     * @param boolean $is_immutable should we create a Immutable object or not
+     * @param integer $enc_type     the RFC to follow when encoding the query string
      *
-     * @return \League\Url\Url
+     * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromString($url, $enc_type = PHP_QUERY_RFC1738)
+    public static function createFromString($url, $is_immutable = false, $enc_type = PHP_QUERY_RFC1738)
     {
         $url = (string) $url;
         $url = trim($url);
@@ -51,7 +52,12 @@ class Factory
 
         $components = self::sanitizeComponents($components);
 
-        return new Url(
+        $obj = 'League\Url\Url';
+        if ($is_immutable) {
+            $obj = 'League\Url\UrlImmutable';
+        }
+
+        return new $obj(
             new Scheme($components['scheme']),
             new User($components['user']),
             new Pass($components['pass']),
@@ -66,14 +72,15 @@ class Factory
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server   the server array
-     * @param integer $enc_type the RFC to follow when encoding the query string
+     * @param array   $server       the server array
+     * @param boolean $is_immutable should we create a Immutable object or not
+     * @param integer $enc_type     the RFC to follow when encoding the query string
      *
-     * @return \League\Url\Url
+     * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromServer(array $server, $enc_type = PHP_QUERY_RFC1738)
+    public static function createFromServer(array $server, $is_immutable = false, $enc_type = PHP_QUERY_RFC1738)
     {
         $scheme = self::fetchServerScheme($server);
         $host =  self::fetchServerHost($server);
@@ -82,7 +89,7 @@ class Factory
 
         $url = $scheme.$host.$port.$request;
 
-        return self::createFromString($url, $enc_type);
+        return self::createFromString($url, $is_immutable, $enc_type);
     }
 
     /**

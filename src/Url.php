@@ -134,14 +134,7 @@ final class Url implements EncodingInterface
      */
     public function __toString()
     {
-        $uri = $this->getUri();
-        $domain = $this->getDomain();
-        $glue = '';
-        if (0 !== strpos($uri, '/') && '' != $domain) {
-            $glue = '/';
-        }
-
-        return $domain.$glue.$uri;
+        return $this->getBaseUrl().$this->getRelativeUrl();
     }
 
     /**
@@ -150,11 +143,14 @@ final class Url implements EncodingInterface
      *
      * @return string
      */
-    public function getUri()
+    public function getRelativeUrl()
     {
         $path = $this->path->getUriComponent();
         $query = $this->query->getUriComponent();
         $fragment = $this->fragment->getUriComponent();
+        if ('' == $path) {
+            $path = '/'.$path;
+        }
 
         return $path.$query.$fragment;
     }
@@ -165,7 +161,7 @@ final class Url implements EncodingInterface
      *
      * @return string
      */
-    public function getDomain()
+    public function getBaseUrl()
     {
         $scheme = $this->scheme->getUriComponent();
         $user = $this->user->getUriComponent();

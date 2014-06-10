@@ -142,14 +142,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException RuntimeException
      */
-    public function testBadScheme()
-    {
-        Factory::createFromString('ftp://example.com');
-    }
-
-    /**
-     * @expectedException RuntimeException
-     */
     public function testQuery()
     {
         $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->url->modifyQuery(array('john' => 'doe the john'))->getQuery());

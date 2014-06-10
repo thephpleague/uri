@@ -64,8 +64,8 @@ By default if no `$enc_type` argument is given, the URL query component is encod
 You can get several string representation of the URL using the following methods:
 
 * `League\Url\Url::__toString` returns the full string representation of the URL;
-* `League\Url\Url::getUri` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
-* `League\Url\Url::getUri` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
+* `League\Url\Url::getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
+* `League\Url\Url::getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
 
 ```php
 $url = new Factory::createFromString(
@@ -73,8 +73,8 @@ $url = new Factory::createFromString(
 	PHP_QUERY_RFC3986
 );
 
-echo $url->getUri(); // /path/index.php?query=toto%20le%20heros
-echo $url->getDomain(); // http://www.example.com
+echo $url->getRelativeUrl(); // /path/index.php?query=toto%20le%20heros
+echo $url->getBaseUrl(); // http://www.example.com
 echo $url; // 'http://www.example.com/path/index.php?query=toto%20le%20heros'
 ```
 ### Objects comparison 
@@ -95,7 +95,7 @@ You can compare 2 `League\Url\Url` object using the `League\Url\Url::sameValueAs
 
 `League\Url` is a Immutable Value Object:
 
-Using the following setter methods you can set/modify each URL component independently but the methods return a clone of the modified object. This mean you can use chaining without modifying the original url.
+Using the following setter methods you can set each URL component independently but the methods return a clone of the modified object. This mean you can use chaining without modifying the original url.
 
 * `League\Url\Url::setScheme($data)` 
 * `League\Url\Url::setUser($data)`
@@ -122,6 +122,36 @@ $new_url = $url
 echo $url; //remains http://www.example.com/
 echo $new_url; //output https://john:doe@www.example.com:443/
 ```
+For complex URLs components additionals methods were added to update an already set component:
+
+* `appendHost($data, $whence = null, $whence_index = null)`
+* `prependHost($data, $whence = null, $whence_index = null)`
+* `removeHost($data)`
+
+* `appendPath($data, $whence = null, $whence_index = null)`
+* `prependPath($data, $whence = null, $whence_index = null)`
+* `removePath($data)`
+
+* `modifyQuery($data)`
+
+The `$data` argument can be
+
+	* `null`;
+	* a valid component string;
+	* a object implementing the `__toString` method;
+	* an `array` or a `Traversable` object;
+
+The `$whence` argument specify the string segment where `$data` will be included from;
+
+The `$whence_index` argument specify the `$whence` index if `$whence` is present more than once;
+
+When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+
+```php
+$url3 = $url2->modifyQuery(array('query' => 'value'));
+echo $url3 //output https://john:doe@www.example.com:443/?query=value
+echo $url2; //remains https://john:doe@www.example.com:443/
+```
 
 ### Setting URL Query component encoding style
 
@@ -143,7 +173,7 @@ echo $new_url; //output http://www.example.com?query=toto%20le%20heros
 
 ## URL components classes
 
-Each URL component is an object on its on. Everytime you acces one of them from the `League\Url\Url` object it returns a clone of the given class. The following method were set:
+Each URL component is an object on its on. When accessing them from the `League\Url\Url` object you get a clone of the corresponding component object. The following method were set:
 
 * `League\Url\Url::getScheme()` 
 * `League\Url\Url::getUser()`
@@ -303,34 +333,25 @@ $path->remove('troll/bar');
 echo (string) $path; //will display bar/leheros/troll
 ```
 
-## Manipulating URL components
+## Tips
 
-In addition to the setter method for each URL component and for the URL query encoding type, the following methods where added to `League\Url\Url` To ease manipulating complex component like the `host`, the `path` and/or the `query` :
-
-* `appendHost($data, $whence = null, $whence_index = null)`
-* `prependHost($data, $whence = null, $whence_index = null)`
-* `removeHost($data)`
-* `appendPath($data, $whence = null, $whence_index = null)`
-* `prependPath($data, $whence = null, $whence_index = null)`
-* `removePath($data)`
-* `modifyQuery($data)`
-
-These methods are proxies to the internal component method but like all setters, they return a fully clone `League\Url\Url` object. 
+There are in fact 2 ways to modify the URL object.
 
 ```php
 $url3 = $url2->modifyQuery(array('query' => 'value'));
 echo $url3 //output https://john:doe@www.example.com:443/?query=value
 echo $url2; //remains https://john:doe@www.example.com:443/
+```
 
-//is equivalent to:
+is equivalent to:
 
+```php
 $query = $url2->getQuery();
 $query->modify(array('query' => 'value'));
 $url3 = $url2->setQuery($query);
 
 echo $url3 //output https://john:doe@www.example.com:443/?query=value
 echo $url2; //remains https://john:doe@www.example.com:443/
-
 ```
 
 Testing

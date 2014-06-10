@@ -184,4 +184,132 @@ abstract class AbstractUrl implements UrlInterface, EncodingInterface
      * {@inheritdoc}
      */
     abstract public function setEncodingType($encoding_type);
+
+    /**
+     * Set the URL user component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    abstract public function setUser($data);
+
+    /**
+     * get the URL user component
+     *
+     * @return {@link ComponentInterface}
+     */
+    abstract public function getUser();
+
+    /**
+     * Set the URL pass component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    abstract public function setPass($data);
+
+    /**
+     * Return the current URL pass component
+     *
+     * @return {@link ComponentInterface}
+     */
+    abstract public function getPass();
+
+    /**
+     * Set the URL port component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    abstract public function setPort($data);
+
+    /**
+     * Return the URL Port component
+     *
+     * @return {@link ComponentInterface}
+     */
+    abstract public function getPort();
+
+    /**
+     * Set the URL scheme component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    abstract public function setScheme($data);
+
+    /**
+     * return the URL scheme component
+     *
+     * @return {@link ComponentInterface}
+     */
+    abstract public function getScheme();
+
+    /**
+     * Set the URL Fragment component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    abstract public function setFragment($data);
+    /**
+     * return the URL fragment component
+     *
+     * @return {@link ComponentInterface}
+     */
+    abstract public function getFragment();
+
+    /**
+     * Set the URL query component
+     *
+     * @param mixed $data the data to be added to the query component
+     *
+     * @return self
+     */
+    abstract public function setQuery($data);
+
+    /**
+     * Return the current URL query component
+     *
+     * @return {@link QueryInterface}
+     */
+    abstract public function getQuery();
+
+    /**
+     * Set the URL host component
+     *
+     * @param mixed $data the host data can be a array or a string
+     *
+     * @return self
+     */
+    abstract public function setHost($data);
+
+    /**
+     * Return the current Host component
+     *
+     * @return {@link SegmentInterface}
+     */
+    abstract public function getHost();
+
+    /**
+     * Set the URL path component
+     *
+     * @param mixed $data the host data can be a array or a string
+     *
+     * @return self
+     */
+    abstract public function setPath($data);
+
+    /**
+     * return the URL current path
+     *
+     * @return {@link SegmentInterface}
+     */
+    abstract public function getPath();
+
 }

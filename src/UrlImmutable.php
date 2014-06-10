@@ -46,11 +46,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL user component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setUser($data)
     {
@@ -61,9 +57,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL user component
-     *
-     * @return {@link ComponentInterface}
+     * {@inheritdoc}
      */
     public function getUser()
     {
@@ -71,11 +65,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL pass component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPass($data)
     {
@@ -86,9 +76,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Return the current URL pass component
-     *
-     * @return {@link ComponentInterface}
+     * {@inheritdoc}
      */
     public function getPass()
     {
@@ -96,11 +84,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL port component
-     *
-     * @param string $value
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPort($value)
     {
@@ -111,9 +95,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Return the URL Port component
-     *
-     * @return {@link ComponentInterface}
+     * {@inheritdoc}
      */
     public function getPort()
     {
@@ -121,11 +103,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL scheme component
-     *
-     * @param string $value
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setScheme($value)
     {
@@ -136,9 +114,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * return the URL scheme component
-     *
-     * @return {@link ComponentInterface}
+     * {@inheritdoc}
      */
     public function getScheme()
     {
@@ -146,11 +122,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL Fragment component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setFragment($data)
     {
@@ -161,9 +133,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * return the URL fragment component
-     *
-     * @return {@link ComponentInterface}
+     * {@inheritdoc}
      */
     public function getFragment()
     {
@@ -171,11 +141,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL query component
-     *
-     * @param mixed $data the data to be added to the query component
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setQuery($data)
     {
@@ -186,9 +152,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Return the current URL query component
-     *
-     * @return {@link QueryInterface}
+     * {@inheritdoc}
      */
     public function getQuery()
     {
@@ -196,11 +160,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL host component
-     *
-     * @param mixed $data the host data can be a array or a string
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setHost($data)
     {
@@ -211,9 +171,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Return the current Host component
-     *
-     * @return {@link ComponentSegmentInterface}
+     * {@inheritdoc}
      */
     public function getHost()
     {
@@ -221,11 +179,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL path component
-     *
-     * @param mixed $data the host data can be a array or a string
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPath($data)
     {
@@ -236,9 +190,7 @@ final class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * return the URL current path
-     *
-     * @return {@link ComponentSegmentInterface}
+     * {@inheritdoc}
      */
     public function getPath()
     {

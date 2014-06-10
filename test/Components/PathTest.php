@@ -3,6 +3,7 @@
 namespace League\Url\test;
 
 use StdClass;
+use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Path;
 
@@ -30,6 +31,41 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertNull($path[0]);
         $this->assertSame(array(1 => 'bar'), $path->toArray());
         $path['toto'] = 'comment ça va';
+    }
+
+    public function testPath()
+    {
+        $path = new Path('/test/query.php');
+        $path->prepend('master');
+        $this->assertSame('master/test/query.php', $path->get());
+
+        $path->remove('test');
+        $this->assertSame('master/query.php', $path->get());
+
+        $path->remove('toto');
+        $this->assertSame('master/query.php', $path->get());
+
+        $path->append('sullivent', 'master');
+        $this->assertSame('master/sullivent/query.php', $path->get());
+
+        $path->set(null);
+        $path->append('/shop/checkout');
+        $this->assertSame('shop/checkout', $path->get());
+
+        $path->set(array('shop', 'rev iew'));
+        $this->assertSame('shop/rev%20iew', $path->get());
+
+        $path->append(new ArrayIterator(array('sullivent', 'wacowski')));
+        $this->assertSame('shop/rev%20iew/sullivent/wacowski', $path->get());
+
+        $path->prepend('master');
+        $path->prepend('master');
+        $this->assertSame('master/master/shop/rev%20iew/sullivent/wacowski', (string) $path);
+
+        $path->append('slave', 'sullivent');
+        $path->append('slave', 'sullivent');
+
+        $this->assertSame('master/master/shop/rev%20iew/sullivent/slave/slave/wacowski', (string) $path);
     }
 
     public function testRemove()

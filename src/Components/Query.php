@@ -64,6 +64,8 @@ class Query extends AbstractArray implements QueryInterface, EncodingInterface
             throw new InvalidArgumentException('Invalid value for the encoding type');
         }
         $this->encoding_type = $enc_type;
+
+        return $this;
     }
 
     /**

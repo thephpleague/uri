@@ -186,25 +186,6 @@ final class Url implements EncodingInterface
     }
 
     /**
-     * Return a array representation of the URL
-     *
-     * @return array similar to PHP internal function {@link parse_url}
-     */
-    public function parse()
-    {
-        return array(
-            'scheme' => $this->scheme->get(),
-            'user' => $this->user->get(),
-            'pass' => $this->pass->get(),
-            'host' => $this->host->get(),
-            'port' => $this->port->get(),
-            'path' => $this->path->get(),
-            'query' => $this->query->get(),
-            'fragment' => $this->fragment->get(),
-        );
-    }
-
-    /**
      * Compare two Url object and tells whether they can be considered equal
      *
      * @param \League\Url\Url $url

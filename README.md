@@ -59,29 +59,54 @@ By default if no `$enc_type` argument is given, the URL query component is encod
 
 ## Usage
 
+### Url String representations
+
+You can get several string representation of the URL using the following methods:
+
+* `League\Url\Url::__toString` returns the full string representation of the URL;
+* `League\Url\Url::getUri` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
+* `League\Url\Url::getUri` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
+
+```php
+$url = new Factory::createFromString(
+	'http://www.example.com/path/index.php?query=toto+le+heros',
+	PHP_QUERY_RFC3986
+);
+
+echo $url->getUri(); // /path/index.php?query=toto%20le%20heros
+echo $url->getDomain(); // http://www.example.com
+echo $url; // 'http://www.example.com/path/index.php?query=toto%20le%20heros'
+```
+### Objects comparison 
+
+You can compare 2 `League\Url\Url` object using the `League\Url\Url::sameValueAs` method. The object comparison is encoding type independent.
+
+```php
+    $original_url = Factory::createFromString('example.com');
+    $new_url = Factory::createFromString('//example.com');
+    $alternate_url = Factory::createFromString('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
+    $another_url = Factory::createFromString('//example.com?foo=toto+le+heros');
+    $original_url->sameValueAs($new_url); //will return true
+    $alternate_url->sameValueAs($new_url); //will return false
+    $alternate_url->sameValueAs($another_url); //will return true
+```
+
 ### Immutable Object
 
 `League\Url` is a Immutable Value Object:
 
-* The object implements the `__toString` method to enable accessing the string representation of the URL;
-* Everytime the object needs to return or to modify a property you return a clone of the modified object or of the property object:
-	* you can easily manipulating the url with chaining without modifying the original object.
-	* you can not modify the object property without notice.
+Using the following setter methods you can set/modify each URL component independently but the methods return a clone of the modified object. This mean you can use chaining without modifying the original url.
 
-Using the following setter methods you can set each URL component independently:
+* `League\Url\Url::setScheme($data)` 
+* `League\Url\Url::setUser($data)`
+* `League\Url\Url::setPass($data)`
+* `League\Url\Url::setHost($data)`
+* `League\Url\Url::setPort($data)`
+* `League\Url\Url::setPath($data)`
+* `League\Url\Url::setQuery($data)`
+* `League\Url\Url::setFragment($data)`
 
-* `League\Url\Url::getScheme($data)` 
-* `League\Url\Url::getUser($data)`
-* `League\Url\Url::getPass($data)`
-* `League\Url\Url::getHost($data)`
-* `League\Url\Url::getPort($data)`
-* `League\Url\Url::getPath($data)`
-* `League\Url\Url::getQuery($data)`
-* `League\Url\Url::getFragment($data)`
-
-Of note:
-
-* The `$data` argument can be:
+The `$data` argument can be:
 	* `null`;
 	* a valid component string for the specified URL component;
 	* an object implementing the `__toString` method;
@@ -96,11 +121,6 @@ $new_url = $url
 		->setScheme('https');
 echo $url; //remains http://www.example.com/
 echo $new_url; //output https://john:doe@www.example.com:443/
-
-$port = $new_url->getPort(); //$port is a clone object of the $url->port.
-$port->set(80); //
-echo $port; //echo 80;
-echo $port->getPort(); // echo 443; 
 ```
 
 ### Setting URL Query component encoding style
@@ -120,48 +140,6 @@ $new_url = $url->setEncodingType(PHP_QUERY_RFC3968);
 echo $url; //remains http://www.example.com?query=toto+le+heros
 echo $new_url; //output http://www.example.com?query=toto%20le%20heros
 ```
- 
-### Parsing the URL
-
-Once created, the object can return its components using the `parse` method. This methods returns an associated array similar to php `parse_url` returned object. 
-
-```php
-$url = new Factory::createFromString('http://www.example.com?foo=bar');
-var_export($url->parse()); 
-// will output the following array:
-// array(
-//     'scheme' => 'http',
-//     'user' => null,
-//     'pass' => null,
-//     'host' => 'www.example.com',
-//     'path' => null,
-//     'query' => 'foo=bar',
-//     'fragment' => null,
-// );
-```
-
-### Url output
-
-To get the string representation of the given URL you need to invoke the `__toString()` method. But note that for Url without path a `/` representing the default path will be added if needed.
-
-```php
-$url = new Factory::createFromString('http://www.example.com#fragment');
-echo $url; //will output 'http://www.example.com/#fragment' notice the trailing slash added
-```
-
-### Objects comparison 
-
-You can compare 2 `League\Url\Url` object using the `League\Url\Url::sameValueAs` method. The object comparison is encoding type independent.
-
-```php
-    $original_url = Factory::createFromString('example.com');
-    $new_url = Factory::createFromString('//example.com');
-    $alternate_url = Factory::createFromString('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
-    $another_url = Factory::createFromString('//example.com?foo=toto+le+heros');
-    $original_url->sameValueAs($new_url); //will return true
-    $alternate_url->sameValueAs($new_url); //will return false
-    $alternate_url->sameValueAs($another_url); //will return true
-```
 
 ## URL components classes
 
@@ -176,6 +154,14 @@ Each URL component is an object on its on. Everytime you acces one of them from 
 * `League\Url\Url::getQuery()`
 * `League\Url\Url::getFragment()`
 
+```php
+$url = new Factory::createFromString('https://www.example.com:443');
+$port = $url->getPort(); //$port is a clone object of the $url->port.
+$port->set(80);
+echo $port; //echo 80;
+echo $url->getPort(); // remains echo 443;
+```
+
 Each component class implements the `League\Interfaces\ComponentInterface` with the following public methods:
 
 * `set($data)`: set the component data
@@ -183,9 +169,7 @@ Each component class implements the `League\Interfaces\ComponentInterface` with 
 * `__toString()`: return a typecast string representation of the component.
 * `getUriComponent()`: return an altered string representation to ease URL representation.
 
-Of note:
-
-* The `$data` argument can be:
+The `$data` argument can be:
 	* `null`;
 	* a valid component string for the specified URL component;
 	* an object implementing the `__toString` method;
@@ -199,6 +183,7 @@ $scheme->set('https');
 echo $scheme->__toString(); //will echo 'https'
 echo $scheme->getUriComponent(); //will echo 'https://'
 ```
+
 The URL components that **only** implement this interface are:
 
 * `scheme` with the `League\Url\Components\Scheme`;
@@ -207,7 +192,7 @@ The URL components that **only** implement this interface are:
 * `port` with the `League\Url\Components\Port`;
 * `fragment` with the `League\Url\Components\Fragment`;
 
-The classes differ on how they validate the data and/or on how they format the component string.
+The classes differ on how they validate the data and/or on how they output the component string.
 
 ## Complex Components Classes
 

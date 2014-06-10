@@ -86,14 +86,16 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame('https://127.0.0.1:23/', (string) Factory::createFromServer($server));
     }
 
+    public function testSchemelessUrl()
+    {
+        $url = $this->url->setScheme(null);
+        $this->assertNull($url->getScheme()->get());
+    }
+
     public function testConstructor()
     {
         $expected = 'http://example.com:80/foo/bar?foo=bar#content';
         $this->assertSame($expected, (string) Factory::createFromString($expected));
-    }
-
-    public function testConstructor2()
-    {
         $this->assertSame('//example.com/', (string) Factory::createFromString('example.com'));
         $this->assertSame('//example.com/', (string) Factory::createFromString('//example.com'));
     }
@@ -197,21 +199,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame('shop.premium.org', $this->url->setHost(new ArrayIterator(array('shop', 'premium', 'org')))->getHost()->get());
         $this->assertNull($this->url->setHost(null)->getHost()->get());
         $this->assertSame('secure.example.com', $this->url->getHost()->get());
-    }
-
-    public function testParse()
-    {
-        $expected = array (
-            'scheme' => $this->url->getScheme()->get(),
-            'user' => $this->url->getUser()->get(),
-            'pass' => $this->url->getPass()->get(),
-            'host' => $this->url->getHost()->get(),
-            'port' => $this->url->getPort()->get(),
-            'path' => $this->url->getPath()->get(),
-            'query' => $this->url->getQuery()->get(),
-            'fragment' => $this->url->getFragment()->get(),
-        );
-        $this->assertSame($expected, $this->url->parse());
     }
 
     /**

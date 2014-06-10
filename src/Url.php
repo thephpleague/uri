@@ -20,11 +20,7 @@ namespace League\Url;
 class Url extends AbstractUrl
 {
     /**
-     * Set the URL user component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setUser($data)
     {
@@ -34,9 +30,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL user component
-     *
-     * @return {@link Component}
+     * {@inheritdoc}
      */
     public function getUser()
     {
@@ -44,11 +38,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL pass component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPass($data)
     {
@@ -58,9 +48,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Return the current URL pass component
-     *
-     * @return {@link Component}
+     * {@inheritdoc}
      */
     public function getPass()
     {
@@ -68,11 +56,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL port component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPort($data)
     {
@@ -82,9 +66,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Return the URL Port component
-     *
-     * @return {@link Port}
+     * {@inheritdoc}
      */
     public function getPort()
     {
@@ -92,11 +74,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL scheme component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setScheme($data)
     {
@@ -106,9 +84,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * return the URL scheme component
-     *
-     * @return {@link Scheme}
+     * {@inheritdoc}
      */
     public function getScheme()
     {
@@ -116,11 +92,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL Fragment component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setFragment($data)
     {
@@ -130,9 +102,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * return the URL fragment component
-     *
-     * @return {@link Component}
+     * {@inheritdoc}
      */
     public function getFragment()
     {
@@ -150,11 +120,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL query component
-     *
-     * @param mixed $data the data to be added to the query component
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setQuery($data)
     {
@@ -164,9 +130,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Return the current URL query component
-     *
-     * @return {@link Query}
+     * {@inheritdoc}
      */
     public function getQuery()
     {
@@ -174,11 +138,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL host component
-     *
-     * @param mixed $data the host data can be a array or a string
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setHost($data)
     {
@@ -188,9 +148,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Return the current Host component
-     *
-     * @return {@link Host}
+     * {@inheritdoc}
      */
     public function getHost()
     {
@@ -198,11 +156,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL path component
-     *
-     * @param mixed $data the host data can be a array or a string
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPath($data)
     {
@@ -212,9 +166,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * return the URL current path
-     *
-     * @return {@link Path}
+     * {@inheritdoc}
      */
     public function getPath()
     {

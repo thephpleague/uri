@@ -97,6 +97,8 @@ class Factory implements EncodingInterface
 
         $components = $this->sanitizeComponents($components);
 
+        $is_immutable = (bool) $is_immutable;
+
         $obj = 'League\Url\Url';
         if ($is_immutable) {
             $obj = 'League\Url\UrlImmutable';

@@ -10,9 +10,14 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 {
     private $url;
 
+    private $url_factory;
+
     public function setUp()
     {
-        $this->url = Factory::createFromString(
+
+        $this->url_factory = new Factory;
+
+        $this->url = $this->url_factory->createFromString(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
             true
         );
@@ -34,8 +39,9 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
         );
-
-        $this->assertSame('https://example.com:23/', (string) Factory::createFromServer($server, true));
+        $url = $this->url_factory->createFromServer($server, true);
+        $this->assertInstanceof('\League\Url\UrlImmutable', $url);
+        $this->assertSame('https://example.com:23/', $url->__toString());
 
         $server = array(
             'PHP_SELF' => '',
@@ -46,7 +52,9 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         );
 
-        $this->assertSame('https://127.0.0.1:23/', (string) Factory::createFromServer($server, true));
+        $url = $this->url_factory->createFromServer($server);
+        $this->assertInstanceof('\League\Url\Url', $url);
+        $this->assertSame('https://127.0.0.1:23/', $url->__toString());
     }
 
     /**
@@ -62,7 +70,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         );
 
-        Factory::createFromServer($server, true);
+        $this->url_factory->createFromServer($server);
     }
 
     public function testCreateFromServerWithoutRequestUri()
@@ -74,8 +82,8 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         );
-
-        $this->assertSame('https://127.0.0.1:23/toto?foo=bar', (string) Factory::createFromServer($server, true));
+        $url = $this->url_factory->createFromServer($server);
+        $this->assertSame('https://127.0.0.1:23/toto?foo=bar', (string) $url);
 
         $server = array(
             'SERVER_ADDR' => '127.0.0.1',
@@ -83,45 +91,30 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         );
+        $url = $this->url_factory->createFromServer($server);
 
-        $this->assertSame('https://127.0.0.1:23/', (string) Factory::createFromServer($server, true));
-    }
-
-    public function testSchemelessUrl()
-    {
-        $url = $this->url->setScheme(null);
-        $this->assertNull($url->getScheme()->get());
+        $this->assertSame('https://127.0.0.1:23/', (string) $url);
     }
 
     public function testConstructor()
     {
         $expected = 'http://example.com:80/foo/bar?foo=bar#content';
-        $this->assertSame($expected, (string) Factory::createFromString($expected, true));
-        $this->assertSame('//example.com/', (string) Factory::createFromString('example.com', true));
-        $this->assertSame('//example.com/', (string) Factory::createFromString('//example.com', true));
-    }
-
-    public function testSameValueAs()
-    {
-        $url1 = Factory::createFromString('example.com', true);
-        $url2 = Factory::createFromString('//example.com', true);
-        $url3 = Factory::createFromString('//example.com?foo=toto+le+heros', true, PHP_QUERY_RFC3986);
-        $url4 = Factory::createFromString('//example.com?foo=toto+le+heros', true);
-        $this->assertTrue($url1->sameValueAs($url2));
-        $this->assertFalse($url3->sameValueAs($url2));
-        $this->assertTrue($url3->sameValueAs($url4));
-    }
-
-    public function testConstructor3()
-    {
-        $this->assertSame('/path/to/url.html', (string) Factory::createFromString('/path/to/url.html', true));
-    }
-
-    public function testConstructor4()
-    {
-        $this->assertSame('//login@example.com/', (string) Factory::createFromString('login@example.com/', true));
-        $this->assertSame('//login:pass@example.com/', (string) Factory::createFromString('login:pass@example.com/', true));
-        $this->assertSame('http://login:pass@example.com/', (string) Factory::createFromString('http://login:pass@example.com/', true));
+        $this->assertSame($expected, (string) $this->url_factory->createFromString($expected));
+        $this->assertSame('//example.com/', (string) $this->url_factory->createFromString('example.com'));
+        $this->assertSame('//example.com/', (string) $this->url_factory->createFromString('//example.com'));
+        $this->assertSame('/path/to/url.html', (string) $this->url_factory->createFromString('/path/to/url.html'));
+        $this->assertSame(
+            '//login@example.com/',
+            (string) $this->url_factory->createFromString('login@example.com/')
+        );
+        $this->assertSame(
+            '//login:pass@example.com/',
+            (string) $this->url_factory->createFromString('login:pass@example.com/')
+        );
+        $this->assertSame(
+            'http://login:pass@example.com/',
+            (string) $this->url_factory->createFromString('http://login:pass@example.com/')
+        );
     }
 
     /**
@@ -129,7 +122,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO()
     {
-        Factory::createFromString("http://user@:80", true);
+        $this->url_factory->createFromString("http://user@:80");
     }
 
     /**
@@ -137,6 +130,16 @@ class FactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromUrlKO()
     {
-        Factory::createFromString(new StdClass, true);
+        $this->url_factory->createFromString(new StdClass);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testEncodingType()
+    {
+        $this->assertSame(PHP_QUERY_RFC1738, $this->url_factory->getEncoding());
+        $this->assertSame(PHP_QUERY_RFC3986, $this->url_factory->setEncoding(PHP_QUERY_RFC3986)->getEncoding());
+        $this->url_factory->setEncoding('toto');
     }
 }

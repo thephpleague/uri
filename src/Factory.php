@@ -13,6 +13,8 @@
 namespace League\Url;
 
 use RuntimeException;
+use InvalidArgumentException;
+use League\Url\Interfaces\EncodingInterface;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;
@@ -27,20 +29,63 @@ use League\Url\Components\Fragment;
  *
  * @package League.url
  */
-class Factory
+class Factory implements EncodingInterface
 {
+
+    /**
+     * Query encoding type
+     *
+     * @var integer
+     */
+    private $encoding_type = PHP_QUERY_RFC1738;
+
+    /**
+     * Possible encoding type list
+     *
+     * @var array
+     */
+    private $encoding_list = array(
+        PHP_QUERY_RFC3986 => 1,
+        PHP_QUERY_RFC1738 => 1
+    );
+
+    public function __construct($enc_type = PHP_QUERY_RFC1738)
+    {
+        $this->setEncoding($enc_type);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEncoding($enc_type)
+    {
+        if (! isset($this->encoding_list[$enc_type])) {
+            throw new InvalidArgumentException('Invalid value for the encoding type');
+        }
+        $this->encoding_type = $enc_type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEncoding()
+    {
+        return $this->encoding_type;
+    }
+
     /**
      * Return a instance of Url from a string
      *
      * @param mixed   $url          a string or an object that implement the __toString method
      * @param boolean $is_immutable should we create a Immutable object or not
-     * @param integer $enc_type     the RFC to follow when encoding the query string
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromString($url, $is_immutable = false, $enc_type = PHP_QUERY_RFC1738)
+    public function createFromString($url, $is_immutable = false)
     {
         $url = (string) $url;
         $url = trim($url);
@@ -50,7 +95,7 @@ class Factory
             throw new RuntimeException('The given URL could not be parse');
         }
 
-        $components = self::sanitizeComponents($components);
+        $components = $this->sanitizeComponents($components);
 
         $obj = 'League\Url\Url';
         if ($is_immutable) {
@@ -64,7 +109,7 @@ class Factory
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),
-            new Query($components['query'], $enc_type),
+            new Query($components['query'], $this->encoding_type),
             new Fragment($components['fragment'])
         );
     }
@@ -74,22 +119,21 @@ class Factory
      *
      * @param array   $server       the server array
      * @param boolean $is_immutable should we create a Immutable object or not
-     * @param integer $enc_type     the RFC to follow when encoding the query string
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromServer(array $server, $is_immutable = false, $enc_type = PHP_QUERY_RFC1738)
+    public function createFromServer(array $server, $is_immutable = false)
     {
-        $scheme = self::fetchServerScheme($server);
-        $host =  self::fetchServerHost($server);
-        $port = self::fetchServerPort($server);
-        $request = self::fetchServerRequestUri($server);
+        $scheme = $this->fetchServerScheme($server);
+        $host =  $this->fetchServerHost($server);
+        $port = $this->fetchServerPort($server);
+        $request = $this->fetchServerRequestUri($server);
 
         $url = $scheme.$host.$port.$request;
 
-        return self::createFromString($url, $is_immutable, $enc_type);
+        return $this->createFromString($url, $is_immutable);
     }
 
     /**
@@ -99,7 +143,7 @@ class Factory
      *
      * @return string
      */
-    protected static function fetchServerScheme(array $server)
+    private function fetchServerScheme(array $server)
     {
         $scheme = '';
         if (isset($server['SERVER_PROTOCOL'])) {
@@ -121,7 +165,7 @@ class Factory
      *
      * @return string
      */
-    protected static function fetchServerHost(array $server)
+    private function fetchServerHost(array $server)
     {
         if (isset($server['HTTP_HOST'])) {
             return $server['HTTP_HOST'];
@@ -139,7 +183,7 @@ class Factory
      *
      * @return string
      */
-    protected static function fetchServerPort(array $server)
+    private function fetchServerPort(array $server)
     {
         $port = '';
         if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
@@ -156,7 +200,7 @@ class Factory
      *
      * @return string
      */
-    protected static function fetchServerRequestUri(array $server)
+    private function fetchServerRequestUri(array $server)
     {
         if (isset($server['REQUEST_URI'])) {
             return $server['REQUEST_URI'];
@@ -174,7 +218,7 @@ class Factory
      *
      * @return array
      */
-    protected static function sanitizeComponents(array $components)
+    private function sanitizeComponents(array $components)
     {
         $components = array_merge(array(
             'scheme' => null,
@@ -187,9 +231,9 @@ class Factory
             'fragment' => null,
         ), $components);
 
-        $components = self::formatAuthComponent($components);
+        $components = $this->formatAuthComponent($components);
 
-        return self::formatPathComponent($components);
+        return $this->formatPathComponent($components);
     }
 
     /**
@@ -199,7 +243,7 @@ class Factory
      *
      * @return array
      */
-    protected static function formatPathComponent(array $components)
+    private function formatPathComponent(array $components)
     {
         if (is_null($components['scheme'])
             && is_null($components['host'])
@@ -215,7 +259,7 @@ class Factory
             if (isset($res[1])) {
                 $components['path'] = $res[1];
             }
-            $components = self::formatHostComponent($components);
+            $components = $this->formatHostComponent($components);
         }
 
         return $components;
@@ -228,7 +272,7 @@ class Factory
      *
      * @return array
      */
-    protected static function formatHostComponent(array $components)
+    private function formatHostComponent(array $components)
     {
         if (strpos($components['host'], '@')) {
             list($auth, $components['host']) = explode('@', $components['host']);
@@ -249,7 +293,7 @@ class Factory
      *
      * @return array
      */
-    protected static function formatAuthComponent(array $components)
+    private function formatAuthComponent(array $components)
     {
         if (!is_null($components['scheme'])
             && is_null($components['host'])

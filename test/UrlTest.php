@@ -26,6 +26,12 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->url_factory = null;
     }
 
+    public function testStringRepresentation()
+    {
+        $this->assertSame('https://login:pass@secure.example.com:443', $this->url->getBaseUrl());
+        $this->assertSame('/test/query.php?kingkong=toto#doc3', $this->url->getRelativeUrl());
+    }
+
     public function testGetterAccess()
     {
         $this->assertInstanceof('League\Url\Components\Scheme', $this->url->getScheme());

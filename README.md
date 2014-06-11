@@ -43,8 +43,8 @@ use League\Url\Factory;
 $url_factory = new Factory(PHP_QUERY_RFC1738);
 
 //Method 1 : from a given string
-$url = new $url_factory->createFromString('http://www.example.com');
-$url_immutable = new $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
+$url = $url_factory->createFromString('http://www.example.com');
+$url_immutable = $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
 
 $url_factory->setEncoding(PHP_QUERY_RFC3968);
 
@@ -68,7 +68,7 @@ The second optional argument for `createFromServer` and `createFromString` metho
 
 Both classes implements the `League\Url\UrlInterface` interface but differ in the way they handle their URLs components setter and getter.
 
-By default if no `$is_immutable` is given, a `League\Url\Url` object is returned.
+By default if no `$mutable_state` is given, a `League\Url\Url` object is returned.
 
 The `League\Url\Factory` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
 
@@ -76,11 +76,11 @@ The `League\Url\Factory` implements the `League\Interfaces\EncodingInterface`, t
 * `getEncodingType()`: get the current encoding constant used
 
 ```php
-$url = new $url_factory->createFromString(
+$url = $url_factory->createFromString(
 	'http://www.example.com/path/index.php?query=toto+le+heros'
 );
 $url_factory->setEncoding(PHP_QUERY_RFC3968);
-$new_url = new $url_factory->createFromString(
+$new_url = $url_factory->createFromString(
 	'http://www.example.com/path/index.php?query=toto+le+heros'
 );
 echo $url; //remains http://www.example.com?query=toto+le+heros
@@ -97,7 +97,7 @@ In addition to the `League\Interfaces\EncodingInterface` interface each Urls obj
 * `sameValueAs` return true if two `League\Url\UrlInterface` object represents the same URL. The comparison is encoding independent.
 
 ```php
-$url = new $url_factory->createFromString(
+$url = $url_factory->createFromString(
 	'http://www.example.com/path/index.php?query=toto+le+heros'
 );
 
@@ -137,7 +137,7 @@ The `$data` argument can be:
 * for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
 ```php
-$url = new $url_factory->createFromString('http://www.example.com');
+$url = $url_factory->createFromString('http://www.example.com');
 $new_url = $url
 		->setUser('john')
 		->setPass('doe')
@@ -162,14 +162,14 @@ For the `League\Url\UrlImmutable` to avoid modifiying the object by reference it
 
 ```php
 //From a League\Url\Url object 
-$url = new $url_factory->createFromString('https://www.example.com:443');
+$url = $url_factory->createFromString('https://www.example.com:443');
 $port = $url->getPort();
 $port->set(80);
 echo $port; // output 80;
 echo $url->getPort(); // output 80;
 
 //From a League\Url\UrlImmutable object 
-$url = new $url_factory->createFromString('https://www.example.com:443', Factory::URL_IMMUTABLE);
+$url = $url_factory->createFromString('https://www.example.com:443', Factory::URL_IMMUTABLE);
 $port = $url->getPort(); //$port is a clone object of the URL port component.
 $port->set(80);
 echo $port; // output 80;

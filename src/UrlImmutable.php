@@ -263,10 +263,10 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
      *
      * @return self
      */
-    public function setPort($value)
+    public function setPort($data)
     {
         $clone = clone $this;
-        $clone->port->set($value);
+        $clone->port->set($data);
 
         return $clone;
     }
@@ -288,10 +288,10 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
      *
      * @return self
      */
-    public function setScheme($value)
+    public function setScheme($data)
     {
         $clone = clone $this;
-        $clone->scheme->set($value);
+        $clone->scheme->set($data);
 
         return $clone;
     }

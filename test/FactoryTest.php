@@ -19,7 +19,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 
         $this->url = $this->url_factory->createFromString(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
-            true
+            Factory::URL_IMMUTABLE
         );
     }
 
@@ -39,7 +39,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
         );
-        $url = $this->url_factory->createFromServer($server, true);
+        $url = $this->url_factory->createFromServer($server, Factory::URL_IMMUTABLE);
         $this->assertInstanceof('\League\Url\UrlImmutable', $url);
         $this->assertSame('https://example.com:23/', $url->__toString());
 
@@ -70,7 +70,18 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         );
 
-        $this->url_factory->createFromServer($server);
+        $this->url_factory->createFromServer($server, true);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testFailWrongMutableStateArgs()
+    {
+        $this->url_factory->createFromString(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
+            'toto'
+        );
     }
 
     public function testCreateFromServerWithoutRequestUri()

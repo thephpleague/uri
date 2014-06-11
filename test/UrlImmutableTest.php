@@ -17,7 +17,7 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
         $this->url_factory = new Factory;
         $this->url = $this->url_factory->createFromString(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
-            true
+            Factory::URL_IMMUTABLE
         );
     }
 
@@ -60,9 +60,9 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
     public function testSameValueAs()
     {
         $url1 = $this->url_factory->createFromString('example.com');
-        $url2 = $this->url_factory->createFromString('//example.com', true);
+        $url2 = $this->url_factory->createFromString('//example.com', Factory::URL_IMMUTABLE);
         $this->url_factory->setEncoding(PHP_QUERY_RFC3986);
-        $url3 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros', true);
+        $url3 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros', Factory::URL_IMMUTABLE);
         $this->url_factory->setEncoding(PHP_QUERY_RFC1738);
         $url4 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros');
         $this->assertTrue($url1->sameValueAs($url2));

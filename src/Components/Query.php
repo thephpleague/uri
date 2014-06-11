@@ -44,21 +44,21 @@ class Query extends AbstractArray implements QueryInterface, EncodingInterface
     /**
      * The Constructor
      *
-     * @param mixed $data can be string, array or Traversable
+     * @param mixed   $data     can be string, array or Traversable
      *                          object convertible into Query String
      * @param integer $enc_type specify the RFC to follow when converting
      *                          the data to string
      */
     public function __construct($data = null, $enc_type = PHP_QUERY_RFC1738)
     {
-        $this->setEncodingType($enc_type);
+        $this->setEncoding($enc_type);
         $this->set($data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setEncodingType($enc_type)
+    public function setEncoding($enc_type)
     {
         if (! isset($this->encoding_list[$enc_type])) {
             throw new InvalidArgumentException('Invalid value for the encoding type');
@@ -71,7 +71,7 @@ class Query extends AbstractArray implements QueryInterface, EncodingInterface
     /**
      * {@inheritdoc}
      */
-    public function getEncodingType()
+    public function getEncoding()
     {
         return $this->encoding_type;
     }

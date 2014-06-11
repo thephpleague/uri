@@ -112,9 +112,9 @@ class Url extends AbstractUrl
     /**
      * {@inheritdoc}
      */
-    public function setEncodingType($encoding_type)
+    public function setEncoding($encoding_type)
     {
-        $this->query->setEncodingType($encoding_type);
+        $this->query->setEncoding($encoding_type);
 
         return $this;
     }

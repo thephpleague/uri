@@ -78,7 +78,7 @@ class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a string
      *
-     * @param mixed   $url          a string or an object that implement the __toString method
+     * @param string  $url          a string or an object that implement the __toString method
      * @param boolean $is_immutable should we create a Immutable object or not
      *
      * @return \League\Url\UrlInterface

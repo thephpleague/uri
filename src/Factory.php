@@ -31,6 +31,25 @@ use League\Url\Components\Fragment;
  */
 class Factory implements EncodingInterface
 {
+    /**
+     * Tell the Factory object to instantiate a mutable class
+     */
+    const URL_MUTABLE = 1;
+
+    /**
+     * Tell the Factory object to instantiate a Immutable class
+     */
+    const URL_IMMUTABLE = 2;
+
+    /**
+     * Possile mutable constant
+     *
+     * @var array
+     */
+    private static $mutable_state = array(
+        self::URL_MUTABLE => 1,
+        self::URL_IMMUTABLE => 1
+    );
 
     /**
      * Query encoding type
@@ -44,7 +63,7 @@ class Factory implements EncodingInterface
      *
      * @var array
      */
-    private $encoding_list = array(
+    private static $encoding_list = array(
         PHP_QUERY_RFC3986 => 1,
         PHP_QUERY_RFC1738 => 1
     );
@@ -59,7 +78,7 @@ class Factory implements EncodingInterface
      */
     public function setEncoding($enc_type)
     {
-        if (! isset($this->encoding_list[$enc_type])) {
+        if (! isset(self::$encoding_list[$enc_type])) {
             throw new InvalidArgumentException('Invalid value for the encoding type');
         }
         $this->encoding_type = $enc_type;
@@ -78,15 +97,18 @@ class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a string
      *
-     * @param string  $url          a string or an object that implement the __toString method
-     * @param boolean $is_immutable should we create a Immutable object or not
+     * @param string  $url           a string or an object that implement the __toString method
+     * @param integer $mutable_state should we create a Immutable object or not
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromString($url, $is_immutable = false)
+    public function createFromString($url, $mutable_state = self::URL_MUTABLE)
     {
+        if (! isset(self::$mutable_state[$mutable_state])) {
+            throw new InvalidArgumentException('Invalid value for the mutable state');
+        }
         $url = (string) $url;
         $url = trim($url);
         $components = @parse_url($url);
@@ -97,10 +119,8 @@ class Factory implements EncodingInterface
 
         $components = $this->sanitizeComponents($components);
 
-        $is_immutable = (bool) $is_immutable;
-
         $obj = 'League\Url\Url';
-        if ($is_immutable) {
+        if (self::URL_IMMUTABLE == $mutable_state) {
             $obj = 'League\Url\UrlImmutable';
         }
 
@@ -119,14 +139,14 @@ class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server       the server array
-     * @param boolean $is_immutable should we create a Immutable object or not
+     * @param array   $server        the server array
+     * @param integer $mutable_state should we create a Immutable object or not
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromServer(array $server, $is_immutable = false)
+    public function createFromServer(array $server, $mutable_state = self::URL_MUTABLE)
     {
         $scheme = $this->fetchServerScheme($server);
         $host =  $this->fetchServerHost($server);
@@ -135,7 +155,7 @@ class Factory implements EncodingInterface
 
         $url = $scheme.$host.$port.$request;
 
-        return $this->createFromString($url, $is_immutable);
+        return $this->createFromString($url, $mutable_state);
     }
 
     /**

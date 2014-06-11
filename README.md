@@ -44,12 +44,12 @@ $url_factory = new Factory(PHP_QUERY_RFC1738);
 
 //Method 1 : from a given string
 $url = new $url_factory->createFromString('http://www.example.com');
-$url_immutable = new $url_factory->createFromString('http://www.example.com', true);
+$url_immutable = new $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
 
 //Method 2: from the current PHP page
 //don't forget to provide the $_SERVER array
 $url = $url_factory->createFromServer($_SERVER); 
-$url_immutable = $url_factory->createFromServer($_SERVER, true);
+$url_immutable = $url_factory->createFromServer($_SERVER, Factory::URL_IMMUTABLE);
 ```
 **Of note:**
 
@@ -60,10 +60,10 @@ The constructor optional argument `$enc_type` specifies how to encode the URL qu
 
 By default if no `$enc_type` argument is given, the URL query component is encoded using RFC 1738.
 
-The second optional argument for `createFromServer` and `createFromString` methods `$is_immutable` specifies the object to be returned:
+The second optional argument for `createFromServer` and `createFromString` methods `$mutable_state` specifies the object to be returned:
 
-* if `$is_immutable` is `true` the factory return a `League\Url\UrlImmutable` object;
-* if `$is_immutable` is `false` the factory return a `League\Url\Url` object;
+* if `$mutable_state` equals `Factory::URL_IMMUTABLE` the factory return a `League\Url\UrlImmutable` object;
+* if `$mutable_state` equals `Factory::URL_MUTABLE` the factory return a `League\Url\Url` object;
 
 Both classes implements the `League\Url\UrlInterface` interface but differ in the way they handle their URLs components setter and getter.
 
@@ -107,7 +107,7 @@ echo $url->getBaseUrl(); // http://www.example.com
 echo $url; // 'http://www.example.com/path/index.php?query=toto+le+heros'
 
 $original_url = $url_factory->createFromString('example.com');
-$new_url = $url_factory->createFromString('//example.com', true);
+$new_url = $url_factory->createFromString('//example.com', Factory::URL_IMMUTABLE);
 $alternate_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
 $url_factory->setEncoding(PHP_QUERY_RFC3968);
 $another_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
@@ -170,7 +170,7 @@ echo $port; // output 80;
 echo $url->getPort(); // output 80;
 
 //From a League\Url\UrlImmutable object 
-$url = new $url_factory->createFromString('https://www.example.com:443', true);
+$url = new $url_factory->createFromString('https://www.example.com:443', Factory::URL_IMMUTABLE);
 $port = $url->getPort(); //$port is a clone object of the URL port component.
 $port->set(80);
 echo $port; // output 80;

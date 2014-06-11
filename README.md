@@ -187,9 +187,10 @@ Each component class implements the `League\Interfaces\ComponentInterface` with 
 * `getUriComponent()`: return an altered string representation to ease URL representation.
 
 The `$data` argument can be:
-	* `null`;
-	* a valid component string for the specified URL component;
-	* an object implementing the `__toString` method;
+
+* `null`;
+* a valid component string for the specified URL component;
+* an object implementing the `__toString` method;
 
 ```php
 use League\Url\Components\Scheme;
@@ -225,7 +226,7 @@ The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\C
 * `toArray()`: will return an array representation of the component;
 * `keys()`: will return all the keys or a subset of the keys of an array if a value is given.
 
-*Of note: The `$data` argument for the `set` method can also be an `array` or a `Traversable` object.*
+**Of note:** The `$data` argument for the `set` method can also be an `array` or a `Traversable` object.
 
 ### The `Query` class
 
@@ -258,12 +259,12 @@ $query->modify(array('foo' => 'baz', 'toto' => null));
 //by setting toto to null
 //you remove the toto argument from the query_string
 
-$found = $query->fetchKeys('troll');
+$found = $query->keys('troll');
 //$found equals array(0 => 'baz')
 
 echo count($query); //will return 2;
 echo $query; //will display foo=baz&baz=troll;
-$query->setEncoding(Query::PHP_QUERY_RFC3968); //for PHP 5.3
+$query->setEncoding(PHP_QUERY_RFC3968); //for PHP 5.3
 $query->modify(array('toto' => 'le gentil'));
 echo $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 ```
@@ -276,12 +277,14 @@ These classes manage the URL path and host components. They only differs in the 
 * `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
 * `remove($data)`: remove data from the component;
 
-Of note:
+The arguments:
 
 * The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
-* The `$whence` argument specify where to include the appended data;
+* The `$whence` argument specify the string segment where to include the data;
 * The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
 * When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+
+*Tips: You can easily get the `$whence_index` by using the `ComponentArrayInterface::keys($whence)` method result.*
 
 Example using the `League\Url\Components\Path` object:
 
@@ -300,7 +303,7 @@ foreach ($path as $offset => $value) {
 
 $path->append('leheros/troll', 'bar');
 
-$found = $path->fetchKeys('troll');
+$found = $path->keys('troll');
 //$found equals array(0 => '2');
 
 echo count($path); //will return 4;

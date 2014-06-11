@@ -40,71 +40,95 @@ require 'vendor/autoload.php' //when using composer
 
 use League\Url\Factory;
 
+$url_factory = new Factory(PHP_QUERY_RFC1738);
+
 //Method 1 : from a given string
-$url = new Factory::createFromString('http://www.example.com');
-$url = new Factory::createFromString('http://www.example.com', PHP_QUERY_RFC3968);
+$url = new $url_factory->createFromString('http://www.example.com');
+$url_immutable = new $url_factory->createFromString('http://www.example.com', true);
 
 //Method 2: from the current PHP page
-$url = Factory::createFromServer($_SERVER); //don't forget to provide the $_SERVER array
-$url = Factory::createFromServer($_SERVER, PHP_QUERY_RFC3968);
+//don't forget to provide the $_SERVER array
+$url = $url_factory->createFromServer($_SERVER); 
+$url_immutable = $url_factory->createFromServer($_SERVER, true);
 ```
-The second argument `$enc_type` specifies how to encode the URL query component using the following PHP internal constant:
+**Of note:**
+
+The constructor optional argument `$enc_type` specifies how to encode the URL query component using the following PHP internal constant:
 
 * `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
 * `PHP_QUERY_RFC3968`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
 
 By default if no `$enc_type` argument is given, the URL query component is encoded using RFC 1738.
 
-`$url` is a valid `League\Url\Url` object. This is the main value object we will be using to manipulate the url.
+The second optional argument for `createFromServer` and `createFromString` methods `$is_immutable` specifies the object to be returned:
 
-## Usage
+* if `$is_immutable` is `true` the factory return a `League\Url\UrlImmutable` object;
+* if `$is_immutable` is `false` the factory return a `League\Url\Url` object;
 
-### Url String representations
+Both classes implements the `League\Url\UrlInterface` interface but differ in the way they handle their URLs components setter and getter.
 
-You can get several string representation of the URL using the following methods:
+By default if no `$is_immutable` is given, a `League\Url\Url` object is returned.
 
-* `League\Url\Url::__toString` returns the full string representation of the URL;
-* `League\Url\Url::getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
-* `League\Url\Url::getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
+### URL encoding using the Factory
+
+The `League\Url\Factory` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
+
+* `setEncoding($enc_type)`: set the encoding constant
+* `getEncodingType()`: get the current encoding constant used
 
 ```php
-$url = new Factory::createFromString(
-	'http://www.example.com/path/index.php?query=toto+le+heros',
-	PHP_QUERY_RFC3986
+$url = new $url_factory->createFromString(
+	'http://www.example.com/path/index.php?query=toto+le+heros'
+);
+$url_factory->setEncoding(PHP_QUERY_RFC3968);
+$new_url = new $url_factory->createFromString(
+	'http://www.example.com/path/index.php?query=toto+le+heros'
+);
+echo $url; //remains http://www.example.com?query=toto+le+heros
+echo $new_url; //output http://www.example.com?query=toto%20le%20heros
+```
+
+## Urls Objects
+
+In addition to the `League\Interfaces\EncodingInterface` interface each Urls object implements the `League\Url\UrlInterface` following methods:
+
+* `__toString` returns the full string representation of the URL;
+* `getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
+* `getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
+* `sameValueAs` return true if two `League\Url\UrlInterface` object represents the same URL. The comparison is encoding independent.
+
+```php
+$url = new $url_factory->createFromString(
+	'http://www.example.com/path/index.php?query=toto+le+heros'
 );
 
-echo $url->getRelativeUrl(); // /path/index.php?query=toto%20le%20heros
+echo $url->getRelativeUrl(); // /path/index.php?query=toto+le+heros
 echo $url->getBaseUrl(); // http://www.example.com
-echo $url; // 'http://www.example.com/path/index.php?query=toto%20le%20heros'
-```
-### Objects comparison 
+echo $url; // 'http://www.example.com/path/index.php?query=toto+le+heros'
 
-You can compare 2 `League\Url\Url` object using the `League\Url\Url::sameValueAs` method. The object comparison is encoding type independent.
+$original_url = $url_factory->createFromString('example.com');
+$new_url = $url_factory->createFromString('//example.com', true);
+$alternate_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
+$url_factory->setEncoding(PHP_QUERY_RFC3968);
+$another_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
 
-```php
-    $original_url = Factory::createFromString('example.com');
-    $new_url = Factory::createFromString('//example.com');
-    $alternate_url = Factory::createFromString('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
-    $another_url = Factory::createFromString('//example.com?foo=toto+le+heros');
-    $original_url->sameValueAs($new_url); //will return true
-    $alternate_url->sameValueAs($new_url); //will return false
-    $alternate_url->sameValueAs($another_url); //will return true
+$original_url->sameValueAs($new_url); //will return true
+$alternate_url->sameValueAs($new_url); //will return false
+$alternate_url->sameValueAs($another_url); //will return true
 ```
 
-### Immutable Object
+In addition to these methods each class implements a setter and a getter method for each URLs components. 
 
-`League\Url` is a Immutable Value Object:
+You can use chaining with all the setter methods but the `League\Url\UrlImmutable` never modified itself but return a new object instead.
 
-Using the following setter methods you can set each URL component independently but the methods return a clone of the modified object. This mean you can use chaining without modifying the original url.
-
-* `League\Url\Url::setScheme($data)` 
-* `League\Url\Url::setUser($data)`
-* `League\Url\Url::setPass($data)`
-* `League\Url\Url::setHost($data)`
-* `League\Url\Url::setPort($data)`
-* `League\Url\Url::setPath($data)`
-* `League\Url\Url::setQuery($data)`
-* `League\Url\Url::setFragment($data)`
+* `setScheme($data)` set the URL scheme component;
+* `setUser($data)` set the URL user component;
+* `setPass($data)` set the URL pass component;
+* `setHost($data)` set the URL host component;
+* `setPort($data)` set the URL port component;
+* `setPath($data)` set the URL path component;
+* `setQuery($data)` set the URL query component;
+* `setFragment($data)` set the URL fragment component;
 
 The `$data` argument can be:
 
@@ -114,7 +138,7 @@ The `$data` argument can be:
 * for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
 ```php
-$url = new Factory::createFromString('http://www.example.com');
+$url = new $url_factory->createFromString('http://www.example.com');
 $new_url = $url
 		->setUser('john')
 		->setPass('doe')
@@ -123,73 +147,37 @@ $new_url = $url
 echo $url; //remains http://www.example.com/
 echo $new_url; //output https://john:doe@www.example.com:443/
 ```
-For complex URLs components additionals methods were added to update an already set component:
 
-* `appendHost($data, $whence = null, $whence_index = null)`
-* `prependHost($data, $whence = null, $whence_index = null)`
-* `removeHost($data)`
-* `appendPath($data, $whence = null, $whence_index = null)`
-* `prependPath($data, $whence = null, $whence_index = null)`
-* `removePath($data)`
-* `modifyQuery($data)`
+When accessing a Urls component from your URL object the getter method returns a object for each component.
 
-The `$data` argument can be
+For the `League\Url\UrlImmutable` to avoid modifiying the object by reference it returns a new property object instead.
 
-* `null`;
-* a valid component string;
-* a object implementing the `__toString` method;
-* an `array` or a `Traversable` object;
-
-The `$whence` argument specify the string segment where `$data` will be included from.
-
-The `$whence_index` argument specify the `$whence` index if `$whence` is present more than once.
-
-When using the `remove` method, if the pattern is present multiple times only the first match found is removed.
+* `getScheme()` returns a `League\Interfaces\ComponentInterface` object
+* `getUser()` returns a `League\Interfaces\ComponentInterface`object
+* `getPass()` returns a `League\Interfaces\ComponentInterface`object
+* `getHost()` returns a `League\Interfaces\SegmentInterface` object
+* `getPort()` returns a `League\Interfaces\ComponentInterface`object
+* `getPath()` returns a `League\Interfaces\SegmentInterface` object
+* `getQuery()` returns a `League\Interfaces\QueryInterface` object
+* `getFragment()` returns a `League\Interfaces\ComponentInterface`object
 
 ```php
-$url3 = $url2->modifyQuery(array('query' => 'value'));
-echo $url3 //output https://john:doe@www.example.com:443/?query=value
-echo $url2; //remains https://john:doe@www.example.com:443/
-```
+//From a League\Url\Url object 
+$url = new $url_factory->createFromString('https://www.example.com:443');
+$port = $url->getPort();
+$port->set(80);
+echo $port; // output 80;
+echo $url->getPort(); // output 80;
 
-### Setting URL Query component encoding style
-
-The `League\Url\Url` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
-
-* `setEncodingType($enc_type)`: set the encoding constant
-* `getEncodingType()`: get the current encoding constant used
-
-```php
-$url = new Factory::createFromString(
-	'http://www.example.com?query=toto+le+heros',
-	PHP_QUERY_RFC17328
-);
-
-$new_url = $url->setEncodingType(PHP_QUERY_RFC3968);
-echo $url; //remains http://www.example.com?query=toto+le+heros
-echo $new_url; //output http://www.example.com?query=toto%20le%20heros
-```
-
-## URL components classes
-
-Each URL component is an object on its on. When accessing them from the `League\Url\Url` object you get a clone of the corresponding component object. The following method were set:
-
-* `League\Url\Url::getScheme()` 
-* `League\Url\Url::getUser()`
-* `League\Url\Url::getPass()`
-* `League\Url\Url::getHost()`
-* `League\Url\Url::getPort()`
-* `League\Url\Url::getPath()`
-* `League\Url\Url::getQuery()`
-* `League\Url\Url::getFragment()`
-
-```php
-$url = new Factory::createFromString('https://www.example.com:443');
+//From a League\Url\UrlImmutable object 
+$url = new $url_factory->createFromString('https://www.example.com:443', true);
 $port = $url->getPort(); //$port is a clone object of the URL port component.
 $port->set(80);
 echo $port; // output 80;
 echo $url->getPort(); // remains 443;
 ```
+
+## URL components classes
 
 Each component class implements the `League\Interfaces\ComponentInterface` with the following public methods:
 
@@ -275,7 +263,7 @@ $found = $query->fetchKeys('troll');
 
 echo count($query); //will return 2;
 echo $query; //will display foo=baz&baz=troll;
-$query->setEncodingType(Query::PHP_QUERY_RFC3968); //for PHP 5.3
+$query->setEncoding(Query::PHP_QUERY_RFC3968); //for PHP 5.3
 $query->modify(array('toto' => 'le gentil'));
 echo $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 ```
@@ -330,27 +318,6 @@ $path->prepend('bar', 'troll', 1);
 echo $path->get(); //will display bar/leheros/troll/bar/troll
 $path->remove('troll/bar');
 echo (string) $path; //will display bar/leheros/troll
-```
-
-## Tips
-
-There are in fact 2 ways to modify the URL object.
-
-```php
-$url3 = $url2->modifyQuery(array('query' => 'value'));
-echo $url3 //output https://john:doe@www.example.com:443/?query=value
-echo $url2; //remains https://john:doe@www.example.com:443/
-```
-
-is equivalent to:
-
-```php
-$query = $url2->getQuery();
-$query->modify(array('query' => 'value'));
-$url3 = $url2->setQuery($query);
-
-echo $url3 //output https://john:doe@www.example.com:443/?query=value
-echo $url2; //remains https://john:doe@www.example.com:443/
 ```
 
 Testing

@@ -10,9 +10,12 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
 {
     private $url;
 
+    private $url_factory;
+
     public function setUp()
     {
-        $this->url = Factory::createFromString(
+        $this->url_factory = new Factory;
+        $this->url = $this->url_factory->createFromString(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
             true
         );
@@ -21,6 +24,7 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->url = null;
+        $this->url_factory = null;
     }
 
     public function testGetterAccess()
@@ -49,12 +53,24 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
 
     public function testSameValueAs()
     {
-        $url1 = Factory::createFromString('example.com');
-        $url2 = Factory::createFromString('//example.com', true);
-        $url3 = Factory::createFromString('//example.com?foo=toto+le+heros', true, PHP_QUERY_RFC3986);
-        $url4 = Factory::createFromString('//example.com?foo=toto+le+heros');
+        $url1 = $this->url_factory->createFromString('example.com');
+        $url2 = $this->url_factory->createFromString('//example.com', true);
+        $this->url_factory->setEncoding(PHP_QUERY_RFC3986);
+        $url3 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros', true);
+        $this->url_factory->setEncoding(PHP_QUERY_RFC1738);
+        $url4 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros');
         $this->assertTrue($url1->sameValueAs($url2));
         $this->assertFalse($url3->sameValueAs($url2));
         $this->assertTrue($url3->sameValueAs($url4));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testEncodingType()
+    {
+        $this->assertSame(PHP_QUERY_RFC1738, $this->url->getEncoding());
+        $this->assertSame(PHP_QUERY_RFC3986, $this->url->setEncoding(PHP_QUERY_RFC3986)->getEncoding());
+        $this->url->setEncoding('toto');
     }
 }

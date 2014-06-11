@@ -21,14 +21,14 @@ interface EncodingInterface
      *
      * @return League\Url\Interfaces\EncodingInterface
      */
-    public function setEncodingType($encoding_type);
+    public function setEncoding($encoding_type);
 
     /**
      * return the current Encoding type value
      *
      * @return integer
      */
-    public function getEncodingType();
+    public function getEncoding();
 }
 
 //@codeCoverageIgnoreStart

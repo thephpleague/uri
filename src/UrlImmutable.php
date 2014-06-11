@@ -37,10 +37,10 @@ final class UrlImmutable extends AbstractUrl
     /**
      * {@inheritdoc}
      */
-    public function setEncodingType($encoding_type)
+    public function setEncoding($encoding_type)
     {
         $clone = clone $this;
-        $clone->query->setEncodingType($encoding_type);
+        $clone->query->setEncoding($encoding_type);
 
         return $clone;
     }

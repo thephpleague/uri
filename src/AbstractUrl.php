@@ -166,8 +166,8 @@ abstract class AbstractUrl implements UrlInterface, EncodingInterface
     {
         $this_url = clone $this;
         $that_url = clone $url;
-        $this_url = $this_url->setEncodingType(PHP_QUERY_RFC1738);
-        $that_url = $that_url->setEncodingType(PHP_QUERY_RFC1738);
+        $this_url = $this_url->setEncoding(PHP_QUERY_RFC1738);
+        $that_url = $that_url->setEncoding(PHP_QUERY_RFC1738);
 
         return  $this_url->__toString() == $that_url->__toString();
     }
@@ -175,15 +175,15 @@ abstract class AbstractUrl implements UrlInterface, EncodingInterface
     /**
      * {@inheritdoc}
      */
-    public function getEncodingType()
+    public function getEncoding()
     {
-        return $this->query->getEncodingType();
+        return $this->query->getEncoding();
     }
 
     /**
      * {@inheritdoc}
      */
-    abstract public function setEncodingType($encoding_type);
+    abstract public function setEncoding($encoding_type);
 
     /**
      * Set the URL user component

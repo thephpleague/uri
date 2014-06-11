@@ -46,12 +46,13 @@ $url_factory = new Factory(PHP_QUERY_RFC1738);
 $url = new $url_factory->createFromString('http://www.example.com');
 $url_immutable = new $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
 
+$url_factory->setEncoding(PHP_QUERY_RFC3968);
+
 //Method 2: from the current PHP page
 //don't forget to provide the $_SERVER array
 $url = $url_factory->createFromServer($_SERVER); 
 $url_immutable = $url_factory->createFromServer($_SERVER, Factory::URL_IMMUTABLE);
 ```
-**Of note:**
 
 The constructor optional argument `$enc_type` specifies how to encode the URL query component using the following PHP internal constant:
 
@@ -68,8 +69,6 @@ The second optional argument for `createFromServer` and `createFromString` metho
 Both classes implements the `League\Url\UrlInterface` interface but differ in the way they handle their URLs components setter and getter.
 
 By default if no `$is_immutable` is given, a `League\Url\Url` object is returned.
-
-### URL encoding using the Factory
 
 The `League\Url\Factory` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
 

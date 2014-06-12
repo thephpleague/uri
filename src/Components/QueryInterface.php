@@ -10,21 +10,16 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Interfaces;
+namespace League\Url\Components;
 
-interface ComponentArrayInterface extends ComponentInterface
+interface QueryInterface extends ComponentArrayInterface
 {
     /**
-     * Return the component as an array
+     * modify/update a Query component
      *
-     * @return array
-     */
-    public function toArray();
-
-    /**
-     * Return all the keys or a subset of the keys of an array
+     * @param mixed $data the data can be a array, a Traversable or a string
      *
-     * @return array
+     * @return void
      */
-    public function keys();
+    public function modify($data);
 }

@@ -14,8 +14,7 @@ namespace League\Url\Components;
 
 use Traversable;
 use InvalidArgumentException;
-use League\Url\Interfaces\QueryInterface;
-use League\Url\Interfaces\EncodingInterface;
+use League\Url\EncodingInterface;
 
 /**
  *  A class to manipulate URL Query component

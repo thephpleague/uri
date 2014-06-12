@@ -82,7 +82,9 @@ class Query extends AbstractArray implements QueryInterface, EncodingInterface
     public function set($data)
     {
         $this->data = array_filter($this->validate($data), function ($value) {
-            $value = trim($value);
+            if (is_string($value)) {
+                $value = trim($value);
+            }
 
             return null !== $value && '' !== $value;
         });

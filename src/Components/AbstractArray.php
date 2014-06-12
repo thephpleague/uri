@@ -70,9 +70,9 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
      *
      * @return integer
      */
-    public function count()
+    public function count($mode = COUNT_NORMAL)
     {
-        return count($this->data);
+        return count($this->data, $mode);
     }
 
     /**

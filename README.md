@@ -57,7 +57,7 @@ $url_immutable = $url_factory->createFromServer($_SERVER, Factory::URL_IMMUTABLE
 * `$url` is a `League\Url\Url` object
 * `$url_immutable` is a `League\Url\UrlImmutable` object
 
-Both objects are value objects that implements the `League\Url\Interfaces\UrlInterface` interface (think of PHP `DateTime` and `DateTimeImmutable` classes that implement the `DateTimeInterface`).
+Both objects are value objects that implements the `League\Url\UrlInterface` interface (think of PHP `DateTime` and `DateTimeImmutable` classes that implement the `DateTimeInterface`).
 
 The `createFromServer` and `createFromString` methods accepts a second optional argument `$type` that specifies which value object must be returned using the following constants:
 
@@ -66,7 +66,7 @@ The `createFromServer` and `createFromString` methods accepts a second optional 
 
 By default `$type` equals `Factory::URL_MUTABLE`.
 
-The `League\Url\Factory` implements the `League\Url\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string using the following PHP internal constant:
+The `League\Url\Factory` implements the `League\Url\EncodingInterface`, this interface provides methods to specify how to encode the query string using the following PHP internal constant:
 
 The constants:
 
@@ -96,14 +96,14 @@ You can also use the `League\Url\Factory` constructor optional argument `$enc_ty
 
 ## Urls Objects
 
-Each Url value object implements the `League\Url\Interfaces\UrlInterface` following methods:
+Each Url value object implements the `League\Url\UrlInterface` following methods:
 
 * `__toString` returns the full string representation of the URL;
 * `getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
 * `getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
-* `sameValueAs` return true if two `League\Url\Interfaces\UrlInterface` object represents the same URL. The comparison is encoding independent.
+* `sameValueAs` return true if two `League\Url\UrlInterface` object represents the same URL. The comparison is encoding independent.
 
-the URLs value objects also implements the `League\Url\Interfaces\EncodingInterface` interface.
+the URLs value objects also implements the `League\Url\EncodingInterface` interface.
 
 ```php
 $url = $url_factory->createFromString(
@@ -188,7 +188,7 @@ echo $new_url->getPort(); // remains 443;
 
 ### Basic components
 
-Each component class implements the `League\Url\Interfaces\ComponentInterface` with the following public methods:
+Each component class implements the `League\Url\Components\ComponentInterface` with the following public methods:
 
 * `set($data)`: set the component data
 * `get()`: returns `null` if the class data is empty or its string representation
@@ -226,9 +226,9 @@ Classes that deal with complex components (ie: `host`, `path`, `query`) implemen
 * `Countable`
 * `IteratorAggregate`
 * `ArrayAccess`
-* `League\Url\Interfaces\ComponentArrayInterface`
+* `League\Url\Components\ComponentArrayInterface`
 
-The `League\Url\Interfaces\ComponentArrayInterface` extends the `League\Url\Interfaces\ComponentInterface` by adding the following methods:
+The `League\Url\Components\ComponentArrayInterface` extends the `League\Url\Components\ComponentInterface` by adding the following methods:
 
 * `toArray()`: will return an array representation of the component;
 * `keys()`: will return all the keys or a subset of the keys of an array if a value is given.
@@ -239,8 +239,8 @@ The `League\Url\Interfaces\ComponentArrayInterface` extends the `League\Url\Inte
 
 This class manage the URL query component and implements the following interfaces:
 
-* the `League\Url\Interfaces\EncodingInterface`;
-* the `League\Url\Interfaces\QueryInterface` which extends the `League\Url\Interfaces\ComponentArrayInterface` by adding the following method:
+* the `League\Url\EncodingInterface`;
+* the `League\Url\Components\QueryInterface` which extends the `League\Url\Components\ComponentArrayInterface` by adding the following method:
 
 	* `modify($data)`: update the component data;
 
@@ -278,7 +278,7 @@ echo $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 
 ### The `Path` and `Host` classes
 
-These classes manage the URL path and host components. They only differs in the way they validate and format before outputting their data. Both classes implements the `League\Url\Interfaces\SegmentInterface` which extends the `League\Url\Interfaces\ComponentArrayInterface` by adding the following methods:
+These classes manage the URL path and host components. They only differs in the way they validate and format before outputting their data. Both classes implements the `League\Url\Components\SegmentInterface` which extends the `League\Url\Components\ComponentArrayInterface` by adding the following methods:
 
 * `append($data, $whence = null, $whence_index = null)`: append data into the component;
 * `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;

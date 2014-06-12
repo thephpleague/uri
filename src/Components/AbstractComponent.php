@@ -12,8 +12,6 @@
 */
 namespace League\Url\Components;
 
-use League\Url\Interfaces\ComponentInterface;
-
 /**
  *  A class to manipulate URL string-like component
  *

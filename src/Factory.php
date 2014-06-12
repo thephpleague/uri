@@ -14,7 +14,6 @@ namespace League\Url;
 
 use RuntimeException;
 use InvalidArgumentException;
-use League\Url\Interfaces\EncodingInterface;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;

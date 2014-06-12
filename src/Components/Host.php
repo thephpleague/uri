@@ -13,7 +13,6 @@
 namespace League\Url\Components;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\SegmentInterface;
 
 /**
  *  A class to manipulate URL Host component

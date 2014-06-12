@@ -12,11 +12,9 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\EncodingInterface;
-use League\Url\Interfaces\UrlInterface;
-use League\Url\Interfaces\QueryInterface;
-use League\Url\Interfaces\SegmentInterface;
-use League\Url\Interfaces\ComponentInterface;
+use League\Url\Components\QueryInterface;
+use League\Url\Components\SegmentInterface;
+use League\Url\Components\ComponentInterface;
 
 /**
  * A class to manipulate URLs

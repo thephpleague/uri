@@ -25,11 +25,11 @@ Via Composer:
 }
 ```
 
-## System Requirements
+## Requirements
 
-You need **PHP >= 5.3.0** to use `League\Url` but the latest stable version of PHP is recommended.
+You need **PHP >= 5.3.0** to use the library but the latest stable version of PHP is recommended.
 
-## Instantiation
+## Usage
 
 The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR-4 compliant Autoloader. Once added to the autoloader you can easily instantiate your url:
 
@@ -54,23 +54,28 @@ $url = $url_factory->createFromServer($_SERVER);
 $url_immutable = $url_factory->createFromServer($_SERVER, Factory::URL_IMMUTABLE);
 ```
 
-The constructor optional argument `$enc_type` specifies how to encode the URL query component using the following PHP internal constant:
+* `$url` is a `League\Url\Url` object
+* `$url_immutable` is a `League\Url\UrlImmutable` object
+
+Both objects are value objects that implements the `League\Url\Interfaces\UrlInterface` interface (think of PHP `DateTime` and `DateTimeImmutable` classes that implement the `DateTimeInterface`).
+
+The `createFromServer` and `createFromString` methods accepts a second optional argument `$type` that specifies which value object must be returned using the following constants:
+
+* `Factory::URL_MUTABLE` the factory will return a `League\Url\Url` object;
+* `Factory::URL_IMMUTABLE` the factory will return a `League\Url\UrlImmutable` object;
+
+By default `$type` equals `Factory::URL_MUTABLE`.
+
+The `League\Url\Factory` implements the `League\Url\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string using the following PHP internal constant:
+
+The constants:
 
 * `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
 * `PHP_QUERY_RFC3968`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
 
-By default if no `$enc_type` argument is given, the URL query component is encoded using RFC 1738.
+*Tips: in PHP5.3 the constant are defined because otherwise, they do not exists!*
 
-The second optional argument for `createFromServer` and `createFromString` methods `$mutable_state` specifies the object to be returned:
-
-* if `$mutable_state` equals `Factory::URL_IMMUTABLE` the factory return a `League\Url\UrlImmutable` object;
-* if `$mutable_state` equals `Factory::URL_MUTABLE` the factory return a `League\Url\Url` object;
-
-Both classes implements the `League\Url\UrlInterface` interface but differ in the way they handle their URLs components setter and getter.
-
-By default if no `$mutable_state` is given, a `League\Url\Url` object is returned.
-
-The `League\Url\Factory` implements the `League\Interfaces\EncodingInterface`, this interface provides methods to specify how to encode the query string:
+The methods:
 
 * `setEncoding($enc_type)`: set the encoding constant
 * `getEncodingType()`: get the current encoding constant used
@@ -83,18 +88,22 @@ $url_factory->setEncoding(PHP_QUERY_RFC3968);
 $new_url = $url_factory->createFromString(
 	'http://www.example.com/path/index.php?query=toto+le+heros'
 );
-echo $url; //remains http://www.example.com?query=toto+le+heros
-echo $new_url; //output http://www.example.com?query=toto%20le%20heros
+echo $url; // http://www.example.com?query=toto+le+heros
+echo $new_url; // http://www.example.com?query=toto%20le%20heros
 ```
+
+You can also use the `League\Url\Factory` constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 
 ## Urls Objects
 
-In addition to the `League\Interfaces\EncodingInterface` interface each Urls object implements the `League\Url\UrlInterface` following methods:
+Each Url value object implements the `League\Url\Interfaces\UrlInterface` following methods:
 
 * `__toString` returns the full string representation of the URL;
 * `getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
 * `getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
-* `sameValueAs` return true if two `League\Url\UrlInterface` object represents the same URL. The comparison is encoding independent.
+* `sameValueAs` return true if two `League\Url\Interfaces\UrlInterface` object represents the same URL. The comparison is encoding independent.
+
+the URLs value objects also implements the `League\Url\Interfaces\EncodingInterface` interface.
 
 ```php
 $url = $url_factory->createFromString(
@@ -116,18 +125,26 @@ $alternate_url->sameValueAs($new_url); //will return false
 $alternate_url->sameValueAs($another_url); //will return true
 ```
 
-In addition to these methods each class implements a setter and a getter method for each URLs components. 
+Additionally, Each class implements a setter and a getter method for each URLs components. You can use chaining with all the setter methods and each getter method returns a component specific object.
 
-You can use chaining with all the setter methods but the `League\Url\UrlImmutable` never modified itself but return a new object instead.
+**Of note: To stay immutable, the `League\Url\UrlImmutable` never modified itself but return a new object instead. The object also returns a new property object instead of its own property object to avoid modification by reference.** 
 
 * `setScheme($data)` set the URL scheme component;
+* `getScheme()` returns a `League\Components\Scheme` object
 * `setUser($data)` set the URL user component;
+* `getUser()` returns a `League\Components\User`object
 * `setPass($data)` set the URL pass component;
+* `getPass()` returns a `League\Components\Pass`object
 * `setHost($data)` set the URL host component;
+* `getHost()` returns a `League\Components\Host` object
 * `setPort($data)` set the URL port component;
+* `getPort()` returns a `League\Components\Port`object
 * `setPath($data)` set the URL path component;
+* `getPath()` returns a `League\Components\Path` object
 * `setQuery($data)` set the URL query component;
+* `getQuery()` returns a `League\Components\Query` object
 * `setFragment($data)` set the URL fragment component;
+* `getFragment()` returns a `League\Components\Fragment`object
 
 The `$data` argument can be:
 
@@ -137,7 +154,22 @@ The `$data` argument can be:
 * for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
 ```php
-$url = $url_factory->createFromString('http://www.example.com');
+//From a League\Url\Url object 
+$url = $url_factory->createFromString('https://www.example.com');
+$url
+	->setUser('john')
+	->setPass('doe')
+	->setPort(443)
+	->setScheme('https');
+echo $url; // https://john:doe@www.example.com:443/
+
+$port = $url->getPort();
+$port->set(80);
+echo $port; // output 80;
+echo $url->getPort(); // output 80;
+
+//From a League\Url\UrlImmutable object 
+$url = $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
 $new_url = $url
 		->setUser('john')
 		->setPass('doe')
@@ -145,40 +177,18 @@ $new_url = $url
 		->setScheme('https');
 echo $url; //remains http://www.example.com/
 echo $new_url; //output https://john:doe@www.example.com:443/
-```
 
-When accessing a Urls component from your URL object the getter method returns a object for each component.
-
-For the `League\Url\UrlImmutable` to avoid modifiying the object by reference it returns a new property object instead.
-
-* `getScheme()` returns a `League\Interfaces\ComponentInterface` object
-* `getUser()` returns a `League\Interfaces\ComponentInterface`object
-* `getPass()` returns a `League\Interfaces\ComponentInterface`object
-* `getHost()` returns a `League\Interfaces\SegmentInterface` object
-* `getPort()` returns a `League\Interfaces\ComponentInterface`object
-* `getPath()` returns a `League\Interfaces\SegmentInterface` object
-* `getQuery()` returns a `League\Interfaces\QueryInterface` object
-* `getFragment()` returns a `League\Interfaces\ComponentInterface`object
-
-```php
-//From a League\Url\Url object 
-$url = $url_factory->createFromString('https://www.example.com:443');
-$port = $url->getPort();
+$port = $new_url->getPort(); //$port is a clone object of the URL port component.
 $port->set(80);
 echo $port; // output 80;
-echo $url->getPort(); // output 80;
-
-//From a League\Url\UrlImmutable object 
-$url = $url_factory->createFromString('https://www.example.com:443', Factory::URL_IMMUTABLE);
-$port = $url->getPort(); //$port is a clone object of the URL port component.
-$port->set(80);
-echo $port; // output 80;
-echo $url->getPort(); // remains 443;
+echo $new_url->getPort(); // remains 443;
 ```
 
 ## URL components classes
 
-Each component class implements the `League\Interfaces\ComponentInterface` with the following public methods:
+### Basic components
+
+Each component class implements the `League\Url\Interfaces\ComponentInterface` with the following public methods:
 
 * `set($data)`: set the component data
 * `get()`: returns `null` if the class data is empty or its string representation
@@ -209,18 +219,16 @@ The URL components that **only** implement this interface are:
 * `port` with the `League\Url\Components\Port`;
 * `fragment` with the `League\Url\Components\Fragment`;
 
-The classes differ on how they validate the data and/or on how they output the component string.
+### Complex components
 
-## Complex Components Classes
-
-Classes that deal with Url complex component (ie: `host`, `path`, `query`) implement the following interfaces:
+Classes that deal with complex components (ie: `host`, `path`, `query`) implement the following interfaces:
 
 * `Countable`
 * `IteratorAggregate`
 * `ArrayAccess`
-* `League\Interfaces\ComponentArrayInterface`
+* `League\Url\Interfaces\ComponentArrayInterface`
 
-The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\ComponentInterface` by adding the following methods:
+The `League\Url\Interfaces\ComponentArrayInterface` extends the `League\Url\Interfaces\ComponentInterface` by adding the following methods:
 
 * `toArray()`: will return an array representation of the component;
 * `keys()`: will return all the keys or a subset of the keys of an array if a value is given.
@@ -231,12 +239,12 @@ The `League\Interfaces\ComponentArrayInterface` extends the `League\Interfaces\C
 
 This class manage the URL query component and implements the following interfaces:
 
-* the `League\Interfaces\EncodingInterface`;
-* the `League\Interfaces\QueryInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following method:
+* the `League\Url\Interfaces\EncodingInterface`;
+* the `League\Url\Interfaces\QueryInterface` which extends the `League\Url\Interfaces\ComponentArrayInterface` by adding the following method:
 
 	* `modify($data)`: update the component data;
 
-By default, the `Query` class encode its members using the RFC #1738
+You can also use the class constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 
 Example using the `League\Url\Components\Query` object:
 
@@ -270,7 +278,7 @@ echo $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 
 ### The `Path` and `Host` classes
 
-These classes manage the URL path and host components. They only differs in the way they validate their data. Both classes implements the `League\Interfaces\SegmentInterface` which extends the `League\Interfaces\ComponentArrayInterface` by adding the following methods:
+These classes manage the URL path and host components. They only differs in the way they validate and format before outputting their data. Both classes implements the `League\Url\Interfaces\SegmentInterface` which extends the `League\Url\Interfaces\ComponentArrayInterface` by adding the following methods:
 
 * `append($data, $whence = null, $whence_index = null)`: append data into the component;
 * `prepend($data, $whence = null, $whence_index = null)`: prepend data into the component;
@@ -280,8 +288,8 @@ The arguments:
 
 * The `$data` argument can be `null`, a valid component string, a object implementing the `__toString` method, an array or a `Traversable` object;
 * The `$whence` argument specify the string segment where to include the data;
-* The `$whence_index` argument specify the `$whence` index if it is present more than once in the object;
-* When using the `remove` method, if the pattern is present multiple times only the first match found is removed* 
+* The `$whence_index` argument specify the `$whence` index if it is present more than once;
+* When using the `remove` method, if the pattern is present multiple times only the first match found is removed 
 
 *Tips: You can easily get the `$whence_index` by using the `ComponentArrayInterface::keys($whence)` method result.*
 
@@ -319,7 +327,7 @@ var_export($path->toArray())
 $path->prepend('bar', 'troll', 1);
 echo $path->get(); //will display bar/leheros/troll/bar/troll
 $path->remove('troll/bar');
-echo (string) $path; //will display bar/leheros/troll
+echo $path->getUriComponent(); //will display /bar/leheros/troll
 ```
 
 Testing

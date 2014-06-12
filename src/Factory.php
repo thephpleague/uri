@@ -46,7 +46,7 @@ class Factory implements EncodingInterface
      *
      * @var array
      */
-    private static $mutable_state = array(
+    private static $type = array(
         self::URL_MUTABLE => 1,
         self::URL_IMMUTABLE => 1
     );
@@ -97,16 +97,16 @@ class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a string
      *
-     * @param string  $url           a string or an object that implement the __toString method
-     * @param integer $mutable_state should we create a Immutable object or not
+     * @param string  $url  a string or an object that implement the __toString method
+     * @param integer $type should we create a Immutable object or not
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromString($url, $mutable_state = self::URL_MUTABLE)
+    public function createFromString($url, $type = self::URL_MUTABLE)
     {
-        if (! isset(self::$mutable_state[$mutable_state])) {
+        if (! isset(self::$type[$type])) {
             throw new InvalidArgumentException('Invalid value for the mutable state');
         }
         $url = (string) $url;
@@ -120,7 +120,7 @@ class Factory implements EncodingInterface
         $components = $this->sanitizeComponents($components);
 
         $obj = 'League\Url\Url';
-        if (self::URL_IMMUTABLE == $mutable_state) {
+        if (self::URL_IMMUTABLE == $type) {
             $obj = 'League\Url\UrlImmutable';
         }
 
@@ -139,14 +139,14 @@ class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server        the server array
-     * @param integer $mutable_state should we create a Immutable object or not
+     * @param array   $server the server array
+     * @param integer $type   should we create a Immutable object or not
      *
      * @return \League\Url\UrlInterface
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromServer(array $server, $mutable_state = self::URL_MUTABLE)
+    public function createFromServer(array $server, $type = self::URL_MUTABLE)
     {
         $scheme = $this->fetchServerScheme($server);
         $host =  $this->fetchServerHost($server);
@@ -155,7 +155,7 @@ class Factory implements EncodingInterface
 
         $url = $scheme.$host.$port.$request;
 
-        return $this->createFromString($url, $mutable_state);
+        return $this->createFromString($url, $type);
     }
 
     /**

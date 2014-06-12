@@ -237,10 +237,7 @@ The `League\Url\Components\ComponentArrayInterface` extends the `League\Url\Comp
 
 ### The `Query` class
 
-This class manage the URL query component and implements the following interfaces:
-
-* the `League\Url\EncodingInterface`;
-* the `League\Url\Components\QueryInterface` which extends the `League\Url\Components\ComponentArrayInterface` by adding the following method:
+This class manage the URL query component and implements the `League\Url\Components\QueryInterface` which extends the `League\Url\EncodingInterface` and the `League\Url\Components\ComponentArrayInterface` by adding the following method:
 
 	* `modify($data)`: update the component data;
 

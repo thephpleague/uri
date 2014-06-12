@@ -40,7 +40,7 @@ interface UrlInterface
     /**
      * Compare two Url object and tells whether they can be considered equal
      *
-     * @param \League\Url\Interfaces\UrlInterface $url
+     * @param {@link UrlInterface} $url
      *
      * @return boolean
      */

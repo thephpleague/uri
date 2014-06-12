@@ -12,7 +12,9 @@
 */
 namespace League\Url\Components;
 
-interface QueryInterface extends ComponentArrayInterface
+use League\Url\EncodingInterface;
+
+interface QueryInterface extends ComponentArrayInterface, EncodingInterface
 {
     /**
      * modify/update a Query component

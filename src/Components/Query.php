@@ -14,14 +14,13 @@ namespace League\Url\Components;
 
 use Traversable;
 use InvalidArgumentException;
-use League\Url\EncodingInterface;
 
 /**
  *  A class to manipulate URL Query component
  *
  *  @package League.url
  */
-class Query extends AbstractArray implements QueryInterface, EncodingInterface
+class Query extends AbstractArray implements QueryInterface
 {
     /**
      * Query encoding type

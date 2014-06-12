@@ -92,6 +92,17 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @require PHP 5.6
+     */
+    public function testCountableRecursive()
+    {
+        $query = new Query('rech[id_client]=&rech[login]=&rech[NOM]=&options[NOM][precise]=1&rech[PRENOM]=&options[PRENOM][precise]=1&rech[email]=&rech[foo]=12345&rech[ID_ACHAT]=');
+        $this->assertCount(4, $query->toArray());
+        $res = count($query, COUNT_RECURSIVE);
+        $this->assertSame(19, $res);
+    }
+
+    /**
      * @expectedException InvalidArgumentException
      */
     public function testEnctype()

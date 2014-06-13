@@ -110,9 +110,8 @@ final class Factory implements EncodingInterface
         }
         $url = (string) $url;
         $url = trim($url);
-        $components = @parse_url($url);
 
-        if (false === $components) {
+        if (false === ($components = @parse_url($url))) {
             throw new RuntimeException('The given URL could not be parse');
         }
 
@@ -209,8 +208,8 @@ final class Factory implements EncodingInterface
     private function fetchServerPort(array $server)
     {
         $port = '';
-        if (array_key_exists('SERVER_PORT', $server) && '80' != $server['SERVER_PORT']) {
-            $port = ':'.$server['SERVER_PORT'];
+        if (isset($server['SERVER_PORT']) && '80' != $server['SERVER_PORT']) {
+            $port = ':'. (int) $server['SERVER_PORT'];
         }
 
         return $port;
@@ -260,29 +259,24 @@ final class Factory implements EncodingInterface
     }
 
     /**
-     * Reformat the component according to the path content
+     * Reformat the component according to the auth content
      *
      * @param array $components the result from parse_url
      *
      * @return array
      */
-    private function formatPathComponent(array $components)
+    private function formatAuthComponent(array $components)
     {
-        if (is_null($components['scheme'])
+        if (!is_null($components['scheme'])
             && is_null($components['host'])
             && !empty($components['path'])
+            && strpos($components['path'], '@') !== false
         ) {
-            $tmp = $components['path'];
-            if (0 === strpos($tmp, '//')) {
-                $tmp = substr($tmp, 2);
-            }
-            $components['path'] = null;
-            $res = explode('/', $tmp, 2);
-            $components['host'] = $res[0];
-            if (isset($res[1])) {
-                $components['path'] = $res[1];
-            }
-            $components = $this->formatHostComponent($components);
+            $tmp = explode('@', $components['path'], 2);
+            $components['user'] = $components['scheme'];
+            $components['pass'] = $tmp[0];
+            $components['path'] = $tmp[1];
+            $components['scheme'] = null;
         }
 
         return $components;
@@ -310,24 +304,29 @@ final class Factory implements EncodingInterface
     }
 
     /**
-     * Reformat the component according to the auth content
+     * Reformat the component according to the path content
      *
      * @param array $components the result from parse_url
      *
      * @return array
      */
-    private function formatAuthComponent(array $components)
+    private function formatPathComponent(array $components)
     {
-        if (!is_null($components['scheme'])
+        if (is_null($components['scheme'])
             && is_null($components['host'])
             && !empty($components['path'])
-            && strpos($components['path'], '@') !== false
         ) {
-            $tmp = explode('@', $components['path'], 2);
-            $components['user'] = $components['scheme'];
-            $components['pass'] = $tmp[0];
-            $components['path'] = $tmp[1];
-            $components['scheme'] = null;
+            $tmp = $components['path'];
+            if (0 === strpos($tmp, '//')) {
+                $tmp = substr($tmp, 2);
+            }
+            $components['path'] = null;
+            $res = explode('/', $tmp, 2);
+            $components['host'] = $res[0];
+            if (isset($res[1])) {
+                $components['path'] = $res[1];
+            }
+            $components = $this->formatHostComponent($components);
         }
 
         return $components;

@@ -189,6 +189,30 @@ class Url implements EncodingInterface, UrlInterface
     }
 
     /**
+     * Set the URL scheme component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    public function setScheme($data)
+    {
+        $this->scheme->set($data);
+
+        return $this;
+    }
+
+    /**
+     * get the URL scheme component
+     *
+     * @return {@link ComponentInterface}
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
      * Set the URL user component
      *
      * @param string $data
@@ -237,6 +261,30 @@ class Url implements EncodingInterface, UrlInterface
     }
 
     /**
+     * Set the URL host component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    public function setHost($data)
+    {
+        $this->host->set($data);
+
+        return $this;
+    }
+
+    /**
+     * get the URL host component
+     *
+     * @return {@link SegmentInterface}
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
      * Set the URL port component
      *
      * @param string $data
@@ -261,51 +309,27 @@ class Url implements EncodingInterface, UrlInterface
     }
 
     /**
-     * Set the URL scheme component
+     * Set the URL path component
      *
      * @param string $data
      *
      * @return self
      */
-    public function setScheme($data)
+    public function setPath($data)
     {
-        $this->scheme->set($data);
+        $this->path->set($data);
 
         return $this;
     }
 
     /**
-     * get the URL scheme component
+     * get the URL path component
      *
-     * @return {@link ComponentInterface}
+     * @return {@link SegmentInterface}
      */
-    public function getScheme()
+    public function getPath()
     {
-        return $this->scheme;
-    }
-
-    /**
-     * Set the URL fragment component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setFragment($data)
-    {
-        $this->fragment->set($data);
-
-        return $this;
-    }
-
-    /**
-     * get the URL fragment component
-     *
-     * @return {@link ComponentInterface}
-     */
-    public function getFragment()
-    {
-        return $this->fragment;
+        return $this->path;
     }
 
     /**
@@ -333,50 +357,26 @@ class Url implements EncodingInterface, UrlInterface
     }
 
     /**
-     * Set the URL host component
+     * Set the URL fragment component
      *
      * @param string $data
      *
      * @return self
      */
-    public function setHost($data)
+    public function setFragment($data)
     {
-        $this->host->set($data);
+        $this->fragment->set($data);
 
         return $this;
     }
 
     /**
-     * get the URL host component
+     * get the URL fragment component
      *
-     * @return {@link SegmentInterface}
+     * @return {@link ComponentInterface}
      */
-    public function getHost()
+    public function getFragment()
     {
-        return $this->host;
-    }
-
-    /**
-     * Set the URL path component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setPath($data)
-    {
-        $this->path->set($data);
-
-        return $this;
-    }
-
-    /**
-     * get the URL path component
-     *
-     * @return {@link SegmentInterface}
-     */
-    public function getPath()
-    {
-        return $this->path;
+        return $this->fragment;
     }
 }

@@ -61,10 +61,10 @@ Both objects are value objects that implements the `League\Url\UrlInterface` int
 
 The `createFromServer` and `createFromString` methods accepts a second optional argument `$type` that specifies which value object must be returned using the following constants:
 
-* `Factory::URL_MUTABLE` the factory will return a `League\Url\Url` object;
-* `Factory::URL_IMMUTABLE` the factory will return a `League\Url\UrlImmutable` object;
+* `League\Url\Factory::URL_MUTABLE` the factory will return a `League\Url\Url` object;
+* `League\Url\Factory::URL_IMMUTABLE` the factory will return a `League\Url\UrlImmutable` object;
 
-By default `$type` equals `Factory::URL_MUTABLE`.
+By default `$type` equals `League\Url\Factory::URL_MUTABLE`.
 
 The `League\Url\Factory` implements the `League\Url\EncodingInterface`, this interface provides methods to specify how to encode the query string using the following PHP internal constant:
 
@@ -73,12 +73,12 @@ The constants:
 * `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
 * `PHP_QUERY_RFC3968`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
 
-*Tips: in PHP5.3 the constant are defined because otherwise, they do not exists!*
+**Of note: to support PHP5.3 the constants are defined because they do not exists!**
 
 The methods:
 
 * `setEncoding($enc_type)`: set the encoding constant
-* `getEncodingType()`: get the current encoding constant used
+* `getEncoding()`: get the current encoding constant used
 
 ```php
 $url = $url_factory->createFromString(

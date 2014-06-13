@@ -29,11 +29,6 @@ class Host extends AbstractSegment implements SegmentInterface
     /**
      * {@inheritdoc}
      */
-    protected $regexStart = '@(:?^|\.)';
-
-    /**
-     * {@inheritdoc}
-     */
     public function get()
     {
         if (! $this->data) {

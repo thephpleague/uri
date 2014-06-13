@@ -205,6 +205,31 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     }
 
     /**
+     * Set the URL scheme component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    public function setScheme($data)
+    {
+        $clone = clone $this;
+        $clone->scheme->set($data);
+
+        return $clone;
+    }
+
+    /**
+     * get the URL scheme component
+     *
+     * @return {@link ComponentInterface}
+     */
+    public function getScheme()
+    {
+        return clone $this->scheme;
+    }
+
+    /**
      * Set the URL user component
      *
      * @param string $data
@@ -255,6 +280,31 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     }
 
     /**
+     * Set the URL host component
+     *
+     * @param string $data
+     *
+     * @return self
+     */
+    public function setHost($data)
+    {
+        $clone = clone $this;
+        $clone->host->set($data);
+
+        return $clone;
+    }
+
+    /**
+     * get the URL pass component
+     *
+     * @return {@link SegmentInterface}
+     */
+    public function getHost()
+    {
+        return clone $this->host;
+    }
+
+    /**
      * Set the URL port component
      *
      * @param string $data
@@ -280,39 +330,16 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     }
 
     /**
-     * Set the URL scheme component
+     * Set the URL path component
      *
      * @param string $data
      *
      * @return self
      */
-    public function setScheme($data)
+    public function setPath($data)
     {
         $clone = clone $this;
-        $clone->scheme->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheme()
-    {
-        return clone $this->scheme;
-    }
-
-    /**
-     * Set the URL fragment component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setFragment($data)
-    {
-        $clone = clone $this;
-        $clone->fragment->set($data);
+        $clone->path->set($data);
 
         return $clone;
     }
@@ -320,11 +347,11 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return {@link SegmentInterface}
      */
-    public function getFragment()
+    public function getPath()
     {
-        return clone $this->fragment;
+        return clone $this->path;
     }
 
     /**
@@ -353,16 +380,16 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     }
 
     /**
-     * Set the URL host component
+     * Set the URL fragment component
      *
      * @param string $data
      *
      * @return self
      */
-    public function setHost($data)
+    public function setFragment($data)
     {
         $clone = clone $this;
-        $clone->host->set($data);
+        $clone->fragment->set($data);
 
         return $clone;
     }
@@ -370,35 +397,10 @@ final class UrlImmutable implements EncodingInterface, UrlInterface
     /**
      * get the URL pass component
      *
-     * @return {@link SegmentInterface}
+     * @return {@link ComponentInterface}
      */
-    public function getHost()
+    public function getFragment()
     {
-        return clone $this->host;
-    }
-
-    /**
-     * Set the URL path component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setPath($data)
-    {
-        $clone = clone $this;
-        $clone->path->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * get the URL pass component
-     *
-     * @return {@link SegmentInterface}
-     */
-    public function getPath()
-    {
-        return clone $this->path;
+        return clone $this->fragment;
     }
 }

@@ -28,7 +28,7 @@ use League\Url\Components\Fragment;
  *
  * @package League.url
  */
-class Factory implements EncodingInterface
+final class Factory implements EncodingInterface
 {
     /**
      * Tell the Factory object to instantiate a mutable class
@@ -185,6 +185,8 @@ class Factory implements EncodingInterface
      * @param array $server the server array
      *
      * @return string
+     *
+     * @throws \RuntimeException If no host is detected
      */
     private function fetchServerHost(array $server)
     {

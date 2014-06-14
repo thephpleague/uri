@@ -19,7 +19,3 @@ script:
 
 after_script:
   - php vendor/bin/coveralls
-
-matrix:
-  allow_failures:
-    - php: hhvm

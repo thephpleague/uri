@@ -116,7 +116,12 @@ class Url implements EncodingInterface, UrlInterface
      */
     public function __toString()
     {
-        return $this->getBaseUrl().$this->getRelativeUrl();
+        $url = $this->getBaseUrl().$this->getRelativeUrl();
+        if ('/' == $url) {
+            return '';
+        }
+
+        return $url;
     }
 
     /**

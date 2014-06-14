@@ -8,7 +8,6 @@ use StdClass;
 
 class FactoryTest extends PHPUnit_Framework_TestCase
 {
-    private $url;
 
     private $url_factory;
 
@@ -16,16 +15,11 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
 
         $this->url_factory = new Factory;
-
-        $this->url = $this->url_factory->createFromString(
-            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
-            Factory::URL_IMMUTABLE
-        );
     }
 
     public function tearDown()
     {
-        $this->url = null;
+        $this->url_factor = null;
     }
 
     public function testCreateFromServer()

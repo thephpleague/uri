@@ -108,19 +108,18 @@ final class Factory implements EncodingInterface
         if (! isset(self::$type[$type])) {
             throw new InvalidArgumentException('Invalid value for the mutable state');
         }
+        $obj = 'League\Url\Url';
+        if (self::URL_IMMUTABLE == $type) {
+            $obj = 'League\Url\UrlImmutable';
+        }
+
         $url = (string) $url;
         $url = trim($url);
-
         if (false === ($components = @parse_url($url))) {
             throw new RuntimeException('The given URL could not be parse');
         }
 
         $components = $this->sanitizeComponents($components);
-
-        $obj = 'League\Url\Url';
-        if (self::URL_IMMUTABLE == $type) {
-            $obj = 'League\Url\UrlImmutable';
-        }
 
         return new $obj(
             new Scheme($components['scheme']),

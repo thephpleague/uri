@@ -239,7 +239,7 @@ The `League\Url\Components\ComponentArrayInterface` extends the `League\Url\Comp
 
 This class manage the URL query component and implements the `League\Url\Components\QueryInterface` which extends the `League\Url\EncodingInterface` and the `League\Url\Components\ComponentArrayInterface` by adding the following method:
 
-	* `modify($data)`: update the component data;
+* `modify($data)`: update the component data;
 
 You can also use the class constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 

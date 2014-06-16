@@ -43,7 +43,7 @@ abstract class AbstractSegment extends AbstractArray
     public function set($data)
     {
         $this->data = array_values(array_filter($this->validate($data), function ($value) {
-            return ! is_null($value) && '' != $value;
+            return ! is_null($value);
         }));
     }
 
@@ -217,6 +217,17 @@ abstract class AbstractSegment extends AbstractArray
     protected function fetchRemainingSegment(array $data, $value)
     {
         $segment = implode($this->delimiter, $data);
+        if ('' == $value) {
+            if ($index = array_search('', $data, true)) {
+                $left = array_slice($data, 0, $index);
+                $right = array_slice($data, $index+1);
+
+                return implode($this->delimiter, array_merge($left, $right));
+            }
+
+            return $segment;
+        }
+
         $part = implode($this->delimiter, $this->validate($value));
 
         $regexStart = '@(:?^|\\'.$this->delimiter.')';

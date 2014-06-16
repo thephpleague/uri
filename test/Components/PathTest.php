@@ -44,28 +44,30 @@ class PathTest extends PHPUnit_Framework_TestCase
 
         $path->remove('toto');
         $this->assertSame('master/query.php', $path->get());
-
+        $path->remove('');
         $path->append('sullivent', 'master');
         $this->assertSame('master/sullivent/query.php', $path->get());
 
         $path->set(null);
-        $path->append('/shop/checkout');
-        $this->assertSame('shop/checkout', $path->get());
+        $path->append('/shop/checkout/');
+        $this->assertSame('shop/checkout/', $path->get());
 
-        $path->set(array('shop', 'rev iew'));
-        $this->assertSame('shop/rev%20iew', $path->get());
+        $path->set(array('shop', 'rev iew', ''));
+        $this->assertSame('shop/rev%20iew/', $path->get());
 
-        $path->append(new ArrayIterator(array('sullivent', 'wacowski')));
-        $this->assertSame('shop/rev%20iew/sullivent/wacowski', $path->get());
+        $path->append(new ArrayIterator(array('sullivent', 'wacowski', '')));
+        $this->assertSame('shop/rev%20iew//sullivent/wacowski/', $path->get());
 
         $path->prepend('master');
         $path->prepend('master');
-        $this->assertSame('master/master/shop/rev%20iew/sullivent/wacowski', (string) $path);
+        $this->assertSame('master/master/shop/rev%20iew//sullivent/wacowski/', (string) $path);
 
         $path->append('slave', 'sullivent');
         $path->append('slave', 'sullivent');
 
-        $this->assertSame('master/master/shop/rev%20iew/sullivent/slave/slave/wacowski', (string) $path);
+        $path->remove('');
+
+        $this->assertSame('master/master/shop/rev%20iew/sullivent/slave/slave/wacowski/', (string) $path);
     }
 
     public function testRemove()

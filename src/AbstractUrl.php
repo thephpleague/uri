@@ -13,7 +13,9 @@
 namespace League\Url;
 
 use RuntimeException;
-use InvalidArgumentException;
+use League\Url\Components\ComponentInterface;
+use League\Url\Components\QueryInterface;
+use League\Url\Components\SegmentInterface;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;
@@ -28,107 +30,185 @@ use League\Url\Components\Fragment;
  *
  * @package League.url
  */
-final class Factory implements EncodingInterface
+abstract class AbstractUrl implements UrlInterface
 {
     /**
-     * Tell the Factory object to instantiate a mutable class
-     */
-    const URL_MUTABLE = 1;
+    * Scheme
+    *
+    * @var {@link ComponentInterface}  Object
+    */
+    protected $scheme;
 
     /**
-     * Tell the Factory object to instantiate a Immutable class
-     */
-    const URL_IMMUTABLE = 2;
+    * User
+    *
+    * @var {@link ComponentInterface} Object
+    */
+    protected $user;
 
     /**
-     * Possile mutable constant
+    * Pass
+    *
+    * @var {@link ComponentInterface} Object
+    */
+    protected $pass;
+
+    /**
+     * Host
      *
-     * @var array
+     * @var {@link SegmentInterface} Object
      */
-    private static $type = array(
-        self::URL_MUTABLE => 1,
-        self::URL_IMMUTABLE => 1
-    );
+    protected $host;
 
     /**
-     * Query encoding type
+     * Port
      *
-     * @var integer
+     *@var {@link ComponentInterface} Object
      */
-    private $encoding_type = PHP_QUERY_RFC1738;
+    protected $port;
 
     /**
-     * Possible encoding type list
+     * Path
      *
-     * @var array
+     * @var {@link SegmentInterface} Object
      */
-    private static $encoding_list = array(
-        PHP_QUERY_RFC3986 => 1,
-        PHP_QUERY_RFC1738 => 1
-    );
+    protected $path;
 
-    public function __construct($enc_type = PHP_QUERY_RFC1738)
-    {
-        $this->setEncoding($enc_type);
+    /**
+     * Query
+     *
+     * @var {@link QueryInterface} Object
+     */
+    protected $query;
+
+    /**
+     * Fragment
+     *
+     * @var {@link ComponentInterface} Object
+     */
+    protected $fragment;
+
+    /**
+     * The Constructor
+     * @param ComponentInterface $scheme   The URL Scheme component
+     * @param ComponentInterface $user     The URL User component
+     * @param ComponentInterface $pass     The URL Pass component
+     * @param SegmentInterface   $host     The URL Host component
+     * @param ComponentInterface $port     The URL Port component
+     * @param SegmentInterface   $path     The URL Path component
+     * @param QueryInterface     $query    The URL Query component
+     * @param ComponentInterface $fragment The URL Fragment component
+     */
+    protected function __construct(
+        ComponentInterface $scheme,
+        ComponentInterface $user,
+        ComponentInterface $pass,
+        SegmentInterface $host,
+        ComponentInterface $port,
+        SegmentInterface $path,
+        QueryInterface $query,
+        ComponentInterface $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->user = $user;
+        $this->pass = $pass;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setEncoding($enc_type)
+    public function __toString()
     {
-        if (! isset(self::$encoding_list[$enc_type])) {
-            throw new InvalidArgumentException('Invalid value for the encoding type');
+        $url = $this->getBaseUrl().$this->getRelativeUrl();
+        if ('/' == $url) {
+            return '';
         }
-        $this->encoding_type = $enc_type;
 
-        return $this;
+        return $url;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEncoding()
+    public function getRelativeUrl()
     {
-        return $this->encoding_type;
+        $path = $this->path->getUriComponent();
+        $query = $this->query->getUriComponent();
+        $fragment = $this->fragment->getUriComponent();
+        if ('' == $path) {
+            $path = '/'.$path;
+        }
+
+        return $path.$query.$fragment;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBaseUrl()
+    {
+        $scheme = $this->scheme->getUriComponent();
+        $user = $this->user->getUriComponent();
+        $pass = $this->pass->getUriComponent();
+        $host = $this->host->getUriComponent();
+        $port = $this->port->getUriComponent();
+
+        $user .= $pass;
+        if ('' != $user) {
+            $user .= '@';
+        }
+
+        if ('' != $host && '' == $scheme) {
+            $scheme = '//';
+        }
+
+        return $scheme.$user.$host.$port;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(UrlInterface $url)
+    {
+        $this_url = self::createFromUrl($this);
+        $that_url = self::createFromUrl($url);
+
+        return $this_url->__toString() == $that_url->__toString();
     }
 
     /**
      * Return a instance of Url from a string
      *
-     * @param string  $url  a string or an object that implement the __toString method
-     * @param integer $type should we create a Immutable object or not
+     * @param string  $url      a string or an object that implement the __toString method
+     * @param integer $enc_type The encoding type constant
      *
-     * @return \League\Url\UrlInterface
+     * @return AbstractUrl
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromString($url, $type = self::URL_MUTABLE)
+    public static function createFromUrl($url, $enc_type = PHP_QUERY_RFC1738)
     {
-        if (! isset(self::$type[$type])) {
-            throw new InvalidArgumentException('Invalid value for the mutable state');
-        }
-        $obj = 'League\Url\Url';
-        if (self::URL_IMMUTABLE == $type) {
-            $obj = 'League\Url\UrlImmutable';
-        }
-
         $url = (string) $url;
         $url = trim($url);
         if (false === ($components = @parse_url($url))) {
-            throw new RuntimeException('The given URL could not be parse');
+            throw new RuntimeException(sprintf('The given URL: `%s` could not be parse', $url));
         }
 
-        $components = $this->sanitizeComponents($components);
+        $components = self::sanitizeComponents($components);
 
-        return new $obj(
+        return new static(
             new Scheme($components['scheme']),
             new User($components['user']),
             new Pass($components['pass']),
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),
-            new Query($components['query'], $this->encoding_type),
+            new Query($components['query'], $enc_type),
             new Fragment($components['fragment'])
         );
     }
@@ -136,23 +216,21 @@ final class Factory implements EncodingInterface
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server the server array
-     * @param integer $type   should we create a Immutable object or not
+     * @param array   $server   the server array
+     * @param integer $enc_type The encoding type constant
      *
-     * @return \League\Url\UrlInterface
+     * @return AbstractUrl
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public function createFromServer(array $server, $type = self::URL_MUTABLE)
+    public static function createFromServer(array $server, $enc_type = PHP_QUERY_RFC1738)
     {
-        $scheme = $this->fetchServerScheme($server);
-        $host =  $this->fetchServerHost($server);
-        $port = $this->fetchServerPort($server);
-        $request = $this->fetchServerRequestUri($server);
+        $scheme = self::fetchServerScheme($server);
+        $host = self::fetchServerHost($server);
+        $port = self::fetchServerPort($server);
+        $request = self::fetchServerRequestUri($server);
 
-        $url = $scheme.$host.$port.$request;
-
-        return $this->createFromString($url, $type);
+        return self::createFromUrl($scheme.$host.$port.$request, $enc_type);
     }
 
     /**
@@ -162,7 +240,7 @@ final class Factory implements EncodingInterface
      *
      * @return string
      */
-    private function fetchServerScheme(array $server)
+    protected static function fetchServerScheme(array $server)
     {
         $scheme = '';
         if (isset($server['SERVER_PROTOCOL'])) {
@@ -186,7 +264,7 @@ final class Factory implements EncodingInterface
      *
      * @throws \RuntimeException If no host is detected
      */
-    private function fetchServerHost(array $server)
+    protected static function fetchServerHost(array $server)
     {
         if (isset($server['HTTP_HOST'])) {
             return $server['HTTP_HOST'];
@@ -204,7 +282,7 @@ final class Factory implements EncodingInterface
      *
      * @return string
      */
-    private function fetchServerPort(array $server)
+    protected static function fetchServerPort(array $server)
     {
         $port = '';
         if (isset($server['SERVER_PORT']) && '80' != $server['SERVER_PORT']) {
@@ -221,7 +299,7 @@ final class Factory implements EncodingInterface
      *
      * @return string
      */
-    private function fetchServerRequestUri(array $server)
+    protected static function fetchServerRequestUri(array $server)
     {
         if (isset($server['REQUEST_URI'])) {
             return $server['REQUEST_URI'];
@@ -239,7 +317,7 @@ final class Factory implements EncodingInterface
      *
      * @return array
      */
-    private function sanitizeComponents(array $components)
+    protected static function sanitizeComponents(array $components)
     {
         $components = array_merge(array(
             'scheme' => null,
@@ -252,9 +330,9 @@ final class Factory implements EncodingInterface
             'fragment' => null,
         ), $components);
 
-        $components = $this->formatAuthComponent($components);
+        $components = self::formatAuthComponent($components);
 
-        return $this->formatPathComponent($components);
+        return self::formatPathComponent($components);
     }
 
     /**
@@ -264,7 +342,7 @@ final class Factory implements EncodingInterface
      *
      * @return array
      */
-    private function formatAuthComponent(array $components)
+    protected static function formatAuthComponent(array $components)
     {
         if (!is_null($components['scheme'])
             && is_null($components['host'])
@@ -288,7 +366,7 @@ final class Factory implements EncodingInterface
      *
      * @return array
      */
-    private function formatHostComponent(array $components)
+    protected static function formatHostComponent(array $components)
     {
         if (strpos($components['host'], '@')) {
             list($auth, $components['host']) = explode('@', $components['host']);
@@ -309,7 +387,7 @@ final class Factory implements EncodingInterface
      *
      * @return array
      */
-    private function formatPathComponent(array $components)
+    protected static function formatPathComponent(array $components)
     {
         if (is_null($components['scheme'])
             && is_null($components['host'])
@@ -325,7 +403,7 @@ final class Factory implements EncodingInterface
             if (isset($res[1])) {
                 $components['path'] = $res[1];
             }
-            $components = $this->formatHostComponent($components);
+            $components = self::formatHostComponent($components);
         }
 
         return $components;

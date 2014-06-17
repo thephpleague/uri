@@ -7,6 +7,9 @@ use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Path;
 
+/**
+ * @group components
+ */
 class PathTest extends PHPUnit_Framework_TestCase
 {
     /**

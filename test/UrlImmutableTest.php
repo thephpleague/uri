@@ -2,29 +2,28 @@
 
 namespace League\Url\test;
 
-use League\Url\Factory;
+use League\Url\UrlImmutable;
+use League\Url\Url;
 use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group immutable
+ */
 class UrlImmutableTest extends PHPUnit_Framework_TestCase
 {
     private $url;
 
-    private $url_factory;
-
     public function setUp()
     {
-        $this->url_factory = new Factory;
-        $this->url = $this->url_factory->createFromString(
-            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
-            Factory::URL_IMMUTABLE
+        $this->url = UrlImmutable::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
 
     public function tearDown()
     {
         $this->url = null;
-        $this->url_factory = null;
     }
 
     public function testStringRepresentation()
@@ -59,24 +58,12 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
 
     public function testSameValueAs()
     {
-        $url1 = $this->url_factory->createFromString('example.com');
-        $url2 = $this->url_factory->createFromString('//example.com', Factory::URL_IMMUTABLE);
-        $this->url_factory->setEncoding(PHP_QUERY_RFC3986);
-        $url3 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros', Factory::URL_IMMUTABLE);
-        $this->url_factory->setEncoding(PHP_QUERY_RFC1738);
-        $url4 = $this->url_factory->createFromString('//example.com?foo=toto+le+heros');
+        $url1 = Url::createFromUrl('example.com');
+        $url2 = UrlImmutable::createFromUrl('//example.com');
+        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
+        $url4 = Url::createFromUrl('//example.com?foo=toto+le+heros', PHP_QUERY_RFC1738);
         $this->assertTrue($url1->sameValueAs($url2));
         $this->assertFalse($url3->sameValueAs($url2));
         $this->assertTrue($url3->sameValueAs($url4));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testEncodingType()
-    {
-        $this->assertSame(PHP_QUERY_RFC1738, $this->url->getEncoding());
-        $this->assertSame(PHP_QUERY_RFC3986, $this->url->setEncoding(PHP_QUERY_RFC3986)->getEncoding());
-        $this->url->setEncoding('toto');
     }
 }

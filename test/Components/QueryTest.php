@@ -7,6 +7,9 @@ use League\Url\Components\Query;
 use ArrayIterator;
 use StdClass;
 
+/**
+ * @group components
+ */
 class QueryTest extends PHPUnit_Framework_TestCase
 {
     protected $query;
@@ -26,6 +29,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $this->query->modify(new ArrayIterator(array('john' => 'doe the john')));
         $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->query);
+    }
+
+    public function testModifyWithQueryInterface()
+    {
+        $this->query->modify(new Query(array('foo' => 'bar')));
+        $this->assertSame('kingkong=toto&foo=bar', (string) $this->query);
     }
 
     public function testModifyWithString()
@@ -57,6 +66,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $this->query->set(array('ali' => 'baba'));
         $this->assertSame('ali=baba', (string) $this->query);
+    }
+
+    public function testSetterWithqueryInterface()
+    {
+        $this->query->set(new Query(array('ali' => '40 voleurs'), PHP_QUERY_RFC3986));
+        $this->assertSame('ali=40%20voleurs', (string) $this->query);
     }
 
     /**

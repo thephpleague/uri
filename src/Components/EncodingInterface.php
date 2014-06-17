@@ -10,18 +10,18 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url;
+namespace League\Url\Components;
 
 interface EncodingInterface
 {
     /**
      * Set the Query String encoding type (see {@link http_build_query})
      *
-     * @param integer $encoding_type
+     * @param integer $enc_type The encoding type constant
      *
      * @return self
      */
-    public function setEncoding($encoding_type);
+    public function setEncoding($enc_type);
 
     /**
      * return the current Encoding type value

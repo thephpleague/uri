@@ -27,7 +27,7 @@ class Query extends AbstractArray implements QueryInterface
      *
      * @var integer
      */
-    protected $encoding_type = PHP_QUERY_RFC1738;
+    protected $enc_type = PHP_QUERY_RFC1738;
 
     /**
      * Possible encoding type list
@@ -61,7 +61,7 @@ class Query extends AbstractArray implements QueryInterface
         if (! isset($this->encoding_list[$enc_type])) {
             throw new InvalidArgumentException('Invalid value for the encoding type');
         }
-        $this->encoding_type = $enc_type;
+        $this->enc_type = $enc_type;
 
         return $this;
     }
@@ -71,7 +71,7 @@ class Query extends AbstractArray implements QueryInterface
      */
     public function getEncoding()
     {
-        return $this->encoding_type;
+        return $this->enc_type;
     }
 
     /**
@@ -79,6 +79,14 @@ class Query extends AbstractArray implements QueryInterface
      */
     public function set($data)
     {
+
+        if ($data instanceof QueryInterface) {
+            $this->data = $data->data;
+            $this->enc_type = $data->enc_type;
+
+            return;
+        }
+
         $this->data = array_filter($this->validate($data), function ($value) {
             if (is_string($value)) {
                 $value = trim($value);
@@ -97,7 +105,7 @@ class Query extends AbstractArray implements QueryInterface
             return null;
         }
 
-        return $this->encode($this->data, $this->encoding_type);
+        return $this->encode($this->data, $this->enc_type);
     }
 
     /**
@@ -126,6 +134,9 @@ class Query extends AbstractArray implements QueryInterface
      */
     public function modify($data)
     {
+        if ($data instanceof QueryInterface) {
+            $data = $data->data;
+        }
         $this->set(array_merge($this->data, $this->validate($data)));
     }
 

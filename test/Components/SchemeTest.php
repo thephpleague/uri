@@ -5,6 +5,9 @@ namespace League\Url\test;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Scheme;
 
+/**
+ * @group components
+ */
 class SchemeTest extends PHPUnit_Framework_TestCase
 {
     /**

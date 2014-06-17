@@ -2,20 +2,20 @@
 
 namespace League\Url\test;
 
-use League\Url\Factory;
+use League\Url\Url;
 use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @group url
+ */
 class UrlTest extends PHPUnit_Framework_TestCase
 {
     private $url;
 
-    private $url_factory;
-
     public function setUp()
     {
-        $this->url_factory = new Factory;
-        $this->url = $this->url_factory->createFromString(
+        $this->url = Url::createFromUrl(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
@@ -23,7 +23,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->url = null;
-        $this->url_factory = null;
     }
 
     public function testStringRepresentation()
@@ -54,15 +53,5 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->url, $this->url->setPath('/test/query.php'));
         $this->assertSame($this->url, $this->url->setQuery('?kingkong=toto'));
         $this->assertSame($this->url, $this->url->setFragment('doc3'));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testEncodingType()
-    {
-        $this->assertSame(PHP_QUERY_RFC1738, $this->url->getEncoding());
-        $this->assertSame(PHP_QUERY_RFC3986, $this->url->setEncoding(PHP_QUERY_RFC3986)->getEncoding());
-        $this->url->setEncoding('toto');
     }
 }

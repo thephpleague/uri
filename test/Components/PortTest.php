@@ -5,6 +5,9 @@ namespace League\Url\test;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Port;
 
+/**
+ * @group components
+ */
 class PortTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -12,6 +15,8 @@ class PortTest extends PHPUnit_Framework_TestCase
      */
     public function testPortSetter()
     {
-        $host = new Port('toto');
+        $port = new Port(new Port(443));
+        $this->assertSame(443, $port->get());
+        $port = new Port('toto');
     }
 }

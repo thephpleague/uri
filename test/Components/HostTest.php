@@ -6,6 +6,9 @@ use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Host;
 
+/**
+ * @group components
+ */
 class HostTest extends PHPUnit_Framework_TestCase
 {
     /**

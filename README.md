@@ -38,124 +38,92 @@ The easiest way to get started is to add `'/path/to/League/url/src'` to your PSR
 
 require 'vendor/autoload.php' //when using composer
 
-use League\Url\Factory;
-
-$url_factory = new Factory(PHP_QUERY_RFC1738);
+use League\Url\Url;
+use League\url\UrlImmutable;
 
 //Method 1 : from a given string
-$url = $url_factory->createFromString('http://www.example.com');
-$url_immutable = $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
-
-$url_factory->setEncoding(PHP_QUERY_RFC3968);
+$url = Url::createFromUrl('http://www.example.com');
+$url_immutable = UrlImmutable::createFromUrl('http://www.example.com', PHP_QUERY_RFC3986);
 
 //Method 2: from the current PHP page
 //don't forget to provide the $_SERVER array
-$url = $url_factory->createFromServer($_SERVER); 
-$url_immutable = $url_factory->createFromServer($_SERVER, Factory::URL_IMMUTABLE);
+$url = Url::createFromServer($_SERVER); 
+$url_immutable = UrlImmutable::createFromServer($_SERVER);
 ```
 
 * `$url` is a `League\Url\Url` object
 * `$url_immutable` is a `League\Url\UrlImmutable` object
 
-Both objects are value objects that implements the `League\Url\UrlInterface` interface (think of PHP `DateTime` and `DateTimeImmutable` classes that implement the `DateTimeInterface`).
+Both objects are value objects implementing the `League\Url\UrlInterface` interface (think of PHP `DateTime` and `DateTimeImmutable` classes which implement the `DateTimeInterface`).
 
-The `createFromServer` and `createFromString` methods accepts a second optional argument `$type` that specifies which value object must be returned using the following constants:
-
-* `League\Url\Factory::URL_MUTABLE` the factory will return a `League\Url\Url` object;
-* `League\Url\Factory::URL_IMMUTABLE` the factory will return a `League\Url\UrlImmutable` object;
-
-By default `$type` equals `League\Url\Factory::URL_MUTABLE`.
-
-The `League\Url\Factory` implements the `League\Url\EncodingInterface`, this interface provides methods to specify how to encode the query string using the following PHP internal constant:
-
-The constants:
+The `createFromServer` and `createFromUrl` methods accept a second optional argument `$enc_type` which specifies which encoding RFC should the URL query string component follow. The following internal PHP constants are the possible values:
 
 * `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
-* `PHP_QUERY_RFC3968`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
+* `PHP_QUERY_RFC3986`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
 
-**Of note: to support PHP5.3 the constants are defined because they do not exists!**
+By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 
-The methods:
-
-* `setEncoding($enc_type)`: set the encoding constant
-* `getEncoding()`: get the current encoding constant used
-
-```php
-$url = $url_factory->createFromString(
-	'http://www.example.com/path/index.php?query=toto+le+heros'
-);
-$url_factory->setEncoding(PHP_QUERY_RFC3968);
-$new_url = $url_factory->createFromString(
-	'http://www.example.com/path/index.php?query=toto+le+heros'
-);
-echo $url; // http://www.example.com?query=toto+le+heros
-echo $new_url; // http://www.example.com?query=toto%20le%20heros
-```
-
-You can also use the `League\Url\Factory` constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
+**Of note: For PHP < 5.4 the constants are defined since they do not exists!**
 
 ## Urls Objects
 
-Each Url value object implements the `League\Url\UrlInterface` following methods:
+Each Url value object implements the `League\Url\UrlInterface` methods:
 
 * `__toString` returns the full string representation of the URL;
 * `getRelativeUrl` returns the string representation of the URL without the "domain" parts (ie: `scheme`, `user`, `path`, `host`, `port`);
-* `getBaseUrl` returns the string representation of the URL without the "Uri" parts (ie: `path`, `query`, `fragment`);
+* `getBaseUrl` returns the string representation of the URL without the "request uri" part (ie: `path`, `query`, `fragment`);
 * `sameValueAs` return true if two `League\Url\UrlInterface` object represents the same URL. The comparison is encoding independent.
 
-the URLs value objects also implements the `League\Url\EncodingInterface` interface.
-
 ```php
-$url = $url_factory->createFromString(
-	'http://www.example.com/path/index.php?query=toto+le+heros'
-);
-
+$url = Url::createFromUrl('http://www.example.com/path/index.php?query=toto+le+heros');
 echo $url->getRelativeUrl(); // /path/index.php?query=toto+le+heros
 echo $url->getBaseUrl(); // http://www.example.com
 echo $url; // 'http://www.example.com/path/index.php?query=toto+le+heros'
 
-$original_url = $url_factory->createFromString('example.com');
-$new_url = $url_factory->createFromString('//example.com', Factory::URL_IMMUTABLE);
-$alternate_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
-$url_factory->setEncoding(PHP_QUERY_RFC3968);
-$another_url = $url_factory->createFromString('//example.com?foo=toto+le+heros');
+$original_url = Url::createFromUrl('example.com');
+$new_url = UrlImmutable::createFromUrl('//example.com');
+$alternate_url = Url::createFromUrl('//example.com?foo=toto+le+heros');
+$another_url = Url::createFromUrl('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
 
 $original_url->sameValueAs($new_url); //will return true
 $alternate_url->sameValueAs($new_url); //will return false
 $alternate_url->sameValueAs($another_url); //will return true
 ```
 
-Additionally, Each class implements a setter and a getter method for each URLs components. You can use chaining with all the setter methods and each getter method returns a component specific object.
+Additionally, Each class implements a setter and a getter method for each URLs components:
 
-**Of note: To stay immutable, the `League\Url\UrlImmutable` never modified itself but return a new object instead. The object also returns a new property object instead of its own property object to avoid modification by reference.** 
+* Chaining is possible since all the setter methods return a `League\Url\UrlInterface` object;
+* Getter methods return a component specific object;
+
+**Of note: To stay immutable, the `League\Url\UrlImmutable` object never modified itself but return a new object instead. The object also returns a new property object instead of its own property object to avoid modification by reference.** 
 
 * `setScheme($data)` set the URL scheme component;
-* `getScheme()` returns a `League\Components\Scheme` object
+* `getScheme()` returns a `League\Url\Components\Scheme` object
 * `setUser($data)` set the URL user component;
-* `getUser()` returns a `League\Components\User`object
+* `getUser()` returns a `League\Url\Components\User`object
 * `setPass($data)` set the URL pass component;
-* `getPass()` returns a `League\Components\Pass`object
+* `getPass()` returns a `League\Url\Components\Pass`object
 * `setHost($data)` set the URL host component;
-* `getHost()` returns a `League\Components\Host` object
+* `getHost()` returns a `League\Url\Components\Host` object
 * `setPort($data)` set the URL port component;
-* `getPort()` returns a `League\Components\Port`object
+* `getPort()` returns a `League\Url\Components\Port`object
 * `setPath($data)` set the URL path component;
-* `getPath()` returns a `League\Components\Path` object
+* `getPath()` returns a `League\Url\Components\Path` object
 * `setQuery($data)` set the URL query component;
-* `getQuery()` returns a `League\Components\Query` object
+* `getQuery()` returns a `League\Url\Components\Query` object
 * `setFragment($data)` set the URL fragment component;
-* `getFragment()` returns a `League\Components\Fragment`object
+* `getFragment()` returns a `League\Url\Components\Fragment`object
 
 The `$data` argument can be:
 
 * `null`;
-* a valid component string for the specified URL component;
+* a valid component string or object for the specified URL component;
 * an object implementing the `__toString` method;
 * for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
 ```php
 //From a League\Url\Url object 
-$url = $url_factory->createFromString('https://www.example.com');
+$url = Url::createFromUrl('https://www.example.com');
 $url
 	->setUser('john')
 	->setPass('doe')
@@ -169,12 +137,12 @@ echo $port; // output 80;
 echo $url->getPort(); // output 80;
 
 //From a League\Url\UrlImmutable object 
-$url = $url_factory->createFromString('http://www.example.com', Factory::URL_IMMUTABLE);
+$url = UrlImmutable::createFromUrl('http://www.example.com');
 $new_url = $url
-		->setUser('john')
-		->setPass('doe')
-		->setPort(443)
-		->setScheme('https');
+	->setUser('john')
+	->setPass('doe')
+	->setPort(443)
+	->setScheme('https');
 echo $url; //remains http://www.example.com/
 echo $new_url; //output https://john:doe@www.example.com:443/
 
@@ -237,11 +205,18 @@ The `League\Url\Components\ComponentArrayInterface` extends the `League\Url\Comp
 
 ### The `Query` class
 
-This class manage the URL query component and implements the `League\Url\Components\QueryInterface` which extends the `League\Url\EncodingInterface` and the `League\Url\Components\ComponentArrayInterface` by adding the following method:
+This class manage the URL query component. 
 
-* `modify($data)`: update the component data;
+It implements the following interfaces:
 
-You can also use the class constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
+* The `League\Url\Components\EncodingInterface` interface which control how the Query component will be encoded on output:
+	* `setEncoding($enc_type)`: set the encoding constant;
+	* `getEncoding()`: get the current encoding constant used by the class;
+
+* The `League\Url\Components\QueryInterface` which extends the `League\Url\Components\ComponentArrayInterface` by adding the following method:
+	* `modify($data)`: update the component data;
+
+**Of note:** You can also use the class constructor optional argument `$enc_type` to specifies the encoding type. By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 
 Example using the `League\Url\Components\Query` object:
 
@@ -268,7 +243,7 @@ $found = $query->keys('troll');
 
 echo count($query); //will return 2;
 echo $query; //will display foo=baz&baz=troll;
-$query->setEncoding(PHP_QUERY_RFC3968); //for PHP 5.3
+$query->setEncoding(PHP_QUERY_RFC3986);
 $query->modify(array('toto' => 'le gentil'));
 echo $query; //will display foo=baz&baz=troll&toto=le%20gentil;
 ```

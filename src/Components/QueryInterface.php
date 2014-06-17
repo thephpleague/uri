@@ -12,8 +12,6 @@
 */
 namespace League\Url\Components;
 
-use League\Url\EncodingInterface;
-
 interface QueryInterface extends ComponentArrayInterface, EncodingInterface
 {
     /**

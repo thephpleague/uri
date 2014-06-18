@@ -22,7 +22,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL scheme component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -46,7 +46,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL user component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -70,7 +70,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL pass component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -94,7 +94,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL host component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -118,7 +118,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL port component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -142,7 +142,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL path component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -166,13 +166,16 @@ class Url extends AbstractUrl
     /**
      * Set the URL query component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
-    public function setQuery($data)
+    public function setQuery($data, $enc_type = null)
     {
         $this->query->set($data);
+        if (! is_null($enc_type)) {
+            $this->query->setEncoding($enc_type);
+        }
 
         return $this;
     }
@@ -190,7 +193,7 @@ class Url extends AbstractUrl
     /**
      * Set the URL fragment component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */

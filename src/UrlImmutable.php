@@ -37,7 +37,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL scheme component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -62,7 +62,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL user component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -87,7 +87,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL pass component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -112,7 +112,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL host component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -137,7 +137,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL port component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -162,7 +162,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL path component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
@@ -187,14 +187,17 @@ class UrlImmutable extends AbstractUrl
     /**
      * Set the URL query component
      *
-     * @param string $data
+     * @param mixed $data
      *
      * @return self
      */
-    public function setQuery($data)
+    public function setQuery($data, $enc_type = null)
     {
         $clone = clone $this;
         $clone->query->set($data);
+        if (! is_null($enc_type)) {
+            $clone->query->setEncoding($enc_type);
+        }
 
         return $clone;
     }

@@ -109,7 +109,7 @@ Additionally, Each class implements a setter and a getter method for each URLs c
 * `getPort()` returns a `League\Url\Components\Port`object
 * `setPath($data)` set the URL path component;
 * `getPath()` returns a `League\Url\Components\Path` object
-* `setQuery($data)` set the URL query component;
+* `setQuery($data, $enc_type = null)` set the URL query component;
 * `getQuery()` returns a `League\Url\Components\Query` object
 * `setFragment($data)` set the URL fragment component;
 * `getFragment()` returns a `League\Url\Components\Fragment`object

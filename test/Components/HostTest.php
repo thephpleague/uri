@@ -5,12 +5,26 @@ namespace League\Url\test;
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Host;
+use League\Url\Components\Path;
 
 /**
  * @group components
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testExchange()
+    {
+        $old = new Host;
+        $new = new Host('http');
+        $old->exchange($new);
+        $this->assertSame('http', $old->get());
+        $new->exchange(new Path);
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */

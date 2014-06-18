@@ -21,6 +21,19 @@ use InvalidArgumentException;
  */
 class Host extends AbstractSegment implements SegmentInterface
 {
+
+    /**
+     * Exchange the object for another one
+     *
+     * @param Host $component The object to exchange property with the current object
+     *
+     * @return void
+     */
+    public function exchange(Host $component)
+    {
+        $this->data = $component->data;
+    }
+
     /**
      * {@inheritdoc}
      */

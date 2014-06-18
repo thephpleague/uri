@@ -12,6 +12,8 @@
 */
 namespace League\Url\Components;
 
+use InvalidArgumentException;
+
 /**
  *  A class to manipulate URL string-like component
  *
@@ -33,9 +35,6 @@ abstract class AbstractComponent implements ComponentInterface
      */
     public function __construct($data = null)
     {
-        if ($data instanceof ComponentInterface) {
-            $this->set($data->data);
-        }
         $this->set($data);
     }
 

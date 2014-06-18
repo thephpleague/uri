@@ -12,10 +12,6 @@
 */
 namespace League\Url;
 
-use League\Url\Components\ComponentInterface;
-use League\Url\Components\SegmentInterface;
-use League\Url\Components\QueryInterface;
-
 /**
  * A Immutable Value Object class to manipulate URLs
  *

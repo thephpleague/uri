@@ -79,14 +79,6 @@ class Query extends AbstractArray implements QueryInterface
      */
     public function set($data)
     {
-
-        if ($data instanceof QueryInterface) {
-            $this->data = $data->data;
-            $this->enc_type = $data->enc_type;
-
-            return;
-        }
-
         $this->data = array_filter($this->validate($data), function ($value) {
             if (is_string($value)) {
                 $value = trim($value);
@@ -134,10 +126,20 @@ class Query extends AbstractArray implements QueryInterface
      */
     public function modify($data)
     {
-        if ($data instanceof QueryInterface) {
-            $data = $data->data;
-        }
         $this->set(array_merge($this->data, $this->validate($data)));
+    }
+
+    /**
+     * Exchange the object for another one
+     *
+     * @param Query $component The object to exchange property with the current object
+     *
+     * @return void
+     */
+    public function exchange(Query $component)
+    {
+        $this->data = $component->data;
+        $this->enc_type = $component->enc_type;
     }
 
     /**

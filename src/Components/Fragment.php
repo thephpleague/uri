@@ -19,6 +19,19 @@ namespace League\Url\Components;
  */
 class Fragment extends AbstractComponent
 {
+
+    /**
+     * Exchange the object for another one
+     *
+     * @param Fragment $component The object to exchange property with the current object
+     *
+     * @return void
+     */
+    public function exchange(Fragment $component)
+    {
+        $this->data = $component->data;
+    }
+
     /**
      * {@inheritdoc}
      */

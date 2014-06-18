@@ -54,4 +54,16 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->url, $this->url->setQuery('?kingkong=toto'));
         $this->assertSame($this->url, $this->url->setFragment('doc3'));
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testQuerySetter()
+    {
+        $this->assertSame(PHP_QUERY_RFC1738, $this->url->getQuery()->getEncoding());
+        $this->url->setQuery(array('foo' => 'hello world'), PHP_QUERY_RFC3986);
+        $this->assertSame(PHP_QUERY_RFC3986, $this->url->getQuery()->getEncoding());
+        $this->assertSame('foo=hello%20world', $this->url->getQuery()->get());
+        $this->url->setQuery(array('foo' => 'hello world'), 'toto');
+    }
 }

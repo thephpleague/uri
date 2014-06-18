@@ -4,6 +4,7 @@ namespace League\Url\test;
 
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Query;
+use League\Url\Components\Host;
 use ArrayIterator;
 use StdClass;
 
@@ -68,10 +69,17 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame('ali=baba', (string) $this->query);
     }
 
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
     public function testSetterWithqueryInterface()
     {
-        $this->query->set(new Query(array('ali' => '40 voleurs'), PHP_QUERY_RFC3986));
+        $exchange = new Query(array('ali' => '40 voleurs'), PHP_QUERY_RFC3986);
+        $this->query->set($exchange);
+        $this->assertSame('ali=40+voleurs', (string) $this->query);
+        $this->query->exchange($exchange);
         $this->assertSame('ali=40%20voleurs', (string) $this->query);
+        $this->query->exchange(new Host);
     }
 
     /**

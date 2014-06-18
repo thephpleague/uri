@@ -6,12 +6,26 @@ use StdClass;
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Path;
+use League\Url\Components\Port;
 
 /**
  * @group components
  */
 class PathTest extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @expectedException PHPUnit_Framework_Error
+     */
+    public function testExchange()
+    {
+        $old = new Path;
+        $new = new Path('http');
+        $old->exchange($new);
+        $this->assertSame('http', $old->get());
+        $new->exchange(new Port);
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */

@@ -117,7 +117,7 @@ Additionally, Each class implements a setter and a getter method for each URLs c
 The `$data` argument can be:
 
 * `null`;
-* a valid component string or object for the specified URL component;
+* a valid component string for the specified URL component;
 * an object implementing the `__toString` method;
 * for `setHost`, `setPath`, `setQuery`: an `array` or a `Traversable` object;
 
@@ -169,6 +169,8 @@ The `$data` argument can be:
 * a valid component string for the specified URL component;
 * an object implementing the `__toString` method;
 
+An additional methods `exchange($component)` is also implemented on each object to ease exchanging component object properties for another one.
+
 ```php
 use League\Url\Components\Scheme;
 
@@ -177,7 +179,13 @@ $scheme->get(); //will return null since no scheme was set
 $scheme->set('https');
 echo $scheme->__toString(); //will echo 'https'
 echo $scheme->getUriComponent(); //will echo 'https://'
+
+$scheme_new = new Scheme;
+$scheme_new->exchange($scheme);
+echo $scheme_new->get(); // will echo 'https';
 ```
+*Tips: The exchange method also copy the internal property of the object while the set method only sets the object data.*
+
 
 The URL components that **only** implement this interface are:
 

@@ -12,6 +12,7 @@
 */
 namespace League\Url\Components;
 
+use ArrayAccess;
 use Traversable;
 use InvalidArgumentException;
 
@@ -20,7 +21,7 @@ use InvalidArgumentException;
  *
  *  @package League.url
  */
-class Query extends AbstractArray implements QueryInterface
+class Query extends AbstractArray implements QueryInterface, ArrayAccess
 {
     /**
      * Query encoding type

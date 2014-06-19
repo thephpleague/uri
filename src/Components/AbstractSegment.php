@@ -12,6 +12,7 @@
 */
 namespace League\Url\Components;
 
+use ArrayAccess;
 use InvalidArgumentException;
 
 /**
@@ -19,7 +20,7 @@ use InvalidArgumentException;
  *
  *  @package League.url
  */
-abstract class AbstractSegment extends AbstractArray
+abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 {
     /**
      * segment delimiter

@@ -58,8 +58,8 @@ Both objects are value objects implementing the `League\Url\UrlInterface` interf
 
 The `createFromServer` and `createFromUrl` methods accept a second optional argument `$enc_type` which specifies which encoding RFC should the URL query string component follow. The following internal PHP constants are the possible values:
 
-* `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 3968](http://www.faqs.org/rfcs/rfc1738)
-* `PHP_QUERY_RFC3986`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc3968)
+* `PHP_QUERY_RFC1738`: encode the URL query component following the [RFC 1738](http://www.faqs.org/rfcs/rfc1738)
+* `PHP_QUERY_RFC3986`: encode the URL query component following the [RFC 3986](http://www.faqs.org/rfcs/rfc3968)
 
 By default `$enc_type` equals `PHP_QUERY_RFC1738`.
 

@@ -16,7 +16,6 @@ use Closure;
 use IteratorAggregate;
 use Countable;
 use ArrayIterator;
-use ArrayAccess;
 use RuntimeException;
 use Traversable;
 
@@ -25,7 +24,7 @@ use Traversable;
  *
  *  @package League.url
  */
-abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAccess
+abstract class AbstractArray implements IteratorAggregate, Countable
 {
     /**
      * container holder
@@ -82,11 +81,6 @@ abstract class AbstractArray implements IteratorAggregate, Countable, ArrayAcces
     {
         return isset($this->data[$offset]);
     }
-
-    /**
-     * ArrayAccess Interface method
-     */
-    abstract public function offsetSet($offset, $value);
 
     /**
      * ArrayAccess Interface method

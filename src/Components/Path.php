@@ -19,19 +19,6 @@ namespace League\Url\Components;
  */
 class Path extends AbstractSegment implements SegmentInterface
 {
-
-    /**
-     * Exchange the object for another one
-     *
-     * @param Path $component The object to exchange property with the current object
-     *
-     * @return void
-     */
-    public function exchange(Path $component)
-    {
-        $this->data = $component->data;
-    }
-
     /**
      * {@inheritdoc}
      */

@@ -21,19 +21,6 @@ use RuntimeException;
  */
 class Scheme extends AbstractComponent
 {
-
-    /**
-     * Exchange the object for another one
-     *
-     * @param Scheme $component The object to exchange property with the current object
-     *
-     * @return void
-     */
-    public function exchange(Scheme $component)
-    {
-        $this->data = $component->data;
-    }
-
     /**
      * {@inheritdoc}
      */

@@ -57,17 +57,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         Url::createFromServer($server, true);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testFailWrongMutableStateArgs()
-    {
-        Url::createFromUrl(
-            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3',
-            'toto'
-        );
-    }
-
     public function testCreateFromServerWithoutRequestUri()
     {
         $server = array(

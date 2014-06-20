@@ -170,12 +170,9 @@ class Url extends AbstractUrl
      *
      * @return self
      */
-    public function setQuery($data, $enc_type = null)
+    public function setQuery($data)
     {
         $this->query->set($data);
-        if (! is_null($enc_type)) {
-            $this->query->setEncoding($enc_type);
-        }
 
         return $this;
     }

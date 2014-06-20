@@ -191,13 +191,10 @@ class UrlImmutable extends AbstractUrl
      *
      * @return self
      */
-    public function setQuery($data, $enc_type = null)
+    public function setQuery($data)
     {
         $clone = clone $this;
         $clone->query->set($data);
-        if (! is_null($enc_type)) {
-            $clone->query->setEncoding($enc_type);
-        }
 
         return $clone;
     }

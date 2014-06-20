@@ -4,7 +4,6 @@ namespace League\Url\test;
 
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Query;
-use League\Url\Components\Host;
 use ArrayIterator;
 use StdClass;
 
@@ -23,13 +22,13 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function testModifyWithArray()
     {
         $this->query->modify(array('john' => 'doe the john'));
-        $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->query);
+        $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $this->query);
     }
 
     public function testModifyWithArrayIterator()
     {
         $this->query->modify(new ArrayIterator(array('john' => 'doe the john')));
-        $this->assertSame('kingkong=toto&john=doe+the+john', (string) $this->query);
+        $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $this->query);
     }
 
     public function testModifyWithQueryInterface()
@@ -70,19 +69,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testSetterWithqueryInterface()
-    {
-        $exchange = new Query(array('ali' => '40 voleurs'), PHP_QUERY_RFC3986);
-        $this->query->set($exchange);
-        $this->assertSame('ali=40+voleurs', (string) $this->query);
-        $this->query->exchange($exchange);
-        $this->assertSame('ali=40%20voleurs', (string) $this->query);
-        $this->query->exchange(new Host);
-    }
-
-    /**
      * @expectedException RuntimeException
      */
     public function testFailmodify()
@@ -118,20 +104,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('rech[id_client]=&rech[login]=&rech[NOM]=&options[NOM][precise]=1&rech[PRENOM]=&options[PRENOM][precise]=1&rech[email]=&rech[foo]=12345&rech[ID_ACHAT]=');
         $this->assertCount(2, $query);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testEnctype()
-    {
-        $query = new Query('foo=bar&toto=le+heros');
-        $this->assertSame(PHP_QUERY_RFC1738, $query->getEncoding());
-        $this->assertSame('foo=bar&toto=le+heros', $query->__toString());
-        $query->setEncoding(PHP_QUERY_RFC3986);
-        $this->assertSame(PHP_QUERY_RFC3986, $query->getEncoding());
-        $this->assertSame('foo=bar&toto=le%20heros', $query->__toString());
-        $query->setEncoding(34);
     }
 
     public function testKeys()

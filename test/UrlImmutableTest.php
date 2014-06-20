@@ -56,26 +56,12 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->url, $this->url->setFragment('doc3'));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testQuerySetter()
-    {
-        $this->assertSame(PHP_QUERY_RFC1738, $this->url->getQuery()->getEncoding());
-        $url = $this->url->setQuery(array('foo' => 'hello world'), PHP_QUERY_RFC3986);
-        $this->assertSame(PHP_QUERY_RFC3986, $url->getQuery()->getEncoding());
-        $this->assertSame('foo=hello%20world', $url->getQuery()->get());
-        $this->url->setQuery(array('foo' => 'hello world'), 'PHP_QUERY_RFC3986');
-    }
-
     public function testSameValueAs()
     {
         $url1 = Url::createFromUrl('example.com');
         $url2 = UrlImmutable::createFromUrl('//example.com');
-        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros', PHP_QUERY_RFC3986);
-        $url4 = Url::createFromUrl('//example.com?foo=toto+le+heros', PHP_QUERY_RFC1738);
+        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros');
         $this->assertTrue($url1->sameValueAs($url2));
         $this->assertFalse($url3->sameValueAs($url2));
-        $this->assertTrue($url3->sameValueAs($url4));
     }
 }

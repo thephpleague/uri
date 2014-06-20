@@ -184,14 +184,13 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * Return a instance of Url from a string
      *
-     * @param string  $url      a string or an object that implement the __toString method
-     * @param integer $enc_type The encoding type constant
+     * @param string $url a string or an object that implement the __toString method
      *
      * @return AbstractUrl
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromUrl($url, $enc_type = PHP_QUERY_RFC1738)
+    public static function createFromUrl($url)
     {
         $url = (string) $url;
         $url = trim($url);
@@ -208,7 +207,7 @@ abstract class AbstractUrl implements UrlInterface
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),
-            new Query($components['query'], $enc_type),
+            new Query($components['query']),
             new Fragment($components['fragment'])
         );
     }
@@ -216,21 +215,20 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * Return a instance of Url from a server array
      *
-     * @param array   $server   the server array
-     * @param integer $enc_type The encoding type constant
+     * @param array $server the server array
      *
      * @return AbstractUrl
      *
      * @throws RuntimeException If the URL can not be parse
      */
-    public static function createFromServer(array $server, $enc_type = PHP_QUERY_RFC1738)
+    public static function createFromServer(array $server)
     {
         $scheme = self::fetchServerScheme($server);
         $host = self::fetchServerHost($server);
         $port = self::fetchServerPort($server);
         $request = self::fetchServerRequestUri($server);
 
-        return self::createFromUrl($scheme.$host.$port.$request, $enc_type);
+        return self::createFromUrl($scheme.$host.$port.$request);
     }
 
     /**

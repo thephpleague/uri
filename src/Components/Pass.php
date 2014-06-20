@@ -19,19 +19,6 @@ namespace League\Url\Components;
  */
 class Pass extends AbstractComponent
 {
-
-    /**
-     * Exchange the object for another one
-     *
-     * @param Pass $component The object to exchange property with the current object
-     *
-     * @return void
-     */
-    public function exchange(Pass $component)
-    {
-        $this->data = $component->data;
-    }
-
     /**
      * {@inheritdoc}
      */

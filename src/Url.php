@@ -15,7 +15,8 @@ namespace League\Url;
 /**
  * A class to manipulate URLs
  *
- * @package League.url
+ *  @package League.url
+ *  @since  1.0.0
  */
 class Url extends AbstractUrl
 {

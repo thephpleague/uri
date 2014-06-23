@@ -17,7 +17,8 @@ use InvalidArgumentException;
 /**
  *  A class to manipulate URL string-like component
  *
- *  @package  League.url
+ *  @package League.url
+ *  @since  3.0.0
  */
 abstract class AbstractComponent implements ComponentInterface
 {

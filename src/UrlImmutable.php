@@ -15,7 +15,8 @@ namespace League\Url;
 /**
  * A Immutable Value Object class to manipulate URLs
  *
- * @package League.url
+ *  @package League.url
+ *  @since  3.0.0
  */
 class UrlImmutable extends AbstractUrl
 {

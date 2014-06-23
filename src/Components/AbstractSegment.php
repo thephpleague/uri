@@ -19,6 +19,7 @@ use InvalidArgumentException;
  *  A class to manipulate URL Segment like components
  *
  *  @package League.url
+ *  @since  3.0.0
  */
 abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 {
@@ -53,7 +54,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
      */
     public function __toString()
     {
-        return str_replace(null, '', $this->get());
+        return (string) $this->get();
     }
 
     /**

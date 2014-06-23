@@ -16,6 +16,7 @@ namespace League\Url\Components;
  *  A class to manipulate URL Path component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class Path extends AbstractSegment implements SegmentInterface
 {

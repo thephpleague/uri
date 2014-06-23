@@ -18,6 +18,7 @@ use InvalidArgumentException;
  *  A class to manipulate URL Host component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class Host extends AbstractSegment implements SegmentInterface
 {

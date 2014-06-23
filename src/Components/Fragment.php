@@ -16,6 +16,7 @@ namespace League\Url\Components;
  *  A class to manipulate URL Fragment component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class Fragment extends AbstractComponent
 {

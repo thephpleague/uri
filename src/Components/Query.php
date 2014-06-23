@@ -20,6 +20,7 @@ use InvalidArgumentException;
  *  A class to manipulate URL Query component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class Query extends AbstractArray implements QueryInterface, ArrayAccess
 {
@@ -71,7 +72,7 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
      */
     public function __toString()
     {
-        return str_replace(null, '', $this->get());
+        return (string) $this->get();
     }
 
     /**

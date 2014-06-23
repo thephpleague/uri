@@ -28,7 +28,8 @@ use League\Url\Components\Fragment;
 /**
  * A Factory to ease League\Url\Url Object instantiation
  *
- * @package League.url
+ *  @package League.url
+ *  @since  3.0.0
  */
 abstract class AbstractUrl implements UrlInterface
 {

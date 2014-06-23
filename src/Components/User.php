@@ -16,6 +16,7 @@ namespace League\Url\Components;
  *  A class to manipulate URL User component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class User extends AbstractComponent
 {

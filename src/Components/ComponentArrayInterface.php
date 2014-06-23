@@ -12,6 +12,12 @@
 */
 namespace League\Url\Components;
 
+/**
+ * A common interface for complex URL components
+ *
+ *  @package League.url
+ *  @since  3.0.0
+ */
 interface ComponentArrayInterface extends ComponentInterface
 {
     /**

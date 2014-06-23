@@ -18,6 +18,7 @@ use RuntimeException;
  *  A class to manipulate URL Scheme component
  *
  *  @package League.url
+ *  @since  1.0.0
  */
 class Scheme extends AbstractComponent
 {

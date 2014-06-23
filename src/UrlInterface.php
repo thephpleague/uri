@@ -12,6 +12,12 @@
 */
 namespace League\Url;
 
+/**
+ * A common interface for URL as Value Object
+ *
+ *  @package League.url
+ *  @since  3.0.0
+ */
 interface UrlInterface
 {
     /**

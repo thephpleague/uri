@@ -12,6 +12,12 @@
 */
 namespace League\Url\Components;
 
+/**
+ * A common interface for URL segment like component
+ *
+ *  @package League.url
+ *  @since  3.0.0
+ */
 interface SegmentInterface extends ComponentArrayInterface
 {
     /**

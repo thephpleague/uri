@@ -20,9 +20,10 @@ use RuntimeException;
 use Traversable;
 
 /**
- *  A class to manipulate URL Segment like components
+ *  A class to manipulate URL Array like components
  *
  *  @package League.url
+ *  @since  3.0.0
  */
 abstract class AbstractArray implements IteratorAggregate, Countable
 {

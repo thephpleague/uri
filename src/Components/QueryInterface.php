@@ -12,6 +12,12 @@
 */
 namespace League\Url\Components;
 
+/**
+ * A common interface for URL Query component
+ *
+ *  @package League.url
+ *  @since  3.0.0
+ */
 interface QueryInterface extends ComponentArrayInterface
 {
     /**

@@ -13,9 +13,6 @@
 namespace League\Url;
 
 use RuntimeException;
-use League\Url\Components\ComponentInterface;
-use League\Url\Components\QueryInterface;
-use League\Url\Components\SegmentInterface;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;
@@ -90,37 +87,6 @@ abstract class AbstractUrl implements UrlInterface
     protected $fragment;
 
     /**
-     * The Constructor
-     * @param ComponentInterface $scheme   The URL Scheme component
-     * @param ComponentInterface $user     The URL User component
-     * @param ComponentInterface $pass     The URL Pass component
-     * @param SegmentInterface   $host     The URL Host component
-     * @param ComponentInterface $port     The URL Port component
-     * @param SegmentInterface   $path     The URL Path component
-     * @param QueryInterface     $query    The URL Query component
-     * @param ComponentInterface $fragment The URL Fragment component
-     */
-    protected function __construct(
-        ComponentInterface $scheme,
-        ComponentInterface $user,
-        ComponentInterface $pass,
-        SegmentInterface $host,
-        ComponentInterface $port,
-        SegmentInterface $path,
-        QueryInterface $query,
-        ComponentInterface $fragment
-    ) {
-        $this->scheme = $scheme;
-        $this->user = $user;
-        $this->pass = $pass;
-        $this->host = $host;
-        $this->port = $port;
-        $this->path = $path;
-        $this->query = $query;
-        $this->fragment = $fragment;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function __toString()
@@ -176,10 +142,7 @@ abstract class AbstractUrl implements UrlInterface
      */
     public function sameValueAs(UrlInterface $url)
     {
-        $this_url = self::createFromUrl($this);
-        $that_url = self::createFromUrl($url);
-
-        return $this_url->__toString() == $that_url->__toString();
+        return $this->__toString() == $url->__toString();
     }
 
     /**

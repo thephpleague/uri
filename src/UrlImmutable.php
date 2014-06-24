@@ -12,6 +12,15 @@
 */
 namespace League\Url;
 
+use League\Url\Components\Scheme;
+use League\Url\Components\User;
+use League\Url\Components\Pass;
+use League\Url\Components\Host;
+use League\Url\Components\Port;
+use League\Url\Components\Path;
+use League\Url\Components\Query;
+use League\Url\Components\Fragment;
+
 /**
  * A Immutable Value Object class to manipulate URLs
  *
@@ -20,6 +29,37 @@ namespace League\Url;
  */
 class UrlImmutable extends AbstractUrl
 {
+    /**
+     * The Constructor
+     * @param Scheme   $scheme   The URL Scheme component
+     * @param User     $user     The URL User component
+     * @param Pass     $pass     The URL Pass component
+     * @param Host     $host     The URL Host component
+     * @param Port     $port     The URL Port component
+     * @param Path     $path     The URL Path component
+     * @param Query    $query    The URL Query component
+     * @param Fragment $fragment The URL Fragment component
+     */
+    public function __construct(
+        Scheme $scheme,
+        User $user,
+        Pass $pass,
+        Host $host,
+        Port $port,
+        Path $path,
+        Query $query,
+        Fragment $fragment
+    ) {
+        $this->scheme = clone $scheme;
+        $this->user = clone $user;
+        $this->pass = clone $pass;
+        $this->host = clone $host;
+        $this->port = clone $port;
+        $this->path = clone $path;
+        $this->query = clone $query;
+        $this->fragment = clone $fragment;
+    }
+
     /**
      * To Enable cloning
      */

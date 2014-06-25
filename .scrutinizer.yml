@@ -6,7 +6,7 @@ tools:
         filter:
             paths: ["src/*"]
     php_cpd:
-        enabled: true
+        enabled: false
         filter:
             paths: ["src/*"]
     php_sim:

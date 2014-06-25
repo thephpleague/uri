@@ -4,6 +4,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/thephpleague/url/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/thephpleague/url/?branch=master)
 [![Total Downloads](https://poser.pugx.org/league/url/downloads.png)](https://packagist.org/packages/league/url)
 [![Latest Stable Version](https://poser.pugx.org/league/url/v/stable.png)](https://packagist.org/packages/league/url)
+[![License](https://poser.pugx.org/league/url/license.png)](https://packagist.org/packages/league/url)
 
 The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 

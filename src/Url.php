@@ -77,7 +77,7 @@ class Url extends AbstractUrl
     /**
      * get the URL scheme component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Scheme
      */
     public function getScheme()
     {
@@ -101,7 +101,7 @@ class Url extends AbstractUrl
     /**
      * get the URL user component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\User
      */
     public function getUser()
     {
@@ -125,7 +125,7 @@ class Url extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Pass
      */
     public function getPass()
     {
@@ -149,7 +149,7 @@ class Url extends AbstractUrl
     /**
      * get the URL host component
      *
-     * @return {@link SegmentInterface}
+     * @return League\Url\Components\Host
      */
     public function getHost()
     {
@@ -173,7 +173,7 @@ class Url extends AbstractUrl
     /**
      * get the URL port component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Port
      */
     public function getPort()
     {
@@ -197,7 +197,7 @@ class Url extends AbstractUrl
     /**
      * get the URL path component
      *
-     * @return {@link SegmentInterface}
+     * @return League\Url\Components\Path
      */
     public function getPath()
     {
@@ -221,7 +221,7 @@ class Url extends AbstractUrl
     /**
      * get the URL user component
      *
-     * @return {@link QueryInterface}
+     * @return League\Url\Components\Query
      */
     public function getQuery()
     {
@@ -245,7 +245,7 @@ class Url extends AbstractUrl
     /**
      * get the URL fragment component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Fragment
      */
     public function getFragment()
     {

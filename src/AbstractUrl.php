@@ -33,56 +33,56 @@ abstract class AbstractUrl implements UrlInterface
     /**
     * Scheme
     *
-    * @var {@link ComponentInterface}  Object
+    * @var League\Url\Components\Scheme
     */
     protected $scheme;
 
     /**
     * User
     *
-    * @var {@link ComponentInterface} Object
+    * @var League\Url\Components\User
     */
     protected $user;
 
     /**
     * Pass
     *
-    * @var {@link ComponentInterface} Object
+    * @var League\Url\Components\Pass
     */
     protected $pass;
 
     /**
      * Host
      *
-     * @var {@link SegmentInterface} Object
+     * @var League\Url\Components\Host
      */
     protected $host;
 
     /**
      * Port
      *
-     *@var {@link ComponentInterface} Object
+     *@var League\Url\Components\Port
      */
     protected $port;
 
     /**
      * Path
      *
-     * @var {@link SegmentInterface} Object
+     * @var League\Url\Components\Path
      */
     protected $path;
 
     /**
      * Query
      *
-     * @var {@link QueryInterface} Object
+     * @var League\Url\Components\Query
      */
     protected $query;
 
     /**
      * Fragment
      *
-     * @var {@link ComponentInterface} Object
+     * @var League\Url\Components\Fragment
      */
     protected $fragment;
 

@@ -93,7 +93,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL scheme component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Scheme
      */
     public function getScheme()
     {
@@ -118,7 +118,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\User
      */
     public function getUser()
     {
@@ -143,7 +143,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Pass
      */
     public function getPass()
     {
@@ -168,7 +168,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link SegmentInterface}
+     * @return League\Url\Components\Host
      */
     public function getHost()
     {
@@ -193,7 +193,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Port
      */
     public function getPort()
     {
@@ -218,7 +218,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link SegmentInterface}
+     * @return League\Url\Components\Path
      */
     public function getPath()
     {
@@ -243,7 +243,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link QueryInterface}
+     * @return League\Url\Components\Query
      */
     public function getQuery()
     {
@@ -268,7 +268,7 @@ class UrlImmutable extends AbstractUrl
     /**
      * get the URL pass component
      *
-     * @return {@link ComponentInterface}
+     * @return League\Url\Components\Fragment
      */
     public function getFragment()
     {

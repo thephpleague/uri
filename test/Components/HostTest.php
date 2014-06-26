@@ -13,7 +13,7 @@ class HostTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testArrayAccess()
     {
@@ -36,46 +36,74 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host['toto'] = 'comment ça va';
     }
 
-    public function testHost()
+    public function testHostPrepend()
     {
         $host = new Host('secure.example.com');
 
         $host->prepend('master');
         $this->assertSame('master.secure.example.com', $host->get());
+    }
 
+    public function testHostRemove()
+    {
+        $host = new Host('secure.example.com');
         $host->remove('secure');
-        $this->assertSame('master.example.com', $host->get());
+        $this->assertSame('example.com', $host->get());
+    }
 
-        $host->remove('toto');
-        $this->assertSame('master.example.com', $host->get());
+    public function testHostAppend()
+    {
+        $host = new Host('secure.example.com');
+        $host->append('shop', 'secure');
+        $this->assertSame('secure.shop.example.com', $host->get());
+    }
 
-        $host->append('shop', 'master');
-        $this->assertSame('master.shop.example.com', $host->get());
-
-        $host->remove('shop');
+    public function testHostAppendWhence()
+    {
+        $host = new Host('master.example.com');
         $host->append('master', 'master');
         $host->append('other', 'master', 1);
         $this->assertSame('master.master.other.example.com', $host->get());
+    }
 
+    public function testHostSetterWithString()
+    {
+        $host = new Host('master.example.com');
         $host->set('.shop.fremium.com');
         $this->assertSame('shop.fremium.com', $host->get());
+    }
 
+    public function testHostSetterWithArray()
+    {
+        $host = new Host('master.example.com');
         $host->set(array('shop', 'premium', 'org'));
         $this->assertSame('shop.premium.org', $host->get());
+    }
 
+    public function testHostSetterWithArrayIterator()
+    {
+        $host = new Host('master.example.com');
         $host->set(new ArrayIterator(array('shop', 'premium', 'com')));
         $this->assertSame('shop.premium.com', $host->get());
+    }
 
+    public function testHostPrependWhence()
+    {
+        $host = new Host('master.example.com');
         $host->prepend('shop');
         $host->prepend('other', 'shop', 1);
-        $this->assertSame('shop.other.shop.premium.com', $host->get());
+        $this->assertSame('other.shop.master.example.com', $host->get());
+    }
 
+    public function testHostSetterWithNull()
+    {
+        $host = new Host('master.example.com');
         $host->set(null);
         $this->assertNull($host->get());
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testHostStatus()
     {
@@ -84,7 +112,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testBadHostCharacters()
     {
@@ -92,7 +120,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testBadHostLength()
     {
@@ -101,7 +129,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testTooManyHostlabel()
     {
@@ -109,7 +137,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testHosttooLong()
     {

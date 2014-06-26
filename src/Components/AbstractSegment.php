@@ -132,6 +132,18 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     abstract protected function validate($data);
 
     /**
+     * Format removing component labels
+     *
+     * @param mixed $data the component value to be validate
+     *
+     * @return array
+     */
+    protected function formatRemoveSegment($data)
+    {
+        return $this->sanitizeValue($this->validateSegment($data, $this->delimiter));
+    }
+
+    /**
      * Validate data before insertion into a URL segment based component
      *
      * @param mixed  $data      the data to insert
@@ -230,7 +242,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
             return $segment;
         }
 
-        $part = implode($this->delimiter, $this->validate($value));
+        $part = implode($this->delimiter, $this->formatRemoveSegment($value));
 
         $regexStart = '@(:?^|\\'.$this->delimiter.')';
 

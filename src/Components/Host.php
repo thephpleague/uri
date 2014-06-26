@@ -12,7 +12,7 @@
 */
 namespace League\Url\Components;
 
-use InvalidArgumentException;
+use RuntimeException;
 
 /**
  *  A class to manipulate URL Host component
@@ -73,23 +73,24 @@ class Host extends AbstractSegment implements SegmentInterface
      *
      * @return array
      *
-     * @throws InvalidArgumentException If the added is invalid
+     * @throws RuntimeException If the added is invalid
      */
     protected function validate($data, array $host = array())
     {
         $data = $this->validateSegment($data, $this->delimiter);
         $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
         if (count($res)) {
-            throw new InvalidArgumentException(
+            throw new RuntimeException(
                 'Invalid host label, check its length and/or its characters'
             );
         }
 
         $imploded = implode($this->delimiter, $data);
-        if (127 <= (count($host) + count($data))) {
-            throw new InvalidArgumentException('Host may have at maximum 127 parts');
+        $nb_labels = count($host) + count($data);
+        if (count($data) && (2 > $nb_labels || 127 <= $nb_labels)) {
+            throw new RuntimeException('Host may have between 2 and 127 parts');
         } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
-            throw new InvalidArgumentException('Host may have a maximum of 255 characters');
+            throw new RuntimeException('Host may have a maximum of 255 characters');
         }
 
         return $this->sanitizeValue($data);

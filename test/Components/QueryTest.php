@@ -77,7 +77,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testArrayAccess()
     {

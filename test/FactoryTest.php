@@ -6,6 +6,7 @@ use League\Url\Url;
 use League\Url\UrlImmutable;
 use PHPUnit_Framework_TestCase;
 use StdClass;
+use RuntimeException;
 
 /**
  * @group factory
@@ -86,7 +87,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) Url::createFromUrl($expected));
         $this->assertSame('//example.com/', (string) Url::createFromUrl('example.com'));
         $this->assertSame('//example.com/', (string) Url::createFromUrl('//example.com'));
-        $this->assertSame('/path/to/url.html', (string) Url::createFromUrl('/path/to/url.html'));
         $this->assertSame(
             '//login@example.com/',
             (string) Url::createFromUrl('login@example.com/')
@@ -104,7 +104,14 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateEmptyUrl()
     {
         $this->assertSame('', (string) Url::createFromUrl(""));
-        $this->assertSame('', (string) UrlImmutable::createFromUrl(""));
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromInvalidUrl()
+    {
+        Url::createFromUrl('/path/to/url.html');
     }
 
     /**
@@ -121,5 +128,21 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromUrlKO()
     {
         Url::createFromUrl(new StdClass);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromUrlBadName()
+    {
+        Url::createFromUrl('http:/google.com');
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromUrlBadName2()
+    {
+        Url::createFromUrl('sdfsdfqsdfsdf');
     }
 }

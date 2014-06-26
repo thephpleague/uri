@@ -86,4 +86,12 @@ class Path extends AbstractSegment implements SegmentInterface
 
         return array_map('urldecode', $data);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function formatRemoveSegment($data)
+    {
+        return array_map('urldecode', parent::formatRemoveSegment($data));
+    }
 }

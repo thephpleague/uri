@@ -14,7 +14,7 @@ namespace League\Url\Components;
 
 use ArrayAccess;
 use Traversable;
-use InvalidArgumentException;
+use RuntimeException;
 
 /**
  *  A class to manipulate URL Query component
@@ -120,7 +120,7 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
-            throw new InvalidArgumentException('offset can not be null');
+            throw new RuntimeException('offset can not be null');
         }
         $this->modify(array($offset => $value));
     }

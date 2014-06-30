@@ -33,56 +33,56 @@ abstract class AbstractUrl implements UrlInterface
     /**
     * Scheme
     *
-    * @var {@link ComponentInterface}  Object
+    * @var League\Url\Components\Scheme
     */
     protected $scheme;
 
     /**
     * User
     *
-    * @var {@link ComponentInterface} Object
+    * @var League\Url\Components\User
     */
     protected $user;
 
     /**
     * Pass
     *
-    * @var {@link ComponentInterface} Object
+    * @var League\Url\Components\Pass
     */
     protected $pass;
 
     /**
      * Host
      *
-     * @var {@link SegmentInterface} Object
+     * @var League\Url\Components\Host
      */
     protected $host;
 
     /**
      * Port
      *
-     *@var {@link ComponentInterface} Object
+     *@var League\Url\Components\Port
      */
     protected $port;
 
     /**
      * Path
      *
-     * @var {@link SegmentInterface} Object
+     * @var League\Url\Components\Path
      */
     protected $path;
 
     /**
      * Query
      *
-     * @var {@link QueryInterface} Object
+     * @var League\Url\Components\Query
      */
     protected $query;
 
     /**
      * Fragment
      *
-     * @var {@link ComponentInterface} Object
+     * @var League\Url\Components\Fragment
      */
     protected $fragment;
 
@@ -158,11 +158,29 @@ abstract class AbstractUrl implements UrlInterface
     {
         $url = (string) $url;
         $url = trim($url);
-        if (false === ($components = @parse_url($url))) {
-            throw new RuntimeException(sprintf('The given URL: `%s` could not be parse', $url));
+        $original_url = $url;
+
+        //if no valid scheme is found we add one
+        if (!empty($url) && !preg_match(',^((ht|f)tp(s?):)?//,i', $url)) {
+            $url = '//'.$url;
+        }
+        $components = @parse_url($url);
+        if (false === $components) {
+            throw new RuntimeException(sprintf('The given URL: `%s` could not be parse', $original_url));
         }
 
-        $components = self::sanitizeComponents($components);
+        $components = array_merge(array(
+            'scheme' => null,
+            'user' => null,
+            'pass' => null,
+            'host' => null,
+            'port' => null,
+            'path' => null,
+            'query' => null,
+            'fragment' => null,
+        ), $components);
+        $components = self::formatAuthComponent($components);
+        $components = self::formatPathComponent($components, $original_url);
 
         return new static(
             new Scheme($components['scheme']),
@@ -273,31 +291,6 @@ abstract class AbstractUrl implements UrlInterface
     }
 
     /**
-     * Sanitize URL components
-     *
-     * @param array $components the result from parse_url
-     *
-     * @return array
-     */
-    protected static function sanitizeComponents(array $components)
-    {
-        $components = array_merge(array(
-            'scheme' => null,
-            'user' => null,
-            'pass' => null,
-            'host' => null,
-            'port' => null,
-            'path' => null,
-            'query' => null,
-            'fragment' => null,
-        ), $components);
-
-        $components = self::formatAuthComponent($components);
-
-        return self::formatPathComponent($components);
-    }
-
-    /**
      * Reformat the component according to the auth content
      *
      * @param array $components the result from parse_url
@@ -345,27 +338,30 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * Reformat the component according to the path content
      *
-     * @param array $components the result from parse_url
+     * @param array  $components the result from parse_url
+     * @param string $url        the original URL to be parse
      *
      * @return array
      */
-    protected static function formatPathComponent(array $components)
+    protected static function formatPathComponent(array $components, $url)
     {
         if (is_null($components['scheme'])
             && is_null($components['host'])
             && !empty($components['path'])
         ) {
-            $tmp = $components['path'];
-            if (0 === strpos($tmp, '//')) {
-                $tmp = substr($tmp, 2);
+            if (0 === strpos($components['path'], '///')) {
+                //even with the added scheme the URL is still broken
+                throw new RuntimeException(sprintf('The given URL: `%s` could not be parse', $url));
+            } elseif (0 === strpos($components['path'], '//')) {
+                $tmp = substr($components['path'], 2);
+                $components['path'] = null;
+                $res = explode('/', $tmp, 2);
+                $components['host'] = $res[0];
+                if (isset($res[1])) {
+                    $components['path'] = $res[1];
+                }
+                $components = self::formatHostComponent($components);
             }
-            $components['path'] = null;
-            $res = explode('/', $tmp, 2);
-            $components['host'] = $res[0];
-            if (isset($res[1])) {
-                $components['path'] = $res[1];
-            }
-            $components = self::formatHostComponent($components);
         }
 
         return $components;

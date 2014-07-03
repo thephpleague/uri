@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\test;
+namespace League\Url\test\Components;
 
 use StdClass;
 use ArrayIterator;

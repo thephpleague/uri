@@ -30,8 +30,7 @@ class Host extends AbstractSegment implements HostInterface
 
     /**
      * Punycode Alogrithm Object
-     *
-     * @var True\Punycode
+     * @var \True\Punycode
      */
     protected $punycode;
 
@@ -70,7 +69,6 @@ class Host extends AbstractSegment implements HostInterface
     public function __construct($data = null)
     {
         $this->punycode = new Punycode;
-        $this->encoding = mb_internal_encoding();
         parent::__construct($data);
     }
 
@@ -181,11 +179,12 @@ class Host extends AbstractSegment implements HostInterface
             throw new RuntimeException('Host may have a maximum of 255 characters');
         }
 
-        $data = $this->sanitizeValue($data);
-
         $data = explode(
             $this->delimiter,
-            $this->punycode->decode(implode($this->delimiter, $data))
+            $this->punycode->decode(implode(
+                $this->delimiter,
+                $this->sanitizeValue($data)
+            ))
         );
         $this->restoreInternalEncoding();
 

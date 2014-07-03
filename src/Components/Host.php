@@ -90,32 +90,6 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
-    public function prepend($data, $whence = null, $whence_index = null)
-    {
-        $this->data = $this->prependSegment(
-            $this->data,
-            $this->validate($data, $this->data),
-            $whence,
-            $whence_index
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function append($data, $whence = null, $whence_index = null)
-    {
-        $this->data = $this->appendSegment(
-            $this->data,
-            $this->validate($data, $this->data),
-            $whence,
-            $whence_index
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toAscii()
     {
         return $this->__toString();

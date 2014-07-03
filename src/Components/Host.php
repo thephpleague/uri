@@ -36,9 +36,9 @@ class Host extends AbstractSegment implements HostInterface
 
     /**
      * Environment Internal encoding
-     * @var string
+     * @var mixed
      */
-    protected $encoding = 'utf-8';
+    protected $encoding;
 
     /**
      * Alter the Environment Internal Encoding if it is not utf-8

@@ -25,7 +25,7 @@ Install the `League\Url` package using composer:
 ```json
 {
     "require": {
-        "League\url": "3.*"
+        "League/url": "3.*"
     }
 }
 ```

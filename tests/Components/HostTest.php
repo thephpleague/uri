@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\test\Components;
+namespace League\Url\Test\Components;
 
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;

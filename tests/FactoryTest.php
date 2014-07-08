@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\test;
+namespace League\Url\Test;
 
 use League\Url\Url;
 use League\Url\UrlImmutable;

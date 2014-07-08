@@ -1,21 +1,22 @@
 <?php
 
-namespace League\Url\test;
+namespace League\Url\Test;
 
+use League\Url\UrlImmutable;
 use League\Url\Url;
 use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group url
+ * @group immutable
  */
-class UrlTest extends PHPUnit_Framework_TestCase
+class UrlImmutableTest extends PHPUnit_Framework_TestCase
 {
     private $url;
 
     public function setUp()
     {
-        $this->url = Url::createFromUrl(
+        $this->url = UrlImmutable::createFromUrl(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
@@ -45,13 +46,22 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testSetterAccess()
     {
-        $this->assertSame($this->url, $this->url->setScheme('https'));
-        $this->assertSame($this->url, $this->url->setUser('login'));
-        $this->assertSame($this->url, $this->url->setPass('pass'));
-        $this->assertSame($this->url, $this->url->setHost('secure.example.com'));
-        $this->assertSame($this->url, $this->url->setPort(443));
-        $this->assertSame($this->url, $this->url->setPath('/test/query.php'));
-        $this->assertSame($this->url, $this->url->setQuery('?kingkong=toto'));
-        $this->assertSame($this->url, $this->url->setFragment('doc3'));
+        $this->assertEquals($this->url, $this->url->setScheme('https'));
+        $this->assertEquals($this->url, $this->url->setUser('login'));
+        $this->assertEquals($this->url, $this->url->setPass('pass'));
+        $this->assertEquals($this->url, $this->url->setHost('secure.example.com'));
+        $this->assertEquals($this->url, $this->url->setPort(443));
+        $this->assertEquals($this->url, $this->url->setPath('/test/query.php'));
+        $this->assertEquals($this->url, $this->url->setQuery('?kingkong=toto'));
+        $this->assertEquals($this->url, $this->url->setFragment('doc3'));
+    }
+
+    public function testSameValueAs()
+    {
+        $url1 = Url::createFromUrl('example.com');
+        $url2 = UrlImmutable::createFromUrl('//example.com');
+        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros');
+        $this->assertTrue($url1->sameValueAs($url2));
+        $this->assertFalse($url3->sameValueAs($url2));
     }
 }

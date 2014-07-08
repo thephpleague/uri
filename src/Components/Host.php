@@ -83,7 +83,7 @@ class Host extends AbstractSegment implements HostInterface
 
         return implode(
             $this->delimiter,
-            array_map(array($this->punycode, 'encode'), $this->data)
+            array_map(array($this->punycode, 'decode'), $this->data)
         );
     }
 
@@ -92,7 +92,11 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function toAscii()
     {
-        return $this->__toString();
+        $this->saveInternalEncoding();
+        $res = $this->punycode->encode($this->__toString());
+        $this->restoreInternalEncoding();
+
+        return $res;
     }
 
     /**
@@ -100,11 +104,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function toUnicode()
     {
-        $this->saveInternalEncoding();
-        $res = $this->punycode->decode($this->__toString());
-        $this->restoreInternalEncoding();
-
-        return $res;
+        return $this->__toString();
     }
 
     /**

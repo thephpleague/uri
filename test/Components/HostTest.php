@@ -115,6 +115,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame(explode('.', $idna_unicode), $host->toArray());
         $this->assertSame($idna_ascii, $host->toAscii());
         $this->assertSame($idna_unicode, $host->toUnicode());
+        $this->assertSame($idna_unicode, (string) $host);
     }
 
     public function hostnamesProvider()

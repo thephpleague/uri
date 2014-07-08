@@ -111,13 +111,12 @@ class Host extends AbstractSegment implements HostInterface
      * Validate Host data before insertion into a URL host component
      *
      * @param mixed $data the data to insert
-     * @param array $host an array representation of a host component
      *
      * @return array
      *
      * @throws RuntimeException If the added is invalid
      */
-    protected function validate($data, array $host = array())
+    protected function validate($data)
     {
         $data = $this->validateSegment($data, $this->delimiter);
         if (! $data) {
@@ -145,6 +144,7 @@ class Host extends AbstractSegment implements HostInterface
             throw new RuntimeException('Invalid host label, check its content');
         }
 
+        $host = $this->data;
         $imploded = implode($this->delimiter, $data);
         $nb_labels = count($host) + count($data);
         if (count($data) && (2 > $nb_labels || 127 <= $nb_labels)) {

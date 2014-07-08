@@ -138,7 +138,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     {
         $this->data = $this->appendSegment(
             $this->data,
-            $this->validate($data, $this->data),
+            $this->validate($data),
             $whence,
             $whence_index
         );
@@ -151,7 +151,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     {
         $this->data = $this->prependSegment(
             $this->data,
-            $this->validate($data, $this->data),
+            $this->validate($data),
             $whence,
             $whence_index
         );

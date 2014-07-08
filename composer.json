@@ -28,7 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "League\\Url\\Test\\": "test"
+            "League\\Url\\Test\\": "tests"
         }
     },
     "replace": {

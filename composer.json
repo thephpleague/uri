@@ -13,11 +13,13 @@
         }
     ],
     "require": {
-        "php" : ">=5.3.0"
+        "php" : ">=5.3.0",
+        "ext-mbstring" : "*",
+        "true/punycode": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit" : "~4.0",
-        "squizlabs/php_codesniffer": "~1.5"
+        "squizlabs/php_codesniffer": "2.0.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -26,7 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "League\\Url\\Test\\": "test"
+            "League\\Url\\Test\\": "tests"
         }
     },
     "replace": {

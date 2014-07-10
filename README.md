@@ -16,7 +16,7 @@ This package is compliant with [PSR-2][], and [PSR-4][].
 Requirements
 -------
 
-You need **PHP >= 5.3.0** to use the library but the latest stable version of PHP is recommended.
+You need **PHP >= 5.3.0** and the `mbstring` extension to use the library but the latest stable version of PHP is recommended.
 
 ## Install
 

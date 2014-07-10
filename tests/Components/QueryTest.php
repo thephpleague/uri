@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\test;
+namespace League\Url\Test\Components;
 
 use PHPUnit_Framework_TestCase;
 use League\Url\Components\Query;

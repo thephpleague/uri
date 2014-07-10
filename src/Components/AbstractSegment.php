@@ -132,6 +132,32 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     abstract protected function validate($data);
 
     /**
+     * {@inheritdoc}
+     */
+    public function append($data, $whence = null, $whence_index = null)
+    {
+        $this->data = $this->appendSegment(
+            $this->data,
+            $this->validate($data),
+            $whence,
+            $whence_index
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prepend($data, $whence = null, $whence_index = null)
+    {
+        $this->data = $this->prependSegment(
+            $this->data,
+            $this->validate($data),
+            $whence,
+            $whence_index
+        );
+    }
+
+    /**
      * Format removing component labels
      *
      * @param mixed $data the component value to be validate

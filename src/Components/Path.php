@@ -53,32 +53,6 @@ class Path extends AbstractSegment implements SegmentInterface
     /**
      * {@inheritdoc}
      */
-    public function append($data, $whence = null, $whence_index = null)
-    {
-        $this->data = $this->appendSegment(
-            $this->data,
-            $this->validate($data),
-            $whence,
-            $whence_index
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepend($data, $whence = null, $whence_index = null)
-    {
-        $this->data = $this->prependSegment(
-            $this->data,
-            $this->validate($data),
-            $whence,
-            $whence_index
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function validate($data)
     {
         $data = $this->validateSegment($data, $this->delimiter);

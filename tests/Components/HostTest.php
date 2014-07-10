@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\test;
+namespace League\Url\Test\Components;
 
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
@@ -100,6 +100,40 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host = new Host('master.example.com');
         $host->set(null);
         $this->assertNull($host->get());
+    }
+
+    /**
+     * Test Punycode support
+     *
+     * @param string $idna_unicode Unicode Hostname
+     * @param string $idna_ascii   Ascii Hostname
+     * @dataProvider hostnamesProvider
+     */
+    public function testPunycode($idna_unicode, $idna_ascii)
+    {
+        $host = new Host($idna_unicode);
+        $this->assertSame(explode('.', $idna_unicode), $host->toArray());
+        $this->assertSame($idna_ascii, $host->toAscii());
+        $this->assertSame($idna_unicode, $host->toUnicode());
+        $this->assertSame($idna_unicode, (string) $host);
+    }
+
+    public function hostnamesProvider()
+    {
+        return array(
+            array(
+                'مثال.إختبار',
+                'xn--mgbh0fb.xn--kgbechtv',
+            ),
+            array(
+                '스타벅스코리아.com',
+                'xn--oy2b35ckwhba574atvuzkc.com'
+            ),
+            array(
+                'президент.рф',
+                'xn--d1abbgf6aiiy.xn--p1ai'
+            ),
+        );
     }
 
     /**

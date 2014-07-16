@@ -24,7 +24,7 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('leheros', (string) $path);
         $path[0] = 'levilain';
         $path[23] = 'bar';
-        $this->assertTrue(isset($path[1]));
+        $this->assertFalse(isset($path[1]));
         $this->assertCount(2, $path);
         $this->assertSame('levilain/bar', (string) $path);
         foreach ($path as $offset => $value) {
@@ -32,7 +32,7 @@ class PathTest extends PHPUnit_Framework_TestCase
         }
         unset($path[0]);
         $this->assertNull($path[0]);
-        $this->assertSame(array(1 => 'bar'), $path->toArray());
+        $this->assertSame(array(23 => 'bar'), $path->toArray());
         $path['toto'] = 'comment ça va';
     }
 

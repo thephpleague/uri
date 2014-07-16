@@ -30,11 +30,12 @@ class Path extends AbstractSegment implements SegmentInterface
      */
     public function get()
     {
-        if (! $this->data) {
+        $res = array_values($this->data);
+        if (! $res) {
             return null;
         }
 
-        return implode($this->delimiter, array_map('rawurlencode', $this->data));
+        return implode($this->delimiter, array_map('rawurlencode', $res));
     }
 
     /**

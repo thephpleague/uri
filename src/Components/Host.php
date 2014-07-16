@@ -77,13 +77,14 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function get()
     {
-        if (! $this->data) {
+        $res = array_values($this->data);
+        if (! $res) {
             return null;
         }
 
         return implode(
             $this->delimiter,
-            array_map(array($this->punycode, 'decode'), $this->data)
+            array_map(array($this->punycode, 'decode'), $res)
         );
     }
 

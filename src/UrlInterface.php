@@ -29,19 +29,40 @@ interface UrlInterface
 
     /**
      * return the string representation for the current URL
-     * not including scheme, user, pass, host and port.
+     * user info
      *
      * @return string
      */
-    public function getRelativeUrl();
+    public function getUserInfo();
 
     /**
      * return the string representation for the current URL
-     * not including path, query and fragment.
+     * authority part (user, pass, host, port components)
+     *
+     * @return string
+     */
+    public function getAuthority();
+
+    /**
+     * return the string representation for the current URL
+     * including the scheme and the authority parts.
      *
      * @return string
      */
     public function getBaseUrl();
+
+    /**
+     * return the string representation for a relative URL
+     * based on the current URL (the string does not
+     * contain the authority part)
+     *
+     * @param integer $start_index the index to start from
+     *                             when adding relative segment path
+     *                             setting the relative URL
+     *
+     * @return string
+     */
+    public function getRelativeUrl($start_index = 0);
 
     /**
      * Compare two Url object and tells whether they can be considered equal

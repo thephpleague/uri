@@ -145,4 +145,33 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
         Url::createFromUrl('sdfsdfqsdfsdf');
     }
+
+    public function testStringRepresentation()
+    {
+        $url = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+        );
+        $this->assertSame('https://login:pass@secure.example.com:443', $url->getBaseUrl());
+        $this->assertSame('login:pass@secure.example.com:443', $url->getAuthority());
+        $this->assertSame('login:pass@', $url->getUserInfo());
+    }
+
+    public function testRelativeUrlRepresentation()
+    {
+        $url = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+        );
+        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl());
+        $this->assertSame('../query.php?kingkong=toto#doc3', $url->getRelativeUrl(1));
+        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl(3));
+    }
+
+    public function testSameValueAs()
+    {
+        $url1 = Url::createFromUrl('example.com');
+        $url2 = UrlImmutable::createFromUrl('//example.com');
+        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros');
+        $this->assertTrue($url1->sameValueAs($url2));
+        $this->assertFalse($url3->sameValueAs($url2));
+    }
 }

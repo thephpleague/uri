@@ -40,7 +40,7 @@ class Url extends AbstractUrl
      * @param Query    $query    The URL Query component
      * @param Fragment $fragment The URL Fragment component
      */
-    public function __construct(
+    protected function __construct(
         Scheme $scheme,
         User $user,
         Pass $pass,

@@ -26,12 +26,6 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
         $this->url = null;
     }
 
-    public function testStringRepresentation()
-    {
-        $this->assertSame('https://login:pass@secure.example.com:443', $this->url->getBaseUrl());
-        $this->assertSame('/test/query.php?kingkong=toto#doc3', $this->url->getRelativeUrl());
-    }
-
     public function testGetterAccess()
     {
         $this->assertInstanceof('League\Url\Components\Scheme', $this->url->getScheme());
@@ -56,12 +50,4 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->url, $this->url->setFragment('doc3'));
     }
 
-    public function testSameValueAs()
-    {
-        $url1 = Url::createFromUrl('example.com');
-        $url2 = UrlImmutable::createFromUrl('//example.com');
-        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros');
-        $this->assertTrue($url1->sameValueAs($url2));
-        $this->assertFalse($url3->sameValueAs($url2));
-    }
 }

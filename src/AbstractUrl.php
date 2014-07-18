@@ -102,16 +102,52 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * {@inheritdoc}
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl($start_index = 0)
     {
+        $start_index = (int) filter_var($start_index, FILTER_VALIDATE_INT, array(
+            'options' => array('min_range' => 0)
+        ));
         $path = $this->path->getUriComponent();
-        $query = $this->query->getUriComponent();
-        $fragment = $this->fragment->getUriComponent();
+        if (0 < $start_index && count($this->path) >= $start_index) {
+            $clone = clone $this->path;
+            $clone->set(array_merge(
+                array_fill(0, $start_index, '..'),
+                array_slice(array_values($clone->toArray()), $start_index)
+            ));
+
+            $path = $clone->__toString();
+        }
+
         if ('' == $path) {
             $path = '/'.$path;
         }
 
-        return $path.$query.$fragment;
+        return $path.$this->query->getUriComponent().$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInfo()
+    {
+        $user = $this->user->getUriComponent().$this->pass->getUriComponent();
+        if ('' != $user) {
+            $user .= '@';
+        }
+
+        return $user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        $user = $this->getUserInfo();
+        $host = $this->host->getUriComponent();
+        $port = $this->port->getUriComponent();
+
+        return $user.$host.$port;
     }
 
     /**
@@ -120,21 +156,12 @@ abstract class AbstractUrl implements UrlInterface
     public function getBaseUrl()
     {
         $scheme = $this->scheme->getUriComponent();
-        $user = $this->user->getUriComponent();
-        $pass = $this->pass->getUriComponent();
-        $host = $this->host->getUriComponent();
-        $port = $this->port->getUriComponent();
-
-        $user .= $pass;
-        if ('' != $user) {
-            $user .= '@';
-        }
-
-        if ('' != $host && '' == $scheme) {
+        $auth = $this->getAuthority();
+        if ('' != $auth && '' == $scheme) {
             $scheme = '//';
         }
 
-        return $scheme.$user.$host.$port;
+        return $scheme.$auth;
     }
 
     /**

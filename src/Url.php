@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -15,11 +15,11 @@ namespace League\Url;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;
-use League\Url\Components\Host;
 use League\Url\Components\Port;
-use League\Url\Components\Path;
-use League\Url\Components\Query;
 use League\Url\Components\Fragment;
+use League\Url\Components\HostInterface;
+use League\Url\Components\PathInterface;
+use League\Url\Components\QueryInterface;
 
 /**
  * A class to manipulate URLs
@@ -31,23 +31,23 @@ class Url extends AbstractUrl
 {
     /**
      * The Constructor
-     * @param Scheme   $scheme   The URL Scheme component
-     * @param User     $user     The URL User component
-     * @param Pass     $pass     The URL Pass component
-     * @param Host     $host     The URL Host component
-     * @param Port     $port     The URL Port component
-     * @param Path     $path     The URL Path component
-     * @param Query    $query    The URL Query component
-     * @param Fragment $fragment The URL Fragment component
+     * @param Scheme         $scheme   The URL Scheme component
+     * @param User           $user     The URL User component
+     * @param Pass           $pass     The URL Pass component
+     * @param HostInterface  $host     The URL Host component
+     * @param Port           $port     The URL Port component
+     * @param PathInterface  $path     The URL Path component
+     * @param QueryInterface $query    The URL Query component
+     * @param Fragment       $fragment The URL Fragment component
      */
     protected function __construct(
         Scheme $scheme,
         User $user,
         Pass $pass,
-        Host $host,
+        HostInterface $host,
         Port $port,
-        Path $path,
-        Query $query,
+        PathInterface $path,
+        QueryInterface $query,
         Fragment $fragment
     ) {
         $this->scheme = $scheme;

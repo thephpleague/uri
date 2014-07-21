@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -18,7 +18,7 @@ namespace League\Url\Components;
  *  @package League.url
  *  @since  1.0.0
  */
-class Path extends AbstractSegment implements SegmentInterface
+class Path extends AbstractSegment implements PathInterface
 {
     /**
      * {@inheritdoc}
@@ -49,6 +49,32 @@ class Path extends AbstractSegment implements SegmentInterface
         }
 
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRelativePath($start_index = 0)
+    {
+        $start_index = (int) filter_var($start_index, FILTER_VALIDATE_INT, array(
+            'options' => array('min_range' => 0)
+        ));
+        $path = $this->getUriComponent();
+        if (0 < $start_index && count($this->data) >= $start_index) {
+            $clone = clone $this;
+            $clone->set(array_merge(
+                array_fill(0, $start_index, '..'),
+                array_slice(array_values($clone->toArray()), $start_index)
+            ));
+
+            $path = $clone->__toString();
+        }
+
+        if ('' == $path) {
+            $path = '/'.$path;
+        }
+
+        return $path;
     }
 
     /**

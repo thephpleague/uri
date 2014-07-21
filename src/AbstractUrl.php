@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -104,25 +104,9 @@ abstract class AbstractUrl implements UrlInterface
      */
     public function getRelativeUrl($start_index = 0)
     {
-        $start_index = (int) filter_var($start_index, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 0)
-        ));
-        $path = $this->path->getUriComponent();
-        if (0 < $start_index && count($this->path) >= $start_index) {
-            $clone = clone $this->path;
-            $clone->set(array_merge(
-                array_fill(0, $start_index, '..'),
-                array_slice(array_values($clone->toArray()), $start_index)
-            ));
-
-            $path = $clone->__toString();
-        }
-
-        if ('' == $path) {
-            $path = '/'.$path;
-        }
-
-        return $path.$this->query->getUriComponent().$this->fragment->getUriComponent();
+        return $this->path->getRelativePath($start_index)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
     }
 
     /**

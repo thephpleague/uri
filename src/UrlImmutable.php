@@ -76,11 +76,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL scheme component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setScheme($data)
     {
@@ -91,9 +87,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL scheme component
-     *
-     * @return League\Url\Components\Scheme
+     * {@inheritdoc}
      */
     public function getScheme()
     {
@@ -101,11 +95,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL user component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setUser($data)
     {
@@ -116,9 +106,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\User
+     * {@inheritdoc}
      */
     public function getUser()
     {
@@ -126,11 +114,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL pass component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPass($data)
     {
@@ -141,9 +125,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Pass
+     * {@inheritdoc}
      */
     public function getPass()
     {
@@ -151,11 +133,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL host component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setHost($data)
     {
@@ -166,9 +144,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Host
+     * {@inheritdoc}
      */
     public function getHost()
     {
@@ -176,11 +152,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL port component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPort($data)
     {
@@ -191,9 +163,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Port
+     * {@inheritdoc}
      */
     public function getPort()
     {
@@ -201,11 +171,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL path component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPath($data)
     {
@@ -216,9 +182,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Path
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -226,11 +190,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL query component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setQuery($data)
     {
@@ -241,9 +201,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Query
+     * {@inheritdoc}
      */
     public function getQuery()
     {
@@ -251,11 +209,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * Set the URL fragment component
-     *
-     * @param string $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setFragment($data)
     {
@@ -266,9 +220,7 @@ class UrlImmutable extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Fragment
+     * {@inheritdoc}
      */
     public function getFragment()
     {

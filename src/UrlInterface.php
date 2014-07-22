@@ -56,13 +56,11 @@ interface UrlInterface
      * based on the current URL (the string does not
      * contain the authority part)
      *
-     * @param integer $start_index the index to start from
-     *                             when adding relative segment path
-     *                             setting the relative URL
+     * @param {@link UrlInterface} $url
      *
      * @return string
      */
-    public function getRelativeUrl($start_index = 0);
+    public function getRelativeUrl(UrlInterface $url = null);
 
     /**
      * Compare two Url object and tells whether they can be considered equal

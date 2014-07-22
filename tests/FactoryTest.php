@@ -161,9 +161,24 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $url = Url::createFromUrl(
             'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
+
+        $url_internal_link = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/toto.php'
+        );
+
+        $url_external_link = Url::createFromUrl(
+            'https://toto.com:443/toto.php'
+        );
+
+        $url_similar = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/lol/query.php'
+        );
+
         $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl());
-        $this->assertSame('../query.php?kingkong=toto#doc3', $url->getRelativeUrl(1));
-        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl(3));
+        $this->assertSame('../query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_internal_link));
+        $this->assertSame('../../toto.php', $url_internal_link->getRelativeUrl($url));
+        $this->assertSame($url->__toString(), $url->getRelativeUrl($url_external_link));
+        $this->assertSame('../../query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_similar));
     }
 
     public function testSameValueAs()

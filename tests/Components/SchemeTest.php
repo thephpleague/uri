@@ -23,4 +23,13 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $this->assertSame('ftp://', $scheme->getUriComponent());
         $scheme->set('svn');
     }
+
+    public function testSameValueAs()
+    {
+        $scheme = new Scheme;
+        $scheme1 = new Scheme('https');
+        $this->assertFalse($scheme->sameValueAs($scheme1));
+        $scheme1->set(null);
+        $this->assertTrue($scheme->sameValueAs($scheme1));
+    }
 }

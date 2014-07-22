@@ -23,9 +23,7 @@ interface PathInterface extends SegmentInterface
     /**
      * return the string representation for a relative path
      *
-     * @param integer $start_index the index to start from
-     *                             when adding relative segment path
-     *                             setting the relative URL
+     * {@link PathInterface} $path
      *
      * @return string
      */

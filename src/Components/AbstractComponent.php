@@ -106,4 +106,12 @@ abstract class AbstractComponent implements ComponentInterface
 
         return $str;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() == $component->__toString();
+    }
 }

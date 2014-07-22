@@ -110,11 +110,11 @@ abstract class AbstractUrl implements UrlInterface
                 .$this->fragment->getUriComponent();
         } elseif ($this->getBaseUrl() != $url->getBaseUrl()) {
             return $this->__toString();
-        } elseif ($this->path->sameValueAs($url->path)) {
+        } elseif ($this->path->sameValueAs($url->getPath())) {
             return $this->query->getUriComponent().$this->fragment->getUriComponent();
         }
 
-        return $this->path->getRelativePath($url->path)
+        return $this->path->getRelativePath($url->getPath())
                 .$this->query->getUriComponent()
                 .$this->fragment->getUriComponent();
     }

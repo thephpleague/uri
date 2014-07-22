@@ -43,38 +43,38 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function getUriComponent()
     {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value = '/'.$value;
-        }
-
-        return $value;
+        return '/'.$this->__toString();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRelativePath($start_index = 0)
+    public function getRelativePath(PathInterface $path)
     {
-        $start_index = (int) filter_var($start_index, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 0)
+        if ($this->sameValueAs($path)) {
+            return '';
+        }
+
+        $ref_path = array_values($path->toArray());
+        $this_path = array_values($this->data);
+        $filename = array_pop($this_path);
+        $common = 0;
+        foreach ($ref_path as $offset => $value) {
+            if (! isset($this_path[$offset]) || $value != $this_path[$offset]) {
+                break;
+            }
+            $common++;
+        }
+        $start_index = count($ref_path) - $common;
+
+        $clone = clone $this;
+        $clone->set(array_merge(
+            array_fill(0, $start_index, '..'),
+            array_slice($this_path, $start_index),
+            array($filename)
         ));
-        $path = $this->getUriComponent();
-        if (0 < $start_index && count($this->data) >= $start_index) {
-            $clone = clone $this;
-            $clone->set(array_merge(
-                array_fill(0, $start_index, '..'),
-                array_slice(array_values($clone->toArray()), $start_index)
-            ));
 
-            $path = $clone->__toString();
-        }
-
-        if ('' == $path) {
-            $path = '/'.$path;
-        }
-
-        return $path;
+        return $clone->__toString();
     }
 
     /**

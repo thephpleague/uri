@@ -29,5 +29,5 @@ interface PathInterface extends SegmentInterface
      *
      * @return string
      */
-    public function getRelativePath($start_index = 0);
+    public function getRelativePath(PathInterface $path);
 }

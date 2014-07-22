@@ -49,4 +49,14 @@ interface ComponentInterface
      * @return string
      */
     public function getUriComponent();
+
+    /**
+     * Compare two Url component object and tells whether they
+     * represent the same string value
+     *
+     * @param {@link ComponentInterface} $component
+     *
+     * @return boolean
+     */
+    public function sameValueAs(ComponentInterface $component);
 }

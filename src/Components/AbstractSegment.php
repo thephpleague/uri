@@ -77,6 +77,14 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() == $component->__toString();
+    }
+
+    /**
      * Sanitize a string component recursively
      *
      * @param mixed $str

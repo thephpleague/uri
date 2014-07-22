@@ -78,6 +78,14 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     /**
      * {@inheritdoc}
      */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() == $component->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
         $value = $this->__toString();

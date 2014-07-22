@@ -19,6 +19,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->query = new Query('?kingkong=toto');
     }
 
+    public function testSameValueAs()
+    {
+        $query_local = new Query;
+        $this->assertFalse($query_local->sameValueAs($this->query));
+        $query_local->set($this->query);
+        $this->assertTrue($query_local->sameValueAs($this->query));
+    }
+
     public function testModifyWithArray()
     {
         $this->query->modify(array('john' => 'doe the john'));

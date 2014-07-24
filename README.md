@@ -1,10 +1,12 @@
 # League.url
 
-[![Build Status](https://travis-ci.org/thephpleague/url.png?branch=master)](https://travis-ci.org/thephpleague/url)
-[![Code Coverage](https://scrutinizer-ci.com/g/thephpleague/url/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/thephpleague/url/?branch=master)
-[![Total Downloads](https://poser.pugx.org/league/url/downloads.png)](https://packagist.org/packages/league/url)
-[![Latest Stable Version](https://poser.pugx.org/league/url/v/stable.png)](https://packagist.org/packages/league/url)
-[![License](https://poser.pugx.org/league/url/license.png)](https://packagist.org/packages/league/url)
+[![Latest Version](https://img.shields.io/github/release/thephpleague/url.svg?style=flat)](https://github.com/thephpleague/url/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/thephpleague/url/master.svg?style=flat)](https://travis-ci.org/thephpleague/url)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/url.svg?style=flat)](https://scrutinizer-ci.com/g/thephpleague/url/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/url.svg?style=flat)](https://scrutinizer-ci.com/g/thephpleague/url)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/url.svg?style=flat)](https://packagist.org/packages/league/url)
+
 
 The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP. 
 

@@ -52,32 +52,35 @@ class Path extends AbstractSegment implements PathInterface
     /**
      * {@inheritdoc}
      */
-    public function getRelativePath(PathInterface $path)
+    public function getRelativePath(PathInterface $reference)
     {
-        if ($this->sameValueAs($path)) {
+        if ($this->sameValueAs($reference)) {
             return '';
         }
 
-        $ref_path = array_values($path->toArray());
+        $ref_path = array_values($reference->toArray());
         $this_path = array_values($this->data);
         $filename = array_pop($this_path);
-        $common = 0;
+
+        //retrieve the final consecutive identic segment in the current path
+        $index = 0;
         foreach ($ref_path as $offset => $value) {
             if (! isset($this_path[$offset]) || $value != $this_path[$offset]) {
                 break;
             }
-            $common++;
+            $index++;
         }
-        $start_index = count($ref_path) - $common;
+        //deduce the number of similar segment according to the reference path
+        $nb_common_segment = count($ref_path) - $index;
 
-        $clone = clone $this;
-        $clone->set(array_merge(
-            array_fill(0, $start_index, '..'),
-            array_slice($this_path, $start_index),
+        //let's output the relative path using a new Path object
+        $res = new Path(array_merge(
+            array_fill(0, $nb_common_segment, '..'),
+            array_slice($this_path, $index),
             array($filename)
         ));
 
-        return $clone->__toString();
+        return $res->__toString();
     }
 
     /**

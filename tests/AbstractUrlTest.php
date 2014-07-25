@@ -170,10 +170,10 @@ class AbstractUrlTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl());
-        $this->assertSame('../query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_internal_link));
+        $this->assertSame('../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_internal_link));
         $this->assertSame('../../toto.php', $url_internal_link->getRelativeUrl($url));
         $this->assertSame($url->__toString(), $url->getRelativeUrl($url_external_link));
-        $this->assertSame('../../query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_similar));
+        $this->assertSame('../../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_similar));
         $this->assertSame('?kingkong=toto#doc3', $url->getRelativeUrl($url_same_path));
     }
 

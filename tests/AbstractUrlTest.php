@@ -5,13 +5,12 @@ namespace League\Url\Test;
 use League\Url\Url;
 use League\Url\UrlImmutable;
 use PHPUnit_Framework_TestCase;
-use StdClass;
 use RuntimeException;
 
 /**
  * @group factory
  */
-class FactoryTest extends PHPUnit_Framework_TestCase
+class AbstractUrlTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateFromServer()
     {
@@ -55,7 +54,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         );
 
-        Url::createFromServer($server, true);
+        Url::createFromServer($server);
     }
 
     public function testCreateFromServerWithoutRequestUri()
@@ -120,14 +119,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromInvalidUrlKO()
     {
         Url::createFromUrl("http://user@:80");
-    }
-
-    /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testCreateFromUrlKO()
-    {
-        Url::createFromUrl(new StdClass);
     }
 
     /**

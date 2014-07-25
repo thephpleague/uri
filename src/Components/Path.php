@@ -30,12 +30,15 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function get()
     {
-        $res = array_values($this->data);
+        $res = array();
+        foreach (array_values($this->data) as $value) {
+            $res[] = rawurlencode($value);
+        }
         if (! $res) {
             return null;
         }
 
-        return implode($this->delimiter, array_map('rawurlencode', $res));
+        return implode($this->delimiter, $res);
     }
 
     /**

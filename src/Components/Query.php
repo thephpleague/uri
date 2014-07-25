@@ -56,15 +56,13 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     {
         if (!$this->data) {
             return null;
-        } elseif (!defined('PHP_QUERY_RFC3986')) {
-            return str_replace(
-                array('%E7', '+'),
-                array('~', '%20'),
-                http_build_query($this->data, '', '&')
-            );
         }
 
-        return http_build_query($this->data, '', '&', PHP_QUERY_RFC3986);
+        return str_replace(
+            array('%E7', '+'),
+            array('~', '%20'),
+            http_build_query($this->data, '', '&')
+        );
     }
 
     /**

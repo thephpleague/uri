@@ -53,14 +53,14 @@ interface UrlInterface
 
     /**
      * return the string representation for a relative URL
-     * based on the current URL (the string does not
-     * contain the authority part)
+     * relative to another UrlInterface or to the current
+     * base URL
      *
-     * @param League\Url\UrlInterface $url
+     * @param League\Url\UrlInterface $ref_url
      *
      * @return string
      */
-    public function getRelativeUrl(UrlInterface $url = null);
+    public function getRelativeUrl(UrlInterface $ref_url = null);
 
     /**
      * Compare two Url object and tells whether they can be considered equal

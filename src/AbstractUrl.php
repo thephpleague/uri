@@ -102,21 +102,21 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * {@inheritdoc}
      */
-    public function getRelativeUrl(UrlInterface $url = null)
+    public function getRelativeUrl(UrlInterface $ref_url = null)
     {
-        if (is_null($url)) {
+        if (is_null($ref_url)) {
             return $this->path->getUriComponent()
                 .$this->query->getUriComponent()
                 .$this->fragment->getUriComponent();
-        } elseif ($this->getBaseUrl() != $url->getBaseUrl()) {
+        } elseif ($this->getBaseUrl() != $ref_url->getBaseUrl()) {
             return $this->__toString();
-        } elseif ($this->path->sameValueAs($url->getPath())) {
+        } elseif ($this->path->sameValueAs($ref_url->getPath())) {
             return $this->query->getUriComponent().$this->fragment->getUriComponent();
         }
 
-        return $this->path->getRelativePath($url->getPath())
-                .$this->query->getUriComponent()
-                .$this->fragment->getUriComponent();
+        return $this->path->getRelativePath($ref_url->getPath())
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
     }
 
     /**

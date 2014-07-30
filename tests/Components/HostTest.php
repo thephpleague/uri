@@ -3,8 +3,8 @@
 namespace League\Url\Test\Components;
 
 use ArrayIterator;
-use PHPUnit_Framework_TestCase;
 use League\Url\Components\Host;
+use PHPUnit_Framework_TestCase;
 
 /**
  * @group components

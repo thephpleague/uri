@@ -2,8 +2,8 @@
 
 namespace League\Url\Test\Components;
 
-use PHPUnit_Framework_TestCase;
 use League\Url\Components\Scheme;
+use PHPUnit_Framework_TestCase;
 
 /**
  * @group components

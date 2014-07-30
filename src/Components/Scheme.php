@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -13,6 +13,7 @@
 namespace League\Url\Components;
 
 use RuntimeException;
+use League\Url\UrlConstants;
 
 /**
  *  A class to manipulate URL Scheme component
@@ -33,7 +34,7 @@ class Scheme extends AbstractComponent
         }
 
         $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^(ht|f)tp(s?)$/i')
+            'options' => array('regexp' => '/^'.UrlConstants::SCHEME_REGEXP.'$/i')
         ));
 
         if (! $data) {

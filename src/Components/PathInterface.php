@@ -13,23 +13,19 @@
 namespace League\Url\Components;
 
 /**
- *  A class to manipulate URL Pass component
+ * A common interface for URL segment like component
  *
  *  @package League.url
- *  @since  1.0.0
+ *  @since  3.2.0
  */
-class Pass extends AbstractComponent
+interface PathInterface extends SegmentInterface
 {
     /**
-     * {@inheritdoc}
+     * return the string representation for a relative path
+     *
+     * {@link PathInterface} $path
+     *
+     * @return string
      */
-    public function getUriComponent()
-    {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value = ':'.$value;
-        }
-
-        return $value;
-    }
+    public function getRelativePath(PathInterface $reference);
 }

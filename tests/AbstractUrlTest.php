@@ -5,13 +5,12 @@ namespace League\Url\Test;
 use League\Url\Url;
 use League\Url\UrlImmutable;
 use PHPUnit_Framework_TestCase;
-use StdClass;
 use RuntimeException;
 
 /**
  * @group factory
  */
-class FactoryTest extends PHPUnit_Framework_TestCase
+class AbstractUrlTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateFromServer()
     {
@@ -55,7 +54,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         );
 
-        Url::createFromServer($server, true);
+        Url::createFromServer($server);
     }
 
     public function testCreateFromServerWithoutRequestUri()
@@ -123,14 +122,6 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error
-     */
-    public function testCreateFromUrlKO()
-    {
-        Url::createFromUrl(new StdClass);
-    }
-
-    /**
      * @expectedException RuntimeException
      */
     public function testCreateFromUrlBadName()
@@ -144,5 +135,54 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromUrlBadName2()
     {
         Url::createFromUrl('sdfsdfqsdfsdf');
+    }
+
+    public function testStringRepresentation()
+    {
+        $url = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+        );
+        $this->assertSame('https://login:pass@secure.example.com:443', $url->getBaseUrl());
+        $this->assertSame('login:pass@secure.example.com:443', $url->getAuthority());
+        $this->assertSame('login:pass@', $url->getUserInfo());
+    }
+
+    public function testRelativeUrlRepresentation()
+    {
+        $url = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+        );
+
+        $url_internal_link = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/toto.php'
+        );
+
+        $url_external_link = Url::createFromUrl(
+            'https://toto.com:443/toto.php'
+        );
+
+        $url_similar = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/lol/query.php'
+        );
+
+        $url_same_path = Url::createFromUrl(
+            'https://login:pass@secure.example.com:443/test/query.php?godzilla=monster'
+        );
+
+        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl());
+        $this->assertSame('../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_internal_link));
+        $this->assertSame('../../toto.php', $url_internal_link->getRelativeUrl($url));
+        $this->assertSame($url->__toString(), $url->getRelativeUrl($url_external_link));
+        $this->assertSame('../../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_similar));
+        $this->assertSame('?kingkong=toto#doc3', $url->getRelativeUrl($url_same_path));
+    }
+
+    public function testSameValueAs()
+    {
+        $url1 = Url::createFromUrl('example.com');
+        $url2 = UrlImmutable::createFromUrl('//example.com');
+        $url3 = UrlImmutable::createFromUrl('//example.com?foo=toto+le+heros');
+        $this->assertTrue($url1->sameValueAs($url2));
+        $this->assertFalse($url3->sameValueAs($url2));
     }
 }

@@ -17,6 +17,6 @@ class PortTest extends PHPUnit_Framework_TestCase
     {
         $port = new Port(new Port(443));
         $this->assertSame(443, $port->get());
-        $port = new Port('toto');
+        new Port('toto');
     }
 }

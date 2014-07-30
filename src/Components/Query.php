@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -56,15 +56,13 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     {
         if (!$this->data) {
             return null;
-        } elseif (!defined('PHP_QUERY_RFC3986')) {
-            return str_replace(
-                array('%E7', '+'),
-                array('~', '%20'),
-                http_build_query($this->data, '', '&')
-            );
         }
 
-        return http_build_query($this->data, '', '&', PHP_QUERY_RFC3986);
+        return str_replace(
+            array('%E7', '+'),
+            array('~', '%20'),
+            http_build_query($this->data, '', '&')
+        );
     }
 
     /**
@@ -73,6 +71,14 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     public function __toString()
     {
         return (string) $this->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() == $component->__toString();
     }
 
     /**

@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -102,16 +102,44 @@ abstract class AbstractUrl implements UrlInterface
     /**
      * {@inheritdoc}
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl(UrlInterface $ref_url = null)
     {
-        $path = $this->path->getUriComponent();
-        $query = $this->query->getUriComponent();
-        $fragment = $this->fragment->getUriComponent();
-        if ('' == $path) {
-            $path = '/'.$path;
+        if (is_null($ref_url)) {
+            return $this->path->getUriComponent()
+                .$this->query->getUriComponent()
+                .$this->fragment->getUriComponent();
+        } elseif ($this->getBaseUrl() != $ref_url->getBaseUrl()) {
+            return $this->__toString();
         }
 
-        return $path.$query.$fragment;
+        return $this->path->getRelativePath($ref_url->getPath())
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInfo()
+    {
+        $user = $this->user->getUriComponent().$this->pass->getUriComponent();
+        if ('' != $user) {
+            $user .= '@';
+        }
+
+        return $user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        $user = $this->getUserInfo();
+        $host = $this->host->getUriComponent();
+        $port = $this->port->getUriComponent();
+
+        return $user.$host.$port;
     }
 
     /**
@@ -120,21 +148,12 @@ abstract class AbstractUrl implements UrlInterface
     public function getBaseUrl()
     {
         $scheme = $this->scheme->getUriComponent();
-        $user = $this->user->getUriComponent();
-        $pass = $this->pass->getUriComponent();
-        $host = $this->host->getUriComponent();
-        $port = $this->port->getUriComponent();
-
-        $user .= $pass;
-        if ('' != $user) {
-            $user .= '@';
-        }
-
-        if ('' != $host && '' == $scheme) {
+        $auth = $this->getAuthority();
+        if ('' != $auth && '' == $scheme) {
             $scheme = '//';
         }
 
-        return $scheme.$user.$host.$port;
+        return $scheme.$auth;
     }
 
     /**
@@ -161,7 +180,7 @@ abstract class AbstractUrl implements UrlInterface
         $original_url = $url;
 
         //if no valid scheme is found we add one
-        if (!empty($url) && !preg_match(',^((ht|f)tp(s?):)?//,i', $url)) {
+        if (!empty($url) && !preg_match(',^('.UrlConstants::SCHEME_REGEXP.':)?//,i', $url)) {
             $url = '//'.$url;
         }
         $components = @parse_url($url);

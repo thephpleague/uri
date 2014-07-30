@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -77,15 +77,15 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function get()
     {
-        $res = array_values($this->data);
+        $res = array();
+        foreach (array_values($this->data) as $value) {
+            $res[] = $this->punycode->decode($value);
+        }
         if (! $res) {
             return null;
         }
 
-        return implode(
-            $this->delimiter,
-            array_map(array($this->punycode, 'decode'), $res)
-        );
+        return implode($this->delimiter, $res);
     }
 
     /**

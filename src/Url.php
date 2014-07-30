@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -15,11 +15,11 @@ namespace League\Url;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
 use League\Url\Components\Pass;
-use League\Url\Components\Host;
 use League\Url\Components\Port;
-use League\Url\Components\Path;
-use League\Url\Components\Query;
 use League\Url\Components\Fragment;
+use League\Url\Components\HostInterface;
+use League\Url\Components\PathInterface;
+use League\Url\Components\QueryInterface;
 
 /**
  * A class to manipulate URLs
@@ -31,23 +31,23 @@ class Url extends AbstractUrl
 {
     /**
      * The Constructor
-     * @param Scheme   $scheme   The URL Scheme component
-     * @param User     $user     The URL User component
-     * @param Pass     $pass     The URL Pass component
-     * @param Host     $host     The URL Host component
-     * @param Port     $port     The URL Port component
-     * @param Path     $path     The URL Path component
-     * @param Query    $query    The URL Query component
-     * @param Fragment $fragment The URL Fragment component
+     * @param Scheme         $scheme   The URL Scheme component
+     * @param User           $user     The URL User component
+     * @param Pass           $pass     The URL Pass component
+     * @param HostInterface  $host     The URL Host component
+     * @param Port           $port     The URL Port component
+     * @param PathInterface  $path     The URL Path component
+     * @param QueryInterface $query    The URL Query component
+     * @param Fragment       $fragment The URL Fragment component
      */
-    public function __construct(
+    protected function __construct(
         Scheme $scheme,
         User $user,
         Pass $pass,
-        Host $host,
+        HostInterface $host,
         Port $port,
-        Path $path,
-        Query $query,
+        PathInterface $path,
+        QueryInterface $query,
         Fragment $fragment
     ) {
         $this->scheme = $scheme;
@@ -61,11 +61,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL scheme component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setScheme($data)
     {
@@ -75,9 +71,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL scheme component
-     *
-     * @return League\Url\Components\Scheme
+     * {@inheritdoc}
      */
     public function getScheme()
     {
@@ -85,11 +79,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL user component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setUser($data)
     {
@@ -99,9 +89,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL user component
-     *
-     * @return League\Url\Components\User
+     * {@inheritdoc}
      */
     public function getUser()
     {
@@ -109,11 +97,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL pass component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPass($data)
     {
@@ -123,9 +107,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL pass component
-     *
-     * @return League\Url\Components\Pass
+     * {@inheritdoc}
      */
     public function getPass()
     {
@@ -133,11 +115,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL host component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setHost($data)
     {
@@ -147,9 +125,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL host component
-     *
-     * @return League\Url\Components\Host
+     * {@inheritdoc}
      */
     public function getHost()
     {
@@ -157,11 +133,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL port component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPort($data)
     {
@@ -171,9 +143,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL port component
-     *
-     * @return League\Url\Components\Port
+     * {@inheritdoc}
      */
     public function getPort()
     {
@@ -181,11 +151,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL path component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setPath($data)
     {
@@ -195,9 +161,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL path component
-     *
-     * @return League\Url\Components\Path
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -205,11 +169,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL query component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setQuery($data)
     {
@@ -219,9 +179,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL user component
-     *
-     * @return League\Url\Components\Query
+     * {@inheritdoc}
      */
     public function getQuery()
     {
@@ -229,11 +187,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * Set the URL fragment component
-     *
-     * @param mixed $data
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setFragment($data)
     {
@@ -243,9 +197,7 @@ class Url extends AbstractUrl
     }
 
     /**
-     * get the URL fragment component
-     *
-     * @return League\Url\Components\Fragment
+     * {@inheritdoc}
      */
     public function getFragment()
     {

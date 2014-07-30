@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -74,6 +74,14 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
         if (! is_null($data)) {
             $this->set($data);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() == $component->__toString();
     }
 
     /**

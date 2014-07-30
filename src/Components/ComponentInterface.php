@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.0.0
+* @version 3.2.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -49,4 +49,14 @@ interface ComponentInterface
      * @return string
      */
     public function getUriComponent();
+
+    /**
+     * Compare two Url component object and tells whether they
+     * represent the same string value
+     *
+     * @param {@link ComponentInterface} $component
+     *
+     * @return boolean
+     */
+    public function sameValueAs(ComponentInterface $component);
 }

@@ -12,8 +12,8 @@
 */
 namespace League\Url\Components;
 
-use RuntimeException;
 use League\Url\UrlConstants;
+use RuntimeException;
 
 /**
  *  A class to manipulate URL Scheme component

@@ -67,6 +67,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     * @param string|array|\Traversable $data the data
      */
     public function remove($data)
     {
@@ -141,6 +142,9 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     * @param string|array|\Traversable $data
+     * @param string                    $whence
+     * @param integer                   $whence_index
      */
     public function append($data, $whence = null, $whence_index = null)
     {
@@ -154,6 +158,9 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     * @param string|array|\Traversable $data
+     * @param string                    $whence
+     * @param integer                   $whence_index
      */
     public function prepend($data, $whence = null, $whence_index = null)
     {
@@ -168,7 +175,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
     /**
      * Format removing component labels
      *
-     * @param mixed $data the component value to be validate
+     * @param string|array|\Traversable $data the component value to be validate
      *
      * @return array
      */

@@ -2,9 +2,9 @@
 
 namespace League\Url\Test\Components;
 
-use PHPUnit_Framework_TestCase;
-use League\Url\Components\Query;
 use ArrayIterator;
+use League\Url\Components\Query;
+use PHPUnit_Framework_TestCase;
 use StdClass;
 
 /**

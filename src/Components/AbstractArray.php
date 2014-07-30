@@ -12,10 +12,10 @@
 */
 namespace League\Url\Components;
 
-use Closure;
-use IteratorAggregate;
-use Countable;
 use ArrayIterator;
+use Closure;
+use Countable;
+use IteratorAggregate;
 use RuntimeException;
 use Traversable;
 

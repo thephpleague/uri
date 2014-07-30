@@ -56,7 +56,7 @@ interface UrlInterface
      * relative to another UrlInterface or to the current
      * base URL
      *
-     * @param League\Url\UrlInterface $ref_url
+     * @param UrlInterface $ref_url
      *
      * @return string
      */
@@ -74,7 +74,7 @@ interface UrlInterface
     /**
      * Set the URL scheme component
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return self
      */
@@ -83,14 +83,14 @@ interface UrlInterface
     /**
      * get the URL scheme component
      *
-     * @return League\Url\Components\Scheme
+     * @return League\Url\Components\ComponentInterface
      */
     public function getScheme();
 
     /**
      * Set the URL user component
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return self
      */
@@ -99,14 +99,14 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\User
+     * @return League\Url\Components\ComponentInterface
      */
     public function getUser();
 
     /**
      * Set the URL pass component
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return self
      */
@@ -115,14 +115,14 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Pass
+     * @return League\Url\Components\ComponentInterface
      */
     public function getPass();
 
     /**
      * Set the URL host component
      *
-     * @param mixed $data
+     * @param string|array|\Traversable $data
      *
      * @return self
      */
@@ -131,14 +131,14 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Host
+     * @return League\Url\Components\ComponentInterface
      */
     public function getHost();
 
     /**
      * Set the URL port component
      *
-     * @param mixed $data
+     * @param string|integer $data
      *
      * @return self
      */
@@ -147,14 +147,14 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Port
+     * @return League\Url\Components\ComponentInterface
      */
     public function getPort();
 
     /**
      * Set the URL path component
      *
-     * @param mixed $data
+     * @param string|array|\Traversable $data
      *
      * @return self
      */
@@ -163,14 +163,14 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Path
+     * @return League\Url\Components\PathInterface
      */
     public function getPath();
 
     /**
      * Set the URL query component
      *
-     * @param mixed $data
+     * @param string|array|\Traversable $data
      *
      * @return self
      */
@@ -179,7 +179,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Query
+     * @return League\Url\Components\QueryInterface
      */
     public function getQuery();
 
@@ -195,7 +195,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\Fragment
+     * @return League\Url\Components\ComponentInterface
      */
     public function getFragment();
 }

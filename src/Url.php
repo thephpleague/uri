@@ -12,14 +12,14 @@
 */
 namespace League\Url;
 
-use League\Url\Components\Scheme;
-use League\Url\Components\User;
-use League\Url\Components\Pass;
-use League\Url\Components\Port;
 use League\Url\Components\Fragment;
 use League\Url\Components\HostInterface;
+use League\Url\Components\Pass;
 use League\Url\Components\PathInterface;
+use League\Url\Components\Port;
 use League\Url\Components\QueryInterface;
+use League\Url\Components\Scheme;
+use League\Url\Components\User;
 
 /**
  * A class to manipulate URLs

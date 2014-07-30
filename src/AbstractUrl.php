@@ -180,7 +180,7 @@ abstract class AbstractUrl implements UrlInterface
         $original_url = $url;
 
         //if no valid scheme is found we add one
-        if (!empty($url) && !preg_match(',^((ht|f)tp(s?):)?//,i', $url)) {
+        if (!empty($url) && !preg_match(',^('.UrlConstants::SCHEME_REGEXP.':)?//,i', $url)) {
             $url = '//'.$url;
         }
         $components = @parse_url($url);

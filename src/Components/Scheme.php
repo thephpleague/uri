@@ -13,6 +13,7 @@
 namespace League\Url\Components;
 
 use RuntimeException;
+use League\Url\UrlConstants;
 
 /**
  *  A class to manipulate URL Scheme component
@@ -33,7 +34,7 @@ class Scheme extends AbstractComponent
         }
 
         $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^(ht|f)tp(s?)$/i')
+            'options' => array('regexp' => '/^'.UrlConstants::SCHEME_REGEXP.'$/i')
         ));
 
         if (! $data) {

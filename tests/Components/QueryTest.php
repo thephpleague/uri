@@ -123,4 +123,16 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('lol'), $query->keys(3));
         $this->assertSame(array('baz', 'toto'), $query->keys('troll'));
     }
+
+    public function testDotFromString()
+    {
+        $query = new Query('foo.bar=baz');
+        $this->assertSame('foo.bar=baz', (string) $query);
+    }
+
+    public function testDotFromArray()
+    {
+        $query = new Query(array('foo.bar' => 'baz'));
+        $this->assertSame('foo.bar=baz', (string) $query);
+    }
 }

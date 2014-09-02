@@ -114,7 +114,18 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
             if ('?' == $str[0]) {
                 $str = substr($str, 1);
             }
+
+            //let's preserve the key params
+            $str = preg_replace_callback('/(?:^|(?<=&))[^=[]+/', function ($match) {
+                return bin2hex(urldecode($match[0]));
+            }, $str);
             parse_str($str, $arr);
+
+            //hexbin does not work in PHP 5.3
+            $arr = array_combine(array_map(function ($value) {
+                return pack('H*', $value);
+
+            }, array_keys($arr)), $arr);
 
             return $arr;
         });

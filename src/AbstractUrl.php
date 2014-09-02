@@ -169,7 +169,7 @@ abstract class AbstractUrl implements UrlInterface
      *
      * @param string $url a string or an object that implement the __toString method
      *
-     * @return AbstractUrl
+     * @return static
      *
      * @throws RuntimeException If the URL can not be parse
      */
@@ -218,7 +218,7 @@ abstract class AbstractUrl implements UrlInterface
      *
      * @param array $server the server array
      *
-     * @return AbstractUrl
+     * @return static
      *
      * @throws RuntimeException If the URL can not be parse
      */

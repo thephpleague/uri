@@ -129,12 +129,10 @@ class AbstractUrlTest extends PHPUnit_Framework_TestCase
         Url::createFromUrl('http:/google.com');
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
-    public function testCreateFromUrlBadName2()
+    public function testCreateFromSingleLabelHost()
     {
-        Url::createFromUrl('sdfsdfqsdfsdf');
+        $url = Url::createFromUrl('sdfsdfqsdfsdf');
+        $this->assertSame('//sdfsdfqsdfsdf/', $url->__toString());
     }
 
     public function testStringRepresentation()

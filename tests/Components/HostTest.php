@@ -13,7 +13,7 @@ class HostTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException InvalidArgumentException
      */
     public function testArrayAccess()
     {

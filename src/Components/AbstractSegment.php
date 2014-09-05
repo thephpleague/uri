@@ -181,21 +181,22 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
      */
     protected function formatRemoveSegment($data)
     {
-        return $this->sanitizeValue($this->validateSegment($data, $this->delimiter));
+        return $this->sanitizeValue($this->validateSegment($data));
     }
 
     /**
      * Validate data before insertion into a URL segment based component
      *
-     * @param mixed  $data      the data to insert
-     * @param string $delimiter a single character delimiter
+     * @param mixed $data the data to insert
      *
      * @return array
      *
      * @throws \RuntimeException if the data is not valid
      */
-    protected function validateSegment($data, $delimiter)
+    protected function validateSegment($data)
     {
+        $delimiter = $this->delimiter;
+
         return $this->convertToArray($data, function ($str) use ($delimiter) {
             if ('' == $str) {
                 return array();

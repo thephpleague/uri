@@ -108,6 +108,35 @@ class Host extends AbstractSegment implements HostInterface
         return $this->__toString();
     }
 
+    protected function isValidHostLength(array $data)
+    {
+        $res = array_filter($data, function ($label) {
+            return mb_strlen($label) > 63;
+        });
+
+        return 0 == count($res);
+    }
+
+    protected function isValidHostPattern(array $data)
+    {
+        $data = explode(
+            $this->delimiter,
+            $this->punycode->encode(implode($this->delimiter, $data))
+        );
+
+        $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
+
+        return 0 == count($res);
+    }
+
+    protected function isValidHostLabels(array $data = array())
+    {
+        $labels       = array_merge($this->data, $data);
+        $count_labels = count($labels);
+
+        return $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode($this->delimiter, $labels));
+    }
+
     /**
      * Validate Host data before insertion into a URL host component
      *
@@ -119,47 +148,27 @@ class Host extends AbstractSegment implements HostInterface
      */
     protected function validate($data)
     {
-        $data = $this->validateSegment($data, $this->delimiter);
+        $data = $this->validateSegment($data);
         if (! $data) {
             return $data;
         }
 
-        //the 63 length must be checked before unicode application
         $this->saveInternalEncoding();
-        $res = array_filter($data, function ($label) {
-            return mb_strlen($label) > 63;
-        });
-        if (count($res)) {
+        if (! $this->isValidHostLength($data)) {
             $this->restoreInternalEncoding();
             throw new RuntimeException('Invalid hostname, check its length');
-        }
-
-        $data = explode(
-            $this->delimiter,
-            $this->punycode->encode(implode($this->delimiter, $data))
-        );
-
-        $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
-        if (count($res)) {
+        } elseif (! $this->isValidHostPattern($data)) {
             $this->restoreInternalEncoding();
             throw new RuntimeException('Invalid host label, check its content');
+        } elseif (! $this->isValidHostLabels($data)) {
+            $this->restoreInternalEncoding();
+            throw new RuntimeException('Invalid host label counts, check its count');
         }
 
-        $host = $this->data;
-        $imploded = implode($this->delimiter, $data);
-        $nb_labels = count($host) + count($data);
-        if (count($data) && (2 > $nb_labels || 127 <= $nb_labels)) {
-            throw new RuntimeException('Host may have between 2 and 127 parts');
-        } elseif (225 <= (strlen(implode($this->delimiter, $host)) + strlen($imploded) + 1)) {
-            throw new RuntimeException('Host may have a maximum of 255 characters');
-        }
-
+        $data = $this->sanitizeValue($data);
         $data = explode(
             $this->delimiter,
-            $this->punycode->decode(implode(
-                $this->delimiter,
-                $this->sanitizeValue($data)
-            ))
+            $this->punycode->decode(implode($this->delimiter, $data))
         );
         $this->restoreInternalEncoding();
 

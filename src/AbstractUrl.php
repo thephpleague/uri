@@ -178,10 +178,11 @@ abstract class AbstractUrl implements UrlInterface
         $url = (string) $url;
         $url = trim($url);
         $original_url = $url;
+        $url = self::sanitizeUrl($url);
 
         //if no valid scheme is found we add one
-        if (!empty($url) && !preg_match(',^('.UrlConstants::SCHEME_REGEXP.':)?//,i', $url)) {
-            $url = '//'.$url;
+        if (is_null($url)) {
+            throw new RuntimeException(sprintf('The given URL: `%s` could not be parse', $original_url));
         }
         $components = @parse_url($url);
         if (false === $components) {
@@ -211,6 +212,24 @@ abstract class AbstractUrl implements UrlInterface
             new Query($components['query']),
             new Fragment($components['fragment'])
         );
+    }
+
+    protected static function sanitizeUrl($url)
+    {
+        if ('' == $url || strpos($url, '//') === 0) {
+            return $url;
+        }
+
+        if (! preg_match(',^((http|ftp|ws)s?:),i', $url, $matches)) {
+            return '//'.$url;
+        }
+
+        $scheme_length = strlen($matches[0]);
+        if ($url[$scheme_length] == '/' && $url[$scheme_length+1] == '/') {
+            return $url;
+        }
+
+        return null;
     }
 
     /**

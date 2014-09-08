@@ -218,14 +218,12 @@ abstract class AbstractUrl implements UrlInterface
     {
         if ('' == $url || strpos($url, '//') === 0) {
             return $url;
-        }
-
-        if (! preg_match(',^((http|ftp|ws)s?:),i', $url, $matches)) {
+        } elseif (! preg_match(',^((http|ftp|ws)s?:),i', $url, $matches)) {
             return '//'.$url;
         }
 
         $scheme_length = strlen($matches[0]);
-        if ($url[$scheme_length] == '/' && $url[$scheme_length+1] == '/') {
+        if (strpos(substr($url, $scheme_length), '//') === 0) {
             return $url;
         }
 

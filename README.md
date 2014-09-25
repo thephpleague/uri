@@ -34,9 +34,7 @@ Install the `League\Url` package using composer:
 Documentation
 -------
 
-`League\Url` has [full documentation](http://url.thephpleague.com), powered by [Sculpin](http://sculpin.io).
-
-Contribute to this documentation in the [sculpin branch](https://github.com/thephpleague/url/tree/sculpin/source)
+`League\Url` is [fully documentation](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/url/tree/gh-pages)
 
 Testing
 -------

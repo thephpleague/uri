@@ -22,8 +22,9 @@ interface PathInterface extends SegmentInterface
 {
     /**
      * return the string representation for a relative path
-     *
      * {@link PathInterface} $path
+     *
+     * @param PathInterface $reference
      *
      * @return string
      */

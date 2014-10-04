@@ -2,9 +2,8 @@
 
 namespace League\Url\Test;
 
-use League\Url\UrlImmutable;
 use League\Url\Url;
-use League\Url\Components\Query;
+use League\Url\UrlImmutable;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -12,6 +11,9 @@ use PHPUnit_Framework_TestCase;
  */
 class UrlImmutableTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Url
+     */
     private $url;
 
     public function setUp()

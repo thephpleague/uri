@@ -62,7 +62,7 @@ class Path extends AbstractSegment implements PathInterface
         $this_path = array_values($this->data);
         $filename = array_pop($this_path);
 
-        //retrieve the final consecutive identic segment in the current path
+        //retrieve the final consecutive identical segment in the current path
         $index = 0;
         foreach ($ref_path as $offset => $value) {
             if (! isset($this_path[$offset]) || $value != $this_path[$offset]) {

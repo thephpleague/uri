@@ -12,6 +12,9 @@ use StdClass;
  */
 class QueryTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Query
+     */
     protected $query;
 
     public function setUp()
@@ -77,7 +80,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testFailmodify()
     {
@@ -85,7 +88,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testArrayAccess()
     {

@@ -29,7 +29,7 @@ class Host extends AbstractSegment implements HostInterface
     protected $delimiter = '.';
 
     /**
-     * Punycode Alogrithm Object
+     * Punycode Algorithm Object
      * @var \True\Punycode
      */
     protected $punycode;

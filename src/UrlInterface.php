@@ -65,7 +65,7 @@ interface UrlInterface
     /**
      * Compare two Url object and tells whether they can be considered equal
      *
-     * @param League\Url\UrlInterface $url
+     * @param \League\Url\UrlInterface $url
      *
      * @return boolean
      */
@@ -83,7 +83,7 @@ interface UrlInterface
     /**
      * get the URL scheme component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getScheme();
 
@@ -99,7 +99,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getUser();
 
@@ -115,7 +115,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getPass();
 
@@ -131,7 +131,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getHost();
 
@@ -147,7 +147,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getPort();
 
@@ -163,7 +163,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\PathInterface
+     * @return \League\Url\Components\PathInterface
      */
     public function getPath();
 
@@ -179,7 +179,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\QueryInterface
+     * @return \League\Url\Components\QueryInterface
      */
     public function getQuery();
 
@@ -195,7 +195,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return League\Url\Components\ComponentInterface
+     * @return \League\Url\Components\ComponentInterface
      */
     public function getFragment();
 }

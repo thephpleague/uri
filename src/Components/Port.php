@@ -37,7 +37,7 @@ class Port extends AbstractComponent
         ));
 
         if (! $data) {
-            throw new RuntimeException('A port must be a valid positif integer');
+            throw new RuntimeException('A port must be a valid positive integer');
         }
 
         return (int) $data;

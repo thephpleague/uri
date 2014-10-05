@@ -11,7 +11,7 @@ use PHPUnit_Framework_TestCase;
 class PortTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testPortSetter()
     {

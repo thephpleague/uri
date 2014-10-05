@@ -54,7 +54,7 @@ interface ComponentInterface
      * Compare two Url component object and tells whether they
      * represent the same string value
      *
-     * @param {@link ComponentInterface} $component
+     * @param ComponentInterface $component
      *
      * @return boolean
      */

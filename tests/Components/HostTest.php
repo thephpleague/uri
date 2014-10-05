@@ -13,7 +13,7 @@ class HostTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testArrayAccess()
     {
@@ -137,7 +137,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testHostStatus()
     {
@@ -146,7 +146,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testBadHostCharacters()
     {
@@ -154,7 +154,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testBadHostLength()
     {
@@ -163,7 +163,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testTooManyHostlabel()
     {
@@ -171,7 +171,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testHosttooLong()
     {

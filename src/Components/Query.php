@@ -14,7 +14,6 @@ namespace League\Url\Components;
 
 use ArrayAccess;
 use RuntimeException;
-use Traversable;
 
 /**
  *  A class to manipulate URL Query component

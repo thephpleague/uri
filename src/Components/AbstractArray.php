@@ -68,6 +68,8 @@ abstract class AbstractArray implements IteratorAggregate, Countable
     /**
      * Countable Interface method
      *
+     * @param int $mode
+     *
      * @return integer
      */
     public function count($mode = COUNT_NORMAL)
@@ -77,6 +79,10 @@ abstract class AbstractArray implements IteratorAggregate, Countable
 
     /**
      * ArrayAccess Interface method
+     *
+     * @param int|string $offset
+     *
+     * @return bool
      */
     public function offsetExists($offset)
     {
@@ -85,6 +91,8 @@ abstract class AbstractArray implements IteratorAggregate, Countable
 
     /**
      * ArrayAccess Interface method
+     *
+     * @param int|string $offset
      */
     public function offsetUnset($offset)
     {
@@ -93,6 +101,10 @@ abstract class AbstractArray implements IteratorAggregate, Countable
 
     /**
      * ArrayAccess Interface method
+     *
+     * @param int|string $offset
+     *
+     * @return null
      */
     public function offsetGet($offset)
     {
@@ -113,7 +125,7 @@ abstract class AbstractArray implements IteratorAggregate, Countable
      *
      * @param mixed    $data     the data to insert
      * @param \Closure $callback a callable function to be called to parse
-     *                           a given string into the corrseponding component
+     *                           a given string into the corresponding component
      *
      * @return array
      *

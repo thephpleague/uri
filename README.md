@@ -19,17 +19,20 @@ Requirements
 
 You need **PHP >= 5.3.0** and the `mbstring` extension to use the library but the latest stable version of PHP is recommended.
 
-## Install
+Install
+-------
 
-Install the `League\Url` package using composer:
+Install `Url` using Composer.
 
-```json
-{
-    "require": {
-        "League/url": "3.*"
-    }
-}
 ```
+composer require league/url
+```
+
+This will edit (or create) your `composer.json` file and automatically choose the most recent version, for example: `~1.0`
+
+#### Going Solo
+
+You can also use `League\Url` without using Composer by downloading the library and using a [PSR-4](http://www.php-fig.org/psr/psr-4/) compatible autoloader.
 
 Documentation
 -------

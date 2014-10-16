@@ -17,7 +17,7 @@ This package is compliant with [PSR-2][], and [PSR-4][].
 Requirements
 -------
 
-You need **PHP >= 5.3.0** and the `mbstring` extension to use the library but the latest stable version of PHP is recommended.
+You need **PHP >= 5.3.0** and the `mbstring` extension to use the library, but the latest stable version of PHP is recommended.
 
 Install
 -------
@@ -28,7 +28,7 @@ Install `Url` using Composer.
 composer require league/url
 ```
 
-This will edit (or create) your `composer.json` file and automatically choose the most recent version, for example: `~1.0`
+This will edit (or create) your `composer.json` file and automatically choose the most recent version, for example: `~1.0`.
 
 #### Going Solo
 
@@ -37,7 +37,7 @@ You can also use `League\Url` without using Composer by downloading the library 
 Documentation
 -------
 
-`League\Url` is [fully documentation](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/url/tree/gh-pages)
+`League\Url` is [fully documented](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/url/tree/gh-pages).
 
 Testing
 -------

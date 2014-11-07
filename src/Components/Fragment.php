@@ -27,7 +27,7 @@ class Fragment extends AbstractComponent
     {
         $value = parent::__toString();
 
-        return rawurlencode($value);
+        return str_replace(array('%2F', '%3F'), array('/', '?'), rawurlencode($value));
     }
 
     /**

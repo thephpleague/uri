@@ -27,7 +27,14 @@ class Fragment extends AbstractComponent
     {
         $value = parent::__toString();
 
-        return rawurlencode($value);
+        // according to http://tools.ietf.org/html/rfc3986#section-3.5
+        $allowedSymbols = array('/', '?', '-', '.', '_', '~', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', ':', '@');
+
+        $encodedAllowedSymbols = array_map(function($symbol) {
+            return urlencode($symbol);
+        }, $allowedSymbols);
+
+        return str_replace($encodedAllowedSymbols, $allowedSymbols, rawurlencode($value));
     }
 
     /**

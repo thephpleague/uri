@@ -33,7 +33,7 @@ class Port extends AbstractComponent
         }
 
         $data = filter_var($data, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1)
+            'options' => array('min_range' => 1),
         ));
 
         if (! $data) {

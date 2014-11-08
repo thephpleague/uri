@@ -51,5 +51,4 @@ class UrlImmutableTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->url, $this->url->setQuery('?kingkong=toto'));
         $this->assertEquals($this->url, $this->url->setFragment('doc3'));
     }
-
 }

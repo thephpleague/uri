@@ -4,8 +4,8 @@ namespace League\Url\Test\Components;
 
 use ArrayIterator;
 use League\Url\Components\Path;
-use StdClass;
 use PHPUnit_Framework_TestCase;
+use StdClass;
 
 /**
  * @group components
@@ -17,7 +17,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $path = new Path;
+        $path = new Path();
         $path[] = 'leheros';
         $this->assertNull($path[5]);
         $this->assertSame('leheros', $path[0]);
@@ -104,7 +104,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testBadPath()
     {
-        new Path(new StdClass);
+        new Path(new StdClass());
     }
 
     public function testGetRelativePath()

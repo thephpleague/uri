@@ -20,5 +20,5 @@ namespace League\Url\Components;
  */
 class User extends AbstractComponent
 {
-
+    //
 }

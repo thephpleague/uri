@@ -10,7 +10,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
-    
+
     <testsuites>
         <testsuite name="League Url Test Suite">
             <directory>tests</directory>

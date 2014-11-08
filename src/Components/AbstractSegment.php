@@ -113,7 +113,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
      * ArrayAccess Interface method
      *
      * @param int|string $offset
-     * @param mixed $value
+     * @param mixed      $value
      */
     public function offsetSet($offset, $value)
     {

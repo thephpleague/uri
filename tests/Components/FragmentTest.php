@@ -2,11 +2,8 @@
 
 namespace League\Url\Test\Components;
 
-use ArrayIterator;
 use League\Url\Components\Fragment;
-use League\Url\Components\Query;
 use PHPUnit_Framework_TestCase;
-use StdClass;
 
 /**
  * @group components

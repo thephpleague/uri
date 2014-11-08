@@ -15,7 +15,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
      */
     public function testAccess()
     {
-        $scheme = new Scheme;
+        $scheme = new Scheme();
         $this->assertNull($scheme->get());
         $scheme->set('HTTP');
         $this->assertSame('http', $scheme->get());
@@ -26,7 +26,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
 
     public function testSameValueAs()
     {
-        $scheme = new Scheme;
+        $scheme = new Scheme();
         $scheme1 = new Scheme('https');
         $this->assertFalse($scheme->sameValueAs($scheme1));
         $scheme1->set(null);

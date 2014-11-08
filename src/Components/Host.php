@@ -68,7 +68,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function __construct($data = null)
     {
-        $this->punycode = new Punycode;
+        $this->punycode = new Punycode();
         parent::__construct($data);
     }
 

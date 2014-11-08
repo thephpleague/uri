@@ -34,7 +34,7 @@ class Scheme extends AbstractComponent
         }
 
         $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^'.UrlConstants::SCHEME_REGEXP.'$/i')
+            'options' => array('regexp' => '/^'.UrlConstants::SCHEME_REGEXP.'$/i'),
         ));
 
         if (! $data) {

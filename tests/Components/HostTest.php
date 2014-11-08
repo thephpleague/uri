@@ -11,13 +11,12 @@ use PHPUnit_Framework_TestCase;
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @expectedException \InvalidArgumentException
      */
     public function testArrayAccess()
     {
-        $host = new Host;
+        $host = new Host();
         $host[] = 'leheros';
         $this->assertNull($host[5]);
         $this->assertSame('leheros', $host[0]);
@@ -127,11 +126,11 @@ class HostTest extends PHPUnit_Framework_TestCase
             ),
             array(
                 '스타벅스코리아.com',
-                'xn--oy2b35ckwhba574atvuzkc.com'
+                'xn--oy2b35ckwhba574atvuzkc.com',
             ),
             array(
                 'президент.рф',
-                'xn--d1abbgf6aiiy.xn--p1ai'
+                'xn--d1abbgf6aiiy.xn--p1ai',
             ),
         );
     }
@@ -141,7 +140,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testHostStatus()
     {
-        $host = new Host;
+        $host = new Host();
         $host[] = 're view';
     }
 

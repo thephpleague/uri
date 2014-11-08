@@ -24,7 +24,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testSameValueAs()
     {
-        $query_local = new Query;
+        $query_local = new Query();
         $this->assertFalse($query_local->sameValueAs($this->query));
         $query_local->set($this->query);
         $this->assertTrue($query_local->sameValueAs($this->query));
@@ -84,7 +84,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testFailmodify()
     {
-        $this->query->modify(new StdClass);
+        $this->query->modify(new StdClass());
     }
 
     /**
@@ -92,7 +92,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccess()
     {
-        $query = new Query;
+        $query = new Query();
         $query['toto'] = 'leheros';
         $this->assertNull($query['tata']);
         $this->assertSame('leheros', $query['toto']);

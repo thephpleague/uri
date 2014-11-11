@@ -28,13 +28,21 @@ class Fragment extends AbstractComponent
         $value = parent::__toString();
 
         // according to http://tools.ietf.org/html/rfc3986#section-3.5
-        $allowedSymbols = array('/', '?', '-', '.', '_', '~', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', ':', '@');
+        $rawSymbols = array(
+            '/', '?', '-', '.', '_', '~', '!',
+            '$', '&', '\'', '(', ')', '*', '+',
+            ',', ';', '=', ':', '@',
+        );
 
-        $encodedAllowedSymbols = array_map(function ($symbol) {
+        $encodedSymbols = array_map(function ($symbol) {
             return urlencode($symbol);
-        }, $allowedSymbols);
+        }, $rawSymbols);
 
-        return str_replace($encodedAllowedSymbols, $allowedSymbols, rawurlencode($value));
+        return str_replace(
+            $encodedSymbols,
+            $rawSymbols,
+            rawurlencode($value)
+        );
     }
 
     /**

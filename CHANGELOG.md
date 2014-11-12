@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
-## 3.2.0 - XXXX-XX-XX
+## 3.2.0 - 2014-11-12
 
 ### Added
 - adding the following methods to `League\Url\AbstractUrl`
@@ -14,7 +14,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Nothing
 
 ### Fixed
-- `League\Url\Components\Fragment::__toString` encoding symbos according to [RFC3986](http://tools.ietf.org/html/rfc3986#section-3.5)
+- `League\Url\Components\Fragment::__toString` encoding symbols according to [RFC3986](http://tools.ietf.org/html/rfc3986#section-3.5)
 
 ### Remove
 - Nothing
@@ -37,7 +37,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Nothing
 
 ### Security
-- Bug Fixed `detectDelimiterList`
+- Nothing
 
 ## 3.1.0 - 2014-07-10
 
@@ -47,8 +47,8 @@ All Notable changes to `League\Url` will be documented in this file
 
 The following methods were added:
 
-* `League\Url\Components\Host::toAscii`
-* `League\Url\Components\Host::toUnicode` as an alias of `League\Url\Components\Host::__toString`
+- `League\Url\Components\Host::toAscii`
+- `League\Url\Components\Host::toUnicode` as an alias of `League\Url\Components\Host::__toString`
 
 ### Deprecated
 - Nothing
@@ -60,7 +60,7 @@ The following methods were added:
 - Nothing
 
 ### Security
-- Bug Fixed `detectDelimiterList`
+- Nothing
 
 ## 3.0.1 - 2014-06-31
 

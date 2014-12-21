@@ -2,6 +2,20 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## 4.X - XXXX-XX-XX
+
+### Added
+- Nothing
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Remove
+- Support for PHP 5.3
+
 ## 3.2.0 - 2014-11-12
 
 ### Added

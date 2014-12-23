@@ -183,12 +183,19 @@ class AbstractUrlTest extends PHPUnit_Framework_TestCase
             'https://login:pass@secure.example.com:443/test/query.php?godzilla=monster'
         );
 
-        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getRelativeUrl());
-        $this->assertSame('../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_internal_link));
-        $this->assertSame('../../toto.php', $url_internal_link->getRelativeUrl($url));
-        $this->assertSame($url->__toString(), $url->getRelativeUrl($url_external_link));
-        $this->assertSame('../../test/query.php?kingkong=toto#doc3', $url->getRelativeUrl($url_similar));
-        $this->assertSame('?kingkong=toto#doc3', $url->getRelativeUrl($url_same_path));
+        $this->assertSame('/test/query.php?kingkong=toto#doc3', $url->getUrl());
+        $this->assertSame('../test/query.php?kingkong=toto#doc3', $url->getUrl($url_internal_link));
+        $this->assertSame('../../toto.php', $url_internal_link->getUrl($url));
+        $this->assertSame($url->__toString(), $url->getUrl($url_external_link));
+        $this->assertSame('../../test/query.php?kingkong=toto#doc3', $url->getUrl($url_similar));
+        $this->assertSame('?kingkong=toto#doc3', $url->getUrl($url_same_path));
+    }
+
+    public function testToArray()
+    {
+        $url1 = Url::createFromUrl('https://toto.com:443/toto.php');
+        $url2 = UrlImmutable::createFromUrl('https://toto.com:443/toto.php');
+        $this->assertSame($url1->toArray(), $url2->toArray());
     }
 
     public function testSameValueAs()

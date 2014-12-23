@@ -3,7 +3,7 @@
 namespace League\Url\Test\Components;
 
 use ArrayIterator;
-use League\Url\Components\Host;
+use League\Url\Host;
 use PHPUnit_Framework_TestCase;
 
 /**

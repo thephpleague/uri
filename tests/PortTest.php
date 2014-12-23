@@ -2,7 +2,7 @@
 
 namespace League\Url\Test\Components;
 
-use League\Url\Components\Port;
+use League\Url\Port;
 use PHPUnit_Framework_TestCase;
 
 /**

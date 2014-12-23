@@ -12,14 +12,6 @@
 */
 namespace League\Url;
 
-use League\Url\Components\Fragment;
-use League\Url\Components\Host;
-use League\Url\Components\Pass;
-use League\Url\Components\Path;
-use League\Url\Components\Port;
-use League\Url\Components\Query;
-use League\Url\Components\Scheme;
-use League\Url\Components\User;
 use League\Url\Interfaces\UrlInterface;
 use RuntimeException;
 
@@ -34,56 +26,56 @@ abstract class AbstractUrl
     /**
     * Scheme
     *
-    * @var \League\Url\Components\Scheme
+    * @var \League\Url\Scheme
     */
     protected $scheme;
 
     /**
     * User
     *
-    * @var \League\Url\Components\User
+    * @var \League\Url\User
     */
     protected $user;
 
     /**
     * Pass
     *
-    * @var \League\Url\Components\Pass
+    * @var \League\Url\Pass
     */
     protected $pass;
 
     /**
      * Host
      *
-     * @var \League\Url\Components\Host
+     * @var \League\Url\Host
      */
     protected $host;
 
     /**
      * Port
      *
-     *@var \League\Url\Components\Port
+     *@var \League\Url\Port
      */
     protected $port;
 
     /**
      * Path
      *
-     * @var \League\Url\Components\Path
+     * @var \League\Url\Path
      */
     protected $path;
 
     /**
      * Query
      *
-     * @var \League\Url\Components\Query
+     * @var \League\Url\Query
      */
     protected $query;
 
     /**
      * Fragment
      *
-     * @var \League\Url\Components\Fragment
+     * @var \League\Url\Fragment
      */
     protected $fragment;
 
@@ -100,7 +92,7 @@ abstract class AbstractUrl
      */
     public function __toString()
     {
-        $url = $this->getBaseUrl().$this->getRelativeUrl();
+        $url = $this->getBaseUrl().$this->getUrl();
         if ('/' == $url) {
             return '';
         }
@@ -109,9 +101,28 @@ abstract class AbstractUrl
     }
 
     /**
+     * Array representation of an URL
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'scheme' => $this->scheme->get(),
+            'user' => $this->user->get(),
+            'pass' => $this->pass->get(),
+            'host' => $this->host->get(),
+            'port' => $this->port->get(),
+            'path' => $this->path->get(),
+            'query' => $this->query->get(),
+            'fragment' => $this->fragment->get(),
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getRelativeUrl(UrlInterface $ref_url = null)
+    public function getUrl(UrlInterface $ref_url = null)
     {
         if (is_null($ref_url)) {
             return $this->path->getUriComponent()
@@ -121,7 +132,7 @@ abstract class AbstractUrl
             return $this->__toString();
         }
 
-        return $this->path->getRelativePath($ref_url->getPath())
+        return $this->path->relativeTo($ref_url->getPath())
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

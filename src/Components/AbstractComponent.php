@@ -13,7 +13,6 @@
 namespace League\Url\Components;
 
 use League\Url\Interfaces\ComponentInterface;
-use InvalidArgumentException;
 
 /**
  *  A class to manipulate URL string-like component
@@ -21,7 +20,7 @@ use InvalidArgumentException;
  *  @package League.url
  *  @since  3.0.0
  */
-abstract class AbstractComponent implements ComponentInterface
+abstract class AbstractComponent
 {
     /**
      * The component data
@@ -45,7 +44,13 @@ abstract class AbstractComponent implements ComponentInterface
      */
     public function set($data)
     {
-        $this->data = $this->validate($data);
+        if (is_null($data)) {
+            $this->data = $data;
+
+            return;
+        }
+        $data = filter_var((string) $data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
+        $this->data = trim($data);
     }
 
     /**
@@ -66,46 +71,6 @@ abstract class AbstractComponent implements ComponentInterface
     public function __toString()
     {
         return str_replace(null, '', $this->get());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * Validate a component
-     *
-     * @param mixed $data the component value to be validate
-     *
-     * @return string|null
-     *
-     * @throws InvalidArgumentException If The data is invalid
-     */
-    protected function validate($data)
-    {
-        return $this->sanitizeComponent($data);
-    }
-
-    /**
-     * Sanitize a string component
-     *
-     * @param mixed $str
-     *
-     * @return string|null
-     */
-    protected function sanitizeComponent($str)
-    {
-        if (is_null($str)) {
-            return $str;
-        }
-        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
-        $str = trim($str);
-
-        return $str;
     }
 
     /**

@@ -13,7 +13,6 @@
 namespace League\Url\Components;
 
 use ArrayAccess;
-use League\Url\Interfaces\ComponentInterface;
 use League\Url\Interfaces\QueryInterface;
 use RuntimeException;
 
@@ -23,7 +22,7 @@ use RuntimeException;
  *  @package League.url
  *  @since  1.0.0
  */
-class Query extends AbstractArray implements QueryInterface, ArrayAccess
+class Query extends AbstractContainer implements QueryInterface, ArrayAccess
 {
     /**
      * The Constructor
@@ -59,11 +58,7 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
             return null;
         }
 
-        return str_replace(
-            array('%E7', '+'),
-            array('~', '%20'),
-            http_build_query($this->data, '', '&')
-        );
+        return str_replace(['%E7', '+'], ['~', '%20'], http_build_query($this->data, '', '&'));
     }
 
     /**
@@ -72,14 +67,6 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     public function __toString()
     {
         return (string) $this->get();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(ComponentInterface $component)
-    {
-        return $this->__toString() == $component->__toString();
     }
 
     /**
@@ -110,7 +97,7 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
     {
         return $this->convertToArray($data, function ($str) {
             if ('' == $str) {
-                return array();
+                return [];
             }
             if ('?' == $str[0]) {
                 $str = substr($str, 1);
@@ -122,14 +109,69 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
             }, $str);
             parse_str($str, $arr);
 
-            //hexbin does not work in PHP 5.3
-            $arr = array_combine(array_map(function ($value) {
-                return pack('H*', $value);
-
-            }, array_keys($arr)), $arr);
-
-            return $arr;
+            return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
         });
+    }
+
+
+    /**
+     * Return a Query Parameter
+     *
+     * @param string $key     the query parameter key
+     * @param mixed  $default the query parameter default value
+     *
+     * @return mixed
+     */
+    public function getParameter($key, $default = null)
+    {
+        $res = $this->offsetGet($key);
+        if (is_null($res)) {
+            return $default;
+        }
+
+        return $res;
+    }
+
+    /**
+     * Query Parameter Setter
+     *
+     * @param string $key   the query parameter key
+     * @param mixed  $value the query parameter value
+     */
+    public function setParameter($key, $value)
+    {
+        if (is_null($key)) {
+            throw new RuntimeException('offset can not be null');
+        }
+        $this->modify([$key => $value]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->data[$offset]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->data[$offset]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
+        }
+
+        return null;
     }
 
     /**
@@ -137,9 +179,6 @@ class Query extends AbstractArray implements QueryInterface, ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            throw new RuntimeException('offset can not be null');
-        }
-        $this->modify(array($offset => $value));
+        return $this->setParameter($offset, $value);
     }
 }

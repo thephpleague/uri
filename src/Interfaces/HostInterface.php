@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.1.0
  */
-interface HostInterface extends SegmentInterface
+interface HostInterface extends ComponentSegmentInterface
 {
     /**
      * Return the unicode string representation of a hostname

@@ -12,27 +12,29 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\ComponentInterface;
+
 /**
  *  A class to manipulate URL Fragment component
  *
  *  @package League.url
  *  @since  1.0.0
  */
-class Fragment extends AbstractComponent
+class Fragment extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}
      */
     public function __toString()
     {
-        $value = parent::__toString();
+        $value = str_replace(null, '', $this->get());
 
         // according to http://tools.ietf.org/html/rfc3986#section-3.5
-        $rawSymbols = array(
+        $rawSymbols = [
             '/', '?', '-', '.', '_', '~', '!',
             '$', '&', '\'', '(', ')', '*', '+',
             ',', ';', '=', ':', '@',
-        );
+        ];
 
         $encodedSymbols = array_map(function ($symbol) {
             return urlencode($symbol);

@@ -13,13 +13,13 @@
 namespace League\Url;
 
 use League\Url\Components\Fragment;
-use League\Url\Interfaces\HostInterface;
 use League\Url\Components\Pass;
-use League\Url\Interfaces\PathInterface;
 use League\Url\Components\Port;
-use League\Url\Interfaces\QueryInterface;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
+use League\Url\Interfaces\HostInterface;
+use League\Url\Interfaces\PathInterface;
+use League\Url\Interfaces\QueryInterface;
 
 /**
  * A Immutable Value Object class to manipulate URLs

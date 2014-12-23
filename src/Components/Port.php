@@ -12,6 +12,7 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\ComponentInterface;
 use RuntimeException;
 
 /**
@@ -20,27 +21,27 @@ use RuntimeException;
  *  @package League.url
  *  @since  1.0.0
  */
-class Port extends AbstractComponent
+class Port extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected function validate($data)
+    public function set($data)
     {
-        $data = parent::validate($data);
         if (is_null($data)) {
-            return $data;
+            $this->data = null;
+            return;
         }
 
-        $data = filter_var($data, FILTER_VALIDATE_INT, array(
-            'options' => array('min_range' => 1),
-        ));
+        $data = (string) $data;
+        $data = trim($data);
+        $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 
         if (! $data) {
             throw new RuntimeException('A port must be a valid positive integer');
         }
 
-        return (int) $data;
+        $this->data = (int) $data;
     }
 
     /**

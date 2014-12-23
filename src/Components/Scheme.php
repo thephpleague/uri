@@ -12,7 +12,7 @@
 */
 namespace League\Url\Components;
 
-use League\Url\UrlConstants;
+use League\Url\Interfaces\ComponentInterface;
 use RuntimeException;
 
 /**
@@ -21,27 +21,26 @@ use RuntimeException;
  *  @package League.url
  *  @since  1.0.0
  */
-class Scheme extends AbstractComponent
+class Scheme extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected function validate($data)
+    public function set($data)
     {
-        $data = parent::validate($data);
         if (is_null($data)) {
-            return $data;
+            $this->data = null;
+            return;
         }
 
-        $data = filter_var($data, FILTER_VALIDATE_REGEXP, array(
-            'options' => array('regexp' => '/^(http|ftp|ws)(s?)$/i'),
-        ));
-
+        $data = filter_var((string) $data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
+        $data = trim($data);
+        $data = filter_var($data, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/^[a-z][a-z0-9+-.]+$/i']]);
         if (! $data) {
             throw new RuntimeException('This class only deals with http URL');
         }
 
-        return strtolower($data);
+        $this->data = strtolower($data);
     }
 
     /**

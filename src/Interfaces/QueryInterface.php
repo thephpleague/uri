@@ -18,14 +18,44 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.0.0
  */
-interface QueryInterface extends ComponentArrayInterface
+interface QueryInterface extends ComponentInterface
 {
     /**
-     * modify/update a Query component
+     * return a array representation of the data
      *
-     * @param mixed $data the data can be a array, a Traversable or a string
+     * @return array
+     */
+    public function toArray();
+
+    /**
+     * return the array keys
      *
-     * @return void
+     * @return array
+     */
+    public function keys();
+
+    /**
+     * Query Parameter setter using an array
+     *
+     * @param array $data
      */
     public function modify($data);
+
+    /**
+     * Return a Parameter Parameter
+     *
+     * @param string $key     the query parameter key
+     * @param mixed  $default the query parameter default value
+     *
+     * @return mixed
+     */
+    public function getParameter($key, $default = null);
+
+    /**
+     * Parameter Parameter Setter
+     *
+     * @param string $key   the query parameter key
+     * @param mixed  $value the query parameter value
+     */
+    public function setParameter($key, $value);
 }

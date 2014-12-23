@@ -18,8 +18,22 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.0.0
  */
-interface SegmentInterface extends ComponentArrayInterface
+interface ComponentSegmentInterface extends ComponentInterface
 {
+    /**
+     * Return the component as an array
+     *
+     * @return array
+     */
+    public function toArray();
+
+    /**
+     * Return all the keys or a subset of the keys of an array
+     *
+     * @return array
+     */
+    public function keys();
+
     /**
      * Append data to the component
      *

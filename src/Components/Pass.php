@@ -12,13 +12,15 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\ComponentInterface;
+
 /**
  *  A class to manipulate URL Pass component
  *
  *  @package League.url
  *  @since  1.0.0
  */
-class Pass extends AbstractComponent
+class Pass extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}

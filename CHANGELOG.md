@@ -5,16 +5,26 @@ All Notable changes to `League\Url` will be documented in this file
 ## 4.X - XXXX-XX-XX
 
 ### Added
-- Nothing
+- `UrlInterface::getUrl` as a better remplacement to `UrlInterface::getRelativeUrl`
+- `HostInterface` now supports IPv4/IPv6 style hostname
+- `PathInterface::relativeTo` replace `PathInterface::getRelativePath`
+- `ComponentInterface::sameValueAs`
+- `QueryInterface::getParameter`, `QueryInterface::setParameter`
+- `ComponentSegmentInterface::getSegment`
 
 ### Deprecated
 - Nothing
 
 ### Fixed
-- Nothing
+- For clarity:
+    - Interfaces are moved to their own directory
+    - The Component subnamespace is removed
 
 ### Remove
 - Support for PHP 5.3
+- `UrlInterface::getRelativeUrl`
+- `PathInterface::getRelativePath`
+- `HostInterface` and `PathInterface` no longer implements the `ArrayAccess` interface
 
 ## 3.2.0 - 2014-11-12
 

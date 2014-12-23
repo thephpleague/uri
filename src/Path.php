@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.2.0
+* @version 4.0.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -22,7 +22,10 @@ use League\Url\Interfaces\PathInterface;
  *  @package League.url
  *  @since  1.0.0
  */
-class Path extends AbstractSegment implements Countable, IteratorAggregate, PathInterface
+class Path extends AbstractSegment implements
+    Countable,
+    IteratorAggregate,
+    PathInterface
 {
     /**
      * {@inheritdoc}

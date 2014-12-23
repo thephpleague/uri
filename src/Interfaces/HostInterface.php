@@ -21,6 +21,27 @@ namespace League\Url\Interfaces;
 interface HostInterface extends ComponentSegmentInterface
 {
     /**
+     * Tell wether the host is an IPV4 IP
+     *
+     * @return boolean
+     */
+    public function isIpv4();
+
+    /**
+     * Tell wether the host is an IPV6 IP
+     *
+     * @return boolean
+     */
+    public function isIpv6();
+
+    /**
+     * Tell wether the host is an IP
+     *
+     * @return boolean
+     */
+    public function isIp();
+
+    /**
      * Return the unicode string representation of a hostname
      *
      * @return string

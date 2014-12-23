@@ -12,8 +12,11 @@
 */
 namespace League\Url\Components;
 
-use RuntimeException;
+use Countable;
+use IteratorAggregate;
 use League\Url\Interfaces\HostInterface;
+use LogicException;
+use RuntimeException;
 use True\Punycode;
 
 /**
@@ -22,12 +25,16 @@ use True\Punycode;
  *  @package League.url
  *  @since  1.0.0
  */
-class Host extends AbstractSegment implements HostInterface
+class Host extends AbstractSegment implements Countable, HostInterface, IteratorAggregate
 {
     /**
      * {@inheritdoc}
      */
     protected $delimiter = '.';
+
+    protected $host_as_ipv6 = false;
+
+    protected $host_as_ipv4 = false;
 
     /**
      * Punycode Algorithm Object
@@ -76,6 +83,21 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
+    public function set($data)
+    {
+        $this->setHostAsIp($data);
+        if ($this->isIp()) {
+            return;
+        }
+
+        $this->data = array_filter($this->validate($data), function ($value) {
+            return ! is_null($value);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get()
     {
         $res = [];
@@ -109,6 +131,13 @@ class Host extends AbstractSegment implements HostInterface
         return $this->__toString();
     }
 
+    /**
+     * Validate Host label length
+     *
+     * @param  array $data Host labels
+     *
+     * @return boolean
+     */
     protected function isValidHostLength(array $data)
     {
         $res = array_filter($data, function ($label) {
@@ -118,6 +147,13 @@ class Host extends AbstractSegment implements HostInterface
         return 0 == count($res);
     }
 
+    /**
+     * Validated the Host Label Pattern
+     *
+     * @param  array $data Host segment
+     *
+     * @return boolean
+     */
     protected function isValidHostPattern(array $data)
     {
         $data = explode(
@@ -179,9 +215,100 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
+    public function isIpv4()
+    {
+        return $this->host_as_ipv4;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIpv6()
+    {
+        return $this->host_as_ipv6;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIp()
+    {
+        return $this->host_as_ipv6 || $this->host_as_ipv4;
+    }
+
+    /**
+     * Set the Host as a IP Address
+     *
+     * @param string $str the raw Host string
+     */
+    protected function setHostAsIp($str)
+    {
+        $this->host_as_ipv4 = false;
+        $this->host_as_ipv6 = false;
+        if (! self::isStringable($str)) {
+            return;
+        }
+
+        $str = (string) $str;
+        $str = trim($str);
+        if ('[' == $str[0] && ']' == $str[strlen($str)-1]) {
+            $str = substr($str, 1, -1);
+        }
+
+        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $this->host_as_ipv4 = true;
+            $this->host_as_ipv6 = false;
+            $this->data = [$str];
+        } elseif (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $this->host_as_ipv4 = false;
+            $this->host_as_ipv6 = true;
+            $this->data = [$str];
+        }
+    }
+
+    /**
+     * Assert the nature of the Host IP or Not
+     *
+     * @throws LogicException If the Host is a valid IP address
+     */
+    protected function assertHostAsIp()
+    {
+        if ($this->isIp()) {
+            throw new LogicException('You can not modify a IP based host');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function append($data, $whence = null, $whence_index = null)
+    {
+        $this->assertHostAsIp();
+
+        return parent::append($data, $whence, $whence_index);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prepend($data, $whence = null, $whence_index = null)
+    {
+        $this->assertHostAsIp();
+
+        return parent::prepend($data, $whence, $whence_index);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
-        return $this->__toString();
+        $str = $this->__toString();
+        if ($this->host_as_ipv6) {
+            return '['.$str.']';
+        }
+
+        return $str;
     }
 
     /**

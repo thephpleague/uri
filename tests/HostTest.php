@@ -107,7 +107,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testHostSetterWithArrayIterator()
     {
         $host = new Host('master.example.com');
-        $host->set(new ArrayIterator(array('shop', 'premium', 'com')));
+        $host->set(new ArrayIterator(['shop', 'premium', 'com']));
         $this->assertSame('shop.premium.com', $host->get());
     }
 
@@ -144,20 +144,11 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     public function hostnamesProvider()
     {
-        return array(
-            array(
-                'مثال.إختبار',
-                'xn--mgbh0fb.xn--kgbechtv',
-            ),
-            array(
-                '스타벅스코리아.com',
-                'xn--oy2b35ckwhba574atvuzkc.com',
-            ),
-            array(
-                'президент.рф',
-                'xn--d1abbgf6aiiy.xn--p1ai',
-            ),
-        );
+        return [
+            ['مثال.إختبار', 'xn--mgbh0fb.xn--kgbechtv',],
+            ['스타벅스코리아.com', 'xn--oy2b35ckwhba574atvuzkc.com',],
+            ['президент.рф', 'xn--d1abbgf6aiiy.xn--p1ai',],
+        ];
     }
 
     /**

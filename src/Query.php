@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.2.0
+* @version 4.0.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -24,7 +24,11 @@ use RuntimeException;
  *  @package League.url
  *  @since  1.0.0
  */
-class Query extends AbstractContainer implements ArrayAccess, Countable, IteratorAggregate, QueryInterface
+class Query extends AbstractContainer implements
+    ArrayAccess,
+    Countable,
+    IteratorAggregate,
+    QueryInterface
 {
     /**
      * The Constructor

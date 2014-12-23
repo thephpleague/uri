@@ -4,7 +4,7 @@
 *
 * @license http://opensource.org/licenses/MIT
 * @link https://github.com/thephpleague/url/
-* @version 3.2.0
+* @version 4.0.0
 * @package League.url
 *
 * For the full copyright and license information, please view the LICENSE
@@ -25,7 +25,10 @@ use True\Punycode;
  *  @package League.url
  *  @since  1.0.0
  */
-class Host extends AbstractSegment implements Countable, HostInterface, IteratorAggregate
+class Host extends AbstractSegment implements
+    Countable,
+    HostInterface,
+    IteratorAggregate
 {
     /**
      * {@inheritdoc}

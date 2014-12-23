@@ -64,4 +64,14 @@ interface ComponentSegmentInterface extends ComponentInterface
      * @return void
      */
     public function remove($data);
+
+    /**
+     * Return a Segment Parameter
+     *
+     * @param integer $key     the segment index
+     * @param mixed   $default the segment default value
+     *
+     * @return string
+     */
+    public function getSegment($key, $default = null);
 }

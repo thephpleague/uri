@@ -50,6 +50,19 @@ abstract class AbstractSegment extends AbstractContainer
 
     /**
      * {@inheritdoc}
+     */
+    public function getSegment($key, $default = null)
+    {
+        $key = filter_var($key, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
+        if (false === $key || ! isset($this->data[$key])) {
+            return $default;
+        }
+
+        return $this->data[$key];
+    }
+
+    /**
+     * {@inheritdoc}
      * @param string|array|\Traversable $data the data
      */
     public function remove($data)

@@ -153,4 +153,12 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         new Host(array_fill(0, 23, 'banana-slip'));
     }
+
+    public function testGetSegment()
+    {
+        $host = new Host('master.example.com');
+        $this->assertSame('master', $host->getSegment(0));
+        $this->assertNull($host->getSegment(23));
+        $this->assertSame('toto', $host->getSegment(23, 'toto'));
+    }
 }

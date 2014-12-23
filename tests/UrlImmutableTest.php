@@ -2,7 +2,6 @@
 
 namespace League\Url\Test;
 
-use League\Url\Url;
 use League\Url\UrlImmutable;
 use PHPUnit_Framework_TestCase;
 

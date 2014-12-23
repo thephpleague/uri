@@ -29,7 +29,7 @@ use RuntimeException;
  *  @package League.url
  *  @since  3.0.0
  */
-abstract class AbstractUrl implements UrlInterface
+abstract class AbstractUrl
 {
     /**
     * Scheme
@@ -86,6 +86,14 @@ abstract class AbstractUrl implements UrlInterface
      * @var \League\Url\Components\Fragment
      */
     protected $fragment;
+
+    /**
+     * The constructor
+     */
+    protected function __construct()
+    {
+
+    }
 
     /**
      * {@inheritdoc}
@@ -201,16 +209,17 @@ abstract class AbstractUrl implements UrlInterface
             'fragment' => null,
         ], $components);
 
-        return new static(
-            new Scheme($components['scheme']),
-            new User($components['user']),
-            new Pass($components['pass']),
-            new Host($components['host']),
-            new Port($components['port']),
-            new Path($components['path']),
-            new Query($components['query']),
-            new Fragment($components['fragment'])
-        );
+        $url = new static;
+        $url->scheme = new Scheme($components['scheme']);
+        $url->user = new User($components['user']);
+        $url->pass = new Pass($components['pass']);
+        $url->host = new Host($components['host']);
+        $url->port = new Port($components['port']);
+        $url->path = new Path($components['path']);
+        $url->query = new Query($components['query']);
+        $url->fragment = new Fragment($components['fragment']);
+
+        return $url;
     }
 
     protected static function sanitizeUrl($url)

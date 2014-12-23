@@ -70,7 +70,10 @@ abstract class AbstractSegment extends AbstractContainer
         $data = $this->fetchRemainingSegment($this->data, $data);
         if (! is_null($data)) {
             $this->set($data);
+
+            return true;
         }
+        return false;
     }
 
     /**

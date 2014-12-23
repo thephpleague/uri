@@ -13,8 +13,6 @@
 namespace League\Url\Components;
 
 use ArrayIterator;
-use Countable;
-use IteratorAggregate;
 use League\Url\Interfaces\ComponentInterface;
 use RuntimeException;
 use Traversable;
@@ -25,7 +23,7 @@ use Traversable;
  *  @package League.url
  *  @since  3.0.0
  */
-abstract class AbstractContainer implements IteratorAggregate, Countable
+abstract class AbstractContainer
 {
     /**
      * container holder

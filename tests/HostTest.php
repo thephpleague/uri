@@ -23,6 +23,14 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame('127.0.0.1', $host->getUriComponent());
     }
 
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testIpv6failed()
+    {
+        new Host('[127.0.0.1]');
+    }
+
     public function testIpv6()
     {
         $expected = 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329';

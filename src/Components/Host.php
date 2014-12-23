@@ -13,6 +13,7 @@
 namespace League\Url\Components;
 
 use RuntimeException;
+use League\Url\Interfaces\HostInterface;
 use True\Punycode;
 
 /**

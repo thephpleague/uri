@@ -10,23 +10,27 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Components;
+namespace League\Url\Interfaces;
 
 /**
- * A common interface for URL segment like component
+ * A common interface for complex URL components
  *
  *  @package League.url
- *  @since  3.2.0
+ *  @since  3.0.0
  */
-interface PathInterface extends SegmentInterface
+interface ComponentArrayInterface extends ComponentInterface
 {
     /**
-     * return the string representation for a relative path
-     * {@link PathInterface} $path
+     * Return the component as an array
      *
-     * @param PathInterface $reference
-     *
-     * @return string
+     * @return array
      */
-    public function getRelativePath(PathInterface $reference);
+    public function toArray();
+
+    /**
+     * Return all the keys or a subset of the keys of an array
+     *
+     * @return array
+     */
+    public function keys();
 }

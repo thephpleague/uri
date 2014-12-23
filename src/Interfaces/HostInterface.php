@@ -10,27 +10,27 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Components;
+namespace League\Url\Interfaces;
 
 /**
- * A common interface for complex URL components
+ * A common interface for URL segment like component
  *
  *  @package League.url
- *  @since  3.0.0
+ *  @since  3.1.0
  */
-interface ComponentArrayInterface extends ComponentInterface
+interface HostInterface extends SegmentInterface
 {
     /**
-     * Return the component as an array
+     * Return the unicode string representation of a hostname
      *
-     * @return array
+     * @return string
      */
-    public function toArray();
+    public function toUnicode();
 
     /**
-     * Return all the keys or a subset of the keys of an array
+     * Return the ascii string representation of a hostname
      *
-     * @return array
+     * @return string
      */
-    public function keys();
+    public function toAscii();
 }

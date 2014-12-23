@@ -14,6 +14,7 @@ namespace League\Url\Components;
 
 use ArrayAccess;
 use InvalidArgumentException;
+use League\Url\Interfaces\ComponentInterface;
 
 /**
  *  A class to manipulate URL Segment like components

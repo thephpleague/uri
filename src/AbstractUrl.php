@@ -20,6 +20,7 @@ use League\Url\Components\Port;
 use League\Url\Components\Query;
 use League\Url\Components\Scheme;
 use League\Url\Components\User;
+use League\Url\Interfaces\UrlInterface;
 use RuntimeException;
 
 /**
@@ -281,7 +282,11 @@ abstract class AbstractUrl implements UrlInterface
     protected static function fetchServerHost(array $server)
     {
         if (isset($server['HTTP_HOST'])) {
-            return $server['HTTP_HOST'];
+            $header = $server['HTTP_HOST'];
+            if (! preg_match('/(:\d+)$/', $header, $matches)) {
+                return $header;
+            }
+            return substr($header, 0, -strlen($matches[1]));
         } elseif (isset($server['SERVER_ADDR'])) {
             return $server['SERVER_ADDR'];
         }

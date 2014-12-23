@@ -41,6 +41,22 @@ class AbstractUrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame('https://127.0.0.1:23/', $url->__toString());
     }
 
+    public function testCreateFromServerWithHttpHostAndPort()
+    {
+        $server = array(
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTPS' => 'on',
+            'SERVER_PROTOCOL' => 'HTTP',
+            'SERVER_PORT' => 23,
+            'HTTP_HOST' => 'localhost:23',
+        );
+        $url = UrlImmutable::createFromServer($server);
+        $this->assertInstanceof('\League\Url\UrlImmutable', $url);
+        $this->assertSame('https://localhost:23/', $url->__toString());
+    }
+
     /**
      * @expectedException RuntimeException
      */

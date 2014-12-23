@@ -12,6 +12,54 @@ use PHPUnit_Framework_TestCase;
 class HostTest extends PHPUnit_Framework_TestCase
 {
 
+    public function testIpv4()
+    {
+        $host = new Host('127.0.0.1');
+        $this->assertTrue($host->isIp());
+        $this->assertTrue($host->isIpv4());
+        $this->assertFalse($host->isIpv6());
+        $this->assertSame(array(0 => '127.0.0.1'), $host->toArray());
+        $this->assertSame('127.0.0.1', (string) $host);
+        $this->assertSame('127.0.0.1', $host->getUriComponent());
+    }
+
+    public function testIpv6()
+    {
+        $expected = 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329';
+        $host = new Host($expected);
+        $this->assertTrue($host->isIp());
+        $this->assertFalse($host->isIpv4());
+        $this->assertTrue($host->isIpv6());
+        $this->assertSame(array(0 => $expected), $host->toArray());
+        $this->assertSame($expected, (string) $host);
+        $this->assertSame('['.$expected.']', $host->getUriComponent());
+        $this->assertTrue($host->sameValueAs(new Host('['.$expected.']')));
+    }
+
+    /**
+     * @expectedException LogicException
+     */
+    public function testAppendWithIpFailed()
+    {
+        $host = new Host('127.0.0.1');
+        $host->append('foo');
+    }
+
+    /**
+     * @expectedException LogicException
+     */
+    public function testPrependWithIpFailed()
+    {
+        $host = new Host('127.0.0.1');
+        $host->prepend('foo');
+    }
+
+    public function testRemoveWithIpFailed()
+    {
+        $host = new Host('127.0.0.1');
+        $this->assertFalse($host->remove('foo'));
+    }
+
     public function testHostPrepend()
     {
         $host = new Host('secure.example.com');

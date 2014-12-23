@@ -60,11 +60,11 @@ class Query extends AbstractContainer implements
      */
     public function get()
     {
-        if (!$this->data) {
+        if (! $this->data) {
             return null;
         }
 
-        return str_replace(['%E7', '+'], ['~', '%20'], http_build_query($this->data, '', '&'));
+        return http_build_query($this->data, '', '&', PHP_QUERY_RFC3986);
     }
 
     /**

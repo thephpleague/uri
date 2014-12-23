@@ -103,4 +103,13 @@ class PathTest extends PHPUnit_Framework_TestCase
         $path->prepend('foo', 'toto', 1);
         $this->assertSame('/toto/foo/toto/shoky/master', $path->getUriComponent());
     }
+
+
+    public function testGetSegment()
+    {
+        $host = new Path('/toto/le/heros/masson');
+        $this->assertSame('toto', $host->getSegment(0));
+        $this->assertNull($host->getSegment(23));
+        $this->assertSame('foo', $host->getSegment(23, 'foo'));
+    }
 }

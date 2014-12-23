@@ -256,6 +256,13 @@ class Host extends AbstractSegment implements
         $str = trim($str);
         if ('[' == $str[0] && ']' == $str[strlen($str)-1]) {
             $str = substr($str, 1, -1);
+            if (! filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                return false;
+            }
+            $this->host_as_ipv4 = false;
+            $this->host_as_ipv6 = true;
+            $this->data = [$str];
+            return;
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {

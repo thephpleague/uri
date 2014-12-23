@@ -91,13 +91,11 @@ class Path extends AbstractSegment implements
         $nb_common_segment = count($ref_path) - $index;
 
         //let's output the relative path using a new Path object
-        $res = new Path(array_merge(
+        return new Path(array_merge(
             array_fill(0, $nb_common_segment, '..'),
             array_slice($this_path, $index),
             [$filename]
         ));
-
-        return $res->__toString();
     }
 
     /**

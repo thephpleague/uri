@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.2.0
  */
-interface PathInterface extends ComponentSegmentInterface
+interface PathInterface extends SegmentInterface
 {
     /**
      * return the string representation for a relative path

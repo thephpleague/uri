@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.0.0
  */
-interface ComponentSegmentInterface extends ComponentInterface
+interface SegmentInterface extends ComponentInterface
 {
     /**
      * Return the component as an array

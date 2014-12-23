@@ -138,4 +138,13 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query = new Query(array('foo.bar' => 'baz'));
         $this->assertSame('foo.bar=baz', (string) $query);
     }
+
+    public function testSetParameters()
+    {
+        $query = new Query;
+        $query->setParameter('toto', 'leheros');
+        $this->assertSame($query['toto'], $query->getParameter('toto'));
+        $expected = 'bar';
+        $this->assertSame($expected, $query->getParameter('voo', $expected));
+    }
 }

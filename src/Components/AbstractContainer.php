@@ -15,6 +15,7 @@ namespace League\Url\Components;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use League\Url\Interfaces\ComponentInterface;
 use RuntimeException;
 use Traversable;
 
@@ -24,7 +25,7 @@ use Traversable;
  *  @package League.url
  *  @since  3.0.0
  */
-abstract class AbstractArray implements IteratorAggregate, Countable
+abstract class AbstractContainer implements IteratorAggregate, Countable
 {
     /**
      * container holder
@@ -76,47 +77,18 @@ abstract class AbstractArray implements IteratorAggregate, Countable
         return count($this->data, $mode);
     }
 
-    /**
-     * ArrayAccess Interface method
-     *
-     * @param int|string $offset
-     *
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->data[$offset]);
-    }
-
-    /**
-     * ArrayAccess Interface method
-     *
-     * @param int|string $offset
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->data[$offset]);
-    }
-
-    /**
-     * ArrayAccess Interface method
-     *
-     * @param int|string $offset
-     *
-     * @return null
-     */
-    public function offsetGet($offset)
-    {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
-        }
-
-        return null;
-    }
 
     public static function isStringable($data)
     {
         return is_string($data) || (is_object($data)) && (method_exists($data, '__toString'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(ComponentInterface $component)
+    {
+        return $this->__toString() === $component->__toString();
     }
 
     /**

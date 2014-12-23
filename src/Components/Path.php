@@ -32,7 +32,7 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function get()
     {
-        $res = array();
+        $res = [];
         foreach (array_values($this->data) as $value) {
             $res[] = rawurlencode($value);
         }
@@ -49,6 +49,14 @@ class Path extends AbstractSegment implements PathInterface
     public function getUriComponent()
     {
         return '/'.$this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return (string) $this->get();
     }
 
     /**
@@ -79,7 +87,7 @@ class Path extends AbstractSegment implements PathInterface
         $res = new Path(array_merge(
             array_fill(0, $nb_common_segment, '..'),
             array_slice($this_path, $index),
-            array($filename)
+            [$filename]
         ));
 
         return $res->__toString();

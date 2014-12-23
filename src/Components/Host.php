@@ -78,7 +78,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function get()
     {
-        $res = array();
+        $res = [];
         foreach (array_values($this->data) as $value) {
             $res[] = $this->punycode->decode($value);
         }
@@ -130,7 +130,7 @@ class Host extends AbstractSegment implements HostInterface
         return 0 == count($res);
     }
 
-    protected function isValidHostLabels(array $data = array())
+    protected function isValidHostLabels(array $data = [])
     {
         $labels       = array_merge($this->data, $data);
         $count_labels = count($labels);
@@ -174,5 +174,21 @@ class Host extends AbstractSegment implements HostInterface
         $this->restoreInternalEncoding();
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return (string) $this->get();
     }
 }

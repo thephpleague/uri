@@ -12,13 +12,21 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\ComponentInterface;
+
 /**
  *  A class to manipulate URL User component
  *
  *  @package League.url
  *  @since  1.0.0
  */
-class User extends AbstractComponent
+class User extends AbstractComponent implements ComponentInterface
 {
-    //
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
 }

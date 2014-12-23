@@ -12,9 +12,7 @@
 */
 namespace League\Url\Components;
 
-use ArrayAccess;
 use InvalidArgumentException;
-use League\Url\Interfaces\ComponentInterface;
 
 /**
  *  A class to manipulate URL Segment like components
@@ -22,7 +20,7 @@ use League\Url\Interfaces\ComponentInterface;
  *  @package League.url
  *  @since  3.0.0
  */
-abstract class AbstractSegment extends AbstractArray implements ArrayAccess
+abstract class AbstractSegment extends AbstractContainer
 {
     /**
      * segment delimiter
@@ -52,22 +50,6 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 
     /**
      * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return (string) $this->get();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
      * @param string|array|\Traversable $data the data
      */
     public function remove($data)
@@ -76,14 +58,6 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
         if (! is_null($data)) {
             $this->set($data);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(ComponentInterface $component)
-    {
-        return $this->__toString() == $component->__toString();
     }
 
     /**
@@ -104,33 +78,10 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
             return $str;
         }
 
-        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, array('flags' => FILTER_FLAG_STRIP_LOW));
+        $str = filter_var((string) $str, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
         $str = trim($str);
 
         return $str;
-    }
-
-    /**
-     * ArrayAccess Interface method
-     *
-     * @param int|string $offset
-     * @param mixed      $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        $data = $this->data;
-        if (is_null($offset)) {
-            $data[] = $value;
-            $this->set($data);
-
-            return;
-        }
-        $offset = filter_var($offset, FILTER_VALIDATE_INT, array('min_range' => 0));
-        if (false === $offset) {
-            throw new InvalidArgumentException('Offset must be an integer');
-        }
-        $data[$offset] = $value;
-        $this->set($data);
     }
 
     /**
@@ -203,7 +154,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
 
         return $this->convertToArray($data, function ($str) use ($delimiter) {
             if ('' == $str) {
-                return array();
+                return [];
             }
             if ($delimiter == $str[0]) {
                 $str = substr($str, 1);
@@ -225,7 +176,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
      */
     protected function appendSegment(array $left, array $value, $whence = null, $whence_index = null)
     {
-        $right = array();
+        $right = [];
         if (null !== $whence && count($found = array_keys($left, $whence))) {
             array_reverse($found);
             $index = $found[0];
@@ -251,7 +202,7 @@ abstract class AbstractSegment extends AbstractArray implements ArrayAccess
      */
     protected function prependSegment(array $right, array $value, $whence = null, $whence_index = null)
     {
-        $left = array();
+        $left = [];
         if (null !== $whence && count($found = array_keys($right, $whence))) {
             $index = $found[0];
             if (array_key_exists($whence_index, $found)) {

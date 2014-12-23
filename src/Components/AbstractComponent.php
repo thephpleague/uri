@@ -12,6 +12,7 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\ComponentInterface;
 use InvalidArgumentException;
 
 /**

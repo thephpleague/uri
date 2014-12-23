@@ -13,7 +13,6 @@
 namespace League\Url\Components;
 
 use ArrayIterator;
-use Closure;
 use Countable;
 use IteratorAggregate;
 use RuntimeException;
@@ -32,7 +31,7 @@ abstract class AbstractArray implements IteratorAggregate, Countable
      *
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * {@inheritdoc}
@@ -124,17 +123,17 @@ abstract class AbstractArray implements IteratorAggregate, Countable
      * convert a given data into an array
      *
      * @param mixed    $data     the data to insert
-     * @param \Closure $callback a callable function to be called to parse
+     * @param callable $callback a callable function to be called to parse
      *                           a given string into the corresponding component
      *
      * @return array
      *
      * @throws \RuntimeException if the data is not valid
      */
-    protected function convertToArray($data, Closure $callback)
+    protected function convertToArray($data, callable $callback)
     {
         if (is_null($data)) {
-            return array();
+            return [];
         } elseif ($data instanceof Traversable) {
             return iterator_to_array($data);
         } elseif (self::isStringable($data)) {

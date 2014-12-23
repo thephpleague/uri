@@ -12,6 +12,8 @@
 */
 namespace League\Url\Components;
 
+use League\Url\Interfaces\PathInterface;
+
 /**
  *  A class to manipulate URL Path component
  *

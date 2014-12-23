@@ -13,6 +13,8 @@
 namespace League\Url\Components;
 
 use ArrayAccess;
+use League\Url\Interfaces\ComponentInterface;
+use League\Url\Interfaces\QueryInterface;
 use RuntimeException;
 
 /**

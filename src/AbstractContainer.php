@@ -35,6 +35,11 @@ abstract class AbstractContainer
     /**
      * {@inheritdoc}
      */
+    abstract public function __toString();
+
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->data;

@@ -12,6 +12,8 @@
 */
 namespace League\Url\Components;
 
+use Countable;
+use IteratorAggregate;
 use League\Url\Interfaces\PathInterface;
 
 /**
@@ -20,7 +22,7 @@ use League\Url\Interfaces\PathInterface;
  *  @package League.url
  *  @since  1.0.0
  */
-class Path extends AbstractSegment implements PathInterface
+class Path extends AbstractSegment implements Countable, IteratorAggregate, PathInterface
 {
     /**
      * {@inheritdoc}

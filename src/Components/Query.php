@@ -13,6 +13,8 @@
 namespace League\Url\Components;
 
 use ArrayAccess;
+use Countable;
+use IteratorAggregate;
 use League\Url\Interfaces\QueryInterface;
 use RuntimeException;
 
@@ -22,7 +24,7 @@ use RuntimeException;
  *  @package League.url
  *  @since  1.0.0
  */
-class Query extends AbstractContainer implements QueryInterface, ArrayAccess
+class Query extends AbstractContainer implements ArrayAccess, Countable, IteratorAggregate, QueryInterface
 {
     /**
      * The Constructor

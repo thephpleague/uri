@@ -12,14 +12,7 @@
 */
 namespace League\Url;
 
-use League\Url\Components\Fragment;
-use League\Url\Components\Pass;
-use League\Url\Components\Port;
-use League\Url\Components\Scheme;
-use League\Url\Components\User;
-use League\Url\Interfaces\HostInterface;
-use League\Url\Interfaces\PathInterface;
-use League\Url\Interfaces\QueryInterface;
+use League\Url\Interfaces\UrlInterface;
 
 /**
  * A class to manipulate URLs
@@ -27,39 +20,8 @@ use League\Url\Interfaces\QueryInterface;
  *  @package League.url
  *  @since  1.0.0
  */
-class Url extends AbstractUrl
+class Url extends AbstractUrl implements UrlInterface
 {
-    /**
-     * The Constructor
-     * @param Scheme         $scheme   The URL Scheme component
-     * @param User           $user     The URL User component
-     * @param Pass           $pass     The URL Pass component
-     * @param HostInterface  $host     The URL Host component
-     * @param Port           $port     The URL Port component
-     * @param PathInterface  $path     The URL Path component
-     * @param QueryInterface $query    The URL Query component
-     * @param Fragment       $fragment The URL Fragment component
-     */
-    protected function __construct(
-        Scheme $scheme,
-        User $user,
-        Pass $pass,
-        HostInterface $host,
-        Port $port,
-        PathInterface $path,
-        QueryInterface $query,
-        Fragment $fragment
-    ) {
-        $this->scheme = $scheme;
-        $this->user = $user;
-        $this->pass = $pass;
-        $this->host = $host;
-        $this->port = $port;
-        $this->path = $path;
-        $this->query = $query;
-        $this->fragment = $fragment;
-    }
-
     /**
      * {@inheritdoc}
      */

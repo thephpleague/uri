@@ -3,7 +3,7 @@
 namespace League\Url\Test\Components;
 
 use ArrayIterator;
-use League\Url\Components\Query;
+use League\Url\Query;
 use PHPUnit_Framework_TestCase;
 use StdClass;
 

@@ -10,23 +10,28 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Components;
+namespace League\Url;
 
 use League\Url\Interfaces\ComponentInterface;
 
 /**
- *  A class to manipulate URL User component
+ *  A class to manipulate URL Pass component
  *
  *  @package League.url
  *  @since  1.0.0
  */
-class User extends AbstractComponent implements ComponentInterface
+class Pass extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}
      */
     public function getUriComponent()
     {
-        return $this->__toString();
+        $value = $this->__toString();
+        if ('' != $value) {
+            $value = ':'.$value;
+        }
+
+        return $value;
     }
 }

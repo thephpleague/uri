@@ -29,14 +29,14 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetterAccess()
     {
-        $this->assertInstanceof('League\Url\Components\Scheme', $this->url->getScheme());
-        $this->assertInstanceof('League\Url\Components\User', $this->url->getUser());
-        $this->assertInstanceof('League\Url\Components\Pass', $this->url->getPass());
-        $this->assertInstanceof('League\Url\Components\Host', $this->url->getHost());
-        $this->assertInstanceof('League\Url\Components\Port', $this->url->getPort());
-        $this->assertInstanceof('League\Url\Components\Path', $this->url->getPath());
-        $this->assertInstanceof('League\Url\Components\Query', $this->url->getQuery());
-        $this->assertInstanceof('League\Url\Components\Fragment', $this->url->getFragment());
+        $this->assertInstanceof('League\Url\Scheme', $this->url->getScheme());
+        $this->assertInstanceof('League\Url\User', $this->url->getUser());
+        $this->assertInstanceof('League\Url\Pass', $this->url->getPass());
+        $this->assertInstanceof('League\Url\Host', $this->url->getHost());
+        $this->assertInstanceof('League\Url\Port', $this->url->getPort());
+        $this->assertInstanceof('League\Url\Path', $this->url->getPath());
+        $this->assertInstanceof('League\Url\Query', $this->url->getQuery());
+        $this->assertInstanceof('League\Url\Fragment', $this->url->getFragment());
     }
 
     public function testSetterAccess()

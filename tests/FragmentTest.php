@@ -2,7 +2,7 @@
 
 namespace League\Url\Test\Components;
 
-use League\Url\Components\Fragment;
+use League\Url\Fragment;
 use PHPUnit_Framework_TestCase;
 
 /**

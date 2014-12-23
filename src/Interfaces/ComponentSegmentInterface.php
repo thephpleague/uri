@@ -61,7 +61,7 @@ interface ComponentSegmentInterface extends ComponentInterface
      *
      * @param mixed $data the data can be a array, a Traversable or a string
      *
-     * @return void
+     * @return bool
      */
     public function remove($data);
 

@@ -10,18 +10,18 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Components;
+namespace League\Url;
 
 use League\Url\Interfaces\ComponentInterface;
 use RuntimeException;
 
 /**
- *  A class to manipulate URL Port component
+ *  A class to manipulate URL Scheme component
  *
  *  @package League.url
  *  @since  1.0.0
  */
-class Port extends AbstractComponent implements ComponentInterface
+class Scheme extends AbstractComponent implements ComponentInterface
 {
     /**
      * {@inheritdoc}
@@ -33,15 +33,14 @@ class Port extends AbstractComponent implements ComponentInterface
             return;
         }
 
-        $data = (string) $data;
+        $data = filter_var((string) $data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
         $data = trim($data);
-        $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-
+        $data = filter_var($data, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/^[a-z][a-z0-9+-.]+$/i']]);
         if (! $data) {
-            throw new RuntimeException('A port must be a valid positive integer');
+            throw new RuntimeException('This class only deals with http URL');
         }
 
-        $this->data = (int) $data;
+        $this->data = strtolower($data);
     }
 
     /**
@@ -51,7 +50,7 @@ class Port extends AbstractComponent implements ComponentInterface
     {
         $value = $this->__toString();
         if ('' != $value) {
-            $value = ':'.$value;
+            $value .= '://';
         }
 
         return $value;

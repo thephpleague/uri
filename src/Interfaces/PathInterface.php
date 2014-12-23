@@ -28,5 +28,5 @@ interface PathInterface extends ComponentSegmentInterface
      *
      * @return string
      */
-    public function getRelativePath(PathInterface $reference);
+    public function relativeTo(PathInterface $reference);
 }

@@ -28,6 +28,15 @@ interface UrlInterface
     public function __toString();
 
     /**
+     * return an associative array representation for the current URL
+     * similar to the result of parse_url but all components are always
+     * present
+     *
+     * @return array
+     */
+    public function toArray();
+
+    /**
      * return the string representation for the current URL
      * user info
      *
@@ -60,12 +69,12 @@ interface UrlInterface
      *
      * @return string
      */
-    public function getRelativeUrl(UrlInterface $ref_url = null);
+    public function getUrl(UrlInterface $ref_url = null);
 
     /**
      * Compare two Url object and tells whether they can be considered equal
      *
-     * @param \League\Url\UrlInterface $url
+     * @param \League\Url\Interfaces\UrlInterface $url
      *
      * @return boolean
      */
@@ -83,7 +92,7 @@ interface UrlInterface
     /**
      * get the URL scheme component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getScheme();
 
@@ -99,7 +108,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getUser();
 
@@ -115,7 +124,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getPass();
 
@@ -131,7 +140,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\HostInterface
      */
     public function getHost();
 
@@ -147,7 +156,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getPort();
 
@@ -163,7 +172,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\PathInterface
+     * @return \League\Url\Interfaces\PathInterface
      */
     public function getPath();
 
@@ -179,7 +188,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\QueryInterface
+     * @return \League\Url\Interfaces\QueryInterface
      */
     public function getQuery();
 
@@ -195,7 +204,7 @@ interface UrlInterface
     /**
      * get the URL pass component
      *
-     * @return \League\Url\Components\ComponentInterface
+     * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getFragment();
 }

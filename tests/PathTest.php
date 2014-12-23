@@ -3,7 +3,7 @@
 namespace League\Url\Test\Components;
 
 use ArrayIterator;
-use League\Url\Components\Path;
+use League\Url\Path;
 use PHPUnit_Framework_TestCase;
 use StdClass;
 
@@ -87,14 +87,15 @@ class PathTest extends PHPUnit_Framework_TestCase
     {
         $path = new Path('/toto/le/heros/masson');
         $other = new Path('/toto/le/heros/masson');
-        $this->assertSame('', $path->getRelativePath($other));
+        $this->assertSame('', (string) $path->relativeTo($other));
+        $this->assertEquals($path, $path->relativeTo());
     }
 
     public function testGetRelativePathDiff()
     {
         $path = new Path('/toto/');
         $other = new Path('/toto/le/heros/masson');
-        $this->assertSame('../../../', $path->getRelativePath($other));
+        $this->assertSame('../../../', (string) $path->relativeTo($other));
     }
 
     public function testPrepend()

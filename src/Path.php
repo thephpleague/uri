@@ -10,7 +10,7 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Components;
+namespace League\Url;
 
 use Countable;
 use IteratorAggregate;
@@ -64,10 +64,12 @@ class Path extends AbstractSegment implements Countable, IteratorAggregate, Path
     /**
      * {@inheritdoc}
      */
-    public function getRelativePath(PathInterface $reference)
+    public function relativeTo(PathInterface $reference = null)
     {
-        if ($this->sameValueAs($reference)) {
-            return '';
+        if (is_null($reference)) {
+            return clone $this;
+        } elseif ($this->sameValueAs($reference)) {
+            return new static;
         }
 
         $ref_path = array_values($reference->toArray());

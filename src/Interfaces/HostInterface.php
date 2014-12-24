@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  *  @package League.url
  *  @since  3.1.0
  */
-interface HostInterface extends SegmentInterface
+interface HostInterface extends ComponentInterface, SegmentInterface
 {
     /**
      * Tell wether the host is an IPV4 IP

@@ -208,4 +208,30 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertNull($host->getSegment(23));
         $this->assertSame('toto', $host->getSegment(23, 'toto'));
     }
+
+    public function testSetSegment()
+    {
+        $host = new Host('master.example.com');
+        $host->setSegment(0, 'slave');
+        $this->assertSame('slave', $host->getSegment(0));
+        $this->assertSame('slave.example.com', (string) $host);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     */
+    public function testSetSegmentInvalidOffset()
+    {
+        $host = new Host('master.example.com');
+        $host->setSegment(4, 'foo');
+    }
+
+    public function testSetSegmentRemoveOffsetWithNullAndEmptyValue()
+    {
+        $host = new Host('master.example.com');
+        $host->setSegment(0, null);
+        $this->assertSame('example.com', (string) $host);
+        $host->setSegment(0, '');
+        $this->assertSame('com', (string) $host);
+    }
 }

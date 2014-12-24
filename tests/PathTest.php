@@ -108,9 +108,35 @@ class PathTest extends PHPUnit_Framework_TestCase
 
     public function testGetSegment()
     {
-        $host = new Path('/toto/le/heros/masson');
-        $this->assertSame('toto', $host->getSegment(0));
-        $this->assertNull($host->getSegment(23));
-        $this->assertSame('foo', $host->getSegment(23, 'foo'));
+        $path = new Path('/toto/le/heros/masson');
+        $this->assertSame('toto', $path->getSegment(0));
+        $this->assertNull($path->getSegment(23));
+        $this->assertSame('foo', $path->getSegment(23, 'foo'));
+    }
+
+    public function testSetSegment()
+    {
+        $path = new Path('/toto/toto/shoky/master');
+        $path->setSegment(0, 'slave');
+        $this->assertSame('slave', $path->getSegment(0));
+        $this->assertSame('slave/toto/shoky/master', (string) $path);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     */
+    public function testSetSegmentInvalidOffset()
+    {
+        $path = new Path('/toto/toto/shoky/master');
+        $path->setSegment(23, 'foo');
+    }
+
+    public function testSetSegmentRemoveOffsetWithNullAndEmptyValue()
+    {
+        $path = new Path('/toto/toto/shoky/master');
+        $path->setSegment(0, null);
+        $this->assertSame('toto/shoky/master', (string) $path);
+        $path->setSegment(0, '');
+        $this->assertSame('/shoky/master', $path->getUriComponent());
     }
 }

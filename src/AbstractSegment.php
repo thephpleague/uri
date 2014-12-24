@@ -13,6 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
+use OutOfBoundsException;
 
 /**
  *  A class to manipulate URL Segment like components
@@ -51,14 +52,41 @@ abstract class AbstractSegment extends AbstractContainer
     /**
      * {@inheritdoc}
      */
-    public function getSegment($key, $default = null)
+    public function getSegment($offset, $default = null)
     {
-        $key = filter_var($key, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
-        if (false === $key || ! isset($this->data[$key])) {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
+        if (false === $offset || ! isset($this->data[$offset])) {
             return $default;
         }
 
-        return $this->data[$key];
+        return $this->data[$offset];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSegment($offset, $value)
+    {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => [
+            "min_range" => 0,
+            "max_range" => $this->count(),
+        ]]);
+        if (false === $offset) {
+            throw new OutOfBoundsException('The specified key is not in the object boundaries');
+        }
+
+        $data = $this->data;
+        $value = filter_var((string) $value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
+        $value = trim($value);
+
+        if (empty($value)) {
+            unset($data[$offset]);
+            return $this->set(array_values($data));
+        }
+
+        $data[$offset] = $value;
+
+        return $this->set(array_values($data));
     }
 
     /**
@@ -166,17 +194,15 @@ abstract class AbstractSegment extends AbstractContainer
      */
     protected function validateSegment($data)
     {
-        $delimiter = $this->delimiter;
-
-        return $this->convertToArray($data, function ($str) use ($delimiter) {
+        return $this->convertToArray($data, function ($str) {
             if ('' == $str) {
                 return [];
             }
-            if ($delimiter == $str[0]) {
+            if ($this->delimiter == $str[0]) {
                 $str = substr($str, 1);
             }
 
-            return explode($delimiter, $str);
+            return explode($this->delimiter, $str);
         });
     }
 

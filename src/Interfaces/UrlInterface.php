@@ -61,15 +61,6 @@ interface UrlInterface
     public function getBaseUrl();
 
     /**
-     * return the string representation an URL relative to another UrlInterface
-     *
-     * @param UrlInterface $ref_url
-     *
-     * @return string
-     */
-    public function getUrl(UrlInterface $ref_url = null);
-
-    /**
      * Compare two Url object and tells whether they can be considered equal
      *
      * @param \League\Url\Interfaces\UrlInterface $url
@@ -79,29 +70,11 @@ interface UrlInterface
     public function sameValueAs(UrlInterface $url);
 
     /**
-     * Set the URL scheme component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setScheme($data);
-
-    /**
      * get the URL scheme component
      *
      * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getScheme();
-
-    /**
-     * Set the URL user component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setUser($data);
 
     /**
      * get the URL pass component
@@ -111,29 +84,11 @@ interface UrlInterface
     public function getUser();
 
     /**
-     * Set the URL pass component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setPass($data);
-
-    /**
      * get the URL pass component
      *
      * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getPass();
-
-    /**
-     * Set the URL host component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return self
-     */
-    public function setHost($data);
 
     /**
      * get the URL pass component
@@ -143,29 +98,11 @@ interface UrlInterface
     public function getHost();
 
     /**
-     * Set the URL port component
-     *
-     * @param string|integer $data
-     *
-     * @return self
-     */
-    public function setPort($data);
-
-    /**
      * get the URL pass component
      *
      * @return \League\Url\Interfaces\ComponentInterface
      */
     public function getPort();
-
-    /**
-     * Set the URL path component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return self
-     */
-    public function setPath($data);
 
     /**
      * get the URL pass component
@@ -175,29 +112,11 @@ interface UrlInterface
     public function getPath();
 
     /**
-     * Set the URL query component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return self
-     */
-    public function setQuery($data);
-
-    /**
      * get the URL pass component
      *
      * @return \League\Url\Interfaces\QueryInterface
      */
     public function getQuery();
-
-    /**
-     * Set the URL fragment component
-     *
-     * @param string $data
-     *
-     * @return self
-     */
-    public function setFragment($data);
 
     /**
      * get the URL pass component

@@ -16,6 +16,7 @@ use Countable;
 use IteratorAggregate;
 use League\Url\Interfaces\HostInterface;
 use LogicException;
+use OutOfBoundsException;
 use RuntimeException;
 use True\Punycode;
 
@@ -62,6 +63,23 @@ class Host extends AbstractSegment implements
         if (stripos($this->encoding, 'utf-8') === false) {
             mb_internal_encoding('utf-8');
         }
+    }
+
+    /**
+     * Sanitize a string component recursively
+     *
+     * @param mixed $str
+     *
+     * @return mixed
+     */
+    protected function sanitizeValue($str)
+    {
+        $str = parent::sanitizeValue($str);
+        if (is_array($str)) {
+            return array_map('mb_strtolower', $str);
+        }
+
+        return mb_strtolower($str);
     }
 
     /**
@@ -327,5 +345,45 @@ class Host extends AbstractSegment implements
     public function __toString()
     {
         return (string) $this->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLabel($offset, $default = null)
+    {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
+        if (false === $offset || ! isset($this->data[$offset])) {
+            return $default;
+        }
+
+        return $this->data[$offset];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLabel($offset, $value)
+    {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => [
+            "min_range" => 0,
+            "max_range" => $this->count(),
+        ]]);
+        if (false === $offset) {
+            throw new OutOfBoundsException('The specified key is not in the object boundaries');
+        }
+
+        $data = $this->data;
+        $value = filter_var((string) $value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
+        $value = trim($value);
+
+        if (empty($value)) {
+            unset($data[$offset]);
+            return $this->set(array_values($data));
+        }
+
+        $data[$offset] = $value;
+
+        return $this->set(array_values($data));
     }
 }

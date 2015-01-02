@@ -64,26 +64,4 @@ interface SegmentInterface
      * @return bool
      */
     public function remove($data);
-
-    /**
-     * Return a Segment Parameter
-     *
-     * @param integer $offset  the segment offset
-     * @param mixed   $default the segment default value
-     *
-     * @return string
-     */
-    public function getSegment($offset, $default = null);
-
-    /**
-     * Return a Segment Parameter
-     *
-     * @param integer $offset the segment offset
-     * @param string  $value  the segment value
-     *
-     * @throws \OutofBoundsException if the specified $offset is not in the Host boundaries
-     *
-     * @return string
-     */
-    public function setSegment($offset, $value);
 }

@@ -15,6 +15,7 @@ namespace League\Url;
 use Countable;
 use IteratorAggregate;
 use League\Url\Interfaces\PathInterface;
+use OutOfBoundsException;
 
 /**
  *  A class to manipulate URL Path component
@@ -31,6 +32,17 @@ class Path extends AbstractSegment implements
      * {@inheritdoc}
      */
     protected $delimiter = '/';
+
+    protected $sanitizePattern = [
+        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
+        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D'
+    ];
+
+    protected $sanitizeReplace = [
+        '/', ':', '@', '!', '$', '&', "'",
+        '(', ')', '*', '+', ',', ';', '='
+    ];
+
 
     /**
      * {@inheritdoc}
@@ -67,35 +79,36 @@ class Path extends AbstractSegment implements
     /**
      * {@inheritdoc}
      */
-    public function relativeTo(PathInterface $reference = null)
+    public function normalize()
     {
-        if (is_null($reference)) {
-            return clone $this;
-        } elseif ($this->sameValueAs($reference)) {
-            return new static;
-        }
-
-        $ref_path = array_values($reference->toArray());
-        $this_path = array_values($this->data);
-        $filename = array_pop($this_path);
-
-        //retrieve the final consecutive identical segment in the current path
-        $index = 0;
-        foreach ($ref_path as $offset => $value) {
-            if (! isset($this_path[$offset]) || $value != $this_path[$offset]) {
-                break;
+        $pattern_a = '!^(\.\./|\./)!x';
+        $pattern_b_1 = '!^(/\./)!x';
+        $pattern_b_2 = '!^(/\.)$!x';
+        $pattern_c = '!^(/\.\./|/\.\.)!x';
+        $pattern_d = '!^(\.|\.\.)$!x';
+        $pattern_e = '!(/*[^/]*)!x';
+        $path = $this->getUriComponent();
+        $new_path = '';
+        while (! empty($path)) {
+            if (preg_match($pattern_a, $path)) {
+                // remove prefix from $path
+                $path = preg_replace($pattern_a, '', $path);
+            } elseif (preg_match($pattern_b_1, $path, $matches) || preg_match($pattern_b_2, $path, $matches)) {
+                $path = preg_replace("!^".$matches[1]."!", '/', $path);
+            } elseif (preg_match($pattern_c, $path, $matches)) {
+                $path = preg_replace('!^'.preg_quote($matches[1], '!').'!x', '/', $path);
+                // remove the last segment and its preceding "/" (if any) from output buffer
+                $new_path = preg_replace('!/([^/]+)$!x', '', $new_path);
+            } elseif (preg_match($pattern_d, $path)) {
+                $path = preg_replace($pattern_d, '', $path);
+            } elseif (preg_match($pattern_e, $path, $matches)) {
+                $first_path_segment = $matches[1];
+                $path = preg_replace('/^'.preg_quote($first_path_segment, '/').'/', '', $path, 1);
+                $new_path .= $first_path_segment;
             }
-            $index++;
         }
-        //deduce the number of similar segment according to the reference path
-        $nb_common_segment = count($ref_path) - $index;
 
-        //let's output the relative path using a new Path object
-        return new Path(array_merge(
-            array_fill(0, $nb_common_segment, '..'),
-            array_slice($this_path, $index),
-            [$filename]
-        ));
+        return new static($new_path);
     }
 
     /**
@@ -109,10 +122,76 @@ class Path extends AbstractSegment implements
     }
 
     /**
+     * Sanitize a string component recursively
+     *
+     * @param mixed $str
+     *
+     * @return mixed
+     */
+    protected function sanitizeValue($str)
+    {
+        $str = parent::sanitizeValue($str);
+        if (is_array($str)) {
+            return array_map([$this, 'sanitizeSegment'], $str);
+        }
+
+        return $this->sanitizeSegment($str);
+    }
+
+    protected function sanitizeSegment($str)
+    {
+        return str_replace(
+            $this->sanitizePattern,
+            $this->sanitizeReplace,
+            rawurlencode(rawurldecode($str))
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function formatRemoveSegment($data)
     {
         return array_map('urldecode', parent::formatRemoveSegment($data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSegment($offset, $default = null)
+    {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
+        if (false === $offset || ! isset($this->data[$offset])) {
+            return $default;
+        }
+
+        return $this->data[$offset];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSegment($offset, $value)
+    {
+        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => [
+            "min_range" => 0,
+            "max_range" => $this->count(),
+        ]]);
+        if (false === $offset) {
+            throw new OutOfBoundsException('The specified key is not in the object boundaries');
+        }
+
+        $data = $this->data;
+        $value = filter_var((string) $value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
+        $value = trim($value);
+
+        if (empty($value)) {
+            unset($data[$offset]);
+            return $this->set(array_values($data));
+        }
+
+        $data[$offset] = $value;
+
+        return $this->set(array_values($data));
     }
 }

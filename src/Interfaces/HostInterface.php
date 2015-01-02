@@ -54,4 +54,26 @@ interface HostInterface extends ComponentInterface, SegmentInterface
      * @return string
      */
     public function toAscii();
+
+    /**
+     * Return a single label
+     *
+     * @param integer $offset  the label offset
+     * @param mixed   $default the label default value
+     *
+     * @return string
+     */
+    public function getLabel($offset, $default = null);
+
+    /**
+     * Set a single label
+     *
+     * @param integer $offset the label offset
+     * @param string  $value  the label value
+     *
+     * @throws \OutofBoundsException if the specified $offset is not in the Host boundaries
+     *
+     * @return string
+     */
+    public function setLabel($offset, $value);
 }

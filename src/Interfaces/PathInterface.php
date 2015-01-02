@@ -21,12 +21,32 @@ namespace League\Url\Interfaces;
 interface PathInterface extends ComponentInterface, SegmentInterface
 {
     /**
-     * return the string representation for a relative path
-     * {@link PathInterface} $path
-     *
-     * @param PathInterface $reference
+     * return a new PathInterface object normalized
+     * by removing dot segment
      *
      * @return PathInterface
      */
-    public function relativeTo(PathInterface $reference);
+    public function normalize();
+
+    /**
+     * Return a Segment Parameter
+     *
+     * @param integer $offset  the segment offset
+     * @param mixed   $default the segment default value
+     *
+     * @return string
+     */
+    public function getSegment($offset, $default = null);
+
+    /**
+     * Return a Segment Parameter
+     *
+     * @param integer $offset the segment offset
+     * @param string  $value  the segment value
+     *
+     * @throws \OutofBoundsException if the specified $offset is not in the Host boundaries
+     *
+     * @return string
+     */
+    public function setSegment($offset, $value);
 }

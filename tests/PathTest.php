@@ -83,21 +83,6 @@ class PathTest extends PHPUnit_Framework_TestCase
         new Path(new StdClass());
     }
 
-    public function testGetRelativePath()
-    {
-        $path = new Path('/toto/le/heros/masson');
-        $other = new Path('/toto/le/heros/masson');
-        $this->assertSame('', (string) $path->relativeTo($other));
-        $this->assertEquals($path, $path->relativeTo());
-    }
-
-    public function testGetRelativePathDiff()
-    {
-        $path = new Path('/toto/');
-        $other = new Path('/toto/le/heros/masson');
-        $this->assertSame('../../../', (string) $path->relativeTo($other));
-    }
-
     public function testPrepend()
     {
         $path = new Path('/toto/toto/shoky/master');
@@ -105,6 +90,13 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('/toto/foo/toto/shoky/master', $path->getUriComponent());
     }
 
+    public function testNormalize()
+    {
+        $path = new Path('/../a/./b/../b/%63/%7bfoo%7d');
+        $newPath = $path->normalize();
+        $this->assertInstanceOf('League\Url\Interfaces\PathInterface', $newPath);
+        $this->assertSame('a/b/c/%7Bfoo%7D', (string) $newPath);
+    }
 
     public function testGetSegment()
     {
@@ -129,6 +121,15 @@ class PathTest extends PHPUnit_Framework_TestCase
     {
         $path = new Path('/toto/toto/shoky/master');
         $path->setSegment(23, 'foo');
+    }
+
+    public function testSegmentNormalization()
+    {
+        $path = new Path('/master/toto/a%c2%b1b');
+        $this->assertSame('master/toto/a%C2%B1b', (string) $path);
+
+        $path = new Path('/master/toto/%7Eetc');
+        $this->assertSame('master/toto/~etc', (string) $path);
     }
 
     public function testSetSegmentRemoveOffsetWithNullAndEmptyValue()

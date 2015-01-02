@@ -204,34 +204,40 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testGetSegment()
     {
         $host = new Host('master.example.com');
-        $this->assertSame('master', $host->getSegment(0));
-        $this->assertNull($host->getSegment(23));
-        $this->assertSame('toto', $host->getSegment(23, 'toto'));
+        $this->assertSame('master', $host->getLabel(0));
+        $this->assertNull($host->getLabel(23));
+        $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
 
-    public function testSetSegment()
+    public function testSetLabel()
     {
         $host = new Host('master.example.com');
-        $host->setSegment(0, 'slave');
-        $this->assertSame('slave', $host->getSegment(0));
+        $host->setLabel(0, 'slave');
+        $this->assertSame('slave', $host->getLabel(0));
         $this->assertSame('slave.example.com', (string) $host);
+    }
+
+    public function testStrtolowerHost()
+    {
+        $host = new Host('Master.EXAMPLE.cOm');
+        $this->assertSame('master.example.com', (string) $host);
     }
 
     /**
      * @expectedException \OutOfBoundsException
      */
-    public function testSetSegmentInvalidOffset()
+    public function testSetLabelInvalidOffset()
     {
         $host = new Host('master.example.com');
-        $host->setSegment(4, 'foo');
+        $host->setLabel(4, 'foo');
     }
 
-    public function testSetSegmentRemoveOffsetWithNullAndEmptyValue()
+    public function testSetLabelRemoveOffsetWithNullAndEmptyValue()
     {
         $host = new Host('master.example.com');
-        $host->setSegment(0, null);
+        $host->setLabel(0, null);
         $this->assertSame('example.com', (string) $host);
-        $host->setSegment(0, '');
+        $host->setLabel(0, '');
         $this->assertSame('com', (string) $host);
     }
 }

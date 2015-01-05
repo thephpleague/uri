@@ -383,6 +383,9 @@ class Host extends AbstractSegment implements
         }
 
         $data[$offset] = $value;
+        if (1 == count($data)) {
+            return $this->set($value);
+        }
 
         return $this->set(array_values($data));
     }

@@ -240,4 +240,11 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host->setLabel(0, '');
         $this->assertSame('com', (string) $host);
     }
+
+    public function testSetLabelWithIPAddress()
+    {
+        $host = new Host();
+        $host->setLabel(0, '::1');
+        $this->assertSame('[::1]', $host->getUriComponent());
+    }
 }

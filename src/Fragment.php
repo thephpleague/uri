@@ -22,27 +22,27 @@ use League\Url\Interfaces\ComponentInterface;
  */
 class Fragment extends AbstractComponent implements ComponentInterface
 {
+
+    // according to http://tools.ietf.org/html/rfc3986#section-3.5
+    protected $rawSymbols = [
+        '/', '?', '-', '.', '_', '~', '!',
+        '$', '&', '\'', '(', ')', '*', '+',
+        ',', ';', '=', ':', '@',
+    ];
+
     /**
      * {@inheritdoc}
      */
     public function __toString()
     {
         $value = str_replace(null, '', $this->get());
-
-        // according to http://tools.ietf.org/html/rfc3986#section-3.5
-        $rawSymbols = [
-            '/', '?', '-', '.', '_', '~', '!',
-            '$', '&', '\'', '(', ')', '*', '+',
-            ',', ';', '=', ':', '@',
-        ];
-
         $encodedSymbols = array_map(function ($symbol) {
             return urlencode($symbol);
-        }, $rawSymbols);
+        }, $this->rawSymbols);
 
         return str_replace(
             $encodedSymbols,
-            $rawSymbols,
+            $this->rawSymbols,
             rawurlencode($value)
         );
     }

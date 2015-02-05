@@ -77,38 +77,49 @@ class Path extends AbstractSegment implements
     }
 
     /**
-     * {@inheritdoc}
+     * Remove dot segments from a URI path according to RFC3986 Section 5.2.4
+     *
+     * @return  static
+     *
+     * @link http://www.ietf.org/rfc/rfc3986.txt
      */
     public function normalize()
     {
-        $pattern_a = '!^(\.\./|\./)!x';
-        $pattern_b_1 = '!^(/\./)!x';
-        $pattern_b_2 = '!^(/\.)$!x';
-        $pattern_c = '!^(/\.\./|/\.\.)!x';
-        $pattern_d = '!^(\.|\.\.)$!x';
-        $pattern_e = '!(/*[^/]*)!x';
         $path = $this->getUriComponent();
-        $new_path = '';
-        while (! empty($path)) {
-            if (preg_match($pattern_a, $path)) {
-                // remove prefix from $path
-                $path = preg_replace($pattern_a, '', $path);
-            } elseif (preg_match($pattern_b_1, $path, $matches) || preg_match($pattern_b_2, $path, $matches)) {
-                $path = preg_replace("!^".$matches[1]."!", '/', $path);
-            } elseif (preg_match($pattern_c, $path, $matches)) {
-                $path = preg_replace('!^'.preg_quote($matches[1], '!').'!x', '/', $path);
-                // remove the last segment and its preceding "/" (if any) from output buffer
-                $new_path = preg_replace('!/([^/]+)$!x', '', $new_path);
-            } elseif (preg_match($pattern_d, $path)) {
-                $path = preg_replace($pattern_d, '', $path);
-            } elseif (preg_match($pattern_e, $path, $matches)) {
-                $first_path_segment = $matches[1];
-                $path = preg_replace('/^'.preg_quote($first_path_segment, '/').'/', '', $path, 1);
-                $new_path .= $first_path_segment;
-            }
+        if (false === strpos($path, '.')) {
+            return new static($path);
         }
 
-        return new static($new_path);
+        $input  = $path;
+        $output = [];
+
+        while ('' != $input) {
+            if ('/.' == $input) {
+                $output[] = '/';
+                break;
+            } elseif ('/./' == substr($input, 0, 3)) {
+                $input = substr($input, 2);
+                continue;
+            } elseif ('/..' == $input) {
+                array_pop($output);
+                $output[] = '/';
+                break;
+            } elseif ('/../' == substr($input, 0, 4)) {
+                array_pop($output);
+                $input = substr($input, 3);
+            } elseif (in_array($input, ['.', '..'])) {
+                break;
+            } elseif (false === ($pos = stripos($input, '/', 1))) {
+                $output[] = $input;
+                break;
+            } else {
+                $output[] = substr($input, 0, $pos);
+                $input = substr($input, $pos);
+            }
+
+        }
+
+        return new static(implode($output));
     }
 
     /**

@@ -32,19 +32,19 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testModifyWithArray()
     {
-        $this->query->modify(array('john' => 'doe the john'));
+        $this->query->modify(['john' => 'doe the john']);
         $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $this->query);
     }
 
     public function testModifyWithArrayIterator()
     {
-        $this->query->modify(new ArrayIterator(array('john' => 'doe the john')));
+        $this->query->modify(new ArrayIterator(['john' => 'doe the john']));
         $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $this->query);
     }
 
     public function testModifyWithQueryInterface()
     {
-        $this->query->modify(new Query(array('foo' => 'bar')));
+        $this->query->modify(new Query(['foo' => 'bar']));
         $this->assertSame('kingkong=toto&foo=bar', (string) $this->query);
     }
 
@@ -62,7 +62,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testModifyWithRemoveArg()
     {
-        $this->query->modify(array('kingkong' => null));
+        $this->query->modify(['kingkong' => null]);
         $this->assertSame('', (string) $this->query);
     }
 
@@ -75,7 +75,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testSetterWithArray()
     {
-        $this->query->set(array('ali' => 'baba'));
+        $this->query->set(['ali' => 'baba']);
         $this->assertSame('ali=baba', (string) $this->query);
     }
 
@@ -107,7 +107,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         }
         unset($query['toto']);
         $this->assertNull($query['toto']);
-        $this->assertSame(array('foo' => 'bar'), $query->toArray());
+        $this->assertSame(['foo' => 'bar'], $query->toArray());
         $query[] = 'comment ça va';
     }
 
@@ -119,12 +119,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testKeys()
     {
-        $query = new Query(array('foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll'));
+        $query = new Query(['foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll']);
         $this->assertCount(0, $query->keys('foo'));
-        $this->assertSame(array('foo'), $query->keys('bar'));
+        $this->assertSame(['foo'], $query->keys('bar'));
         $this->assertCount(0, $query->keys('3'));
-        $this->assertSame(array('lol'), $query->keys(3));
-        $this->assertSame(array('baz', 'toto'), $query->keys('troll'));
+        $this->assertSame(['lol'], $query->keys(3));
+        $this->assertSame(['baz', 'toto'], $query->keys('troll'));
     }
 
     public function testDotFromString()
@@ -135,7 +135,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testDotFromArray()
     {
-        $query = new Query(array('foo.bar' => 'baz'));
+        $query = new Query(['foo.bar' => 'baz']);
         $this->assertSame('foo.bar=baz', (string) $query);
     }
 

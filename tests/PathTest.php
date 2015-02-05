@@ -12,67 +12,128 @@ use StdClass;
  */
 class PathTest extends PHPUnit_Framework_TestCase
 {
-    public function testPath()
+    public function testPrepend()
     {
         $path = new Path('/test/query.php');
         $path->prepend('master');
         $this->assertSame('master/test/query.php', $path->get());
-
-        $path->remove('test');
-        $this->assertSame('master/query.php', $path->get());
-
-        $path->remove('toto');
-        $this->assertSame('master/query.php', $path->get());
-        $path->remove('');
-        $path->append('sullivent', 'master');
-        $this->assertSame('master/sullivent/query.php', $path->get());
-
-        $path->set(null);
-        $path->append('/shop/checkout/');
-        $this->assertSame('shop/checkout/', $path->get());
-
-        $path->set(array('shop', 'rev iew', ''));
-        $this->assertSame('shop/rev%20iew/', $path->get());
-
-        $path->append(new ArrayIterator(array('sullivent', 'wacowski', '')));
-        $this->assertSame('shop/rev%20iew//sullivent/wacowski/', $path->get());
-
-        $path->prepend('master');
-        $path->prepend('master');
-        $this->assertSame('master/master/shop/rev%20iew//sullivent/wacowski/', (string) $path);
-
-        $path->append('slave', 'sullivent');
-        $path->append('slave', 'sullivent');
-
-        $path->remove('');
-
-        $this->assertSame('master/master/shop/rev%20iew/sullivent/slave/slave/wacowski/', (string) $path);
     }
 
-    public function testRemove()
+    public function testAppendWithWhence()
+    {
+        $path = new Path('/master/query.php');
+        $path->append('sullivent', 'master');
+        $this->assertSame('master/sullivent/query.php', $path->get());
+    }
+
+    public function testSet()
+    {
+        $path = new Path('/master/query.php');
+        $path->set(null);
+        $this->assertSame('', (string) $path);
+    }
+
+    public function testSetWithArray()
+    {
+        $path = new Path();
+        $path->set(['shop', 'rev iew', '']);
+        $this->assertSame('shop/rev%20iew/', $path->get());
+    }
+
+    public function testSetWithTraversable()
+    {
+        $path = new Path();
+        $path->set(new ArrayIterator(['sullivent', 'wacowski', '']));
+        $this->assertSame('sullivent/wacowski/', $path->get());
+    }
+
+    public function testMultiplePrepend()
+    {
+        $path = new Path('/master/query.php');
+        $path->prepend('master');
+        $path->prepend('master');
+        $this->assertSame('master/master/master/query.php', (string) $path);
+    }
+
+    public function testMultipleAppendWithWhence()
+    {
+        $path = new Path('/master/query.php');
+        $path->append('slave', 'master');
+        $path->append('slave', 'master');
+        $this->assertSame('master/slave/slave/query.php', (string) $path);
+    }
+
+    public function testAppendEmptyPath()
+    {
+        $path = new Path();
+        $path->append('/shop/checkout/');
+        $this->assertSame('shop/checkout/', $path->get());
+    }
+
+    public function testRemoveUnknownSegment()
+    {
+        $path = new Path('/test/query.php');
+        $this->assertFalse($path->remove('toto'));
+        $this->assertSame('test/query.php', $path->get());
+    }
+
+    public function testRemoveEmptyString()
+    {
+        $path = new Path('/test/query.php');
+        $this->assertTrue($path->remove(''));
+        $this->assertSame('test/query.php', $path->get());
+    }
+
+    public function testRemoveLastSegment()
+    {
+        $path = new Path('/master/test/query.php');
+        $this->assertTrue($path->remove('query.php'));
+        $this->assertSame('master/test', $path->get());
+    }
+
+    public function testRemoveFirstSegment()
     {
         $path = new Path('/toto/le/heros/masson');
-        $path->remove('toto');
+        $this->assertTrue($path->remove('toto'));
         $this->assertSame('le/heros/masson', (string) $path);
-        $path->remove('ros/masson');
-        $this->assertSame('le/heros/masson', (string) $path);
-        $path->remove('asson');
-        $this->assertSame('le/heros/masson', (string) $path);
-        $path->remove('/heros/masson');
-        $this->assertSame('le', (string) $path);
+    }
+
+    public function testRemoveTruncatedSegment()
+    {
         $path = new Path('/toto/le/heros/masson');
-        $path->remove('le/heros');
+        $this->assertFalse($path->remove('ros/masson'));
+        $this->assertSame('toto/le/heros/masson', (string) $path);
+    }
+
+    public function testRemoveUncompleteSegment()
+    {
+        $path = new Path('/toto/le/heros/masson');
+        $this->assertFalse($path->remove('asson'));
+        $this->assertSame('toto/le/heros/masson', (string) $path);
+    }
+
+    public function testRemoveMultipleSegment()
+    {
+        $path = new Path('/toto/le/heros/masson');
+        $this->assertTrue($path->remove('/heros/masson'));
+        $this->assertSame('toto/le', (string) $path);
+    }
+
+    public function testRemoveContainedSegment()
+    {
+        $path = new Path('/toto/le/heros/masson');
+        $this->assertTrue($path->remove('/le/heros'));
         $this->assertSame('toto/masson', (string) $path);
     }
 
     public function testKeys()
     {
-        $path = new Path(array('bar', 3, 'troll', 3));
+        $path = new Path(['bar', 3, 'troll', 3]);
         $this->assertCount(4, $path->keys());
         $this->assertCount(0, $path->keys('foo'));
-        $this->assertSame(array(0), $path->keys('bar'));
+        $this->assertSame([0], $path->keys('bar'));
         $this->assertCount(2, $path->keys('3'));
-        $this->assertSame(array(1, 3), $path->keys('3'));
+        $this->assertSame([1, 3], $path->keys('3'));
     }
 
     /**
@@ -83,19 +144,55 @@ class PathTest extends PHPUnit_Framework_TestCase
         new Path(new StdClass());
     }
 
-    public function testPrepend()
+    public function testPrependWithWhenceIndex()
     {
         $path = new Path('/toto/toto/shoky/master');
         $path->prepend('foo', 'toto', 1);
         $this->assertSame('/toto/foo/toto/shoky/master', $path->getUriComponent());
     }
 
-    public function testNormalize()
+    /**
+     * Test Removing Dot Segment
+     *
+     * @param  string $expected [description]
+     * @param  string $path     [description]
+     * @dataProvider normalizeProvider
+     */
+    public function testNormalize($expected, $path)
     {
-        $path = new Path('/../a/./b/../b/%63/%7bfoo%7d');
+        $path = new Path($path);
         $newPath = $path->normalize();
         $this->assertInstanceOf('League\Url\Interfaces\PathInterface', $newPath);
-        $this->assertSame('a/b/c/%7Bfoo%7D', (string) $newPath);
+        $this->assertSame($expected, $newPath->getUriComponent());
+    }
+
+    /**
+     * Provides different segment to be normalized
+     *
+     * @return array
+     */
+    public function normalizeProvider()
+    {
+        return [
+            ['/path/to/mars', '/path/to/mars'],
+            ['/a/b/c/%7Bfoo%7D', '/../a/./b/../b/%63/%7bfoo%7d'],
+            ['/bar', '../bar'],
+            ['/bar', './bar'],
+            ['/bar', '.././bar'],
+            ['/bar', '.././bar'],
+            ['/foo/bar', '/foo/./bar'],
+            ['/bar/', '/bar/./'],
+            ['/', '/.'],
+            ['/bar/', '/bar/.'],
+            ['/bar', '/foo/../bar'],
+            ['/', '/bar/../'],
+            ['/', '/..'],
+            ['/', '/bar/..'],
+            ['/foo/', '/foo/bar/..'],
+            ['/', '.'],
+            ['/', '..'],
+            ['/', '../aaa/./..'],
+        ];
     }
 
     public function testGetSegment()

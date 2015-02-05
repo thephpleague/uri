@@ -18,7 +18,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($host->isIp());
         $this->assertTrue($host->isIpv4());
         $this->assertFalse($host->isIpv6());
-        $this->assertSame(array(0 => '127.0.0.1'), $host->toArray());
+        $this->assertSame(['127.0.0.1'], $host->toArray());
         $this->assertSame('127.0.0.1', (string) $host);
         $this->assertSame('127.0.0.1', $host->getUriComponent());
     }
@@ -38,7 +38,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($host->isIp());
         $this->assertFalse($host->isIpv4());
         $this->assertTrue($host->isIpv6());
-        $this->assertSame(array(0 => $expected), $host->toArray());
+        $this->assertSame([$expected], $host->toArray());
         $this->assertSame($expected, (string) $host);
         $this->assertSame('['.$expected.']', $host->getUriComponent());
         $this->assertTrue($host->sameValueAs(new Host('['.$expected.']')));

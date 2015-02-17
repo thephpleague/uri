@@ -60,7 +60,7 @@ Credits
 -------
 
 - [ignace nyamagana butera](https://github.com/nyamsprod)
-- [All Contributors](graphs/contributors)
+- [All Contributors](https://github.com/thephpleague/url/contributors)
 
 License
 -------

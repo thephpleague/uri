@@ -43,7 +43,9 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
      */
     public function __construct($data = null)
     {
-        $this->data = $this->validate($data);
+        if (null !== $data) {
+            $this->data = $this->validate($data);
+        }
     }
 
     /**
@@ -59,12 +61,12 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
             return [];
         }
 
-        if ($data instanceof Traversable) {
-            return iterator_to_array($data, true);
-        }
-
         if (is_array($data)) {
             return $data;
+        }
+
+        if ($data instanceof Traversable) {
+            return iterator_to_array($data, true);
         }
 
         return $this->validateStringQuery($data);

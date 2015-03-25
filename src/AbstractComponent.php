@@ -12,45 +12,47 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\ComponentInterface;
+use League\Url\Interfaces\Component;
 
 /**
- *  A class to manipulate URL string-like component
+ * An abstract class to ease component creation
  *
- *  @package League.url
- *  @since  3.0.0
+ * @package  League.url
+ * @since  4.0.0
  */
 abstract class AbstractComponent
 {
     /**
      * The component data
      *
-     * @var string|null
+     * @var string
      */
     protected $data;
 
     /**
-     * The Constructor
-     *
-     * @param mixed $data the component data
+     * {@inheritdoc}
      */
     public function __construct($data = null)
     {
-        $this->set($data);
+        if (! is_null($data)) {
+            $data = $this->validate($data);
+        }
+
+        $this->data = $data;
     }
 
     /**
-     * {@inheritdoc}
+     * validate the incoming data
+     *
+     * @param  string $data
+     *
+     * @throws InvalidArgumentException If the supplied data is invalid
+     *
+     * @return string
      */
-    public function set($data)
+    protected function validate($data)
     {
-        if (is_null($data)) {
-            $this->data = $data;
-
-            return;
-        }
-        $data = filter_var((string) $data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $this->data = trim($data);
+        return trim(filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]));
     }
 
     /**
@@ -58,10 +60,6 @@ abstract class AbstractComponent
      */
     public function get()
     {
-        if (is_null($this->data) || ! $this->data) {
-            return null;
-        }
-
         return $this->data;
     }
 
@@ -70,14 +68,30 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return str_replace(null, '', $this->get());
+        return (string) $this->data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(ComponentInterface $component)
+    public function getUriComponent()
     {
-        return $this->__toString() == $component->__toString();
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(Component $component)
+    {
+        return $component->__toString() == $this->__toString();
+    }
+
+    /**
+     * Returns a new object with the given value
+     */
+    public function withValue($data = null)
+    {
+        return new static($data);
     }
 }

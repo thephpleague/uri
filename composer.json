@@ -4,6 +4,7 @@
     "description" : "League/url is a lightweight PHP Url manipulating library",
     "keywords": ["php", "url", "parse_url"],
     "license": "MIT",
+    "homepage": "http://url.thephpleague.com",
     "authors": [
         {
             "name" : "Ignace Nyamagana Butera",
@@ -19,7 +20,7 @@
     "require": {
         "php" : ">=5.4.7",
         "ext-mbstring" : "*",
-        "true/punycode": "~1.0"
+        "psr/http-message": "0.9.*"
     },
     "require-dev": {
         "phpunit/phpunit" : "~4.0"

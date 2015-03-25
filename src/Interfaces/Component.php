@@ -15,20 +15,11 @@ namespace League\Url\Interfaces;
 /**
  * A common interface for URL components
  *
- *  @package League.url
- *  @since  3.0.0
+ * @package  League.url
+ * @since  4.0.0
  */
-interface ComponentInterface
+interface Component
 {
-    /**
-     * Set the component data
-     *
-     * @param mixed $data data to be added
-     *
-     * @return void
-     */
-    public function set($data);
-
     /**
      * Get the component data
      *
@@ -37,26 +28,26 @@ interface ComponentInterface
     public function get();
 
     /**
-     * String representation of an URL component
+     * Return the component string representation
      *
      * @return string
      */
     public function __toString();
 
     /**
-     * component representation of an URL component
+     * Return a user friendly string representation to ease URL construction
      *
      * @return string
      */
     public function getUriComponent();
 
     /**
-     * Compare two Url component object and tells whether they
-     * represent the same string value
+     * Tells whether two component represent the same value
+     * The Comparaison is based on the getUriComponent method
      *
-     * @param ComponentInterface $component
+     * @param Component $component
      *
-     * @return boolean
+     * @return bool
      */
-    public function sameValueAs(ComponentInterface $component);
+    public function sameValueAs(Component $component);
 }

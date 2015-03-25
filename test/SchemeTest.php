@@ -24,6 +24,14 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $scheme->withValue('123');
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCharacterRange()
+    {
+        $scheme = new Scheme('in,valid');
+    }
+
     public function testSameValueAs()
     {
         $scheme  = new Scheme();

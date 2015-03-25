@@ -12,144 +12,201 @@
 */
 namespace League\Url;
 
-use Countable;
-use IteratorAggregate;
-use League\Url\Interfaces\HostInterface;
+use InvalidArgumentException;
+use League\Url\Interfaces\Host as HostInterface;
+use League\Url\Modifier;
 use LogicException;
-use OutOfBoundsException;
-use RuntimeException;
-use True\Punycode;
 
 /**
- *  A class to manipulate URL Host component
- *
- *  @package League.url
- *  @since  1.0.0
- */
-class Host extends AbstractSegment implements
-    Countable,
-    HostInterface,
-    IteratorAggregate
+* A class to manipulate URL Host component
+*
+* @package League.url
+* @since 1.0.0
+*/
+class Host extends AbstractSegment implements HostInterface
 {
     /**
-     * {@inheritdoc}
+     * Bootstring parameter values for host punycode
      */
-    protected $delimiter = '.';
+    const BASE         = 36;
+    const TMIN         = 1;
+    const TMAX         = 26;
+    const SKEW         = 38;
+    const DAMP         = 700;
+    const INITIAL_BIAS = 72;
+    const INITIAL_N    = 128;
+    const PREFIX       = 'xn--';
+    const DELIMITER    = '-';
 
-    protected $host_as_ipv6 = false;
-
+    /**
+     * Is the Host an IPv4
+     * @var bool
+     */
     protected $host_as_ipv4 = false;
 
     /**
-     * Punycode Algorithm Object
-     * @var \True\Punycode
+     * Is the Host an IPv6
+     * @var bool
      */
-    protected $punycode;
+    protected $host_as_ipv6 = false;
 
     /**
-     * Environment Internal encoding
-     * @var mixed
+     * Character encoding
+     *
+     * @var string
      */
     protected $encoding;
 
     /**
-     * Alter the Environment Internal Encoding if it is not utf-8
+     * Host delimiter
      *
-     * @return void
+     * @var string
      */
-    protected function saveInternalEncoding()
-    {
-        $this->encoding = mb_internal_encoding();
-        if (stripos($this->encoding, 'utf-8') === false) {
-            mb_internal_encoding('utf-8');
-        }
-    }
+    protected $delimiter = '.';
 
     /**
-     * Sanitize a string component recursively
-     *
-     * @param mixed $str
-     *
-     * @return mixed
+     * Trait to handle punycode
      */
-    protected function sanitizeValue($str)
-    {
-        $str = parent::sanitizeValue($str);
-        if (is_array($str)) {
-            return array_map('mb_strtolower', $str);
-        }
-
-        return mb_strtolower($str);
-    }
+    use Modifier\Punycode;
 
     /**
-     * Restore the Environment Internal Encoding
+     * new Instance
      *
-     * @return void
+     * @param string $str      the host
+     * @param string $encoding the encoding charset
      */
-    protected function restoreInternalEncoding()
+    public function __construct($str = null, $encoding = 'UTF-8')
     {
-        mb_internal_encoding($this->encoding);
-    }
+        $this->encoding = $encoding;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($data = null)
-    {
-        $this->punycode = new Punycode();
-        parent::__construct($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($data)
-    {
-        $this->setHostAsIp($data);
-        if ($this->isIp()) {
-            return;
+        $data = [];
+        $str  = trim($str);
+        if (false !== strpos($str, '..')) {
+            throw new InvalidArgumentException('Multiple dot hostname are invalid');
         }
 
-        $this->data = array_filter($this->validate($data), function ($value) {
-            return ! is_null($value);
-        });
+        $str = trim($str, $this->delimiter);
+        if (! empty($str)) {
+            $data = $this->validate($str);
+        }
+        $this->data = $data;
     }
 
     /**
-     * {@inheritdoc}
+     * Convert to lowercase a string without modifying unicode characters
+     *
+     * @param  string $str
+     *
+     * @return string
      */
-    public function get()
+    protected function lower($str)
     {
         $res = [];
-        foreach (array_values($this->data) as $value) {
-            $res[] = $this->punycode->decode($value);
-        }
-        if (! $res) {
-            return null;
+        for ($i = 0, $length = mb_strlen($str, $this->encoding); $i < $length; $i++) {
+            $char = mb_substr($str, $i, 1, $this->encoding);
+            if (ord($char) < 128) {
+                $char = strtolower($char);
+            }
+            $res[] = $char;
         }
 
-        return implode($this->delimiter, $res);
+        return implode('', $res);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toAscii()
+    protected function validate($str)
     {
-        $this->saveInternalEncoding();
-        $res = $this->punycode->encode($this->__toString());
-        $this->restoreInternalEncoding();
+        $res = $this->validateIpHost($str);
+        if (! empty($res)) {
+            return $res;
+        }
 
-        return $res;
+        return $this->validateStringHost($str);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function toUnicode()
+    protected function validateIpHost($str)
     {
-        return $this->__toString();
+        if ('[' == $str[0] && ']' == $str[strlen($str) - 1]) {
+            $str = trim($str, '][');
+            if (! filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                throw new InvalidArgumentException('Invalid IPV6 format');
+            }
+            $this->host_as_ipv4 = false;
+            $this->host_as_ipv6 = true;
+
+            return [$str];
+        }
+
+        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $this->host_as_ipv4 = false;
+            $this->host_as_ipv6 = true;
+
+            return [$str];
+        }
+
+        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $this->host_as_ipv4 = true;
+            $this->host_as_ipv6 = false;
+
+            return [$str];
+        }
+
+        $this->host_as_ipv4 = false;
+        $this->host_as_ipv6 = false;
+
+        return [];
+    }
+
+    /**
+     * Validate a string only host
+     *
+     * @param  string $str
+     *
+     * @throws InvalidArgumentException If the string failed to be a valid hostname
+     *
+     * @return array
+     */
+    protected function validateStringHost($str)
+    {
+        $str  = $this->lower($str);
+        $data = explode('.', $str);
+        $nb_labels = count($data);
+
+        $data = array_map(function ($value) {
+            $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
+
+            return trim($value);
+        }, $data);
+
+        $data = array_filter($data, function ($value) {
+            return ! empty($value);
+        });
+
+        if ($nb_labels != count($data)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its content');
+        }
+
+        $res  = $this->encode(implode($this->delimiter, $data));
+        $data = explode('.', $res);
+
+        if (! $this->isValidLength($data)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its length');
+        }
+
+        if (! $this->isValidContent($data)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its content');
+        }
+
+        if (! $this->isValidLabelsCount($data)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
+        }
+
+        return explode('.', $this->decode(implode($this->delimiter, $data)));
     }
 
     /**
@@ -159,13 +216,13 @@ class Host extends AbstractSegment implements
      *
      * @return boolean
      */
-    protected function isValidHostLength(array $data)
+    protected function isValidLength(array $data)
     {
         $res = array_filter($data, function ($label) {
             return mb_strlen($label) > 63;
         });
 
-        return 0 == count($res);
+        return empty($res);
     }
 
     /**
@@ -175,19 +232,14 @@ class Host extends AbstractSegment implements
      *
      * @return boolean
      */
-    protected function isValidHostPattern(array $data)
+    protected function isValidContent(array $data)
     {
-        $data = explode(
-            $this->delimiter,
-            $this->punycode->encode(implode($this->delimiter, $data))
-        );
-
         $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
 
-        return 0 == count($res);
+        return empty($res);
     }
 
-    protected function isValidHostLabels(array $data = [])
+    protected function isValidLabelsCount(array $data = [])
     {
         $labels       = array_merge($this->data, $data);
         $count_labels = count($labels);
@@ -196,41 +248,11 @@ class Host extends AbstractSegment implements
     }
 
     /**
-     * Validate Host data before insertion into a URL host component
-     *
-     * @param mixed $data the data to insert
-     *
-     * @return array
-     *
-     * @throws RuntimeException If the added is invalid
+     * {@inheritdoc}
      */
-    protected function validate($data)
+    public function isIp()
     {
-        $data = $this->validateSegment($data);
-        if (! $data) {
-            return $data;
-        }
-
-        $this->saveInternalEncoding();
-        if (! $this->isValidHostLength($data)) {
-            $this->restoreInternalEncoding();
-            throw new RuntimeException('Invalid hostname, check its length');
-        } elseif (! $this->isValidHostPattern($data)) {
-            $this->restoreInternalEncoding();
-            throw new RuntimeException('Invalid host label, check its content');
-        } elseif (! $this->isValidHostLabels($data)) {
-            $this->restoreInternalEncoding();
-            throw new RuntimeException('Invalid host label counts, check its count');
-        }
-
-        $data = $this->sanitizeValue($data);
-        $data = explode(
-            $this->delimiter,
-            $this->punycode->decode(implode($this->delimiter, $data))
-        );
-        $this->restoreInternalEncoding();
-
-        return $data;
+        return $this->host_as_ipv4 || $this->host_as_ipv6;
     }
 
     /**
@@ -252,91 +274,17 @@ class Host extends AbstractSegment implements
     /**
      * {@inheritdoc}
      */
-    public function isIp()
+    public function get()
     {
-        return $this->host_as_ipv6 || $this->host_as_ipv4;
-    }
-
-    /**
-     * Set the Host as a IP Address
-     *
-     * @param string $str the raw Host string
-     */
-    protected function setHostAsIp($str)
-    {
-        $this->host_as_ipv4 = false;
-        $this->host_as_ipv6 = false;
-        if (! self::isStringable($str)) {
-            return;
+        if (empty($this->data)) {
+            return null;
         }
 
-        $str = (string) $str;
-        $str = trim($str);
-        if ('[' == $str[0] && ']' == $str[strlen($str)-1]) {
-            $str = substr($str, 1, -1);
-            if (! filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                return false;
-            }
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
-            $this->data = [$str];
-            return;
-        }
-
-        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->host_as_ipv4 = true;
-            $this->host_as_ipv6 = false;
-            $this->data = [$str];
-        } elseif (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
-            $this->data = [$str];
-        }
-    }
-
-    /**
-     * Assert the nature of the Host IP or Not
-     *
-     * @throws LogicException If the Host is a valid IP address
-     */
-    protected function assertHostAsIp()
-    {
         if ($this->isIp()) {
-            throw new LogicException('You can not modify a IP based host');
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function append($data, $whence = null, $whence_index = null)
-    {
-        $this->assertHostAsIp();
-
-        return parent::append($data, $whence, $whence_index);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prepend($data, $whence = null, $whence_index = null)
-    {
-        $this->assertHostAsIp();
-
-        return parent::prepend($data, $whence, $whence_index);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        $str = $this->__toString();
-        if ($this->host_as_ipv6) {
-            return '['.$str.']';
+            return $this->data[0];
         }
 
-        return $str;
+        return implode($this->delimiter, $this->data);
     }
 
     /**
@@ -350,43 +298,58 @@ class Host extends AbstractSegment implements
     /**
      * {@inheritdoc}
      */
-    public function getLabel($offset, $default = null)
+    public function toUnicode()
     {
-        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
-        if (false === $offset || ! isset($this->data[$offset])) {
-            return $default;
-        }
-
-        return $this->data[$offset];
+        return $this->__toString();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setLabel($offset, $value)
+    public function toAscii()
     {
-        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => [
-            "min_range" => 0,
-            "max_range" => $this->count(),
-        ]]);
-        if (false === $offset) {
-            throw new OutOfBoundsException('The specified key is not in the object boundaries');
+        return $this->encode(implode($this->delimiter, $this->data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        $str = $this->__toString();
+        if ($this->host_as_ipv6) {
+            return "[$str]";
+        }
+        return $str;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appendWith($value, $offset = null)
+    {
+        if ($this->isIp()) {
+            throw new LogicException('You can not modify a IP base host');
         }
 
-        $data = $this->data;
-        $value = filter_var((string) $value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $value = trim($value);
+        $res = parent::appendWith($value, $offset);
+        $res->encoding = $this->encoding;
 
-        if (empty($value)) {
-            unset($data[$offset]);
-            return $this->set(array_values($data));
+        return $res;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prependWith($value, $offset = null)
+    {
+        if ($this->isIp()) {
+            throw new LogicException('You can not modify a IP base host');
         }
 
-        $data[$offset] = $value;
-        if (1 == count($data)) {
-            return $this->set($value);
-        }
+        $res = parent::prependWith($value, $offset);
+        $res->encoding = $this->encoding;
 
-        return $this->set(array_values($data));
+        return $res;
     }
 }

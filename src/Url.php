@@ -12,106 +12,127 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\UrlInterface;
-use League\Url\Traits\Factory;
-use RuntimeException;
+use League\Url\Interfaces\Url as UrlInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
- * A Immutable Value Object class to manipulate URLs
- *
- *  @package League.url
- *  @since  3.0.0
- */
-final class Url implements UrlInterface
+* A class to manipulate an URL as a Value Object
+*
+* @package League.url
+* @since 1.0.0
+*/
+class Url implements UrlInterface
 {
     /**
-    * Scheme
-    *
-    * @var \League\Url\Scheme
-    */
-    private $scheme;
-
-    /**
-    * User
-    *
-    * @var \League\Url\User
-    */
-    private $user;
-
-    /**
-    * Pass
-    *
-    * @var \League\Url\Pass
-    */
-    private $pass;
-
-    /**
-     * Host
+     * Scheme Component
      *
-     * @var \League\Url\Host
+     * @var League\Url\Scheme
      */
-    private $host;
+    protected $scheme;
 
     /**
-     * Port
+     * User Component
      *
-     *@var \League\Url\Port
+     * @var League\Url\User
      */
-    private $port;
+    protected $user;
 
     /**
-     * Path
+     * Pass Component
      *
-     * @var \League\Url\Path
+     * @var League\Url\Pass
      */
-    private $path;
+    protected $pass;
 
     /**
-     * Query
+     * Host Component
      *
-     * @var \League\Url\Query
+     * @var League\Url\Host
      */
-    private $query;
+    protected $host;
 
     /**
-     * Fragment
+     * Port Component
      *
-     * @var \League\Url\Fragment
+     * @var League\Url\Port
      */
-    private $fragment;
-
-    use Factory;
+    protected $port;
 
     /**
-     * create a new instance of URL
+     * Path Component
      *
-     * @param  array $components a array created from PHP parse_url function
+     * @var League\Url\Path
      */
-    public function __construct(array $components = [])
-    {
-        $components = array_merge([
-            'scheme' => null,
-            'user' => null,
-            'pass' => null,
-            'host' => null,
-            'port' => null,
-            'path' => null,
-            'query' => null,
-            'fragment' => null,
-        ], $components);
+    protected $path;
 
-        $this->scheme = new Scheme($components['scheme']);
-        $this->user = new User($components['user']);
-        $this->pass = new Pass($components['pass']);
-        $this->host = new Host($components['host']);
-        $this->port = new Port($components['port']);
-        $this->path = new Path($components['path']);
-        $this->query = new Query($components['query']);
-        $this->fragment = new Fragment($components['fragment']);
+    /**
+     * Query Component
+     *
+     * @var League\Url\Query
+     */
+    protected $query;
+
+    /**
+     * Fragment Component
+     *
+     * @var League\Url\Fragment
+     */
+    protected $fragment;
+
+    /**
+     * Standard Port for known scheme
+     *
+     * @var array
+     */
+    protected static $standardPorts = [
+        'https' => 443,
+        'http'  => 80,
+        'ftp'   => 21,
+        'ftps'  => 990,
+        'ws'    => 80,
+        'wss'   => 443,
+        'ssh'   => 22,
+    ];
+
+    /**
+     * A Factory trait to create new URL object more easily
+     */
+    use UrlFactoryTrait;
+
+    /**
+     * Create a new instance of URL
+     *
+     * @param Scheme   $scheme
+     * @param User     $user
+     * @param Pass     $pass
+     * @param Host     $host
+     * @param Port     $port
+     * @param Path     $path
+     * @param Query    $query
+     * @param Fragment $fragment
+     */
+    public function __construct(
+        Scheme $scheme,
+        User $user,
+        Pass $pass,
+        Host $host,
+        Port $port,
+        Path $path,
+        Query $query,
+        Fragment $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->user = $user;
+        $this->pass = $pass;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
     }
 
     /**
-     * To Enable cloning
+     * clone the current instance
      */
     public function __clone()
     {
@@ -123,6 +144,216 @@ final class Url implements UrlInterface
         $this->path = clone $this->path;
         $this->query = clone $this->query;
         $this->fragment = clone $this->fragment;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withScheme($scheme)
+    {
+        $clone = clone $this;
+        $clone->scheme = new Scheme($scheme);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withUserInfo($user, $pass = null)
+    {
+        $clone = clone $this;
+        $clone->user = $this->user->withValue($user);
+        $clone->pass = $this->pass->withValue($pass);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
+    {
+        $clone = clone $this;
+        $clone->host = new Host($host);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPort($port)
+    {
+        $clone = clone $this;
+        $clone->port = $this->port->withValue($port);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        $clone = clone $this;
+        $clone->path = new Path($path);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withQuery($query)
+    {
+        $clone = clone $this;
+        $clone->query = new Query($query);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withFragment($fragment)
+    {
+        $clone = clone $this;
+        $clone->fragment = $this->fragment->withValue($fragment);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPass()
+    {
+        return $this->pass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFragment()
+    {
+        return $this->fragment;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInfo()
+    {
+        $info = $this->user->getUriComponent();
+        if (empty($info)) {
+            return $info;
+        }
+
+        return $info.$this->pass->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        $host = $this->host->getUriComponent();
+        if (empty($host)) {
+            return '';
+        }
+
+        $userinfo = $this->getUserInfo();
+        if (strpos($userinfo, ':') !== false) {
+            $userinfo .= '@';
+        }
+
+        $scheme  = $this->scheme->get();
+        $thePort = $this->port->getUriComponent();
+        if (empty($thePort)
+            || is_null($scheme)
+            || (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme])
+        ) {
+            $thePort = '';
+        }
+
+        return $userinfo.$host.$thePort;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBaseUrl()
+    {
+        $scheme = $this->scheme->getUriComponent();
+        $auth = $this->getAuthority();
+        if ('' != $auth && '' == $scheme) {
+            $scheme = '//';
+        }
+
+        return $scheme.$auth;
+    }
+
+    public function toArray()
+    {
+        return [
+            'scheme' => $this->scheme->get(),
+            'user' => $this->user->get(),
+            'pass' => $this->pass->get(),
+            'host' => $this->host->get(),
+            'port' => $this->port->get(),
+            'path' => $this->path->get(),
+            'query' => $this->query->get(),
+            'fragment' => $this->fragment->get(),
+        ];
     }
 
     /**
@@ -142,252 +373,10 @@ final class Url implements UrlInterface
     }
 
     /**
-     * Array representation of an URL
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'scheme' => $this->scheme->get(),
-            'user' => $this->user->get(),
-            'pass' => $this->pass->get(),
-            'host' => $this->host->get(),
-            'port' => $this->port->get(),
-            'path' => $this->path->get(),
-            'query' => $this->query->get(),
-            'fragment' => $this->fragment->get(),
-        ];
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function getUserInfo()
+    public function sameValueAs(UriInterface $url)
     {
-        $user = $this->user->getUriComponent().$this->pass->getUriComponent();
-        if ('' != $user) {
-            $user .= '@';
-        }
-
-        return $user;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthority()
-    {
-        $user = $this->getUserInfo();
-        $host = $this->host->getUriComponent();
-        $port = $this->port->getUriComponent();
-
-        return $user.$host.$port;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBaseUrl()
-    {
-        $scheme = $this->scheme->getUriComponent();
-        $auth = $this->getAuthority();
-        if ('' != $auth && '' == $scheme) {
-            $scheme = '//';
-        }
-
-        return $scheme.$auth;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(UrlInterface $url)
-    {
-        return $this->__toString() == $url->__toString();
-    }
-
-    /**
-     * Set the URL scheme component
-     *
-     * @param string $data
-     *
-     * @return static
-     */
-    public function withScheme($data)
-    {
-        $clone = clone $this;
-        $clone->scheme->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheme()
-    {
-        return clone $this->scheme;
-    }
-
-    /**
-     * Set the URL user component
-     *
-     * @param string $data
-     *
-     * @return static
-     */
-    public function withUser($data)
-    {
-        $clone = clone $this;
-        $clone->user->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUser()
-    {
-        return clone $this->user;
-    }
-
-    /**
-     * Set the URL pass component
-     *
-     * @param string $data
-     *
-     * @return static
-     */
-    public function withPass($data)
-    {
-        $clone = clone $this;
-        $clone->pass->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPass()
-    {
-        return clone $this->pass;
-    }
-
-    /**
-     * Set the URL host component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return static
-     */
-    public function withHost($data)
-    {
-        $clone = clone $this;
-        $clone->host->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHost()
-    {
-        return clone $this->host;
-    }
-
-    /**
-     * Set the URL port component
-     *
-     * @param string|integer $data
-     *
-     * @return static
-     */
-    public function withPort($data)
-    {
-        $clone = clone $this;
-        $clone->port->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPort()
-    {
-        return clone $this->port;
-    }
-
-    /**
-     * Set the URL path component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return static
-     */
-    public function withPath($data)
-    {
-        $clone = clone $this;
-        $clone->path->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return clone $this->path;
-    }
-
-    /**
-     * Set the URL query component
-     *
-     * @param string|array|\Traversable $data
-     *
-     * @return static
-     */
-    public function withQuery($data)
-    {
-        $clone = clone $this;
-        $clone->query->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getQuery()
-    {
-        return clone $this->query;
-    }
-
-    /**
-     * Set the URL fragment component
-     *
-     * @param string $data
-     *
-     * @return static
-     */
-    public function withFragment($data)
-    {
-        $clone = clone $this;
-        $clone->fragment->set($data);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFragment()
-    {
-        return clone $this->fragment;
+        return $url->__toString() == $this->__toString();
     }
 }

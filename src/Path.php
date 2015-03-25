@@ -12,21 +12,16 @@
 */
 namespace League\Url;
 
-use Countable;
-use IteratorAggregate;
-use League\Url\Interfaces\PathInterface;
-use OutOfBoundsException;
+use InvalidArgumentException;
+use League\Url\Interfaces\Path as PathInterface;
 
 /**
- *  A class to manipulate URL Path component
- *
- *  @package League.url
- *  @since  1.0.0
- */
-class Path extends AbstractSegment implements
-    Countable,
-    IteratorAggregate,
-    PathInterface
+* A class to manipulate URL Path component
+*
+* @package League.url
+* @since 1.0.0
+*/
+class Path extends AbstractSegment implements PathInterface
 {
     /**
      * {@inheritdoc}
@@ -43,29 +38,60 @@ class Path extends AbstractSegment implements
         '(', ')', '*', '+', ',', ';', '='
     ];
 
+    public function __construct($str = null)
+    {
+        if (is_null($str)) {
+            $this->data = [];
+            return;
+        }
+
+        if (! is_scalar($str) || (is_object($str) && ! method_exists($str, '__toString'))) {
+            throw new InvalidArgumentException('Invalid data to create a new Path instance');
+        }
+
+        $str = trim($str);
+        $str = ltrim($str, '/');
+        $this->data = $this->validate($str);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function validate($data)
+    {
+        $data = array_values(array_filter(explode('/', $data), function ($value) {
+            return ! is_null($value);
+        }));
+
+        return array_map(function ($value) {
+            $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
+
+            return str_replace($this->sanitizePattern, $this->sanitizeReplace, rawurlencode(rawurldecode($value)));
+        }, $data);
+    }
 
     /**
      * {@inheritdoc}
      */
     public function get()
     {
-        $res = [];
-        foreach (array_values($this->data) as $value) {
-            $res[] = rawurlencode($value);
-        }
-        if (! $res) {
+        if (! $this->data) {
             return null;
         }
 
-        return implode($this->delimiter, $res);
+        return implode('/', $this->data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUriComponent()
+    public function getValue($key, $default = null)
     {
-        return '/'.$this->__toString();
+        if ($this->hasKey($key)) {
+            return rawurldecode($this->data[$key]);
+        }
+
+        return $default;
     }
 
     /**
@@ -73,26 +99,27 @@ class Path extends AbstractSegment implements
      */
     public function __toString()
     {
-        return (string) $this->get();
+        return (string) '/'.$this->get();
     }
 
     /**
-     * Remove dot segments from a URI path according to RFC3986 Section 5.2.4
-     *
-     * @return  static
-     *
-     * @link http://www.ietf.org/rfc/rfc3986.txt
+     * {@inheritdoc}
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function normalize()
     {
-        $path = $this->getUriComponent();
-        if (false === strpos($path, '.')) {
-            return new static($path);
+        $input = $this->__toString();
+        if (false === strpos($input, '.')) {
+            return new static($input);
         }
-
-        $input  = $path;
         $output = [];
-
         while ('' != $input) {
             if ('/.' == $input) {
                 $output[] = '/';
@@ -116,93 +143,8 @@ class Path extends AbstractSegment implements
                 $output[] = substr($input, 0, $pos);
                 $input = substr($input, $pos);
             }
-
         }
 
         return new static(implode($output));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function validate($data)
-    {
-        $data = $this->sanitizeValue($this->validateSegment($data));
-
-        return array_map('urldecode', $data);
-    }
-
-    /**
-     * Sanitize a string component recursively
-     *
-     * @param mixed $str
-     *
-     * @return mixed
-     */
-    protected function sanitizeValue($str)
-    {
-        $str = parent::sanitizeValue($str);
-        if (is_array($str)) {
-            return array_map([$this, 'sanitizeSegment'], $str);
-        }
-
-        return $this->sanitizeSegment($str);
-    }
-
-    protected function sanitizeSegment($str)
-    {
-        return str_replace(
-            $this->sanitizePattern,
-            $this->sanitizeReplace,
-            rawurlencode(rawurldecode($str))
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function formatRemoveSegment($data)
-    {
-        return array_map('urldecode', parent::formatRemoveSegment($data));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSegment($offset, $default = null)
-    {
-        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => ["min_range" => 0]]);
-        if (false === $offset || ! isset($this->data[$offset])) {
-            return $default;
-        }
-
-        return $this->data[$offset];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSegment($offset, $value)
-    {
-        $offset = filter_var($offset, FILTER_VALIDATE_INT, ['options' => [
-            "min_range" => 0,
-            "max_range" => $this->count(),
-        ]]);
-        if (false === $offset) {
-            throw new OutOfBoundsException('The specified key is not in the object boundaries');
-        }
-
-        $data = $this->data;
-        $value = filter_var((string) $value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $value = trim($value);
-
-        if (empty($value)) {
-            unset($data[$offset]);
-            return $this->set(array_values($data));
-        }
-
-        $data[$offset] = $value;
-
-        return $this->set(array_values($data));
     }
 }

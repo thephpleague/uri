@@ -12,47 +12,116 @@
 */
 namespace League\Url;
 
-use ArrayAccess;
+use ArrayIterator;
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
-use League\Url\Interfaces\QueryInterface;
-use RuntimeException;
+use League\Url\Interfaces\Component;
+use League\Url\Interfaces\Query as QueryInterface;
+use JsonSerializable;
+use Traversable;
 
 /**
- *  A class to manipulate URL Query component
+ * An abstract class to ease component creation
  *
- *  @package League.url
- *  @since  1.0.0
+ * @package  League.url
+ * @since  1.0.0
  */
-class Query extends AbstractContainer implements
-    ArrayAccess,
-    Countable,
-    IteratorAggregate,
-    QueryInterface
+class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInterface
 {
     /**
-     * The Constructor
+     * The Component Data
      *
-     * @param mixed $data can be string, array or Traversable
-     *                    object convertible into Query String
+     * @var array
      */
-    public function __construct($data = null)
+    protected $data = [];
+
+    /**
+     * a new instance
+     *
+     * @param mixed $data
+     */
+    public function __construct($str = null)
     {
-        $this->set($data);
+        $this->data = $this->validate($str);
+    }
+
+    /**
+     * sanitize the submitted data
+     *
+     * @param mixed $data
+     *
+     * @return array
+     */
+    protected function validate($str)
+    {
+        if (is_null($str)) {
+            return [];
+        }
+
+        if ($str instanceof Traversable) {
+            return iterator_to_array($str, true);
+        }
+
+        if (is_array($str)) {
+            return $str;
+        }
+
+        return $this->validateStringQuery($str);
+    }
+
+    /**
+     * sanitize the submitted data
+     *
+     * @param string $data
+     *
+     * @throws  InvalidArgumentException If the submitted data is not stringable
+     *
+     * @return array
+     */
+    public function validateStringQuery($str)
+    {
+        if (! is_scalar($str) && (is_object($str) && ! method_exists($str, '__toString'))) {
+            throw new InvalidArgumentException('the submitted data can not be converted into a valid query');
+        }
+
+        $str = trim($str);
+        $str = ltrim($str, '?');
+
+        $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
+            return bin2hex(urldecode($match[0]));
+        }, $str);
+        parse_str($str, $arr);
+
+        $data = array_combine(array_map('hex2bin', array_keys($arr)), $arr);
+
+        return array_filter($data, function ($value) {
+            return ! is_null($value);
+        });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function set($data)
+    public function count()
     {
-        $this->data = array_filter($this->validate($data), function ($value) {
-            if (is_string($value)) {
-                $value = trim($value);
-            }
+        return count($this->data);
+    }
 
-            return null !== $value && '' !== $value;
-        });
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 
     /**
@@ -80,111 +149,67 @@ class Query extends AbstractContainer implements
      */
     public function getUriComponent()
     {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value = '?'.$value;
+        $res = $this->__toString();
+        if (empty($res)) {
+            return $res;
         }
 
-        return $value;
+        return '?'.$res;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function modify($data)
+    public function sameValueAs(Component $component)
     {
-        $this->set(array_merge($this->data, $this->validate($data)));
+        return $component->__toString() == $this->__toString();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function validate($data)
+    public function toArray()
     {
-        return $this->convertToArray($data, function ($str) {
-            if ('' == $str) {
-                return [];
-            }
-            if ('?' == $str[0]) {
-                $str = substr($str, 1);
-            }
-
-            //let's preserve the key params
-            $str = preg_replace_callback('/(?:^|(?<=&))[^=[]+/', function ($match) {
-                return bin2hex(urldecode($match[0]));
-            }, $str);
-            parse_str($str, $arr);
-
-            return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
-        });
+        return $this->data;
     }
 
-
     /**
-     * Return a Query Parameter
-     *
-     * @param string $key     the query parameter key
-     * @param mixed  $default the query parameter default value
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function getParameter($key, $default = null)
+    public function getKeys($value = null)
     {
-        $res = $this->offsetGet($key);
-        if (is_null($res)) {
-            return $default;
+        if (is_null($value)) {
+            return array_keys($this->data);
         }
 
-        return $res;
-    }
-
-    /**
-     * Query Parameter Setter
-     *
-     * @param string $key   the query parameter key
-     * @param mixed  $value the query parameter value
-     */
-    public function setParameter($key, $value)
-    {
-        if (is_null($key)) {
-            throw new RuntimeException('offset can not be null');
-        }
-        $this->modify([$key => $value]);
+        return array_keys($this->data, $value, true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function getValue($key, $default = null)
     {
-        return isset($this->data[$offset]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->data[$offset]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
-    {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
+        if ($this->hasKey($key)) {
+            return $this->data[$key];
         }
 
-        return null;
+        return $default;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function offsetSet($offset, $value)
+    public function hasKey($key)
     {
-        return $this->setParameter($offset, $value);
+        return array_key_exists($key, $this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mergeWith($data = null)
+    {
+        return new static(array_merge($this->data, $this->validate($data)));
     }
 }

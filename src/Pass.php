@@ -12,7 +12,7 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\ComponentInterface;
+use League\Url\Interfaces\Component;
 
 /**
  *  A class to manipulate URL Pass component
@@ -20,18 +20,18 @@ use League\Url\Interfaces\ComponentInterface;
  *  @package League.url
  *  @since  1.0.0
  */
-class Pass extends AbstractComponent implements ComponentInterface
+class Pass extends AbstractComponent implements Component
 {
     /**
      * {@inheritdoc}
      */
     public function getUriComponent()
     {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value = ':'.$value;
+        $res = $this->__toString();
+        if (! empty($res)) {
+            $res = ':'.$res;
         }
 
-        return $value;
+        return $res;
     }
 }

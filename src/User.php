@@ -22,4 +22,5 @@ use League\Url\Interfaces\Component;
 */
 class User extends AbstractComponent implements Component
 {
+    use UserComponentValidatorTrait;
 }

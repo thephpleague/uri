@@ -12,19 +12,40 @@ class UserTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructor()
     {
-        $port = new User(new User('toto'));
-        $this->assertSame('toto', $port->get());
+        $user = new User(new User('toto'));
+        $this->assertSame('toto', $user->get());
     }
 
     public function testGetUriComponent()
     {
-        $port = new User('toto');
-        $this->assertSame('toto', $port->getUriComponent());
+        $user = new User('toto');
+        $this->assertSame('toto', $user->getUriComponent());
     }
 
     public function testGetUriComponentWithEmptyData()
     {
-        $port = new User();
-        $this->assertSame('', $port->getUriComponent());
+        $user = new User();
+        $this->assertSame('', $user->getUriComponent());
+    }
+
+    public function providerInvalidCharacters()
+    {
+        return [
+            ['"bad"'],
+            ['<not good>'],
+            ['{broken}'],
+            ['failure?'],
+            ['`oops`'],
+            ['\\slashy'],
+        ];
+    }
+
+    /**
+     * @dataProvider providerInvalidCharacters
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidCharacters($value)
+    {
+        $user = new User($value);
     }
 }

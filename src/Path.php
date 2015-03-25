@@ -50,7 +50,7 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         $str = trim($str);
-        $str = ltrim($str, '/');
+        $str = ltrim($str, $this->delimiter);
         $this->data = $this->validate($str);
     }
 
@@ -59,7 +59,7 @@ class Path extends AbstractSegment implements PathInterface
      */
     protected function validate($data)
     {
-        $data = array_values(array_filter(explode('/', $data), function ($value) {
+        $data = array_values(array_filter(explode($this->delimiter, $data), function ($value) {
             return ! is_null($value);
         }));
 
@@ -75,11 +75,11 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function get()
     {
-        if (! $this->data) {
+        if (empty($this->data)) {
             return null;
         }
 
-        return implode('/', $this->data);
+        return implode($this->delimiter, $this->data);
     }
 
     /**
@@ -99,7 +99,7 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function __toString()
     {
-        return (string) '/'.$this->get();
+        return (string) $this->delimiter.$this->get();
     }
 
     /**

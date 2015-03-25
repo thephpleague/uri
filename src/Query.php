@@ -128,7 +128,7 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
      */
     public function get()
     {
-        if (! $this->data) {
+        if (empty($this->data)) {
             return null;
         }
 

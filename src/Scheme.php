@@ -12,35 +12,27 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\ComponentInterface;
-use RuntimeException;
+use InvalidArgumentException;
+use League\Url\Interfaces\Component;
 
 /**
- *  A class to manipulate URL Scheme component
- *
- *  @package League.url
- *  @since  1.0.0
- */
-class Scheme extends AbstractComponent implements ComponentInterface
+* A class to manipulate URL Scheme component
+*
+* @package League.url
+* @since 1.0.0
+*/
+class Scheme extends AbstractComponent implements Component
 {
     /**
      * {@inheritdoc}
      */
-    public function set($data)
+    protected function validate($data)
     {
-        if (is_null($data)) {
-            $this->data = null;
-            return;
+        if (! preg_match('/^[a-z][a-z0-9+-.]+$/i', $data)) {
+            throw new InvalidArgumentException('The submitted data is invalid');
         }
 
-        $data = filter_var((string) $data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $data = trim($data);
-        $data = filter_var($data, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/^[a-z][a-z0-9+-.]+$/i']]);
-        if (! $data) {
-            throw new RuntimeException('This class only deals with http URL');
-        }
-
-        $this->data = strtolower($data);
+        return strtolower($data);
     }
 
     /**
@@ -48,11 +40,10 @@ class Scheme extends AbstractComponent implements ComponentInterface
      */
     public function getUriComponent()
     {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value .= '://';
+        $data = $this->__toString();
+        if (empty($data)) {
+            return $data;
         }
-
-        return $value;
+        return $data.'://';
     }
 }

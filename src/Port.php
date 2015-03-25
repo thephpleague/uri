@@ -12,36 +12,28 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\ComponentInterface;
-use RuntimeException;
+use InvalidArgumentException;
+use League\Url\Interfaces\Component;
 
 /**
- *  A class to manipulate URL Port component
- *
- *  @package League.url
- *  @since  1.0.0
- */
-class Port extends AbstractComponent implements ComponentInterface
+* A class to manipulate URL Port component
+*
+* @package League.url
+* @since 1.0.0
+*/
+class Port extends AbstractComponent implements Component
 {
     /**
      * {@inheritdoc}
      */
-    public function set($data)
+    protected function validate($data)
     {
-        if (is_null($data)) {
-            $this->data = null;
-            return;
-        }
-
-        $data = (string) $data;
-        $data = trim($data);
         $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-
         if (! $data) {
-            throw new RuntimeException('A port must be a valid positive integer');
+            throw new InvalidArgumentException('The submitted port is invalid');
         }
 
-        $this->data = (int) $data;
+        return $data;
     }
 
     /**
@@ -49,11 +41,10 @@ class Port extends AbstractComponent implements ComponentInterface
      */
     public function getUriComponent()
     {
-        $value = $this->__toString();
-        if ('' != $value) {
-            $value = ':'.$value;
+        $data = $this->__toString();
+        if (empty($data)) {
+            return $data;
         }
-
-        return $value;
+        return ':'.$data;
     }
 }

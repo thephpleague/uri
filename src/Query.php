@@ -41,9 +41,9 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
      *
      * @param mixed $data
      */
-    public function __construct($str = null)
+    public function __construct($data = null)
     {
-        $this->data = $this->validate($str);
+        $this->data = $this->validate($data);
     }
 
     /**
@@ -53,29 +53,29 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
      *
      * @return array
      */
-    protected function validate($str)
+    protected function validate($data)
     {
-        if (is_null($str)) {
+        if (is_null($data)) {
             return [];
         }
 
-        if ($str instanceof Traversable) {
-            return iterator_to_array($str, true);
+        if ($data instanceof Traversable) {
+            return iterator_to_array($data, true);
         }
 
-        if (is_array($str)) {
-            return $str;
+        if (is_array($data)) {
+            return $data;
         }
 
-        return $this->validateStringQuery($str);
+        return $this->validateStringQuery($data);
     }
 
     /**
      * sanitize the submitted data
      *
-     * @param string $data
+     * @param string $str
      *
-     * @throws  InvalidArgumentException If the submitted data is not stringable
+     * @throws InvalidArgumentException If the submitted data is not stringable
      *
      * @return array
      */
@@ -87,15 +87,14 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
 
         $str = trim($str);
         $str = ltrim($str, '?');
-
         $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
             return bin2hex(urldecode($match[0]));
         }, $str);
         parse_str($str, $arr);
 
-        $data = array_combine(array_map('hex2bin', array_keys($arr)), $arr);
+        $arr = array_combine(array_map('hex2bin', array_keys($arr)), $arr);
 
-        return array_filter($data, function ($value) {
+        return array_filter($arr, function ($value) {
             return ! is_null($value);
         });
     }

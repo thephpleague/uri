@@ -23,35 +23,35 @@ interface Host extends Segment
     /**
      * Tell whether the host is an IP
      *
-     * @return boo
+     * @return bool
      */
     public function isIp();
 
     /**
      * Tell whether the host is an IPv4
      *
-     * @return boo
+     * @return bool
      */
     public function isIpv4();
 
     /**
      * Tell whether the host is an IPv6
      *
-     * @return boo
+     * @return bool
      */
     public function isIpv6();
 
     /**
      * Return the unicode string representation of a host
      *
-     * @return boo
+     * @return string
      */
     public function toUnicode();
 
     /**
      * Return the ascii string representation of a host
      *
-     * @return boo
+     * @return string
      */
     public function toAscii();
 }

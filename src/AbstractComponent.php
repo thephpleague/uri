@@ -34,11 +34,9 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if (! is_null($data)) {
-            $data = $this->validate($data);
+        if (null !== $data) {
+            $this->data = $this->validate((string) $data);
         }
-
-        $this->data = $data;
     }
 
     /**

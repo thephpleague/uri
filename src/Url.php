@@ -12,6 +12,7 @@
 */
 namespace League\Url;
 
+use InvalidArgumentException;
 use League\Url\Interfaces\Url as UrlInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -144,6 +145,64 @@ class Url implements UrlInterface
         $this->path = clone $this->path;
         $this->query = clone $this->query;
         $this->fragment = clone $this->fragment;
+    }
+
+    /**
+     * Create a new League\Url\Url instance from a string
+     *
+     * @param  string $url
+     *
+     * @throws new InvalidArgumentException If the URL can not be parsed
+     *
+     * @return League\Url\Url
+     */
+    public static function createFromUrl($url)
+    {
+        $url = trim($url);
+        $components = @parse_url($url);
+        if (false === $components) {
+            throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
+        }
+        $components = array_merge([
+            "scheme" => null,
+            "user" => null,
+            "pass" => null,
+            "host" => null,
+            "port" => null,
+            "path" => null,
+            "query" => null,
+            "fragment" => null,
+        ], $components);
+
+        return new static(
+            new Scheme($components["scheme"]),
+            new User($components["user"]),
+            new Pass($components["pass"]),
+            new Host($components["host"]),
+            new Port($components["port"]),
+            new Path($components["path"]),
+            new Query($components["query"]),
+            new Fragment($components["fragment"])
+        );
+    }
+
+    /**
+     * Create a new League\Url\Url object from the environment
+     *
+     * @param  array  $server the environment server typically $_SERVER
+     *
+     * @throws new InvalidArgumentException If the URL can not be parsed
+     *
+     * @return League\Url\Url
+     */
+    public static function createFromServer(array $server)
+    {
+        $scheme  = static::fetchServerScheme($server);
+        $host    = static::fetchServerHost($server);
+        $port    = static::fetchServerPort($server);
+        $request = static::fetchServerRequestUri($server);
+
+        return static::createFromUrl($scheme.$host.$port.$request);
     }
 
     /**
@@ -316,16 +375,15 @@ class Url implements UrlInterface
             $userinfo .= '@';
         }
 
-        $scheme  = $this->scheme->get();
-        $thePort = $this->port->getUriComponent();
-        if (empty($thePort)
-            || is_null($scheme)
-            || (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme])
+        $scheme = $this->scheme->get();
+        $port   = $this->port->getUriComponent();
+        if (isset(static::$standardPorts[$scheme]) &&
+            $this->port->get() == static::$standardPorts[$scheme]
         ) {
-            $thePort = '';
+            $port = '';
         }
 
-        return $userinfo.$host.$thePort;
+        return $userinfo.$host.$port;
     }
 
     /**
@@ -333,13 +391,12 @@ class Url implements UrlInterface
      */
     public function getBaseUrl()
     {
-        $scheme = $this->scheme->getUriComponent();
         $auth = $this->getAuthority();
-        if ('' != $auth && '' == $scheme) {
-            $scheme = '//';
+        if ('' != $auth) {
+            $auth = '//'.$auth;
         }
 
-        return $scheme.$auth;
+        return $this->scheme->getUriComponent().$auth;
     }
 
     public function toArray()

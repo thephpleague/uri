@@ -13,45 +13,56 @@ use StdClass;
 class PathTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testConstructor()
+    /**
+     * @param string $raw
+     * @param string $parsed
+     * @dataProvider validPathProvider
+     */
+    public function testValidPath($raw, $parsed)
     {
-        $expected = '/path/to/mars';
-        $path = new Path($expected);
-        $this->assertSame($expected, $path->__toString());
+        $path = new Path($raw);
+        $this->assertSame($parsed, $path->__toString());
     }
 
-    public function testEmptyConstructor()
+    public function validPathProvider()
     {
-        $path = new Path();
-        $this->assertSame('/', (string) $path);
+        return [
+            ['/path/to/my/file.csv', '/path/to/my/file.csv'],
+            ['you', '/you'],
+            ['foo/bar/', '/foo/bar/'],
+            ['', '/'],
+            ['/', '/'],
+            ['/shop/rev iew/', '/shop/rev%20iew/'],
+        ];
+    }
+
+    /**
+     * @param string $raw
+     * @param int    $key
+     * @param string $value
+     * @param mixed  $default
+     * @dataProvider getValueProvider
+     */
+    public function testGetValue($raw, $key, $value, $default)
+    {
+        $path = new Path($raw);
+        $this->assertSame($value, $path->getValue($key, $default));
+    }
+
+    public function getValueProvider()
+    {
+        return [
+            ['/shop/rev iew/', 1, 'rev iew', null],
+            ['/shop/rev%20iew/', 1, 'rev iew', null],
+            ['/shop/rev%20iew/', 28, 'foo', 'foo'],
+        ];
     }
 
     public function testPrepend()
     {
         $path = new Path('/test/query.php');
         $newPath = $path->prependWith('master');
-        $this->assertSame('master/test/query.php', $newPath->get());
-    }
-
-    public function testNormalizePath()
-    {
-        $path = new Path('/shop/rev iew/');
-        $this->assertSame('shop/rev%20iew/', $path->get());
-    }
-
-    public function testGetValueEncoded()
-    {
-        $path = new Path('/shop/rev iew/');
-        $this->assertSame('rev iew', $path->getValue(1));
-    }
-
-    public function testMultiplePrepend()
-    {
-        $path = new Path('/master/query.php');
-        $newPath = $path
-            ->prependWith('master')
-            ->prependWith('master');
-        $this->assertSame('/master/master/master/query.php', (string) $newPath);
+        $this->assertSame('/master/test/query.php', $newPath->__toString());
     }
 
     public function testAppendEmptyPath()
@@ -98,18 +109,16 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame([1, 3], $path->getKeys('3'));
     }
 
-    public function testGetValue()
-    {
-        $path = new Path('/toto/le/heros/masson');
-        $this->assertSame('toto', $path->getValue(0));
-        $this->assertNull($path->getValue(23));
-        $this->assertSame('foo', $path->getValue(23, 'foo'));
-    }
-
     public function testCountable()
     {
         $path = new Path('/toto/le/heros/masson');
         $this->assertCount(4, $path);
+    }
+
+    public function testCountableWithDelimiterEndingPath()
+    {
+        $path = new Path('/toto/le/heros/masson/');
+        $this->assertCount(5, $path);
     }
 
     public function testSegmentNormalization()

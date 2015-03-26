@@ -1,4 +1,5 @@
-# League Url
+League Url
+=======
 
 [![Build Status](https://img.shields.io/travis/thephpleague/url/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/url)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/url.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/url/code-structure)
@@ -7,40 +8,43 @@
 [![Latest Version](https://img.shields.io/github/release/thephpleague/url.svg?style=flat-square)](https://github.com/thephpleague/url/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/url.svg?style=flat-square)](https://packagist.org/packages/league/url)
 
-The League Url package provides simple and intuitive classes and methods to create and manage Urls in PHP.
+The `League\Url` package provides simple and intuitive classes to create and manage Urls in PHP.
 
-This package is compliant with [PSR-2][], and [PSR-4][].
+Highlights
+------
 
-[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
-[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+- Simple API
+- Treats URL and URL components as Immutable Values Objects
+- Implements the `UriInterface` from the upcoming [PSR-7][]
+- Fully documented
+- Framework Agnostic
+- Composer ready, [PSR-2][] and [PSR-4][] compliant
 
-Requirements
+Documentation
+------
+
+Full documentation can be found at [url.thephpleague.com](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages](https://github.com/thephpleague/url/tree/gh-pages) branch
+
+System Requirements
 -------
 
-You need **PHP >= 5.4.7** and the `mbstring` extension to use the library, but the latest stable version of PHP is recommended.
+You need **PHP >= 5.4.7** or **HHVM >= 3.4** and the `mbstring` extension to use the library, but the latest stable version of PHP/HHVM is recommended.
 
-* **Note:** The last stable version of `League\Url` [version 3.2.1](https://github.com/thephpleague/url/tree/3.2.1) still supports PHP 5.3*
+**Note: The last stable version of `League\Url` [version 3.3.1](https://github.com/thephpleague/url/tree/3.3.1) still supports PHP 5.3**
 
 Install
 -------
 
-Install `Url` using Composer.
+Install `League\Url` using Composer.
 
 ```
 $ composer require league/url
 ```
 
-#### Going Solo
-
-You can also use `League\Url` without using Composer by downloading the library and using a [PSR-4](http://www.php-fig.org/psr/psr-4/) compatible autoloader.
-
-Documentation
--------
-
-`League\Url` is [fully documented](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/url/tree/gh-pages).
-
 Testing
 -------
+
+`League\Url` has a [PHPUnit](https://phpunit.de) test suite. To run the tests, run the following command from the project folder.
 
 ``` bash
 $ phpunit
@@ -49,7 +53,7 @@ $ phpunit
 Contributing
 -------
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Security
 -------
@@ -66,3 +70,7 @@ License
 -------
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
+[PSR-7]: https://github.com/php-fig/fig-standards/blob/master/proposed/http-message.md

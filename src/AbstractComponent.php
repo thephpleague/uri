@@ -48,10 +48,7 @@ abstract class AbstractComponent
      *
      * @return string
      */
-    protected function validate($data)
-    {
-        return trim(filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]));
-    }
+    abstract protected function validate($data);
 
     /**
      * {@inheritdoc}

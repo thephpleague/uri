@@ -21,12 +21,14 @@ use OutOfBoundsException;
  * An abstract class to ease Segment object creation
  *
  * @package  League.url
- * @since  4.0.0
+ * @since  3.0.0
  */
 abstract class AbstractSegment
 {
     /**
-     * {@inheritdoc}
+     * The Component delimiter
+     *
+     * @var string
      */
     protected $delimiter;
 
@@ -45,9 +47,9 @@ abstract class AbstractSegment
     /**
      * Validate incoming data
      *
-     * @param  mixed $data
+     * @param string $data
      *
-     * @throws  InvalidArgumentException If the given data is not valid
+     * @throws InvalidArgumentException If the given data is not valid
      *
      * @return array
      */

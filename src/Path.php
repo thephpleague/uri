@@ -12,6 +12,7 @@
 */
 namespace League\Url;
 
+use Countable;
 use InvalidArgumentException;
 use League\Url\Interfaces\Path as PathInterface;
 
@@ -21,7 +22,7 @@ use League\Url\Interfaces\Path as PathInterface;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegment implements PathInterface
+class Path extends AbstractSegment implements Countable, PathInterface
 {
     /**
      * {@inheritdoc}

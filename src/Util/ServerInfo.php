@@ -10,17 +10,17 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url;
+namespace League\Url\Util;
 
 use InvalidArgumentException;
 
 /**
-* A class to manipulate an URL as a Value Object
-*
-* @package League.url
-* @since 4.0.0
-*/
-trait UrlFactoryTrait
+ * A Trait to fetch URI info from the Server variables
+ *
+ * @package League.url
+ * @since 4.0.0
+ */
+trait ServerInfo
 {
     /**
      * Returns the environment scheme

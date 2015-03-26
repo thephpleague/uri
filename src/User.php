@@ -13,6 +13,7 @@
 namespace League\Url;
 
 use League\Url\Interfaces\Component;
+use League\Url\Util;
 
 /**
 * A class to manipulate URL User component
@@ -22,5 +23,5 @@ use League\Url\Interfaces\Component;
 */
 class User extends AbstractComponent implements Component
 {
-    use UserComponentValidatorTrait;
+    use Util\UserInfoValidator;
 }

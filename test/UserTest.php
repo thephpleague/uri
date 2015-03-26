@@ -10,22 +10,23 @@ use PHPUnit_Framework_TestCase;
  */
 class UserTest extends PHPUnit_Framework_TestCase
 {
-    public function testConstructor()
+    public function validUserProvider()
     {
-        $user = new User(new User('toto'));
-        $this->assertSame('toto', $user->get());
+        return [
+            ['toto', 'toto'],
+            ['bar---', 'bar---'],
+            [null, ''],
+        ];
     }
 
-    public function testGetUriComponent()
+    /**
+     * @param  string $value
+     * @dataProvider validUserProvider
+     */
+    public function testGetUriComponent($raw, $parsed)
     {
-        $user = new User('toto');
-        $this->assertSame('toto', $user->getUriComponent());
-    }
-
-    public function testGetUriComponentWithEmptyData()
-    {
-        $user = new User();
-        $this->assertSame('', $user->getUriComponent());
+        $user = new User(new User($raw));
+        $this->assertSame($parsed, $user->getUriComponent());
     }
 
     public function providerInvalidCharacters()

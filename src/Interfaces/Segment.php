@@ -12,15 +12,13 @@
 */
 namespace League\Url\Interfaces;
 
-use Countable;
-
 /**
  * An interface for URL Query component
  *
  * @package  League.url
  * @since  4.0.0
  */
-interface Segment extends Component, Countable
+interface Segment extends Component
 {
     /**
      * Return the query keys. If a value is specified
@@ -45,7 +43,7 @@ interface Segment extends Component, Countable
     /**
      * Tell whether the given key exists in the Query object
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return bool
      */
@@ -54,7 +52,7 @@ interface Segment extends Component, Countable
     /**
      * Append new data at the end of the component
      *
-     * @param  string $value
+     * @param string $value
      *
      * @return Segment
      */
@@ -63,7 +61,7 @@ interface Segment extends Component, Countable
     /**
      * Prepend new data at the beginning of the component
      *
-     * @param  string $value
+     * @param string $value
      *
      * @return Segment
      */
@@ -72,8 +70,8 @@ interface Segment extends Component, Countable
     /**
      * Replace data from the segment and return a new segment
      *
-     * @param  string $value
-     * @param  int $key
+     * @param string $value
+     * @param int $key
      *
      * @return Segment
      */

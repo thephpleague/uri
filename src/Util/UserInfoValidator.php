@@ -10,18 +10,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace League\Url;
+namespace League\Url\Util;
 
 use InvalidArgumentException;
 
 /**
- *
- * A class to manipulate an URL as a Value Object
+ * A trait to validate User and Pass component value
  *
  * @package League.url
  * @since 4.0.0
  */
-trait UserComponentValidatorTrait
+trait UserInfoValidator
 {
     /**
      * {@inheritdoc}
@@ -31,7 +30,9 @@ trait UserComponentValidatorTrait
         // https://tools.ietf.org/html/rfc3986#section-3.2.1
         // userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
 
-        if (ctype_alnum($data)) {
+        $data = trim($data);
+
+        if (empty($data) || ctype_alnum($data)) {
             // Simplest and most common use case: component is alphanumeric.
             return $data;
         }

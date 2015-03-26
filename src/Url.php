@@ -14,6 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Url as UrlInterface;
+use League\Url\Util;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -96,9 +97,9 @@ class Url implements UrlInterface
     ];
 
     /**
-     * A Factory trait to create new URL object more easily
+     * A Factory trait fetch info from Server environment variables
      */
-    use UrlFactoryTrait;
+    use Util\ServerInfo;
 
     /**
      * Create a new instance of URL
@@ -154,7 +155,7 @@ class Url implements UrlInterface
      *
      * @throws new InvalidArgumentException If the URL can not be parsed
      *
-     * @return League\Url\Url
+     * @return static
      */
     public static function createFromUrl($url)
     {
@@ -189,20 +190,21 @@ class Url implements UrlInterface
     /**
      * Create a new League\Url\Url object from the environment
      *
-     * @param  array  $server the environment server typically $_SERVER
+     * @param array $server the environment server typically $_SERVER
      *
-     * @throws new InvalidArgumentException If the URL can not be parsed
+     * @throws
+     *  \InvalidArgumentException If the URL can not be parsed
      *
-     * @return League\Url\Url
+     * @return static
      */
     public static function createFromServer(array $server)
     {
-        $scheme  = static::fetchServerScheme($server);
-        $host    = static::fetchServerHost($server);
-        $port    = static::fetchServerPort($server);
-        $request = static::fetchServerRequestUri($server);
-
-        return static::createFromUrl($scheme.$host.$port.$request);
+        return static::createFromUrl(
+            static::fetchServerScheme($server)
+            .static::fetchServerHost($server)
+            .static::fetchServerPort($server)
+            .static::fetchServerRequestUri($server)
+        );
     }
 
     /**
@@ -399,6 +401,9 @@ class Url implements UrlInterface
         return $this->scheme->getUriComponent().$auth;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return [

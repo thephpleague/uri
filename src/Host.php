@@ -12,9 +12,10 @@
 */
 namespace League\Url;
 
+use Countable;
 use InvalidArgumentException;
 use League\Url\Interfaces\Host as HostInterface;
-use League\Url\Modifier;
+use League\Url\Util;
 use LogicException;
 
 /**
@@ -23,7 +24,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Host extends AbstractSegment implements HostInterface
+class Host extends AbstractSegment implements Countable, HostInterface
 {
     /**
      * Bootstring parameter values for host punycode
@@ -51,13 +52,6 @@ class Host extends AbstractSegment implements HostInterface
     protected $host_as_ipv6 = false;
 
     /**
-     * Character encoding
-     *
-     * @var string
-     */
-    protected $encoding;
-
-    /**
      * Host delimiter
      *
      * @var string
@@ -67,7 +61,7 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * Trait to handle punycode
      */
-    use Modifier\Punycode;
+    use Util\Punycode;
 
     /**
      * new Instance
@@ -75,10 +69,8 @@ class Host extends AbstractSegment implements HostInterface
      * @param string $str      the host
      * @param string $encoding the encoding charset
      */
-    public function __construct($str = null, $encoding = 'UTF-8')
+    public function __construct($str = null)
     {
-        $this->encoding = $encoding;
-
         $data = [];
         $str  = trim($str);
         if (false !== strpos($str, '..')) {
@@ -160,7 +152,6 @@ class Host extends AbstractSegment implements HostInterface
             throw new InvalidArgumentException('Invalid Host format');
         }
 
-
         $this->host_as_ipv4 = false;
         $this->host_as_ipv6 = false;
 
@@ -196,8 +187,7 @@ class Host extends AbstractSegment implements HostInterface
             throw new InvalidArgumentException('Invalid Hostname, verify its content');
         }
 
-        $res  = $this->encode(implode($this->delimiter, $data));
-        $data = explode('.', $res);
+        $data = array_map([$this, 'encodeLabel'], $data);
 
         if (! $this->isValidLength($data)) {
             throw new InvalidArgumentException('Invalid Hostname, verify its length');
@@ -211,7 +201,12 @@ class Host extends AbstractSegment implements HostInterface
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
 
-        return explode('.', $this->decode(implode($this->delimiter, $data)));
+        return array_map(function ($part) {
+            if (strpos($part, static::PREFIX) !== 0) {
+                return $part;
+            }
+            return $this->decodeLabel(substr($part, strlen(static::PREFIX)));
+        }, $data);
     }
 
     /**
@@ -224,7 +219,7 @@ class Host extends AbstractSegment implements HostInterface
     protected function isValidLength(array $data)
     {
         $res = array_filter($data, function ($label) {
-            return mb_strlen($label) > 63;
+            return strlen($label) > 63;
         });
 
         return empty($res);
@@ -313,7 +308,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function toAscii()
     {
-        return $this->encode(implode($this->delimiter, $this->data));
+        return implode($this->delimiter, array_map([$this, 'encodeLabel'], $this->data));
     }
 
     /**
@@ -333,19 +328,20 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function appendWith($value)
     {
-        $this->assertIpRestriction($value);
+        $this->assertIpRestriction();
 
-        $res = parent::appendWith($value);
-        $res->encoding = $this->encoding;
-
-        return $res;
+        return parent::appendWith($value);
     }
 
-
-    protected function assertIpRestriction($value)
+    /**
+     * Check if the method is usable with IP
+     *
+     * @throws \LogicException if the API can not be use
+     */
+    protected function assertIpRestriction()
     {
         if ($this->isIp()) {
-            throw new LogicException('You can not modify a IP host');
+            throw new LogicException('The API can not be use with an IP based host.');
         }
     }
 
@@ -354,22 +350,8 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function prependWith($value)
     {
-        $this->assertIpRestriction($value);
+        $this->assertIpRestriction();
 
-        $res = parent::prependWith($value);
-        $res->encoding = $this->encoding;
-
-        return $res;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceWith($value, $key)
-    {
-        $res = parent::replaceWith($value, $key);
-        $res->encoding = $this->encoding;
-
-        return $res;
+        return parent::prependWith($value);
     }
 }

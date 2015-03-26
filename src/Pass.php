@@ -13,6 +13,7 @@
 namespace League\Url;
 
 use League\Url\Interfaces\Component;
+use League\Url\Util;
 
 /**
  *  A class to manipulate URL Pass component
@@ -22,7 +23,7 @@ use League\Url\Interfaces\Component;
  */
 class Pass extends AbstractComponent implements Component
 {
-    use UserComponentValidatorTrait;
+    use Util\UserInfoValidator;
 
     /**
      * {@inheritdoc}

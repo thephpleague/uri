@@ -17,8 +17,8 @@ use League\Url\Interfaces\Component;
 /**
  * An abstract class to ease component creation
  *
- * @package  League.url
- * @since  4.0.0
+ * @package League.url
+ * @since  3.0.0
  */
 abstract class AbstractComponent
 {
@@ -30,7 +30,9 @@ abstract class AbstractComponent
     protected $data;
 
     /**
-     * {@inheritdoc}
+     * new instance
+     *
+     * @param string $data the component value
      */
     public function __construct($data = null)
     {
@@ -55,7 +57,7 @@ abstract class AbstractComponent
      */
     public function get()
     {
-        return $this->data;
+        return ! empty($this->data) ? $this->data : null;
     }
 
     /**
@@ -84,6 +86,8 @@ abstract class AbstractComponent
 
     /**
      * Returns a new object with the given value
+     *
+     * @return static
      */
     public function withValue($data = null)
     {

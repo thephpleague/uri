@@ -15,6 +15,7 @@ namespace League\Url;
 use Countable;
 use InvalidArgumentException;
 use League\Url\Interfaces\Path as PathInterface;
+use LogicException;
 
 /**
 * A class to manipulate URL Path component
@@ -156,5 +157,51 @@ class Path extends AbstractSegment implements Countable, PathInterface
         }
 
         return new static(implode($output));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBasename()
+    {
+        $basename = end($this->data);
+        reset($this->data);
+
+        return $basename;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtension()
+    {
+        $basename = $this->getBasename();
+        $pos = mb_strpos($basename, '.');
+        if (false === $pos) {
+            return '';
+        }
+
+        return ltrim(mb_substr($basename, $pos), '.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withExtension($ext)
+    {
+        $ext = trim($ext);
+        $ext = ltrim($ext, '.');
+        $ext = implode('.', $this->validate($ext));
+
+        $basename = $this->getBasename();
+        if (empty($basename)) {
+            throw new LogicException('No basename exist!!');
+        }
+        $pos = mb_strpos($basename, '.');
+        if (false !== $pos) {
+            $basename = mb_substr($basename, 0, $pos);
+        }
+
+        return $this->replaceWith("/$basename.$ext", count($this->data) - 1);
     }
 }

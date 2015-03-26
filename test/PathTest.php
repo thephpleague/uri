@@ -179,4 +179,59 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/', '../aaa/./..'],
         ];
     }
+
+    public function testGetBasemane()
+    {
+        $path = new Path('/path/to/my/file.txt');
+        $this->assertSame('file.txt', $path->getBasename());
+    }
+
+    /**
+     * @param  string $raw
+     * @param  string $parsed
+     * @dataProvider extensionProvider
+     */
+    public function testGetExtension($raw, $parsed)
+    {
+        $this->assertSame($parsed, (new Path($raw))->getExtension());
+    }
+
+    public function extensionProvider()
+    {
+        return [
+            ['/path/to/my/', ''],
+            ['/path/to/my/file', ''],
+            ['/path/to/my/file.txt', 'txt'],
+            ['/path/to/my/file.csv.txt', 'csv.txt'],
+        ];
+    }
+
+    /**
+     * @param  string $raw
+     * @param  string $raw_ext
+     * @param  string $parsed_ext
+     * @dataProvider withExtensionProvider
+     */
+    public function testWithExtension($raw, $raw_ext, $parsed_ext)
+    {
+        $newPath = (new Path($raw))->withExtension($raw_ext);
+        $this->assertSame($parsed_ext, $newPath->getExtension());
+    }
+
+    public function withExtensionProvider()
+    {
+        return [
+            ['/path/to/my/file.txt', '.csv', 'csv'],
+            ['/path/to/my/file.txt', 'csv', 'csv'],
+            ['/path/to/my/file', '.csv', 'csv'],
+        ];
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testWithExtensionFailed()
+    {
+        (new Path())->withExtension('txt');
+    }
 }

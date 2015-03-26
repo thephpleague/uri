@@ -56,65 +56,36 @@ class PathTest extends PHPUnit_Framework_TestCase
 
     public function testAppendEmptyPath()
     {
-        $path    = new Path();
-        $newPath = $path->appendWith('/shop/checkout/');
-        $this->assertSame('shop/checkout/', $newPath->get());
+        $expected = '/shop/checkout/';
+        $this->assertSame($expected, (string) (new Path())->appendWith($expected));
     }
 
-    public function testRemoveUnknownSegment()
+    /**
+     * Test AbstractSegment::without
+     *
+     * @param string $origin
+     * @param string $without
+     * @param string $result
+     *
+     * @dataProvider withoutProvider
+     */
+    public function testWithout($origin, $without, $result)
     {
-        $path    = new Path('/test/query.php');
-        $newPath = $path->without('toto');
-        $this->assertEquals($path, $newPath);
+        $this->assertSame($result, (string) (new Path($origin))->without($without));
     }
 
-    public function testRemoveEmptyString()
+    public function withoutProvider()
     {
-        $path    = new Path('/test/query.php');
-        $newPath = $path->without('');
-        $this->assertEquals($path, $newPath);
-    }
-
-    public function testRemoveLastSegment()
-    {
-        $path = new Path('/master/test/query.php');
-        $newPath = $path->without('query.php');
-        $this->assertSame('master/test/', $newPath->get());
-    }
-
-    public function testRemoveFirstSegment()
-    {
-        $path = new Path('/toto/le/heros/masson');
-        $newPath = $path->without('toto');
-        $this->assertSame('/le/heros/masson', (string) $newPath);
-    }
-
-    public function testRemoveTruncatedSegment()
-    {
-        $path = new Path('/toto/le/heros/masson');
-        $newPath = $path->without('ros/masson');
-        $this->assertSame('/toto/le/heros/masson', (string) $newPath);
-    }
-
-    public function testRemoveUncompleteSegment()
-    {
-        $path = new Path('/toto/le/heros/masson');
-        $newPath = $path->without('asson');
-        $this->assertSame('/toto/le/heros/masson', (string) $newPath);
-    }
-
-    public function testRemoveMultipleSegment()
-    {
-        $path    = new Path('/toto/le/heros/masson');
-        $newPath = $path->without('/heros/masson');
-        $this->assertSame('/toto/le', (string) $newPath);
-    }
-
-    public function testRemoveContainedSegment()
-    {
-        $path    = new Path('/toto/le/heros/masson');
-        $newPath = $path->without('/le/heros');
-        $this->assertSame('/toto/masson', (string) $newPath);
+        return [
+            ['/test/query.php', 'toto', '/test/query.php'],
+            ['/test/query.php', '  ', '/test/query.php'],
+            ['/master/test/query.php', 'query.php', '/master/test/'],
+            ['/toto/le/heros/masson', 'toto', '/le/heros/masson'],
+            ['/toto/le/heros/masson', 'ros/masson', '/toto/le/heros/masson'],
+            ['/toto/le/heros/masson', 'asson', '/toto/le/heros/masson'],
+            ['/toto/le/heros/masson', '/heros/masson', '/toto/le'],
+            ['/toto/le/heros/masson', '/le/heros', '/toto/masson'],
+        ];
     }
 
     public function testKeys()
@@ -133,6 +104,12 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('toto', $path->getValue(0));
         $this->assertNull($path->getValue(23));
         $this->assertSame('foo', $path->getValue(23, 'foo'));
+    }
+
+    public function testCountable()
+    {
+        $path = new Path('/toto/le/heros/masson');
+        $this->assertCount(4, $path);
     }
 
     public function testSegmentNormalization()

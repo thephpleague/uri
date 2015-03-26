@@ -44,6 +44,6 @@ class Scheme extends AbstractComponent implements Component
         if (empty($data)) {
             return $data;
         }
-        return $data.'://';
+        return $data.':';
     }
 }

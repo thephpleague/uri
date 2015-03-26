@@ -11,118 +11,106 @@ use PHPUnit_Framework_TestCase;
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
-    public function testIpv4()
+    /**
+     * Test valid Host
+     * @param string $host
+     * @param bool $isIp
+     * @param bool $isIpv4
+     * @param bool $isIpv6
+     * @param string $str
+     * @param string $uri
+     * @dataProvider validHostProvider
+     */
+    public function testValidHost($host, $isIp, $isIpv4, $isIpv6, $str, $uri)
     {
-        $host = new Host('127.0.0.1', 'UTF-8');
-        $this->assertTrue($host->isIp());
-        $this->assertTrue($host->isIpv4());
-        $this->assertFalse($host->isIpv6());
-        $this->assertSame('127.0.0.1', (string) $host);
-        $this->assertSame('127.0.0.1', $host->getUriComponent());
+        $host = new Host($host);
+        $this->assertSame($isIp, $host->isIp());
+        $this->assertSame($isIpv4, $host->isIpv4());
+        $this->assertSame($isIpv6, $host->isIpv6());
+        $this->assertSame($str, $host->__toString());
+        $this->assertSame($uri, $host->getUriComponent());
+    }
+
+    public function validHostProvider()
+    {
+        return [
+            ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
+            ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
+            ['[::1]', true, false, true, '::1', '[::1]'],
+            ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
+            ['example.com.', false, false, false, 'example.com', 'example.com'],
+            [null, false, false, false, '', ''],
+        ];
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @param              string $invalid
+     * @dataProvider       invalidHostProvider
+     * @expectedException \InvalidArgumentException
      */
-    public function testIpv6failed()
+    public function testInvalidHost($invalid)
     {
-        new Host('[127.0.0.1]');
+        new Host($invalid);
     }
 
-    public function testIpv6()
+    public function invalidHostProvider()
     {
-        $expected = 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329';
-        $host = new Host($expected);
-        $this->assertTrue($host->isIp());
-        $this->assertFalse($host->isIpv4());
-        $this->assertTrue($host->isIpv6());
-        $this->assertSame($expected, (string) $host);
-        $this->assertSame('['.$expected.']', $host->getUriComponent());
-        $this->assertTrue($host->sameValueAs(new Host('['.$expected.']')));
+        return [
+            ['.......'],
+            ['tot.    .coucou.com'],
+            ['re view'],
+            ['_bad.host.com'],
+            [implode('', array_fill(0, 23, 'banana')).'secure.example.com'],
+            [implode('.', array_fill(0, 128, 'a'))],
+            [implode('.', array_fill(0, 23, 'banana-slip'))],
+            ['[127.0.0.1]'],
+            ['toto.127.0.0.1'],
+            ['98.3.2']
+        ];
     }
 
     /**
-     * @expectedException LogicException
+     * Test Punycode support
+     *
+     * @param string $unicode Unicode Hostname
+     * @param string $ascii   Ascii Hostname
+     * @dataProvider hostnamesProvider
      */
-    public function testAppendWithIpFailed()
+    public function testValidUnicodeHost($unicode, $ascii)
     {
-        (new Host('127.0.0.1'))->appendWith('foo');
+        $host = new Host($unicode, 'UTF-8');
+        $this->assertSame($ascii, $host->toAscii());
+        $this->assertSame($unicode, $host->toUnicode());
+        $this->assertSame($unicode, $host->__toString());
+    }
+
+    public function hostnamesProvider()
+    {
+        return [
+            ['مثال.إختبار', 'xn--mgbh0fb.xn--kgbechtv',],
+            ['스타벅스코리아.com', 'xn--oy2b35ckwhba574atvuzkc.com',],
+            ['президент.рф', 'xn--d1abbgf6aiiy.xn--p1ai',],
+        ];
     }
 
     /**
-     * @expectedException LogicException
+     * Test Countable
+     *
+     * @param  string $host
+     * @param  int $nblabels
+     * @dataProvider countableProvider
      */
-    public function testPrependWithIpFailed()
+    public function testCountable($host, $nblabels)
     {
-        (new Host('127.0.0.1'))->prependWith('foo');
+        $this->assertCount($nblabels, new Host($host));
     }
 
-    public function testRemoveWithWrongValue()
+    public function countableProvider()
     {
-        $host = (new Host('127.0.0.1'))->without('foo');
-        $this->assertSame('127.0.0.1', $host->__toString());
-    }
-
-    public function testRemoveWhereItMakesNoSense()
-    {
-        $host = (new Host())->without('foo');
-        $this->assertNull($host->get());
-    }
-
-    public function testRemoveEmpty()
-    {
-        $host = (new Host('toto.com'))->without('      ');
-        $this->assertSame('toto.com', $host->get());
-    }
-
-    public function testPrependWith()
-    {
-        $host    = new Host('secure.example.com');
-        $newHost = $host->prependWith('master');
-        $this->assertSame('master.secure.example.com', $newHost->get());
-    }
-
-    public function testWithout()
-    {
-        $host    = new Host('secure.example.com');
-        $newHost = $host->without('secure');
-        $this->assertSame('example.com', $newHost->get());
-    }
-
-    public function testAppendWith()
-    {
-        $host    = new Host('secure.example.com');
-        $newHost = $host->appendWith('shop');
-        $this->assertSame('secure.example.com.shop', $newHost->get());
-    }
-
-    public function testReplaceWith()
-    {
-        $host    = new Host('master.example.com');
-        $newHost = $host->replaceWith('shop', 0);
-        $this->assertSame('shop.example.com', $newHost->get());
-    }
-
-    public function testReplaceWithWithIpAddressOnEmptyHost()
-    {
-        $host = new Host();
-        $newHost = $host->replaceWith('::1', 0);
-        $this->assertSame('[::1]', $newHost->getUriComponent());
-    }
-
-    /**
-     * @expectedException \OutOfBoundsException
-     */
-    public function testReplaceWithFailedWithWrongOffset()
-    {
-        $host = new Host('toto');
-        $host->replaceWith('::1', 23);
-    }
-
-    public function testHostSetterWithNull()
-    {
-        $host = new Host();
-        $this->assertNull($host->get());
+        return [
+            ['127.0.0.1', 1],
+            ['secure.example.com', 3],
+        ];
     }
 
     public function testGetValue()
@@ -141,95 +129,105 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Punycode support
-     *
-     * @param string $unicode Unicode Hostname
-     * @param string $ascii   Ascii Hostname
-     * @dataProvider hostnamesProvider
+     * @param string $host1
+     * @param string $host2
+     * @param bool $bool
+     * @dataProvider sameValueAsProvider
      */
-    public function testPunycode($unicode, $ascii)
+    public function testSameValueAs($host1, $host2, $bool)
     {
-        $host = new Host($unicode);
-        $this->assertSame($ascii, $host->toAscii());
-        $this->assertSame($unicode, $host->toUnicode());
-        $this->assertSame($unicode, $host->__toString());
+        $this->assertSame($bool, (new Host($host1))->sameValueAs(new Host($host2)));
     }
 
-    public function hostnamesProvider()
+    public function sameValueAsProvider()
     {
         return [
-            ['مثال.إختبار', 'xn--mgbh0fb.xn--kgbechtv',],
-            ['스타벅스코리아.com', 'xn--oy2b35ckwhba574atvuzkc.com',],
-            ['президент.рф', 'xn--d1abbgf6aiiy.xn--p1ai',],
+            ['master.example.com', 'MaStEr.ExAMple.CoM', true],
+            ['[::1]', '::1', true],
+            ['toto.com', 'barbaz.be', false],
         ];
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @param string $host
+     * @param string $without
+     * @param string $res
+     * @dataProvider withoutProvider
      */
-    public function testHostWithMultipleDot()
+    public function testWithout($host, $without, $res)
     {
-        new Host('........');
+        $this->assertSame($res, (new Host($host))->without($without)->__toString());
+    }
+
+    public function withoutProvider()
+    {
+        return [
+            ['secure.example.com', 'secure', 'example.com'],
+            ['127.0.0.1', 'foo', '127.0.0.1'],
+            ['', 'foo', ''],
+            ['toto.com', '    ', 'toto.com'],
+        ];
+    }
+
+    public function testPrependWith()
+    {
+        $host    = new Host('secure.example.com');
+        $newHost = $host->prependWith('master');
+        $this->assertSame('master.secure.example.com', $newHost->get());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException LogicException
      */
-    public function testHostWithEmptyLabel()
+    public function testPrependWithIpFailed()
     {
-        new Host('tot.   .coucou.com');
+        (new Host('127.0.0.1'))->prependWith('foo');
     }
 
-    public function testLegacyHost()
+    public function testAppendWith()
     {
-        $host = new Host('tot.coucou.com.');
-        $this->assertSame('tot.coucou.com', $host->get());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testHostWIthInvalidHostContent()
-    {
-        new Host('re view');
+        $host    = new Host('secure.example.com');
+        $newHost = $host->appendWith('shop');
+        $this->assertSame('secure.example.com.shop', $newHost->get());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException LogicException
      */
-    public function testBadHostCharacters()
+    public function testAppendWithIpFailed()
     {
-        new Host('_bad.host.com');
+        (new Host('127.0.0.1'))->appendWith('foo');
+    }
+
+    public function testReplaceWith()
+    {
+        $host    = new Host('master.example.com');
+        $newHost = $host->replaceWith('shop', 0);
+        $this->assertSame('shop.example.com', $newHost->get());
+    }
+
+    public function testReplaceWithWithIpAddressOnEmptyHost()
+    {
+        $host    = new Host();
+        $newHost = $host->replaceWith('::1', 0);
+        $this->assertSame('[::1]', $newHost->getUriComponent());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \OutOfBoundsException
      */
-    public function testBadHostLength()
+    public function testReplaceWithFailedWithWrongOffset()
+    {
+        $host = new Host('toto');
+        $host->replaceWith('::1', 23);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testReplaceWithIpMustFailed()
     {
         $host = new Host('secure.example.com');
-        $host->prependWith(implode('', array_fill(0, 23, 'banana')));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testTooManyHostlabel()
-    {
-        new Host(implode('.', array_fill(0, 128, 'a')));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testHostTooLong()
-    {
-        new Host(implode('.', array_fill(0, 23, 'banana-slip')));
-    }
-
-    public function testStrtolowerHost()
-    {
-        $host = new Host('Master.EXAMPLE.cOm');
-        $this->assertSame('master.example.com', (string) $host);
+        $host->replaceWith('127.0.0.1', 2);
     }
 }

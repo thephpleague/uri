@@ -156,6 +156,11 @@ class Host extends AbstractSegment implements HostInterface
             return [$str];
         }
 
+        if (preg_match('/^[0-9\.]+$/', $str)) {
+            throw new InvalidArgumentException('Invalid Host format');
+        }
+
+
         $this->host_as_ipv4 = false;
         $this->host_as_ipv6 = false;
 
@@ -326,13 +331,32 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
-    public function appendWith($value, $offset = null)
+    public function appendWith($value)
+    {
+        $this->assertIpRestriction($value);
+
+        $res = parent::appendWith($value);
+        $res->encoding = $this->encoding;
+
+        return $res;
+    }
+
+
+    protected function assertIpRestriction($value)
     {
         if ($this->isIp()) {
-            throw new LogicException('You can not modify a IP base host');
+            throw new LogicException('You can not modify a IP host');
         }
+    }
 
-        $res = parent::appendWith($value, $offset);
+    /**
+     * {@inheritdoc}
+     */
+    public function prependWith($value)
+    {
+        $this->assertIpRestriction($value);
+
+        $res = parent::prependWith($value);
         $res->encoding = $this->encoding;
 
         return $res;
@@ -341,13 +365,9 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
-    public function prependWith($value, $offset = null)
+    public function replaceWith($value, $key)
     {
-        if ($this->isIp()) {
-            throw new LogicException('You can not modify a IP base host');
-        }
-
-        $res = parent::prependWith($value, $offset);
+        $res = parent::replaceWith($value, $key);
         $res->encoding = $this->encoding;
 
         return $res;

@@ -50,8 +50,17 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         $str = trim($str);
-        $str = ltrim($str, $this->delimiter);
+        if (preg_match(',^/+$,', $str)) {
+            $this->data = [];
+            return;
+        }
+
+        $append_delimiter = $this->delimiter === mb_substr($str, -1, 1);
+        $str = trim($str, $this->delimiter);
         $this->data = $this->validate($str);
+        if ($append_delimiter) {
+            $this->data[] = '';
+        }
     }
 
     /**
@@ -73,18 +82,6 @@ class Path extends AbstractSegment implements PathInterface
     /**
      * {@inheritdoc}
      */
-    public function get()
-    {
-        if (empty($this->data)) {
-            return null;
-        }
-
-        return implode($this->delimiter, $this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getValue($key, $default = null)
     {
         if ($this->hasKey($key)) {
@@ -92,6 +89,18 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get()
+    {
+        if (empty($this->data)) {
+            return null;
+        }
+
+        return implode($this->delimiter, $this->data);
     }
 
     /**

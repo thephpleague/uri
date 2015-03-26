@@ -58,7 +58,7 @@ abstract class AbstractSegment
      */
     public function sameValueAs(Component $component)
     {
-        return $component->getUriComponent() == $this->getUriComponent();
+        return $component->__toString() == $this->__toString();
     }
 
     /**

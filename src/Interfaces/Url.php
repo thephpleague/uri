@@ -46,4 +46,11 @@ interface Url extends UriInterface
      * @return string
      */
     public function getBaseUrl();
+
+    /**
+     * Return a new object with its path normalized
+     *
+     * @return League\Url\Interfaces\Url
+     */
+    public function normalize();
 }

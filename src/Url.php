@@ -379,4 +379,15 @@ class Url implements UrlInterface
     {
         return $url->__toString() == $this->__toString();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize()
+    {
+        $clone = clone $this;
+        $clone->path = $this->path->normalize();
+
+        return $clone;
+    }
 }

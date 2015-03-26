@@ -85,6 +85,18 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testForceUrlNormalization()
+    {
+        $url = Url::createFromUrl(
+            'HtTpS://MaStEr.eXaMpLe.CoM:83/%7ejohndoe/%a1/../index.php?foo.bar=value#fragment'
+        );
+
+        $this->assertSame(
+            'https://master.example.com:83/~johndoe/index.php?foo.bar=value#fragment',
+            (string) $url->normalize()
+        );
+    }
+
     public function testToArray()
     {
         $url = Url::createFromUrl('https://toto.com:443/toto.php');
@@ -93,7 +105,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'user' => null,
             'pass' => null,
             'host' => 'toto.com',
-            'port' => '443',
+            'port' => 443,
             'path' => 'toto.php',
             'query' => null,
             'fragment' => null,

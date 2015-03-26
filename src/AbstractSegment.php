@@ -164,6 +164,14 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
+    public function count()
+    {
+        return count($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function without($value)
     {
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);

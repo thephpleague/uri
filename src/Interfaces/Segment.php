@@ -12,13 +12,15 @@
 */
 namespace League\Url\Interfaces;
 
+use Countable;
+
 /**
  * An interface for URL Query component
  *
  * @package  League.url
  * @since  4.0.0
  */
-interface Segment extends Component
+interface Segment extends Component, Countable
 {
     /**
      * Return the query keys. If a value is specified

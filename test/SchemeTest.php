@@ -20,7 +20,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $http_scheme = $scheme->withValue('HTTP');
         $this->assertSame('http', $http_scheme->get());
         $new_scheme = $scheme->withValue('ftp');
-        $this->assertSame('ftp://', $new_scheme->getUriComponent());
+        $this->assertSame('ftp:', $new_scheme->getUriComponent());
         $scheme->withValue('123');
     }
 

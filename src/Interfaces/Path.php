@@ -27,4 +27,31 @@ interface Path extends Segment
      * @return Path
      */
     public function normalize();
+
+    /**
+     * Gets the basename of the path
+     *
+     * @return string
+     */
+    public function getBasename();
+
+    /**
+     * Gets the path extension of the basename
+     *
+     * @return string
+     */
+    public function getExtension();
+
+    /**
+     * Return a new Path object with a modified extension
+     * for the basename
+     *
+     * @param  string $ext the new extension
+     *                     can preceeded with or without the dot (.) character
+     *
+     * @throws \LogicException If the basename is empty
+     *
+     * @return Path
+     */
+    public function withExtension($ext);
 }

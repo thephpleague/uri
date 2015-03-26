@@ -22,6 +22,8 @@ use League\Url\Interfaces\Component;
  */
 class Pass extends AbstractComponent implements Component
 {
+    use UserComponentValidatorTrait;
+
     /**
      * {@inheritdoc}
      */

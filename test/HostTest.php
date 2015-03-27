@@ -230,13 +230,12 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame('[::1]', $newHost->getUriComponent());
     }
 
-    /**
-     * @expectedException \OutOfBoundsException
-     */
+
     public function testReplaceWithFailedWithWrongOffset()
     {
         $host = new Host('toto');
-        $host->replaceWith('::1', 23);
+        $newHost = $host->replaceWith('::1', 23);
+        $this->assertSame('toto', $newHost->getUriComponent());
     }
 
     /**

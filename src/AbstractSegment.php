@@ -14,7 +14,6 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
-use OutOfBoundsException;
 
 /**
  * An abstract class to ease Segment object creation
@@ -148,7 +147,7 @@ abstract class AbstractSegment
     public function replaceWith($value, $key)
     {
         if (! empty($this->data) && ! $this->hasKey($key)) {
-            throw new OutOfBoundsException('the offset specified does not exists');
+            return clone $this;
         }
 
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);

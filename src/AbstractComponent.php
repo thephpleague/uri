@@ -37,8 +37,9 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if (null !== $data) {
-            $this->data = $this->validate((string) $data);
+        $data = trim($data);
+        if ('' != $data) {
+            $this->data = $this->validate($data);
         }
     }
 
@@ -53,28 +54,15 @@ abstract class AbstractComponent
      */
     protected function validate($data)
     {
-        // https://tools.ietf.org/html/rfc3986#section-3.2.1
-        // userinfo = *( unreserved / pct-encoded / sub-delims / ":" )
-
-        $data = trim($data);
-
-        if (empty($data) || ctype_alnum($data)) {
-            // Simplest and most common use case: component is alphanumeric.
+        if (ctype_alnum($data)) {
             return $data;
         }
 
-        // unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
-        // pct-encoded = "%" HEXDIG HEXDIG
-        // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
-
-        // Anything percent-encoded is safe and can be removed.
-        $component = preg_replace('/%[0-9a-f]{2}/i', '', $data);
-
-        // With what remains, ensure that it is "unreserved" or "sub-delimiter".
+        $component  = preg_replace('/%[0-9a-f]{2}/i', '', $data);
         $unreserved = '-a-z0-9._~';
         $subdelims  = preg_quote('!$&\'()*+,;=]/', '/');
 
-        if (! preg_match('/^[' . $unreserved . $subdelims . ']+$/i', $component)) {
+        if (! preg_match('/^['.$unreserved.$subdelims.']+$/i', $component)) {
             throw new InvalidArgumentException('The submitted user info is invalid');
         }
 

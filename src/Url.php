@@ -370,7 +370,6 @@ class Url implements UrlInterface
         if (strpos($userinfo, ':') !== false) {
             $userinfo .= '@';
         }
-
         $scheme = $this->scheme->get();
         $port   = $this->port->getUriComponent();
         if (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme]) {

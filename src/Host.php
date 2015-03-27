@@ -23,7 +23,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Host extends AbstractSegment implements HostInterface
+class Host implements HostInterface
 {
     /**
      * Bootstring parameter values for host punycode
@@ -61,6 +61,11 @@ class Host extends AbstractSegment implements HostInterface
      * Trait to handle punycode
      */
     use Util\Punycode;
+
+    /**
+     * Trait to manage operation on segment component
+     */
+    use Util\SegmentModifier;
 
     /**
      * new Instance
@@ -326,34 +331,14 @@ class Host extends AbstractSegment implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function appendWith($value)
-    {
-        $this->assertIpRestriction();
-
-        return parent::appendWith($value);
-    }
-
-    /**
-     * Check if the method is usable with IP
+     * Check if the segment modifier are usable
      *
      * @throws \LogicException if the API can not be use
      */
-    protected function assertIpRestriction()
+    protected function assertRestriction()
     {
         if ($this->isIp()) {
             throw new LogicException('The API can not be use with an IP based host.');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prependWith($value)
-    {
-        $this->assertIpRestriction();
-
-        return parent::prependWith($value);
     }
 }

@@ -10,7 +10,7 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url;
+namespace League\Url\Util;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
@@ -21,15 +21,8 @@ use League\Url\Interfaces\Component;
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractSegment
+trait SegmentModifier
 {
-    /**
-     * The Component delimiter
-     *
-     * @var string
-     */
-    protected $delimiter;
-
     /**
      * The Component Data
      *
@@ -100,10 +93,19 @@ abstract class AbstractSegment
     }
 
     /**
+     * Check if the segment modifier are usable
+     *
+     * @throws \LogicException if the API can not be use
+     */
+    abstract protected function assertRestriction();
+
+    /**
      * {@inheritdoc}
      */
     public function appendWith($value)
     {
+        $this->assertRestriction();
+
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
         $appended_delimiter = '';
@@ -127,6 +129,8 @@ abstract class AbstractSegment
      */
     public function prependWith($value)
     {
+        $this->assertRestriction();
+
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
         $value = trim($value, $this->delimiter);

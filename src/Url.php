@@ -164,16 +164,10 @@ class Url implements UrlInterface
         if (false === $components) {
             throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
-        $components = array_merge([
-            "scheme" => null,
-            "user" => null,
-            "pass" => null,
-            "host" => null,
-            "port" => null,
-            "path" => null,
-            "query" => null,
-            "fragment" => null,
-        ], $components);
+        $components = array_merge(array_fill_keys(
+            ["scheme", "user", "pass", "host", "port", "path", "query", "fragment"],
+            null
+        ), $components);
 
         return new static(
             new Scheme($components["scheme"]),
@@ -379,9 +373,7 @@ class Url implements UrlInterface
 
         $scheme = $this->scheme->get();
         $port   = $this->port->getUriComponent();
-        if (isset(static::$standardPorts[$scheme]) &&
-            $this->port->get() == static::$standardPorts[$scheme]
-        ) {
+        if (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme]) {
             $port = '';
         }
 
@@ -439,10 +431,11 @@ class Url implements UrlInterface
      */
     public function toHTML()
     {
-        $url = $this->getBaseUrl()
-            .$this->path->getUriComponent()
-            .$this->query->toHTML()
-            .$this->fragment->getUriComponent();
+        $query = $this->query->toHTML();
+        if (! empty($query)) {
+            $query = '?'.$query;
+        }
+        $url = $this->getBaseUrl().$this->path->getUriComponent().$query.$this->fragment->getUriComponent();
         if ('/' == $url) {
             return '';
         }

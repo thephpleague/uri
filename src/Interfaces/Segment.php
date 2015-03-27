@@ -35,21 +35,21 @@ interface Segment extends Component, Countable
     /**
      * Return a value from the Query object
      *
-     * @param string $name    the parameter name
+     * @param string $key     the parameter name
      * @param mixed  $default if no key is found the default value to return
      *
      * @return mixed
      */
-    public function getValue($name, $default = null);
+    public function getValue($key, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object
      *
-     * @param string $name
+     * @param string $key
      *
      * @return bool
      */
-    public function hasKey($name);
+    public function hasKey($key);
 
     /**
      * Append new data at the end of the component
@@ -73,7 +73,7 @@ interface Segment extends Component, Countable
      * Replace data from the segment and return a new segment
      *
      * @param string $value
-     * @param int $key
+     * @param int    $key
      *
      * @return Segment
      */

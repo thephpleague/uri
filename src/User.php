@@ -23,5 +23,5 @@ use League\Url\Util;
 */
 class User extends AbstractComponent implements Component
 {
-    use Util\UserInfoValidator;
+
 }

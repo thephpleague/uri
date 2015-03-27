@@ -14,7 +14,6 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
-use LogicException;
 use OutOfBoundsException;
 
 /**

@@ -41,15 +41,6 @@ class Path extends AbstractSegment implements PathInterface
 
     public function __construct($str = null)
     {
-        if (is_null($str)) {
-            $this->data = [];
-            return;
-        }
-
-        if (! is_scalar($str) || (is_object($str) && ! method_exists($str, '__toString'))) {
-            throw new InvalidArgumentException('Invalid data to create a new Path instance');
-        }
-
         $str = trim($str);
         if (preg_match(',^/+$,', $str)) {
             $this->data = [];

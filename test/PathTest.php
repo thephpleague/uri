@@ -33,6 +33,8 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['', '/'],
             ['/', '/'],
             ['/shop/rev iew/', '/shop/rev%20iew/'],
+            ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
+            ['/master/toto/%7Eetc', '/master/toto/~etc'],
         ];
     }
 
@@ -121,15 +123,6 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertCount(5, $path);
     }
 
-    public function testSegmentNormalization()
-    {
-        $path = new Path('/master/toto/a%c2%b1b');
-        $this->assertSame('/master/toto/a%C2%B1b', (string) $path);
-
-        $path = new Path('/master/toto/%7Eetc');
-        $this->assertSame('/master/toto/~etc', (string) $path);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -147,8 +140,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testNormalize($expected, $path)
     {
-        $path = new Path($path);
-        $this->assertSame($expected, $path->normalize()->__toString());
+        $this->assertSame($expected, (new Path($path))->normalize()->__toString());
     }
 
     /**
@@ -186,6 +178,12 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('file.txt', $path->getBasename());
     }
 
+    public function testGetBasemaneWithEmptyBasename()
+    {
+        $path = new Path('/path/to/my/');
+        $this->assertEmpty($path->getBasename());
+    }
+
     /**
      * @param  string $raw
      * @param  string $parsed
@@ -202,7 +200,7 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/path/to/my/', ''],
             ['/path/to/my/file', ''],
             ['/path/to/my/file.txt', 'txt'],
-            ['/path/to/my/file.csv.txt', 'csv.txt'],
+            ['/path/to/my/file.csv.txt', 'txt'],
         ];
     }
 
@@ -228,9 +226,17 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithExtensionWithInvalidExtension()
+    {
+        (new Path())->withExtension('t/xt');
+    }
+
+    /**
      * @expectedException \LogicException
      */
-    public function testWithExtensionFailed()
+    public function testWithExtensionWithoutBasename()
     {
         (new Path())->withExtension('txt');
     }

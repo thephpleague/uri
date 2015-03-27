@@ -47,15 +47,15 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceof('League\Url\Fragment', $this->url->getFragment());
     }
 
-    public function testSetterAccess()
+    public function testImmutabilityAccess()
     {
-        $this->assertInstanceof('League\Url\Url', $this->url->withScheme('https'));
-        $this->assertInstanceof('League\Url\Url', $this->url->withUserInfo('login', 'pass'));
-        $this->assertInstanceof('League\Url\Url', $this->url->withHost('secure.example.com'));
-        $this->assertInstanceof('League\Url\Url', $this->url->withPort(443));
-        $this->assertInstanceof('League\Url\Url', $this->url->withPath('/test/query.php'));
-        $this->assertInstanceof('League\Url\Url', $this->url->withQuery('?kingkong=toto'));
-        $this->assertInstanceof('League\Url\Url', $this->url->withFragment('doc3'));
+        $this->assertEquals($this->url, $this->url->withScheme('http'));
+        $this->assertEquals($this->url, $this->url->withUserInfo('login', 'pass'));
+        $this->assertEquals($this->url, $this->url->withHost('secure.example.com'));
+        $this->assertEquals($this->url, $this->url->withPort(443));
+        $this->assertEquals($this->url, $this->url->withPath('/test/query.php'));
+        $this->assertEquals($this->url, $this->url->withQuery('?kingkong=toto'));
+        $this->assertEquals($this->url, $this->url->withFragment('doc3'));
     }
 
     public function testGetBaseUrl()

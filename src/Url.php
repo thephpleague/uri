@@ -284,7 +284,7 @@ class Url implements UrlInterface
      */
     public function getScheme()
     {
-        return $this->scheme;
+        return clone $this->scheme;
     }
 
     /**
@@ -292,7 +292,7 @@ class Url implements UrlInterface
      */
     public function getUser()
     {
-        return $this->user;
+        return clone $this->user;
     }
 
     /**
@@ -300,7 +300,7 @@ class Url implements UrlInterface
      */
     public function getPass()
     {
-        return $this->pass;
+        return clone $this->pass;
     }
 
     /**
@@ -308,7 +308,7 @@ class Url implements UrlInterface
      */
     public function getHost()
     {
-        return $this->host;
+        return clone $this->host;
     }
 
     /**
@@ -316,7 +316,7 @@ class Url implements UrlInterface
      */
     public function getPort()
     {
-        return $this->port;
+        return clone $this->port;
     }
 
     /**
@@ -324,7 +324,7 @@ class Url implements UrlInterface
      */
     public function getPath()
     {
-        return $this->path;
+        return clone $this->path;
     }
 
     /**
@@ -332,7 +332,7 @@ class Url implements UrlInterface
      */
     public function getQuery()
     {
-        return $this->query;
+        return clone $this->query;
     }
 
     /**
@@ -340,7 +340,7 @@ class Url implements UrlInterface
      */
     public function getFragment()
     {
-        return $this->fragment;
+        return clone $this->fragment;
     }
 
     /**

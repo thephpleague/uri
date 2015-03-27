@@ -173,7 +173,9 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function getBasename()
     {
-        return array_pop($data = $this->data);
+        $data = $this->data;
+
+        return array_pop($data);
     }
 
     /**

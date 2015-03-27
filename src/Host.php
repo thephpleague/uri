@@ -12,7 +12,6 @@
 */
 namespace League\Url;
 
-use Countable;
 use InvalidArgumentException;
 use League\Url\Interfaces\Host as HostInterface;
 use League\Url\Util;
@@ -24,7 +23,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Host extends AbstractSegment implements Countable, HostInterface
+class Host extends AbstractSegment implements HostInterface
 {
     /**
      * Bootstring parameter values for host punycode

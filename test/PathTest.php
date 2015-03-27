@@ -124,14 +124,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testBadPath()
-    {
-        new Path(new StdClass());
-    }
-
-    /**
      * Test Removing Dot Segment
      *
      * @param  string $expected

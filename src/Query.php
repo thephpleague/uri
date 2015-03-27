@@ -143,7 +143,7 @@ class Query implements QueryInterface
             return '';
         }
 
-        return '?'.http_build_query($this->data, '', '&amp;', PHP_QUERY_RFC3986);
+        return http_build_query($this->data, '', '&amp;', PHP_QUERY_RFC3986);
     }
 
     /**

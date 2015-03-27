@@ -23,8 +23,6 @@ use League\Url\Util;
  */
 class Pass extends AbstractComponent implements Component
 {
-    use Util\UserInfoValidator;
-
     /**
      * {@inheritdoc}
      */

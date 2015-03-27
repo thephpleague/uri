@@ -26,7 +26,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->url = Url::createFromUrl(
-            'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+            'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
 
@@ -60,12 +60,12 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetBaseUrl()
     {
-        $this->assertSame('https://login:pass@secure.example.com', $this->url->getBaseUrl());
+        $this->assertSame('http://login:pass@secure.example.com:443', $this->url->getBaseUrl());
     }
 
     public function testGetAuthority()
     {
-        $this->assertSame('login:pass@secure.example.com', $this->url->getAuthority());
+        $this->assertSame('login:pass@secure.example.com:443', $this->url->getAuthority());
     }
 
     public function testGetUserInfo()
@@ -76,11 +76,11 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function testAutomaticUrlNormalization()
     {
         $url = Url::createFromUrl(
-            'HtTpS://MaStEr.eXaMpLe.CoM:83/%7ejohndoe/%a1/index.php?foo.bar=value#fragment'
+            'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment'
         );
 
         $this->assertSame(
-            'https://master.example.com:83/~johndoe/%A1/index.php?foo.bar=value#fragment',
+            'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment',
             (string) $url
         );
     }
@@ -95,6 +95,15 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'https://master.example.com:83/~johndoe/index.php?foo.bar=value#fragment',
             (string) $url->normalize()
         );
+    }
+
+    public function testToHTML()
+    {
+        $url = Url::createFromUrl('http://www.example.com/tst?foo&bar&baz');
+        $this->assertSame('http://www.example.com/tst?foo=&amp;bar=&amp;baz=', $url->toHTML());
+
+        $url = Url::createFromUrl('');
+        $this->assertEmpty($url->toHTML());
     }
 
     public function testToArray()

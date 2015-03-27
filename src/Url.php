@@ -437,6 +437,22 @@ class Url implements UrlInterface
     /**
      * {@inheritdoc}
      */
+    public function toHTML()
+    {
+        $url = $this->getBaseUrl()
+            .$this->path->getUriComponent()
+            .$this->query->toHTML()
+            .$this->fragment->getUriComponent();
+        if ('/' == $url) {
+            return '';
+        }
+
+        return $url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function sameValueAs(UriInterface $url)
     {
         return $url->__toString() == $this->__toString();

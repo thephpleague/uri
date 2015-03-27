@@ -47,6 +47,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $query);
     }
 
+    public function testToHTML()
+    {
+        $query = new Query('kingkong=toto&john=doe+the+john');
+        $this->assertSame('?kingkong=toto&amp;john=doe%20the%20john', $query->toHTML());
+    }
+
     public function testMergeWithWithArrayIterator()
     {
         $query = $this->query->mergeWith(new ArrayIterator(['john' => 'doe the john']));

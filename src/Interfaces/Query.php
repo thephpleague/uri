@@ -12,13 +12,17 @@
 */
 namespace League\Url\Interfaces;
 
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+
 /**
  * An interface for URL Query component
  *
  * @package  League.url
  * @since  4.0.0
  */
-interface Query extends Component
+interface Query extends Component, Countable, IteratorAggregate, JsonSerializable
 {
     /**
      * Return an array representation of the Query
@@ -26,6 +30,14 @@ interface Query extends Component
      * @return array
      */
     public function toArray();
+
+    /**
+     * Return a string representation of the Query suitable
+     * for direct insertion into HTML document
+     *
+     * @return string
+     */
+    public function toHTML();
 
     /**
      * Return the query keys. If a value is specified

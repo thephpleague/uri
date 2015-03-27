@@ -30,6 +30,14 @@ interface Url extends UriInterface
     public function toArray();
 
     /**
+     * Return a string representation of the URL suitable
+     * for direct insertion into HTML document
+     *
+     * @return string
+     */
+    public function toHTML();
+
+    /**
      * Tells whether two UriInterface represents the same value
      * The Comparaison is based on the __toString method
      *

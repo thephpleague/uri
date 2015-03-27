@@ -13,12 +13,9 @@
 namespace League\Url;
 
 use ArrayIterator;
-use Countable;
 use InvalidArgumentException;
-use IteratorAggregate;
 use League\Url\Interfaces\Component;
 use League\Url\Interfaces\Query as QueryInterface;
-use JsonSerializable;
 use Traversable;
 
 /**
@@ -27,7 +24,7 @@ use Traversable;
  * @package  League.url
  * @since  1.0.0
  */
-class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInterface
+class Query implements QueryInterface
 {
     /**
      * The Component Data
@@ -135,6 +132,18 @@ class Query implements Countable, IteratorAggregate, JsonSerializable, QueryInte
         }
 
         return http_build_query($this->data, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toHTML()
+    {
+        if (empty($this->data)) {
+            return '';
+        }
+
+        return '?'.http_build_query($this->data, '', '&amp;', PHP_QUERY_RFC3986);
     }
 
     /**

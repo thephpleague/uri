@@ -12,7 +12,6 @@
 */
 namespace League\Url;
 
-use Countable;
 use InvalidArgumentException;
 use League\Url\Interfaces\Path as PathInterface;
 use LogicException;
@@ -23,7 +22,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegment implements Countable, PathInterface
+class Path extends AbstractSegment implements PathInterface
 {
     /**
      * {@inheritdoc}
@@ -135,25 +134,35 @@ class Path extends AbstractSegment implements Countable, PathInterface
             if ('/.' == $input) {
                 $output[] = '/';
                 break;
-            } elseif ('/./' == substr($input, 0, 3)) {
+            }
+
+            if ('/./' == substr($input, 0, 3)) {
                 $input = substr($input, 2);
                 continue;
-            } elseif ('/..' == $input) {
+            }
+
+            if ('/..' == $input) {
                 array_pop($output);
                 $output[] = '/';
                 break;
-            } elseif ('/../' == substr($input, 0, 4)) {
+            }
+
+            if ('/../' == substr($input, 0, 4)) {
                 array_pop($output);
                 $input = substr($input, 3);
-            } elseif (in_array($input, ['.', '..'])) {
+                continue;
+            }
+
+            if (in_array($input, ['.', '..'])) {
                 break;
-            } elseif (false === ($pos = stripos($input, '/', 1))) {
+            }
+
+            if (false === ($pos = stripos($input, '/', 1))) {
                 $output[] = $input;
                 break;
-            } else {
-                $output[] = substr($input, 0, $pos);
-                $input = substr($input, $pos);
             }
+            $output[] = substr($input, 0, $pos);
+            $input = substr($input, $pos);
         }
 
         return new static(implode($output));
@@ -164,10 +173,7 @@ class Path extends AbstractSegment implements Countable, PathInterface
      */
     public function getBasename()
     {
-        $basename = end($this->data);
-        reset($this->data);
-
-        return $basename;
+        return array_pop($data = $this->data);
     }
 
     /**
@@ -175,13 +181,7 @@ class Path extends AbstractSegment implements Countable, PathInterface
      */
     public function getExtension()
     {
-        $basename = $this->getBasename();
-        $pos = mb_strpos($basename, '.');
-        if (false === $pos) {
-            return '';
-        }
-
-        return ltrim(mb_substr($basename, $pos), '.');
+        return pathinfo($this->getBasename(), PATHINFO_EXTENSION);
     }
 
     /**
@@ -191,15 +191,18 @@ class Path extends AbstractSegment implements Countable, PathInterface
     {
         $ext = trim($ext);
         $ext = ltrim($ext, '.');
-        $ext = implode('.', $this->validate($ext));
+        if (strpos($ext, $this->delimiter)) {
+            throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
+        }
+        $ext = implode($this->delimiter, $this->validate($ext));
 
         $basename = $this->getBasename();
-        if (empty($basename)) {
+        if ('' == $basename) {
             throw new LogicException('No basename exist!!');
         }
-        $pos = mb_strpos($basename, '.');
-        if (false !== $pos) {
-            $basename = mb_substr($basename, 0, $pos);
+        $current_ext = pathinfo($basename, PATHINFO_EXTENSION);
+        if ('' != $current_ext) {
+            $basename = mb_substr(0, mb_strlen($current_ext) - 1);
         }
 
         return $this->replaceWith("/$basename.$ext", count($this->data) - 1);

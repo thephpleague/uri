@@ -14,6 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Path as PathInterface;
+use League\Url\Util;
 use LogicException;
 
 /**
@@ -22,22 +23,37 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegment implements PathInterface
+class Path implements PathInterface
 {
     /**
      * {@inheritdoc}
      */
     protected $delimiter = '/';
 
+    /**
+     * Pattern to conform to Path RFC
+     *
+     * @var array
+     */
     protected $sanitizePattern = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
         '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D'
     ];
 
+    /**
+     * Pattern to conform to Path RFC
+     *
+     * @var array
+     */
     protected $sanitizeReplace = [
         '/', ':', '@', '!', '$', '&', "'",
         '(', ')', '*', '+', ',', ';', '='
     ];
+
+    /**
+     * Trait to manage operation on segment component
+     */
+    use Util\SegmentModifier;
 
     public function __construct($str = null)
     {
@@ -53,6 +69,14 @@ class Path extends AbstractSegment implements PathInterface
         if ($append_delimiter) {
             $this->data[] = '';
         }
+    }
+
+    /**
+     * Check if the segment modifier are usable
+     */
+    protected function assertRestriction()
+    {
+
     }
 
     /**

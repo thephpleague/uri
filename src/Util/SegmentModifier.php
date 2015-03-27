@@ -94,10 +94,11 @@ trait SegmentModifier
 
     /**
      * Check if the segment modifier are usable
-     *
-     * @throws \LogicException if the API can not be use
      */
-    abstract protected function assertRestriction();
+    protected function assertRestriction()
+    {
+
+    }
 
     /**
      * {@inheritdoc}

@@ -55,6 +55,11 @@ class Path implements PathInterface
      */
     use Util\SegmentModifier;
 
+    /**
+     * New Instance of Path
+     *
+     * @param string $str the path
+     */
     public function __construct($str = null)
     {
         $str = trim($str);
@@ -69,14 +74,6 @@ class Path implements PathInterface
         if ($append_delimiter) {
             $this->data[] = '';
         }
-    }
-
-    /**
-     * Check if the segment modifier are usable
-     */
-    protected function assertRestriction()
-    {
-
     }
 
     /**

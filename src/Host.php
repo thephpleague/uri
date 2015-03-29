@@ -125,7 +125,7 @@ class Host implements HostInterface
     protected function validateIpHost($str)
     {
         if ('[' == $str[0] && ']' == $str[strlen($str) - 1]) {
-            $str = trim($str, '][');
+            $str = substr($str, 1, -1);
             if (! filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 throw new InvalidArgumentException('Invalid IPV6 format');
             }

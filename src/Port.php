@@ -28,7 +28,7 @@ class Port extends AbstractComponent implements Component
      */
     protected function validate($data)
     {
-        $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]);
         if (! $data) {
             throw new InvalidArgumentException('The submitted port is invalid');
         }

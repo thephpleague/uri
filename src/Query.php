@@ -16,6 +16,7 @@ use ArrayIterator;
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
 use League\Url\Interfaces\Query as QueryInterface;
+use League\Url\Util;
 use Traversable;
 
 /**
@@ -32,6 +33,8 @@ class Query implements QueryInterface
      * @var array
      */
     protected $data = [];
+
+    use Util\StringValidator;
 
     /**
      * a new instance
@@ -80,11 +83,7 @@ class Query implements QueryInterface
      */
     public function validateStringQuery($str)
     {
-        if (! is_scalar($str) && (is_object($str) && ! method_exists($str, '__toString'))) {
-            throw new InvalidArgumentException('the submitted data can not be converted into a valid query');
-        }
-
-        $str = trim($str);
+        $str = $this->validateString($str);
         $str = ltrim($str, '?');
         $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
             return bin2hex(urldecode($match[0]));

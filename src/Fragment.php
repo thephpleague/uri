@@ -45,6 +45,9 @@ class Fragment extends AbstractComponent implements Component
      */
     protected function validate($data)
     {
+        if ('#' == $data[0]) {
+            $data = substr($data, 1);
+        }
         $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
 
         return rawurldecode(trim($data));

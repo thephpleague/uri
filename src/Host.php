@@ -67,6 +67,8 @@ class Host implements HostInterface
      */
     use Util\SegmentModifier;
 
+    use Util\StringValidator;
+
     /**
      * new Instance
      *
@@ -74,7 +76,7 @@ class Host implements HostInterface
      */
     public function __construct($str = null)
     {
-        $str = trim($str);
+        $str = $this->validateString($str);
         if (false !== strpos($str, '..')) {
             throw new InvalidArgumentException('Multiple dot hostname are invalid');
         }

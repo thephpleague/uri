@@ -14,6 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
+use League\Url\Util;
 
 /**
  * An abstract class to ease component creation
@@ -30,6 +31,8 @@ abstract class AbstractComponent
      */
     protected $data;
 
+    use Util\StringValidator;
+
     /**
      * new instance
      *
@@ -41,11 +44,7 @@ abstract class AbstractComponent
             return;
         }
 
-        if (! is_scalar($data) && (is_object($data) && ! method_exists($data, '__toString'))) {
-            throw new InvalidArgumentException('the submitted data must be stringable');
-        }
-
-        $data = trim($data);
+        $data = $this->validateString($data);
         if ('' != $data) {
             $this->data = $this->validate($data);
         }

@@ -22,7 +22,7 @@ use InvalidArgumentException;
  */
 trait StringValidator
 {
-    function validateString($str)
+    protected function validateString($str)
     {
         if (! is_scalar($str) && (is_object($str) && ! method_exists($str, '__toString'))) {
             throw new InvalidArgumentException(sprintf(

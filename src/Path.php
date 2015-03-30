@@ -23,7 +23,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Path implements PathInterface
+class Path extends AbstractSegment implements PathInterface
 {
     /**
      * Pattern to conform to Path RFC
@@ -46,9 +46,11 @@ class Path implements PathInterface
     ];
 
     /**
-     * Trait to manage operation on segment component
+     * Segment delimiter
+     *
+     * @var string
      */
-    use Util\SegmentModifier;
+    protected $delimiter = '/';
 
     /**
      * Trait to validate a stringable variable
@@ -62,7 +64,6 @@ class Path implements PathInterface
      */
     public function __construct($str = null)
     {
-        $this->delimiter = '/';
         $str = $this->validateString($str);
         if (empty($str) || preg_match(',^/+$,', $str)) {
             return;
@@ -74,46 +75,6 @@ class Path implements PathInterface
         if ($append_delimiter) {
             $this->data[] = '';
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function without($value)
-    {
-        return new static($this->prepareWithout($value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceWith($value, $key)
-    {
-        return new static($this->prepareReplaceWith($value, $key));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appendWith($value)
-    {
-        return new static($this->prepareAppendWith($value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prependWith($value)
-    {
-        return new static($this->preparePrependWith($value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withValue($value = null)
-    {
-        return new static($value);
     }
 
     /**

@@ -31,6 +31,9 @@ abstract class AbstractComponent
      */
     protected $data;
 
+    /**
+     * Trait to validate a stringable variable
+     */
     use Util\StringValidator;
 
     /**
@@ -40,12 +43,8 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if (is_null($data)) {
-            return;
-        }
-
         $data = $this->validateString($data);
-        if ('' != $data) {
+        if (! empty($data)) {
             $this->data = $this->validate($data);
         }
     }

@@ -10,14 +10,32 @@ use PHPUnit_Framework_TestCase;
  */
 class PortTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testPortSetter()
     {
         $port = new Port(new Port(443));
         $this->assertSame(443, $port->get());
-        new Port('toto');
+    }
+
+    public function invalidPortProvider()
+    {
+        return [
+            ["toto"],
+            ["-23"],
+            ["10000000"],
+            ["0"],
+        ];
+    }
+
+    /**
+     * @param $port
+     *
+     * @dataProvider invalidPortProvider
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailedPort($port)
+    {
+        new Port($port);
     }
 
     public function testGetUriComponent()

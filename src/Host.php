@@ -67,6 +67,9 @@ class Host implements HostInterface
      */
     use Util\SegmentModifier;
 
+    /**
+     * Trait to validate a stringable variable
+     */
     use Util\StringValidator;
 
     /**

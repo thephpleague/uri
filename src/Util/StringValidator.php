@@ -24,6 +24,10 @@ trait StringValidator
 {
     protected function validateString($str)
     {
+        if (is_null($str)) {
+            return $str;
+        }
+
         if (! is_scalar($str) && (is_object($str) && ! method_exists($str, '__toString'))) {
             throw new InvalidArgumentException(sprintf(
                 'Data passed to the method must be a string; received "%s"',
@@ -32,5 +36,5 @@ trait StringValidator
         }
 
         return trim($str);
-    }   
+    }
 }

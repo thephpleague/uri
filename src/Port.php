@@ -23,13 +23,22 @@ use League\Url\Interfaces\Component;
 */
 class Port extends AbstractComponent implements Component
 {
+
+    public function __construct($data = null)
+    {
+        if ("0" == $data) {
+            throw new InvalidArgumentException('The submitted port is invalid');
+        }
+        parent::__construct($data);
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function validate($data)
     {
         $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]);
-        if (! $data) {
+        if (false === $data) {
             throw new InvalidArgumentException('The submitted port is invalid');
         }
 

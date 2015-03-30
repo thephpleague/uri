@@ -55,6 +55,9 @@ class Path implements PathInterface
      */
     use Util\SegmentModifier;
 
+    /**
+     * Trait to validate a stringable variable
+     */
     use Util\StringValidator;
 
     /**
@@ -64,12 +67,8 @@ class Path implements PathInterface
      */
     public function __construct($str = null)
     {
-        if (is_null($str)) {
-            return;
-        }
-    
         $str = $this->validateString($str);
-        if (preg_match(',^/+$,', $str)) {
+        if (empty($str) || preg_match(',^/+$,', $str)) {
             return;
         }
 

@@ -65,7 +65,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             [implode('.', array_fill(0, 23, 'banana-slip'))],
             ['[127.0.0.1]'],
             ['toto.127.0.0.1'],
-            ['98.3.2']
+            ['98.3.2'],
+            ['[[::1]]'],
         ];
     }
 

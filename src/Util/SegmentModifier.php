@@ -31,9 +31,26 @@ trait SegmentModifier
     protected $data = [];
 
     /**
+     * Segment delimiter
+     *
+     * @var string
+     */
+    protected $delimiter;
+
+    /**
      * {@inheritdoc}
      */
     abstract public function getUriComponent();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function __toString();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function get();
 
     /**
      * Validate incoming data
@@ -52,6 +69,14 @@ trait SegmentModifier
     public function sameValueAs(Component $component)
     {
         return $component->__toString() == $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->data);
     }
 
     /**
@@ -97,13 +122,12 @@ trait SegmentModifier
      */
     protected function assertRestriction()
     {
-
     }
 
     /**
      * {@inheritdoc}
      */
-    public function appendWith($value)
+    protected function prepareAppendWith($value)
     {
         $this->assertRestriction();
 
@@ -122,13 +146,13 @@ trait SegmentModifier
             $orig = $this->delimiter.$orig;
         }
 
-        return new static($orig.$this->delimiter.$value.$appended_delimiter);
+        return $orig.$this->delimiter.$value.$appended_delimiter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function prependWith($value)
+    protected function preparePrependWith($value)
     {
         $this->assertRestriction();
 
@@ -143,16 +167,16 @@ trait SegmentModifier
             $orig = $this->delimiter.$orig;
         }
 
-        return new static($value.$orig);
+        return $value.$orig;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function replaceWith($value, $key)
+    protected function prepareReplaceWith($value, $key)
     {
         if (! empty($this->data) && ! $this->hasKey($key)) {
-            return clone $this;
+            return $this->getUriComponent();
         }
 
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
@@ -163,27 +187,19 @@ trait SegmentModifier
         $res = $this->data;
         $res[$key] = implode($this->delimiter, $value);
 
-        return new static(implode($this->delimiter, $res));
+        return implode($this->delimiter, $res);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function without($value)
+    protected function prepareWithout($value)
     {
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
 
         if (is_null($this->get()) || empty($value)) {
-            return clone $this;
+            return $this->getUriComponent();
         }
 
         $value_appended  = ($this->delimiter != $value[mb_strlen($value) - 1]);
@@ -229,6 +245,6 @@ trait SegmentModifier
             $path = mb_substr($path, 1);
         }
 
-        return new static($path);
+        return $path;
     }
 }

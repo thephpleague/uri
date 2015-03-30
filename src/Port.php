@@ -24,6 +24,11 @@ use League\Url\Interfaces\Component;
 class Port extends AbstractComponent implements Component
 {
 
+    /**
+     * New Instance
+     *
+     * @param string|int $data
+     */
     public function __construct($data = null)
     {
         if ("0" == $data) {

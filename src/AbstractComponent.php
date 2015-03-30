@@ -108,9 +108,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * Returns a new object with the given value
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withValue($data = null)
     {

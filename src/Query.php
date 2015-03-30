@@ -209,4 +209,12 @@ class Query implements QueryInterface
     {
         return new static(array_merge($this->data, $this->validate($data)));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withValue($value = null)
+    {
+        return new static($value);
+    }
 }

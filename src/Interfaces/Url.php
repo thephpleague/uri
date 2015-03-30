@@ -50,7 +50,7 @@ interface Url extends UriInterface
     /**
      * Return a new object with its path normalized
      *
-     * @return League\Url\Interfaces\Url
+     * @return Url
      */
     public function normalize();
 
@@ -59,5 +59,5 @@ interface Url extends UriInterface
      *
      * @return bool
      */
-    public function useStandardPort();
+    public function hasStandadPort();
 }

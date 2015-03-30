@@ -22,7 +22,7 @@ use League\Url\Util;
 * A class to manipulate an URL as a Value Object
 *
 * @package League.url
-* @since 1.0.0
+* @since 4.0.0
 */
 class Formatter
 {
@@ -200,8 +200,8 @@ class Formatter
             if (strpos($userinfo, ':') !== false) {
                 $userinfo .= '@';
             }
-            $str .=  '//'.$userinfo.$this->formatHost($host);
-            if (! $url->useStandardPort()) {
+            $str .= '//'.$userinfo.$this->formatHost($host);
+            if (! $url->hasStandadPort()) {
                 $str .= $url->getPort()->getUriComponent();
             }
         }

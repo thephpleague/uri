@@ -44,7 +44,7 @@ class FragmentTest extends PHPUnit_Framework_TestCase
 
     public function testNotAllowedSymbolsEncodedWhenCastToString()
     {
-        $fragment = new Fragment("%^[]{}\"<>\\");
+        $fragment = new Fragment("#%^[]{}\"<>\\");
 
         $this->assertEquals("%25%5E%5B%5D%7B%7D%22%3C%3E%5C", $fragment->__toString());
     }

@@ -51,13 +51,6 @@ class Host implements HostInterface
     protected $host_as_ipv6 = false;
 
     /**
-     * Host delimiter
-     *
-     * @var string
-     */
-    protected $delimiter = '.';
-
-    /**
      * Trait to handle punycode
      */
     use Util\Punycode;
@@ -79,6 +72,7 @@ class Host implements HostInterface
      */
     public function __construct($str = null)
     {
+        $this->delimiter = '.';
         $str = $this->validateString($str);
         if (false !== strpos($str, '..')) {
             throw new InvalidArgumentException('Multiple dot hostname are invalid');
@@ -88,6 +82,46 @@ class Host implements HostInterface
         if (! empty($str)) {
             $this->data = $this->validate($str);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function without($value)
+    {
+        return new static($this->prepareWithout($value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceWith($value, $key)
+    {
+        return new static($this->prepareReplaceWith($value, $key));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appendWith($value)
+    {
+        return new static($this->prepareAppendWith($value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prependWith($value)
+    {
+        return new static($this->preparePrependWith($value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withValue($value = null)
+    {
+        return new static($value);
     }
 
     /**

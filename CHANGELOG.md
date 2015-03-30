@@ -5,26 +5,77 @@ All Notable changes to `League\Url` will be documented in this file
 ## 4.X - XXXX-XX-XX
 
 ### Added
-- `UrlInterface::getUrl` as a better remplacement to `UrlInterface::getRelativeUrl`
-- `HostInterface` now supports IPv4/IPv6 style hostname
-- `PathInterface::relativeTo` replace `PathInterface::getRelativePath`
-- `ComponentInterface::sameValueAs`
-- `QueryInterface::getParameter`, `QueryInterface::setParameter`
-- `ComponentSegmentInterface::getSegment`
+- `League\Url\Interfaces\Url`
+    -  now extends `Psr\Http\Message\UriInterface`
+    - `normalize` to normalize a URL returns a new Url interface normalized;
+    - `hasStandardPort` which returns `true` if the standard port for a given `scheme` is used.
+
+- `League\Url\Interfaces\Component`
+    -  different Component implementing object can be compared using the `sameValueAs`
+    - `withValue` to create a new instance from a given component;
+
+- `League\Url\Interfaces\Segment`:
+    - The interface is simplified to remove ambiguity when manipulating Host and Path objects.
+
+- `League\Url\Interfaces\Host`:
+    - implements IPv4 and IPV6 style host
+
+- `League\Url\Interfaces\Path`:
+    - `normalize` the path according to RFC3986 rules;
+    - `getBasename` returns the trailing path;
+    - manage the trailing path extension using `getExtension` and `withExtension`;
+
+- `League\Url\Interfaces\Query`:
+    - The interface is simplified to remove ambiguity and allow setting default values for missing keys;
+
+- The `Url` class as well as all Components classes are now immutable value objects.
+- The `League\Url\Util\Formatter` class is added to ease Url formatting
+- The package is more RFC3986 compliant
 
 ### Deprecated
 - Nothing
 
 ### Fixed
-- For clarity:
-    - Interfaces are moved to their own directory
-    - The Component subnamespace is removed
+- Handling of legacy hostname suffixed with a "."
+- Package structure is changed better reflect the importance of each component.
 
 ### Remove
-- Support for PHP 5.3
-- `UrlInterface::getRelativeUrl`
-- `PathInterface::getRelativePath`
-- `HostInterface` and `PathInterface` no longer implements the `ArrayAccess` interface
+- Support for `PHP 5.3`
+- `UrlImmutable` class
+- Most of the public API is removed :
+    - to comply to `RFC3986`;
+    - to enable immutable value object;
+    - to implement `PSR7` UriInterface;
+
+## 3.3.1 - 2015-03-26
+
+### Fixed
+- `League\Url\Components\Query` bug fix [issue #58](https://github.com/thephpleague/url/issues/58), improved bug fix [issue #31](https://github.com/thephpleague/url/issues/31)
+
+## 3.3.0 - 2015-03-20
+
+### Added
+- adding the `toArray` method to `League\Url\AbstractUrl` to output the URL like PHP native `parse_url` [issue #56](https://github.com/thephpleague/url/issues/56)
+
+### Fixed
+- `League\Url\Components\Query` bug fix remove parameter only if the value equals `null` [issue #58](https://github.com/thephpleague/url/issues/58)
+
+## 3.2.1 - 2014-11-27
+
+### Added
+- Nothing
+
+### Deprecated
+- Nothing
+
+### Fixed
+- `League\Url\AbstractUrl\createFromServer` bug fix handling of `$_SERVER['HTTP_HOST']`
+
+### Remove
+- Nothing
+
+### Security
+- Nothing
 
 ## 3.2.0 - 2014-11-12
 

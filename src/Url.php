@@ -13,7 +13,10 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Url as UrlInterface;
+use League\Url\Interfaces\Url   as UrlInterface;
+use League\Url\Interfaces\Host  as HostInterface;
+use League\Url\Interfaces\Path  as PathInterface;
+use League\Url\Interfaces\Query as QueryInterface;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
 
@@ -28,49 +31,49 @@ class Url implements UrlInterface
     /**
      * Scheme Component
      *
-     * @var League\Url\Scheme
+     * @var Scheme
      */
     protected $scheme;
 
     /**
      * User Component
      *
-     * @var League\Url\User
+     * @var User
      */
     protected $user;
 
     /**
      * Pass Component
      *
-     * @var League\Url\Pass
+     * @var Pass
      */
     protected $pass;
 
     /**
      * Host Component
      *
-     * @var League\Url\Host
+     * @var Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var League\Url\Port
+     * @var Port
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var League\Url\Path
+     * @var Path
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var League\Url\Query
+     * @var Query
      */
     protected $query;
 
@@ -117,10 +120,10 @@ class Url implements UrlInterface
         Scheme $scheme,
         User $user,
         Pass $pass,
-        Host $host,
+        HostInterface $host,
         Port $port,
-        Path $path,
-        Query $query,
+        PathInterface $path,
+        QueryInterface $query,
         Fragment $fragment
     ) {
         $this->scheme = $scheme;
@@ -164,10 +167,10 @@ class Url implements UrlInterface
         if (false === $components) {
             throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
-        $components = array_merge(array_fill_keys(
-            ["scheme", "user", "pass", "host", "port", "path", "query", "fragment"],
-            null
-        ), $components);
+        $components = array_merge([
+            "scheme" => null, "user" => null, "pass" => null, "host" => null,
+            "port" => null, "path" => null, "query" => null, "fragment" => null,
+        ], $components);
 
         return new static(
             new Scheme($components["scheme"]),
@@ -207,7 +210,7 @@ class Url implements UrlInterface
     public function withScheme($scheme)
     {
         $clone = clone $this;
-        $clone->scheme = new Scheme($scheme);
+        $clone->scheme = $this->scheme->withValue($scheme);
 
         return $clone;
     }
@@ -230,7 +233,7 @@ class Url implements UrlInterface
     public function withHost($host)
     {
         $clone = clone $this;
-        $clone->host = new Host($host);
+        $clone->host = $this->host->withValue($host);
 
         return $clone;
     }
@@ -252,7 +255,7 @@ class Url implements UrlInterface
     public function withPath($path)
     {
         $clone = clone $this;
-        $clone->path = new Path($path);
+        $clone->path = $this->path->withValue($path);
 
         return $clone;
     }
@@ -263,7 +266,7 @@ class Url implements UrlInterface
     public function withQuery($query)
     {
         $clone = clone $this;
-        $clone->query = new Query($query);
+        $clone->query = $this->query->withValue($query);
 
         return $clone;
     }
@@ -361,8 +364,7 @@ class Url implements UrlInterface
      */
     public function getAuthority()
     {
-        $host = $this->host->getUriComponent();
-        if (empty($host)) {
+        if (! count($this->host)) {
             return '';
         }
 
@@ -371,18 +373,17 @@ class Url implements UrlInterface
             $userinfo .= '@';
         }
 
-        $port   = $this->port->getUriComponent();
-        if ($this->useStandardPort()) {
-            $port = '';
+        if ($this->hasStandadPort()) {
+            return $userinfo.$this->host->getUriComponent();
         }
 
-        return $userinfo.$host.$port;
+        return $userinfo.$this->host->getUriComponent().$this->port->getUriComponent();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function useStandardPort()
+    public function hasStandadPort()
     {
         $scheme = $this->scheme->get();
 

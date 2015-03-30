@@ -50,4 +50,11 @@ interface Component
      * @return bool
      */
     public function sameValueAs(Component $component);
+
+    /**
+     * Returns a new object with the given value
+     *
+     * @return static
+     */
+    public function withValue($data = null);
 }

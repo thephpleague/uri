@@ -150,14 +150,14 @@ class Formatter
             return $this->formatUrl($input);
         }
 
-        throw new InvalidArgumentException(
+        throw new InvalidArgumentException(sprintf(
             'Data passed to the method must be a one of the following :
             - League\Url\Interfaces\Query,
             - League\Url\Interfaces\Host,
             - League\Url\Interfaces\Url;
             received "%s"',
             (is_object($input) ? get_class($input) : gettype($input))
-        );
+        ));
     }
 
     /**

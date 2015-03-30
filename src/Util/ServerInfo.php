@@ -32,16 +32,16 @@ trait ServerInfo
     protected static function fetchServerScheme(array $server)
     {
         $scheme = "";
-        if (isset($server["SERVER_PROTOCOL"])) {
-            $scheme = explode("/", $server["SERVER_PROTOCOL"]);
-            $scheme = strtolower($scheme[0]);
-            if (isset($server["HTTPS"]) && "off" != $server["HTTPS"]) {
-                $scheme .= "s";
-            }
-            $scheme .= ":";
+        if (isset($server["HTTP_X_FORWARDED_PROTO"]) && ! empty($server['HTTP_X_FORWARDED_PROTO'])) {
+            return strtolower($server["HTTP_X_FORWARDED_PROTO"]).":";
         }
 
-        return $scheme."//";
+        $scheme = "http";
+        if (isset($server["HTTPS"]) && "off" != $server["HTTPS"]) {
+            $scheme .= "s";
+        }
+
+        return $scheme.":";
     }
 
     /**
@@ -72,6 +72,33 @@ trait ServerInfo
     }
 
     /**
+     * Returns the environment user info
+     *
+     * @param array $server the environment server typically $_SERVER
+     *
+     * @return string
+     */
+    protected static function fetchServerUserInfo(array $server)
+    {
+        $user = '';
+        if (isset($server['PHP_AUTH_USER'])) {
+            $user = $server['PHP_AUTH_USER'];
+        }
+
+        $pass = '';
+        if (isset($server['PHP_AUTH_PW']) && ! empty($server['PHP_AUTH_PW'])) {
+            $pass = ':'.$server['PHP_AUTH_PW'];
+        }
+
+        $info = $user.$pass;
+        if (! empty($info)) {
+            $info .= '@';
+        }
+
+        return $info;
+    }
+
+    /**
      * Returns the environment port
      *
      * @param array $server the environment server typically $_SERVER
@@ -97,14 +124,19 @@ trait ServerInfo
      */
     protected static function fetchServerRequestUri(array $server)
     {
-        if (isset($server['REQUEST_URI'])) {
-            return $server['REQUEST_URI'];
+        if (isset($server["REQUEST_URI"])) {
+            return $server["REQUEST_URI"];
         }
 
-        if (isset($server['PHP_SELF'])) {
-            return $server['PHP_SELF'];
+        $request = "";
+        if (isset($server["PHP_SELF"])) {
+            $request .= $server["PHP_SELF"];
         }
 
-        return '/';
+        if (isset($server["QUERY_STRING"]) && ! empty($server["QUERY_STRING"])) {
+            $request .= "?".$server["QUERY_STRING"];
+        }
+
+        return $request;
     }
 }

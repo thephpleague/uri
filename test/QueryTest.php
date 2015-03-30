@@ -92,15 +92,15 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->query->mergeWith(new StdClass());
     }
 
-    public function testGetValue()
+    public function testgetData()
     {
-        $this->assertSame('toto', $this->query->getValue('kingkong'));
+        $this->assertSame('toto', $this->query->getData('kingkong'));
     }
 
-    public function testGetValueWithDefaultValue()
+    public function testgetDataWithDefaultValue()
     {
         $expected = 'toofan';
-        $this->assertSame($expected, $this->query->getValue('togo', $expected));
+        $this->assertSame($expected, $this->query->getData('togo', $expected));
     }
 
     public function testhAsKey()
@@ -142,9 +142,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $query->getKeys());
         $this->assertSame(['foo', 'bar', 'baz'], $query->getKeys());
-        $this->assertSame('', $query->getValue('foo'));
-        $this->assertSame('', $query->getValue('bar'));
-        $this->assertSame('', $query->getValue('baz'));
+        $this->assertSame('', $query->getData('foo'));
+        $this->assertSame('', $query->getData('bar'));
+        $this->assertSame('', $query->getData('baz'));
     }
 
     public function testToArray()

@@ -90,31 +90,19 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
-    public function getKeys($value = null)
+    public function getKeys($data = null)
     {
-        if (is_null($value)) {
+        if (is_null($data)) {
             return array_keys($this->data);
         }
 
-        $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
-        $value = trim($value);
-        $value = trim($value, $this->delimiter);
-        $value = $this->validate($value);
-        $value = implode($this->delimiter, $value);
+        $data = filter_var($data, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
+        $data = trim($data);
+        $data = trim($data, $this->delimiter);
+        $data = $this->validate($data);
+        $data = implode($this->delimiter, $data);
 
-        return array_keys($this->data, $value, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue($key, $default = null)
-    {
-        if ($this->hasKey($key)) {
-            return $this->data[$key];
-        }
-
-        return $default;
+        return array_keys($this->data, $data, true);
     }
 
     /**

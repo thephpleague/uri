@@ -95,8 +95,8 @@ class Host extends AbstractSegment implements HostInterface
     protected function lower($str)
     {
         $res = [];
-        for ($i = 0, $length = mb_strlen($str, $this->encoding); $i < $length; $i++) {
-            $char = mb_substr($str, $i, 1, $this->encoding);
+        for ($i = 0, $length = mb_strlen($str, 'UTF-8'); $i < $length; $i++) {
+            $char = mb_substr($str, $i, 1, 'UTF-8');
             if (ord($char) < 128) {
                 $char = strtolower($char);
             }
@@ -292,6 +292,18 @@ class Host extends AbstractSegment implements HostInterface
         }
 
         return implode($this->delimiter, $this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getData($key, $default = null)
+    {
+        if ($this->hasKey($key)) {
+            return $this->data[$key];
+        }
+
+        return $default;
     }
 
     /**

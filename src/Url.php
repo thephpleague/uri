@@ -196,12 +196,13 @@ class Url implements UrlInterface
      */
     public static function createFromServer(array $server)
     {
-        return static::createFromUrl(
-            static::fetchServerScheme($server)
-            .static::fetchServerHost($server)
-            .static::fetchServerPort($server)
-            .static::fetchServerRequestUri($server)
-        );
+        $scheme     = static::fetchServerScheme($server);
+        $userinfo   = static::fetchServerUserInfo($server);
+        $host       = static::fetchServerHost($server);
+        $port       = static::fetchServerPort($server);
+        $requesturi = static::fetchServerRequestUri($server);
+
+        return static::createFromUrl($scheme.'//'.$userinfo.$host.$port.$requesturi);
     }
 
     /**

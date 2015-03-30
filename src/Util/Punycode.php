@@ -24,22 +24,11 @@ namespace League\Url\Util;
 trait Punycode
 {
     /**
-     * Character encoding
-     *
-     * @var string
-     */
-    protected $encoding = 'UTF-8';
-
-    /**
      * Encode table
      *
      * @param array
      */
-    protected static $encodeTable = [
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-        'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    ];
+    protected static $encodeTable = [];
 
     /**
      * Decode table
@@ -47,6 +36,19 @@ trait Punycode
      * @param array
      */
     protected static $decodeTable = [];
+
+    /**
+     * Initialize encoding/decoding Table
+     */
+    protected static function initTable()
+    {
+        if (empty(static::$encodeTable)) {
+            static::$encodeTable = array_merge(range('a', 'z'), range(0, 9));
+        }
+        if (empty(static::$decodeTable)) {
+            static::$decodeTable = array_flip(static::$encodeTable);
+        }
+    }
 
     /**
      * Encode a part of a domain name, such as tld, to its Punycode version
@@ -58,10 +60,11 @@ trait Punycode
     {
         $codePoints = $this->codePoints($input);
 
-        $n = static::INITIAL_N;
-        $bias = static::INITIAL_BIAS;
+        $n     = static::INITIAL_N;
+        $bias  = static::INITIAL_BIAS;
         $delta = 0;
-        $h = $b = count($codePoints['basic']);
+        $h     = count($codePoints['basic']);
+        $b     = $h;
 
         $output = '';
         foreach ($codePoints['basic'] as $code) {
@@ -74,12 +77,13 @@ trait Punycode
             $output .= static::DELIMITER;
         }
 
+        $this->initTable();
         $i = 0;
-        $length = mb_strlen($input, $this->encoding);
+        $length = mb_strlen($input, 'UTF-8');
         while ($h < $length) {
-            $m = $codePoints['nonBasic'][$i++];
+            $m     = $codePoints['nonBasic'][$i++];
             $delta = $delta + ($m - $n) * ($h + 1);
-            $n = $m;
+            $n     = $m;
 
             foreach ($codePoints['all'] as $c) {
                 if ($c < $n || $c < static::INITIAL_N) {
@@ -92,16 +96,14 @@ trait Punycode
                         if ($q < $t) {
                             break;
                         }
-
-                        $code = $t + (($q - $t) % (static::BASE - $t));
+                        $code    = $t + (($q - $t) % (static::BASE - $t));
                         $output .= static::$encodeTable[$code];
-
-                        $q = ($q - $t) / (static::BASE - $t);
+                        $q       = ($q - $t) / (static::BASE - $t);
                     }
 
                     $output .= static::$encodeTable[$q];
-                    $bias = $this->adapt($delta, $h + 1, ($h === $b));
-                    $delta = 0;
+                    $bias    = $this->adapt($delta, $h + 1, ($h === $b));
+                    $delta   = 0;
                     $h++;
                 }
             }
@@ -121,13 +123,9 @@ trait Punycode
      */
     protected function decodeLabel($input)
     {
-        if (empty(static::$decodeTable)) {
-            static::$decodeTable = array_flip(static::$encodeTable);
-        }
-
-        $n = static::INITIAL_N;
-        $i = 0;
-        $bias = static::INITIAL_BIAS;
+        $n      = static::INITIAL_N;
+        $i      = 0;
+        $bias   = static::INITIAL_BIAS;
         $output = '';
 
         $pos = strrpos($input, static::DELIMITER);
@@ -138,30 +136,27 @@ trait Punycode
         }
 
         $outputLength = strlen($output);
-        $inputLength = strlen($input);
+        $inputLength  = strlen($input);
+        $this->initTable();
         while ($pos < $inputLength) {
             $oldi = $i;
-            $w = 1;
-
+            $w    = 1;
             for ($k = static::BASE;; $k += static::BASE) {
                 $digit = static::$decodeTable[$input[$pos++]];
                 $i = $i + ($digit * $w);
                 $t = $this->calculateThreshold($k, $bias);
-
                 if ($digit < $t) {
                     break;
                 }
-
                 $w = $w * (static::BASE - $t);
             }
 
-            $bias = $this->adapt($i - $oldi, ++$outputLength, ($oldi === 0));
-            $n = $n + (int) ($i / $outputLength);
-            $i = $i % ($outputLength);
-            $output = mb_substr($output, 0, $i, $this->encoding)
+            $bias   = $this->adapt($i - $oldi, ++$outputLength, ($oldi === 0));
+            $n      = $n + (int) ($i / $outputLength);
+            $i      = $i % ($outputLength);
+            $output = mb_substr($output, 0, $i, 'UTF-8')
                 .$this->codePointToChar($n)
-                .mb_substr($output, $i, $outputLength - 1, $this->encoding);
-
+                .mb_substr($output, $i, $outputLength - 1, 'UTF-8');
             $i++;
         }
 
@@ -198,8 +193,8 @@ trait Punycode
      */
     protected function adapt($delta, $numPoints, $firstTime)
     {
-        $key   = 0;
-        $delta = $firstTime ? floor($delta / static::DAMP) : $delta >> 1;
+        $key    = 0;
+        $delta  = $firstTime ? floor($delta / static::DAMP) : $delta >> 1;
         $delta += floor($delta / $numPoints);
 
         $tmp = static::BASE - static::TMIN;
@@ -224,15 +219,12 @@ trait Punycode
             'nonBasic' => [],
         ];
 
-        $length = mb_strlen($input, $this->encoding);
+        $length = mb_strlen($input, 'UTF-8');
         for ($i = 0; $i < $length; $i++) {
-            $code = $this->charToCodePoint(mb_substr($input, $i, 1, $this->encoding));
+            $code = $this->charToCodePoint(mb_substr($input, $i, 1, 'UTF-8'));
+            $key  = ($code < 128) ? 'basic' : 'nonBasic';
             $codePoints['all'][] = $code;
-            $key = 'nonBasic';
-            if ($code < 128) {
-                $key = 'basic';
-            }
-            $codePoints[$key][] = $code;
+            $codePoints[$key][]  = $code;
         }
 
         $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);

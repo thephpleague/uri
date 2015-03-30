@@ -35,11 +35,11 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
-     * @param  null|string $value
+     * @param  null|string $data
      *
      * @return array
      */
-    public function getKeys($value = null);
+    public function getKeys($data = null);
 
     /**
      * Return a value from the Query object
@@ -49,7 +49,7 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      *
      * @return mixed
      */
-    public function getValue($name, $default = null);
+    public function getData($name, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object

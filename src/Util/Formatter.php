@@ -10,13 +10,10 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url;
+namespace League\Url\Util;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Host as HostInterface;
-use League\Url\Interfaces\Query as QueryInterface;
-use League\Url\Interfaces\Url as UrlInterface;
-use League\Url\Util;
+use League\Url\Interfaces;
 
 /**
 * A class to manipulate an URL as a Value Object
@@ -27,13 +24,13 @@ use League\Url\Util;
 class Formatter
 {
 
-    const HOST_ASCII = 1;
+    const HOST_ASCII    = 1;
 
-    const HOST_UNICODE = 2;
+    const HOST_UNICODE  = 2;
 
-    const QUERY_RFC1738 = \PHP_QUERY_RFC1738;
+    const QUERY_RFC1738 = PHP_QUERY_RFC1738;
 
-    const QUERY_RFC3986 = \PHP_QUERY_RFC3986;
+    const QUERY_RFC3986 = PHP_QUERY_RFC3986;
 
     /**
      * host encoding property
@@ -59,7 +56,7 @@ class Formatter
     /**
      * Trait to validate string
      */
-    use Util\StringValidator;
+    use StringValidator;
 
     /**
      * Host encoding setter
@@ -69,7 +66,7 @@ class Formatter
     public function setHostEncoding($encode)
     {
         if (! in_array($encode, [self::HOST_UNICODE, self::HOST_ASCII])) {
-            throw new InvalidArgumentException('Unknown Host encoding set');
+            throw new InvalidArgumentException('Unknown Host encoding rule');
         }
         $this->hostEncoding = $encode;
     }
@@ -92,7 +89,7 @@ class Formatter
     public function setQueryEncoding($encode)
     {
         if (! in_array($encode, [self::QUERY_RFC3986, self::QUERY_RFC1738])) {
-            throw new InvalidArgumentException('Unknown Query encoding set');
+            throw new InvalidArgumentException('Unknown Query encoding rule');
         }
         $this->queryEncoding = $encode;
     }
@@ -139,21 +136,28 @@ class Formatter
      *
      * @return string
      */
-    public function format($args)
+    public function format($input)
     {
-        if ($args instanceof QueryInterface) {
-            return $this->formatQuery($args);
+        if ($input instanceof Interfaces\Query) {
+            return $this->formatQuery($input);
         }
 
-        if ($args instanceof HostInterface) {
-            return $this->formatHost($args);
+        if ($input instanceof Interfaces\Host) {
+            return $this->formatHost($input);
         }
 
-        if ($args instanceof UrlInterface) {
-            return $this->formatUrl($args);
+        if ($input instanceof Interfaces\Url) {
+            return $this->formatUrl($input);
         }
 
-        throw new InvalidArgumentException('Unknown object to be formatted');
+        throw new InvalidArgumentException(
+            'Data passed to the method must be a one of the following :
+            - League\Url\Interfaces\Query,
+            - League\Url\Interfaces\Host,
+            - League\Url\Interfaces\Url;
+            received "%s"',
+            (is_object($input) ? get_class($input) : gettype($input))
+        );
     }
 
     /**
@@ -163,7 +167,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatQuery(QueryInterface $query)
+    public function formatQuery(Interfaces\Query $query)
     {
         return http_build_query($query->toArray(), null, $this->querySeparator, $this->queryEncoding);
     }
@@ -175,7 +179,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatHost(HostInterface $host)
+    public function formatHost(Interfaces\Host $host)
     {
         if (self::HOST_ASCII == $this->hostEncoding) {
             return $host->toAscii();
@@ -190,7 +194,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatUrl(UrlInterface $url)
+    public function formatUrl(Interfaces\Url $url)
     {
         $host  = $url->getHost();
         $query = $url->getQuery();

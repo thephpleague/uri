@@ -26,11 +26,11 @@ interface Segment extends Component, Countable
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
-     * @param  null|string $value
+     * @param  null|string $data
      *
      * @return array
      */
-    public function getKeys($value = null);
+    public function getKeys($data = null);
 
     /**
      * Return a value from the Query object
@@ -40,7 +40,7 @@ interface Segment extends Component, Countable
      *
      * @return mixed
      */
-    public function getValue($key, $default = null);
+    public function getData($key, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object

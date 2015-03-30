@@ -173,19 +173,19 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getKeys($value = null)
+    public function getKeys($data = null)
     {
-        if (is_null($value)) {
+        if (is_null($data)) {
             return array_keys($this->data);
         }
 
-        return array_keys($this->data, $value, true);
+        return array_keys($this->data, $data, true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getValue($key, $default = null)
+    public function getData($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return $this->data[$key];

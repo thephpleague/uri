@@ -43,15 +43,15 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @param int    $key
      * @param string $value
      * @param mixed  $default
-     * @dataProvider getValueProvider
+     * @dataProvider getDataProvider
      */
-    public function testGetValue($raw, $key, $value, $default)
+    public function testgetData($raw, $key, $value, $default)
     {
         $path = new Path($raw);
-        $this->assertSame($value, $path->getValue($key, $default));
+        $this->assertSame($value, $path->getData($key, $default));
     }
 
-    public function getValueProvider()
+    public function getDataProvider()
     {
         return [
             ['/shop/rev iew/', 1, 'rev iew', null],

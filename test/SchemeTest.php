@@ -42,6 +42,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['', ''],
             ['ftp', 'ftp'],
             ['HtTps:', 'https'],
+            ['ssh://', 'ssh'], //to be remove when PSR-7 is fixed
         ];
     }
 
@@ -50,7 +51,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         return [
             ['in,valid'],
             ['123'],
-            ['scheme://']
+            //['scheme://'] to be restore when PSR-7 is fixed
         ];
     }
 

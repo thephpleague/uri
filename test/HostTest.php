@@ -131,12 +131,12 @@ class HostTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetValue()
+    public function testgetData()
     {
         $host = new Host('master.example.com');
-        $this->assertSame('master', $host->getValue(0));
-        $this->assertNull($host->getValue(23));
-        $this->assertSame('toto', $host->getValue(23, 'toto'));
+        $this->assertSame('master', $host->getData(0));
+        $this->assertNull($host->getData(23));
+        $this->assertSame('toto', $host->getData(23, 'toto'));
     }
 
     public function testGetKeys()

@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Url\Test\Util;
 
-use League\Url\Formatter;
+use League\Url\Util\Formatter;
 use League\Url\Url;
 use PHPUnit_Framework_TestCase;
 

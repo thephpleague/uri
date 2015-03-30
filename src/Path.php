@@ -96,7 +96,7 @@ class Path extends AbstractSegment implements PathInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue($key, $default = null)
+    public function getData($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return rawurldecode($this->data[$key]);

@@ -18,8 +18,6 @@ use PHPUnit_Framework_TestCase;
  */
 class UrlConstructorTest extends PHPUnit_Framework_TestCase
 {
-
-
     public function testCreateFromServerWithHttpHost()
     {
         $server = [
@@ -27,7 +25,6 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'REQUEST_URI' => '',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
         ];
@@ -41,7 +38,6 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'REQUEST_URI' => '',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         ];
 
@@ -55,13 +51,44 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'REQUEST_URI' => '',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'localhost:23',
         ];
 
         $this->assertSame('https://localhost:23/', Url::createFromServer($server)->__toString());
     }
+
+
+    public function testCreateFromServerWithXforwardHeader()
+    {
+        $server = [
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
+            'HTTP_X_FORWARDED_PROTO' => 'https',
+            'SERVER_PORT' => 23,
+            'HTTP_HOST' => 'localhost:23',
+        ];
+
+        $this->assertSame('https://localhost:23/', Url::createFromServer($server)->__toString());
+    }
+
+    public function testCreateFromServerWithUserInfo()
+    {
+        $server = [
+            'PHP_SELF' => '',
+            'REQUEST_URI' => '',
+            'SERVER_ADDR' => '127.0.0.1',
+            'PHP_AUTH_USER' => 'foo',
+            'PHP_AUTH_PW' => 'bar',
+            'HTTPS' => 'on',
+            'SERVER_PORT' => 23,
+            'HTTP_HOST' => 'localhost:23',
+        ];
+
+        $this->assertSame('https://foo:bar@localhost:23/', Url::createFromServer($server)->__toString());
+    }
+
 
     /**
      * @expectedException InvalidArgumentException
@@ -72,7 +99,6 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'PHP_SELF' => '',
             'REQUEST_URI' => '',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         ];
 
@@ -82,11 +108,11 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
     public function testCreateFromServerWithoutRequestUri()
     {
         $server = [
-            'PHP_SELF' => '/toto?foo=bar',
+            'PHP_SELF' => '/toto',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
+            'QUERY_STRING' => 'foo=bar',
         ];
 
         $this->assertSame('https://127.0.0.1:23/toto?foo=bar', (string) Url::createFromServer($server));
@@ -97,7 +123,6 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
         $server = [
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
-            'SERVER_PROTOCOL' => 'HTTP',
             'SERVER_PORT' => 23,
         ];
 

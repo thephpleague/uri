@@ -370,13 +370,23 @@ class Url implements UrlInterface
         if (strpos($userinfo, ':') !== false) {
             $userinfo .= '@';
         }
-        $scheme = $this->scheme->get();
+
         $port   = $this->port->getUriComponent();
-        if (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme]) {
+        if ($this->useStandardPort()) {
             $port = '';
         }
 
         return $userinfo.$host.$port;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function useStandardPort()
+    {
+        $scheme = $this->scheme->get();
+
+        return (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme]);
     }
 
     /**
@@ -418,23 +428,6 @@ class Url implements UrlInterface
             .$this->path->getUriComponent()
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
-        if ('/' == $url) {
-            return '';
-        }
-
-        return $url;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toHTML()
-    {
-        $query = $this->query->toHTML();
-        if (! empty($query)) {
-            $query = '?'.$query;
-        }
-        $url = $this->getBaseUrl().$this->path->getUriComponent().$query.$this->fragment->getUriComponent();
         if ('/' == $url) {
             return '';
         }

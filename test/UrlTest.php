@@ -97,15 +97,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testToHTML()
-    {
-        $url = Url::createFromUrl('http://www.example.com/tst?foo&bar&baz');
-        $this->assertSame('http://www.example.com/tst?foo=&amp;bar=&amp;baz=', $url->toHTML());
-
-        $url = Url::createFromUrl('');
-        $this->assertEmpty($url->toHTML());
-    }
-
     public function testToArray()
     {
         $url = Url::createFromUrl('https://toto.com:443/toto.php');

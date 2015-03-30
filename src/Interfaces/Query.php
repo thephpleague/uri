@@ -32,14 +32,6 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function toArray();
 
     /**
-     * Return a string representation of the Query suitable
-     * for direct insertion into HTML document
-     *
-     * @return string
-     */
-    public function toHTML();
-
-    /**
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *

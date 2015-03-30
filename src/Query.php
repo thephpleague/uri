@@ -136,18 +136,6 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function toHTML()
-    {
-        if (empty($this->data)) {
-            return '';
-        }
-
-        return http_build_query($this->data, '', '&amp;', PHP_QUERY_RFC3986);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return (string) $this->get();

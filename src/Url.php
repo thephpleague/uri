@@ -369,7 +369,7 @@ class Url implements UrlInterface
         }
 
         $userinfo = $this->getUserInfo();
-        if (strpos($userinfo, ':') !== false) {
+        if (! empty($userinfo)) {
             $userinfo .= '@';
         }
 

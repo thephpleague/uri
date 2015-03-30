@@ -197,7 +197,7 @@ class Formatter
         $str   = $url->getScheme()->getUriComponent();
         if (count($host)) {
             $userinfo = $url->getUserInfo();
-            if (strpos($userinfo, ':') !== false) {
+            if (! empty($userinfo)) {
                 $userinfo .= '@';
             }
             $str .= '//'.$userinfo.$this->formatHost($host);

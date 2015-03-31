@@ -173,4 +173,15 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $query->toArray());
         $this->assertSame($expected, json_decode(json_encode($query), true));
     }
+
+    public function testDebugInfo()
+    {
+        $query = new Query('foo&bar&baz&to.go=toofan');
+
+        $expected = [
+            'data' => 'foo=&bar=&baz=&to.go=toofan',
+        ];
+
+        $this->assertSame($expected, $query->__debugInfo());
+    }
 }

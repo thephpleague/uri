@@ -90,13 +90,13 @@ class Url implements UrlInterface
      * @var array
      */
     protected static $standardPorts = [
-        'https' => 443,
-        'http'  => 80,
-        'ftp'   => 21,
-        'ftps'  => 990,
-        'ws'    => 80,
-        'wss'   => 443,
-        'ssh'   => 22,
+        'https' => [443 => 1],
+        'http'  => [80 => 1],
+        'ftp'   => [21 => 1],
+        'ftps'  => [990 => 1, 989 => 1],
+        'ws'    => [80 => 1],
+        'wss'   => [443 => 1],
+        'ssh'   => [22 => 1],
     ];
 
     /**
@@ -189,20 +189,19 @@ class Url implements UrlInterface
      *
      * @param array $server the environment server typically $_SERVER
      *
-     * @throws
-     *  \InvalidArgumentException If the URL can not be parsed
+     * @throws \InvalidArgumentException If the URL can not be parsed
      *
      * @return static
      */
     public static function createFromServer(array $server)
     {
-        $scheme     = static::fetchServerScheme($server);
-        $userinfo   = static::fetchServerUserInfo($server);
-        $host       = static::fetchServerHost($server);
-        $port       = static::fetchServerPort($server);
-        $requesturi = static::fetchServerRequestUri($server);
-
-        return static::createFromUrl($scheme.'//'.$userinfo.$host.$port.$requesturi);
+        return static::createFromUrl(
+            static::fetchServerScheme($server).'//'
+            .static::fetchServerUserInfo($server)
+            .static::fetchServerHost($server)
+            .static::fetchServerPort($server)
+            .static::fetchServerRequestUri($server)
+        );
     }
 
     /**
@@ -374,7 +373,7 @@ class Url implements UrlInterface
             $userinfo .= '@';
         }
 
-        if ($this->hasStandadPort()) {
+        if ($this->hasStandardPort()) {
             return $userinfo.$this->host->getUriComponent();
         }
 
@@ -384,11 +383,11 @@ class Url implements UrlInterface
     /**
      * {@inheritdoc}
      */
-    public function hasStandadPort()
+    public function hasStandardPort()
     {
         $scheme = $this->scheme->get();
 
-        return (isset(static::$standardPorts[$scheme]) && $this->port->get() == static::$standardPorts[$scheme]);
+        return isset(static::$standardPorts[$scheme], static::$standardPorts[$scheme][$this->port->get()]);
     }
 
     /**

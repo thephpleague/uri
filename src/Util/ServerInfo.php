@@ -31,7 +31,6 @@ trait ServerInfo
      */
     protected static function fetchServerScheme(array $server)
     {
-        $scheme = "";
         if (isset($server["HTTP_X_FORWARDED_PROTO"]) && ! empty($server['HTTP_X_FORWARDED_PROTO'])) {
             return strtolower($server["HTTP_X_FORWARDED_PROTO"]).":";
         }

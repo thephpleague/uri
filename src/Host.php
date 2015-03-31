@@ -357,10 +357,10 @@ class Host extends AbstractSegment implements HostInterface
     public function __debugInfo()
     {
         return [
-            'host_unicode' => $this->toUnicode(),
-            'host_ascii' => $this->toAscii(),
-            'host_as_ipv4' => $this->host_as_ipv4,
-            'host_as_ipv6' => $this->host_as_ipv6,
+            'unicode' => $this->toUnicode(),
+            'ascii'   => $this->toAscii(),
+            'is_ipv4' => $this->host_as_ipv4,
+            'is_ipv6' => $this->host_as_ipv6,
         ];
     }
 }

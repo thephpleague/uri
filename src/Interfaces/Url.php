@@ -59,5 +59,5 @@ interface Url extends UriInterface
      *
      * @return bool
      */
-    public function hasStandadPort();
+    public function hasStandardPort();
 }

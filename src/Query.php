@@ -80,7 +80,7 @@ class Query implements QueryInterface
     /**
      * sanitize the submitted data
      *
-     * @param string $data
+     * @param string $str
      *
      * @return array
      */
@@ -236,5 +236,12 @@ class Query implements QueryInterface
     public function withValue($value = null)
     {
         return new static($value);
+    }
+
+    public function __debugInfo()
+    {
+        return [
+            'data' => $this->__toString(),
+        ];
     }
 }

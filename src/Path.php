@@ -30,7 +30,7 @@ class Path extends AbstractSegment implements PathInterface
      *
      * @var array
      */
-    protected $sanitizePattern = [
+    protected static $sanitizePattern = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
         '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D'
     ];
@@ -40,7 +40,7 @@ class Path extends AbstractSegment implements PathInterface
      *
      * @var array
      */
-    protected $sanitizeReplace = [
+    protected static $sanitizeReplace = [
         '/', ':', '@', '!', '$', '&', "'",
         '(', ')', '*', '+', ',', ';', '='
     ];
@@ -89,7 +89,7 @@ class Path extends AbstractSegment implements PathInterface
         return array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
 
-            return str_replace($this->sanitizePattern, $this->sanitizeReplace, rawurlencode(rawurldecode($value)));
+            return str_replace(self::$sanitizePattern, self::$sanitizeReplace, rawurlencode(rawurldecode($value)));
         }, $data);
     }
 

@@ -253,10 +253,10 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host = new Host('secure.example.com');
 
         $expected = [
-            'host_unicode' => 'secure.example.com',
-            'host_ascii' => 'secure.example.com',
-            'host_as_ipv4' => false,
-            'host_as_ipv6' => false,
+            'unicode' => 'secure.example.com',
+            'ascii' => 'secure.example.com',
+            'is_ipv4' => false,
+            'is_ipv6' => false,
         ];
 
         $this->assertSame($expected, $host->__debugInfo());

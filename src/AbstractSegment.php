@@ -64,6 +64,13 @@ abstract class AbstractSegment
     abstract protected function validate($data);
 
     /**
+     * new Instance
+     *
+     * @param string $str
+     */
+    abstract public function __construct($str = null);
+
+    /**
      * {@inheritdoc}
      */
     public function withValue($value = null)

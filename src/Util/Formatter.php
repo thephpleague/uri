@@ -130,9 +130,9 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param  mixed $args
+     * @param  mixed $input
      *
-     * @throws \InvalidArgumentException if the given $args can not be formatted
+     * @throws \InvalidArgumentException if the given $input can not be formatted
      *
      * @return string
      */
@@ -205,7 +205,7 @@ class Formatter
                 $userinfo .= '@';
             }
             $str .= '//'.$userinfo.$this->formatHost($host);
-            if (! $url->hasStandadPort()) {
+            if (! $url->hasStandardPort()) {
                 $str .= $url->getPort()->getUriComponent();
             }
         }

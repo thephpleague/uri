@@ -28,7 +28,6 @@ class Scheme extends AbstractComponent implements Component
      */
     protected function validate($data)
     {
-        //TODO PSR-7 errata "//" are part of the authority AND NOT scheme!!
         if ('://' == substr($data, -3, 3)) {
             $data = substr($data, 0, -3);
         }

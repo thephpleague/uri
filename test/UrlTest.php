@@ -106,7 +106,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'pass' => null,
             'host' => 'toto.com',
             'port' => 443,
-            'path' => 'toto.php',
+            'path' => '/toto.php',
             'query' => null,
             'fragment' => null,
         ], $url->toArray());

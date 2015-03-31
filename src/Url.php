@@ -152,6 +152,33 @@ class Url implements UrlInterface
     }
 
     /**
+     * Create a new League\Url\Url instance from an array returned by
+     * PHP parse_url function
+     *
+     * @param array $components
+     *
+     * @return static
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components += [
+            "scheme" => null, "user" => null, "pass" => null, "host" => null,
+            "port" => null, "path" => null, "query" => null, "fragment" => null
+        ];
+
+        return new static(
+            new Scheme($components["scheme"]),
+            new User($components["user"]),
+            new Pass($components["pass"]),
+            new Host($components["host"]),
+            new Port($components["port"]),
+            new Path($components["path"]),
+            new Query($components["query"]),
+            new Fragment($components["fragment"])
+        );
+    }
+
+    /**
      * Create a new League\Url\Url instance from a string
      *
      * @param  string $url
@@ -167,21 +194,8 @@ class Url implements UrlInterface
         if (false === $components) {
             throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
-        $components = array_merge([
-            "scheme" => null, "user" => null, "pass" => null, "host" => null,
-            "port" => null, "path" => null, "query" => null, "fragment" => null,
-        ], $components);
 
-        return new static(
-            new Scheme($components["scheme"]),
-            new User($components["user"]),
-            new Pass($components["pass"]),
-            new Host($components["host"]),
-            new Port($components["port"]),
-            new Path($components["path"]),
-            new Query($components["query"]),
-            new Fragment($components["fragment"])
-        );
+        return static::createFromComponents($components);
     }
 
     /**
@@ -425,15 +439,10 @@ class Url implements UrlInterface
      */
     public function __toString()
     {
-        $url = $this->getBaseUrl()
+        return $this->getBaseUrl()
             .$this->path->getUriComponent()
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
-        if ('/' == $url) {
-            return '';
-        }
-
-        return $url;
     }
 
     /**

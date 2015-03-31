@@ -163,7 +163,7 @@ class Formatter
     /**
      * Format a League\Url\Interfaces\Query
      *
-     * @param Query $query
+     * @param Interfaces\Query $query
      *
      * @return string
      */
@@ -175,7 +175,7 @@ class Formatter
     /**
      * Format a League\Url\Interfaces\Host
      *
-     * @param Host $host
+     * @param Interfaces\Host $host
      *
      * @return string
      */
@@ -190,7 +190,7 @@ class Formatter
     /**
      * Format a League\Url\Interfaces\Url
      *
-     * @param Url $url
+     * @param Interfaces\Url $url
      *
      * @return string
      */

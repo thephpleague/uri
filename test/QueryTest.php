@@ -33,6 +33,20 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame('', $query->getUriComponent());
     }
 
+    public function testCreateFromArrayWithTraversable()
+    {
+        $query = Query::createFromArray(new ArrayIterator(['john' => 'doe the john']));
+        $this->assertCount(1, $query);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreateFromArrayFailed()
+    {
+        Query::createFromArray(new \StdClass);
+    }
+
     public function testSameValueAs()
     {
         $empty_query = new Query();
@@ -55,7 +69,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testMergeWithWithQueryInterface()
     {
-        $query = $this->query->mergeWith(new Query(['foo' => 'bar']));
+        $query = $this->query->mergeWith(Query::createFromArray(['foo' => 'bar']));
         $this->assertSame('kingkong=toto&foo=bar', (string) $query);
     }
 
@@ -116,11 +130,16 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testKeys()
     {
-        $query = new Query(['foo' => 'bar', 'baz' => 'troll', 'lol' => 3, 'toto' => 'troll']);
+        $query = Query::createFromArray([
+            'foo' => 'bar',
+            'baz' => 'troll',
+            'lol' => 3,
+            'toto' => 'troll'
+        ]);
         $this->assertCount(0, $query->getKeys('foo'));
         $this->assertSame(['foo'], $query->getKeys('bar'));
-        $this->assertCount(0, $query->getKeys('3'));
-        $this->assertSame(['lol'], $query->getKeys(3));
+        $this->assertCount(1, $query->getKeys('3'));
+        $this->assertSame(['lol'], $query->getKeys('3'));
         $this->assertSame(['baz', 'toto'], $query->getKeys('troll'));
     }
 
@@ -132,7 +151,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testDotFromArray()
     {
-        $query = new Query(['foo.bar' => 'baz']);
+        $query = Query::createFromArray(['foo.bar' => 'baz']);
         $this->assertSame('foo.bar=baz', (string) $query);
     }
 

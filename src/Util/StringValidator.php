@@ -35,6 +35,11 @@ trait StringValidator
             ));
         }
 
-        return trim($str);
+        $str = trim($str);
+        if (empty($str)) {
+            return null;
+        }
+
+        return $str;
     }
 }

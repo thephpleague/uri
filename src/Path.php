@@ -65,7 +65,12 @@ class Path extends AbstractSegment implements PathInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-        if (empty($str) || preg_match(',^/+$,', $str)) {
+        if (is_null($str)) {
+            return;
+        }
+
+        if (preg_match(',^/+$,', $str)) {
+            $this->data[] = '';
             return;
         }
 
@@ -114,7 +119,7 @@ class Path extends AbstractSegment implements PathInterface
             return null;
         }
 
-        return implode($this->delimiter, $this->data);
+        return $this->delimiter.implode($this->delimiter, $this->data);
     }
 
     /**
@@ -122,7 +127,7 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function __toString()
     {
-        return (string) $this->delimiter.$this->get();
+        return (string) $this->get();
     }
 
     /**
@@ -149,15 +154,20 @@ class Path extends AbstractSegment implements PathInterface
                 break;
             }
 
-            if ('/./' == substr($input, 0, 3)) {
-                $input = substr($input, 2);
-                continue;
-            }
-
             if ('/..' == $input) {
                 array_pop($output);
                 $output[] = '/';
                 break;
+            }
+
+            if (false === ($pos = stripos($input, '/', 1))) {
+                $output[] = $input;
+                break;
+            }
+
+            if ('/./' == substr($input, 0, 3)) {
+                $input = substr($input, 2);
+                continue;
             }
 
             if ('/../' == substr($input, 0, 4)) {
@@ -166,14 +176,6 @@ class Path extends AbstractSegment implements PathInterface
                 continue;
             }
 
-            if (in_array($input, ['.', '..'])) {
-                break;
-            }
-
-            if (false === ($pos = stripos($input, '/', 1))) {
-                $output[] = $input;
-                break;
-            }
             $output[] = substr($input, 0, $pos);
             $input = substr($input, $pos);
         }

@@ -44,21 +44,21 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     /**
      * Return a value from the Query object
      *
-     * @param string $name    the parameter name
+     * @param string $key     the parameter name
      * @param mixed  $default if no key is found the default value to return
      *
      * @return mixed
      */
-    public function getData($name, $default = null);
+    public function getData($key, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object
      *
-     * @param  string $name
+     * @param  string $key
      *
      * @return bool
      */
-    public function hasKey($name);
+    public function hasKey($key);
 
     /**
      * Merge new data to the current Query object

@@ -14,6 +14,7 @@ namespace League\Url;
 
 use ArrayIterator;
 use InvalidArgumentException;
+use IteratorAggregate;
 use League\Url\Interfaces\Component;
 use League\Url\Interfaces\Query as QueryInterface;
 use League\Url\Util;
@@ -34,56 +35,62 @@ class Query implements QueryInterface
      */
     protected $data = [];
 
+    /**
+     * Trait to validate a stringable variable
+     */
     use Util\StringValidator;
 
     /**
      * a new instance
      *
-     * @param mixed $data
+     * @param string $data
      */
     public function __construct($data = null)
     {
-        if (null !== $data) {
+        if (! is_null($data)) {
             $this->data = $this->validate($data);
         }
     }
 
     /**
-     * sanitize the submitted data
+     * return a new Query instance from an Array or a traversable object
      *
-     * @param mixed $data
+     * @param  \Traversable|array $data
      *
-     * @return array
+     * @throws \InvalidArgumentException If $data is invalid
+     *
+     * @return static
      */
-    protected function validate($data)
+    public static function createFromArray($data)
     {
-        if (is_null($data)) {
-            return [];
-        }
-
-        if (is_array($data)) {
-            return $data;
-        }
-
         if ($data instanceof Traversable) {
-            return iterator_to_array($data, true);
+            $data = iterator_to_array($data, true);
         }
 
-        return $this->validateStringQuery($data);
+        if (! is_array($data)) {
+            throw new InvalidArgumentException(sprintf(
+                'Data passed to the method must be an array or a Traversable object; received "%s"',
+                (is_object($data) ? get_class($data) : gettype($data))
+            ));
+        }
+
+        return new static(http_build_query($data, '', '&', PHP_QUERY_RFC3986));
     }
 
     /**
      * sanitize the submitted data
      *
-     * @param string $str
-     *
-     * @throws InvalidArgumentException If the submitted data is not stringable
+     * @param string $data
      *
      * @return array
      */
-    public function validateStringQuery($str)
+    protected function validate($str)
     {
         $str = $this->validateString($str);
+        if (empty($str)) {
+            return [];
+        }
+
         $str = ltrim($str, '?');
         $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
             return bin2hex(urldecode($match[0]));
@@ -207,7 +214,20 @@ class Query implements QueryInterface
      */
     public function mergeWith($data = null)
     {
-        return new static(array_merge($this->data, $this->validate($data)));
+        if ($data instanceof Traversable) {
+            $data = iterator_to_array($data, true);
+        }
+
+        if (! is_array($data)) {
+            $data = $this->validate($data);
+        }
+
+        return new static(http_build_query(
+            array_merge($this->data, $data),
+            '',
+            '&',
+            PHP_QUERY_RFC3986
+        ));
     }
 
     /**

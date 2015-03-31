@@ -232,4 +232,15 @@ class PathTest extends PHPUnit_Framework_TestCase
     {
         (new Path())->withExtension('txt');
     }
+
+    public function testDebugInfo()
+    {
+        $path = new Path('/path/to/my/file.php');
+
+        $expected = [
+            'data' => '/path/to/my/file.php',
+        ];
+
+        $this->assertSame($expected, $path->__debugInfo());
+    }
 }

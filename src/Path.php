@@ -222,4 +222,11 @@ class Path extends AbstractSegment implements PathInterface
 
         return $this->replaceWith("/$basename.$ext", count($this->data) - 1);
     }
+
+    public function __debugInfo()
+    {
+        return [
+            'data' => $this->__toString(),
+        ];
+    }
 }

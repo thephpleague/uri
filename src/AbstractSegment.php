@@ -145,7 +145,7 @@ abstract class AbstractSegment
 
         $value = implode($this->delimiter, $value);
         $orig = $this->__toString();
-        if ($this->delimiter !== $orig[0]) {
+        if (empty($orig) || $this->delimiter !== $orig[0]) {
             $orig = $this->delimiter.$orig;
         }
 

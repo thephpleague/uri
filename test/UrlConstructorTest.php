@@ -28,7 +28,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
             'HTTP_HOST' => 'example.com',
         ];
-        $this->assertSame('https://example.com:23/', Url::createFromServer($server)->__toString());
+        $this->assertSame('https://example.com:23', Url::createFromServer($server)->__toString());
     }
 
     public function testCreateFromServerWithServerAddr()
@@ -41,7 +41,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         ];
 
-        $this->assertSame('https://127.0.0.1:23/', Url::createFromServer($server)->__toString());
+        $this->assertSame('https://127.0.0.1:23', Url::createFromServer($server)->__toString());
     }
 
     public function testCreateFromServerWithHttpHostAndPort()
@@ -55,7 +55,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'HTTP_HOST' => 'localhost:23',
         ];
 
-        $this->assertSame('https://localhost:23/', Url::createFromServer($server)->__toString());
+        $this->assertSame('https://localhost:23', Url::createFromServer($server)->__toString());
     }
 
 
@@ -70,7 +70,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'HTTP_HOST' => 'localhost:23',
         ];
 
-        $this->assertSame('https://localhost:23/', Url::createFromServer($server)->__toString());
+        $this->assertSame('https://localhost:23', Url::createFromServer($server)->__toString());
     }
 
     public function testCreateFromServerWithUserInfo()
@@ -86,7 +86,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'HTTP_HOST' => 'localhost:23',
         ];
 
-        $this->assertSame('https://foo:bar@localhost:23/', Url::createFromServer($server)->__toString());
+        $this->assertSame('https://foo:bar@localhost:23', Url::createFromServer($server)->__toString());
     }
 
 
@@ -126,7 +126,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         ];
 
-        $this->assertSame('https://127.0.0.1:23/', (string) Url::createFromServer($server));
+        $this->assertSame('https://127.0.0.1:23', (string) Url::createFromServer($server));
     }
 
     public function testConstructor()
@@ -139,7 +139,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
 
     public function testConstructorWithoutSchemeButWithSchemeDelimiter()
     {
-        $this->assertSame('//example.com/', (string) Url::createFromUrl('//example.com'));
+        $this->assertSame('//example.com', (string) Url::createFromUrl('//example.com'));
     }
 
     public function testConstructorWithUserInfoAndScheme()

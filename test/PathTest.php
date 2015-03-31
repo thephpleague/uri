@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\Test\Components;
+namespace League\Url\Test;
 
 use ArrayIterator;
 use League\Url\Path;
@@ -30,7 +30,7 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/path/to/my/file.csv', '/path/to/my/file.csv'],
             ['you', '/you'],
             ['foo/bar/', '/foo/bar/'],
-            ['', '/'],
+            ['', ''],
             ['/', '/'],
             ['/shop/rev iew/', '/shop/rev%20iew/'],
             ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
@@ -148,7 +148,6 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/bar', '../bar'],
             ['/bar', './bar'],
             ['/bar', '.././bar'],
-            ['/bar', '.././bar'],
             ['/foo/bar', '/foo/./bar'],
             ['/bar/', '/bar/./'],
             ['/', '/.'],
@@ -161,6 +160,9 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/', '.'],
             ['/', '..'],
             ['/', '../aaa/./..'],
+            ['/', '../../.a../../.'],
+            ['/a/g', '/a/b/c/./../../g'],
+            ['/mid/6', 'mid/content=5/../6'],
         ];
     }
 

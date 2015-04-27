@@ -27,7 +27,7 @@ class Port extends AbstractComponent implements Component
     /**
      * New Instance
      *
-     * @param string|int $data
+     * @param int $data
      */
     public function __construct($data = null)
     {

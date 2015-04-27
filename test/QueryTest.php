@@ -19,7 +19,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->query = new Query('?kingkong=toto');
+        $this->query = new Query('kingkong=toto');
     }
 
     public function testGetUriComponent()
@@ -75,7 +75,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testMergeWithWithString()
     {
-        $query = $this->query->mergeWith('?kingkong=tata');
+        $query = $this->query->mergeWith('kingkong=tata');
         $this->assertSame('kingkong=tata', (string) $query);
     }
 
@@ -174,14 +174,23 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, json_decode(json_encode($query), true));
     }
 
-    public function testDebugInfo()
+    public function invalidQueryStrings()
     {
-        $query = new Query('foo&bar&baz&to.go=toofan');
-
-        $expected = [
-            'data' => 'foo=&bar=&baz=&to.go=toofan',
+        return [
+            'true'      => [ true ],
+            'false'     => [ false ],
+            'array'     => [ [ 'baz=bat' ] ],
+            'object'    => [ (object) [ 'baz=bat' ] ],
+            'fragment'  => [ 'baz=bat#quz' ],
         ];
+    }
 
-        $this->assertSame($expected, $query->__debugInfo());
+    /**
+     * @dataProvider invalidQueryStrings
+     */
+    public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
+    {
+        $this->setExpectedException('InvalidArgumentException', 'Data passed must be a valid string;');
+        new Query($query);
     }
 }

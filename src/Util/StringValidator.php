@@ -24,22 +24,13 @@ trait StringValidator
 {
     protected function validateString($str)
     {
-        if (is_null($str)) {
-            return $str;
+        if (is_null($str) || is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
+            return trim($str);
         }
 
-        if (! is_scalar($str) && (is_object($str) && ! method_exists($str, '__toString'))) {
-            throw new InvalidArgumentException(sprintf(
-                'Data passed to the method must be a string; received "%s"',
-                (is_object($str) ? get_class($str) : gettype($str))
-            ));
-        }
-
-        $str = trim($str);
-        if (empty($str)) {
-            return null;
-        }
-
-        return $str;
+        throw new InvalidArgumentException(sprintf(
+            'Data passed must be a valid string; received "%s"',
+            (is_object($str) ? get_class($str) : gettype($str))
+        ));
     }
 }

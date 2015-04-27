@@ -23,7 +23,6 @@ use League\Url\Interfaces;
 */
 class Formatter
 {
-
     const HOST_ASCII    = 1;
 
     const HOST_UNICODE  = 2;
@@ -151,12 +150,7 @@ class Formatter
         }
 
         throw new InvalidArgumentException(sprintf(
-            'Data passed to the method must be a one of the following :
-            - League\Url\Interfaces\Query,
-            - League\Url\Interfaces\Host,
-            - League\Url\Interfaces\Url;
-            received "%s"',
-            (is_object($input) ? get_class($input) : gettype($input))
+            "The submitted value can not be formatted"
         ));
     }
 
@@ -169,7 +163,18 @@ class Formatter
      */
     public function formatQuery(Interfaces\Query $query)
     {
-        return http_build_query($query->toArray(), null, $this->querySeparator, $this->queryEncoding);
+        $sep = preg_quote($this->querySeparator, ',');
+
+        return preg_replace(
+            [",=$sep,", ",=$,"],
+            [$sep, ''],
+            http_build_query(
+                $query->toArray(),
+                null,
+                $this->querySeparator,
+                $this->queryEncoding
+            )
+        );
     }
 
     /**
@@ -184,6 +189,7 @@ class Formatter
         if (self::HOST_ASCII == $this->hostEncoding) {
             return $host->toAscii();
         }
+
         return $host->toUnicode();
     }
 

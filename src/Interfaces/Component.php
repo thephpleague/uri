@@ -35,7 +35,7 @@ interface Component
     public function __toString();
 
     /**
-     * Return a user friendly string representation to ease URL construction
+     * Return the component string representation with its delimiter
      *
      * @return string
      */

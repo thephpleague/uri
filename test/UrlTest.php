@@ -23,6 +23,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     private $url;
 
+    const BASE_URL = "http://a/b/c/d;p?q";
+
     public function setUp()
     {
         $this->url = Url::createFromUrl(
@@ -54,7 +56,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->url, $this->url->withHost('secure.example.com'));
         $this->assertEquals($this->url, $this->url->withPort(443));
         $this->assertEquals($this->url, $this->url->withPath('/test/query.php'));
-        $this->assertEquals($this->url, $this->url->withQuery('?kingkong=toto'));
+        $this->assertEquals($this->url, $this->url->withQuery('kingkong=toto'));
         $this->assertEquals($this->url, $this->url->withFragment('doc3'));
     }
 
@@ -153,5 +155,54 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue($url1->sameValueAs($url2));
+    }
+
+    /**
+     * @param $relative
+     * @param $expected
+     *
+     * @dataProvider resolveProvider
+     */
+    public function testResolve($url, $relative, $expected)
+    {
+        $this->assertSame($expected, (string) Url::createFromUrl($url)->resolve($relative));
+    }
+
+    public function resolveProvider()
+    {
+        return [
+          'baseurl' =>                 [self::BASE_URL, "",               self::BASE_URL],
+          'scheme' =>                  [self::BASE_URL, "ftp://d/e/f",    "ftp://d/e/f"],
+          'path 1' =>                  [self::BASE_URL, "g",              "http://a/b/c/g"],
+          'path 2' =>                  [self::BASE_URL, "./g",            "http://a/b/c/g"],
+          'path 3' =>                  [self::BASE_URL, "g/",             "http://a/b/c/g/"],
+          'path 4' =>                  [self::BASE_URL, "/g",             "http://a/g"],
+          'authority' =>               [self::BASE_URL, "//g",            "http://g"],
+          'query' =>                   [self::BASE_URL, "?y",             "http://a/b/c/d;p?y"],
+          'path + query' =>            [self::BASE_URL, "g?y",            "http://a/b/c/g?y"],
+          'fragment' =>                [self::BASE_URL, "#s",             "http://a/b/c/d;p?q#s"],
+          'path + fragment' =>         [self::BASE_URL, "g#s",            "http://a/b/c/g#s"],
+          'path + query + fragment' => [self::BASE_URL, "g?y#s",          "http://a/b/c/g?y#s"],
+          'single dot 1'=>             [self::BASE_URL, ".",              "http://a/b/c/"],
+          'single dot 2' =>            [self::BASE_URL, "./",             "http://a/b/c/"],
+          'single dot 3' =>            [self::BASE_URL, "./g/.",          "http://a/b/c/g/"],
+          'single dot 4' =>            [self::BASE_URL, "g/./h",          "http://a/b/c/g/h"],
+          'double dot 1' =>            [self::BASE_URL, "..",             "http://a/b/"],
+          'double dot 2' =>            [self::BASE_URL, "../",            "http://a/b/"],
+          'double dot 3' =>            [self::BASE_URL, "../g",           "http://a/b/g"],
+          'double dot 4' =>            [self::BASE_URL, "../..",          "http://a/"],
+          'double dot 5' =>            [self::BASE_URL, "../../",         "http://a/"],
+          'double dot 6' =>            [self::BASE_URL, "../../g",        "http://a/g"],
+          'double dot 7' =>            [self::BASE_URL, "../../../g",     "http://a/g"],
+          'double dot 8' =>            [self::BASE_URL, "../../../../g",  "http://a/g"],
+          'double dot 9' =>            [self::BASE_URL, "g/../h" ,        "http://a/b/c/h"],
+          'mulitple slashes' =>        [self::BASE_URL, "foo////g",       "http://a/b/c/foo////g"],
+          'complex path 1' =>          [self::BASE_URL, ";x",             "http://a/b/c/;x"],
+          'complex path 2' =>          [self::BASE_URL, "g;x",            "http://a/b/c/g;x"],
+          'complex path 3' =>          [self::BASE_URL, "g;x?y#s",        "http://a/b/c/g;x?y#s"],
+          'complex path 4' =>          [self::BASE_URL, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
+          'complex path 5' =>          [self::BASE_URL, "g;x=1/../y",     "http://a/b/c/y"],
+          'origin url without path' => ["http://a",     "b/../y",         "http://a/y"],
+        ];
     }
 }

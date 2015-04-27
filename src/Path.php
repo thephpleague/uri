@@ -26,23 +26,23 @@ use LogicException;
 class Path extends AbstractSegment implements PathInterface
 {
     /**
-     * Pattern to conform to Path RFC
+     * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
      *
      * @var array
      */
     protected static $sanitizePattern = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
-        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D'
+        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
     ];
 
     /**
-     * Pattern to conform to Path RFC
+     * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
      *
      * @var array
      */
     protected static $sanitizeReplace = [
         '/', ':', '@', '!', '$', '&', "'",
-        '(', ')', '*', '+', ',', ';', '='
+        '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
     /**
@@ -51,6 +51,12 @@ class Path extends AbstractSegment implements PathInterface
      * @var string
      */
     protected $delimiter = '/';
+
+    /**
+     * Does the path contain a leading delimiter
+     * @var bool
+     */
+    protected $has_front_delimiter = false;
 
     /**
      * Trait to validate a stringable variable
@@ -65,16 +71,18 @@ class Path extends AbstractSegment implements PathInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-        if (is_null($str)) {
-            return;
+
+        if (strpos($str, '#') !== false || strpos($str, '?') !== false) {
+            throw new InvalidArgumentException('Data passed must be a valid string;');
         }
 
         if (preg_match(',^/+$,', $str)) {
-            $this->data[] = '';
+            $this->has_front_delimiter = true;
             return;
         }
 
-        $append_delimiter = $this->delimiter === mb_substr($str, -1, 1);
+        $this->has_front_delimiter = $this->delimiter == mb_substr($str, 0, 1);
+        $append_delimiter          = $this->delimiter === mb_substr($str, -1, 1);
         $str = trim($str, $this->delimiter);
         $this->data = $this->validate($str);
         if ($append_delimiter) {
@@ -115,11 +123,12 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function get()
     {
-        if (empty($this->data)) {
-            return null;
+        $front_delimiter = '';
+        if ($this->has_front_delimiter) {
+            $front_delimiter = $this->delimiter;
         }
 
-        return $this->delimiter.implode($this->delimiter, $this->data);
+        return $front_delimiter.implode($this->delimiter, $this->data);
     }
 
     /**
@@ -144,43 +153,32 @@ class Path extends AbstractSegment implements PathInterface
     public function normalize()
     {
         $input = $this->__toString();
-        if (false === strpos($input, '.')) {
-            return new static($input);
+        if (empty($input) || false === strpos($input, '.')) {
+            return clone $this;
         }
+        $prepend_slash = ($this->delimiter == $input[0]) ? $this->delimiter : '';
+        $append_slash  = ($this->delimiter == mb_substr($input, -1, 1)) ? $this->delimiter : '';
+
+        $input  = explode($this->delimiter, trim($input));
         $output = [];
-        while ('' != $input) {
-            if ('/.' == $input) {
-                $output[] = '/';
-                break;
-            }
-
-            if ('/..' == $input) {
-                array_pop($output);
-                $output[] = '/';
-                break;
-            }
-
-            if (false === ($pos = stripos($input, '/', 1))) {
-                $output[] = $input;
-                break;
-            }
-
-            if ('/./' == substr($input, 0, 3)) {
-                $input = substr($input, 2);
+        foreach ($input as $segment) {
+            if ('.' == $segment) {
                 continue;
             }
 
-            if ('/../' == substr($input, 0, 4)) {
+            if ('..' == $segment) {
                 array_pop($output);
-                $input = substr($input, 3);
                 continue;
             }
 
-            $output[] = substr($input, 0, $pos);
-            $input = substr($input, $pos);
+            $output[] = $segment;
         }
 
-        return new static(implode($output));
+        if (count($output) && in_array(end($input), ['.', '..'])) {
+            $append_slash = $this->delimiter;
+        }
+
+        return new static($prepend_slash.implode($this->delimiter, $output).$append_slash);
     }
 
     /**
@@ -223,12 +221,5 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         return $this->replaceWith("/$basename.$ext", count($this->data) - 1);
-    }
-
-    public function __debugInfo()
-    {
-        return [
-            'data' => $this->__toString(),
-        ];
     }
 }

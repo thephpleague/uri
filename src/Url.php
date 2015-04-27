@@ -469,15 +469,19 @@ class Url implements UrlInterface
      */
     public function resolve($url)
     {
-        if (null == $url || "" === $url) {
+        if (empty($url)) {
             return clone $this;
         }
 
-        $rel = self::createFromUrl((string) $url)->toArray();
-        if (! empty($rel["scheme"]) && ! empty($rel["host"])) {
-            return self::createFromComponents($rel);
+        if (! $url instanceof UrlInterface) {
+            $rel = self::createFromUrl((string) $url);
         }
 
+        if (! empty($rel->getScheme()->get()) && ! empty($rel->getHost()->get())) {
+            return $rel;
+        }
+
+        $rel   = $rel->toArray();
         $final = $this->toArray();
         $final["fragment"] = $rel["fragment"];
         if (! empty($rel["host"])) {
@@ -499,6 +503,13 @@ class Url implements UrlInterface
         return self::createFromComponents($final);
     }
 
+    /**
+     * returns the resolve URL components
+     *
+     * @param  array  $final the final URL components
+     * @param  array  $rel   the relative URL components
+     * @return array
+     */
     protected function resolveHost(array $final, array $rel)
     {
         $final["host"]  = $rel["host"];
@@ -509,6 +520,13 @@ class Url implements UrlInterface
         return $final;
     }
 
+    /**
+     * returns the resolve URL components
+     *
+     * @param  array  $final the final URL components
+     * @param  array  $rel   the relative URL components
+     * @return array
+     */
     protected function resolvePath(array $final, array $rel)
     {
         $final["query"] = $rel["query"];

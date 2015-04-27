@@ -75,8 +75,8 @@ class Host extends AbstractSegment implements HostInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-        if (false !== strpos($str, '..')) {
-            throw new InvalidArgumentException('Multiple dot hostname are invalid');
+        if (false !== strpos($str, '..') || '.' == mb_substr($str, -1, 1)) {
+            throw new InvalidArgumentException('Malformed Host');
         }
 
         $str = trim($str, $this->delimiter);

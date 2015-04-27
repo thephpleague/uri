@@ -5,13 +5,17 @@ All Notable changes to `League\Url` will be documented in this file
 ## 4.X - XXXX-XX-XX
 
 ### Added
+
+- Package structure is changed better reflect the importance of each component.
+
 - `League\Url\Interfaces\Url`
     -  now extends `Psr\Http\Message\UriInterface`
     - `normalize` to normalize a URL returns a new Url interface normalized;
     - `hasStandardPort` which returns `true` if the standard port for a given `scheme` is used.
+    - `resolve` to create new URL from relative URL
 
 - `League\Url\Interfaces\Component`
-    -  different Component implementing object can be compared using the `sameValueAs`
+    -  different component implementing object can be compared using the `sameValueAs`
     - `withValue` to create a new instance from a given component;
 
 - `League\Url\Interfaces\Segment`:
@@ -36,8 +40,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Nothing
 
 ### Fixed
-- Handling of legacy hostname suffixed with a "."
-- Package structure is changed better reflect the importance of each component.
+- Handling of legacy hostname suffixed with a "." when using `Url::createFromServer`
 
 ### Remove
 - Support for `PHP 5.3`

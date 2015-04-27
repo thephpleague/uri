@@ -13,10 +13,10 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Url   as UrlInterface;
 use League\Url\Interfaces\Host  as HostInterface;
 use League\Url\Interfaces\Path  as PathInterface;
 use League\Url\Interfaces\Query as QueryInterface;
+use League\Url\Interfaces\Url   as UrlInterface;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
 

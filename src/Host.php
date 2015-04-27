@@ -124,15 +124,14 @@ class Host extends AbstractSegment implements HostInterface
      */
     protected function validateIpHost($str)
     {
-        if ('[' == $str[0] && ']' == $str[strlen($str) - 1]) {
-            $str = substr($str, 1, -1);
-            if (! filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        if (preg_match(',^\[(.*)\]$,', $str, $matches)) {
+            if (! filter_var($matches[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 throw new InvalidArgumentException('Invalid IPV6 format');
             }
             $this->host_as_ipv4 = false;
             $this->host_as_ipv6 = true;
 
-            return [$str];
+            return [$matches[1]];
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {

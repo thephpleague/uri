@@ -86,7 +86,7 @@ class Query implements QueryInterface
      */
     protected function validate($str)
     {
-        if (is_bool($str) || is_int($str)) {
+        if (is_bool($str)) {
             throw new InvalidArgumentException('Data passed must be a valid string; received '.gettype($str));
         }
 

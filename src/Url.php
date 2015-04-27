@@ -13,10 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Host  as HostInterface;
-use League\Url\Interfaces\Path  as PathInterface;
-use League\Url\Interfaces\Query as QueryInterface;
-use League\Url\Interfaces\Url   as UrlInterface;
+use League\Url\Interfaces;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
 
@@ -26,7 +23,7 @@ use Psr\Http\Message\UriInterface;
 * @package League.url
 * @since 1.0.0
 */
-class Url implements UrlInterface
+class Url implements Interfaces\Url
 {
     /**
      * Scheme Component
@@ -120,10 +117,10 @@ class Url implements UrlInterface
         Scheme $scheme,
         User $user,
         Pass $pass,
-        HostInterface $host,
+        Interfaces\Host $host,
         Port $port,
-        PathInterface $path,
-        QueryInterface $query,
+        Interfaces\Path $path,
+        Interfaces\Query $query,
         Fragment $fragment
     ) {
         $this->scheme   = $scheme;
@@ -479,17 +476,17 @@ class Url implements UrlInterface
             return clone $this;
         }
 
-        if (! $url instanceof UrlInterface) {
-            $rel = self::createFromUrl((string) $url);
+        if (! $url instanceof Interfaces\Url) {
+            $url = self::createFromUrl((string) $url);
         }
 
-        $scheme = $rel->getScheme()->get();
-        $host   = $rel->getHost()->get();
+        $scheme = $url->getScheme()->get();
+        $host   = $url->getHost()->get();
         if (! empty($scheme) && ! empty($host)) {
-            return $rel;
+            return $url;
         }
 
-        $rel   = $rel->toArray();
+        $rel   = $url->toArray();
         $final = $this->toArray();
         $final["fragment"] = $rel["fragment"];
         if (! empty($rel["host"])) {

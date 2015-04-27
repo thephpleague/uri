@@ -72,7 +72,7 @@ class Path extends AbstractSegment implements PathInterface
     {
         $str = $this->validateString($str);
 
-        if (strpos($str, '#') !== false || strpos($str, '?') !== false) {
+        if (preg_match(',(#|\?),', $str)) {
             throw new InvalidArgumentException('Data passed must be a valid string;');
         }
 
@@ -157,7 +157,6 @@ class Path extends AbstractSegment implements PathInterface
             return clone $this;
         }
         $prepend_slash = ($this->delimiter == $input[0]) ? $this->delimiter : '';
-        $append_slash  = ($this->delimiter == mb_substr($input, -1, 1)) ? $this->delimiter : '';
 
         $input  = explode($this->delimiter, trim($input));
         $output = [];
@@ -174,6 +173,7 @@ class Path extends AbstractSegment implements PathInterface
             $output[] = $segment;
         }
 
+        $append_slash = '';
         if (count($output) && in_array(end($input), ['.', '..'])) {
             $append_slash = $this->delimiter;
         }

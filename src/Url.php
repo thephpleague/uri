@@ -126,13 +126,13 @@ class Url implements UrlInterface
         QueryInterface $query,
         Fragment $fragment
     ) {
-        $this->scheme = $scheme;
-        $this->user = $user;
-        $this->pass = $pass;
-        $this->host = $host;
-        $this->port = $port;
-        $this->path = $path;
-        $this->query = $query;
+        $this->scheme   = $scheme;
+        $this->user     = $user;
+        $this->pass     = $pass;
+        $this->host     = $host;
+        $this->port     = $port;
+        $this->path     = $path;
+        $this->query    = $query;
         $this->fragment = $fragment;
     }
 
@@ -141,13 +141,13 @@ class Url implements UrlInterface
      */
     public function __clone()
     {
-        $this->scheme = clone $this->scheme;
-        $this->user = clone $this->user;
-        $this->pass = clone $this->pass;
-        $this->host = clone $this->host;
-        $this->port = clone $this->port;
-        $this->path = clone $this->path;
-        $this->query = clone $this->query;
+        $this->scheme   = clone $this->scheme;
+        $this->user     = clone $this->user;
+        $this->pass     = clone $this->pass;
+        $this->host     = clone $this->host;
+        $this->port     = clone $this->port;
+        $this->path     = clone $this->path;
+        $this->query    = clone $this->query;
         $this->fragment = clone $this->fragment;
     }
 
@@ -183,7 +183,7 @@ class Url implements UrlInterface
      *
      * @param  string $url
      *
-     * @throws new InvalidArgumentException If the URL can not be parsed
+     * @throws \InvalidArgumentException If the URL can not be parsed
      *
      * @return static
      */
@@ -192,7 +192,10 @@ class Url implements UrlInterface
         $url = trim($url);
         $components = @parse_url($url);
         if (false === $components) {
-            throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
+            throw new InvalidArgumentException(sprintf(
+                "The given URL: `%s` could not be parse",
+                $url
+            ));
         }
 
         return static::createFromComponents($components);
@@ -401,7 +404,10 @@ class Url implements UrlInterface
     {
         $scheme = $this->scheme->get();
 
-        return isset(static::$standardPorts[$scheme], static::$standardPorts[$scheme][$this->port->get()]);
+        return isset(
+            static::$standardPorts[$scheme],
+            static::$standardPorts[$scheme][$this->port->get()]
+        );
     }
 
     /**
@@ -423,13 +429,13 @@ class Url implements UrlInterface
     public function toArray()
     {
         return [
-            'scheme' => $this->scheme->get(),
-            'user' => $this->user->get(),
-            'pass' => $this->pass->get(),
-            'host' => $this->host->get(),
-            'port' => $this->port->get(),
-            'path' => $this->path->get(),
-            'query' => $this->query->get(),
+            'scheme'   => $this->scheme->get(),
+            'user'     => $this->user->get(),
+            'pass'     => $this->pass->get(),
+            'host'     => $this->host->get(),
+            'port'     => $this->port->get(),
+            'path'     => $this->path->get(),
+            'query'    => $this->query->get(),
             'fragment' => $this->fragment->get(),
         ];
     }

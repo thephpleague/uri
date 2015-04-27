@@ -31,13 +31,14 @@ interface Url extends UriInterface
 
     /**
      * Tells whether two UriInterface represents the same value
-     * The Comparaison is based on the __toString method
+     * The Comparaison is based on the __toString method.
+     * No normalization is done
      *
-     * @param UriInterface $component
+     * @param UriInterface $url
      *
      * @return bool
      */
-    public function sameValueAs(UriInterface $component);
+    public function sameValueAs(UriInterface $url);
 
     /**
      * Return the string representation for the current URL
@@ -50,7 +51,7 @@ interface Url extends UriInterface
     /**
      * Return a new object with its path normalized
      *
-     * @return Url
+     * @return static
      */
     public function normalize();
 
@@ -60,4 +61,13 @@ interface Url extends UriInterface
      * @return bool
      */
     public function hasStandardPort();
+
+    /**
+     * Resolve a new URI with a relative URI
+     *
+     * @param string $rel the relative URI
+     *
+     * @return static
+     */
+    public function resolve($rel);
 }

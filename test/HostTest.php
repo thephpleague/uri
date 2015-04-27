@@ -38,7 +38,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
             ['[::1]', true, false, true, '::1', '[::1]'],
             ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
-            ['example.com.', false, false, false, 'example.com', 'example.com'],
             [null, false, false, false, '', ''],
         ];
     }
@@ -67,6 +66,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['toto.127.0.0.1'],
             ['98.3.2'],
             ['[[::1]]'],
+            ['example.com.']
         ];
     }
 

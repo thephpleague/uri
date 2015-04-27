@@ -483,7 +483,9 @@ class Url implements UrlInterface
             $rel = self::createFromUrl((string) $url);
         }
 
-        if (! empty($rel->getScheme()->get()) && ! empty($rel->getHost()->get())) {
+        $scheme = $rel->getScheme()->get();
+        $host   = $rel->getHost()->get();
+        if (! empty($scheme) && ! empty($host)) {
             return $rel;
         }
 

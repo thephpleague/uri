@@ -45,6 +45,8 @@ class Path extends AbstractSegment implements PathInterface
         '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
+    protected static $dot_segments = ['.' => 1, '..' => 1];
+
     /**
      * Segment delimiter
      *
@@ -152,33 +154,47 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function normalize()
     {
-        $input = $this->__toString();
-        if (empty($input) || false === strpos($input, '.')) {
+        $current = $this->__toString();
+        if (false === strpos($current, '.')) {
             return clone $this;
         }
-        $prepend_slash = ($this->delimiter == $input[0]) ? $this->delimiter : '';
 
-        $input  = explode($this->delimiter, trim($input));
-        $output = [];
+        $input    = explode($this->delimiter, $current);
+        $new_path = '';
+        if ($this->delimiter == $current[0]) {
+            $new_path = $this->delimiter;
+        }
+        $new_path .= implode($this->delimiter, $this->filterDotSegment($input));
+        if (isset(static::$dot_segments[end($input)])) {
+            $new_path .= $this->delimiter;
+        }
+
+        return new static($new_path);
+    }
+
+    /**
+     * Filter Dot Segments
+     *
+     * @param  array  $input
+     * @param  array  $dot_segments
+     *
+     * @return array
+     */
+    protected function filterDotSegment(array $input)
+    {
+        $arr = [];
         foreach ($input as $segment) {
-            if ('.' == $segment) {
-                continue;
-            }
-
             if ('..' == $segment) {
-                array_pop($output);
+                array_pop($arr);
                 continue;
             }
 
-            $output[] = $segment;
+            if (! isset(static::$dot_segments[$segment])) {
+                $arr[] = $segment;
+            }
         }
 
-        $append_slash = '';
-        if (count($output) && in_array(end($input), ['.', '..'])) {
-            $append_slash = $this->delimiter;
-        }
-
-        return new static($prepend_slash.implode($this->delimiter, $output).$append_slash);
+        return $arr;
     }
 
     /**

@@ -463,4 +463,67 @@ class Url implements UrlInterface
 
         return $clone;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($url)
+    {
+        if (null == $url || "" === $url) {
+            return clone $this;
+        }
+
+        $rel = self::createFromUrl((string) $url)->toArray();
+        if (! empty($rel["scheme"]) && ! empty($rel["host"])) {
+            return self::createFromComponents($rel);
+        }
+
+        $final = $this->toArray();
+        $final["fragment"] = $rel["fragment"];
+        if (! empty($rel["host"])) {
+            $final = $this->resolveHost($final, $rel);
+
+            return self::createFromComponents($final);
+        }
+
+        if (! empty($rel["path"])) {
+            $final = $this->resolvePath($final, $rel);
+
+            return self::createFromComponents($final);
+        }
+
+        if (! empty($rel["query"])) {
+            $final["query"] = $rel["query"];
+        }
+
+        return self::createFromComponents($final);
+    }
+
+    protected function resolveHost(array $final, array $rel)
+    {
+        $final["host"]  = $rel["host"];
+        $final["port"]  = $rel["port"];
+        $final["path"]  = (string) (new Path($rel["path"]))->normalize();
+        $final["query"] = $rel["query"];
+
+        return $final;
+    }
+
+    protected function resolvePath(array $final, array $rel)
+    {
+        $final["query"] = $rel["query"];
+        if ("/" == $rel["path"][0]) {
+            $final["path"] = (string) (new Path($rel["path"]))->normalize();
+
+            return $final;
+        }
+
+        $merge_path = mb_substr($final["path"], 0, mb_strrpos($final["path"], "/") + 1);
+        if (! empty($final["host"]) && empty($final["path"])) {
+            $merge_path = "/";
+        }
+        $final["path"] = (string) (new Path($merge_path.$rel["path"]))->normalize();
+
+        return $final;
+    }
 }

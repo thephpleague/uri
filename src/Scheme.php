@@ -28,14 +28,6 @@ class Scheme extends AbstractComponent implements Component
      */
     protected function validate($data)
     {
-        if ('://' == substr($data, -3, 3)) {
-            $data = substr($data, 0, -3);
-        }
-
-        if (':' == substr($data, -1, 1)) {
-            $data = substr($data, 0, -1);
-        }
-
         if (! preg_match('/^[a-z][-a-z0-9+.]+$/i', $data)) {
             throw new InvalidArgumentException('The submitted data is invalid');
         }

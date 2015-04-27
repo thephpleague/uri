@@ -161,6 +161,11 @@ abstract class AbstractSegment
 
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
+
+        $prepend_delimiter = '';
+        if ($this->delimiter == $value[0]) {
+            $prepend_delimiter = $this->delimiter;
+        }
         $value = trim($value, $this->delimiter);
         $value = $this->validate($value);
 
@@ -170,7 +175,7 @@ abstract class AbstractSegment
             $orig = $this->delimiter.$orig;
         }
 
-        return new static($value.$orig);
+        return new static($prepend_delimiter.$value.$orig);
     }
 
     /**

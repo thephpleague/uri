@@ -86,12 +86,19 @@ class Query implements QueryInterface
      */
     protected function validate($str)
     {
+        if (is_bool($str) || is_int($str)) {
+            throw new InvalidArgumentException('Data passed must be a valid string; received '.gettype($str));
+        }
+
         $str = $this->validateString($str);
+        if (strpos($str, '#')) {
+            throw new InvalidArgumentException('Data passed must be a valid string;');
+        }
+
         if (empty($str)) {
             return [];
         }
 
-        $str = ltrim($str, '?');
         $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
             return bin2hex(urldecode($match[0]));
         }, $str);
@@ -137,7 +144,11 @@ class Query implements QueryInterface
             return null;
         }
 
-        return http_build_query($this->data, '', '&', PHP_QUERY_RFC3986);
+        return preg_replace(
+            [',=&,', ',=$,'],
+            ['&', ''],
+            http_build_query($this->data, '', '&', PHP_QUERY_RFC3986)
+        );
     }
 
     /**
@@ -236,12 +247,5 @@ class Query implements QueryInterface
     public function withValue($value = null)
     {
         return new static($value);
-    }
-
-    public function __debugInfo()
-    {
-        return [
-            'data' => $this->__toString(),
-        ];
     }
 }

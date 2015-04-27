@@ -41,8 +41,8 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         return [
             ['', ''],
             ['ftp', 'ftp'],
-            ['HtTps:', 'https'],
-            ['ssh://', 'ssh'],
+            ['HtTps', 'https'],
+            ['sSh', 'ssh'],
         ];
     }
 

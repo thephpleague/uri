@@ -353,14 +353,4 @@ class Host extends AbstractSegment implements HostInterface
             throw new LogicException('The API can not be use with an IP based host.');
         }
     }
-
-    public function __debugInfo()
-    {
-        return [
-            'unicode' => $this->toUnicode(),
-            'ascii'   => $this->toAscii(),
-            'is_ipv4' => $this->host_as_ipv4,
-            'is_ipv6' => $this->host_as_ipv6,
-        ];
-    }
 }

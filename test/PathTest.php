@@ -8,7 +8,7 @@ use PHPUnit_Framework_TestCase;
 use StdClass;
 
 /**
- * @group segment
+ * @group path
  */
 class PathTest extends PHPUnit_Framework_TestCase
 {
@@ -27,9 +27,10 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function validPathProvider()
     {
         return [
+            [null, ''],
             ['/path/to/my/file.csv', '/path/to/my/file.csv'],
-            ['you', '/you'],
-            ['foo/bar/', '/foo/bar/'],
+            ['you', 'you'],
+            ['foo/bar/', 'foo/bar/'],
             ['', ''],
             ['/', '/'],
             ['/shop/rev iew/', '/shop/rev%20iew/'],
@@ -62,8 +63,8 @@ class PathTest extends PHPUnit_Framework_TestCase
 
     public function testPrepend()
     {
-        $path = new Path('/test/query.php');
-        $newPath = $path->prependWith('master');
+        $path    = new Path('/test/query.php');
+        $newPath = $path->prependWith('/master');
         $this->assertSame('/master/test/query.php', $newPath->__toString());
     }
 
@@ -130,7 +131,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @param  string $path
      * @dataProvider normalizeProvider
      */
-    public function testNormalize($expected, $path)
+    public function testNormalize($path, $expected)
     {
         $this->assertSame($expected, (new Path($path))->normalize()->__toString());
     }
@@ -143,26 +144,10 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function normalizeProvider()
     {
         return [
-            ['/path/to/mars', '/path/to/mars'],
-            ['/a/b/c/%7Bfoo%7D', '/../a/./b/../b/%63/%7bfoo%7d'],
-            ['/bar', '../bar'],
-            ['/bar', './bar'],
-            ['/bar', '.././bar'],
-            ['/foo/bar', '/foo/./bar'],
-            ['/bar/', '/bar/./'],
-            ['/', '/.'],
-            ['/bar/', '/bar/.'],
-            ['/bar', '/foo/../bar'],
-            ['/', '/bar/../'],
-            ['/', '/..'],
-            ['/', '/bar/..'],
-            ['/foo/', '/foo/bar/..'],
-            ['/', '.'],
-            ['/', '..'],
-            ['/', '../aaa/./..'],
-            ['/', '../../.a../../.'],
-            ['/a/g', '/a/b/c/./../../g'],
-            ['/mid/6', 'mid/content=5/../6'],
+            ['/a/b/c/./../../g', '/a/g'],
+            ['mid/content=5/../6', 'mid/6'],
+            ['a/b/c', 'a/b/c'],
+            ['a/b/c/.', 'a/b/c/'],
         ];
     }
 
@@ -235,14 +220,22 @@ class PathTest extends PHPUnit_Framework_TestCase
         (new Path())->withExtension('txt');
     }
 
-    public function testDebugInfo()
+    /**
+     * @param $path
+     * @expectedException \InvalidArgumentException
+     * @dataProvider invalidPath
+     */
+    public function testInvalidPath($path)
     {
-        $path = new Path('/path/to/my/file.php');
+        new Path($path);
+    }
 
-        $expected = [
-            'data' => '/path/to/my/file.php',
+    public function invalidPath()
+    {
+        return [
+            ['/path/to#fragment'],
+            ['/path/to?query'],
+            [new \StdClass()],
         ];
-
-        $this->assertSame($expected, $path->__debugInfo());
     }
 }

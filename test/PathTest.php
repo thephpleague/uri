@@ -287,8 +287,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function invalidPath()
     {
         return [
-            ['/path/to#fragment'],
-            ['/path/to?query'],
             [new \StdClass()],
         ];
     }

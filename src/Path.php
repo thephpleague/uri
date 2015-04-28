@@ -74,11 +74,6 @@ class Path extends AbstractSegment implements PathInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-
-        if (preg_match(',(#|\?),', $str)) {
-            throw new InvalidArgumentException('data must be url encoded for special characters');
-        }
-
         if (preg_match(',^/+$,', $str)) {
             $this->has_front_delimiter = true;
             return;

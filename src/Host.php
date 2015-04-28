@@ -150,16 +150,6 @@ class Host extends AbstractSegment implements HostInterface
      */
     protected function validateIpHost($str)
     {
-        if (preg_match(',^\[(.*)\]$,', $str, $matches)) {
-            if (! filter_var($matches[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                throw new InvalidArgumentException('Invalid IPV6 format');
-            }
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
-
-            return [$matches[1]];
-        }
-
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $this->host_as_ipv4 = false;
             $this->host_as_ipv6 = true;
@@ -195,11 +185,10 @@ class Host extends AbstractSegment implements HostInterface
      */
     protected function validateStringHost($str)
     {
-        $str    = $this->lower($str);
-        $labels = explode(static::$delimiter, $str);
+        $str       = $this->lower($str);
+        $labels    = explode(static::$delimiter, $str);
         $nb_labels = count($labels);
-
-        $labels = array_map(function ($value) {
+        $labels    = array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
             $value = trim($value);
 
@@ -210,21 +199,7 @@ class Host extends AbstractSegment implements HostInterface
             return ! empty($value);
         });
 
-        if ($nb_labels != count($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its content');
-        }
-
-        if (! $this->isValidLength($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its length');
-        }
-
-        if (! $this->isValidContent($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its content');
-        }
-
-        if (! $this->isValidLabelsCount($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
-        }
+        $this->assertValidHost($labels, $nb_labels);
 
         return array_map(function ($label) {
             if (strpos($label, static::PREFIX) !== 0) {
@@ -232,6 +207,29 @@ class Host extends AbstractSegment implements HostInterface
             }
             return $this->decodeLabel(substr($label, strlen(static::PREFIX)));
         }, $labels);
+    }
+
+    /**
+     * Validate a String Label
+     *
+     * @param array $labels    found host labels
+     * @param int   $nb_labels source host label count
+     *
+     * @throws InvalidArgumentException If the validation fails
+     */
+    protected function assertValidHost(array $labels, $nb_labels)
+    {
+        if ($nb_labels != count($labels) || ! $this->isValidContent($labels)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its content');
+        }
+
+        if (! $this->isValidLength($labels)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its length');
+        }
+
+        if (! $this->isValidLabelsCount($labels)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
+        }
     }
 
     /**

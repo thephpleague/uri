@@ -36,7 +36,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         return [
             ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
             ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
-            ['[::1]', true, false, true, '::1', '[::1]'],
+            ['::1', true, false, true, '::1', '[::1]'],
             ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
             [null, false, false, false, '', ''],
         ];
@@ -55,6 +55,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function invalidHostProvider()
     {
         return [
+            ['..example.com'],
             ['.......'],
             ['tot.    .coucou.com'],
             ['re view'],
@@ -207,7 +208,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['master.example.com', 'MaStEr.ExAMple.CoM', true],
-            ['[::1]', '::1', true],
+            ['::1', '::1', true],
             ['toto.com', 'barbaz.be', false],
         ];
     }

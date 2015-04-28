@@ -105,10 +105,7 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         if (! is_array($data)) {
-            throw new InvalidArgumentException(sprintf(
-                'Data passed to the method must be an array or a Traversable object; received "%s"',
-                (is_object($data) ? get_class($data) : gettype($data))
-            ));
+            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
         }
 
         $path = '';

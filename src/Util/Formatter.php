@@ -167,7 +167,7 @@ class Formatter
 
         return preg_replace(
             [",=$sep,", ",=$,"],
-            [$sep, ''],
+            [$this->querySeparator, ''],
             http_build_query(
                 $query->toArray(),
                 null,

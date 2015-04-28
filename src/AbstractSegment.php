@@ -35,7 +35,7 @@ abstract class AbstractSegment
      *
      * @var string
      */
-    protected $delimiter;
+    protected static $delimiter;
 
     /**
      * {@inheritdoc}
@@ -97,6 +97,14 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
+    public function toArray()
+    {
+        return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getKeys($data = null)
     {
         if (is_null($data)) {
@@ -105,9 +113,9 @@ abstract class AbstractSegment
 
         $data = filter_var($data, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $data = trim($data);
-        $data = trim($data, $this->delimiter);
+        $data = trim($data, static::$delimiter);
         $data = $this->validate($data);
-        $data = implode($this->delimiter, $data);
+        $data = implode(static::$delimiter, $data);
 
         return array_keys($this->data, $data, true);
     }
@@ -137,19 +145,19 @@ abstract class AbstractSegment
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
         $appended_delimiter = '';
-        if ($this->delimiter == $value[mb_strlen($value) - 1]) {
-            $appended_delimiter = $this->delimiter;
+        if (static::$delimiter == $value[mb_strlen($value) - 1]) {
+            $appended_delimiter = static::$delimiter;
         }
-        $value = trim($value, $this->delimiter);
+        $value = trim($value, static::$delimiter);
         $value = $this->validate($value);
 
-        $value = implode($this->delimiter, $value);
+        $value = implode(static::$delimiter, $value);
         $orig = $this->__toString();
-        if (empty($orig) || $this->delimiter !== $orig[0]) {
-            $orig = $this->delimiter.$orig;
+        if (empty($orig) || static::$delimiter !== $orig[0]) {
+            $orig = static::$delimiter.$orig;
         }
 
-        return new static($orig.$this->delimiter.$value.$appended_delimiter);
+        return new static($orig.static::$delimiter.$value.$appended_delimiter);
     }
 
     /**
@@ -163,16 +171,16 @@ abstract class AbstractSegment
         $value = trim($value);
 
         $prepend_delimiter = '';
-        if ($this->delimiter == $value[0]) {
-            $prepend_delimiter = $this->delimiter;
+        if (static::$delimiter == $value[0]) {
+            $prepend_delimiter = static::$delimiter;
         }
-        $value = trim($value, $this->delimiter);
+        $value = trim($value, static::$delimiter);
         $value = $this->validate($value);
 
-        $value = implode($this->delimiter, $value);
+        $value = implode(static::$delimiter, $value);
         $orig = $this->__toString();
-        if ($this->delimiter !== $orig[0]) {
-            $orig = $this->delimiter.$orig;
+        if (static::$delimiter !== $orig[0]) {
+            $orig = static::$delimiter.$orig;
         }
 
         return new static($prepend_delimiter.$value.$orig);
@@ -189,13 +197,13 @@ abstract class AbstractSegment
 
         $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
         $value = trim($value);
-        $value = trim($value, $this->delimiter);
+        $value = trim($value, static::$delimiter);
         $value = $this->validate($value);
 
         $res = $this->data;
-        $res[$key] = implode($this->delimiter, $value);
+        $res[$key] = implode(static::$delimiter, $value);
 
-        return new static(implode($this->delimiter, $res));
+        return new static(implode(static::$delimiter, $res));
     }
 
     /**
@@ -210,24 +218,24 @@ abstract class AbstractSegment
             return clone $this;
         }
 
-        $value_appended  = ($this->delimiter != $value[mb_strlen($value) - 1]);
-        $value_prepended = ($this->delimiter != $value[0]);
+        $value_appended  = (static::$delimiter != $value[mb_strlen($value) - 1]);
+        $value_prepended = (static::$delimiter != $value[0]);
 
-        $value = trim($value, $this->delimiter);
+        $value = trim($value, static::$delimiter);
         $value = $this->validate($value);
-        $value = implode($this->delimiter, $value);
-        $value = $this->delimiter.$value.$this->delimiter;
+        $value = implode(static::$delimiter, $value);
+        $value = static::$delimiter.$value.static::$delimiter;
 
         $orig = $this->getUriComponent();
         $orig_appended = false;
-        if ($this->delimiter != $orig[mb_strlen($orig) - 1]) {
-            $orig .= $this->delimiter;
+        if (static::$delimiter != $orig[mb_strlen($orig) - 1]) {
+            $orig .= static::$delimiter;
             $orig_appended = true;
         }
 
         $orig_prepended = false;
-        if ($this->delimiter != $orig[0]) {
-            $orig = $this->delimiter.$orig;
+        if (static::$delimiter != $orig[0]) {
+            $orig = static::$delimiter.$orig;
             $orig_prepended = true;
         }
 

@@ -24,9 +24,19 @@ interface Path extends Segment
      * Return a new Path interface normalized
      * by removing do segment
      *
-     * @return Path
+     * @return static
      */
     public function normalize();
+
+    /**
+     * Return a Path segment
+     *
+     * @param string $key     the parameter name
+     * @param mixed  $default if no key is found the default value to return
+     *
+     * @return mixed
+     */
+    public function getSegment($key, $default = null);
 
     /**
      * Gets the basename of the path
@@ -46,12 +56,12 @@ interface Path extends Segment
      * Return a new Path object with a modified extension
      * for the basename
      *
-     * @param  string $ext the new extension
+     * @param string $ext the new extension
      *                     can preceeded with or without the dot (.) character
      *
      * @throws \LogicException If the basename is empty
      *
-     * @return Path
+     * @return static
      */
     public function withExtension($ext);
 }

@@ -55,47 +55,49 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($query->sameValueAs($this->query));
     }
 
-    public function testMergeWithWithArray()
+    /**
+     * @param $input
+     * @param $expected
+     * @dataProvider validMergeValue
+     */
+    public function testMergerWith($input, $expected)
     {
-        $query = $this->query->mergeWith(['john' => 'doe the john']);
-        $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $query);
+        $query = $this->query->mergeWith($input);
+        $this->assertSame($expected, (string) $query);
     }
 
-    public function testMergeWithWithArrayIterator()
+    public function validMergeValue()
     {
-        $query = $this->query->mergeWith(new ArrayIterator(['john' => 'doe the john']));
-        $this->assertSame('kingkong=toto&john=doe%20the%20john', (string) $query);
-    }
-
-    public function testMergeWithWithQueryInterface()
-    {
-        $query = $this->query->mergeWith(Query::createFromArray(['foo' => 'bar']));
-        $this->assertSame('kingkong=toto&foo=bar', (string) $query);
-    }
-
-    public function testMergeWithWithString()
-    {
-        $query = $this->query->mergeWith('kingkong=tata');
-        $this->assertSame('kingkong=tata', (string) $query);
-    }
-
-    public function testMergeWithEmptyString()
-    {
-        $query = $this->query->mergeWith('');
-        $this->assertSame('kingkong=toto', (string) $query);
-    }
-
-    public function testMergeWithRemoveArg()
-    {
-        $query = $this->query->mergeWith(['kingkong' => null]);
-        $this->assertSame('', (string) $query);
-    }
-
-    public function testSetterWithNull()
-    {
-        $query = $this->query->mergeWith(null);
-        $this->assertSame($this->query->get(), $query->get());
-        $this->assertTrue($query->sameValueAs($this->query));
+        return [
+            'array' => [
+                ['john' => 'doe the john'],
+                'kingkong=toto&john=doe%20the%20john',
+            ],
+            'iterator' => [
+                new ArrayIterator(['john' => 'doe the john']),
+                'kingkong=toto&john=doe%20the%20john'
+            ],
+            'QueryInterface' => [
+                Query::createFromArray(['foo' => 'bar']),
+                'kingkong=toto&foo=bar',
+            ],
+            'string' => [
+                'kingkong=tata',
+                'kingkong=tata',
+            ],
+            'empty string' => [
+                '',
+                'kingkong=toto',
+            ],
+            'null value' => [
+                null,
+                'kingkong=toto',
+            ],
+            'remove parameter' => [
+                ['kingkong' => null],
+                '',
+            ],
+        ];
     }
 
     /**
@@ -106,18 +108,18 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->query->mergeWith(new StdClass());
     }
 
-    public function testgetData()
+    public function testGetParameter()
     {
-        $this->assertSame('toto', $this->query->getData('kingkong'));
+        $this->assertSame('toto', $this->query->getParameter('kingkong'));
     }
 
-    public function testgetDataWithDefaultValue()
+    public function testGetParameterWithDefaultValue()
     {
         $expected = 'toofan';
-        $this->assertSame($expected, $this->query->getData('togo', $expected));
+        $this->assertSame($expected, $this->query->getParameter('togo', $expected));
     }
 
-    public function testhAsKey()
+    public function testHasKey()
     {
         $this->assertFalse($this->query->hasKey('togo'));
         $this->assertTrue($this->query->hasKey('kingkong'));
@@ -161,9 +163,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $query->getKeys());
         $this->assertSame(['foo', 'bar', 'baz'], $query->getKeys());
-        $this->assertSame('', $query->getData('foo'));
-        $this->assertSame('', $query->getData('bar'));
-        $this->assertSame('', $query->getData('baz'));
+        $this->assertSame('', $query->getParameter('foo'));
+        $this->assertSame('', $query->getParameter('bar'));
+        $this->assertSame('', $query->getParameter('baz'));
     }
 
     public function testToArray()

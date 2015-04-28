@@ -12,7 +12,6 @@ use StdClass;
  */
 class PathTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @param string $raw
      * @param string $parsed
@@ -44,20 +43,65 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @param int    $key
      * @param string $value
      * @param mixed  $default
-     * @dataProvider getDataProvider
+     * @dataProvider getSegmentProvider
      */
-    public function testgetData($raw, $key, $value, $default)
+    public function testGetSegment($raw, $key, $value, $default)
     {
         $path = new Path($raw);
-        $this->assertSame($value, $path->getData($key, $default));
+        $this->assertSame($value, $path->getSegment($key, $default));
     }
 
-    public function getDataProvider()
+    public function getSegmentProvider()
     {
         return [
             ['/shop/rev iew/', 1, 'rev iew', null],
             ['/shop/rev%20iew/', 1, 'rev iew', null],
             ['/shop/rev%20iew/', 28, 'foo', 'foo'],
+        ];
+    }
+
+    /**
+     * @param $input
+     * @param $expected
+     * @dataProvider createFromArrayValid
+     */
+    public function testCreateFromArray($input, $has_front_delimiter, $expected)
+    {
+        $this->assertSame($expected, Path::createFromArray($input, $has_front_delimiter)->__toString());
+    }
+
+    public function createFromArrayValid()
+    {
+        return [
+            'array' => [['www', 'example', 'com'], false, 'www/example/com'],
+            'array' => [['www', 'example', 'com'], true, '/www/example/com'],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), true, '/www/example/com'],
+            'host object' => [(new Path('::1'))->toArray(), false, '::1',],
+            'arbitrary cut 1' => [['foo', 'bar', 'baz'], true, '/foo/bar/baz'],
+            'arbitrary cut 2' => [['foo/bar', 'baz'], true, '/foo/bar/baz'],
+            'arbitrary cut 3' => [['foo/bar/baz'], true, '/foo/bar/baz'],
+            'ending delimiter' => [['foo/bar/baz', ''], false, 'foo/bar/baz/'],
+        ];
+    }
+
+    /**
+     * @param $input
+     * @dataProvider createFromArrayInvalid
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreateFromArrayFailed($input)
+    {
+        Path::createFromArray($input);
+    }
+
+    public function createFromArrayInvalid()
+    {
+        return [
+            'string' => ['www.example.com'],
+            'bool' => [true],
+            'integer' => [1],
+            'object' => [new \StdClass()],
+            'host object' => [new Path('::1')],
         ];
     }
 
@@ -112,16 +156,26 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame([1, 3], $path->getKeys('3'));
     }
 
-    public function testCountable()
+    /**
+     * @param $input
+     * @param $toArray
+     * @param $nbSegment
+     * @dataProvider arrayProvider
+     */
+    public function testCountable($input, $toArray, $nbSegment)
     {
-        $path = new Path('/toto/le/heros/masson');
-        $this->assertCount(4, $path);
+        $path = new Path($input);
+        $this->assertCount($nbSegment, $path);
+        $this->assertSame($toArray, $path->toArray());
     }
 
-    public function testCountableWithDelimiterEndingPath()
+    public function arrayProvider()
     {
-        $path = new Path('/toto/le/heros/masson/');
-        $this->assertCount(5, $path);
+        return [
+            ['/toto/le/heros/masson', ['toto', 'le', 'heros', 'masson'], 4],
+            ['toto/le/heros/masson', ['toto', 'le', 'heros', 'masson'], 4],
+            ['/toto/le/heros/masson/', ['toto', 'le', 'heros', 'masson', ''], 5],
+        ];
     }
 
     /**

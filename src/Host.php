@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces\Host as HostInterface;
 use League\Url\Util;
 use LogicException;
+use Traversable;
 
 /**
 * A class to manipulate URL Host component
@@ -55,7 +56,7 @@ class Host extends AbstractSegment implements HostInterface
      *
      * @var string
      */
-    protected $delimiter = '.';
+    protected static $delimiter = '.';
 
     /**
      * Trait to handle punycode
@@ -79,10 +80,35 @@ class Host extends AbstractSegment implements HostInterface
             throw new InvalidArgumentException('Malformed Host');
         }
 
-        $str = trim($str, $this->delimiter);
+        $str = trim($str, static::$delimiter);
         if (! empty($str)) {
             $this->data = $this->validate($str);
         }
+    }
+
+    /**
+     * return a new Host instance from an Array or a traversable object
+     *
+     * @param \Traversable|array $data
+     *
+     * @throws \InvalidArgumentException If $data is invalid
+     *
+     * @return static
+     */
+    public static function createFromArray($data)
+    {
+        if ($data instanceof Traversable) {
+            $data = iterator_to_array($data, false);
+        }
+
+        if (! is_array($data)) {
+            throw new InvalidArgumentException(sprintf(
+                'Data passed to the method must be an array or a Traversable object; received "%s"',
+                (is_object($data) ? get_class($data) : gettype($data))
+            ));
+        }
+
+        return new static(implode(static::$delimiter, $data));
     }
 
     /**
@@ -170,7 +196,7 @@ class Host extends AbstractSegment implements HostInterface
     protected function validateStringHost($str)
     {
         $str    = $this->lower($str);
-        $labels = explode($this->delimiter, $str);
+        $labels = explode(static::$delimiter, $str);
         $nb_labels = count($labels);
 
         $labels = array_map(function ($value) {
@@ -250,7 +276,7 @@ class Host extends AbstractSegment implements HostInterface
         $labels       = array_merge($this->data, $data);
         $count_labels = count($labels);
 
-        return $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode($this->delimiter, $labels));
+        return $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
     }
 
     /**
@@ -290,13 +316,13 @@ class Host extends AbstractSegment implements HostInterface
             return $this->data[0];
         }
 
-        return implode($this->delimiter, $this->data);
+        return implode(static::$delimiter, $this->data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getData($key, $default = null)
+    public function getLabel($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return $this->data[$key];
@@ -326,7 +352,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function toAscii()
     {
-        return implode($this->delimiter, array_map([$this, 'encodeLabel'], $this->data));
+        return implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
     }
 
     /**

@@ -54,4 +54,14 @@ interface Host extends Segment
      * @return string
      */
     public function toAscii();
+
+    /**
+     * Return a host label
+     *
+     * @param string $key     the parameter name
+     * @param mixed  $default if no key is found the default value to return
+     *
+     * @return mixed
+     */
+    public function getLabel($key, $default = null);
 }

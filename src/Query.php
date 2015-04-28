@@ -203,7 +203,7 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function getData($key, $default = null)
+    public function getParameter($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return $this->data[$key];

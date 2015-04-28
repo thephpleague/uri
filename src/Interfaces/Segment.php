@@ -33,7 +33,7 @@ interface Segment extends Component, Countable
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
-     * @param  null|string $data
+     * @param null|string $data
      *
      * @return array
      */

@@ -60,10 +60,6 @@ abstract class AbstractComponent
      */
     protected function validate($data)
     {
-        if (ctype_alnum($data)) {
-            return $data;
-        }
-
         $component  = preg_replace('/%[0-9a-f]{2}/i', '', $data);
         $unreserved = '-a-z0-9._~';
         $subdelims  = preg_quote('!$&\'()*+,;=]/', '/');
@@ -110,8 +106,8 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function withValue($data = null)
+    public function withValue($value)
     {
-        return new static($data);
+        return new static($value);
     }
 }

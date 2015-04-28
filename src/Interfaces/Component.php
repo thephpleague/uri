@@ -54,7 +54,9 @@ interface Component
     /**
      * Returns a new object with the given value
      *
+     * @param string $value
+     *
      * @return static
      */
-    public function withValue($data = null);
+    public function withValue($value);
 }

@@ -91,10 +91,6 @@ class Query implements QueryInterface
         }
 
         $str = $this->validateString($str);
-        if (strpos($str, '#')) {
-            throw new InvalidArgumentException('Data passed must be a valid string;');
-        }
-
         if (empty($str)) {
             return [];
         }

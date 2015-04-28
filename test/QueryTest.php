@@ -183,7 +183,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'false'     => [ false ],
             'array'     => [ [ 'baz=bat' ] ],
             'object'    => [ (object) [ 'baz=bat' ] ],
-            'fragment'  => [ 'baz=bat#quz' ],
         ];
     }
 

@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces\Path as PathInterface;
 use League\Url\Util;
 use LogicException;
+use Traversable;
 
 /**
 * A class to manipulate URL Path component
@@ -52,7 +53,7 @@ class Path extends AbstractSegment implements PathInterface
      *
      * @var string
      */
-    protected $delimiter = '/';
+    protected static $delimiter = '/';
 
     /**
      * Does the path contain a leading delimiter
@@ -75,7 +76,7 @@ class Path extends AbstractSegment implements PathInterface
         $str = $this->validateString($str);
 
         if (preg_match(',(#|\?),', $str)) {
-            throw new InvalidArgumentException('Data passed must be a valid string;');
+            throw new InvalidArgumentException('data must be url encoded for special characters');
         }
 
         if (preg_match(',^/+$,', $str)) {
@@ -83,9 +84,9 @@ class Path extends AbstractSegment implements PathInterface
             return;
         }
 
-        $this->has_front_delimiter = $this->delimiter == mb_substr($str, 0, 1);
-        $append_delimiter          = $this->delimiter === mb_substr($str, -1, 1);
-        $str = trim($str, $this->delimiter);
+        $this->has_front_delimiter = static::$delimiter == mb_substr($str, 0, 1);
+        $append_delimiter          = static::$delimiter === mb_substr($str, -1, 1);
+        $str = trim($str, static::$delimiter);
         $this->data = $this->validate($str);
         if ($append_delimiter) {
             $this->data[] = '';
@@ -93,11 +94,42 @@ class Path extends AbstractSegment implements PathInterface
     }
 
     /**
+     * return a new Host instance from an Array or a traversable object
+     *
+     * @param \Traversable|array $data
+     * @param bool               $has_front_delimiter
+     *
+     * @throws \InvalidArgumentException If $data is invalid
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $has_front_delimiter = false)
+    {
+        if ($data instanceof Traversable) {
+            $data = iterator_to_array($data, false);
+        }
+
+        if (! is_array($data)) {
+            throw new InvalidArgumentException(sprintf(
+                'Data passed to the method must be an array or a Traversable object; received "%s"',
+                (is_object($data) ? get_class($data) : gettype($data))
+            ));
+        }
+
+        $path = '';
+        if ($has_front_delimiter) {
+            $path = static::$delimiter;
+        }
+        $path .= implode(static::$delimiter, $data);
+
+        return new static($path);
+    }
+    /**
      * {@inheritdoc}
      */
     protected function validate($data)
     {
-        $data = array_values(array_filter(explode($this->delimiter, $data), function ($value) {
+        $data = array_values(array_filter(explode(static::$delimiter, $data), function ($value) {
             return ! is_null($value);
         }));
 
@@ -111,7 +143,7 @@ class Path extends AbstractSegment implements PathInterface
     /**
      * {@inheritdoc}
      */
-    public function getData($key, $default = null)
+    public function getSegment($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return rawurldecode($this->data[$key]);
@@ -127,10 +159,10 @@ class Path extends AbstractSegment implements PathInterface
     {
         $front_delimiter = '';
         if ($this->has_front_delimiter) {
-            $front_delimiter = $this->delimiter;
+            $front_delimiter = static::$delimiter;
         }
 
-        return $front_delimiter.implode($this->delimiter, $this->data);
+        return $front_delimiter.implode(static::$delimiter, $this->data);
     }
 
     /**
@@ -159,14 +191,14 @@ class Path extends AbstractSegment implements PathInterface
             return clone $this;
         }
 
-        $input    = explode($this->delimiter, $current);
+        $input    = explode(static::$delimiter, $current);
         $new_path = '';
-        if ($this->delimiter == $current[0]) {
-            $new_path = $this->delimiter;
+        if (static::$delimiter == $current[0]) {
+            $new_path = static::$delimiter;
         }
-        $new_path .= implode($this->delimiter, $this->filterDotSegment($input));
+        $new_path .= implode(static::$delimiter, $this->filterDotSegment($input));
         if (isset(static::$dot_segments[end($input)])) {
-            $new_path .= $this->delimiter;
+            $new_path .= static::$delimiter;
         }
 
         return new static($new_path);
@@ -222,10 +254,10 @@ class Path extends AbstractSegment implements PathInterface
     {
         $ext = trim($ext);
         $ext = ltrim($ext, '.');
-        if (strpos($ext, $this->delimiter)) {
+        if (strpos($ext, static::$delimiter)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext = implode($this->delimiter, $this->validate($ext));
+        $ext = implode(static::$delimiter, $this->validate($ext));
 
         $basename = $this->getBasename();
         if ('' == $basename) {

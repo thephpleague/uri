@@ -23,6 +23,13 @@ use Countable;
 interface Segment extends Component, Countable
 {
     /**
+     * Return an array representation of the Segment
+     *
+     * @return array
+     */
+    public function toArray();
+
+    /**
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
@@ -31,16 +38,6 @@ interface Segment extends Component, Countable
      * @return array
      */
     public function getKeys($data = null);
-
-    /**
-     * Return a value from the Query object
-     *
-     * @param string $key     the parameter name
-     * @param mixed  $default if no key is found the default value to return
-     *
-     * @return mixed
-     */
-    public function getData($key, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object

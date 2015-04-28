@@ -114,29 +114,75 @@ class HostTest extends PHPUnit_Framework_TestCase
     /**
      * Test Countable
      *
-     * @param  string $host
-     * @param  int $nblabels
+     * @param $host
+     * @param $nblabels
+     * @param $array
      * @dataProvider countableProvider
      */
-    public function testCountable($host, $nblabels)
+    public function testCountable($host, $nblabels, $array)
     {
-        $this->assertCount($nblabels, new Host($host));
+        $obj = new Host($host);
+        $this->assertCount($nblabels, $obj);
+        $this->assertSame($array, $obj->toArray());
     }
 
     public function countableProvider()
     {
         return [
-            ['127.0.0.1', 1],
-            ['secure.example.com', 3],
+            'ip' => ['127.0.0.1', 1, ['127.0.0.1']],
+            'string' => ['secure.example.com', 3, ['secure', 'example', 'com']],
         ];
     }
 
-    public function testgetData()
+    /**
+     * @param $input
+     * @param $expected
+     * @dataProvider createFromArrayValid
+     */
+    public function testCreateFromArray($input, $expected)
+    {
+        $this->assertSame($expected, Host::createFromArray($input)->__toString());
+    }
+
+    public function createFromArrayValid()
+    {
+        return [
+            'array' => [['www', 'example', 'com'], 'www.example.com',],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), 'www.example.com',],
+            'host object' => [(new Host('::1'))->toArray(), '::1',],
+            'ip 1' => [[127, 0, 0, 1], '127.0.0.1'],
+            'ip 2' => [['127.0', '0.1'], '127.0.0.1'],
+            'ip 3' => [['127.0.0.1'], '127.0.0.1'],
+        ];
+    }
+
+    /**
+     * @param $input
+     * @dataProvider createFromArrayInvalid
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreateFromArrayFailed($input)
+    {
+        Host::createFromArray($input);
+    }
+
+    public function createFromArrayInvalid()
+    {
+        return [
+            'string' => ['www.example.com'],
+            'bool' => [true],
+            'integer' => [1],
+            'object' => [new \StdClass()],
+            'host object' => [new Host('::1')],
+        ];
+    }
+
+    public function testGetLabel()
     {
         $host = new Host('master.example.com');
-        $this->assertSame('master', $host->getData(0));
-        $this->assertNull($host->getData(23));
-        $this->assertSame('toto', $host->getData(23, 'toto'));
+        $this->assertSame('master', $host->getLabel(0));
+        $this->assertNull($host->getLabel(23));
+        $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
 
     public function testGetKeys()

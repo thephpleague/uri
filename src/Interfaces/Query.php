@@ -35,7 +35,7 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
-     * @param  null|string $data
+     * @param null|string $data
      *
      * @return array
      */
@@ -54,7 +54,7 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     /**
      * Tell whether the given key exists in the Query object
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
@@ -64,9 +64,9 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * Merge new data to the current Query object
      * and return a new modified Query object
      *
-     * @param  mixed $data
+     * @param mixed $data
      *
      * @return Query
      */
-    public function mergeWith($data = null);
+    public function mergeWith($data);
 }

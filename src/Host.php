@@ -146,7 +146,13 @@ class Host extends AbstractSegment implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Validate a Host as an IP
+     *
+     * @param string $str
+     *
+     * @throws \InvalidArgumentException if the IP based host is malformed
+     *
+     * @return array
      */
     protected function validateIpHost($str)
     {
@@ -165,7 +171,7 @@ class Host extends AbstractSegment implements HostInterface
         }
 
         if (preg_match('/^[0-9\.]+$/', $str)) {
-            throw new InvalidArgumentException('Invalid Host format');
+            throw new InvalidArgumentException('Invalid IP based host format');
         }
 
         $this->host_as_ipv4 = false;

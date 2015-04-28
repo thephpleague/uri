@@ -10,10 +10,11 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Util;
+namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
+use League\Url\Util;
 
 /**
 * A class to manipulate an URL as a Value Object
@@ -55,7 +56,7 @@ class Formatter
     /**
      * Trait to validate string
      */
-    use StringValidator;
+    use Util\StringValidator;
 
     /**
      * Host encoding setter
@@ -149,9 +150,7 @@ class Formatter
             return $this->formatUrl($input);
         }
 
-        throw new InvalidArgumentException(sprintf(
-            "The submitted value can not be formatted"
-        ));
+        throw new InvalidArgumentException("The submitted value can not be formatted");
     }
 
     /**

@@ -73,7 +73,7 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
-    public function withValue($value = null)
+    public function withValue($value)
     {
         return new static($value);
     }

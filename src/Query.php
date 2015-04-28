@@ -68,10 +68,7 @@ class Query implements QueryInterface
         }
 
         if (! is_array($data)) {
-            throw new InvalidArgumentException(sprintf(
-                'Data passed to the method must be an array or a Traversable object; received "%s"',
-                (is_object($data) ? get_class($data) : gettype($data))
-            ));
+            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
         }
 
         return new static(http_build_query($data, '', '&', PHP_QUERY_RFC3986));
@@ -219,7 +216,7 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function mergeWith($data = null)
+    public function mergeWith($data)
     {
         if ($data instanceof Traversable) {
             $data = iterator_to_array($data, true);
@@ -240,7 +237,7 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function withValue($value = null)
+    public function withValue($value)
     {
         return new static($value);
     }

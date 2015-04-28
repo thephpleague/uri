@@ -231,7 +231,7 @@ class Path extends AbstractSegment implements PathInterface
     {
         $data = $this->data;
 
-        return array_pop($data);
+        return (string) array_pop($data);
     }
 
     /**
@@ -247,22 +247,22 @@ class Path extends AbstractSegment implements PathInterface
      */
     public function withExtension($ext)
     {
-        $ext = trim($ext);
         $ext = ltrim($ext, '.');
         if (strpos($ext, static::$delimiter)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext = implode(static::$delimiter, $this->validate($ext));
-
-        $basename = $this->getBasename();
+        $ext      = implode(static::$delimiter, $this->validate($ext));
+        $data     = $this->data;
+        $basename = (string) array_pop($data);
         if ('' == $basename) {
             throw new LogicException('No basename exist!!');
         }
         $current_ext = pathinfo($basename, PATHINFO_EXTENSION);
         if ('' != $current_ext) {
-            $basename = mb_substr(0, mb_strlen($current_ext) - 1);
+            $basename = mb_substr($basename, 0, -mb_strlen($current_ext)-1);
         }
+        $data[] = "$basename.$ext";
 
-        return $this->replaceWith("/$basename.$ext", count($this->data) - 1);
+        return static::createFromArray($data, $this->has_front_delimiter);
     }
 }

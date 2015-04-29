@@ -186,11 +186,11 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
 
-    public function testGetKeys()
+    public function testGetOffsets()
     {
         $host = new Host('master.example.com');
-        $this->assertSame([0, 1, 2], $host->getKeys());
-        $this->assertSame([1], $host->getKeys('example'));
+        $this->assertSame([0, 1, 2], $host->getOffsets());
+        $this->assertSame([1], $host->getOffsets('example'));
     }
 
     /**

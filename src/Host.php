@@ -331,10 +331,10 @@ class Host extends AbstractSegment implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
-    public function getLabel($key, $default = null)
+    public function getLabel($offset, $default = null)
     {
-        if ($this->hasKey($key)) {
-            return $this->data[$key];
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
         }
 
         return $default;

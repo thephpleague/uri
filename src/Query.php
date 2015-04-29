@@ -175,22 +175,10 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function getKeys($data = null)
+    public function getParameter($offset, $default = null)
     {
-        if (is_null($data)) {
-            return array_keys($this->data);
-        }
-
-        return array_keys($this->data, $data, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameter($key, $default = null)
-    {
-        if ($this->hasKey($key)) {
-            return $this->data[$key];
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
         }
 
         return $default;
@@ -199,9 +187,21 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function hasKey($key)
+    public function getOffsets($parameter = null)
     {
-        return array_key_exists($key, $this->data);
+        if (is_null($parameter)) {
+            return array_keys($this->data);
+        }
+
+        return array_keys($this->data, $parameter, true);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOffset($offset)
+    {
+        return array_key_exists($offset, $this->data);
     }
 
     /**

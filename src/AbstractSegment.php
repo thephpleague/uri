@@ -12,16 +12,13 @@
 */
 namespace League\Url;
 
-use InvalidArgumentException;
-use League\Url\Util;
-
 /**
  * An abstract class to ease Segment object creation
  *
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractSegment
+abstract class AbstractSegment extends AbstractComponent
 {
     /**
      * The Component Data
@@ -31,49 +28,11 @@ abstract class AbstractSegment
     protected $data = [];
 
     /**
-     * Trait to add default Component method
-     */
-    use Util\ComponentTrait;
-
-    /**
      * Segment delimiter
      *
      * @var string
      */
     protected static $delimiter;
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getUriComponent();
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function __toString();
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function get();
-
-    /**
-     * Validate incoming data
-     *
-     * @param string $data
-     *
-     * @throws InvalidArgumentException If the given data is not valid
-     *
-     * @return array
-     */
-    abstract protected function validate($data);
-
-    /**
-     * new Instance
-     *
-     * @param string $str
-     */
-    abstract public function __construct($str = null);
 
     /**
      * {@inheritdoc}
@@ -94,7 +53,7 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
-    public function getKeys($data = null)
+    public function getOffsets($data = null)
     {
         if (is_null($data)) {
             return array_keys($this->data);
@@ -112,9 +71,9 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
-    public function hasKey($key)
+    public function hasOffset($offset)
     {
-        return array_key_exists($key, $this->data);
+        return array_key_exists($offset, $this->data);
     }
 
     /**
@@ -178,9 +137,9 @@ abstract class AbstractSegment
     /**
      * {@inheritdoc}
      */
-    public function replaceWith($value, $key)
+    public function replaceWith($value, $offset)
     {
-        if (! empty($this->data) && ! $this->hasKey($key)) {
+        if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return clone $this;
         }
 
@@ -190,7 +149,7 @@ abstract class AbstractSegment
         $value = $this->validate($value);
 
         $res = $this->data;
-        $res[$key] = implode(static::$delimiter, $value);
+        $res[$offset] = implode(static::$delimiter, $value);
 
         return new static(implode(static::$delimiter, $res));
     }

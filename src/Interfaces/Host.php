@@ -20,6 +20,17 @@ namespace League\Url\Interfaces;
  */
 interface Host extends Segment
 {
+
+    /**
+     * Return a host label
+     *
+     * @param string $offset     the parameter name
+     * @param mixed  $default if no offset is found the default value to return
+     *
+     * @return mixed
+     */
+    public function getLabel($offset, $default = null);
+
     /**
      * Tell whether the host is an IP
      *
@@ -54,14 +65,4 @@ interface Host extends Segment
      * @return string
      */
     public function toAscii();
-
-    /**
-     * Return a host label
-     *
-     * @param string $key     the parameter name
-     * @param mixed  $default if no key is found the default value to return
-     *
-     * @return mixed
-     */
-    public function getLabel($key, $default = null);
 }

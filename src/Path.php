@@ -138,10 +138,10 @@ class Path extends AbstractSegment implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function getSegment($key, $default = null)
+    public function getSegment($offset, $default = null)
     {
-        if ($this->hasKey($key)) {
-            return rawurldecode($this->data[$key]);
+        if (isset($this->data[$offset])) {
+            return rawurldecode($this->data[$offset]);
         }
 
         return $default;

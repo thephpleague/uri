@@ -195,16 +195,16 @@ trait Punycode
      */
     protected function adapt($delta, $numPoints, $firstTime)
     {
-        $key    = 0;
+        $offset    = 0;
         $delta  = $firstTime ? floor($delta / static::DAMP) : $delta >> 1;
         $delta += floor($delta / $numPoints);
 
         $tmp = static::BASE - static::TMIN;
-        for (; $delta > $tmp * static::TMAX >> 1; $key += static::BASE) {
+        for (; $delta > $tmp * static::TMAX >> 1; $offset += static::BASE) {
             $delta = floor($delta / $tmp);
         }
 
-        return floor($key + ($tmp + 1) * $delta / ($delta + static::SKEW));
+        return floor($offset + ($tmp + 1) * $delta / ($delta + static::SKEW));
     }
 
     /**
@@ -224,9 +224,9 @@ trait Punycode
         $length = mb_strlen($input, 'UTF-8');
         for ($i = 0; $i < $length; $i++) {
             $code = $this->charToCodePoint(mb_substr($input, $i, 1, 'UTF-8'));
-            $key  = ($code < 128) ? 'basic' : 'nonBasic';
+            $offset  = ($code < 128) ? 'basic' : 'nonBasic';
             $codePoints['all'][] = $code;
-            $codePoints[$key][]  = $code;
+            $codePoints[$offset][]  = $code;
         }
 
         $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);

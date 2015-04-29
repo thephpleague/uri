@@ -495,13 +495,12 @@ class Url implements Interfaces\Url
             return $final
                 ->withHost($host)
                 ->withPort($url->getPort())
-                ->withPath($url->getPath())
-                ->withQuery($url->getQuery())
-                ->normalize();
+                ->withPath($url->getPath()->normalize())
+                ->withQuery($url->getQuery());
         }
 
         if ('' != $url->getPath()->get()) {
-            return $this->resolvePath($final, $url)->normalize();
+            return $this->resolvePath($final, $url);
         }
 
         if ('' != $url->getQuery()->get()) {
@@ -533,7 +532,7 @@ class Url implements Interfaces\Url
         }
 
         return $final
-            ->withPath($relPath)
+            ->withPath($relPath->normalize())
             ->withQuery($rel->getQuery());
     }
 }

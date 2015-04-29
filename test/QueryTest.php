@@ -119,12 +119,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $this->query->getParameter('togo', $expected));
     }
 
-    public function testHasKey()
-    {
-        $this->assertFalse($this->query->hasKey('togo'));
-        $this->assertTrue($this->query->hasKey('kingkong'));
-    }
-
     public function testCountable()
     {
         $this->assertSame(1, count($this->query));
@@ -138,11 +132,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'lol' => 3,
             'toto' => 'troll'
         ]);
-        $this->assertCount(0, $query->getKeys('foo'));
-        $this->assertSame(['foo'], $query->getKeys('bar'));
-        $this->assertCount(1, $query->getKeys('3'));
-        $this->assertSame(['lol'], $query->getKeys('3'));
-        $this->assertSame(['baz', 'toto'], $query->getKeys('troll'));
+        $this->assertCount(0, $query->getOffsets('foo'));
+        $this->assertSame(['foo'], $query->getOffsets('bar'));
+        $this->assertCount(1, $query->getOffsets('3'));
+        $this->assertSame(['lol'], $query->getOffsets('3'));
+        $this->assertSame(['baz', 'toto'], $query->getOffsets('troll'));
     }
 
     public function testDotFromString()
@@ -161,8 +155,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('foo&bar&baz');
 
-        $this->assertCount(3, $query->getKeys());
-        $this->assertSame(['foo', 'bar', 'baz'], $query->getKeys());
+        $this->assertCount(3, $query->getOffsets());
+        $this->assertSame(['foo', 'bar', 'baz'], $query->getOffsets());
         $this->assertSame('', $query->getParameter('foo'));
         $this->assertSame('', $query->getParameter('bar'));
         $this->assertSame('', $query->getParameter('baz'));

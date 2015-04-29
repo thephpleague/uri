@@ -39,26 +39,26 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      *
      * @return array
      */
-    public function getKeys($data = null);
+    public function getOffsets($data = null);
 
     /**
      * Return a value from the Query object
      *
-     * @param string $key     the parameter name
+     * @param string $offset     the parameter name
      * @param mixed  $default if no key is found the default value to return
      *
      * @return mixed
      */
-    public function getParameter($key, $default = null);
+    public function getParameter($offset, $default = null);
 
     /**
      * Tell whether the given key exists in the Query object
      *
-     * @param string $key
+     * @param string $offset
      *
      * @return bool
      */
-    public function hasKey($key);
+    public function hasOffset($offset);
 
     /**
      * Merge new data to the current Query object

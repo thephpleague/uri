@@ -30,23 +30,14 @@ interface Segment extends Component, Countable
     public function toArray();
 
     /**
-     * Return the query keys. If a value is specified
+     * Return the component keys. If a value is specified
      * only the key for that value are returned
      *
      * @param null|string $data
      *
      * @return array
      */
-    public function getKeys($data = null);
-
-    /**
-     * Tell whether the given key exists in the Query object
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasKey($key);
+    public function getOffsets($data = null);
 
     /**
      * Append new data at the end of the component
@@ -70,11 +61,11 @@ interface Segment extends Component, Countable
      * Replace data from the segment and return a new segment
      *
      * @param string $value
-     * @param int    $key
+     * @param int    $offset
      *
      * @return Segment
      */
-    public function replaceWith($value, $key);
+    public function replaceWith($value, $offset);
 
     /**
      * Remove data from the segment and return a new segment

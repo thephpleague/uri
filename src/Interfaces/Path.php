@@ -38,12 +38,12 @@ interface Path extends Segment
     /**
      * Return a Path segment
      *
-     * @param string $key     the parameter name
+     * @param string $offset     the parameter name
      * @param mixed  $default if no key is found the default value to return
      *
      * @return mixed
      */
-    public function getSegment($key, $default = null);
+    public function getSegment($offset, $default = null);
 
     /**
      * Gets the basename of the path

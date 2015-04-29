@@ -13,8 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Path as PathInterface;
-use League\Url\Util;
+use League\Url\Interfaces;
 use LogicException;
 use Traversable;
 
@@ -24,7 +23,7 @@ use Traversable;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegment implements PathInterface
+class Path extends AbstractSegment implements Interfaces\Path
 {
     /**
      * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
@@ -61,11 +60,6 @@ class Path extends AbstractSegment implements PathInterface
      * @var bool
      */
     protected $is_absolute = false;
-
-    /**
-     * Trait to validate a stringable variable
-     */
-    use Util\StringValidator;
 
     /**
      * New Instance of Path

@@ -13,7 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
+use League\Url\Util;
 
 /**
  * An abstract class to ease Segment object creation
@@ -29,6 +29,11 @@ abstract class AbstractSegment
      * @var array
      */
     protected $data = [];
+
+    /**
+     * Trait to add default Component method
+     */
+    use Util\ComponentTrait;
 
     /**
      * Segment delimiter
@@ -69,22 +74,6 @@ abstract class AbstractSegment
      * @param string $str
      */
     abstract public function __construct($str = null);
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withValue($value)
-    {
-        return new static($value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(Component $component)
-    {
-        return $component->getUriComponent() == $this->getUriComponent();
-    }
 
     /**
      * {@inheritdoc}

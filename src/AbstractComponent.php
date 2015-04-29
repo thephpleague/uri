@@ -13,7 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
 use League\Url\Util;
 
 /**
@@ -32,9 +31,9 @@ abstract class AbstractComponent
     protected $data;
 
     /**
-     * Trait to validate a stringable variable
+     * Trait to add default Component method
      */
-    use Util\StringValidator;
+    use Util\ComponentTrait;
 
     /**
      * new instance
@@ -76,7 +75,11 @@ abstract class AbstractComponent
      */
     public function get()
     {
-        return ! empty($this->data) ? $this->data : null;
+        if (! empty($this->data)) {
+            return $this->data;
+        }
+
+        return null;
     }
 
     /**
@@ -84,7 +87,7 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return (string) $this->data;
+        return (string) $this->get();
     }
 
     /**
@@ -93,21 +96,5 @@ abstract class AbstractComponent
     public function getUriComponent()
     {
         return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(Component $component)
-    {
-        return $component->getUriComponent() == $this->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withValue($value)
-    {
-        return new static($value);
     }
 }

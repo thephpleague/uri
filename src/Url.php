@@ -478,80 +478,62 @@ class Url implements Interfaces\Url
     public function resolve($url)
     {
         if (empty($url)) {
-            return clone $this;
+            return $this->normalize();
         }
 
         if (! $url instanceof Interfaces\Url) {
             $url = self::createFromUrl((string) $url);
         }
 
-        $scheme = $url->getScheme()->get();
-        $host   = $url->getHost()->get();
-        if (! empty($scheme) && ! empty($host)) {
-            return $url;
+        $host = $url->getHost();
+        if ('' != $url->getScheme()->get() && '' != $host->get()) {
+            return $url->normalize();
         }
 
-        $rel   = $url->toArray();
-        $final = $this->toArray();
-        $final["fragment"] = $rel["fragment"];
-        if (! empty($rel["host"])) {
-            $final = $this->resolveHost($final, $rel);
-
-            return self::createFromComponents($final);
+        $final = $this->withFragment($url->getFragment());
+        if ('' != $host->get()) {
+            return $final
+                ->withHost($host)
+                ->withPort($url->getPort())
+                ->withPath($url->getPath())
+                ->withQuery($url->getQuery())
+                ->normalize();
         }
 
-        if (! empty($rel["path"])) {
-            $final = $this->resolvePath($final, $rel);
-
-            return self::createFromComponents($final);
+        if ('' != $url->getPath()->get()) {
+            return $this->resolvePath($final, $url)->normalize();
         }
 
-        if (! empty($rel["query"])) {
-            $final["query"] = $rel["query"];
+        if ('' != $url->getQuery()->get()) {
+            return $final->withQuery($url->getQuery())->normalize();
         }
 
-        return self::createFromComponents($final);
+        return $final->normalize();
     }
 
     /**
      * returns the resolve URL components
      *
-     * @param  array  $final the final URL components
-     * @param  array  $rel   the relative URL components
-     * @return array
-     */
-    protected function resolveHost(array $final, array $rel)
-    {
-        $final["host"]  = $rel["host"];
-        $final["port"]  = $rel["port"];
-        $final["path"]  = (string) (new Path($rel["path"]))->normalize();
-        $final["query"] = $rel["query"];
-
-        return $final;
-    }
-
-    /**
-     * returns the resolve URL components
+     * @param Interfaces\Url $final the final URL
+     * @param Interfaces\Url $rel   the relative URL
      *
-     * @param  array  $final the final URL components
-     * @param  array  $rel   the relative URL components
-     * @return array
+     * @return static
      */
-    protected function resolvePath(array $final, array $rel)
+    protected function resolvePath(Interfaces\Url $final, Interfaces\Url $rel)
     {
-        $final["query"] = $rel["query"];
-        if ("/" == $rel["path"][0]) {
-            $final["path"] = (string) (new Path($rel["path"]))->normalize();
-
-            return $final;
+        $relPath = $rel->getPath();
+        if (! $relPath->isAbsolute()) {
+            $finalPath = $final->getPath();
+            $segments  = $finalPath->toArray();
+            array_pop($segments);
+            $relPath = Path::createFromArray(
+                array_merge($segments, $relPath->toArray()),
+                '' == $finalPath->get() || $finalPath->isAbsolute()
+            );
         }
 
-        $merge_path = mb_substr($final["path"], 0, mb_strrpos($final["path"], "/") + 1);
-        if (! empty($final["host"]) && empty($final["path"])) {
-            $merge_path = "/";
-        }
-        $final["path"] = (string) (new Path($merge_path.$rel["path"]))->normalize();
-
-        return $final;
+        return $final
+            ->withPath($relPath)
+            ->withQuery($rel->getQuery());
     }
 }

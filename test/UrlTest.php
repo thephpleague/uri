@@ -99,20 +99,74 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testToArray()
+    /**
+     * @param $url
+     * @param $expected
+     * @dataProvider toArrayProvider
+     */
+    public function testToArray($url, $expected)
     {
-        $url = Url::createFromUrl('https://toto.com:443/toto.php');
-        $this->assertSame([
-            'scheme' => 'https',
-            'user' => null,
-            'pass' => null,
-            'host' => 'toto.com',
-            'port' => 443,
-            'path' => '/toto.php',
-            'query' => null,
-            'fragment' => null,
-        ], $url->toArray());
+        $this->assertSame($expected, Url::createFromUrl($url)->toArray());
     }
+
+    public function toArrayProvider()
+    {
+        return [
+            'simple' => [
+                'https://toto.com:443/toto.php',
+                [
+                    'scheme' => 'https',
+                    'user' => null,
+                    'pass' => null,
+                    'host' => 'toto.com',
+                    'port' => 443,
+                    'path' => '/toto.php',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'ipv6 host' => [
+                'https://[::1]:443/toto.php',
+                [
+                    'scheme' => 'https',
+                    'user' => null,
+                    'pass' => null,
+                    'host' => '[::1]',
+                    'port' => 443,
+                    'path' => '/toto.php',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'missing host' => [
+                '/toto.php',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '/toto.php',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'relative path' => [
+                'toto.php#fragment',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => 'toto.php',
+                    'query' => null,
+                    'fragment' => 'fragment',
+                ],
+            ],
+        ];
+    }
+
 
     public function testEmptyConstructor()
     {
@@ -203,6 +257,11 @@ class UrlTest extends PHPUnit_Framework_TestCase
           'complex path 4' =>          [self::BASE_URL, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
           'complex path 5' =>          [self::BASE_URL, "g;x=1/../y",     "http://a/b/c/y"],
           'origin url without path' => ["http://a",     "b/../y",         "http://a/y"],
+          '2 relative paths 1'      => ["a/b",          "../..",          "/"],
+          '2 relative paths 2'      => ["a/b",          "./.",            "a/"],
+          '2 relative paths 3'      => ["a/b",          "../c",           "c"],
+          '2 relative paths 4'      => ["a/b",          "c/..",           "a/"],
+          '2 relative paths 5'      => ["a/b",          "c/.",            "a/c/"],
         ];
     }
 }

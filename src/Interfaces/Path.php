@@ -29,6 +29,13 @@ interface Path extends Segment
     public function normalize();
 
     /**
+     * Tells wether the current path is absolute or relative
+     *
+     * @return bool
+     */
+    public function isAbsolute();
+
+    /**
      * Return a Path segment
      *
      * @param string $key     the parameter name

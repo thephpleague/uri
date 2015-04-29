@@ -18,77 +18,105 @@ use PHPUnit_Framework_TestCase;
  */
 class UrlConstructorTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreateFromServerWithHttpHost()
+    /**
+     * @param $expected
+     * @param $input
+     * @dataProvider validServerArray
+     */
+    public function testCreateFromServer($expected, $input)
     {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
-            'HTTP_HOST' => 'example.com',
-        ];
-        $this->assertSame('https://example.com:23', Url::createFromServer($server)->__toString());
+        $this->assertSame($expected, Url::createFromServer($input)->__toString());
     }
 
-    public function testCreateFromServerWithServerAddr()
+    public function validServerArray()
     {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
+        return [
+            'with host' => [
+                'https://example.com:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'example.com',
+                ],
+            ],
+            'server address IPv4' => [
+                'https://127.0.0.1:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                ],
+            ],
+            'server address IPv6' => [
+                'https://[::1]:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '::1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                ],
+            ],
+            'with port attached to host' => [
+                'https://localhost:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'localhost:23',
+                ],
+            ],
+            'with Xforward header' => [
+                'https://localhost:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTP_X_FORWARDED_PROTO' => 'https',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'localhost:23',
+                ]
+            ],
+            'with user info' => [
+                'https://foo:bar@localhost:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'PHP_AUTH_USER' => 'foo',
+                    'PHP_AUTH_PW' => 'bar',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'localhost:23',
+                ],
+            ],
+            'without request uri' => [
+                'https://127.0.0.1:23/toto?foo=bar',
+                [
+                    'PHP_SELF' => '/toto',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                    'QUERY_STRING' => 'foo=bar',
+                ],
+            ],
+            'without request uri and server host' => [
+                'https://127.0.0.1:23',
+                [
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                ],
+            ],
         ];
-
-        $this->assertSame('https://127.0.0.1:23', Url::createFromServer($server)->__toString());
     }
-
-    public function testCreateFromServerWithHttpHostAndPort()
-    {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
-            'HTTP_HOST' => 'localhost:23',
-        ];
-
-        $this->assertSame('https://localhost:23', Url::createFromServer($server)->__toString());
-    }
-
-
-    public function testCreateFromServerWithXforwardHeader()
-    {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTP_X_FORWARDED_PROTO' => 'https',
-            'SERVER_PORT' => 23,
-            'HTTP_HOST' => 'localhost:23',
-        ];
-
-        $this->assertSame('https://localhost:23', Url::createFromServer($server)->__toString());
-    }
-
-    public function testCreateFromServerWithUserInfo()
-    {
-        $server = [
-            'PHP_SELF' => '',
-            'REQUEST_URI' => '',
-            'SERVER_ADDR' => '127.0.0.1',
-            'PHP_AUTH_USER' => 'foo',
-            'PHP_AUTH_PW' => 'bar',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
-            'HTTP_HOST' => 'localhost:23',
-        ];
-
-        $this->assertSame('https://foo:bar@localhost:23', Url::createFromServer($server)->__toString());
-    }
-
 
     /**
      * @expectedException InvalidArgumentException
@@ -105,54 +133,33 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
         Url::createFromServer($server);
     }
 
-    public function testCreateFromServerWithoutRequestUri()
+    /**
+     * @param $expected
+     * @param $input
+     * @dataProvider validUrlArray
+     */
+    public function testCreateFromUrl($expected, $input)
     {
-        $server = [
-            'PHP_SELF' => '/toto',
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
-            'QUERY_STRING' => 'foo=bar',
+        $this->assertSame($expected, Url::createFromUrl($input)->__toString());
+    }
+
+    public function validUrlArray()
+    {
+        return [
+            'with default port' => [
+                'http://example.com/foo/bar?foo=bar#content',
+                'http://example.com:80/foo/bar?foo=bar#content',
+            ],
+            'without scheme' => [
+                '//example.com',
+                '//example.com',
+            ],
+            'with user info' => [
+                'http://login:pass@example.com/',
+                'http://login:pass@example.com/',
+            ],
+            'empty string' => ['', ''],
         ];
-
-        $this->assertSame('https://127.0.0.1:23/toto?foo=bar', (string) Url::createFromServer($server));
-    }
-
-    public function testCreateFromServerWithoutRequestUriAndServerHost()
-    {
-        $server = [
-            'SERVER_ADDR' => '127.0.0.1',
-            'HTTPS' => 'on',
-            'SERVER_PORT' => 23,
-        ];
-
-        $this->assertSame('https://127.0.0.1:23', (string) Url::createFromServer($server));
-    }
-
-    public function testConstructor()
-    {
-        $this->assertSame(
-            'http://example.com/foo/bar?foo=bar#content',
-            (string) Url::createFromUrl('http://example.com:80/foo/bar?foo=bar#content')
-        );
-    }
-
-    public function testConstructorWithoutSchemeButWithSchemeDelimiter()
-    {
-        $this->assertSame('//example.com', (string) Url::createFromUrl('//example.com'));
-    }
-
-    public function testConstructorWithUserInfoAndScheme()
-    {
-        $this->assertSame(
-            'http://login:pass@example.com/',
-            (string) Url::createFromUrl('http://login:pass@example.com/')
-        );
-    }
-
-    public function testConstructorWithEmptyString()
-    {
-        $this->assertSame('', (string) Url::createFromUrl(""));
     }
 
     /**

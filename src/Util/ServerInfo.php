@@ -64,6 +64,9 @@ trait ServerInfo
         }
 
         if (isset($server["SERVER_ADDR"])) {
+            if (filter_var($server["SERVER_ADDR"], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                return "[".$server["SERVER_ADDR"]."]";
+            }
             return $server["SERVER_ADDR"];
         }
 

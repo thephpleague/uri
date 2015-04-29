@@ -82,18 +82,20 @@ class Url implements Interfaces\Url
     protected $fragment;
 
     /**
-     * Standard Port for known scheme
+     * Standard Port for known schemes
      *
      * @var array
      */
     protected static $standardPorts = [
-        'https' => [443 => 1],
-        'http'  => [80 => 1],
         'ftp'   => [21 => 1],
         'ftps'  => [990 => 1, 989 => 1],
+        'https' => [443 => 1],
+        'http'  => [80 => 1],
+        'ldap'  => [389 => 1],
+        'ldaps' => [636 => 1],
+        'ssh'   => [22 => 1],
         'ws'    => [80 => 1],
         'wss'   => [443 => 1],
-        'ssh'   => [22 => 1],
     ];
 
     /**

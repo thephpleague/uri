@@ -166,7 +166,7 @@ abstract class AbstractSegment extends AbstractComponent
             return clone $this;
         }
 
-        $value_appended  = (static::$delimiter != $value[mb_strlen($value) - 1]);
+        $value_appended  = (static::$delimiter != mb_substr($value, -1, 1));
         $value_prepended = (static::$delimiter != $value[0]);
 
         $value = trim($value, static::$delimiter);
@@ -176,7 +176,7 @@ abstract class AbstractSegment extends AbstractComponent
 
         $orig = $this->getUriComponent();
         $orig_appended = false;
-        if (static::$delimiter != $orig[mb_strlen($orig) - 1]) {
+        if (static::$delimiter != mb_substr($orig, -1, 1)) {
             $orig .= static::$delimiter;
             $orig_appended = true;
         }
@@ -194,7 +194,7 @@ abstract class AbstractSegment extends AbstractComponent
 
         $length = mb_strlen($value);
         if ($value_prepended) {
-            $pos += 1;
+            $pos    += 1;
             $length -= 1;
         }
         if ($value_appended) {

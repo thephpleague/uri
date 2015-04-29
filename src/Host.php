@@ -13,7 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Host as HostInterface;
+use League\Url\Interfaces;
 use League\Url\Util;
 use LogicException;
 use Traversable;
@@ -24,7 +24,7 @@ use Traversable;
 * @package League.url
 * @since 1.0.0
 */
-class Host extends AbstractSegment implements HostInterface
+class Host extends AbstractSegment implements Interfaces\Host
 {
     /**
      * Bootstring parameter values for host punycode
@@ -64,11 +64,6 @@ class Host extends AbstractSegment implements HostInterface
     use Util\Punycode;
 
     /**
-     * Trait to validate a stringable variable
-     */
-    use Util\StringValidator;
-
-    /**
      * new Instance
      *
      * @param string $str the host
@@ -76,7 +71,8 @@ class Host extends AbstractSegment implements HostInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-        if (false !== strpos($str, '..') || in_array('.', [mb_substr($str, -1, 1), $str[0]])) {
+
+        if (false !== strpos($str, '..') || '.' == mb_substr($str, -1, 1)) {
             throw new InvalidArgumentException('Malformed Host');
         }
 
@@ -109,27 +105,6 @@ class Host extends AbstractSegment implements HostInterface
         }
 
         return new static(implode(static::$delimiter, $data));
-    }
-
-    /**
-     * Convert to lowercase a string without modifying unicode characters
-     *
-     * @param  string $str
-     *
-     * @return string
-     */
-    protected function lower($str)
-    {
-        $res = [];
-        for ($i = 0, $length = mb_strlen($str, 'UTF-8'); $i < $length; $i++) {
-            $char = mb_substr($str, $i, 1, 'UTF-8');
-            if (ord($char) < 128) {
-                $char = strtolower($char);
-            }
-            $res[] = $char;
-        }
-
-        return implode('', $res);
     }
 
     /**
@@ -242,6 +217,27 @@ class Host extends AbstractSegment implements HostInterface
     }
 
     /**
+     * Convert to lowercase a string without modifying unicode characters
+     *
+     * @param  string $str
+     *
+     * @return string
+     */
+    protected function lower($str)
+    {
+        $res = [];
+        for ($i = 0, $length = mb_strlen($str, 'UTF-8'); $i < $length; $i++) {
+            $char = mb_substr($str, $i, 1, 'UTF-8');
+            if (ord($char) < 128) {
+                $char = strtolower($char);
+            }
+            $res[] = $char;
+        }
+
+        return implode('', $res);
+    }
+
+    /**
      * Validate a String Label
      *
      * @param array $labels found host labels
@@ -335,6 +331,18 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
+    public function getLabel($key, $default = null)
+    {
+        if ($this->hasKey($key)) {
+            return $this->data[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get()
     {
         if (empty($this->data)) {
@@ -346,18 +354,6 @@ class Host extends AbstractSegment implements HostInterface
         }
 
         return implode(static::$delimiter, $this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel($key, $default = null)
-    {
-        if ($this->hasKey($key)) {
-            return $this->data[$key];
-        }
-
-        return $default;
     }
 
     /**
@@ -376,6 +372,14 @@ class Host extends AbstractSegment implements HostInterface
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toUnicode()
     {
         return $this->__toString();
@@ -387,14 +391,6 @@ class Host extends AbstractSegment implements HostInterface
     public function toAscii()
     {
         return implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
     }
 
     /**

@@ -15,8 +15,7 @@ namespace League\Url;
 use ArrayIterator;
 use InvalidArgumentException;
 use IteratorAggregate;
-use League\Url\Interfaces\Component;
-use League\Url\Interfaces\Query as QueryInterface;
+use League\Url\Interfaces;
 use League\Url\Util;
 use Traversable;
 
@@ -26,7 +25,7 @@ use Traversable;
  * @package  League.url
  * @since  1.0.0
  */
-class Query implements QueryInterface
+class Query implements Interfaces\Query
 {
     /**
      * The Component Data
@@ -36,9 +35,9 @@ class Query implements QueryInterface
     protected $data = [];
 
     /**
-     * Trait to validate a stringable variable
+     * Trait to add default Component method
      */
-    use Util\StringValidator;
+    use Util\ComponentTrait;
 
     /**
      * a new instance
@@ -168,14 +167,6 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Component $component)
-    {
-        return $component->getUriComponent() == $this->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;
@@ -232,13 +223,5 @@ class Query implements QueryInterface
             '&',
             PHP_QUERY_RFC3986
         ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withValue($value)
-    {
-        return new static($value);
     }
 }

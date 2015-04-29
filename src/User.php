@@ -13,7 +13,6 @@
 namespace League\Url;
 
 use League\Url\Interfaces\Component;
-use League\Url\Util;
 
 /**
 * A class to manipulate URL User component

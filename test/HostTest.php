@@ -27,18 +27,18 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame($isIp, $host->isIp());
         $this->assertSame($isIpv4, $host->isIpv4());
         $this->assertSame($isIpv6, $host->isIpv6());
-        $this->assertSame($str, $host->__toString());
+        $this->assertSame($str, $host->get());
         $this->assertSame($uri, $host->getUriComponent());
     }
 
     public function validHostProvider()
     {
         return [
-            ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
-            ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
-            ['::1', true, false, true, '::1', '[::1]'],
-            ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
-            [null, false, false, false, '', ''],
+            'ipv4' => ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
+            'naked ipv6' => ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
+            'ipv6' => ['[::1]', true, false, true, '::1', '[::1]'],
+            'string' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
+            'null' => [null, false, false, false, null, ''],
         ];
     }
 
@@ -150,7 +150,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         return [
             'array' => [['www', 'example', 'com'], 'www.example.com',],
             'iterator' => [new ArrayIterator(['www', 'example', 'com']), 'www.example.com',],
-            'host object' => [(new Host('::1'))->toArray(), '::1',],
+            'host object' => [(new Host('::1'))->toArray(), '[::1]',],
             'ip 1' => [[127, 0, 0, 1], '127.0.0.1'],
             'ip 2' => [['127.0', '0.1'], '127.0.0.1'],
             'ip 3' => [['127.0.0.1'], '127.0.0.1'],

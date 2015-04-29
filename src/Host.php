@@ -76,7 +76,7 @@ class Host extends AbstractSegment implements HostInterface
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-        if (false !== strpos($str, '..') || '.' == mb_substr($str, -1, 1)) {
+        if (false !== strpos($str, '..') || in_array('.', [mb_substr($str, -1, 1), $str[0]])) {
             throw new InvalidArgumentException('Malformed Host');
         }
 
@@ -156,11 +156,12 @@ class Host extends AbstractSegment implements HostInterface
      */
     protected function validateIpHost($str)
     {
-        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        $res = $this->filterIpv6Host($str);
+        if (! empty($res)) {
             $this->host_as_ipv4 = false;
             $this->host_as_ipv6 = true;
 
-            return [$str];
+            return [$res];
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
@@ -178,6 +179,27 @@ class Host extends AbstractSegment implements HostInterface
         $this->host_as_ipv6 = false;
 
         return [];
+    }
+
+    /**
+     * validate and filter a Ipv6 Hostname
+     *
+     * @param string $str
+     *
+     * @return string
+     *
+     * @throws \InvalidArgumentException If malformed IPV6 format
+     */
+    protected function filterIpv6Host($str)
+    {
+        if (preg_match(',^\[(.*)\]$,', $str, $matches)) {
+            if (! filter_var($matches[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                throw new InvalidArgumentException('Invalid IPV6 format');
+            }
+            return $matches[1];
+        }
+
+        return filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
@@ -343,7 +365,12 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function __toString()
     {
-        return (string) $this->get();
+        $str = (string) $this->get();
+        if ($this->host_as_ipv6) {
+            return "[$str]";
+        }
+
+        return $str;
     }
 
     /**
@@ -367,11 +394,7 @@ class Host extends AbstractSegment implements HostInterface
      */
     public function getUriComponent()
     {
-        $str = $this->__toString();
-        if ($this->host_as_ipv6) {
-            return "[$str]";
-        }
-        return $str;
+        return $this->__toString();
     }
 
     /**

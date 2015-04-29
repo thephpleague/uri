@@ -83,7 +83,7 @@ class Query implements Interfaces\Query
     protected function validate($str)
     {
         if (is_bool($str)) {
-            throw new InvalidArgumentException('Data passed must be a valid string; received '.gettype($str));
+            throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
         }
 
         $str = $this->validateString($str);

@@ -39,6 +39,27 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $raw
+     * @param $expected
+     * @dataProvider isAbsoluteProvider
+     */
+    public function testIsAbsolute($raw, $expected)
+    {
+        $path = new Path($raw);
+        $this->assertSame($expected, $path->isAbsolute());
+    }
+
+    public function isAbsoluteProvider()
+    {
+        return [
+            ['', false],
+            ['/', true],
+            ['../..', false],
+            ['/a/b/c', true],
+        ];
+    }
+
+    /**
      * @param string $raw
      * @param int    $key
      * @param string $value

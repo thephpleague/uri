@@ -56,10 +56,11 @@ class Path extends AbstractSegment implements PathInterface
     protected static $delimiter = '/';
 
     /**
-     * Does the path contain a leading delimiter
+     * Is the path absolute
+     *
      * @var bool
      */
-    protected $has_front_delimiter = false;
+    protected $is_absolute = false;
 
     /**
      * Trait to validate a stringable variable
@@ -75,12 +76,12 @@ class Path extends AbstractSegment implements PathInterface
     {
         $str = $this->validateString($str);
         if (preg_match(',^/+$,', $str)) {
-            $this->has_front_delimiter = true;
+            $this->is_absolute = true;
             return;
         }
 
-        $this->has_front_delimiter = static::$delimiter == mb_substr($str, 0, 1);
-        $append_delimiter          = static::$delimiter === mb_substr($str, -1, 1);
+        $this->is_absolute = static::$delimiter == mb_substr($str, 0, 1);
+        $append_delimiter  = static::$delimiter === mb_substr($str, -1, 1);
         $str = trim($str, static::$delimiter);
         $this->data = $this->validate($str);
         if ($append_delimiter) {
@@ -92,13 +93,13 @@ class Path extends AbstractSegment implements PathInterface
      * return a new Host instance from an Array or a traversable object
      *
      * @param \Traversable|array $data
-     * @param bool               $has_front_delimiter
+     * @param bool               $is_absolute
      *
      * @throws \InvalidArgumentException If $data is invalid
      *
      * @return static
      */
-    public static function createFromArray($data, $has_front_delimiter = false)
+    public static function createFromArray($data, $is_absolute = false)
     {
         if ($data instanceof Traversable) {
             $data = iterator_to_array($data, false);
@@ -109,7 +110,7 @@ class Path extends AbstractSegment implements PathInterface
         }
 
         $path = '';
-        if ($has_front_delimiter) {
+        if ($is_absolute) {
             $path = static::$delimiter;
         }
         $path .= implode(static::$delimiter, $data);
@@ -135,6 +136,14 @@ class Path extends AbstractSegment implements PathInterface
     /**
      * {@inheritdoc}
      */
+    public function isAbsolute()
+    {
+        return $this->is_absolute;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSegment($key, $default = null)
     {
         if ($this->hasKey($key)) {
@@ -150,7 +159,7 @@ class Path extends AbstractSegment implements PathInterface
     public function get()
     {
         $front_delimiter = '';
-        if ($this->has_front_delimiter) {
+        if ($this->is_absolute) {
             $front_delimiter = static::$delimiter;
         }
 
@@ -260,6 +269,6 @@ class Path extends AbstractSegment implements PathInterface
         }
         $data[] = "$basename.$ext";
 
-        return static::createFromArray($data, $this->has_front_delimiter);
+        return static::createFromArray($data, $this->is_absolute);
     }
 }

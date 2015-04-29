@@ -45,6 +45,7 @@ trait Punycode
         if (empty(static::$encodeTable)) {
             static::$encodeTable = array_merge(range('a', 'z'), range(0, 9));
         }
+
         if (empty(static::$decodeTable)) {
             static::$decodeTable = array_flip(static::$encodeTable);
         }
@@ -70,14 +71,16 @@ trait Punycode
         foreach ($codePoints['basic'] as $code) {
             $output .= $this->codePointToChar($code);
         }
+
         if ($input === $output) {
             return $output;
         }
+
         if ($b > 0) {
             $output .= static::DELIMITER;
         }
 
-        $this->initTable();
+        static::initTable();
         $i = 0;
         $length = mb_strlen($input, 'UTF-8');
         while ($h < $length) {
@@ -131,13 +134,12 @@ trait Punycode
         $pos = strrpos($input, static::DELIMITER);
         if ($pos !== false) {
             $output = substr($input, 0, $pos++);
-        } else {
-            $pos = 0;
         }
+        $pos = (int) $pos;
 
         $outputLength = strlen($output);
         $inputLength  = strlen($input);
-        $this->initTable();
+        static::initTable();
         while ($pos < $inputLength) {
             $oldi = $i;
             $w    = 1;

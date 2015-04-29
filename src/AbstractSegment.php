@@ -12,6 +12,8 @@
 */
 namespace League\Url;
 
+use ArrayIterator;
+
 /**
  * An abstract class to ease Segment object creation
  *
@@ -40,6 +42,14 @@ abstract class AbstractSegment extends AbstractComponent
     public function count()
     {
         return count($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
     }
 
     /**

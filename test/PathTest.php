@@ -97,7 +97,7 @@ class PathTest extends PHPUnit_Framework_TestCase
             'array' => [['www', 'example', 'com'], false, 'www/example/com'],
             'array' => [['www', 'example', 'com'], true, '/www/example/com'],
             'iterator' => [new ArrayIterator(['www', 'example', 'com']), true, '/www/example/com'],
-            'host object' => [(new Path('::1'))->toArray(), false, '::1',],
+            'Path object' => [new Path('/foo/bar/baz'), true, '/foo/bar/baz'],
             'arbitrary cut 1' => [['foo', 'bar', 'baz'], true, '/foo/bar/baz'],
             'arbitrary cut 2' => [['foo/bar', 'baz'], true, '/foo/bar/baz'],
             'arbitrary cut 3' => [['foo/bar/baz'], true, '/foo/bar/baz'],
@@ -122,7 +122,6 @@ class PathTest extends PHPUnit_Framework_TestCase
             'bool' => [true],
             'integer' => [1],
             'object' => [new \StdClass()],
-            'host object' => [new Path('::1')],
         ];
     }
 

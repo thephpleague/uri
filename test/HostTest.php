@@ -150,7 +150,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         return [
             'array' => [['www', 'example', 'com'], 'www.example.com',],
             'iterator' => [new ArrayIterator(['www', 'example', 'com']), 'www.example.com',],
-            'host object' => [(new Host('::1'))->toArray(), '[::1]',],
+            'host object' => [new Host('::1'), '[::1]'],
             'ip 1' => [[127, 0, 0, 1], '127.0.0.1'],
             'ip 2' => [['127.0', '0.1'], '127.0.0.1'],
             'ip 3' => [['127.0.0.1'], '127.0.0.1'],
@@ -174,7 +174,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             'bool' => [true],
             'integer' => [1],
             'object' => [new \StdClass()],
-            'host object' => [new Host('::1')],
         ];
     }
 

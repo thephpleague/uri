@@ -13,6 +13,7 @@
 namespace League\Url\Interfaces;
 
 use Countable;
+use IteratorAggregate;
 
 /**
  * An interface for URL Query component
@@ -20,7 +21,7 @@ use Countable;
  * @package  League.url
  * @since  4.0.0
  */
-interface Segment extends Component, Countable
+interface Segment extends Component, Countable, IteratorAggregate
 {
     /**
      * Return an array representation of the Segment

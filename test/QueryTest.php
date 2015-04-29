@@ -119,6 +119,12 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $this->query->getParameter('togo', $expected));
     }
 
+    public function testHasOffset()
+    {
+        $this->assertTrue($this->query->hasOffset('kingkong'));
+        $this->assertFalse($this->query->hasOffset('togo'));
+    }
+
     public function testCountable()
     {
         $this->assertSame(1, count($this->query));

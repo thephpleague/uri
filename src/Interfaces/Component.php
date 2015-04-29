@@ -21,7 +21,7 @@ namespace League\Url\Interfaces;
 interface Component
 {
     /**
-     * Get the component data. Can be null
+     * Get the component raw data. Can be null
      *
      * @return null|string
      */
@@ -35,7 +35,7 @@ interface Component
     public function __toString();
 
     /**
-     * Return the component string representation with its delimiter
+     * Return the component string representation with its optional delimiter
      *
      * @return string
      */

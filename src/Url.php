@@ -425,11 +425,16 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
+        $host = $this->host->__toString();
+        if (empty($host)) {
+            $host = null;
+        }
+
         return [
             'scheme'   => $this->scheme->get(),
             'user'     => $this->user->get(),
             'pass'     => $this->pass->get(),
-            'host'     => $this->host->get(),
+            'host'     => $host,
             'port'     => $this->port->get(),
             'path'     => $this->path->get(),
             'query'    => $this->query->get(),

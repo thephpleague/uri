@@ -32,7 +32,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testInvalifHostEncoding()
+    public function testInvalidHostEncoding()
     {
         (new Formatter())->setHostEncoding('toto');
     }
@@ -40,17 +40,9 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testInvalifQueryEncoding()
+    public function testInvalidQueryEncoding()
     {
         (new Formatter())->setQueryEncoding('toto');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalifQuerySeparator()
-    {
-        (new Formatter())->setQuerySeparator(new \StdClass);
     }
 
     /**
@@ -72,16 +64,16 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function testFormatQueryRFC1738()
     {
         $formatter = new Formatter;
-        $this->assertSame(Formatter::QUERY_RFC3986, $formatter->getQueryEncoding());
-        $formatter->setQueryEncoding(Formatter::QUERY_RFC1738);
-        $this->assertSame(Formatter::QUERY_RFC1738, $formatter->getQueryEncoding());
+        $this->assertSame(PHP_QUERY_RFC3986, $formatter->getQueryEncoding());
+        $formatter->setQueryEncoding(PHP_QUERY_RFC1738);
+        $this->assertSame(PHP_QUERY_RFC1738, $formatter->getQueryEncoding());
         $this->assertSame('kingkong=toto&foo=bar+baz', $formatter->format($this->url->getQuery()));
     }
 
     public function testFormatQueryRFC3986()
     {
         $formatter = new Formatter;
-        $formatter->setQueryEncoding(Formatter::QUERY_RFC3986);
+        $formatter->setQueryEncoding(PHP_QUERY_RFC3986);
         $this->assertSame('kingkong=toto&foo=bar%20baz', $formatter->format($this->url->getQuery()));
     }
 

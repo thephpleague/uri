@@ -14,7 +14,6 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
 
 /**
 * A class to manipulate an URL as a Value Object
@@ -24,13 +23,9 @@ use League\Url\Util;
 */
 class Formatter
 {
-    const HOST_ASCII    = 1;
+    const HOST_ASCII = 1;
 
-    const HOST_UNICODE  = 2;
-
-    const QUERY_RFC1738 = PHP_QUERY_RFC1738;
-
-    const QUERY_RFC3986 = PHP_QUERY_RFC3986;
+    const HOST_UNICODE = 2;
 
     /**
      * host encoding property
@@ -44,7 +39,7 @@ class Formatter
      *
      * @var int
      */
-    protected $queryEncoding = self::QUERY_RFC3986;
+    protected $queryEncoding = PHP_QUERY_RFC3986;
 
     /**
      * query separator property
@@ -52,11 +47,6 @@ class Formatter
      * @var string
      */
     protected $querySeparator = '&';
-
-    /**
-     * Trait to validate string
-     */
-    use Util\StringValidator;
 
     /**
      * Host encoding setter
@@ -88,7 +78,7 @@ class Formatter
      */
     public function setQueryEncoding($encode)
     {
-        if (! in_array($encode, [self::QUERY_RFC3986, self::QUERY_RFC1738])) {
+        if (! in_array($encode, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738])) {
             throw new InvalidArgumentException('Unknown Query encoding rule');
         }
         $this->queryEncoding = $encode;
@@ -111,10 +101,9 @@ class Formatter
      */
     public function setQuerySeparator($separator)
     {
-        $separator = $this->validateString($separator);
-        if (! empty($separator)) {
-            $this->querySeparator = $separator;
-        }
+        $separator = filter_var($separator, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+        $this->querySeparator = trim($separator);
     }
 
     /**

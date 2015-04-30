@@ -127,12 +127,12 @@ class Formatter
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\Query) {
-            return $this->formatQuery($input);
-        }
-
         if ($input instanceof Interfaces\Host) {
             return $this->formatHost($input);
+        }
+
+        if ($input instanceof Interfaces\Query) {
+            return $this->formatQuery($input);
         }
 
         if ($input instanceof Interfaces\Url) {
@@ -149,7 +149,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatQuery(Interfaces\Query $query)
+    protected function formatQuery(Interfaces\Query $query)
     {
         $sep = preg_quote($this->querySeparator, ',');
 
@@ -172,7 +172,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatHost(Interfaces\Host $host)
+    protected function formatHost(Interfaces\Host $host)
     {
         if (self::HOST_ASCII == $this->hostEncoding) {
             return $host->toAscii();
@@ -188,7 +188,7 @@ class Formatter
      *
      * @return string
      */
-    public function formatUrl(Interfaces\Url $url)
+    protected function formatUrl(Interfaces\Url $url)
     {
         $host  = $url->getHost();
         $query = $url->getQuery();

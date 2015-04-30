@@ -56,7 +56,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function invalidHostProvider()
     {
         return [
-            ['..example.com'],
+            ['.example.com'],
             ['.......'],
             ['tot.    .coucou.com'],
             ['re view'],

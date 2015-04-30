@@ -68,6 +68,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['toto.127.0.0.1'],
             ['98.3.2'],
             ['[[::1]]'],
+            ['23.42c.two'],
         ];
     }
 

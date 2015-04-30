@@ -123,7 +123,7 @@ class Path extends AbstractSegment implements Interfaces\Path
         return array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
 
-            return str_replace(self::$sanitizePattern, self::$sanitizeReplace, rawurlencode(rawurldecode($value)));
+            return str_replace(static::$sanitizePattern, static::$sanitizeReplace, rawurlencode(rawurldecode($value)));
         }, $data);
     }
 

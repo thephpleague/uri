@@ -195,7 +195,7 @@ trait Punycode
      */
     protected function adapt($delta, $numPoints, $firstTime)
     {
-        $offset    = 0;
+        $offset = 0;
         $delta  = $firstTime ? floor($delta / static::DAMP) : $delta >> 1;
         $delta += floor($delta / $numPoints);
 

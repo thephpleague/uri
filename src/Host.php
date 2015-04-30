@@ -59,6 +59,13 @@ class Host extends AbstractSegment implements Interfaces\Host
     protected static $delimiter = '.';
 
     /**
+     * Whether the Hostname ends with a dot
+     *
+     * @var boolean
+     */
+    protected $has_dot_ending = false;
+
+    /**
      * Trait to handle punycode
      */
     use Util\Punycode;
@@ -71,12 +78,10 @@ class Host extends AbstractSegment implements Interfaces\Host
     public function __construct($str = null)
     {
         $str = $this->validateString($str);
-
-        if (false !== strpos($str, '..') || '.' == mb_substr($str, -1, 1)) {
+        if ('.' == mb_substr($str, 0, 1)) {
             throw new InvalidArgumentException('Malformed Host');
         }
 
-        $str = trim($str, static::$delimiter);
         if (! empty($str)) {
             $this->data = $this->validate($str);
         }
@@ -133,8 +138,8 @@ class Host extends AbstractSegment implements Interfaces\Host
     {
         $res = $this->filterIpv6Host($str);
         if (! empty($res)) {
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
+            $this->host_as_ipv4   = false;
+            $this->host_as_ipv6   = true;
 
             return [$res];
         }
@@ -188,6 +193,10 @@ class Host extends AbstractSegment implements Interfaces\Host
      */
     protected function validateStringHost($str)
     {
+        if ('.' == mb_substr($str, -1, 1)) {
+            $this->has_dot_ending = true;
+            $str = mb_substr($str, 0, -1);
+        }
         $str       = $this->lower($str);
         $labels    = explode(static::$delimiter, $str);
         $nb_labels = count($labels);
@@ -353,7 +362,12 @@ class Host extends AbstractSegment implements Interfaces\Host
             return $this->data[0];
         }
 
-        return implode(static::$delimiter, $this->data);
+        $str = implode(static::$delimiter, $this->data);
+        if ($this->has_dot_ending) {
+            $str .= static::$delimiter;
+        }
+
+        return $str;
     }
 
     /**
@@ -391,6 +405,22 @@ class Host extends AbstractSegment implements Interfaces\Host
     public function toAscii()
     {
         return implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function without(array $offsets = [])
+    {
+        return static::createFromArray($this->removeSegmentByOffsets($offsets));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceWith($value, $offset)
+    {
+        return new static($this->prepareReplaceWith($value, $offset));
     }
 
     /**

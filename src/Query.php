@@ -187,7 +187,7 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function getOffsets($parameter = null)
+    public function offsets($parameter = null)
     {
         if (is_null($parameter)) {
             return array_keys($this->data);

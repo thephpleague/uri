@@ -38,7 +38,16 @@ interface Segment extends Component, Countable, IteratorAggregate
      *
      * @return array
      */
-    public function getOffsets($data = null);
+    public function offsets($data = null);
+
+    /**
+     * Tell whether the given offset exists in the Segment object
+     *
+     * @param string $offset
+     *
+     * @return bool
+     */
+    public function hasOffset($offset);
 
     /**
      * Append new data at the end of the component
@@ -69,11 +78,12 @@ interface Segment extends Component, Countable, IteratorAggregate
     public function replaceWith($value, $offset);
 
     /**
-     * Remove data from the segment and return a new segment
+     * Remove the data corresponding to the offset
+     * from the object and return a new segment
      *
-     * @param  string $value
+     * @param  array $value
      *
      * @return Segment
      */
-    public function without($value);
+    public function without(array $offsets = []);
 }

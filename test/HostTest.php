@@ -39,6 +39,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'ipv6' => ['[::1]', true, false, true, '::1', '[::1]'],
             'string' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
             'null' => [null, false, false, false, null, ''],
+            'dot ending' => ['example.com.', false, false, false, 'example.com.', 'example.com.'],
         ];
     }
 
@@ -67,7 +68,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['toto.127.0.0.1'],
             ['98.3.2'],
             ['[[::1]]'],
-            ['example.com.']
         ];
     }
 
@@ -185,11 +185,11 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
 
-    public function testGetOffsets()
+    public function testoffsets()
     {
         $host = new Host('master.example.com');
-        $this->assertSame([0, 1, 2], $host->getOffsets());
-        $this->assertSame([1], $host->getOffsets('example'));
+        $this->assertSame([0, 1, 2], $host->offsets());
+        $this->assertSame([1], $host->offsets('example'));
     }
 
     /**
@@ -214,8 +214,8 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param string $host
-     * @param string $without
-     * @param string $res
+     * @param $without
+     * @param $res
      * @dataProvider withoutProvider
      */
     public function testWithout($host, $without, $res)
@@ -226,10 +226,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            ['secure.example.com', 'secure', 'example.com'],
-            ['127.0.0.1', 'foo', '127.0.0.1'],
-            ['', 'foo', ''],
-            ['toto.com', '    ', 'toto.com'],
+            ['secure.example.com', [0], 'example.com'],
+            ['127.0.0.1', [0, 1] , '127.0.0.1'],
+            ['127.0.0.1', [0], ''],
         ];
     }
 
@@ -263,26 +262,27 @@ class HostTest extends PHPUnit_Framework_TestCase
         (new Host('127.0.0.1'))->appendWith('foo');
     }
 
-    public function testReplaceWith()
+    /**
+     * @param $raw
+     * @param $input
+     * @param $offset
+     * @param $expected
+     * @dataProvider replaceWithValid
+     */
+    public function testReplaceWith($raw, $input, $offset, $expected)
     {
-        $host    = new Host('master.example.com');
-        $newHost = $host->replaceWith('shop', 0);
-        $this->assertSame('shop.example.com', $newHost->get());
+        $host = new Host($raw);
+        $newHost = $host->replaceWith($input, $offset);
+        $this->assertSame($expected, $newHost->get());
     }
 
-    public function testReplaceWithWithIpAddressOnEmptyHost()
+    public function replaceWithValid()
     {
-        $host    = new Host();
-        $newHost = $host->replaceWith('::1', 0);
-        $this->assertSame('[::1]', $newHost->getUriComponent());
-    }
-
-
-    public function testReplaceWithFailedWithWrongOffset()
-    {
-        $host = new Host('toto');
-        $newHost = $host->replaceWith('::1', 23);
-        $this->assertSame('toto', $newHost->getUriComponent());
+        return [
+            ['master.example.com', 'shop', 0, 'shop.example.com'],
+            ['', '::1', 0, '::1'],
+            ['toto', '::1', 23, 'toto'],
+        ];
     }
 
     /**

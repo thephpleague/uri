@@ -15,6 +15,7 @@ Highlights
 
 - Simple API
 - Treats URL and URL components as Immutable Values Objects
+- Comply to [RFC3986](http://tools.ietf.org/html/rfc3986)
 - Implements the `UriInterface` from the upcoming [PSR-7][]
 - Fully documented
 - Framework Agnostic

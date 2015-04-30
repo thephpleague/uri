@@ -20,7 +20,6 @@ namespace League\Url\Interfaces;
  */
 interface Host extends Segment
 {
-
     /**
      * Return a host label
      *

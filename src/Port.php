@@ -23,7 +23,6 @@ use League\Url\Interfaces\Component;
 */
 class Port extends AbstractComponent implements Component
 {
-
     /**
      * New Instance
      *

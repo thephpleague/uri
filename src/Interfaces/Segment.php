@@ -43,7 +43,7 @@ interface Segment extends Component, Countable, IteratorAggregate
     /**
      * Tell whether the given offset exists in the Segment object
      *
-     * @param string $offset
+     * @param int $offset
      *
      * @return bool
      */
@@ -54,7 +54,7 @@ interface Segment extends Component, Countable, IteratorAggregate
      *
      * @param string $value
      *
-     * @return Segment
+     * @return static
      */
     public function appendWith($value);
 
@@ -63,7 +63,7 @@ interface Segment extends Component, Countable, IteratorAggregate
      *
      * @param string $value
      *
-     * @return Segment
+     * @return static
      */
     public function prependWith($value);
 
@@ -73,7 +73,7 @@ interface Segment extends Component, Countable, IteratorAggregate
      * @param string $value
      * @param int    $offset
      *
-     * @return Segment
+     * @return static
      */
     public function replaceWith($value, $offset);
 
@@ -83,7 +83,7 @@ interface Segment extends Component, Countable, IteratorAggregate
      *
      * @param  array $value
      *
-     * @return Segment
+     * @return static
      */
     public function without(array $offsets = []);
 }

@@ -6,7 +6,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- Package structure is changed better reflect the importance of each component.
+- Package structure is changed to better reflect the importance of each component.
 
 - `League\Url\Interfaces\Url`
     -  now extends `Psr\Http\Message\UriInterface`

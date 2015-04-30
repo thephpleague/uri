@@ -483,10 +483,7 @@ class Url implements Interfaces\Url
             return $this->normalize();
         }
 
-        if (! $url instanceof Interfaces\Url) {
-            $url = self::createFromUrl((string) $url);
-        }
-
+        $url = static::createFromUrl((string) $url);
         if (! is_null($url->scheme->get())) {
             return $url->normalize();
         }

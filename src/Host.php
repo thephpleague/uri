@@ -149,10 +149,6 @@ class Host extends AbstractSegment implements Interfaces\Host
             return [$str];
         }
 
-        if (preg_match('/^[0-9\.]+$/', $str)) {
-            throw new InvalidArgumentException('Invalid IP based host format');
-        }
-
         $this->host_as_ipv4 = false;
         $this->host_as_ipv6 = false;
         return [];
@@ -194,22 +190,12 @@ class Host extends AbstractSegment implements Interfaces\Host
             $this->has_dot_ending = true;
             $str = mb_substr($str, 0, -1);
         }
-        $str       = $this->lower($str);
-        $labels    = explode(static::$delimiter, $str);
-        $nb_labels = count($labels);
-        $labels    = array_map(function ($value) {
+
+        $labels = array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
 
             return $this->encodeLabel(trim($value));
-        }, $labels);
-
-        $labels = array_filter($labels, function ($value) {
-            return ! empty($value);
-        });
-
-        if ($nb_labels != count($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels');
-        }
+        }, explode(static::$delimiter, $this->lower($str)));
 
         $this->assertValidHost($labels);
 
@@ -251,17 +237,17 @@ class Host extends AbstractSegment implements Interfaces\Host
      */
     protected function assertValidHost(array $labels)
     {
-        if (! $this->isValidLength($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its length');
+        $verifs = array_filter($labels, function ($value) {
+            return ! empty($value) && ! preg_match('/^[0-9]+$/', $value);
+        });
+
+        if ($verifs != $labels) {
+            throw new InvalidArgumentException('Invalid Hostname, verify labels');
         }
 
-        if (! $this->isValidLabelsCount($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
-        }
-
-        if (! $this->isValidContent($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its content');
-        }
+        $this->isValidLength($labels);
+        $this->isValidLabelsCount($labels);
+        $this->isValidContent($labels);
     }
 
     /**
@@ -269,7 +255,7 @@ class Host extends AbstractSegment implements Interfaces\Host
      *
      * @param  array $data Host labels
      *
-     * @return boolean
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidLength(array $data)
     {
@@ -277,7 +263,9 @@ class Host extends AbstractSegment implements Interfaces\Host
             return strlen($label) > 63;
         });
 
-        return empty($res);
+        if (! empty($res)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its length');
+        }
     }
 
     /**
@@ -285,13 +273,15 @@ class Host extends AbstractSegment implements Interfaces\Host
      *
      * @param  array $data Host segment
      *
-     * @return boolean
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidContent(array $data)
     {
         $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
 
-        return empty($res);
+        if (! empty($res)) {
+            throw new InvalidArgumentException('Invalid Hostname, verify its content');
+        }
     }
 
     /**
@@ -299,14 +289,16 @@ class Host extends AbstractSegment implements Interfaces\Host
      *
      * @param  array $data Host segment
      *
-     * @return boolean
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidLabelsCount(array $data = [])
     {
         $labels       = array_merge($this->data, $data);
         $count_labels = count($labels);
-
-        return $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
+        $res = $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
+        if (! $res) {
+            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
+        }
     }
 
     /**

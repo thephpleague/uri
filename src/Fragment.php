@@ -56,13 +56,13 @@ class Fragment extends AbstractComponent implements Component
     public function __toString()
     {
         $data = (string) $this->data;
-        if (empty(self::$encodedSymbols)) {
-            self::$encodedSymbols = array_map(function ($str) {
+        if (empty(static::$encodedSymbols)) {
+            static::$encodedSymbols = array_map(function ($str) {
                 return urlencode($str);
-            }, self::$rawSymbols);
+            }, static::$rawSymbols);
         }
 
-        return str_replace(self::$encodedSymbols, self::$rawSymbols, rawurlencode($data));
+        return str_replace(static::$encodedSymbols, static::$rawSymbols, rawurlencode($data));
     }
 
     /**

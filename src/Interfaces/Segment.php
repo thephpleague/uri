@@ -81,7 +81,7 @@ interface Segment extends Component, Countable, IteratorAggregate
      * Remove the data corresponding to the offset
      * from the object and return a new segment
      *
-     * @param  array $value
+     * @param  array $offsets
      *
      * @return static
      */

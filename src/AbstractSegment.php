@@ -147,7 +147,7 @@ abstract class AbstractSegment extends AbstractComponent
      *
      * @return string
      */
-    public function prepareReplaceWith($value, $offset)
+    protected function prepareReplaceWith($value, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return clone $this;
@@ -171,7 +171,7 @@ abstract class AbstractSegment extends AbstractComponent
      *
      * @return array
      */
-    public function removeSegmentByOffsets(array $offsets)
+    protected function removeSegmentByOffsets(array $offsets)
     {
         $offsets = array_unique($offsets);
         $data    = $this->data;

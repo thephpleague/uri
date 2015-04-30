@@ -138,16 +138,14 @@ class Host extends AbstractSegment implements Interfaces\Host
     {
         $res = $this->filterIpv6Host($str);
         if (! empty($res)) {
-            $this->host_as_ipv4   = false;
-            $this->host_as_ipv6   = true;
-
+            $this->host_as_ipv4 = false;
+            $this->host_as_ipv6 = true;
             return [$res];
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $this->host_as_ipv4 = true;
             $this->host_as_ipv6 = false;
-
             return [$str];
         }
 
@@ -157,7 +155,6 @@ class Host extends AbstractSegment implements Interfaces\Host
 
         $this->host_as_ipv4 = false;
         $this->host_as_ipv6 = false;
-
         return [];
     }
 
@@ -202,9 +199,8 @@ class Host extends AbstractSegment implements Interfaces\Host
         $nb_labels = count($labels);
         $labels    = array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
-            $value = trim($value);
 
-            return $this->encodeLabel($value);
+            return $this->encodeLabel(trim($value));
         }, $labels);
 
         $labels = array_filter($labels, function ($value) {

@@ -202,8 +202,7 @@ class Path extends AbstractSegment implements Interfaces\Path
     /**
      * Filter Dot Segments
      *
-     * @param  array  $input
-     * @param  array  $dot_segments
+     * @param array $input
      *
      * @return array
      */

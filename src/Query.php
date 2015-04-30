@@ -16,7 +16,6 @@ use ArrayIterator;
 use InvalidArgumentException;
 use IteratorAggregate;
 use League\Url\Interfaces;
-use League\Url\Util;
 use Traversable;
 
 /**
@@ -25,7 +24,7 @@ use Traversable;
  * @package  League.url
  * @since  1.0.0
  */
-class Query implements Interfaces\Query
+class Query extends AbstractComponent implements Interfaces\Query
 {
     /**
      * The Component Data
@@ -33,11 +32,6 @@ class Query implements Interfaces\Query
      * @var array
      */
     protected $data = [];
-
-    /**
-     * Trait to add default Component method
-     */
-    use Util\ComponentTrait;
 
     /**
      * a new instance

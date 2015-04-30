@@ -155,25 +155,45 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            ['/test/query.php', 'toto', '/test/query.php'],
-            ['/test/query.php', '  ', '/test/query.php'],
-            ['/master/test/query.php', 'query.php', '/master/test/'],
-            ['/toto/le/heros/masson', 'toto', '/le/heros/masson'],
-            ['/toto/le/heros/masson', 'ros/masson', '/toto/le/heros/masson'],
-            ['/toto/le/heros/masson', 'asson', '/toto/le/heros/masson'],
-            ['/toto/le/heros/masson', '/heros/masson', '/toto/le'],
-            ['/toto/le/heros/masson', '/le/heros', '/toto/masson'],
+            ['/test/query.php', [4], '/test/query.php'],
+            ['/master/test/query.php', [2], '/master/test'],
+            ['/toto/le/heros/masson', [0], '/le/heros/masson'],
+            ['/toto/le/heros/masson', [2, 3], '/toto/le'],
+            ['/toto/le/heros/masson', [1, 2], '/toto/masson'],
+        ];
+    }
+
+    /**
+     * @param $raw
+     * @param $input
+     * @param $offset
+     * @param $expected
+     * @dataProvider replaceWithValid
+     */
+    public function testReplaceWith($raw, $input, $offset, $expected)
+    {
+        $path = new Path($raw);
+        $newPath = $path->replaceWith($input, $offset);
+        $this->assertSame($expected, $newPath->get());
+    }
+
+    public function replaceWithValid()
+    {
+        return [
+            ['/path/to/the/sky', 'shop', 0, '/shop/to/the/sky'],
+            ['', 'shoki', 0, 'shoki'],
+            ['/path/to/paradise', '::1', 42, '/path/to/paradise'],
         ];
     }
 
     public function testKeys()
     {
         $path = new Path('/bar/3/troll/3');
-        $this->assertCount(4, $path->getOffsets());
-        $this->assertCount(0, $path->getOffsets('foo'));
-        $this->assertSame([0], $path->getOffsets('bar'));
-        $this->assertCount(2, $path->getOffsets('3'));
-        $this->assertSame([1, 3], $path->getOffsets('3'));
+        $this->assertCount(4, $path->offsets());
+        $this->assertCount(0, $path->offsets('foo'));
+        $this->assertSame([0], $path->offsets('bar'));
+        $this->assertCount(2, $path->offsets('3'));
+        $this->assertSame([1, 3], $path->offsets('3'));
     }
 
     /**

@@ -63,7 +63,7 @@ abstract class AbstractSegment extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function getOffsets($data = null)
+    public function offsets($data = null)
     {
         if (is_null($data)) {
             return array_keys($this->data);
@@ -108,14 +108,9 @@ abstract class AbstractSegment extends AbstractComponent
         }
         $value = trim($value, static::$delimiter);
         $value = $this->validate($value);
-
         $value = implode(static::$delimiter, $value);
-        $orig = $this->__toString();
-        if (empty($orig) || static::$delimiter !== $orig[0]) {
-            $orig = static::$delimiter.$orig;
-        }
 
-        return new static($orig.static::$delimiter.$value.$appended_delimiter);
+        return new static($this->__toString().static::$delimiter.$value.$appended_delimiter);
     }
 
     /**
@@ -145,9 +140,14 @@ abstract class AbstractSegment extends AbstractComponent
     }
 
     /**
-     * {@inheritdoc}
+     * Return a string with the replace data
+     *
+     * @param  string $value  The data to replace in the current object
+     * @param  int $offset The offset where to inject the new string
+     *
+     * @return string
      */
-    public function replaceWith($value, $offset)
+    public function prepareReplaceWith($value, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return clone $this;
@@ -161,64 +161,27 @@ abstract class AbstractSegment extends AbstractComponent
         $res = $this->data;
         $res[$offset] = implode(static::$delimiter, $value);
 
-        return new static(implode(static::$delimiter, $res));
+        return implode(static::$delimiter, $res);
     }
 
     /**
-     * {@inheritdoc}
+     * Remove selected segments from the collection
+     *
+     * @param array  $offsets contains segment offsets
+     *
+     * @return array
      */
-    public function without($value)
+    public function removeSegmentByOffsets(array $offsets)
     {
-        $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
-        $value = trim($value);
-
-        if (is_null($this->get()) || empty($value)) {
-            return clone $this;
+        $offsets = array_unique($offsets);
+        $data    = $this->data;
+        foreach ($offsets as $offset) {
+            if (! array_key_exists($offset, $data)) {
+                return $this->data;
+            }
+            unset($data[$offset]);
         }
 
-        $value_appended  = (static::$delimiter != mb_substr($value, -1, 1));
-        $value_prepended = (static::$delimiter != $value[0]);
-
-        $value = trim($value, static::$delimiter);
-        $value = $this->validate($value);
-        $value = implode(static::$delimiter, $value);
-        $value = static::$delimiter.$value.static::$delimiter;
-
-        $orig = $this->getUriComponent();
-        $orig_appended = false;
-        if (static::$delimiter != mb_substr($orig, -1, 1)) {
-            $orig .= static::$delimiter;
-            $orig_appended = true;
-        }
-
-        $orig_prepended = false;
-        if (static::$delimiter != $orig[0]) {
-            $orig = static::$delimiter.$orig;
-            $orig_prepended = true;
-        }
-
-        $pos = mb_strpos($orig, $value);
-        if (false === $pos) {
-            return clone $this;
-        }
-
-        $length = mb_strlen($value);
-        if ($value_prepended) {
-            $pos    += 1;
-            $length -= 1;
-        }
-        if ($value_appended) {
-            $length -= 1;
-        }
-
-        $path = mb_substr($orig, 0, $pos).mb_substr($orig, $pos + $length);
-        if ($orig_appended) {
-            $path = mb_substr($path, 0, -1);
-        }
-        if ($orig_prepended) {
-            $path = mb_substr($path, 1);
-        }
-
-        return new static($path);
+        return $data;
     }
 }

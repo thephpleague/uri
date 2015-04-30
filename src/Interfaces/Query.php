@@ -32,16 +32,6 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function toArray();
 
     /**
-     * Return the query keys. If a value is specified
-     * only the key for that value are returned
-     *
-     * @param null|string $data
-     *
-     * @return array
-     */
-    public function getOffsets($data = null);
-
-    /**
      * Return a value from the Query object
      *
      * @param string $offset     the parameter name
@@ -52,7 +42,17 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function getParameter($offset, $default = null);
 
     /**
-     * Tell whether the given key exists in the Query object
+     * Return the query keys. If a value is specified
+     * only the key for that value are returned
+     *
+     * @param null|string $data
+     *
+     * @return array
+     */
+    public function offsets($data = null);
+
+    /**
+     * Tell whether the given offset exists in the Query object
      *
      * @param string $offset
      *

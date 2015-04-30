@@ -265,4 +265,28 @@ class Path extends AbstractSegment implements Interfaces\Path
 
         return static::createFromArray($data, $this->is_absolute);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function without(array $offsets = [])
+    {
+        return static::createFromArray(
+            $this->removeSegmentByOffsets($offsets),
+            $this->is_absolute
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceWith($value, $offset)
+    {
+        $path = $this->prepareReplaceWith($value, $offset);
+        if ($this->is_absolute) {
+            $path = static::$delimiter.$path;
+        }
+
+        return new static($path);
+    }
 }

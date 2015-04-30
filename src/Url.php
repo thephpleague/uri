@@ -225,7 +225,7 @@ class Url implements Interfaces\Url
      */
     public function withScheme($scheme)
     {
-        $clone = clone $this;
+        $clone         = clone $this;
         $clone->scheme = $this->scheme->withValue($scheme);
 
         return $clone;
@@ -236,7 +236,7 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $clone->user = $this->user->withValue($user);
         $clone->pass = $this->pass->withValue($pass);
 
@@ -248,7 +248,7 @@ class Url implements Interfaces\Url
      */
     public function withHost($host)
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $clone->host = $this->host->withValue($host);
 
         return $clone;
@@ -259,7 +259,7 @@ class Url implements Interfaces\Url
      */
     public function withPort($port)
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $clone->port = $this->port->withValue($port);
 
         return $clone;
@@ -270,7 +270,7 @@ class Url implements Interfaces\Url
      */
     public function withPath($path)
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $clone->path = $this->path->withValue($path);
 
         return $clone;
@@ -281,7 +281,7 @@ class Url implements Interfaces\Url
      */
     public function withQuery($query)
     {
-        $clone = clone $this;
+        $clone        = clone $this;
         $clone->query = $this->query->withValue($query);
 
         return $clone;
@@ -292,7 +292,7 @@ class Url implements Interfaces\Url
      */
     public function withFragment($fragment)
     {
-        $clone = clone $this;
+        $clone           = clone $this;
         $clone->fragment = $this->fragment->withValue($fragment);
 
         return $clone;
@@ -468,7 +468,7 @@ class Url implements Interfaces\Url
      */
     public function normalize()
     {
-        $clone = clone $this;
+        $clone       = clone $this;
         $clone->path = $this->path->normalize();
 
         return $clone;
@@ -487,26 +487,22 @@ class Url implements Interfaces\Url
             $url = self::createFromUrl((string) $url);
         }
 
-        $host = $url->getHost();
-        if ('' != $url->getScheme()->get() && '' != $host->get()) {
+        if (! is_null($url->scheme->get())) {
             return $url->normalize();
         }
 
-        $final = $this->withFragment($url->getFragment());
-        if ('' != $host->get()) {
-            return $final
-                ->withHost($host)
-                ->withPort($url->getPort())
-                ->withPath($url->getPath()->normalize())
-                ->withQuery($url->getQuery());
+        $auth = $url->getAuthority();
+        if (! empty($auth) && $auth != $this->getAuthority()) {
+            return $url->withScheme($this->scheme)->normalize();
         }
 
-        if ('' != $url->getPath()->get()) {
+        $final = $this->withFragment($url->fragment);
+        if ('' != $url->path->get()) {
             return $this->resolvePath($final, $url);
         }
 
-        if ('' != $url->getQuery()->get()) {
-            return $final->withQuery($url->getQuery())->normalize();
+        if ('' != $url->query->get()) {
+            return $final->withQuery($url->query)->normalize();
         }
 
         return $final->normalize();
@@ -515,26 +511,23 @@ class Url implements Interfaces\Url
     /**
      * returns the resolve URL components
      *
-     * @param Interfaces\Url $final the final URL
-     * @param Interfaces\Url $rel   the relative URL
+     * @param Url $url the final URL
+     * @param Url $rel the relative URL
      *
      * @return static
      */
-    protected function resolvePath(Interfaces\Url $final, Interfaces\Url $rel)
+    protected function resolvePath(Url $url, Url $rel)
     {
-        $relPath = $rel->getPath();
-        if (! $relPath->isAbsolute()) {
-            $finalPath = $final->getPath();
-            $segments  = $finalPath->toArray();
+        $path = $rel->path;
+        if (! $rel->path->isAbsolute()) {
+            $segments = $url->path->toArray();
             array_pop($segments);
-            $relPath = Path::createFromArray(
-                array_merge($segments, $relPath->toArray()),
-                '' == $finalPath->get() || $finalPath->isAbsolute()
+            $path = Path::createFromArray(
+                array_merge($segments, $rel->path->toArray()),
+                '' == $url->path->get() || $url->path->isAbsolute()
             );
         }
 
-        return $final
-            ->withPath($relPath->normalize())
-            ->withQuery($rel->getQuery());
+        return $url->withPath($path->normalize())->withQuery($rel->query);
     }
 }

@@ -138,11 +138,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'lol' => 3,
             'toto' => 'troll'
         ]);
-        $this->assertCount(0, $query->getOffsets('foo'));
-        $this->assertSame(['foo'], $query->getOffsets('bar'));
-        $this->assertCount(1, $query->getOffsets('3'));
-        $this->assertSame(['lol'], $query->getOffsets('3'));
-        $this->assertSame(['baz', 'toto'], $query->getOffsets('troll'));
+        $this->assertCount(0, $query->offsets('foo'));
+        $this->assertSame(['foo'], $query->offsets('bar'));
+        $this->assertCount(1, $query->offsets('3'));
+        $this->assertSame(['lol'], $query->offsets('3'));
+        $this->assertSame(['baz', 'toto'], $query->offsets('troll'));
     }
 
     public function testDotFromString()
@@ -161,8 +161,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('foo&bar&baz');
 
-        $this->assertCount(3, $query->getOffsets());
-        $this->assertSame(['foo', 'bar', 'baz'], $query->getOffsets());
+        $this->assertCount(3, $query->offsets());
+        $this->assertSame(['foo', 'bar', 'baz'], $query->offsets());
         $this->assertSame('', $query->getParameter('foo'));
         $this->assertSame('', $query->getParameter('bar'));
         $this->assertSame('', $query->getParameter('baz'));

@@ -83,7 +83,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('&', $formatter->getQuerySeparator());
         $formatter->setQuerySeparator('&amp;');
         $this->assertSame('&amp;', $formatter->getQuerySeparator());
-        $this->assertSame('kingkong=toto&amp;foo=bar%20baz', $formatter->formatQuery($this->url->getQuery()));
+        $this->assertSame('kingkong=toto&amp;foo=bar%20baz', $formatter->format($this->url->getQuery()));
     }
 
     public function testFormatURL()

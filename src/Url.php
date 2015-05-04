@@ -517,10 +517,10 @@ class Url implements Interfaces\Url
     {
         $path = $rel->path;
         if (! $rel->path->isAbsolute()) {
-            $segments = $url->path->toArray();
-            array_pop($segments);
+            $SegmentComponents = $url->path->toArray();
+            array_pop($SegmentComponents);
             $path = Path::createFromArray(
-                array_merge($segments, $rel->path->toArray()),
+                array_merge($SegmentComponents, $rel->path->toArray()),
                 '' == $url->path->get() || $url->path->isAbsolute()
             );
         }

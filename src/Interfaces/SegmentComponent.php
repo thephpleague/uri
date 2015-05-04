@@ -21,10 +21,10 @@ use IteratorAggregate;
  * @package  League.url
  * @since  4.0.0
  */
-interface Segment extends Component, Countable, IteratorAggregate
+interface SegmentComponent extends Component, Countable, IteratorAggregate
 {
     /**
-     * Return an array representation of the Segment
+     * Return an array representation of the SegmentComponent
      *
      * @return array
      */
@@ -41,7 +41,7 @@ interface Segment extends Component, Countable, IteratorAggregate
     public function offsets($data = null);
 
     /**
-     * Tell whether the given offset exists in the Segment object
+     * Tell whether the given offset exists in the SegmentComponent object
      *
      * @param int $offset
      *
@@ -52,38 +52,38 @@ interface Segment extends Component, Countable, IteratorAggregate
     /**
      * Append new data at the end of the component
      *
-     * @param string $value
+     * @param SegmentComponent $value
      *
      * @return static
      */
-    public function appendWith($value);
+    public function appendWith(SegmentComponent $value);
 
     /**
      * Prepend new data at the beginning of the component
      *
-     * @param string $value
+     * @param SegmentComponent $value
      *
      * @return static
      */
-    public function prependWith($value);
+    public function prependWith(SegmentComponent $value);
 
     /**
-     * Replace data from the segment and return a new segment
+     * Replace data from the SegmentComponent and return a new SegmentComponent
      *
-     * @param string $value
-     * @param int    $offset
+     * @param SegmentComponent $value
+     * @param int              $offset
      *
      * @return static
      */
-    public function replaceWith($value, $offset);
+    public function replaceWith(SegmentComponent $value, $offset);
 
     /**
      * Remove the data corresponding to the offset
-     * from the object and return a new segment
+     * from the object and return a new SegmentComponent
      *
      * @param  array $offsets
      *
      * @return static
      */
-    public function without(array $offsets = []);
+    public function without(array $offsets);
 }

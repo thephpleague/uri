@@ -23,7 +23,7 @@ use Traversable;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegment implements Interfaces\Path
+class Path extends AbstractSegmentComponent implements Interfaces\Path
 {
     /**
      * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
@@ -45,21 +45,14 @@ class Path extends AbstractSegment implements Interfaces\Path
         '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
-    protected static $dot_segments = ['.' => 1, '..' => 1];
+    protected static $dot_SegmentComponents = ['.' => 1, '..' => 1];
 
     /**
-     * Segment delimiter
+     * SegmentComponent delimiter
      *
      * @var string
      */
     protected static $delimiter = '/';
-
-    /**
-     * Is the path absolute
-     *
-     * @var bool
-     */
-    protected $is_absolute = false;
 
     /**
      * New Instance of Path
@@ -130,14 +123,6 @@ class Path extends AbstractSegment implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function isAbsolute()
-    {
-        return $this->is_absolute;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSegment($offset, $default = null)
     {
         if (isset($this->data[$offset])) {
@@ -192,7 +177,7 @@ class Path extends AbstractSegment implements Interfaces\Path
             $new_path = static::$delimiter;
         }
         $new_path .= implode(static::$delimiter, $this->filterDotSegment($input));
-        if (isset(static::$dot_segments[end($input)])) {
+        if (isset(static::$dot_SegmentComponents[end($input)])) {
             $new_path .= static::$delimiter;
         }
 
@@ -200,7 +185,7 @@ class Path extends AbstractSegment implements Interfaces\Path
     }
 
     /**
-     * Filter Dot Segments
+     * Filter Dot SegmentComponents
      *
      * @param array $input
      *
@@ -209,14 +194,14 @@ class Path extends AbstractSegment implements Interfaces\Path
     protected function filterDotSegment(array $input)
     {
         $arr = [];
-        foreach ($input as $segment) {
-            if ('..' == $segment) {
+        foreach ($input as $SegmentComponent) {
+            if ('..' == $SegmentComponent) {
                 array_pop($arr);
                 continue;
             }
 
-            if (! isset(static::$dot_segments[$segment])) {
-                $arr[] = $segment;
+            if (! isset(static::$dot_SegmentComponents[$SegmentComponent])) {
+                $arr[] = $SegmentComponent;
             }
         }
 
@@ -263,29 +248,5 @@ class Path extends AbstractSegment implements Interfaces\Path
         $data[] = "$basename.$ext";
 
         return static::createFromArray($data, $this->is_absolute);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function without(array $offsets = [])
-    {
-        return static::createFromArray(
-            $this->removeSegmentByOffsets($offsets),
-            $this->is_absolute
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceWith($value, $offset)
-    {
-        $path = $this->prepareReplaceWith($value, $offset);
-        if ($this->is_absolute) {
-            $path = static::$delimiter.$path;
-        }
-
-        return new static($path);
     }
 }

@@ -64,9 +64,20 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * Merge new data to the current Query object
      * and return a new modified Query object
      *
-     * @param mixed $data
+     * @param Query $query
      *
      * @return static
      */
-    public function mergeWith($data);
+    public function mergeWith(Query $query);
+
+    /**
+     * Remove the data corresponding to the offset
+     * from the object and return a new instance with
+     * the modified data
+     *
+     * @param  array $offsets
+     *
+     * @return static
+     */
+    public function without(array $offsets);
 }

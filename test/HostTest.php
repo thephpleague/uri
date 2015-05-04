@@ -73,6 +73,25 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $raw
+     * @param $expected
+     * @dataProvider isAbsoluteProvider
+     */
+    public function testIsAbsolute($raw, $expected)
+    {
+        $this->assertSame($expected, (new Host($raw))->isAbsolute());
+    }
+
+    public function isAbsoluteProvider()
+    {
+        return [
+            ['127.0.0.1', false],
+            ['example.com.', true],
+            ['example.com', false],
+        ];
+    }
+
+    /**
      * Test Punycode support
      *
      * @param string $unicode Unicode Hostname
@@ -138,43 +157,48 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $input
+     * @param $is_absolute
      * @param $expected
      * @dataProvider createFromArrayValid
      */
-    public function testCreateFromArray($input, $expected)
+    public function testCreateFromArray($input, $is_absolute, $expected)
     {
-        $this->assertSame($expected, Host::createFromArray($input)->__toString());
+        $this->assertSame($expected, Host::createFromArray($input, $is_absolute)->__toString());
     }
 
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], 'www.example.com',],
-            'iterator' => [new ArrayIterator(['www', 'example', 'com']), 'www.example.com',],
-            'host object' => [new Host('::1'), '[::1]'],
-            'ip 1' => [[127, 0, 0, 1], '127.0.0.1'],
-            'ip 2' => [['127.0', '0.1'], '127.0.0.1'],
-            'ip 3' => [['127.0.0.1'], '127.0.0.1'],
+            'array' => [['www', 'example', 'com'], false, 'www.example.com',],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), false, 'www.example.com',],
+            'host object' => [new Host('::1'), false, '[::1]'],
+            'ip 1' => [[127, 0, 0, 1], false, '127.0.0.1'],
+            'ip 2' => [['127.0', '0.1'], false, '127.0.0.1'],
+            'ip 3' => [['127.0.0.1'], false, '127.0.0.1'],
+            'FQDN' => [['www', 'example', 'com'], true, 'www.example.com.'],
         ];
     }
 
     /**
      * @param $input
+     * @param $is_absolute
      * @dataProvider createFromArrayInvalid
      * @expectedException \InvalidArgumentException
      */
-    public function testCreateFromArrayFailed($input)
+    public function testCreateFromArrayFailed($input, $is_absolute)
     {
-        Host::createFromArray($input);
+        Host::createFromArray($input, $is_absolute);
     }
 
     public function createFromArrayInvalid()
     {
         return [
-            'string' => ['www.example.com'],
-            'bool' => [true],
-            'integer' => [1],
-            'object' => [new \StdClass()],
+            'string' => ['www.example.com', false],
+            'bool' => [true, false],
+            'integer' => [1, false],
+            'object' => [new \StdClass(), false],
+            'ip FQDN' => [['127.0.0.1'], true],
+            'ipv6 FQDN' => [['::1'], true],
         ];
     }
 
@@ -228,7 +252,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['secure.example.com', [0], 'example.com'],
-            ['127.0.0.1', [0, 1] , '127.0.0.1'],
+            ['127.0.0.1', [0, 1] , ''],
             ['127.0.0.1', [0], ''],
         ];
     }
@@ -236,7 +260,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testPrependWith()
     {
         $host    = new Host('secure.example.com');
-        $newHost = $host->prependWith('master');
+        $newHost = $host->prependWith(new Host('master'));
         $this->assertSame('master.secure.example.com', $newHost->get());
     }
 
@@ -245,13 +269,13 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testPrependWithIpFailed()
     {
-        (new Host('127.0.0.1'))->prependWith('foo');
+        (new Host('127.0.0.1'))->prependWith(new Host('foo'));
     }
 
     public function testAppendWith()
     {
         $host    = new Host('secure.example.com');
-        $newHost = $host->appendWith('shop');
+        $newHost = $host->appendWith(new Host('shop'));
         $this->assertSame('secure.example.com.shop', $newHost->get());
     }
 
@@ -260,7 +284,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendWithIpFailed()
     {
-        (new Host('127.0.0.1'))->appendWith('foo');
+        (new Host('127.0.0.1'))->appendWith(new Host('foo'));
     }
 
     /**
@@ -280,9 +304,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function replaceWithValid()
     {
         return [
-            ['master.example.com', 'shop', 0, 'shop.example.com'],
-            ['', '::1', 0, '::1'],
-            ['toto', '::1', 23, 'toto'],
+            ['master.example.com', new Host('shop'), 0, 'shop.example.com'],
+            ['', new Host('::1'), 0, '::1'],
+            ['toto', new Host('::1'), 23, 'toto'],
         ];
     }
 
@@ -292,6 +316,6 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testReplaceWithIpMustFailed()
     {
         $host = new Host('secure.example.com');
-        $host->replaceWith('127.0.0.1', 2);
+        $host->replaceWith(new Host('127.0.0.1'), 2);
     }
 }

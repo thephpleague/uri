@@ -18,11 +18,11 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Path extends Segment
+interface Path extends SegmentComponent
 {
     /**
      * Return a new Path interface normalized
-     * by removing do segment
+     * by removing do SegmentComponent
      *
      * @return static
      */
@@ -36,7 +36,7 @@ interface Path extends Segment
     public function isAbsolute();
 
     /**
-     * Return a Path segment
+     * Return a Path SegmentComponent
      *
      * @param string $offset     the parameter name
      * @param mixed  $default if no key is found the default value to return

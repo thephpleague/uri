@@ -22,6 +22,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->query = new Query('kingkong=toto');
     }
 
+    public function testIterator()
+    {
+        $this->assertSame(['kingkong' => 'toto'], iterator_to_array($this->query, true));
+    }
+
     public function testGetUriComponent()
     {
         $this->assertSame('?kingkong=toto', $this->query->getUriComponent());
@@ -69,43 +74,19 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function validMergeValue()
     {
         return [
-            'array' => [
-                ['john' => 'doe the john'],
+            'with new data' => [
+                Query::createFromArray(['john' => 'doe the john']),
                 'kingkong=toto&john=doe%20the%20john',
             ],
-            'iterator' => [
-                new ArrayIterator(['john' => 'doe the john']),
-                'kingkong=toto&john=doe%20the%20john'
-            ],
-            'QueryInterface' => [
-                Query::createFromArray(['foo' => 'bar']),
-                'kingkong=toto&foo=bar',
-            ],
-            'string' => [
-                'kingkong=tata',
+            'with the same data' => [
+                new Query('kingkong=tata'),
                 'kingkong=tata',
             ],
-            'empty string' => [
-                '',
+            'without new data' => [
+                new Query(''),
                 'kingkong=toto',
-            ],
-            'null value' => [
-                null,
-                'kingkong=toto',
-            ],
-            'remove parameter' => [
-                ['kingkong' => null],
-                '',
             ],
         ];
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testFailMergeWith()
-    {
-        $this->query->mergeWith(new StdClass());
     }
 
     public function testGetParameter()
@@ -174,6 +155,20 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query = new Query('foo&bar&baz&to.go=toofan');
         $this->assertSame($expected, $query->toArray());
         $this->assertSame($expected, json_decode(json_encode($query), true));
+    }
+
+    public function testWithout()
+    {
+        $query = new Query('foo&bar&baz&to.go=toofan');
+        $res = $query->without(['foo', 'to.go']);
+        $this->assertSame('bar&baz', (string) $res);
+    }
+
+    public function testWithoutNoDataModified()
+    {
+        $query = new Query('foo&bar&baz&to.go=toofan');
+        $res = $query->without(['foo', 'unknown']);
+        $this->assertEquals('bar&baz&to.go=toofan', (string) $res);
     }
 
     public function invalidQueryStrings()

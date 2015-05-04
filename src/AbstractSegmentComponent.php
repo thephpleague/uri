@@ -47,6 +47,14 @@ abstract class AbstractSegmentComponent
     /**
      * {@inheritdoc}
      */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function offsets($data = null)
     {
         if (is_null($data)) {
@@ -71,7 +79,7 @@ abstract class AbstractSegmentComponent
     }
 
     /**
-     * return a new Host instance from an Array or a traversable object
+     * return a new SegmentComponent instance from an Array or a traversable object
      *
      * @param \Traversable|array $data
      * @param bool               $is_absolute
@@ -82,12 +90,12 @@ abstract class AbstractSegmentComponent
      */
     public static function createFromArray($data, $is_absolute = false)
     {
-        $path = implode(static::$delimiter, static::validateIterator($data));
+        $component = implode(static::$delimiter, static::validateIterator($data));
         if ($is_absolute) {
-            $path = static::$delimiter.$path;
+            $component = static::$delimiter.$component;
         }
 
-        return new static($path);
+        return new static($component);
     }
 
     /**

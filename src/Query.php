@@ -167,6 +167,6 @@ class Query implements Interfaces\Query
      */
     public function merge(Interfaces\Query $query)
     {
-        return static::createFromArray(array_merge($this->data, $query->data));
+        return static::createFromArray(array_merge($this->data, $query->toArray()));
     }
 }

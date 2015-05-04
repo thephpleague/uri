@@ -141,14 +141,6 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toUnicode()
     {
         return $this->__toString();

@@ -65,9 +65,9 @@ interface Url extends UriInterface
     /**
      * Resolve a new URI with a relative URI
      *
-     * @param string $rel the relative URI
+     * @param UriInterface $rel the relative URI
      *
      * @return static
      */
-    public function resolve($rel);
+    public function resolve(UriInterface $rel);
 }

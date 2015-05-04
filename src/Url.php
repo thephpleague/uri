@@ -301,6 +301,17 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function normalize()
+    {
+        $clone       = clone $this;
+        $clone->path = $this->path->normalize();
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getScheme()
     {
         return clone $this->scheme;
@@ -466,17 +477,6 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function normalize()
-    {
-        $clone       = clone $this;
-        $clone->path = $this->path->normalize();
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function resolve(UriInterface $url)
     {
         $url = static::createFromUrl((string) $url);
@@ -513,10 +513,10 @@ class Url implements Interfaces\Url
     {
         $path = $rel->path;
         if (! $rel->path->isAbsolute()) {
-            $SegmentComponents = $url->path->toArray();
-            array_pop($SegmentComponents);
+            $segments = $url->path->toArray();
+            array_pop($segments);
             $path = Path::createFromArray(
-                array_merge($SegmentComponents, $rel->path->toArray()),
+                array_merge($segments, $rel->path->toArray()),
                 '' == $url->path->get() || $url->path->isAbsolute()
             );
         }

@@ -15,7 +15,6 @@ namespace League\Url;
 use InvalidArgumentException;
 use League\Url\Interfaces;
 use League\Url\Util;
-use LogicException;
 use Traversable;
 
 /**
@@ -100,30 +99,6 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
         }
 
         return $this->validateStringHost($str);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIp()
-    {
-        return $this->host_as_ipv4 || $this->host_as_ipv6;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIpv4()
-    {
-        return $this->host_as_ipv4;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIpv6()
-    {
-        return $this->host_as_ipv6;
     }
 
     /**

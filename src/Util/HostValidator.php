@@ -14,14 +14,12 @@ namespace League\Url\Util;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use LogicException;
-use Traversable;
 
 /**
-* A class to manipulate URL Host component
+* A Trait to validate a Host component
 *
 * @package League.url
-* @since 1.0.0
+* @since 4.0.0
 */
 trait HostValidator
 {
@@ -45,16 +43,33 @@ trait HostValidator
     protected $host_as_ipv6 = false;
 
     /**
-     * Whether the Hostname ends with a dot
-     *
-     * @var boolean
-     */
-    protected $is_absolute = false;
-
-    /**
      * Trait to handle punycode
      */
     use Punycode;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIp()
+    {
+        return $this->host_as_ipv4 || $this->host_as_ipv6;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIpv4()
+    {
+        return $this->host_as_ipv4;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIpv6()
+    {
+        return $this->host_as_ipv6;
+    }
 
     /**
      * Validate a Host as an IP

@@ -31,6 +31,20 @@ interface Host extends SegmentComponent
     public function getLabel($offset, $default = null);
 
     /**
+     * Return the unicode string representation of a host
+     *
+     * @return string
+     */
+    public function toUnicode();
+
+    /**
+     * Return the ascii string representation of a host
+     *
+     * @return string
+     */
+    public function toAscii();
+
+    /**
      * Tells wether the current object is a full qualified domain name or not
      *
      * @return bool
@@ -57,18 +71,4 @@ interface Host extends SegmentComponent
      * @return bool
      */
     public function isIpv6();
-
-    /**
-     * Return the unicode string representation of a host
-     *
-     * @return string
-     */
-    public function toUnicode();
-
-    /**
-     * Return the ascii string representation of a host
-     *
-     * @return string
-     */
-    public function toAscii();
 }

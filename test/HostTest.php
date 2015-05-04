@@ -257,34 +257,34 @@ class HostTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testPrependWith()
+    public function testprepend()
     {
         $host    = new Host('secure.example.com');
-        $newHost = $host->prependWith(new Host('master'));
+        $newHost = $host->prepend(new Host('master'));
         $this->assertSame('master.secure.example.com', $newHost->get());
     }
 
     /**
      * @expectedException LogicException
      */
-    public function testPrependWithIpFailed()
+    public function testprependIpFailed()
     {
-        (new Host('127.0.0.1'))->prependWith(new Host('foo'));
+        (new Host('127.0.0.1'))->prepend(new Host('foo'));
     }
 
-    public function testAppendWith()
+    public function testappend()
     {
         $host    = new Host('secure.example.com');
-        $newHost = $host->appendWith(new Host('shop'));
+        $newHost = $host->append(new Host('shop'));
         $this->assertSame('secure.example.com.shop', $newHost->get());
     }
 
     /**
      * @expectedException LogicException
      */
-    public function testAppendWithIpFailed()
+    public function testappendIpFailed()
     {
-        (new Host('127.0.0.1'))->appendWith(new Host('foo'));
+        (new Host('127.0.0.1'))->append(new Host('foo'));
     }
 
     /**
@@ -292,16 +292,16 @@ class HostTest extends PHPUnit_Framework_TestCase
      * @param $input
      * @param $offset
      * @param $expected
-     * @dataProvider replaceWithValid
+     * @dataProvider replaceValid
      */
-    public function testReplaceWith($raw, $input, $offset, $expected)
+    public function testreplace($raw, $input, $offset, $expected)
     {
         $host = new Host($raw);
-        $newHost = $host->replaceWith($input, $offset);
+        $newHost = $host->replace($input, $offset);
         $this->assertSame($expected, $newHost->get());
     }
 
-    public function replaceWithValid()
+    public function replaceValid()
     {
         return [
             ['master.example.com', new Host('shop'), 0, 'shop.example.com'],
@@ -313,9 +313,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testReplaceWithIpMustFailed()
+    public function testreplaceIpMustFailed()
     {
         $host = new Host('secure.example.com');
-        $host->replaceWith(new Host('127.0.0.1'), 2);
+        $host->replace(new Host('127.0.0.1'), 2);
     }
 }

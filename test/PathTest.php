@@ -134,7 +134,7 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testPrepend($source, $prepend, $res)
     {
         $path    = new Path($source);
-        $newPath = $path->prependWith(new Path($prepend));
+        $newPath = $path->prepend(new Path($prepend));
         $this->assertSame($res, $newPath->__toString());
     }
 
@@ -157,7 +157,7 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testAppend($source, $append, $res)
     {
         $path    = new Path($source);
-        $newPath = $path->appendWith(new Path($append));
+        $newPath = $path->append(new Path($append));
         $this->assertSame($res, $newPath->__toString());
     }
 
@@ -203,16 +203,16 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @param $input
      * @param $offset
      * @param $expected
-     * @dataProvider replaceWithValid
+     * @dataProvider replaceValid
      */
-    public function testReplaceWith($raw, $input, $offset, $expected)
+    public function testreplace($raw, $input, $offset, $expected)
     {
         $path = new Path($raw);
-        $newPath = $path->replaceWith(new Path($input), $offset);
+        $newPath = $path->replace(new Path($input), $offset);
         $this->assertSame($expected, $newPath->get());
     }
 
-    public function replaceWithValid()
+    public function replaceValid()
     {
         return [
             ['/path/to/the/sky', 'shop', 0, '/shop/to/the/sky'],

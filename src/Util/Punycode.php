@@ -16,6 +16,8 @@ namespace League\Url\Util;
  * Punycode implementation as described in RFC 3492
  *
  * @link http://tools.ietf.org/html/rfc3492
+ * @package League.url
+ * @since 4.0.0
  *
  * This is a fork from https://github.com/true/php-punycode/
  * Created by TrueServer B.V.

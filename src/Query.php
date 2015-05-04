@@ -12,9 +12,7 @@
 */
 namespace League\Url;
 
-use ArrayIterator;
 use InvalidArgumentException;
-use IteratorAggregate;
 use League\Url\Interfaces;
 use Traversable;
 
@@ -24,14 +22,12 @@ use Traversable;
  * @package  League.url
  * @since  1.0.0
  */
-class Query extends AbstractComponent implements Interfaces\Query
+class Query implements Interfaces\Query
 {
     /**
-     * The Component Data
-     *
-     * @var array
+     * Trait for Collection type Component
      */
-    protected $data = [];
+    use Util\CollectionComponent;
 
     /**
      * a new instance
@@ -46,6 +42,14 @@ class Query extends AbstractComponent implements Interfaces\Query
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function withValue($value)
+    {
+        return new static($value);
+    }
+
+    /**
      * return a new Query instance from an Array or a traversable object
      *
      * @param  \Traversable|array $data
@@ -56,15 +60,7 @@ class Query extends AbstractComponent implements Interfaces\Query
      */
     public static function createFromArray($data)
     {
-        if ($data instanceof Traversable) {
-            $data = iterator_to_array($data, true);
-        }
-
-        if (! is_array($data)) {
-            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
-        }
-
-        return new static(http_build_query($data, '', '&', PHP_QUERY_RFC3986));
+        return new static(http_build_query(static::validateIterator($data), '', '&', PHP_QUERY_RFC3986));
     }
 
     /**
@@ -137,41 +133,9 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOffset($offset)
-    {
-        return array_key_exists($offset, $this->data);
     }
 
     /**
@@ -196,19 +160,6 @@ class Query extends AbstractComponent implements Interfaces\Query
         }
 
         return $default;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function without(array $offsets)
-    {
-        $data = $this->data;
-        foreach (array_unique($offsets) as $offset) {
-            unset($data[$offset]);
-        }
-
-        return static::createFromArray($data);
     }
 
     /**

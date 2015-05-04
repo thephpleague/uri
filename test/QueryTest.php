@@ -183,10 +183,10 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider invalidQueryStrings
+     * @expectedException InvalidArgumentException
      */
     public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
     {
-        $this->setExpectedException('InvalidArgumentException', 'Data passed must be a valid string;');
         new Query($query);
     }
 }

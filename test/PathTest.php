@@ -125,17 +125,52 @@ class PathTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testPrepend()
+    /**
+     * @param $source
+     * @param $prepend
+     * @param $res
+     * @dataProvider prependData
+     */
+    public function testPrepend($source, $prepend, $res)
     {
-        $path    = new Path('/test/query.php');
-        $newPath = $path->prependWith('/master');
-        $this->assertSame('/master/test/query.php', $newPath->__toString());
+        $path    = new Path($source);
+        $newPath = $path->prependWith(new Path($prepend));
+        $this->assertSame($res, $newPath->__toString());
     }
 
-    public function testAppendEmptyPath()
+    public function prependData()
     {
-        $expected = '/shop/checkout/';
-        $this->assertSame($expected, (string) (new Path())->appendWith($expected));
+        return [
+            ['/test/query.php', '/master', '/master/test/query.php'],
+            ['/test/query.php', '/master/', '/master/test/query.php'],
+            ['/test/query.php', '', '/test/query.php'],
+            ['/test/query.php', '/', '/test/query.php'],
+        ];
+    }
+
+    /**
+     * @param $source
+     * @param $append
+     * @param $res
+     * @dataProvider appendData
+     */
+    public function testAppend($source, $append, $res)
+    {
+        $path    = new Path($source);
+        $newPath = $path->appendWith(new Path($append));
+        $this->assertSame($res, $newPath->__toString());
+    }
+
+    public function appendData()
+    {
+        return [
+            ['/test/', '/master/', '/test/master/'],
+            ['/test/', '/master',  '/test/master'],
+            ['/test',  'master',   '/test/master'],
+            ['test',   'master',   'test/master'],
+            ['test',   '/master',  'test/master'],
+            ['test',   'master/',  'test/master/'],
+        ];
     }
 
     /**
@@ -173,7 +208,7 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testReplaceWith($raw, $input, $offset, $expected)
     {
         $path = new Path($raw);
-        $newPath = $path->replaceWith($input, $offset);
+        $newPath = $path->replaceWith(new Path($input), $offset);
         $this->assertSame($expected, $newPath->get());
     }
 
@@ -182,6 +217,8 @@ class PathTest extends PHPUnit_Framework_TestCase
         return [
             ['/path/to/the/sky', 'shop', 0, '/shop/to/the/sky'],
             ['', 'shoki', 0, 'shoki'],
+            ['', 'shoki/', 0, 'shoki'],
+            ['', '/shoki/', 0, 'shoki'],
             ['/path/to/paradise', '::1', 42, '/path/to/paradise'],
         ];
     }

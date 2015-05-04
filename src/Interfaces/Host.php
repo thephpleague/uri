@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Host extends Segment
+interface Host extends SegmentComponent
 {
     /**
      * Return a host label
@@ -29,6 +29,13 @@ interface Host extends Segment
      * @return mixed
      */
     public function getLabel($offset, $default = null);
+
+    /**
+     * Tells wether the current object is a full qualified domain name or not
+     *
+     * @return bool
+     */
+    public function isAbsolute();
 
     /**
      * Tell whether the host is an IP

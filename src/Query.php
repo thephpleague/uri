@@ -201,21 +201,22 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function mergeWith($data)
+    public function without(array $offsets)
     {
-        if ($data instanceof Traversable) {
-            $data = iterator_to_array($data, true);
+        $offsets = array_unique($offsets);
+        $data    = $this->data;
+        foreach ($offsets as $offset) {
+            unset($data[$offset]);
         }
 
-        if (! is_array($data)) {
-            $data = $this->validate($data);
-        }
+        return static::createFromArray($data);
+    }
 
-        return new static(http_build_query(
-            array_merge($this->data, $data),
-            '',
-            '&',
-            PHP_QUERY_RFC3986
-        ));
+    /**
+     * {@inheritdoc}
+     */
+    public function mergeWith(Interfaces\Query $query)
+    {
+        return static::createFromArray(array_merge($this->data, $query->data));
     }
 }

@@ -13,6 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
+use League\Url\Interfaces;
 use League\Url\Util;
 
 /**
@@ -21,12 +22,24 @@ use League\Url\Util;
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractSegmentComponent
+abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
 {
     /**
      * Trait for Collection type Component
      */
     use Util\CollectionComponent;
+
+    /**
+     * New Instance of Path
+     *
+     * @param string $str the path
+     */
+    public function __construct($str = null)
+    {
+        $this->init($str);
+    }
+
+    abstract protected function init($str);
 
     /**
      * {@inheritdoc}

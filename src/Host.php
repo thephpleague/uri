@@ -47,7 +47,7 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
      *
      * @param string $str the host
      */
-    public function __construct($str = null)
+    protected function init($str)
     {
         $str = $this->validateString($str);
         if ('.' == mb_substr($str, 0, 1)) {
@@ -71,12 +71,12 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
      */
     public static function createFromArray($data, $is_absolute = false)
     {
-        $host = implode(static::$delimiter, static::validateIterator($data));
+        $component = implode(static::$delimiter, static::validateIterator($data));
         if ($is_absolute) {
-            $host .= static::$delimiter;
+            $component = $component.static::$delimiter;
         }
 
-        return new static($host);
+        return new static($component);
     }
 
     /**

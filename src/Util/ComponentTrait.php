@@ -19,10 +19,15 @@ use League\Url\Interfaces\Component;
  * A trait with common method for Component
  *
  * @package League.url
- * @since  4.0.0
+ * @since 4.0.0
  */
 trait ComponentTrait
 {
+    /**
+     * {@inheritdoc}
+     */
+    public abstract function getUriComponent();
+
     /**
      * validate a string
      *

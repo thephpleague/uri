@@ -58,7 +58,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
      *
      * @param string $str the path
      */
-    public function __construct($str = null)
+    protected function init($str)
     {
         $str = $this->validateString($str);
         if (preg_match(',^/+$,', $str)) {

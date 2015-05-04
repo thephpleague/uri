@@ -127,14 +127,6 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function normalize()
     {
         $current = $this->__toString();

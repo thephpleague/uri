@@ -477,12 +477,8 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function resolve($url)
+    public function resolve(UriInterface $url)
     {
-        if (empty($url)) {
-            return $this->normalize();
-        }
-
         $url = static::createFromUrl((string) $url);
         if (! is_null($url->scheme->get())) {
             return $url->normalize();

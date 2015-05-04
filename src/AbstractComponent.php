@@ -14,6 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
+use League\Url\Util;
 
 /**
  * An abstract class to ease component creation
@@ -29,6 +30,11 @@ abstract class AbstractComponent
      * @var string
      */
     protected $data;
+
+    /**
+     * Trait for ComponentTrait method
+     */
+    use Util\ComponentTrait;
 
     /**
      * new instance
@@ -91,35 +97,6 @@ abstract class AbstractComponent
     public function getUriComponent()
     {
         return $this->__toString();
-    }
-
-    /**
-     * validate a string
-     *
-     * @param  mixed $str
-     *
-     * @throws InvalidArgumentException if the submitted data can not be converted to string
-     *
-     * @return string
-     */
-    protected function validateString($str)
-    {
-        if (is_null($str) || is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
-            return trim($str);
-        }
-
-        throw new InvalidArgumentException(sprintf(
-            'Data passed must be a valid string; received "%s"',
-            (is_object($str) ? get_class($str) : gettype($str))
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(Component $component)
-    {
-        return $component->getUriComponent() == $this->getUriComponent();
     }
 
     /**

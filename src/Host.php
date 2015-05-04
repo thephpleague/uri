@@ -15,7 +15,6 @@ namespace League\Url;
 use InvalidArgumentException;
 use League\Url\Interfaces;
 use League\Url\Util;
-use Traversable;
 
 /**
 * A class to manipulate URL Host component
@@ -72,15 +71,7 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
      */
     public static function createFromArray($data, $is_absolute = false)
     {
-        if ($data instanceof Traversable) {
-            $data = iterator_to_array($data, false);
-        }
-
-        if (! is_array($data)) {
-            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
-        }
-
-        $host = implode(static::$delimiter, $data);
+        $host = implode(static::$delimiter, static::validateIterator($data));
         if ($is_absolute) {
             $host .= static::$delimiter;
         }

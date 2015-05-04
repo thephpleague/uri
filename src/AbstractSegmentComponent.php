@@ -12,9 +12,8 @@
 */
 namespace League\Url;
 
-use ArrayIterator;
 use InvalidArgumentException;
-use Traversable;
+use League\Url\Util;
 
 /**
  * An abstract class to ease SegmentComponent object creation
@@ -22,21 +21,20 @@ use Traversable;
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractSegmentComponent extends AbstractComponent
+abstract class AbstractSegmentComponent
 {
     /**
-     * The Component Data
-     *
-     * @var array
+     * Trait for Collection type Component
      */
-    protected $data = [];
+    use Util\CollectionComponent;
 
     /**
-     * is the SegmentComponent absolute
-     *
-     * @var boolean
+     * {@inheritdoc}
      */
-    protected $is_absolute = false;
+    public function withValue($value)
+    {
+        return new static($value);
+    }
 
     /**
      * {@inheritdoc}
@@ -44,38 +42,6 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     public function isAbsolute()
     {
         return $this->is_absolute;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOffset($offset)
-    {
-        return array_key_exists($offset, $this->data);
     }
 
     /**
@@ -105,17 +71,31 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     }
 
     /**
+     * return a new Host instance from an Array or a traversable object
+     *
+     * @param \Traversable|array $data
+     * @param bool               $is_absolute
+     *
+     * @throws \InvalidArgumentException If $data is invalid
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $is_absolute = false)
+    {
+        $path = implode(static::$delimiter, static::validateIterator($data));
+        if ($is_absolute) {
+            $path = static::$delimiter.$path;
+        }
+
+        return new static($path);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function prepend(Interfaces\SegmentComponent $component)
     {
-        $source = $this->toArray();
-        $dest   = $component->toArray();
-        if (count($dest) && '' == $dest[count($dest) - 1]) {
-            array_pop($dest);
-        }
-
-        return static::createFromArray(array_merge($dest, $source), $this->is_absolute);
+        return static::createFromArray($component, $this->is_absolute)->append($this);
     }
 
     /**
@@ -134,18 +114,5 @@ abstract class AbstractSegmentComponent extends AbstractComponent
         $dest = array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1));
 
         return static::createFromArray($dest, $this->is_absolute);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function without(array $offsets)
-    {
-        $data = $this->data;
-        foreach (array_unique($offsets) as $offset) {
-            unset($data[$offset]);
-        }
-
-        return static::createFromArray($data, $this->is_absolute);
     }
 }

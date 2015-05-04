@@ -15,7 +15,6 @@ namespace League\Url;
 use InvalidArgumentException;
 use League\Url\Interfaces;
 use LogicException;
-use Traversable;
 
 /**
 * A class to manipulate URL Path component
@@ -74,35 +73,6 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
         if ($append_delimiter) {
             $this->data[] = '';
         }
-    }
-
-    /**
-     * return a new Host instance from an Array or a traversable object
-     *
-     * @param \Traversable|array $data
-     * @param bool               $is_absolute
-     *
-     * @throws \InvalidArgumentException If $data is invalid
-     *
-     * @return static
-     */
-    public static function createFromArray($data, $is_absolute = false)
-    {
-        if ($data instanceof Traversable) {
-            $data = iterator_to_array($data, false);
-        }
-
-        if (! is_array($data)) {
-            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
-        }
-
-        $path = '';
-        if ($is_absolute) {
-            $path = static::$delimiter;
-        }
-        $path .= implode(static::$delimiter, $data);
-
-        return new static($path);
     }
 
     /**

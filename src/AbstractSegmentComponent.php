@@ -13,6 +13,8 @@
 namespace League\Url;
 
 use ArrayIterator;
+use InvalidArgumentException;
+use Traversable;
 
 /**
  * An abstract class to ease SegmentComponent object creation
@@ -30,23 +32,11 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     protected $data = [];
 
     /**
-     * Is the SegmentComponentComponent absolute
+     * is the SegmentComponent absolute
      *
-     * @var bool
+     * @var boolean
      */
     protected $is_absolute = false;
-
-    /**
-     * return a new SegmentComponentComponet object from an Array or a traversable object
-     *
-     * @param \Traversable|array $data
-     * @param bool               $is_absolute
-     *
-     * @throws \InvalidArgumentException If $data is invalid
-     *
-     * @return static
-     */
-    abstract public static function createFromArray($data, $is_absolute = false);
 
     /**
      * {@inheritdoc}
@@ -103,10 +93,10 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function append(Interfaces\SegmentComponent $value)
+    public function append(Interfaces\SegmentComponent $component)
     {
         $source = $this->toArray();
-        $dest   = $value->toArray();
+        $dest   = $component->toArray();
         if (count($source) && '' == $source[count($source) - 1]) {
             array_pop($source);
         }
@@ -117,10 +107,10 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function prepend(Interfaces\SegmentComponent $value)
+    public function prepend(Interfaces\SegmentComponent $component)
     {
         $source = $this->toArray();
-        $dest   = $value->toArray();
+        $dest   = $component->toArray();
         if (count($dest) && '' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }
@@ -131,13 +121,13 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function replace(Interfaces\SegmentComponent $value, $offset)
+    public function replace(Interfaces\SegmentComponent $component, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return $this;
         }
         $source = $this->toArray();
-        $dest   = $value->toArray();
+        $dest   = $component->toArray();
         if ('' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }

@@ -104,6 +104,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
 
         return new static($path);
     }
+
     /**
      * {@inheritdoc}
      */

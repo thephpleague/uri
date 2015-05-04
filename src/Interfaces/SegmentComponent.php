@@ -52,30 +52,30 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
     /**
      * Append new data at the end of the component
      *
-     * @param SegmentComponent $value
+     * @param SegmentComponent $component
      *
      * @return static
      */
-    public function append(SegmentComponent $value);
+    public function append(SegmentComponent $component);
 
     /**
      * Prepend new data at the beginning of the component
      *
-     * @param SegmentComponent $value
+     * @param SegmentComponent $component
      *
      * @return static
      */
-    public function prepend(SegmentComponent $value);
+    public function prepend(SegmentComponent $component);
 
     /**
      * Replace data from the SegmentComponent and return a new SegmentComponent
      *
-     * @param SegmentComponent $value
+     * @param SegmentComponent $component
      * @param int              $offset
      *
      * @return static
      */
-    public function replace(SegmentComponent $value, $offset);
+    public function replace(SegmentComponent $component, $offset);
 
     /**
      * Remove the data corresponding to the offset

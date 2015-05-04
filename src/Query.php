@@ -100,30 +100,6 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function count()
-    {
-        return count($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function get()
     {
         if (empty($this->data)) {
@@ -161,6 +137,30 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
+    public function count()
+    {
+        return count($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->data;
@@ -169,13 +169,9 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function getParameter($offset, $default = null)
+    public function hasOffset($offset)
     {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
-        }
-
-        return $default;
+        return array_key_exists($offset, $this->data);
     }
 
     /**
@@ -193,9 +189,13 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function hasOffset($offset)
+    public function getParameter($offset, $default = null)
     {
-        return array_key_exists($offset, $this->data);
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
+        }
+
+        return $default;
     }
 
     /**
@@ -203,9 +203,8 @@ class Query extends AbstractComponent implements Interfaces\Query
      */
     public function without(array $offsets)
     {
-        $offsets = array_unique($offsets);
-        $data    = $this->data;
-        foreach ($offsets as $offset) {
+        $data = $this->data;
+        foreach (array_unique($offsets) as $offset) {
             unset($data[$offset]);
         }
 
@@ -215,7 +214,7 @@ class Query extends AbstractComponent implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function mergeWith(Interfaces\Query $query)
+    public function merge(Interfaces\Query $query)
     {
         return static::createFromArray(array_merge($this->data, $query->data));
     }

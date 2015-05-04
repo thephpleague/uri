@@ -168,7 +168,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
     {
         $current = $this->__toString();
         if (false === strpos($current, '.')) {
-            return clone $this;
+            return $this;
         }
 
         $input    = explode(static::$delimiter, $current);

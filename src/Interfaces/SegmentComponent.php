@@ -56,7 +56,7 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      *
      * @return static
      */
-    public function appendWith(SegmentComponent $value);
+    public function append(SegmentComponent $value);
 
     /**
      * Prepend new data at the beginning of the component
@@ -65,7 +65,7 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      *
      * @return static
      */
-    public function prependWith(SegmentComponent $value);
+    public function prepend(SegmentComponent $value);
 
     /**
      * Replace data from the SegmentComponent and return a new SegmentComponent
@@ -75,7 +75,7 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      *
      * @return static
      */
-    public function replaceWith(SegmentComponent $value, $offset);
+    public function replace(SegmentComponent $value, $offset);
 
     /**
      * Remove the data corresponding to the offset

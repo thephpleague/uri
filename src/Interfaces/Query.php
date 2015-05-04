@@ -32,16 +32,6 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function toArray();
 
     /**
-     * Return a value from the Query object
-     *
-     * @param string $offset     the parameter name
-     * @param mixed  $default if no key is found the default value to return
-     *
-     * @return mixed
-     */
-    public function getParameter($offset, $default = null);
-
-    /**
      * Return the query keys. If a value is specified
      * only the key for that value are returned
      *
@@ -61,6 +51,16 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function hasOffset($offset);
 
     /**
+     * Return a value from the Query object
+     *
+     * @param string $offset  the parameter name
+     * @param mixed  $default if no key is found the default value to return
+     *
+     * @return mixed
+     */
+    public function getParameter($offset, $default = null);
+
+    /**
      * Merge new data to the current Query object
      * and return a new modified Query object
      *
@@ -68,14 +68,14 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      *
      * @return static
      */
-    public function mergeWith(Query $query);
+    public function merge(Query $query);
 
     /**
      * Remove the data corresponding to the offset
      * from the object and return a new instance with
      * the modified data
      *
-     * @param  array $offsets
+     * @param array $offsets
      *
      * @return static
      */

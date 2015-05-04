@@ -56,7 +56,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $empty_query = new Query();
         $this->assertFalse($empty_query->sameValueAs($this->query));
-        $query = $empty_query->mergeWith($this->query);
+        $query = $empty_query->merge($this->query);
         $this->assertTrue($query->sameValueAs($this->query));
     }
 
@@ -67,7 +67,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testMergerWith($input, $expected)
     {
-        $query = $this->query->mergeWith($input);
+        $query = $this->query->merge($input);
         $this->assertSame($expected, (string) $query);
     }
 

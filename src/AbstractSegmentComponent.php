@@ -83,6 +83,14 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
+    public function hasOffset($offset)
+    {
+        return array_key_exists($offset, $this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function offsets($data = null)
     {
         if (is_null($data)) {
@@ -95,15 +103,7 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function hasOffset($offset)
-    {
-        return array_key_exists($offset, $this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appendWith(Interfaces\SegmentComponent $value)
+    public function append(Interfaces\SegmentComponent $value)
     {
         $source = $this->toArray();
         $dest   = $value->toArray();
@@ -117,7 +117,7 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function prependWith(Interfaces\SegmentComponent $value)
+    public function prepend(Interfaces\SegmentComponent $value)
     {
         $source = $this->toArray();
         $dest   = $value->toArray();
@@ -131,7 +131,7 @@ abstract class AbstractSegmentComponent extends AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function replaceWith(Interfaces\SegmentComponent $value, $offset)
+    public function replace(Interfaces\SegmentComponent $value, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return $this;
@@ -151,9 +151,8 @@ abstract class AbstractSegmentComponent extends AbstractComponent
      */
     public function without(array $offsets)
     {
-        $offsets = array_unique($offsets);
-        $data    = $this->data;
-        foreach ($offsets as $offset) {
+        $data = $this->data;
+        foreach (array_unique($offsets) as $offset) {
             unset($data[$offset]);
         }
 

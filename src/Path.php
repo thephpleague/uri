@@ -17,7 +17,7 @@ use League\Url\Interfaces;
 use LogicException;
 
 /**
-* A class to manipulate URL Path component
+* Value object representing a URL path component.
 *
 * @package League.url
 * @since 1.0.0
@@ -138,7 +138,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
             return $this;
         }
 
-        $input    = explode(static::$delimiter, $current);
+        $input = explode(static::$delimiter, $current);
         $new_path = '';
         if (static::$delimiter == $current[0]) {
             $new_path = static::$delimiter;

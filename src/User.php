@@ -15,7 +15,7 @@ namespace League\Url;
 use League\Url\Interfaces\Component;
 
 /**
-* A class to manipulate URL User component
+* Value object representing a URL user component.
 *
 * @package League.url
 * @since 1.0.0

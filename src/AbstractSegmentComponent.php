@@ -17,7 +17,7 @@ use League\Url\Interfaces;
 use League\Url\Util;
 
 /**
- * An abstract class to ease SegmentComponent object creation
+ * An abstract class to ease SegmentComponent object manipulation
  *
  * @package  League.url
  * @since  3.0.0
@@ -39,6 +39,11 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
         $this->init($str);
     }
 
+    /**
+     * Initiliaze the object data
+     *
+     * @param string $str the raw component string
+     */
     abstract protected function init($str);
 
     /**

@@ -420,11 +420,15 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        $scheme = $this->scheme->get();
+        $port = $this->port->get();
+        if (empty($port)) {
+            return true;
+        }
 
+        $scheme = $this->scheme->get();
         return isset(
             static::$standardPorts[$scheme],
-            static::$standardPorts[$scheme][$this->port->get()]
+            static::$standardPorts[$scheme][$port]
         );
     }
 

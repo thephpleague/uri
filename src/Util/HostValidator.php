@@ -126,7 +126,7 @@ trait HostValidator
      *
      * @param  string $str
      *
-     * @throws InvalidArgumentException If the string failed to be a valid hostname
+     * @throws \InvalidArgumentException If the string failed to be a valid hostname
      *
      * @return array
      */
@@ -150,8 +150,14 @@ trait HostValidator
         }, $labels);
     }
 
+    /**
+     * set the FQDN property
+     *
+     * @param string $str
+     *
+     * @return string
+     */
     abstract protected function setIsAbsolute($str);
-
 
     /**
      * Convert to lowercase a string without modifying unicode characters
@@ -179,7 +185,7 @@ trait HostValidator
      *
      * @param array $labels found host labels
      *
-     * @throws InvalidArgumentException If the validation fails
+     * @throws \InvalidArgumentException If the validation fails
      */
     protected function assertValidHost(array $labels)
     {
@@ -201,7 +207,7 @@ trait HostValidator
      *
      * @param  array $data Host labels
      *
-     * @throws InvalidArgumentException If the validation fails
+     * @throws \InvalidArgumentException If the validation fails
      */
     protected function isValidLength(array $data)
     {
@@ -219,7 +225,7 @@ trait HostValidator
      *
      * @param  array $data Host SegmentComponent
      *
-     * @throws InvalidArgumentException If the validation fails
+     * @throws \InvalidArgumentException If the validation fails
      */
     protected function isValidContent(array $data)
     {
@@ -231,7 +237,11 @@ trait HostValidator
     }
 
     /**
-     * {@inheritdoc}
+     * Validated the Host Label Count
+     *
+     * @param  array $data Host SegmentComponent
+     *
+     * @throws \InvalidArgumentException If the validation fails
      */
     abstract protected function isValidLabelsCount(array $data = []);
 }

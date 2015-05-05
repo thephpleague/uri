@@ -80,7 +80,11 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     }
 
     /**
-     * {@inheritdoc}
+     * validate the submitted data
+     *
+     * @param string $str
+     *
+     * @return array
      */
     protected function validate($str)
     {
@@ -130,7 +134,7 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
      *
      * @param  array $data Host SegmentComponent
      *
-     * @throws InvalidArgumentException If the validation fails
+     * @throws \InvalidArgumentException If the validation fails
      */
     protected function isValidLabelsCount(array $data = [])
     {

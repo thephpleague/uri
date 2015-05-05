@@ -48,7 +48,7 @@ trait ServerInfo
      *
      * @param array $server the environment server typically $_SERVER
      *
-     * @throws new InvalidArgumentException If the host can not be detected
+     * @throws \InvalidArgumentException If the host can not be detected
      *
      * @return string
      */

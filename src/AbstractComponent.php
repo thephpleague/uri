@@ -54,7 +54,7 @@ abstract class AbstractComponent
      *
      * @param  string $data
      *
-     * @throws InvalidArgumentException If the supplied data is invalid
+     * @throws \InvalidArgumentException If the supplied data is invalid
      *
      * @return string
      */

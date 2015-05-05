@@ -76,7 +76,11 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
     }
 
     /**
-     * {@inheritdoc}
+     * validate the submitted data
+     *
+     * @param string $str
+     *
+     * @return array
      */
     protected function validate($data)
     {

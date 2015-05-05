@@ -132,10 +132,7 @@ trait HostValidator
      */
     protected function validateStringHost($str)
     {
-        if ('.' == mb_substr($str, -1, 1)) {
-            $this->is_absolute = true;
-            $str = mb_substr($str, 0, -1);
-        }
+        $str = $this->setIsAbsolute($str);
 
         $labels = array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
@@ -152,6 +149,9 @@ trait HostValidator
             return $this->decodeLabel(substr($label, strlen(static::PREFIX)));
         }, $labels);
     }
+
+    abstract protected function setIsAbsolute($str);
+
 
     /**
      * Convert to lowercase a string without modifying unicode characters
@@ -231,19 +231,7 @@ trait HostValidator
     }
 
     /**
-     * Validated the Host Label Count
-     *
-     * @param  array $data Host SegmentComponent
-     *
-     * @throws InvalidArgumentException If the validation fails
+     * {@inheritdoc}
      */
-    protected function isValidLabelsCount(array $data = [])
-    {
-        $labels       = array_merge($this->data, $data);
-        $count_labels = count($labels);
-        $res = $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
-        if (! $res) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
-        }
-    }
+    abstract protected function isValidLabelsCount(array $data = []);
 }

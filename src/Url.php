@@ -238,8 +238,12 @@ class Url implements Interfaces\Url
      */
     public function withScheme($scheme)
     {
-        $clone         = clone $this;
-        $clone->scheme = $this->scheme->withValue($scheme);
+        $scheme = $this->scheme->withValue($scheme);
+        if ($this->scheme->sameValueAs($scheme)) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->scheme = $scheme;
 
         return $clone;
     }
@@ -278,9 +282,14 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
+        $user = $this->user->withValue($user);
+        $pass = $this->pass->withValue($pass);
+        if ($this->user->sameValueAs($user) && ($this->pass->sameValueAs($pass))) {
+            return $this;
+        }
         $clone       = clone $this;
-        $clone->user = $this->user->withValue($user);
-        $clone->pass = $this->pass->withValue($pass);
+        $clone->user = $user;
+        $clone->pass = $pass;
 
         return $clone;
     }
@@ -298,8 +307,12 @@ class Url implements Interfaces\Url
      */
     public function withHost($host)
     {
+        $host = $this->host->withValue($host);
+        if ($this->host->sameValueAs($host)) {
+            return $this;
+        }
         $clone       = clone $this;
-        $clone->host = $this->host->withValue($host);
+        $clone->host = $host;
 
         return $clone;
     }
@@ -317,8 +330,12 @@ class Url implements Interfaces\Url
      */
     public function withPort($port)
     {
+        $port = $this->port->withValue($port);
+        if ($this->port->sameValueAs($port)) {
+            return $this;
+        }
         $clone       = clone $this;
-        $clone->port = $this->port->withValue($port);
+        $clone->port = $port;
 
         return $clone;
     }
@@ -336,8 +353,12 @@ class Url implements Interfaces\Url
      */
     public function withPath($path)
     {
+        $path = $this->path->withValue($path);
+        if ($this->path->sameValueAs($path)) {
+            return $this;
+        }
         $clone       = clone $this;
-        $clone->path = $this->path->withValue($path);
+        $clone->path = $path;
 
         return $clone;
     }
@@ -347,8 +368,12 @@ class Url implements Interfaces\Url
      */
     public function normalize()
     {
+        $path = $this->path->normalize();
+        if ($this->path->sameValueAs($path)) {
+            return $this;
+        }
         $clone       = clone $this;
-        $clone->path = $this->path->normalize();
+        $clone->path = $path;
 
         return $clone;
     }
@@ -366,8 +391,12 @@ class Url implements Interfaces\Url
      */
     public function withQuery($query)
     {
+        $query = $this->query->withValue($query);
+        if ($this->query->sameValueAs($query)) {
+            return $this;
+        }
         $clone        = clone $this;
-        $clone->query = $this->query->withValue($query);
+        $clone->query = $query;
 
         return $clone;
     }
@@ -385,8 +414,12 @@ class Url implements Interfaces\Url
      */
     public function withFragment($fragment)
     {
-        $clone           = clone $this;
-        $clone->fragment = $this->fragment->withValue($fragment);
+        $fragment = $this->fragment->withValue($fragment);
+        if ($this->fragment->sameValueAs($fragment)) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->fragment = $fragment;
 
         return $clone;
     }

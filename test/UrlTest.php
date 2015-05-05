@@ -51,13 +51,24 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testImmutabilityAccess()
     {
-        $this->assertEquals($this->url, $this->url->withScheme('http'));
-        $this->assertEquals($this->url, $this->url->withUserInfo('login', 'pass'));
-        $this->assertEquals($this->url, $this->url->withHost('secure.example.com'));
-        $this->assertEquals($this->url, $this->url->withPort(443));
-        $this->assertEquals($this->url, $this->url->withPath('/test/query.php'));
-        $this->assertEquals($this->url, $this->url->withQuery('kingkong=toto'));
-        $this->assertEquals($this->url, $this->url->withFragment('doc3'));
+        $this->assertSame($this->url, $this->url->withScheme('http'));
+        $this->assertSame($this->url, $this->url->withUserInfo('login', 'pass'));
+        $this->assertSame($this->url, $this->url->withHost('secure.example.com'));
+        $this->assertSame($this->url, $this->url->withPort(443));
+        $this->assertSame($this->url, $this->url->withPath('/test/query.php'));
+        $this->assertSame($this->url, $this->url->withQuery('kingkong=toto'));
+        $this->assertSame($this->url, $this->url->withFragment('doc3'));
+    }
+
+    public function testImmutabilityAccess2()
+    {
+        $this->assertNotEquals($this->url, $this->url->withScheme('ftp'));
+        $this->assertNotEquals($this->url, $this->url->withUserInfo('login', null));
+        $this->assertNotEquals($this->url, $this->url->withHost('shop.example.com'));
+        $this->assertNotEquals($this->url, $this->url->withPort(81));
+        $this->assertNotEquals($this->url, $this->url->withPath('/test/file.php'));
+        $this->assertNotEquals($this->url, $this->url->withQuery('kingkong=tata'));
+        $this->assertNotEquals($this->url, $this->url->withFragment('doc2'));
     }
 
     public function testGetAuthority()

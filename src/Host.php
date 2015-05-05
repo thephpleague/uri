@@ -126,6 +126,41 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     }
 
     /**
+     * Validated the Host Label Count
+     *
+     * @param  array $data Host SegmentComponent
+     *
+     * @throws InvalidArgumentException If the validation fails
+     */
+    protected function isValidLabelsCount(array $data = [])
+    {
+        $labels       = array_merge($this->data, $data);
+        $count_labels = count($labels);
+        $res = $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
+        if (! $res) {
+            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
+        }
+    }
+
+    /**
+     * set the FQDN property
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    protected function setIsAbsolute($str)
+    {
+        $this->is_absolute = false;
+        if ('.' == mb_substr($str, -1, 1)) {
+            $this->is_absolute = true;
+            $str = mb_substr($str, 0, -1);
+        }
+
+        return $str;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __toString()

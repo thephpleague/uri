@@ -133,6 +133,29 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test Punycode support with IP address
+     *
+     * @param string $unicode Unicode Hostname
+     * @param string $ascii   Ascii Hostname
+     * @dataProvider hostnamesIpProvider
+     */
+    public function testUnicodeWithIP($ip, $res)
+    {
+        $host = new Host($ip);
+        $this->assertSame($res, $host->toAscii());
+        $this->assertSame($res, $host->toUnicode());
+        $this->assertSame($res, $host->__toString());
+    }
+
+    public function hostnamesIpProvider()
+    {
+        return [
+            ['::1', '[::1]'],
+            ['127.0.0.1', '127.0.0.1'],
+        ];
+    }
+
+    /**
      * Test Countable
      *
      * @param $host

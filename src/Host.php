@@ -17,7 +17,7 @@ use League\Url\Interfaces;
 use League\Url\Util;
 
 /**
-* A class to manipulate URL Host component
+* Value object representing a URL host component.
 *
 * @package League.url
 * @since 1.0.0
@@ -50,10 +50,6 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     protected function init($str)
     {
         $str = $this->validateString($str);
-        if ('.' == mb_substr($str, 0, 1)) {
-            throw new InvalidArgumentException('Malformed Host');
-        }
-
         if (! empty($str)) {
             $this->data = $this->validate($str);
         }
@@ -132,7 +128,7 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     /**
      * Validated the Host Label Count
      *
-     * @param  array $data Host SegmentComponent
+     * @param array $data Host SegmentComponent
      *
      * @throws \InvalidArgumentException If the validation fails
      */
@@ -190,6 +186,11 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
      */
     public function toAscii()
     {
-        return implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
+        $str = implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
+        if ($this->host_as_ipv6) {
+            return "[$str]";
+        }
+
+        return $str;
     }
 }

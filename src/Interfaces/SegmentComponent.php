@@ -16,7 +16,7 @@ use Countable;
 use IteratorAggregate;
 
 /**
- * An interface for URL Query component
+ * Value object representing a URL Segment like component.
  *
  * @package  League.url
  * @since  4.0.0
@@ -31,57 +31,71 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
     public function toArray();
 
     /**
-     * Return the component keys. If a value is specified
-     * only the key for that value are returned
+     * Returns the component offsets.
      *
-     * @param null|string $data
+     * Returns the component offsets. If a specific value is specified
+     * only the offsets associated with the given value will be returned
+     *
+     * @param mixed $data
      *
      * @return array
      */
     public function offsets($data = null);
 
     /**
-     * Tell whether the given offset exists in the SegmentComponent object
+     * Returns whether the given offset exists in the instance
      *
-     * @param int $offset
+     * @param string $offset
      *
      * @return bool
      */
     public function hasOffset($offset);
 
     /**
-     * Append new data at the end of the component
+     * Returns an instance with the specified component appended
      *
-     * @param SegmentComponent $component
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the appended data
+     *
+     * @param SegmentComponent $component the component to append
      *
      * @return static
      */
     public function append(SegmentComponent $component);
 
     /**
-     * Prepend new data at the beginning of the component
+     * Returns an instance with the specified component prepended
      *
-     * @param SegmentComponent $component
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the prepended data
+     *
+     * @param SegmentComponent $component the component to prepend
      *
      * @return static
      */
     public function prepend(SegmentComponent $component);
 
     /**
-     * Replace data from the SegmentComponent and return a new SegmentComponent
+     * Returns an instance with the modified segment
      *
-     * @param SegmentComponent $component
-     * @param int              $offset
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the replaced data
+     *
+     * @param SegmentComponent $component the component added
+     * @param int              $offset    the label offset to remove and replace by
+     *                                    the given component
      *
      * @return static
      */
     public function replace(SegmentComponent $component, $offset);
 
     /**
-     * Remove the data corresponding to the offset
-     * from the object and return a new SegmentComponent
+     * Returns an instance without the specified offsets
      *
-     * @param  array $offsets
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component
+     *
+     * @param array $offsets a list of segment offset to be removed
      *
      * @return static
      */

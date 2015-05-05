@@ -57,6 +57,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $empty_query = new Query();
         $this->assertFalse($empty_query->sameValueAs($this->query));
         $query = $empty_query->merge($this->query);
+        $this->assertInstanceof('League\Url\Interfaces\Query', $query);
         $this->assertTrue($query->sameValueAs($this->query));
     }
 
@@ -65,7 +66,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      * @param $expected
      * @dataProvider validMergeValue
      */
-    public function testMergerWith($input, $expected)
+    public function testMerge($input, $expected)
     {
         $query = $this->query->merge($input);
         $this->assertSame($expected, (string) $query);

@@ -47,7 +47,7 @@ class Url implements Interfaces\Url
     protected $pass;
 
     /**
-     * Host Component
+     * Interfaces\Host Component
      *
      * @var Host
      */
@@ -61,14 +61,14 @@ class Url implements Interfaces\Url
     protected $port;
 
     /**
-     * Path Component
+     * Interfaces\Path Component
      *
      * @var Path
      */
     protected $path;
 
     /**
-     * Query Component
+     * Interfaces\Query Component
      *
      * @var Query
      */
@@ -223,90 +223,9 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function withScheme($scheme)
+    public function isAbsolute()
     {
-        $clone         = clone $this;
-        $clone->scheme = $this->scheme->withValue($scheme);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withUserInfo($user, $pass = null)
-    {
-        $clone       = clone $this;
-        $clone->user = $this->user->withValue($user);
-        $clone->pass = $this->pass->withValue($pass);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withHost($host)
-    {
-        $clone       = clone $this;
-        $clone->host = $this->host->withValue($host);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPort($port)
-    {
-        $clone       = clone $this;
-        $clone->port = $this->port->withValue($port);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPath($path)
-    {
-        $clone       = clone $this;
-        $clone->path = $this->path->withValue($path);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withQuery($query)
-    {
-        $clone        = clone $this;
-        $clone->query = $this->query->withValue($query);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withFragment($fragment)
-    {
-        $clone           = clone $this;
-        $clone->fragment = $this->fragment->withValue($fragment);
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize()
-    {
-        $clone       = clone $this;
-        $clone->path = $this->path->normalize();
-
-        return $clone;
+        return ! is_null($this->scheme->get());
     }
 
     /**
@@ -315,6 +234,17 @@ class Url implements Interfaces\Url
     public function getScheme()
     {
         return clone $this->scheme;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withScheme($scheme)
+    {
+        $clone         = clone $this;
+        $clone->scheme = $this->scheme->withValue($scheme);
+
+        return $clone;
     }
 
     /**
@@ -336,9 +266,45 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function getUserInfo()
+    {
+        $info = $this->user->getUriComponent();
+        if (empty($info)) {
+            return '';
+        }
+
+        return $info.$this->pass->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withUserInfo($user, $pass = null)
+    {
+        $clone       = clone $this;
+        $clone->user = $this->user->withValue($user);
+        $clone->pass = $this->pass->withValue($pass);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHost()
     {
         return clone $this->host;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
+    {
+        $clone       = clone $this;
+        $clone->host = $this->host->withValue($host);
+
+        return $clone;
     }
 
     /**
@@ -352,9 +318,42 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function withPort($port)
+    {
+        $clone       = clone $this;
+        $clone->port = $this->port->withValue($port);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPath()
     {
         return clone $this->path;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        $clone       = clone $this;
+        $clone->path = $this->path->withValue($path);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize()
+    {
+        $clone       = clone $this;
+        $clone->path = $this->path->normalize();
+
+        return $clone;
     }
 
     /**
@@ -368,6 +367,17 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function withQuery($query)
+    {
+        $clone        = clone $this;
+        $clone->query = $this->query->withValue($query);
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFragment()
     {
         return clone $this->fragment;
@@ -376,14 +386,12 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function getUserInfo()
+    public function withFragment($fragment)
     {
-        $info = $this->user->getUriComponent();
-        if (empty($info)) {
-            return $info;
-        }
+        $clone           = clone $this;
+        $clone->fragment = $this->fragment->withValue($fragment);
 
-        return $info.$this->pass->getUriComponent();
+        return $clone;
     }
 
     /**
@@ -423,19 +431,6 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function getBaseUrl()
-    {
-        $auth = $this->getAuthority();
-        if ('' != $auth) {
-            $auth = '//'.$auth;
-        }
-
-        return $this->scheme->getUriComponent().$auth;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         $host = $this->host->__toString();
@@ -460,7 +455,12 @@ class Url implements Interfaces\Url
      */
     public function __toString()
     {
-        return $this->getBaseUrl()
+        $auth = $this->getAuthority();
+        if ('' != $auth) {
+            $auth = '//'.$auth;
+        }
+
+        return $this->scheme->getUriComponent().$auth
             .$this->path->getUriComponent()
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
@@ -479,26 +479,26 @@ class Url implements Interfaces\Url
      */
     public function resolve(UriInterface $url)
     {
-        $url = static::createFromUrl((string) $url);
-        if (! is_null($url->scheme->get())) {
-            return $url->normalize();
+        $rel = static::createFromUrl($url);
+        if ($rel->isAbsolute()) {
+            return $rel->normalize();
         }
 
-        $auth = $url->getAuthority();
+        $auth = $rel->getAuthority();
         if (! empty($auth) && $auth != $this->getAuthority()) {
-            return $url->withScheme($this->scheme)->normalize();
+            return $rel->withScheme($this->scheme)->normalize();
         }
 
-        $final = $this->withFragment($url->fragment);
-        if ('' != $url->path->get()) {
-            return $this->resolvePath($final, $url);
+        $res = $this->withFragment($rel->fragment);
+        if ('' != $rel->path->get()) {
+            return $this->resolvePath($res, $rel);
         }
 
-        if ('' != $url->query->get()) {
-            return $final->withQuery($url->query)->normalize();
+        if ('' != $rel->query->get()) {
+            return $res->withQuery($rel->query)->normalize();
         }
 
-        return $final->normalize();
+        return $res->normalize();
     }
 
     /**

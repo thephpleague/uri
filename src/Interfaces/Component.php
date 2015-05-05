@@ -13,7 +13,7 @@
 namespace League\Url\Interfaces;
 
 /**
- * A common interface for URL components
+ * Value object representing simple URL component.
  *
  * @package  League.url
  * @since  4.0.0
@@ -21,28 +21,29 @@ namespace League\Url\Interfaces;
 interface Component
 {
     /**
-     * Get the component raw data. Can be null
+     * Returns the component raw data. Can be null
      *
      * @return null|string
      */
     public function get();
 
     /**
-     * Return the component string representation
+     * Returns the component string representation
      *
      * @return string
      */
     public function __toString();
 
     /**
-     * Return the component string representation with its optional delimiter
+     * Returns the component URL string representation
+     * with its optional URL delimiters
      *
      * @return string
      */
     public function getUriComponent();
 
     /**
-     * Tells whether two component represent the same value
+     * Returns whether two component represent the same value
      * The Comparaison is based on the getUriComponent method
      *
      * @param Component $component
@@ -52,7 +53,10 @@ interface Component
     public function sameValueAs(Component $component);
 
     /**
-     * Returns a new object with the given value
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
      *
      * @param string $value
      *

@@ -13,7 +13,7 @@
 namespace League\Url\Interfaces;
 
 /**
- * An interface for URL Path component
+ * Value object representing a URL Path component.
  *
  * @package  League.url
  * @since  4.0.0
@@ -21,50 +21,58 @@ namespace League\Url\Interfaces;
 interface Path extends SegmentComponent
 {
     /**
-     * Return a new Path interface normalized
-     * by removing do SegmentComponent
+     * Returns an instance with the path normalized
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * the dot segment.
      *
      * @return static
      */
     public function normalize();
 
     /**
-     * Tells wether the current path is absolute or relative
+     * Returns whether or not the path is absolute or relative
      *
      * @return bool
      */
     public function isAbsolute();
 
     /**
-     * Return a Path SegmentComponent
+     * Retrieves a single path segment.
      *
-     * @param string $offset     the parameter name
-     * @param mixed  $default if no key is found the default value to return
+     * Retrieves a single path segment. If the segment offset has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the segment offset
+     * @param mixed  $default Default value to return if the offset does not exist.
      *
      * @return mixed
      */
     public function getSegment($offset, $default = null);
 
     /**
-     * Gets the basename of the path
+     * Returns the path basename
      *
      * @return string
      */
     public function getBasename();
 
     /**
-     * Gets the path extension of the basename
+     * Returns the basename extension
      *
      * @return string
      */
     public function getExtension();
 
     /**
-     * Return a new Path object with a modified extension
-     * for the basename
+     * Returns an instance with the specified basename extension
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the extension basename modified.
      *
      * @param string $ext the new extension
-     *                     can preceeded with or without the dot (.) character
+     *                    can preceeded with or without the dot (.) character
      *
      * @throws \LogicException If the basename is empty
      *

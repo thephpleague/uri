@@ -13,7 +13,7 @@
 namespace League\Url\Interfaces;
 
 /**
- * An interface for URL Host component
+ * Value object representing a URL Host component.
  *
  * @package  League.url
  * @since  4.0.0
@@ -21,52 +21,55 @@ namespace League\Url\Interfaces;
 interface Host extends SegmentComponent
 {
     /**
-     * Return a host label
+     * Retrieves a single host label.
      *
-     * @param string $offset     the parameter name
-     * @param mixed  $default if no offset is found the default value to return
+     * Retrieves a single host label. If the label offset has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the label offset
+     * @param mixed  $default Default value to return if the offset does not exist.
      *
      * @return mixed
      */
     public function getLabel($offset, $default = null);
 
     /**
-     * Return the unicode string representation of a host
+     * Returns the unicode string representation of a host
      *
      * @return string
      */
     public function toUnicode();
 
     /**
-     * Return the ascii string representation of a host
+     * Returns the ascii string representation of a host
      *
      * @return string
      */
     public function toAscii();
 
     /**
-     * Tells wether the current object is a full qualified domain name or not
+     * Returns whether or not the host is a full qualified domain name
      *
      * @return bool
      */
     public function isAbsolute();
 
     /**
-     * Tell whether the host is an IP
+     * Returns whether or not the host is an IP address
      *
      * @return bool
      */
     public function isIp();
 
     /**
-     * Tell whether the host is an IPv4
+     * Returns whether or not the host is an IPv4 address
      *
      * @return bool
      */
     public function isIpv4();
 
     /**
-     * Tell whether the host is an IPv6
+     * Returns whether or not the host is an IPv6 address
      *
      * @return bool
      */

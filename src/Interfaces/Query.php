@@ -17,7 +17,7 @@ use IteratorAggregate;
 use JsonSerializable;
 
 /**
- * An interface for URL Query component
+ * Value object representing a URL Query component.
  *
  * @package  League.url
  * @since  4.0.0
@@ -32,8 +32,8 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function toArray();
 
     /**
-     * Return the query keys. If a value is specified
-     * only the key for that value are returned
+     * Returns the query parameters. If a specific value is specified
+     * only the parameters associated with the given value will be returned
      *
      * @param mixed $data
      *
@@ -42,7 +42,7 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function offsets($data = null);
 
     /**
-     * Tell whether the given offset exists in the Query object
+     * Returns whether the given parameter exists in the Query object
      *
      * @param string $offset
      *
@@ -51,31 +51,37 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function hasOffset($offset);
 
     /**
-     * Return a value from the Query object
+     * Retrieves a single query parameter.
+     *
+     * Retrieves a single query parameter. If the parameter has not been set,
+     * returns the default value provided.
      *
      * @param string $offset  the parameter name
-     * @param mixed  $default if no key is found the default value to return
+     * @param mixed  $default Default value to return if the parameter does not exist.
      *
      * @return mixed
      */
     public function getParameter($offset, $default = null);
 
     /**
-     * Merge new data to the current Query object
-     * and return a new modified Query object
+     * Returns an instance merge with the specified query
      *
-     * @param Query $query
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param Query ...$query the Query object to be merged
      *
      * @return static
      */
     public function merge(Query $query);
 
     /**
-     * Remove the data corresponding to the offset
-     * from the object and return a new instance with
-     * the modified data
+     * Returns an instance without the specified parameters
      *
-     * @param array $offsets
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param array $offsets a list of query parameters to be removed
      *
      * @return static
      */

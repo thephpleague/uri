@@ -60,11 +60,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->url, $this->url->withFragment('doc3'));
     }
 
-    public function testGetBaseUrl()
-    {
-        $this->assertSame('http://login:pass@secure.example.com:443', $this->url->getBaseUrl());
-    }
-
     public function testGetAuthority()
     {
         $this->assertSame('login:pass@secure.example.com:443', $this->url->getAuthority());

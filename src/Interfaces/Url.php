@@ -15,7 +15,7 @@ namespace League\Url\Interfaces;
 use Psr\Http\Message\UriInterface;
 
 /**
- * A common interface for URL components
+ * Value object representing a URL.
  *
  * @package  League.url
  * @since  4.0.0
@@ -30,7 +30,7 @@ interface Url extends UriInterface
     public function toArray();
 
     /**
-     * Tells whether two UriInterface represents the same value
+     * Returns whether two UriInterface represents the same value
      * The Comparaison is based on the __toString method.
      * No normalization is done
      *
@@ -41,31 +41,38 @@ interface Url extends UriInterface
     public function sameValueAs(UriInterface $url);
 
     /**
-     * Return the string representation for the current URL
-     * including the scheme and the authority parts.
+     * Returns whether a Url is absolute or relative. An Url is
+     * said to be absolute if is has a non empty scheme.
      *
-     * @return string
+     * @return bool
      */
-    public function getBaseUrl();
+    public function isAbsolute();
 
     /**
-     * Return a new object with its path normalized
+     * Returns an instance with the path normalized
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains a normalize path.
      *
      * @return static
      */
     public function normalize();
 
     /**
-     * Tells if the standard port for the given scheme is used
+     * Returns whether the standard port for the given scheme is used, when
+     * the scheme is unknown or unsupported will the method return false
      *
      * @return bool
      */
     public function hasStandardPort();
 
     /**
-     * Resolve a new URI with a relative URI
+     * Returns an instance resolve according to a given URL
      *
-     * @param UriInterface $rel the relative URI
+     * This method MUST retain the state of the current instance, and return
+     * an instance resolved according to supplied URL
+     *
+     * @param UriInterface $rel the relative URL
      *
      * @return static
      */

@@ -33,7 +33,7 @@ trait ComponentTrait
      *
      * @param  mixed $str
      *
-     * @throws InvalidArgumentException if the submitted data can not be converted to string
+     * @throws \InvalidArgumentException if the submitted data can not be converted to string
      *
      * @return string
      */

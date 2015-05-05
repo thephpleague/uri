@@ -86,11 +86,7 @@ class Query implements Interfaces\Query
         }, $str);
         parse_str($str, $arr);
 
-        $arr = array_combine(array_map('hex2bin', array_keys($arr)), $arr);
-
-        return array_filter($arr, function ($value) {
-            return ! is_null($value);
-        });
+        return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
     }
 
     /**

@@ -223,12 +223,11 @@ trait Punycode
             'nonBasic' => [],
         ];
 
-        $length = mb_strlen($input, 'UTF-8');
-        for ($i = 0; $i < $length; $i++) {
-            $code = $this->charToCodePoint(mb_substr($input, $i, 1, 'UTF-8'));
-            $offset  = ($code < 128) ? 'basic' : 'nonBasic';
-            $codePoints['all'][] = $code;
-            $codePoints[$offset][]  = $code;
+        $codePoints['all'] = array_map([$this, 'charToCodePoint'], preg_split("//u", $input, -1, PREG_SPLIT_NO_EMPTY));
+
+        foreach ($codePoints['all'] as $code) {
+            $offset = ($code < 128) ? 'basic' : 'nonBasic';
+            $codePoints[$offset][] = $code;
         }
 
         $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);

@@ -15,7 +15,7 @@ namespace League\Url;
 use League\Url\Interfaces\Component;
 
 /**
- *  A class to manipulate URL Pass component
+* Value object representing a URL pass component.
  *
  *  @package League.url
  *  @since  1.0.0

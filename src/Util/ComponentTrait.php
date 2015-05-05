@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces\Component;
 
 /**
- * A trait with common method for Component
+ * A trait with common methods for Component Value Object
  *
  * @package League.url
  * @since 4.0.0

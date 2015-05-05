@@ -17,7 +17,7 @@ use League\Url\Interfaces\Component;
 use League\Url\Util;
 
 /**
- * An abstract class to ease component creation
+ * An abstract class to ease component manipulation
  *
  * @package League.url
  * @since  3.0.0

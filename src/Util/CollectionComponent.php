@@ -17,8 +17,7 @@ use InvalidArgumentException;
 use Traversable;
 
 /**
- * A trait with common method for Collection like Component
- * (Host, Query, Path)
+ * A trait with common methods for Collection like Component
  *
  * @package League.url
  * @since  4.0.0

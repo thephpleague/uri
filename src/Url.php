@@ -18,7 +18,7 @@ use League\Url\Util;
 use Psr\Http\Message\UriInterface;
 
 /**
-* A class to manipulate an URL as a Value Object
+* Value object representing a URL.
 *
 * @package League.url
 * @since 1.0.0
@@ -191,10 +191,7 @@ class Url implements Interfaces\Url
         $url = trim($url);
         $components = @parse_url($url);
         if (false === $components) {
-            throw new InvalidArgumentException(sprintf(
-                "The given URL: `%s` could not be parse",
-                $url
-            ));
+            throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
 
         return static::createFromComponents($components);

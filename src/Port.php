@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces\Component;
 
 /**
-* A class to manipulate URL Port component
+* Value object representing a URL port component.
 *
 * @package League.url
 * @since 1.0.0

@@ -14,10 +14,9 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use Traversable;
 
 /**
- * An abstract class to ease component creation
+* Value object representing a URL query component.
  *
  * @package  League.url
  * @since  1.0.0

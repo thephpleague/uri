@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces\Component;
 
 /**
-* A class to manipulate URL Scheme component
+* Value object representing a URL scheme component.
 *
 * @package League.url
 * @since 1.0.0

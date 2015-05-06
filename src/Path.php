@@ -78,7 +78,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * validate the submitted data
      *
-     * @param string $str
+     * @param string $data
      *
      * @return array
      */

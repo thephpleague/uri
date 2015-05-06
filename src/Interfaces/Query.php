@@ -69,7 +69,7 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
      *
-     * @param Query ...$query the Query object to be merged
+     * @param Query $query the Query object to be merged
      *
      * @return static
      */

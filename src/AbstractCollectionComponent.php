@@ -17,17 +17,17 @@ use League\Url\Interfaces;
 use League\Url\Util;
 
 /**
- * An abstract class to ease SegmentComponent object manipulation
+ * An abstract class to ease collection like Component object manipulation
  *
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
+abstract class AbstractCollectionComponent implements Interfaces\CollectionComponent
 {
     /**
      * Trait for Collection type Component
      */
-    use Util\CollectionComponent;
+    use Util\CollectionTrait;
 
     /**
      * New Instance of Path
@@ -51,6 +51,10 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
      */
     public function withValue($value)
     {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
         return new static($value);
     }
 
@@ -85,7 +89,7 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
     /**
      * {@inheritdoc}
      */
-    public function append(Interfaces\SegmentComponent $component)
+    public function append(Interfaces\CollectionComponent $component)
     {
         $source = $this->toArray();
         $dest   = $component->toArray();
@@ -97,7 +101,7 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
     }
 
     /**
-     * return a new SegmentComponent instance from an Array or a traversable object
+     * return a new CollectionComponent instance from an Array or a traversable object
      *
      * @param \Traversable|array $data
      * @param bool               $is_absolute
@@ -119,7 +123,7 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
     /**
      * {@inheritdoc}
      */
-    public function prepend(Interfaces\SegmentComponent $component)
+    public function prepend(Interfaces\CollectionComponent $component)
     {
         return static::createFromArray($component, $this->is_absolute)->append($this);
     }
@@ -127,7 +131,7 @@ abstract class AbstractSegmentComponent implements Interfaces\SegmentComponent
     /**
      * {@inheritdoc}
      */
-    public function replace(Interfaces\SegmentComponent $component, $offset)
+    public function replace(Interfaces\CollectionComponent $component, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return $this;

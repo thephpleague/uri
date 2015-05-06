@@ -87,14 +87,14 @@ class Url implements Interfaces\Url
      * @var array
      */
     protected static $standardPorts = [
-        'ftp'   => [21 => 1],
+        'ftp'   => [21  => 1],
         'ftps'  => [990 => 1, 989 => 1],
         'https' => [443 => 1],
-        'http'  => [80 => 1],
+        'http'  => [80  => 1],
         'ldap'  => [389 => 1],
         'ldaps' => [636 => 1],
-        'ssh'   => [22 => 1],
-        'ws'    => [80 => 1],
+        'ssh'   => [22  => 1],
+        'ws'    => [80  => 1],
         'wss'   => [443 => 1],
     ];
 
@@ -223,19 +223,19 @@ class Url implements Interfaces\Url
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param string $component the component to modified
-     * @param string $value     the new component value
+     * @param string $name  the component to set
+     * @param string $value the component value
      *
      * @return static
      */
-    protected function withComponent($component_name, $value)
+    protected function withComponent($name, $value)
     {
-        $value = $this->$component_name->withValue($value);
-        if ($value->sameValueAs($this->$component_name)) {
+        $value = $this->$name->withValue($value);
+        if ($value->sameValueAs($this->$name)) {
             return $this;
         }
         $clone = clone $this;
-        $clone->$component_name = $value;
+        $clone->$name = $value;
 
         return $clone;
     }
@@ -298,9 +298,8 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
-        $res = $this->withComponent('user', $user);
-
-        return $res->withComponent('pass', $pass);
+        return $this->withComponent('user', $user)
+                    ->withComponent('pass', $pass);
     }
 
     /**
@@ -405,11 +404,12 @@ class Url implements Interfaces\Url
             $userinfo .= '@';
         }
 
-        if ($this->hasStandardPort()) {
-            return $userinfo.$this->host->getUriComponent();
+        $port = '';
+        if (! $this->hasStandardPort()) {
+            $port = $this->port->getUriComponent();
         }
 
-        return $userinfo.$this->host->getUriComponent().$this->port->getUriComponent();
+        return $userinfo.$this->host->getUriComponent().$port;
     }
 
     /**
@@ -424,6 +424,7 @@ class Url implements Interfaces\Url
 
         $scheme = $this->scheme->get();
         return isset(
+            $scheme,
             static::$standardPorts[$scheme],
             static::$standardPorts[$scheme][$port]
         );
@@ -457,7 +458,7 @@ class Url implements Interfaces\Url
     public function __toString()
     {
         $auth = $this->getAuthority();
-        if ('' != $auth) {
+        if (! empty($auth)) {
             $auth = '//'.$auth;
         }
 
@@ -491,11 +492,11 @@ class Url implements Interfaces\Url
         }
 
         $res = $this->withFragment($rel->fragment);
-        if ('' != $rel->path->get()) {
+        if (! empty($rel->path->get())) {
             return $this->resolvePath($res, $rel);
         }
 
-        if ('' != $rel->query->get()) {
+        if (! empty($rel->query->get())) {
             return $res->withQuery($rel->query)->normalize();
         }
 

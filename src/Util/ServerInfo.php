@@ -56,11 +56,11 @@ trait ServerInfo
     {
         if (isset($server["HTTP_HOST"])) {
             $header = $server["HTTP_HOST"];
-            if (! preg_match("/(:\d+)$/", $header, $matches)) {
-                return $header;
+            if (preg_match("/^(.*)(:\d+)$/", $header, $matches)) {
+                return $matches[1];
             }
 
-            return rtrim(substr($header, 0, -strlen($matches[1])), '.');
+            return $header;
         }
 
         if (isset($server["SERVER_ADDR"])) {

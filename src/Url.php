@@ -494,11 +494,11 @@ class Url implements Interfaces\Url
         }
 
         $res = $this->withFragment($rel->fragment);
-        if (! empty($rel->path->get())) {
+        if ('' != $rel->path->get()) {
             return $this->resolvePath($res, $rel);
         }
 
-        if (! empty($rel->query->get())) {
+        if ('' != $rel->query->get()) {
             return $res->withQuery($rel->query)->normalize();
         }
 

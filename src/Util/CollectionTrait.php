@@ -22,7 +22,7 @@ use Traversable;
  * @package League.url
  * @since  4.0.0
  */
-trait CollectionComponent
+trait CollectionTrait
 {
     /**
      * The Component Data
@@ -32,7 +32,7 @@ trait CollectionComponent
     protected $data = [];
 
     /**
-     * is the SegmentComponent absolute
+     * is the CollectionComponent absolute
      *
      * @var boolean
      */

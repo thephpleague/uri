@@ -22,7 +22,7 @@ use LogicException;
 * @package League.url
 * @since 1.0.0
 */
-class Path extends AbstractSegmentComponent implements Interfaces\Path
+class Path extends AbstractCollectionComponent implements Interfaces\Path
 {
     /**
      * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
@@ -44,10 +44,10 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
         '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
-    protected static $dot_SegmentComponents = ['.' => 1, '..' => 1];
+    protected static $dot_CollectionComponents = ['.' => 1, '..' => 1];
 
     /**
-     * SegmentComponent delimiter
+     * CollectionComponent delimiter
      *
      * @var string
      */
@@ -144,7 +144,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
             $new_path = static::$delimiter;
         }
         $new_path .= implode(static::$delimiter, $this->filterDotSegment($input));
-        if (isset(static::$dot_SegmentComponents[end($input)])) {
+        if (isset(static::$dot_CollectionComponents[end($input)])) {
             $new_path .= static::$delimiter;
         }
 
@@ -152,7 +152,7 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
     }
 
     /**
-     * Filter Dot SegmentComponents
+     * Filter Dot CollectionComponents
      *
      * @param array $input
      *
@@ -161,14 +161,14 @@ class Path extends AbstractSegmentComponent implements Interfaces\Path
     protected function filterDotSegment(array $input)
     {
         $arr = [];
-        foreach ($input as $SegmentComponent) {
-            if ('..' == $SegmentComponent) {
+        foreach ($input as $CollectionComponent) {
+            if ('..' == $CollectionComponent) {
                 array_pop($arr);
                 continue;
             }
 
-            if (! isset(static::$dot_SegmentComponents[$SegmentComponent])) {
-                $arr[] = $SegmentComponent;
+            if (! isset(static::$dot_CollectionComponents[$CollectionComponent])) {
+                $arr[] = $CollectionComponent;
             }
         }
 

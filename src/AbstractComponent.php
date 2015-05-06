@@ -104,6 +104,10 @@ abstract class AbstractComponent
      */
     public function withValue($value)
     {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
         return new static($value);
     }
 }

@@ -24,7 +24,7 @@ use League\Url\Interfaces;
 trait HostValidator
 {
     /**
-     * SegmentComponent delimiter
+     * CollectionComponent delimiter
      *
      * @var string
      */
@@ -223,7 +223,7 @@ trait HostValidator
     /**
      * Validated the Host Label Pattern
      *
-     * @param  array $data Host SegmentComponent
+     * @param  array $data Host CollectionComponent
      *
      * @throws \InvalidArgumentException If the validation fails
      */
@@ -239,7 +239,7 @@ trait HostValidator
     /**
      * Validated the Host Label Count
      *
-     * @param  array $data Host SegmentComponent
+     * @param  array $data Host CollectionComponent
      *
      * @throws \InvalidArgumentException If the validation fails
      */

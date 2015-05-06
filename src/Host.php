@@ -22,7 +22,7 @@ use League\Url\Util;
 * @package League.url
 * @since 1.0.0
 */
-class Host extends AbstractSegmentComponent implements Interfaces\Host
+class Host extends AbstractCollectionComponent implements Interfaces\Host
 {
     /**
      * Bootstring parameter values for host punycode
@@ -128,7 +128,7 @@ class Host extends AbstractSegmentComponent implements Interfaces\Host
     /**
      * Validated the Host Label Count
      *
-     * @param array $data Host SegmentComponent
+     * @param array $data Host CollectionComponent
      *
      * @throws \InvalidArgumentException If the validation fails
      */

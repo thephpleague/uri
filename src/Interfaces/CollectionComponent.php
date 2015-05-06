@@ -16,15 +16,15 @@ use Countable;
 use IteratorAggregate;
 
 /**
- * Value object representing a URL Segment like component.
+ * Value object representing a URL Collection like component.
  *
  * @package  League.url
  * @since  4.0.0
  */
-interface SegmentComponent extends Component, Countable, IteratorAggregate
+interface CollectionComponent extends Component, Countable, IteratorAggregate
 {
     /**
-     * Return an array representation of the SegmentComponent
+     * Return an array representation of the CollectionComponent
      *
      * @return array
      */
@@ -57,11 +57,11 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the appended data
      *
-     * @param SegmentComponent $component the component to append
+     * @param CollectionComponent $component the component to append
      *
      * @return static
      */
-    public function append(SegmentComponent $component);
+    public function append(CollectionComponent $component);
 
     /**
      * Returns an instance with the specified component prepended
@@ -69,11 +69,11 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the prepended data
      *
-     * @param SegmentComponent $component the component to prepend
+     * @param CollectionComponent $component the component to prepend
      *
      * @return static
      */
-    public function prepend(SegmentComponent $component);
+    public function prepend(CollectionComponent $component);
 
     /**
      * Returns an instance with the modified segment
@@ -81,13 +81,13 @@ interface SegmentComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the replaced data
      *
-     * @param SegmentComponent $component the component added
+     * @param CollectionComponent $component the component added
      * @param int              $offset    the label offset to remove and replace by
      *                                    the given component
      *
      * @return static
      */
-    public function replace(SegmentComponent $component, $offset);
+    public function replace(CollectionComponent $component, $offset);
 
     /**
      * Returns an instance without the specified offsets

@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Path extends SegmentComponent
+interface Path extends CollectionComponent
 {
     /**
      * Returns an instance with the path normalized

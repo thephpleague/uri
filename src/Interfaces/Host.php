@@ -18,7 +18,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Host extends SegmentComponent
+interface Host extends CollectionComponent
 {
     /**
      * Retrieves a single host label.

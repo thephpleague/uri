@@ -26,7 +26,7 @@ class Query implements Interfaces\Query
     /**
      * Trait for Collection type Component
      */
-    use Util\CollectionComponent;
+    use Util\CollectionTrait;
 
     /**
      * a new instance
@@ -45,6 +45,10 @@ class Query implements Interfaces\Query
      */
     public function withValue($value)
     {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
         return new static($value);
     }
 

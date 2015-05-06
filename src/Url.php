@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use League\Url\Interfaces;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
+use ReflectionClass;
 
 /**
 * Value object representing a URL.
@@ -125,14 +126,14 @@ class Url implements Interfaces\Url
         Interfaces\Query $query,
         Fragment $fragment
     ) {
-        $this->scheme   = $scheme;
-        $this->user     = $user;
-        $this->pass     = $pass;
-        $this->host     = $host;
-        $this->port     = $port;
-        $this->path     = $path;
-        $this->query    = $query;
-        $this->fragment = $fragment;
+        $this->scheme   = clone $scheme;
+        $this->user     = clone $user;
+        $this->pass     = clone $pass;
+        $this->host     = clone $host;
+        $this->port     = clone $port;
+        $this->path     = clone $path;
+        $this->query    = clone $query;
+        $this->fragment = clone $fragment;
     }
 
     /**
@@ -165,16 +166,17 @@ class Url implements Interfaces\Url
             "port" => null, "path" => null, "query" => null, "fragment" => null
         ];
 
-        return new static(
-            new Scheme($components["scheme"]),
-            new User($components["user"]),
-            new Pass($components["pass"]),
-            new Host($components["host"]),
-            new Port($components["port"]),
-            new Path($components["path"]),
-            new Query($components["query"]),
-            new Fragment($components["fragment"])
-        );
+        $url = (new ReflectionClass('League\Url\Url'))->newInstanceWithoutConstructor();
+        $url->scheme   = new Scheme($components["scheme"]);
+        $url->user     = new User($components["user"]);
+        $url->pass     = new Pass($components["pass"]);
+        $url->host     = new Host($components["host"]);
+        $url->port     = new Port($components["port"]);
+        $url->path     = new Path($components["path"]);
+        $url->query    = new Query($components["query"]);
+        $url->fragment = new Fragment($components["fragment"]);
+
+        return $url;
     }
 
     /**

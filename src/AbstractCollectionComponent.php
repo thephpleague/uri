@@ -91,12 +91,8 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      */
     public function append($component)
     {
-        if (! $component instanceof Interfaces\CollectionComponent) {
-            $component = new static($component);
-        }
-
         $source = $this->toArray();
-        $dest   = $component->toArray();
+        $dest   = static::validateComponent($component)->toArray();
         if (count($source) && '' == $source[count($source) - 1]) {
             array_pop($source);
         }
@@ -129,11 +125,7 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      */
     public function prepend($component)
     {
-        if (! $component instanceof Interfaces\CollectionComponent) {
-            $component = new static($component);
-        }
-
-        return static::createFromArray($component, $this->is_absolute)->append($this);
+        return static::createFromArray(static::validateComponent($component), $this->is_absolute)->append($this);
     }
 
     /**
@@ -145,12 +137,8 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
             return $this;
         }
 
-        if (! $component instanceof Interfaces\CollectionComponent) {
-            $component = new static($component);
-        }
-
         $source = $this->toArray();
-        $dest   = $component->toArray();
+        $dest   = static::validateComponent($component)->toArray();
         if ('' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }

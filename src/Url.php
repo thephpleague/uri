@@ -481,7 +481,7 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function resolve(UriInterface $url)
+    public function resolve($url)
     {
         $rel = static::createFromUrl($url);
         if ($rel->isAbsolute()) {

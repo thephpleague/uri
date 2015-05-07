@@ -225,7 +225,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testResolve($url, $relative, $expected)
     {
-        $this->assertSame($expected, (string) Url::createFromUrl($url)->resolve(Url::createFromUrl($relative)));
+        $this->assertSame($expected, Url::createFromUrl($url)->resolve($relative)->__toString());
     }
 
     public function resolveProvider()

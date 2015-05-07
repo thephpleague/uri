@@ -72,9 +72,9 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URL
      *
-     * @param UriInterface $rel the relative URL
+     * @param string $rel the relative URL
      *
      * @return static
      */
-    public function resolve(UriInterface $rel);
+    public function resolve($rel);
 }

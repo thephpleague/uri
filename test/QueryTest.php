@@ -87,6 +87,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
                 new Query(''),
                 'kingkong=toto',
             ],
+            'with array' => [
+                ['john' => 'doe the john'],
+                'kingkong=toto&john=doe%20the%20john',
+            ],
+            'with empty array' => [
+                [],
+                'kingkong=toto',
+            ],
         ];
     }
 

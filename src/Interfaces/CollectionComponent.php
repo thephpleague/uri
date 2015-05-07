@@ -57,11 +57,11 @@ interface CollectionComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the appended data
      *
-     * @param CollectionComponent $component the component to append
+     * @param CollectionComponent|string $component the component to append
      *
      * @return static
      */
-    public function append(CollectionComponent $component);
+    public function append($component);
 
     /**
      * Returns an instance with the specified component prepended
@@ -69,11 +69,11 @@ interface CollectionComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the prepended data
      *
-     * @param CollectionComponent $component the component to prepend
+     * @param CollectionComponent|string $component the component to prepend
      *
      * @return static
      */
-    public function prepend(CollectionComponent $component);
+    public function prepend($component);
 
     /**
      * Returns an instance with the modified segment
@@ -81,13 +81,13 @@ interface CollectionComponent extends Component, Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the replaced data
      *
-     * @param CollectionComponent $component the component added
-     * @param int              $offset    the label offset to remove and replace by
-     *                                    the given component
+     * @param CollectionComponent|string $component the component added
+     * @param int                        $offset    the label offset to remove and replace by
+     *                                              the given component
      *
      * @return static
      */
-    public function replace(CollectionComponent $component, $offset);
+    public function replace($component, $offset);
 
     /**
      * Returns an instance without the specified offsets

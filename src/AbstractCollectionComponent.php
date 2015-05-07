@@ -89,8 +89,12 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * {@inheritdoc}
      */
-    public function append(Interfaces\CollectionComponent $component)
+    public function append($component)
     {
+        if (! $component instanceof Interfaces\CollectionComponent) {
+            $component = new static($component);
+        }
+
         $source = $this->toArray();
         $dest   = $component->toArray();
         if (count($source) && '' == $source[count($source) - 1]) {
@@ -123,19 +127,28 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * {@inheritdoc}
      */
-    public function prepend(Interfaces\CollectionComponent $component)
+    public function prepend($component)
     {
+        if (! $component instanceof Interfaces\CollectionComponent) {
+            $component = new static($component);
+        }
+
         return static::createFromArray($component, $this->is_absolute)->append($this);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function replace(Interfaces\CollectionComponent $component, $offset)
+    public function replace($component, $offset)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return $this;
         }
+
+        if (! $component instanceof Interfaces\CollectionComponent) {
+            $component = new static($component);
+        }
+
         $source = $this->toArray();
         $dest   = $component->toArray();
         if ('' == $dest[count($dest) - 1]) {

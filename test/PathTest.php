@@ -134,13 +134,17 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testPrepend($source, $prepend, $res)
     {
         $path    = new Path($source);
-        $newPath = $path->prepend(new Path($prepend));
+        $newPath = $path->prepend($prepend);
         $this->assertSame($res, $newPath->__toString());
     }
 
     public function prependData()
     {
         return [
+            ['/test/query.php', new Path('/master'), '/master/test/query.php'],
+            ['/test/query.php', new Path('/master/'), '/master/test/query.php'],
+            ['/test/query.php', new Path(''), '/test/query.php'],
+            ['/test/query.php', new Path('/'), '/test/query.php'],
             ['/test/query.php', '/master', '/master/test/query.php'],
             ['/test/query.php', '/master/', '/master/test/query.php'],
             ['/test/query.php', '', '/test/query.php'],
@@ -157,13 +161,19 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testAppend($source, $append, $res)
     {
         $path    = new Path($source);
-        $newPath = $path->append(new Path($append));
+        $newPath = $path->append($append);
         $this->assertSame($res, $newPath->__toString());
     }
 
     public function appendData()
     {
         return [
+            ['/test/', new Path('/master/'), '/test/master/'],
+            ['/test/', new Path('/master'),  '/test/master'],
+            ['/test',  new Path('master'),   '/test/master'],
+            ['test',   new Path('master'),   'test/master'],
+            ['test',   new Path('/master'),  'test/master'],
+            ['test',   new Path('master/'),  'test/master/'],
             ['/test/', '/master/', '/test/master/'],
             ['/test/', '/master',  '/test/master'],
             ['/test',  'master',   '/test/master'],
@@ -208,13 +218,18 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testreplace($raw, $input, $offset, $expected)
     {
         $path = new Path($raw);
-        $newPath = $path->replace(new Path($input), $offset);
+        $newPath = $path->replace($input, $offset);
         $this->assertSame($expected, $newPath->get());
     }
 
     public function replaceValid()
     {
         return [
+            ['/path/to/the/sky', new Path('shop'), 0, '/shop/to/the/sky'],
+            ['', new Path('shoki'), 0, 'shoki'],
+            ['', new Path('shoki/'), 0, 'shoki'],
+            ['', new Path('/shoki/'), 0, 'shoki'],
+            ['/path/to/paradise', new Path('::1'), 42, '/path/to/paradise'],
             ['/path/to/the/sky', 'shop', 0, '/shop/to/the/sky'],
             ['', 'shoki', 0, 'shoki'],
             ['', 'shoki/', 0, 'shoki'],

@@ -35,9 +35,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             'ipv4' => ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
-            'naked ipv6' => ['FE80:0000:0000:0000:0202:B3FF:FE1E:8329', true, false, true, 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', '[FE80:0000:0000:0000:0202:B3FF:FE1E:8329]'],
+            'naked ipv6' => ['::1', true, false, true, '::1', '[::1]'],
             'ipv6' => ['[::1]', true, false, true, '::1', '[::1]'],
-            'string' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
+            'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
             'null' => [null, false, false, false, null, ''],
             'dot ending' => ['example.com.', false, false, false, 'example.com.', 'example.com.'],
         ];
@@ -233,7 +233,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
 
-    public function testoffsets()
+    public function testOffsets()
     {
         $host = new Host('master.example.com');
         $this->assertSame([0, 1, 2], $host->offsets());
@@ -280,32 +280,68 @@ class HostTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testprepend()
+    /**
+     * @param  $raw
+     * @param  $prepend
+     * @param  $expected
+     * @dataProvider validPrepend
+     */
+    public function testPrepend($raw, $prepend, $expected)
     {
-        $host    = new Host('secure.example.com');
-        $newHost = $host->prepend(new Host('master'));
-        $this->assertSame('master.secure.example.com', $newHost->get());
+        $host    = new Host($raw);
+        $newHost = $host->prepend($prepend);
+        $this->assertSame($expected, $newHost->get());
+    }
+
+    public function validPrepend()
+    {
+        return [
+            ['secure.example.com', new Host('master'), 'master.secure.example.com'],
+            ['secure.example.com', 'master', 'master.secure.example.com'],
+            ['secure.example.com', new Host('master.'), 'master.secure.example.com'],
+            ['secure.example.com', 'master.', 'master.secure.example.com'],
+            ['secure.example.com.', new Host('master'), 'master.secure.example.com.'],
+            ['secure.example.com.', 'master', 'master.secure.example.com.'],
+        ];
     }
 
     /**
      * @expectedException LogicException
      */
-    public function testprependIpFailed()
+    public function testPrependIpFailed()
     {
         (new Host('127.0.0.1'))->prepend(new Host('foo'));
     }
 
-    public function testappend()
+    /**
+     * @param  $raw
+     * @param  $append
+     * @param  $expected
+     * @dataProvider validAppend
+     */
+    public function testAppend($raw, $append, $expected)
     {
-        $host    = new Host('secure.example.com');
-        $newHost = $host->append(new Host('shop'));
-        $this->assertSame('secure.example.com.shop', $newHost->get());
+        $host    = new Host($raw);
+        $newHost = $host->append($append);
+        $this->assertSame($expected, $newHost->get());
+    }
+
+    public function validAppend()
+    {
+        return [
+            ['secure.example.com', new Host('master'), 'secure.example.com.master'],
+            ['secure.example.com', 'master', 'secure.example.com.master'],
+            ['secure.example.com', new Host('master.'), 'secure.example.com.master'],
+            ['secure.example.com', 'master.', 'secure.example.com.master'],
+            ['secure.example.com.', new Host('master'), 'secure.example.com.master.'],
+            ['secure.example.com.', 'master', 'secure.example.com.master.'],
+        ];
     }
 
     /**
      * @expectedException LogicException
      */
-    public function testappendIpFailed()
+    public function testAppendIpFailed()
     {
         (new Host('127.0.0.1'))->append(new Host('foo'));
     }
@@ -317,7 +353,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      * @param $expected
      * @dataProvider replaceValid
      */
-    public function testreplace($raw, $input, $offset, $expected)
+    public function testReplace($raw, $input, $offset, $expected)
     {
         $host = new Host($raw);
         $newHost = $host->replace($input, $offset);
@@ -330,13 +366,16 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['master.example.com', new Host('shop'), 0, 'shop.example.com'],
             ['', new Host('::1'), 0, '::1'],
             ['toto', new Host('::1'), 23, 'toto'],
+            ['master.example.com', 'shop', 0, 'shop.example.com'],
+            ['', '::1', 0, '::1'],
+            ['toto', '::1', 23, 'toto'],
         ];
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testreplaceIpMustFailed()
+    public function testReplaceIpMustFailed()
     {
         $host = new Host('secure.example.com');
         $host->replace(new Host('127.0.0.1'), 2);

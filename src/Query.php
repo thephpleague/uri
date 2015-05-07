@@ -164,8 +164,12 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function merge(Interfaces\Query $query)
+    public function merge($query)
     {
+        if (! $query instanceof Interfaces\Query) {
+            $query = static::createFromArray($query);
+        }
+
         return static::createFromArray(array_merge($this->data, $query->toArray()));
     }
 }

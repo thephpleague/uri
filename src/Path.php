@@ -91,7 +91,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         return array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
 
-            return str_replace(static::$sanitizePattern, static::$sanitizeReplace, rawurlencode(rawurldecode($value)));
+            return rawurldecode($value);
         }, $data);
     }
 
@@ -101,7 +101,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     public function getSegment($offset, $default = null)
     {
         if (isset($this->data[$offset])) {
-            return rawurldecode($this->data[$offset]);
+            return $this->data[$offset];
         }
 
         return $default;
@@ -125,7 +125,16 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      */
     public function __toString()
     {
-        return (string) $this->get();
+        $front_delimiter = '';
+        if ($this->is_absolute) {
+            $front_delimiter = static::$delimiter;
+        }
+
+        $data = array_map(function ($value) {
+            return str_replace(static::$sanitizePattern, static::$sanitizeReplace, rawurlencode($value));
+        }, $this->data);
+
+        return $front_delimiter.implode(static::$delimiter, $data);
     }
 
     /**

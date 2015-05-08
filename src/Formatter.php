@@ -119,7 +119,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param  mixed $input
+     * @param Interfaces\Component|Interfaces\Url $input
      *
      * @throws \InvalidArgumentException if the given $input can not be formatted
      *
@@ -127,19 +127,35 @@ class Formatter
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\Host) {
-            return $this->formatHost($input);
-        }
-
-        if ($input instanceof Interfaces\Query) {
-            return $this->formatQuery($input);
-        }
-
         if ($input instanceof Interfaces\Url) {
             return $this->formatUrl($input);
         }
 
+        if ($input instanceof Interfaces\Component) {
+            return $this->formatComponent($input);
+        }
+
         throw new InvalidArgumentException("The submitted value can not be formatted");
+    }
+
+    /**
+     * Format a League\Url\Interfaces\Component
+     *
+     * @param Interfaces\Component $component
+     *
+     * @return string
+     */
+    protected function formatComponent(Interfaces\Component $component)
+    {
+        if ($component instanceof Interfaces\Query) {
+            return $this->formatQuery($component);
+        }
+
+        if ($component instanceof Interfaces\Host) {
+            return $this->formatHost($component);
+        }
+
+        return $component->__toString();
     }
 
     /**

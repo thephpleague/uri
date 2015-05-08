@@ -3,6 +3,7 @@
 namespace League\Url\Test;
 
 use League\Url\Formatter;
+use League\Url\Scheme;
 use League\Url\Url;
 use PHPUnit_Framework_TestCase;
 
@@ -22,7 +23,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatHostAscii()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $this->assertSame(Formatter::HOST_UNICODE, $formatter->getHostEncoding());
         $formatter->setHostEncoding(Formatter::HOST_ASCII);
         $this->assertSame(Formatter::HOST_ASCII, $formatter->getHostEncoding());
@@ -50,20 +51,26 @@ class FormatterTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidFormat()
     {
-        $formatter = new Formatter;
-        $formatter->format(new \StdClass);
+        (new Formatter())->format(new \StdClass);
+    }
+
+    public function testFormatComponent()
+    {
+        $scheme    = new Scheme('ldap');
+        $formatter = new Formatter();
+        $this->assertSame($scheme->__toString(), $formatter->format($scheme));
     }
 
     public function testFormatHostUnicode()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $formatter->setHostEncoding(Formatter::HOST_UNICODE);
         $this->assertSame('gwóźdź.pl', $formatter->format($this->url->getHost()));
     }
 
     public function testFormatQueryRFC1738()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $this->assertSame(PHP_QUERY_RFC3986, $formatter->getQueryEncoding());
         $formatter->setQueryEncoding(PHP_QUERY_RFC1738);
         $this->assertSame(PHP_QUERY_RFC1738, $formatter->getQueryEncoding());
@@ -72,14 +79,14 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatQueryRFC3986()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $formatter->setQueryEncoding(PHP_QUERY_RFC3986);
         $this->assertSame('kingkong=toto&foo=bar%20baz', $formatter->format($this->url->getQuery()));
     }
 
     public function testFormatQueryWithSeparator()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $this->assertSame('&', $formatter->getQuerySeparator());
         $formatter->setQuerySeparator('&amp;');
         $this->assertSame('&amp;', $formatter->getQuerySeparator());
@@ -88,7 +95,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatURL()
     {
-        $formatter = new Formatter;
+        $formatter = new Formatter();
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Formatter::HOST_ASCII);
         $expected = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';

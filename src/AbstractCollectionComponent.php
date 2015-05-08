@@ -47,6 +47,24 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     abstract protected function init($str);
 
     /**
+     * Validate a component as a Interfaces\CollectionComponent object
+     *
+     * @param  mixed $component
+     *
+     * @throws InvalidArgumentException if the value can not be converted
+     *
+     * @return Interfaces\CollectionComponent
+     */
+    protected function validateComponent($component)
+    {
+        if (! $component instanceof Interfaces\CollectionComponent) {
+            $component = new static($component);
+        }
+
+        return $component;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function withValue($value)

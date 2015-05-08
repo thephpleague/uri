@@ -140,13 +140,13 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function offsets($parameter = null)
+    public function offsets($data = null)
     {
-        if (is_null($parameter)) {
+        if (is_null($data)) {
             return array_keys($this->data);
         }
 
-        return array_keys($this->data, $parameter, true);
+        return array_keys($this->data, rawurldecode($data), true);
     }
 
     /**
@@ -154,6 +154,7 @@ class Query implements Interfaces\Query
      */
     public function getParameter($offset, $default = null)
     {
+        $offset = rawurldecode($offset);
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }

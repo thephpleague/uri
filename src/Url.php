@@ -83,21 +83,10 @@ class Url implements Interfaces\Url
     protected $fragment;
 
     /**
-     * Standard Port for known schemes
-     *
-     * @var array
+     * A trait with information about Scheme and their
+     * related standard port
      */
-    protected static $standardPorts = [
-        'ftp'   => [21  => 1],
-        'ftps'  => [990 => 1, 989 => 1],
-        'https' => [443 => 1],
-        'http'  => [80  => 1],
-        'ldap'  => [389 => 1],
-        'ldaps' => [636 => 1],
-        'ssh'   => [22  => 1],
-        'ws'    => [80  => 1],
-        'wss'   => [443 => 1],
-    ];
+    use Util\StandardPort;
 
     /**
      * A Factory trait fetch info from Server environment variables

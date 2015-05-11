@@ -25,26 +25,27 @@ use LogicException;
 class Path extends AbstractCollectionComponent implements Interfaces\Path
 {
     /**
-     * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    protected static $sanitizePattern = [
+    protected static $characters_set = [
+        '/', ':', '@', '!', '$', '&', "'",
+        '(', ')', '*', '+', ',', ';', '=', '?',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static $characters_set_encoded = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
         '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
     ];
 
     /**
-     * Pattern to conform to Path RFC - http://tools.ietf.org/html/rfc3986#appendix-A
+     * Dot Segment pattern
      *
      * @var array
      */
-    protected static $sanitizeReplace = [
-        '/', ':', '@', '!', '$', '&', "'",
-        '(', ')', '*', '+', ',', ';', '=', '?',
-    ];
-
-    protected static $dot_CollectionComponents = ['.' => 1, '..' => 1];
+    protected static $dot_segments = ['.' => 1, '..' => 1];
 
     /**
      * CollectionComponent delimiter
@@ -89,9 +90,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }));
 
         return array_map(function ($value) {
-            $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
-
-            return rawurldecode($value);
+            return rawurldecode(filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]));
         }, $data);
     }
 
@@ -130,11 +129,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
             $front_delimiter = static::$delimiter;
         }
 
-        $data = array_map(function ($value) {
-            return str_replace(static::$sanitizePattern, static::$sanitizeReplace, rawurlencode($value));
-        }, $this->data);
-
-        return $front_delimiter.implode(static::$delimiter, $data);
+        return $front_delimiter.implode(static::$delimiter, array_map([$this, 'encode'], $this->data));
     }
 
     /**
@@ -153,7 +148,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
             $new_path = static::$delimiter;
         }
         $new_path .= implode(static::$delimiter, $this->filterDotSegment($input));
-        if (isset(static::$dot_CollectionComponents[end($input)])) {
+        if (isset(static::$dot_segments[end($input)])) {
             $new_path .= static::$delimiter;
         }
 
@@ -176,7 +171,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
                 continue;
             }
 
-            if (! isset(static::$dot_CollectionComponents[$CollectionComponent])) {
+            if (! isset(static::$dot_segments[$CollectionComponent])) {
                 $arr[] = $CollectionComponent;
             }
         }

@@ -148,7 +148,7 @@ class Formatter
     protected function formatComponent(Interfaces\Component $component)
     {
         if ($component instanceof Interfaces\Query) {
-            return $this->formatQuery($component);
+            return $component->format($this->querySeparator, $this->queryEncoding);
         }
 
         if ($component instanceof Interfaces\Host) {
@@ -156,29 +156,6 @@ class Formatter
         }
 
         return $component->__toString();
-    }
-
-    /**
-     * Format a League\Url\Interfaces\Query
-     *
-     * @param Interfaces\Query $query
-     *
-     * @return string
-     */
-    protected function formatQuery(Interfaces\Query $query)
-    {
-        $sep = preg_quote($this->querySeparator, ',');
-
-        return preg_replace(
-            [",=$sep,", ",=$,"],
-            [$this->querySeparator, ''],
-            http_build_query(
-                $query->toArray(),
-                null,
-                $this->querySeparator,
-                $this->queryEncoding
-            )
-        );
     }
 
     /**
@@ -222,7 +199,7 @@ class Formatter
 
         $str .= $url->getPath()->getUriComponent();
         if (count($query)) {
-            $str .= '?'.$this->formatQuery($query);
+            $str .= '?'.$query->format($this->querySeparator, $this->queryEncoding);
         }
 
         return $str.$url->getFragment()->getUriComponent();

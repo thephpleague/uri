@@ -23,47 +23,20 @@ use League\Url\Interfaces\Component;
 class Fragment extends AbstractComponent implements Component
 {
     /**
-     * Escaping symbols according to http://tools.ietf.org/html/rfc3986#section-3.5
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    protected static $rawSymbols = [
-        '/', '?', '-', '.', '_', '~', '!',
-        '$', '&', '\'', '(', ')', '*', '+',
-        ',', ';', '=', ':', '@',
+    protected static $characters_set = [
+        "!", "$", "&", "'", "(", ")", "*", "+",
+        ",", ";", "=", ":", "@", "/", "?",
     ];
 
     /**
-     * Encoded escaping symbols according to http://tools.ietf.org/html/rfc3986#section-3.5
-     *
-     * @var array
-     */
-    protected static $encodedSymbols = [];
-
-    /**
      * {@inheritdoc}
      */
-    protected function validate($data)
-    {
-        $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-
-        return rawurldecode(trim($data));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        $data = (string) $this->data;
-        if (empty(static::$encodedSymbols)) {
-            static::$encodedSymbols = array_map(function ($str) {
-                return urlencode($str);
-            }, static::$rawSymbols);
-        }
-
-        return str_replace(static::$encodedSymbols, static::$rawSymbols, rawurlencode($data));
-    }
+    protected static $characters_set_encoded = [
+        "%21", "%24", "%26", "%27", "%28", "%29", "%2A", "%2B",
+        "%2C", "%3B", "%3D", "%3A", "%40", "%2F", "%3F"
+    ];
 
     /**
      * {@inheritdoc}
@@ -71,10 +44,10 @@ class Fragment extends AbstractComponent implements Component
     public function getUriComponent()
     {
         $data = $this->__toString();
-        if (empty($data)) {
-            return $data;
+        if (! empty($data)) {
+            return '#'.$data;
         }
 
-        return '#'.$data;
+        return $data;
     }
 }

@@ -32,6 +32,16 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
     public function toArray();
 
     /**
+     * Returns query formatted according to given separator and encoded type
+     *
+     * @param  string $separator query separator
+     * @param  int $enc_type  encoding type using PHP_QUERY_* constant
+     *
+     * @return string
+     */
+    public function format($separator, $enc_type);
+
+    /**
      * Returns the query parameters. If a specific value is specified
      * only the parameters associated with the given value will be returned
      *

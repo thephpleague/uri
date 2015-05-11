@@ -101,10 +101,25 @@ class Query implements Interfaces\Query
             return null;
         }
 
+        return $this->format('&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function format($separator, $enc_type)
+    {
+        $sep = preg_quote($separator, ',');
+
         return preg_replace(
-            [',=&,', ',=$,'],
-            ['&', ''],
-            http_build_query($this->data, '', '&', PHP_QUERY_RFC3986)
+            [",=$sep,", ",=$,"],
+            [$separator, ''],
+            http_build_query(
+                $this->data,
+                null,
+                $separator,
+                $enc_type
+            )
         );
     }
 
@@ -113,7 +128,7 @@ class Query implements Interfaces\Query
      */
     public function __toString()
     {
-        return (string) $this->get();
+        return $this->format('&', PHP_QUERY_RFC3986);
     }
 
     /**

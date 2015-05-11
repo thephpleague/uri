@@ -25,16 +25,16 @@ use League\Url\Util;
 abstract class AbstractComponent
 {
     /**
+     * Trait for ComponentTrait method
+     */
+    use Util\ComponentTrait;
+
+    /**
      * The component data
      *
      * @var string
      */
     protected $data;
-
-    /**
-     * Trait for ComponentTrait method
-     */
-    use Util\ComponentTrait;
 
     /**
      * new instance
@@ -54,21 +54,13 @@ abstract class AbstractComponent
      *
      * @param  string $data
      *
-     * @throws \InvalidArgumentException If the supplied data is invalid
-     *
      * @return string
      */
     protected function validate($data)
     {
-        $component  = preg_replace('/%[0-9a-f]{2}/i', '', $data);
-        $unreserved = '-a-z0-9._~';
-        $subdelims  = preg_quote('!$&\'()*+,;=]/', '/');
+        $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
 
-        if (! preg_match('/^['.$unreserved.$subdelims.']+$/i', $component)) {
-            throw new InvalidArgumentException('The submitted user info is invalid');
-        }
-
-        return $data;
+        return rawurldecode(trim($data));
     }
 
     /**
@@ -88,7 +80,7 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return (string) $this->get();
+        return $this->encode($this->data);
     }
 
     /**

@@ -24,6 +24,25 @@ use League\Url\Interfaces\Component;
 trait ComponentTrait
 {
     /**
+     * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
+     *
+     * @var array
+     */
+    protected static $characters_set = [
+        "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "=", ":",
+    ];
+
+    /**
+     * Encoded characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
+     *
+     * @var array
+     */
+    protected static $characters_set_encoded = [
+        "%21", "%24", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%3B", "%3D", "%3A",
+    ];
+
+
+    /**
      * {@inheritdoc}
      */
     public abstract function getUriComponent();
@@ -52,5 +71,17 @@ trait ComponentTrait
     public function sameValueAs(Component $component)
     {
         return $component->getUriComponent() == $this->getUriComponent();
+    }
+
+    /**
+     * Encoding string according to RFC3986
+     *
+     * @param  string $value
+     *
+     * @return string
+     */
+    protected function encode($value)
+    {
+        return str_replace(static::$characters_set_encoded, static::$characters_set, rawurlencode($value));
     }
 }

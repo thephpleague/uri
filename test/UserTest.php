@@ -16,6 +16,12 @@ class UserTest extends PHPUnit_Framework_TestCase
             ['toto', 'toto'],
             ['bar---', 'bar---'],
             [null, ''],
+            ['"bad"', "%22bad%22"],
+            ['<not good>', "%3Cnot%20good%3E"],
+            ['{broken}', '%7Bbroken%7D'],
+            ['failure?', 'failure%3F'],
+            ['`oops`', '%60oops%60'],
+            ['\\slashy', "%5Cslashy"],
         ];
     }
 
@@ -27,26 +33,5 @@ class UserTest extends PHPUnit_Framework_TestCase
     {
         $user = new User(new User($raw));
         $this->assertSame($parsed, $user->getUriComponent());
-    }
-
-    public function providerInvalidCharacters()
-    {
-        return [
-            ['"bad"'],
-            ['<not good>'],
-            ['{broken}'],
-            ['failure?'],
-            ['`oops`'],
-            ['\\slashy'],
-        ];
-    }
-
-    /**
-     * @dataProvider providerInvalidCharacters
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidCharacters($value)
-    {
-        $user = new User($value);
     }
 }

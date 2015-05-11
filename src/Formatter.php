@@ -179,7 +179,7 @@ class Formatter
      */
     protected function formatAuthority(Interfaces\Url $url)
     {
-        if ('' != $url->getAuthority()) {
+        if ('' == $url->getAuthority()) {
             return '';
         }
         $userinfo = $url->getUserInfo();

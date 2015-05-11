@@ -107,6 +107,54 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
+    protected function format($enc_type)
+    {
+        if ($this->isIp()) {
+            return $this->formatIp();
+        }
+
+        return $this->formatDomainName($enc_type);
+    }
+
+    /**
+     * Format an IP for string representation of the Host
+     *
+     * @return string
+     */
+    protected function formatIp()
+    {
+        if ($this->host_as_ipv6) {
+            return "[".$this->data[0]."]";
+        }
+
+        return $this->data[0];
+    }
+
+    /**
+     * Format an Domain name for string representation of the Host
+     *
+     * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE
+     *
+     * @return string
+     */
+    protected function formatDomainName($enc_type)
+    {
+        $data = $this->data;
+        if ($enc_type == self::HOST_AS_ASCII) {
+            $data = array_map([$this, 'encodeLabel'], $this->data);
+        }
+
+        $str = implode(static::$delimiter, $data);
+        if ($this->is_absolute) {
+            $str .= static::$delimiter;
+        }
+
+        return $str;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get()
     {
         if (empty($this->data)) {
@@ -117,12 +165,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
             return $this->data[0];
         }
 
-        $str = implode(static::$delimiter, $this->data);
-        if ($this->is_absolute) {
-            $str .= static::$delimiter;
-        }
-
-        return $str;
+        return $this->formatDomainName(self::HOST_AS_UNICODE);
     }
 
     /**
@@ -165,20 +208,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     public function __toString()
     {
-        $str = (string) $this->get();
-        if ($this->host_as_ipv6) {
-            return "[$str]";
-        }
-
-        return $str;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toUnicode()
-    {
-        return $this->__toString();
+        return $this->format(self::HOST_AS_UNICODE);
     }
 
     /**
@@ -186,11 +216,6 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     public function toAscii()
     {
-        $str = implode(static::$delimiter, array_map([$this, 'encodeLabel'], $this->data));
-        if ($this->host_as_ipv6) {
-            return "[$str]";
-        }
-
-        return $str;
+        return $this->format(self::HOST_AS_ASCII);
     }
 }

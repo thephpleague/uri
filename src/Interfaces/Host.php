@@ -20,6 +20,10 @@ namespace League\Url\Interfaces;
  */
 interface Host extends CollectionComponent
 {
+    const HOST_AS_UNICODE = 1;
+
+    const HOST_AS_ASCII   = 2;
+
     /**
      * Retrieves a single host label.
      *
@@ -34,14 +38,7 @@ interface Host extends CollectionComponent
     public function getLabel($offset, $default = null);
 
     /**
-     * Returns the unicode string representation of a host
-     *
-     * @return string
-     */
-    public function toUnicode();
-
-    /**
-     * Returns the ascii string representation of a host
+     * Returns the string representation of a host using the punycode algorythm
      *
      * @return string
      */

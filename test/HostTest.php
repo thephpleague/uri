@@ -102,7 +102,6 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host = new Host($unicode);
         $this->assertSame($ascii, $host->toAscii());
-        $this->assertSame($unicode, $host->toUnicode());
         $this->assertSame($unicode, $host->__toString());
     }
 
@@ -143,7 +142,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host = new Host($ip);
         $this->assertSame($res, $host->toAscii());
-        $this->assertSame($res, $host->toUnicode());
+        $this->assertSame($res, $host->__toString());
         $this->assertSame($res, $host->__toString());
     }
 

@@ -23,16 +23,12 @@ use League\Url\Interfaces;
 */
 class Formatter
 {
-    const HOST_ASCII = 1;
-
-    const HOST_UNICODE = 2;
-
     /**
      * host encoding property
      *
      * @var int
      */
-    protected $hostEncoding = self::HOST_UNICODE;
+    protected $hostEncoding = Interfaces\Host::HOST_AS_UNICODE;
 
     /**
      * query encoding property
@@ -55,7 +51,7 @@ class Formatter
      */
     public function setHostEncoding($encode)
     {
-        if (! in_array($encode, [self::HOST_UNICODE, self::HOST_ASCII])) {
+        if (! in_array($encode, [Interfaces\Host::HOST_AS_UNICODE, Interfaces\Host::HOST_AS_ASCII])) {
             throw new InvalidArgumentException('Unknown Host encoding rule');
         }
         $this->hostEncoding = $encode;
@@ -159,19 +155,43 @@ class Formatter
     }
 
     /**
+     * Format a League\Url\Interfaces\Host component
+     *
+     * @param  Interfaces\Host $host
+     *
+     * @return string
+     */
+    protected function formatHost(Interfaces\Host $host)
+    {
+        if (Host::HOST_AS_ASCII == $this->hostEncoding) {
+            return $host->toAscii();
+        }
+
+        return $host->__toString();
+    }
+
+    /**
      * Format a League\Url\Interfaces\Host
      *
      * @param Interfaces\Host $host
      *
      * @return string
      */
-    protected function formatHost(Interfaces\Host $host)
+    protected function formatAuthority(Interfaces\Url $url)
     {
-        if (self::HOST_ASCII == $this->hostEncoding) {
-            return $host->toAscii();
+        if (empty($url->getAuthority())) {
+            return '';
+        }
+        $userinfo = $url->getUserInfo();
+        if (! empty($userinfo)) {
+            $userinfo .= '@';
+        }
+        $str = '//'.$userinfo.$this->formatHost($url->getHost());
+        if (! $url->hasStandardPort()) {
+            $str .= $url->getPort()->getUriComponent();
         }
 
-        return $host->toUnicode();
+        return $str;
     }
 
     /**
@@ -183,25 +203,15 @@ class Formatter
      */
     protected function formatUrl(Interfaces\Url $url)
     {
-        $host  = $url->getHost();
-        $query = $url->getQuery();
-        $str   = $url->getScheme()->getUriComponent();
-        if (count($host)) {
-            $userinfo = $url->getUserInfo();
-            if (! empty($userinfo)) {
-                $userinfo .= '@';
-            }
-            $str .= '//'.$userinfo.$this->formatHost($host);
-            if (! $url->hasStandardPort()) {
-                $str .= $url->getPort()->getUriComponent();
-            }
+        $query = $url->getQuery()->format($this->querySeparator, $this->queryEncoding);
+        if (! empty($query)) {
+            $query = '?'.$query;
         }
 
-        $str .= $url->getPath()->getUriComponent();
-        if (count($query)) {
-            $str .= '?'.$query->format($this->querySeparator, $this->queryEncoding);
-        }
-
-        return $str.$url->getFragment()->getUriComponent();
+        return $url->getScheme()->getUriComponent()
+                .$this->formatAuthority($url)
+                .$url->getPath()->getUriComponent()
+                .$query
+                .$url->getFragment()->getUriComponent();
     }
 }

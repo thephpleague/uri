@@ -30,10 +30,9 @@ class Port extends AbstractComponent implements Component
      */
     public function __construct($data = null)
     {
-        if ("0" == $data) {
-            throw new InvalidArgumentException('The submitted port is invalid');
+        if (! is_null($data)) {
+            $this->data = $this->validate($data);
         }
-        parent::__construct($data);
     }
 
     /**

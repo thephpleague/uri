@@ -1,10 +1,9 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Url\Test\Output;
 
-use League\Url\Formatter;
-use League\Url\Scheme;
-use League\Url\Url;
+use League\Url\Output\Formatter;
+use League\Url;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -16,7 +15,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url::createFromUrl(
+        $this->url = Url\Url::createFromUrl(
             'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }
@@ -56,7 +55,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatComponent()
     {
-        $scheme    = new Scheme('ldap');
+        $scheme    = new Url\Scheme('ldap');
         $formatter = new Formatter();
         $this->assertSame($scheme->__toString(), $formatter->format($scheme));
     }

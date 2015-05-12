@@ -10,7 +10,7 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url;
+namespace League\Url\Output;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
@@ -183,8 +183,9 @@ class Formatter
      */
     protected function formatAuthority(Interfaces\Url $url)
     {
+        $str = '';
         if ('' == $url->getAuthority()) {
-            return '';
+            return $str;
         }
         $userinfo = $url->getUserInfo();
         if (! empty($userinfo)) {
@@ -213,9 +214,9 @@ class Formatter
         }
 
         return $url->getScheme()->getUriComponent()
-                .$this->formatAuthority($url)
-                .$url->getPath()->getUriComponent()
-                .$query
-                .$url->getFragment()->getUriComponent();
+            .$this->formatAuthority($url)
+            .$url->getPath()->getUriComponent()
+            .$query
+            .$url->getFragment()->getUriComponent();
     }
 }

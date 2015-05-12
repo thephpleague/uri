@@ -113,6 +113,26 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
+    public function __toString()
+    {
+        return $this->format(self::HOST_AS_UNICODE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toAscii()
+    {
+        return $this->format(self::HOST_AS_ASCII);
+    }
+
+    /**
+     * Format the Host output
+     *
+     * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE
+     *
+     * @return string
+     */
     protected function format($enc_type)
     {
         if ($this->isIp()) {
@@ -156,30 +176,6 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
         }
 
         return $str;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        if ($this->isIp()) {
-            return $this->formatIp();
-        }
-
-        return $this->formatDomainName(self::HOST_AS_UNICODE);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toAscii()
-    {
-        if ($this->isIp()) {
-            return $this->formatIp();
-        }
-
-        return $this->formatDomainName(self::HOST_AS_ASCII);
     }
 
     /**

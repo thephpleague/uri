@@ -41,18 +41,6 @@ class Query implements Interfaces\Query
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function withValue($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
-
-    /**
      * return a new Query instance from an Array or a traversable object
      *
      * @param  \Traversable|array $data
@@ -97,10 +85,8 @@ class Query implements Interfaces\Query
      */
     public function format($separator, $enc_type)
     {
-        $sep = preg_quote($separator, ',');
-
         return preg_replace(
-            [",=$sep,", ",=$,"],
+            [",=".preg_quote($separator, ',').",", ",=$,"],
             [$separator, ''],
             http_build_query(
                 $this->data,
@@ -143,18 +129,6 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function offsets($data = null)
-    {
-        if (is_null($data)) {
-            return array_keys($this->data);
-        }
-
-        return array_keys($this->data, rawurldecode($data), true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParameter($offset, $default = null)
     {
         $offset = rawurldecode($offset);
@@ -172,6 +146,10 @@ class Query implements Interfaces\Query
     {
         if (! $query instanceof Interfaces\Query) {
             $query = static::createFromArray($query);
+        }
+
+        if ($this->sameValueAs($query)) {
+            return $this;
         }
 
         return static::createFromArray(array_merge($this->data, $query->toArray()));

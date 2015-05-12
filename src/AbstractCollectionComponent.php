@@ -67,18 +67,6 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * {@inheritdoc}
      */
-    public function withValue($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isAbsolute()
     {
         return $this->is_absolute;
@@ -90,18 +78,6 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     public function getUriComponent()
     {
         return $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsets($data = null)
-    {
-        if (is_null($data)) {
-            return array_keys($this->data);
-        }
-
-        return array_keys($this->data, (new static($data))->__toString(), true);
     }
 
     /**

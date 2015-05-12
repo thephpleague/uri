@@ -332,21 +332,24 @@ class PathTest extends PHPUnit_Framework_TestCase
     /**
      * @param  string $raw
      * @param  string $raw_ext
+     * @param  string $new_path
      * @param  string $parsed_ext
      * @dataProvider withExtensionProvider
      */
-    public function testWithExtension($raw, $raw_ext, $parsed_ext)
+    public function testWithExtension($raw, $raw_ext, $new_path, $parsed_ext)
     {
         $newPath = (new Path($raw))->withExtension($raw_ext);
+        $this->assertSame($new_path, (string) $newPath);
         $this->assertSame($parsed_ext, $newPath->getExtension());
     }
 
     public function withExtensionProvider()
     {
         return [
-            ['/path/to/my/file.txt', '.csv', 'csv'],
-            ['/path/to/my/file.txt', 'csv', 'csv'],
-            ['/path/to/my/file', '.csv', 'csv'],
+            ['/path/to/my/file.txt', '.csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file.txt', 'csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file', '.csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file.csv', '.csv', '/path/to/my/file.csv', 'csv'],
         ];
     }
 

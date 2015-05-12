@@ -193,16 +193,23 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         if (strpos($ext, static::$delimiter)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext      = implode(static::$delimiter, $this->validate($ext));
-        $data     = $this->data;
+        $ext = implode(static::$delimiter, $this->validate($ext));
+
+        $data = $this->data;
         $basename = (string) array_pop($data);
         if ('' == $basename) {
             throw new LogicException('No basename exist!!');
         }
+
         $current_ext = pathinfo($basename, PATHINFO_EXTENSION);
-        if ('' != $current_ext) {
-            $basename = mb_substr($basename, 0, -mb_strlen($current_ext)-1);
+        if ($ext == $current_ext) {
+            return $this;
         }
+        $pos = mb_strlen($current_ext);
+        if ($pos > 0) {
+            $basename = mb_substr($basename, 0, -$pos-1);
+        }
+
         $data[] = "$basename.$ext";
 
         return static::createFromArray($data, $this->is_absolute);

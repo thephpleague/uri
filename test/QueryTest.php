@@ -80,8 +80,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
                 'kingkong=toto&john=doe%20the%20john',
             ],
             'with the same data' => [
-                new Query('kingkong=tata'),
-                'kingkong=tata',
+                new Query('kingkong=toto'),
+                'kingkong=toto',
             ],
             'without new data' => [
                 new Query(''),

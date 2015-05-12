@@ -5,7 +5,6 @@ namespace League\Url\Test;
 use League\Url\Formatter;
 use League\Url\Scheme;
 use League\Url\Url;
-use League\Url\Host;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -25,9 +24,9 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function testFormatHostAscii()
     {
         $formatter = new Formatter();
-        $this->assertSame(Host::HOST_AS_UNICODE, $formatter->getHostEncoding());
-        $formatter->setHostEncoding(Host::HOST_AS_ASCII);
-        $this->assertSame(Host::HOST_AS_ASCII, $formatter->getHostEncoding());
+        $this->assertSame(Formatter::HOST_AS_UNICODE, $formatter->getHostEncoding());
+        $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
+        $this->assertSame(Formatter::HOST_AS_ASCII, $formatter->getHostEncoding());
         $this->assertSame('xn--gwd-hna98db.pl', $formatter->format($this->url->getHost()));
     }
 
@@ -65,7 +64,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function testFormatHostUnicode()
     {
         $formatter = new Formatter();
-        $formatter->setHostEncoding(Host::HOST_AS_UNICODE);
+        $formatter->setHostEncoding(Formatter::HOST_AS_UNICODE);
         $this->assertSame('gwóźdź.pl', $formatter->format($this->url->getHost()));
     }
 
@@ -98,7 +97,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     {
         $formatter = new Formatter();
         $formatter->setQuerySeparator('&amp;');
-        $formatter->setHostEncoding(Host::HOST_AS_ASCII);
+        $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
         $expected = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
         $this->assertSame($expected, $formatter->format($this->url));
     }
@@ -107,7 +106,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     {
         $formatter = new Formatter();
         $formatter->setQuerySeparator('&amp;');
-        $formatter->setHostEncoding(Host::HOST_AS_ASCII);
+        $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
         $expected = '/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
         $url = $this->url->withScheme(null)->withHost(null)->withPort(null)->withUserInfo(null, null);
         $this->assertSame($expected, $formatter->format($url));

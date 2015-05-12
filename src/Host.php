@@ -38,6 +38,12 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     const DELIMITER    = '-';
 
     /**
+     * Constants for host formatting
+     */
+    const HOST_AS_UNICODE = 1;
+    const HOST_AS_ASCII   = 2;
+
+    /**
      * Trait to handle host label validation
      */
     use Util\HostValidator;
@@ -155,17 +161,25 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
-    public function get()
+    public function __toString()
     {
-        if (empty($this->data)) {
-            return null;
-        }
-
         if ($this->isIp()) {
-            return $this->data[0];
+            return $this->formatIp();
         }
 
         return $this->formatDomainName(self::HOST_AS_UNICODE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toAscii()
+    {
+        if ($this->isIp()) {
+            return $this->formatIp();
+        }
+
+        return $this->formatDomainName(self::HOST_AS_ASCII);
     }
 
     /**
@@ -201,21 +215,5 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
         }
 
         return $str;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return $this->format(self::HOST_AS_UNICODE);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toAscii()
-    {
-        return $this->format(self::HOST_AS_ASCII);
     }
 }

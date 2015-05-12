@@ -101,7 +101,7 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
             return array_keys($this->data);
         }
 
-        return array_keys($this->data, (new static($data))->get(), true);
+        return array_keys($this->data, (new static($data))->__toString(), true);
     }
 
     /**

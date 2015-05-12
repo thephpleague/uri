@@ -15,14 +15,13 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     {
         $scheme = new Scheme('ftp');
         $http_scheme = $scheme->withValue('HTTP');
-        $this->assertSame('http', $http_scheme->get());
+        $this->assertSame('http', $http_scheme->__toString());
         $this->assertSame('http:', $http_scheme->getUriComponent());
     }
 
     public function testEmptyScheme()
     {
-        $scheme = new Scheme();
-        $this->assertNull($scheme->get());
+        $this->assertEmpty((new Scheme())->__toString());
     }
 
     /**
@@ -32,8 +31,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
      */
     public function testValidScheme($scheme, $toString)
     {
-        $scheme = new Scheme($scheme);
-        $this->assertSame($toString, $scheme->__toString());
+        $this->assertSame($toString, (new Scheme($scheme))->__toString());
     }
 
     public function validSchemeProvider()

@@ -12,19 +12,17 @@ class PassTest extends PHPUnit_Framework_TestCase
 {
     public function testPassConstructor()
     {
-        $port = new Pass(new Pass('toto'));
-        $this->assertSame('toto', $port->get());
+        $pass = new Pass(new Pass('toto'));
+        $this->assertSame('toto', $pass->__toString());
     }
 
     public function testGetUriComponent()
     {
-        $port = new Pass('toto');
-        $this->assertSame(':toto', $port->getUriComponent());
+        $this->assertSame(':toto', (new Pass('toto'))->getUriComponent());
     }
 
     public function testGetUriComponentWithEmptyPort()
     {
-        $port = new Pass();
-        $this->assertSame('', $port->getUriComponent());
+        $this->assertSame('', (new Pass())->getUriComponent());
     }
 }

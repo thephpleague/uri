@@ -154,6 +154,10 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
                 '//example.com',
                 '//example.com',
             ],
+            'without scheme but with port' => [
+                '//example.com:80',
+                '//example.com:80',
+            ],
             'with user info' => [
                 'http://login:pass@example.com/',
                 'http://login:pass@example.com/',
@@ -163,10 +167,20 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $input
+     * @dataProvider invalidURL
      * @expectedException InvalidArgumentException
      */
-    public function testCreateFromInvalidUrlKO()
+    public function testCreateFromInvalidUrlKO($input)
     {
-        Url::createFromUrl("http://user@:80");
+        Url::createFromUrl($input);
+    }
+
+    public function invalidURL()
+    {
+        return [
+            ["http://user@:80"],
+            ["//user@:80"],
+        ];
     }
 }

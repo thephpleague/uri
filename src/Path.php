@@ -109,19 +109,6 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function get()
-    {
-        $front_delimiter = '';
-        if ($this->is_absolute) {
-            $front_delimiter = static::$delimiter;
-        }
-
-        return $front_delimiter.implode(static::$delimiter, $this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         $front_delimiter = '';

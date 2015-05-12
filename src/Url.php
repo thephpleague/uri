@@ -236,7 +236,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return ! is_null($this->scheme->get());
+        return '' != $this->getAuthority() && '' != $this->scheme->__toString();
     }
 
     /**
@@ -408,12 +408,12 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        $port = $this->port->get();
+        $port = $this->port->__toString();
         if (empty($port)) {
             return true;
         }
 
-        $scheme = $this->scheme->get();
+        $scheme = $this->scheme->__toString();
         return isset(
             $scheme,
             static::$standardPorts[$scheme],
@@ -426,21 +426,23 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        $host = $this->host->__toString();
-        if (empty($host)) {
-            $host = null;
-        }
-
-        return [
-            'scheme'   => $this->scheme->get(),
-            'user'     => $this->user->get(),
-            'pass'     => $this->pass->get(),
-            'host'     => $host,
-            'port'     => $this->port->get(),
-            'path'     => $this->path->get(),
-            'query'    => $this->query->get(),
-            'fragment' => $this->fragment->get(),
+        $res = [
+            'scheme'   => $this->scheme->__toString(),
+            'user'     => $this->user->__toString(),
+            'pass'     => $this->pass->__toString(),
+            'host'     => $this->host->__toString(),
+            'port'     => (int) $this->port->__toString(),
+            'path'     => $this->path->__toString(),
+            'query'    => $this->query->__toString(),
+            'fragment' => $this->fragment->__toString(),
         ];
+
+        return array_map(function ($value) {
+            if (empty($value)) {
+                return null;
+            }
+            return $value;
+        }, $res);
     }
 
     /**
@@ -483,11 +485,11 @@ class Url implements Interfaces\Url
         }
 
         $res = $this->withFragment($rel->fragment);
-        if ('' != $rel->path->get()) {
+        if ('' != $rel->path->__toString()) {
             return $this->resolvePath($res, $rel);
         }
 
-        if ('' != $rel->query->get()) {
+        if ('' != $rel->query->__toString()) {
             return $res->withQuery($rel->query)->normalize();
         }
 
@@ -510,7 +512,7 @@ class Url implements Interfaces\Url
             array_pop($segments);
             $path = Path::createFromArray(
                 array_merge($segments, $rel->path->toArray()),
-                '' == $url->path->get() || $url->path->isAbsolute()
+                '' == $url->path->__toString() || $url->path->isAbsolute()
             );
         }
 

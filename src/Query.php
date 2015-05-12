@@ -95,18 +95,6 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function get()
-    {
-        if (empty($this->data)) {
-            return null;
-        }
-
-        return $this->format('&', PHP_QUERY_RFC3986);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function format($separator, $enc_type)
     {
         $sep = preg_quote($separator, ',');

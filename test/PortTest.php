@@ -13,7 +13,7 @@ class PortTest extends PHPUnit_Framework_TestCase
     public function testPortSetter()
     {
         $port = new Port(new Port(443));
-        $this->assertSame(443, $port->get());
+        $this->assertSame('443', $port->__toString());
     }
 
     public function invalidPortProvider()

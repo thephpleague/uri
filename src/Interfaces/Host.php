@@ -20,10 +20,6 @@ namespace League\Url\Interfaces;
  */
 interface Host extends CollectionComponent
 {
-    const HOST_AS_UNICODE = 1;
-
-    const HOST_AS_ASCII   = 2;
-
     /**
      * Retrieves a single host label.
      *

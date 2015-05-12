@@ -17,29 +17,27 @@ class HostTest extends PHPUnit_Framework_TestCase
      * @param bool $isIp
      * @param bool $isIpv4
      * @param bool $isIpv6
-     * @param string $str
      * @param string $uri
      * @dataProvider validHostProvider
      */
-    public function testValidHost($host, $isIp, $isIpv4, $isIpv6, $str, $uri)
+    public function testValidHost($host, $isIp, $isIpv4, $isIpv6, $uri)
     {
         $host = new Host($host);
         $this->assertSame($isIp, $host->isIp());
         $this->assertSame($isIpv4, $host->isIpv4());
         $this->assertSame($isIpv6, $host->isIpv6());
-        $this->assertSame($str, $host->get());
         $this->assertSame($uri, $host->getUriComponent());
     }
 
     public function validHostProvider()
     {
         return [
-            'ipv4' => ['127.0.0.1', true, true, false, '127.0.0.1', '127.0.0.1'],
-            'naked ipv6' => ['::1', true, false, true, '::1', '[::1]'],
-            'ipv6' => ['[::1]', true, false, true, '::1', '[::1]'],
-            'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com', 'master.example.com'],
-            'null' => [null, false, false, false, null, ''],
-            'dot ending' => ['example.com.', false, false, false, 'example.com.', 'example.com.'],
+            'ipv4' => ['127.0.0.1', true, true, false, '127.0.0.1'],
+            'naked ipv6' => ['::1', true, false, true, '[::1]'],
+            'ipv6' => ['[::1]', true, false, true, '[::1]'],
+            'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com'],
+            'null' => [null, false, false, false, ''],
+            'dot ending' => ['example.com.', false, false, false, 'example.com.'],
         ];
     }
 
@@ -289,7 +287,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host    = new Host($raw);
         $newHost = $host->prepend($prepend);
-        $this->assertSame($expected, $newHost->get());
+        $this->assertSame($expected, $newHost->__toString());
     }
 
     public function validPrepend()
@@ -322,7 +320,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host    = new Host($raw);
         $newHost = $host->append($append);
-        $this->assertSame($expected, $newHost->get());
+        $this->assertSame($expected, $newHost->__toString());
     }
 
     public function validAppend()
@@ -356,17 +354,17 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host = new Host($raw);
         $newHost = $host->replace($input, $offset);
-        $this->assertSame($expected, $newHost->get());
+        $this->assertSame($expected, $newHost->__toString());
     }
 
     public function replaceValid()
     {
         return [
             ['master.example.com', new Host('shop'), 0, 'shop.example.com'],
-            ['', new Host('::1'), 0, '::1'],
+            ['', new Host('::1'), 0, '[::1]'],
             ['toto', new Host('::1'), 23, 'toto'],
             ['master.example.com', 'shop', 0, 'shop.example.com'],
-            ['', '::1', 0, '::1'],
+            ['', '::1', 0, '[::1]'],
             ['toto', '::1', 23, 'toto'],
         ];
     }

@@ -23,12 +23,16 @@ use League\Url\Interfaces;
 */
 class Formatter
 {
+    const HOST_AS_UNICODE = 1;
+
+    const HOST_AS_ASCII   = 2;
+
     /**
      * host encoding property
      *
      * @var int
      */
-    protected $hostEncoding = Interfaces\Host::HOST_AS_UNICODE;
+    protected $hostEncoding = self::HOST_AS_UNICODE;
 
     /**
      * query encoding property
@@ -51,7 +55,7 @@ class Formatter
      */
     public function setHostEncoding($encode)
     {
-        if (! in_array($encode, [Interfaces\Host::HOST_AS_UNICODE, Interfaces\Host::HOST_AS_ASCII])) {
+        if (! in_array($encode, [self::HOST_AS_UNICODE, self::HOST_AS_ASCII])) {
             throw new InvalidArgumentException('Unknown Host encoding rule');
         }
         $this->hostEncoding = $encode;
@@ -163,7 +167,7 @@ class Formatter
      */
     protected function formatHost(Interfaces\Host $host)
     {
-        if (Host::HOST_AS_ASCII == $this->hostEncoding) {
+        if (self::HOST_AS_ASCII == $this->hostEncoding) {
             return $host->toAscii();
         }
 

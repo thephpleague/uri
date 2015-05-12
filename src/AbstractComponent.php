@@ -66,18 +66,6 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function get()
-    {
-        if (! empty($this->data)) {
-            return $this->data;
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return $this->encode($this->data);

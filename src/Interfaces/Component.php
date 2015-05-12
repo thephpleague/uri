@@ -21,13 +21,6 @@ namespace League\Url\Interfaces;
 interface Component
 {
     /**
-     * Returns the component raw data. Can be null
-     *
-     * @return null|string
-     */
-    public function get();
-
-    /**
      * Returns the component string representation
      *
      * @return string

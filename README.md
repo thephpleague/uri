@@ -54,6 +54,8 @@ $ phpunit
 Contributing
 -------
 
+**Note: Contribute on the last stable version of `League\Url` [on the develop-3 branch](https://github.com/thephpleague/url/tree/develop-3)**
+
 Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Security

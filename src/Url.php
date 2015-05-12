@@ -12,7 +12,6 @@
 */
 namespace League\Url;
 
-use InvalidArgumentException;
 use League\Url\Interfaces;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
@@ -171,7 +170,7 @@ class Url implements Interfaces\Url
     /**
      * Create a new League\Url\Url instance from a string
      *
-     * @param  string $url
+     * @param string $url
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
@@ -180,12 +179,8 @@ class Url implements Interfaces\Url
     public static function createFromUrl($url)
     {
         $url = trim($url);
-        $components = @parse_url($url);
-        if (false === $components) {
-            throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
-        }
 
-        return static::createFromComponents($components);
+        return static::createFromComponents(self::parseUrl($url));
     }
 
     /**

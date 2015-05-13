@@ -352,6 +352,7 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/path/to/my/file.csv', '.csv', '/path/to/my/file.csv', 'csv'],
             ['/path/to/my/file.csv', '', '/path/to/my/file', ''],
             ['/path/to/my/file.tar.gz', 'bz2', '/path/to/my/file.tar.bz2', 'bz2'],
+            ['', 'csv', '', ''],
         ];
     }
 
@@ -361,14 +362,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testWithExtensionWithInvalidExtension()
     {
         (new Path())->withExtension('t/xt');
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testWithExtensionWithoutBasename()
-    {
-        (new Path())->withExtension('txt');
     }
 
     /**

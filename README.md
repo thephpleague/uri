@@ -31,7 +31,7 @@ System Requirements
 
 You need **PHP >= 5.4.7** or **HHVM >= 3.4** and the `mbstring` extension to use the library, but the latest stable version of PHP/HHVM is recommended.
 
-**Note: The last stable version of `League\Url` [version 3.*](https://github.com/thephpleague/url/tree/develop-3) still supports PHP 5.3**
+**Note: The last stable version of `League\Url` [version 3.*](https://github.com/thephpleague/url/tree/3.x) still supports PHP 5.3**
 
 Install
 -------
@@ -54,7 +54,7 @@ $ phpunit
 Contributing
 -------
 
-**Note: Contribute on the last stable version of `League\Url` [on the develop-3 branch](https://github.com/thephpleague/url/tree/develop-3)**
+**Note: Contribute on the last stable version of `League\Url` [on the 3.x branch](https://github.com/thephpleague/url/tree/3.x)**
 
 Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 

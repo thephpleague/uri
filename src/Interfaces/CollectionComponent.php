@@ -43,9 +43,9 @@ interface CollectionComponent extends Component, Countable, IteratorAggregate
     public function offsets($data = null);
 
     /**
-     * Returns whether the given offset exists in the instance
+     * Returns whether the given offset exists in the current instance
      *
-     * @param string $offset
+     * @param string|int $offset
      *
      * @return bool
      */

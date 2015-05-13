@@ -177,7 +177,7 @@ class Formatter
     /**
      * Format a League\Url\Interfaces\Host
      *
-     * @param Interfaces\Host $host
+     * @param Interfaces\Url $url
      *
      * @return string
      */

@@ -92,6 +92,12 @@ class Url implements Interfaces\Url
      */
     use Util\ServerInfo;
 
+
+    /**
+     * A Trait to parse URL strings
+     */
+    use Util\UrlParser;
+
     /**
      * Create a new instance of URL
      *

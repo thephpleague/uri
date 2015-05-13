@@ -144,36 +144,4 @@ trait ServerInfo
 
         return $request;
     }
-
-    /**
-     * Parse a string as an URL
-     *
-     * @param  string $url The URL to parse
-     *
-     * @throws  InvalidArgumentException if the URL can not be parsed
-     *
-     * @return array
-     */
-    protected static function parseUrl($url)
-    {
-        $components = @parse_url($url);
-        if (! empty($components)) {
-            return $components;
-        }
-
-        if (is_null(static::$is_parse_url_bugged)) {
-            static::$is_parse_url_bugged = !@parse_url("//example.org:80");
-        }
-
-        // inline fix for https://bugs.php.net/bug.php?id=68917
-        if (static::$is_parse_url_bugged &&
-            strpos($url, '/') === 0 &&
-            is_array($components = @parse_url('http:'.$url))
-        ) {
-            unset($components['scheme']);
-            return $components;
-        }
-
-        throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
-    }
 }

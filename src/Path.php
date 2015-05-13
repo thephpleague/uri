@@ -193,25 +193,37 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         if (strpos($ext, static::$delimiter)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext = implode(static::$delimiter, $this->validate($ext));
-
-        $data = $this->data;
-        $basename = (string) array_pop($data);
-        if ('' == $basename) {
-            throw new LogicException('No basename exist!!');
-        }
-
-        $current_ext = pathinfo($basename, PATHINFO_EXTENSION);
-        if ($ext == $current_ext) {
+        $ext         = implode(static::$delimiter, $this->validate($ext));
+        $data        = $this->data;
+        $basename    = (string) array_pop($data);
+        $newBasename = $this->setBasename($basename, $ext);
+        if ($newBasename == $basename) {
             return $this;
         }
-        $pos = mb_strlen($current_ext);
-        if ($pos > 0) {
-            $basename = mb_substr($basename, 0, -$pos-1);
-        }
-
-        $data[] = "$basename.$ext";
+        $data[] = $newBasename;
 
         return static::createFromArray($data, $this->is_absolute);
+    }
+
+    /**
+     * Set a new extension to a basename
+     *
+     * @param string $basename the current basename
+     * @param string $ext      the new extension to use
+     *
+     * @return string
+     */
+    protected function setBasename($basename, $ext)
+    {
+        $length = mb_strlen(pathinfo($basename, PATHINFO_EXTENSION));
+        if ($length > 0) {
+            $basename = mb_substr($basename, 0, -($length+1));
+        }
+
+        if (empty($basename) || empty($ext)) {
+            return $basename;
+        }
+
+        return "$basename.$ext";
     }
 }

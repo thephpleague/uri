@@ -160,7 +160,7 @@ class Url implements Interfaces\Url
             "port" => null, "path" => null, "query" => null, "fragment" => null
         ];
 
-        $url = (new ReflectionClass('League\Url\Url'))->newInstanceWithoutConstructor();
+        $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
         $url->scheme   = new Scheme($components["scheme"]);
         $url->user     = new User($components["user"]);
         $url->pass     = new Pass($components["pass"]);

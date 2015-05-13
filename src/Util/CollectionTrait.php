@@ -70,18 +70,6 @@ trait CollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function withValue($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function hasOffset($offset)
     {
         return array_key_exists($offset, $this->data);

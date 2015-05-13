@@ -41,6 +41,18 @@ class Query implements Interfaces\Query
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function withValue($value)
+    {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
+    }
+
+    /**
      * return a new Query instance from an Array or a traversable object
      *
      * @param  \Traversable|array $data

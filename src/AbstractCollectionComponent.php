@@ -47,6 +47,18 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     abstract protected function init($str);
 
     /**
+     * {@inheritdoc}
+     */
+    public function withValue($value)
+    {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
+    }
+
+    /**
      * Validate a component as a Interfaces\CollectionComponent object
      *
      * @param  mixed $component

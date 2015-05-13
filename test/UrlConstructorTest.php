@@ -162,7 +162,10 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
                 'http://login:pass@example.com/',
                 'http://login:pass@example.com/',
             ],
-            'empty string' => ['', ''],
+            'empty string' => [
+                '',
+                ''
+            ],
         ];
     }
 
@@ -181,6 +184,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
         return [
             ["http://user@:80"],
             ["//user@:80"],
+            ["//80"],
         ];
     }
 }

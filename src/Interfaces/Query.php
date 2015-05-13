@@ -19,6 +19,11 @@ use JsonSerializable;
 /**
  * Value object representing a URL Query component.
  *
+ * Instances of this interface are considered immutable; all methods that
+ * might change state MUST be implemented such that they retain the internal
+ * state of the current instance and return an instance that contains the
+ * changed state.
+ *
  * @package  League.url
  * @since  4.0.0
  */

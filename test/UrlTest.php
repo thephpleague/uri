@@ -39,13 +39,23 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetterAccess()
     {
+        $host  = $this->url->getHost();
+        $path  = $this->url->getPath();
+        $query = $this->url->getQuery();
         $this->assertInstanceof('League\Url\Scheme', $this->url->getScheme());
         $this->assertInstanceof('League\Url\User', $this->url->getUser());
         $this->assertInstanceof('League\Url\Pass', $this->url->getPass());
-        $this->assertInstanceof('League\Url\Host', $this->url->getHost());
-        $this->assertInstanceof('League\Url\Port', $this->url->getPort());
-        $this->assertInstanceof('League\Url\Path', $this->url->getPath());
-        $this->assertInstanceof('League\Url\Query', $this->url->getQuery());
+        $this->assertInstanceof('League\Url\Host', $host);
+        $this->assertInstanceof('League\Url\Interfaces\Host', $host);
+        $this->assertInstanceof('League\Url\Interfaces\CollectionComponent', $host);
+        $this->assertInstanceof('League\Url\Interfaces\Component', $host);
+        $this->assertInstanceof('League\Url\Path', $path);
+        $this->assertInstanceof('League\Url\Interfaces\Path', $path);
+        $this->assertInstanceof('League\Url\Interfaces\CollectionComponent', $path);
+        $this->assertInstanceof('League\Url\Interfaces\Component', $path);
+        $this->assertInstanceof('League\Url\Query', $query);
+        $this->assertInstanceof('League\Url\Interfaces\Component', $query);
+        $this->assertInstanceof('League\Url\Interfaces\Query', $query);
         $this->assertInstanceof('League\Url\Fragment', $this->url->getFragment());
     }
 

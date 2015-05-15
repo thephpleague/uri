@@ -227,6 +227,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($url1->sameValueAs($url2));
     }
 
+    public function testHasStandardPort()
+    {
+        $this->assertFalse(Url::createFromUrl('http://example.com:81/')->hasStandardPort());
+        $this->assertTrue(Url::createFromUrl('http://example.com:80/')->hasStandardPort());
+        $this->assertTrue(Url::createFromUrl('http://example.com/')->hasStandardPort());
+    }
+
     /**
      * @param $relative
      * @param $expected

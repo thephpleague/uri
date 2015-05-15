@@ -31,4 +31,11 @@ interface Port extends Component
      * @return null|int
      */
     public function toInt();
+
+    /**
+     * Return the default schemes attached to a port
+     *
+     * @return array
+     */
+    public function getStandardSchemes();
 }

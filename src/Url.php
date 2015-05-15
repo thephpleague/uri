@@ -237,7 +237,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return '' != $this->getAuthority() && ! $this->scheme->isEmpty();
+        return '' != $this->getAuthority() && ! $this->scheme->isEmpty() && $this->path->isAbsolute();
     }
 
     /**
@@ -427,23 +427,21 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        $res = [
-            'scheme'   => $this->scheme->__toString(),
-            'user'     => $this->user->__toString(),
-            'pass'     => $this->pass->__toString(),
-            'host'     => $this->host->__toString(),
-            'port'     => (int) $this->port->__toString(),
-            'path'     => $this->path->__toString(),
-            'query'    => $this->query->__toString(),
-            'fragment' => $this->fragment->__toString(),
-        ];
-
         return array_map(function ($value) {
             if (empty($value)) {
                 return null;
             }
             return $value;
-        }, $res);
+        }, [
+            'scheme'   => $this->scheme->__toString(),
+            'user'     => $this->user->__toString(),
+            'pass'     => $this->pass->__toString(),
+            'host'     => $this->host->__toString(),
+            'port'     => $this->port->toInt(),
+            'path'     => $this->path->__toString(),
+            'query'    => $this->query->__toString(),
+            'fragment' => $this->fragment->__toString(),
+        ]);
     }
 
     /**

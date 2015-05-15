@@ -21,7 +21,7 @@ namespace League\Url\Util;
 trait StandardPort
 {
     /**
-     * Standard Port for known schemes
+     * Standard ports for known schemes
      *
      * @var array
      */
@@ -37,6 +37,11 @@ trait StandardPort
         'wss'   => [443],
     ];
 
+    /**
+     * Standard scheme for known ports
+     *
+     * @var array
+     */
     protected static $standardSchemes = [
         21  => ['ftp'],
         22  => ['ssh'],
@@ -52,6 +57,7 @@ trait StandardPort
      * Return all the port attached to a given scheme
      *
      * @param  string $scheme
+     *
      * @return array
      */
     protected function getStandardPortsFromScheme($scheme)
@@ -70,6 +76,7 @@ trait StandardPort
      * Return all the scheme attached to a given port
      *
      * @param  int $port
+     *
      * @return array
      */
     protected function getStandardSchemesFromPort($port)

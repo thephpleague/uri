@@ -43,10 +43,10 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
      */
     public function getStandardPorts()
     {
-        if ($this->isEmpty()) {
-            return [];
+        $res = [];
+        if (! $this->isEmpty()) {
+            $res = explode('+', $this->data);
         }
-        $res = explode('+', $this->data);
 
         return $this->getStandardPortsFromScheme(array_pop($res));
     }

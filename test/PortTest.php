@@ -58,15 +58,41 @@ class PortTest extends PHPUnit_Framework_TestCase
         new Port($port);
     }
 
-    public function testGetUriComponent()
+    /**
+     * @param  $input
+     * @param  $expected
+     * @dataProvider getUriComponentProvider
+     */
+    public function testGetUriComponent($input, $expected)
     {
-        $port = new Port(80);
-        $this->assertSame(':80', $port->getUriComponent());
+        $this->assertSame($expected, (new Port($input))->getUriComponent());
     }
 
-    public function testGetUriComponentWithEmptyPort()
+    public function getUriComponentProvider()
     {
-        $port = new Port();
-        $this->assertSame('', $port->getUriComponent());
+        return [
+            ['443', ':443'],
+            [null, ''],
+            [23, ':23']
+        ];
+    }
+
+    /**
+     * @param  $input
+     * @param  $expected
+     * @dataProvider isEmptyProvider
+     */
+    public function testIsEmpty($input, $expected)
+    {
+        $this->assertSame($expected, (new Port($input))->isEmpty());
+    }
+
+    public function isEmptyProvider()
+    {
+        return [
+            ['443', false],
+            [null, true],
+            [23, false]
+        ];
     }
 }

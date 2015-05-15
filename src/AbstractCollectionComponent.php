@@ -95,6 +95,16 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * {@inheritdoc}
      */
+    public function isEmpty()
+    {
+        $str = $this->__toString();
+
+        return empty($str);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function append($component)
     {
         $source = $this->toArray();

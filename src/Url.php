@@ -223,7 +223,7 @@ class Url implements Interfaces\Url
     protected function withComponent($name, $value)
     {
         $value = $this->$name->withValue($value);
-        if ($value->sameValueAs($this->$name)) {
+        if ($this->$name->sameValueAs($value)) {
             return $this;
         }
         $clone = clone $this;
@@ -237,7 +237,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return '' != $this->getAuthority() && '' != $this->scheme->__toString();
+        return '' != $this->getAuthority() && ! $this->scheme->isEmpty();
     }
 
     /**
@@ -387,7 +387,7 @@ class Url implements Interfaces\Url
      */
     public function getAuthority()
     {
-        if (! count($this->host)) {
+        if ($this->host->isEmpty()) {
             return '';
         }
 
@@ -486,11 +486,11 @@ class Url implements Interfaces\Url
         }
 
         $res = $this->withFragment($rel->fragment);
-        if ('' != $rel->path->__toString()) {
+        if (! $rel->path->isEmpty()) {
             return $this->resolvePath($res, $rel);
         }
 
-        if ('' != $rel->query->__toString()) {
+        if (! $rel->query->isEmpty()) {
             return $res->withQuery($rel->query)->normalize();
         }
 
@@ -513,7 +513,7 @@ class Url implements Interfaces\Url
             array_pop($segments);
             $path = Path::createFromArray(
                 array_merge($segments, $rel->path->toArray()),
-                '' == $url->path->__toString() || $url->path->isAbsolute()
+                $url->path->isEmpty() || $url->path->isAbsolute()
             );
         }
 

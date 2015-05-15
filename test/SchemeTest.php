@@ -90,4 +90,24 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['', true]
         ];
     }
+
+    /**
+     * @param  $scheme
+     * @param  $expected
+     * @dataProvider portProvider
+     */
+    public function testGetDefaultPorts($scheme, $expected)
+    {
+        $this->assertSame($expected, (new Scheme($scheme))->getDefaultPorts());
+    }
+
+    public function portProvider()
+    {
+        return [
+            ['http', [80]],
+            ['', []],
+            ['ftps', [989, 990]],
+            ['svn+ssh', []],
+        ];
+    }
 }

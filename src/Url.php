@@ -15,7 +15,6 @@ namespace League\Url;
 use League\Url\Interfaces;
 use League\Url\Util;
 use Psr\Http\Message\UriInterface;
-use ReflectionClass;
 
 /**
 * Value object representing a URL.
@@ -82,33 +81,27 @@ class Url implements Interfaces\Url
     protected $fragment;
 
     /**
-     * A trait with information about Scheme and their
-     * related standard port
-     */
-    use Util\StandardPort;
-
-    /**
      * A Factory trait fetch info from Server environment variables
      */
     use Util\ServerInfo;
 
 
     /**
-     * A Trait to parse URL strings
+     * A Factory Trait to create new URL instance
      */
-    use Util\UrlParser;
+    use Util\UrlFactory;
 
     /**
      * Create a new instance of URL
      *
-     * @param Scheme           $scheme
-     * @param User             $user
-     * @param Pass             $pass
-     * @param Interfaces\Host  $host
-     * @param Interfaces\Port  $port
-     * @param Interfaces\Path  $path
-     * @param Interfaces\Query $query
-     * @param Fragment         $fragment
+     * @param Interfaces\Scheme $scheme
+     * @param User              $user
+     * @param Pass              $pass
+     * @param Interfaces\Host   $host
+     * @param Interfaces\Port   $port
+     * @param Interfaces\Path   $path
+     * @param Interfaces\Query  $query
+     * @param Fragment          $fragment
      */
     public function __construct(
         Interfaces\Scheme $scheme,
@@ -146,67 +139,103 @@ class Url implements Interfaces\Url
     }
 
     /**
-     * Create a new League\Url\Url instance from an array returned by
-     * PHP parse_url function
-     *
-     * @param array $components
-     *
-     * @return static
+     * {@inheritdoc}
      */
-    public static function createFromComponents(array $components)
+    public function toArray()
     {
-        $components += [
-            "scheme" => null, "user" => null, "pass" => null, "host" => null,
-            "port" => null, "path" => null, "query" => null, "fragment" => null
-        ];
-
-        $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
-        $url->scheme   = new Scheme($components["scheme"]);
-        $url->user     = new User($components["user"]);
-        $url->pass     = new Pass($components["pass"]);
-        $url->host     = new Host($components["host"]);
-        $url->port     = new Port($components["port"]);
-        $url->path     = new Path($components["path"]);
-        $url->query    = new Query($components["query"]);
-        $url->fragment = new Fragment($components["fragment"]);
-
-        return $url;
+        return array_map(function ($value) {
+            if (empty($value)) {
+                return null;
+            }
+            return $value;
+        }, [
+            'scheme'   => $this->scheme->__toString(),
+            'user'     => $this->user->__toString(),
+            'pass'     => $this->pass->__toString(),
+            'host'     => $this->host->__toString(),
+            'port'     => $this->port->toInt(),
+            'path'     => $this->path->__toString(),
+            'query'    => $this->query->__toString(),
+            'fragment' => $this->fragment->__toString(),
+        ]);
     }
 
     /**
-     * Create a new League\Url\Url instance from a string
-     *
-     * @param string $url
-     *
-     * @throws \InvalidArgumentException If the URL can not be parsed
-     *
-     * @return static
+     * {@inheritdoc}
      */
-    public static function createFromUrl($url)
+    public function __toString()
     {
-        $url = trim($url);
+        $auth = $this->getAuthority();
+        if (! empty($auth)) {
+            $auth = '//'.$auth;
+        }
 
-        return static::createFromComponents(self::parseUrl($url));
+        return $this->scheme->getUriComponent().$auth
+            .$this->path->getUriComponent()
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
     }
 
     /**
-     * Create a new League\Url\Url object from the environment
-     *
-     * @param array $server the environment server typically $_SERVER
-     *
-     * @throws \InvalidArgumentException If the URL can not be parsed
-     *
-     * @return static
+     * {@inheritdoc}
      */
-    public static function createFromServer(array $server)
+    public function getAuthority()
     {
-        return static::createFromUrl(
-            static::fetchServerScheme($server).'//'
-            .static::fetchServerUserInfo($server)
-            .static::fetchServerHost($server)
-            .static::fetchServerPort($server)
-            .static::fetchServerRequestUri($server)
-        );
+        if ($this->host->isEmpty()) {
+            return '';
+        }
+
+        $userinfo = $this->getUserInfo();
+        if (! empty($userinfo)) {
+            $userinfo .= '@';
+        }
+
+        $port = '';
+        if (! $this->hasStandardPort()) {
+            $port = $this->port->getUriComponent();
+        }
+
+        return $userinfo.$this->host->getUriComponent().$port;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAbsolute()
+    {
+        return ! $this->scheme->isEmpty() && '' != $this->getAuthority() && $this->path->isAbsolute();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasStandardPort()
+    {
+        return in_array($this->port->toInt(), $this->scheme->getStandardPorts());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(UriInterface $url)
+    {
+        return $url->__toString() == $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScheme()
+    {
+        return clone $this->scheme;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withScheme($scheme)
+    {
+        return $this->withComponent('scheme', $scheme);
     }
 
     /**
@@ -230,30 +259,6 @@ class Url implements Interfaces\Url
         $clone->$name = $value;
 
         return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAbsolute()
-    {
-        return '' != $this->getAuthority() && ! $this->scheme->isEmpty() && $this->path->isAbsolute();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheme()
-    {
-        return clone $this->scheme;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withScheme($scheme)
-    {
-        return $this->withComponent('scheme', $scheme);
     }
 
     /**
@@ -380,82 +385,6 @@ class Url implements Interfaces\Url
     public function withFragment($fragment)
     {
         return $this->withComponent('fragment', $fragment);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthority()
-    {
-        if ($this->host->isEmpty()) {
-            return '';
-        }
-
-        $userinfo = $this->getUserInfo();
-        if (! empty($userinfo)) {
-            $userinfo .= '@';
-        }
-
-        $port = '';
-        if (! $this->hasStandardPort()) {
-            $port = $this->port->getUriComponent();
-        }
-
-        return $userinfo.$this->host->getUriComponent().$port;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        return in_array($this->port->toInt(), $this->scheme->getStandardPorts());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return array_map(function ($value) {
-            if (empty($value)) {
-                return null;
-            }
-            return $value;
-        }, [
-            'scheme'   => $this->scheme->__toString(),
-            'user'     => $this->user->__toString(),
-            'pass'     => $this->pass->__toString(),
-            'host'     => $this->host->__toString(),
-            'port'     => $this->port->toInt(),
-            'path'     => $this->path->__toString(),
-            'query'    => $this->query->__toString(),
-            'fragment' => $this->fragment->__toString(),
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        $auth = $this->getAuthority();
-        if (! empty($auth)) {
-            $auth = '//'.$auth;
-        }
-
-        return $this->scheme->getUriComponent().$auth
-            .$this->path->getUriComponent()
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(UriInterface $url)
-    {
-        return $url->__toString() == $this->__toString();
     }
 
     /**

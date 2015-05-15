@@ -47,7 +47,10 @@ interface Url extends UriInterface
 
     /**
      * Returns whether a Url is absolute or relative. An Url is
-     * said to be absolute if is has a non empty scheme.
+     * said to be absolute if is has:
+     * - a non empty scheme.
+     * - an authority part
+     * - an absolute path
      *
      * @return bool
      */

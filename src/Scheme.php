@@ -13,7 +13,8 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
+use League\Url\Interfaces;
+use League\Url\Util;
 
 /**
 * Value object representing a URL scheme component.
@@ -21,8 +22,10 @@ use League\Url\Interfaces\Component;
 * @package League.url
 * @since 1.0.0
 */
-class Scheme extends AbstractComponent implements Component
+class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
+    use Util\StandardPort;
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +36,21 @@ class Scheme extends AbstractComponent implements Component
         }
 
         return strtolower($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultPorts()
+    {
+        if (! isset(static::$standardPorts[$this->data])) {
+            return [];
+        }
+
+        $port_list = array_keys(static::$standardPorts[$this->data]);
+        sort($port_list);
+
+        return $port_list;
     }
 
     /**

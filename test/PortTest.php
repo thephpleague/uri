@@ -16,6 +16,25 @@ class PortTest extends PHPUnit_Framework_TestCase
         $this->assertSame('443', $port->__toString());
     }
 
+    /**
+     * @param  $input
+     * @param  $expected
+     * @dataProvider toIntProvider
+     */
+    public function testToInt($input, $expected)
+    {
+        $this->assertSame($expected, (new Port($input))->toInt());
+    }
+
+    public function toIntProvider()
+    {
+        return [
+            ['443', 443],
+            [null, null],
+            [23, 23]
+        ];
+    }
+
     public function invalidPortProvider()
     {
         return [

@@ -47,37 +47,37 @@ class Url implements Interfaces\Url
     protected $pass;
 
     /**
-     * Interfaces\Host Component
+     * Host Component
      *
-     * @var Host
+     * @var Interfaces\Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var Port
+     * @var Interfaces\Port
      */
     protected $port;
 
     /**
-     * Interfaces\Path Component
+     * Path Component
      *
-     * @var Path
+     * @var Interfaces\Path
      */
     protected $path;
 
     /**
-     * Interfaces\Query Component
+     * Query Component
      *
-     * @var Query
+     * @var Interfaces\Query
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var League\Url\Fragment
+     * @var Fragment
      */
     protected $fragment;
 
@@ -101,21 +101,21 @@ class Url implements Interfaces\Url
     /**
      * Create a new instance of URL
      *
-     * @param Scheme   $scheme
-     * @param User     $user
-     * @param Pass     $pass
-     * @param Host     $host
-     * @param Port     $port
-     * @param Path     $path
-     * @param Query    $query
-     * @param Fragment $fragment
+     * @param Scheme           $scheme
+     * @param User             $user
+     * @param Pass             $pass
+     * @param Interfaces\Host  $host
+     * @param Interfaces\Port  $port
+     * @param Interfaces\Path  $path
+     * @param Interfaces\Query $query
+     * @param Fragment         $fragment
      */
     public function __construct(
         Scheme $scheme,
         User $user,
         Pass $pass,
         Interfaces\Host $host,
-        Port $port,
+        Interfaces\Port $port,
         Interfaces\Path $path,
         Interfaces\Query $query,
         Fragment $fragment

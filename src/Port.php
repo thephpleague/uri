@@ -13,7 +13,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
+use League\Url\Interfaces;
 
 /**
 * Value object representing a URL port component.
@@ -21,7 +21,7 @@ use League\Url\Interfaces\Component;
 * @package League.url
 * @since 1.0.0
 */
-class Port extends AbstractComponent implements Component
+class Port extends AbstractComponent implements Interfaces\Port
 {
     /**
      * New Instance
@@ -58,5 +58,13 @@ class Port extends AbstractComponent implements Component
             return $data;
         }
         return ':'.$data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toInt()
+    {
+        return $this->data;
     }
 }

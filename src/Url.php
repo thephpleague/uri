@@ -28,7 +28,7 @@ class Url implements Interfaces\Url
     /**
      * Scheme Component
      *
-     * @var Scheme
+     * @var Interfaces\Scheme
      */
     protected $scheme;
 
@@ -111,7 +111,7 @@ class Url implements Interfaces\Url
      * @param Fragment         $fragment
      */
     public function __construct(
-        Scheme $scheme,
+        Interfaces\Scheme $scheme,
         User $user,
         Pass $pass,
         Interfaces\Host $host,
@@ -409,17 +409,7 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        $port = $this->port->__toString();
-        if (empty($port)) {
-            return true;
-        }
-
-        $scheme = $this->scheme->__toString();
-        return isset(
-            $scheme,
-            static::$standardPorts[$scheme],
-            static::$standardPorts[$scheme][$port]
-        );
+        return in_array($this->port->toInt(), $this->scheme->getStandardPorts());
     }
 
     /**

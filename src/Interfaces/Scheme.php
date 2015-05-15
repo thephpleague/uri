@@ -30,5 +30,5 @@ interface Scheme extends Component
      *
      * @return array
      */
-    public function getDefaultPorts();
+    public function getStandardPorts();
 }

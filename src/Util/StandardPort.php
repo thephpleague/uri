@@ -26,14 +26,60 @@ trait StandardPort
      * @var array
      */
     protected static $standardPorts = [
-        'ftp'   => [21  => 1],
-        'ftps'  => [990 => 1, 989 => 1],
-        'https' => [443 => 1],
-        'http'  => [80  => 1],
-        'ldap'  => [389 => 1],
-        'ldaps' => [636 => 1],
-        'ssh'   => [22  => 1],
-        'ws'    => [80  => 1],
-        'wss'   => [443 => 1],
+        'ftp'   => [21],
+        'ftps'  => [989, 990],
+        'https' => [443],
+        'http'  => [80],
+        'ldap'  => [389],
+        'ldaps' => [636],
+        'ssh'   => [22],
+        'ws'    => [80],
+        'wss'   => [443],
     ];
+
+    protected static $standardSchemes = [
+        21  => ['ftp'],
+        22  => ['ssh'],
+        80  => ['http', 'ws'],
+        389 => ['ldap'],
+        443 => ['https', 'wss'],
+        636 => ['ldaps'],
+        989 => ['ftps'],
+        990 => ['ftps'],
+    ];
+
+    /**
+     * Return all the port attached to a given scheme
+     *
+     * @param  string $scheme
+     * @return array
+     */
+    protected function getStandardPortsFromScheme($scheme)
+    {
+        $res = [];
+        if (array_key_exists($scheme, static::$standardPorts)) {
+            $res = static::$standardPorts[$scheme];
+
+        }
+        sort($res);
+
+        return $res;
+    }
+
+    /**
+     * Return all the scheme attached to a given port
+     *
+     * @param  int $port
+     * @return array
+     */
+    protected function getStandardSchemesFromPort($port)
+    {
+        $res = [];
+        if (array_key_exists($port, static::$standardSchemes)) {
+            $res = static::$standardSchemes[$port];
+        }
+        sort($res);
+
+        return $res;
+    }
 }

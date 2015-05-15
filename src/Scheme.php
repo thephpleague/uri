@@ -41,16 +41,14 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     /**
      * {@inheritdoc}
      */
-    public function getDefaultPorts()
+    public function getStandardPorts()
     {
-        if (! isset(static::$standardPorts[$this->data])) {
+        if ($this->isEmpty()) {
             return [];
         }
+        $res = explode('+', $this->data);
 
-        $port_list = array_keys(static::$standardPorts[$this->data]);
-        sort($port_list);
-
-        return $port_list;
+        return $this->getStandardPortsFromScheme(array_pop($res));
     }
 
     /**

@@ -82,6 +82,14 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
+    public function isEmpty()
+    {
+        return empty($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function withValue($value)
     {
         if ($value == $this->__toString()) {

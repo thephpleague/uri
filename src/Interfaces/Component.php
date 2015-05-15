@@ -33,6 +33,13 @@ interface Component
     public function __toString();
 
     /**
+     * Returns true if the component is empty
+     *
+     * @return bool
+     */
+    public function isEmpty();
+
+    /**
      * Returns the component URL string representation
      * with its optional URL delimiters
      *

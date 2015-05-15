@@ -32,4 +32,23 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'encoded' => ["%^[]{}\"<>\\", "#%25%5E%5B%5D%7B%7D%22%3C%3E%5C",],
         ];
     }
+
+    /**
+     * @param  $input
+     * @param  $expected
+     * @dataProvider isEmptyProvider
+     */
+    public function testIsEmpty($input, $expected)
+    {
+        $this->assertSame($expected, (new Fragment($input))->isEmpty());
+    }
+
+    public function isEmptyProvider()
+    {
+        return [
+            ['yes', false],
+            [null, true],
+            ['', true]
+        ];
+    }
 }

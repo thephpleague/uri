@@ -26,7 +26,7 @@ namespace League\Url\Interfaces;
 interface Path extends CollectionComponent
 {
     /**
-     * Returns an instance with the path normalized
+     * Returns an instance without dot segments
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the path component normalized by removing
@@ -34,7 +34,18 @@ interface Path extends CollectionComponent
      *
      * @return static
      */
-    public function normalize();
+    public function withoutDotSegments();
+
+    /**
+     * Returns an instance without duplicate delimiters
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * multiple consecutive empty segment
+     *
+     * @return static
+     */
+    public function withoutDuplicateDelimiters();
 
     /**
      * Returns whether or not the path is absolute or relative

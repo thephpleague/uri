@@ -275,11 +275,11 @@ class PathTest extends PHPUnit_Framework_TestCase
      *
      * @param  string $expected
      * @param  string $path
-     * @dataProvider normalizeProvider
+     * @dataProvider withoutDotSegmentsProvider
      */
-    public function testNormalize($path, $expected)
+    public function testWithoutDotSegments($path, $expected)
     {
-        $this->assertSame($expected, (new Path($path))->normalize()->__toString());
+        $this->assertSame($expected, (new Path($path))->withoutDotSegments()->__toString());
     }
 
     /**
@@ -287,13 +287,34 @@ class PathTest extends PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function normalizeProvider()
+    public function withoutDotSegmentsProvider()
     {
         return [
             ['/a/b/c/./../../g', '/a/g'],
             ['mid/content=5/../6', 'mid/6'],
             ['a/b/c', 'a/b/c'],
             ['a/b/c/.', 'a/b/c/'],
+            ['/a/b/c', '/a/b/c'],
+        ];
+    }
+
+    /**
+     * @param  $path     [description]
+     * @param  $expected [description]
+     * @dataProvider withoutDuplicateDelimitersProvider
+     */
+    public function testWithoutDuplicateDelimiters($path, $expected)
+    {
+        $this->assertSame($expected, (new Path($path))->withoutDuplicateDelimiters()->__toString());
+    }
+
+    public function withoutDuplicateDelimitersProvider()
+    {
+        return [
+            ['/a/b/c', '/a/b/c'],
+            ['//a//b//c', '/a/b/c'],
+            ['a//b/c//', 'a/b/c/'],
+            ['/a/b/c//', '/a/b/c/'],
         ];
     }
 

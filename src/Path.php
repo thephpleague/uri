@@ -134,7 +134,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         if (static::$delimiter == $current[0]) {
             $new = static::$delimiter;
         }
-        $new .= implode(static::$delimiter, $this->filterDotSegment($input));
+        $new .= implode(static::$delimiter, $this->filterDotSegments($input));
         if (isset(static::$dot_segments[end($input)])) {
             $new .= static::$delimiter;
         }
@@ -149,7 +149,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      *
      * @return array
      */
-    protected function filterDotSegment(array $input)
+    protected function filterDotSegments(array $input)
     {
         $arr = [];
         foreach ($input as $CollectionComponent) {

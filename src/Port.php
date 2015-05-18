@@ -39,7 +39,9 @@ class Port extends AbstractComponent implements Interfaces\Port
     }
 
     /**
-     * {@inheritdoc}
+     * Validate the port
+     *
+     * @param int $data
      */
     protected function validate($data)
     {
@@ -76,7 +78,9 @@ class Port extends AbstractComponent implements Interfaces\Port
      */
     public function hasStandardScheme($scheme)
     {
-        $scheme = new Scheme(array_pop(explode('+', $scheme)));
+        $scheme = explode('+', $scheme);
+        $scheme = array_pop($scheme);
+        $scheme = new Scheme($scheme);
         if ($this->isEmpty()) {
             return true;
         }

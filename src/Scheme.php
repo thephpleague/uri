@@ -54,6 +54,26 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     /**
      * {@inheritdoc}
      */
+    public function hasStandardPort($port)
+    {
+        if (! $port instanceof Interfaces\Port) {
+            $port = new Port($port);
+        }
+
+        if ($port->isEmpty()) {
+            return true;
+        }
+
+        $res = array_filter($this->getStandardPorts(), function ($value) use ($port) {
+            return $port->sameValueAs($value);
+        });
+
+        return ! empty($res);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
         $data = $this->__toString();

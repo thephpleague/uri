@@ -3,6 +3,7 @@
 namespace League\Url\Test\Components;
 
 use League\Url\Port;
+use League\Url\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -103,16 +104,38 @@ class PortTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultSchemes($port, $expected)
     {
-        $this->assertSame($expected, (new Port($port))->getStandardSchemes());
+        $this->assertEquals($expected, (new Port($port))->getStandardSchemes());
     }
 
     public function schemeProvider()
     {
         return [
-            ['443', ['https', 'wss']],
+            ['443', [new Scheme('https'), new Scheme('wss')]],
             [null, []],
             [23, []],
-            ['443', ['https', 'wss']],
+            ['443', [new Scheme('https'), new Scheme('wss')]],
+        ];
+    }
+
+    /**
+     * @param  $scheme
+     * @param  $port
+     * @param  $expected
+     * @dataProvider hasStandardProvider
+     */
+    public function testHasStandardScheme($scheme, $port, $expected)
+    {
+        $this->assertSame($expected, (new Port($port))->hasStandardScheme($scheme));
+    }
+
+    public function hasStandardProvider()
+    {
+        return [
+            ['http', 80, true],
+            ['http', null, true],
+            ['ftp', 80, false],
+            ['ws', 80, true],
+            ['', 80, false],
         ];
     }
 }

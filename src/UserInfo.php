@@ -37,6 +37,11 @@ class UserInfo implements Interfaces\UserInfo
     protected $pass;
 
     /**
+     * Trait for Common methods amongs composed class
+     */
+    use Util\CompositionTrait;
+
+    /**
      * Create a new instance of UserInfo
      *
      * @param User $user
@@ -86,15 +91,10 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function toArray()
     {
-        return array_map(function ($value) {
-            if (empty($value)) {
-                return null;
-            }
-            return $value;
-        }, [
+        return [
             'user' => $this->user->__toString(),
             'pass' => $this->pass->__toString(),
-        ]);
+        ];
     }
 
     /**
@@ -102,12 +102,11 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function __toString()
     {
-        $info = $this->user->getUriComponent();
-        if (empty($info)) {
+        if ($this->user->isEmpty()) {
             return '';
         }
 
-        return $info.$this->pass->getUriComponent();
+        return $this->user->getUriComponent().$this->pass->getUriComponent();
     }
 
     /**
@@ -137,30 +136,6 @@ class UserInfo implements Interfaces\UserInfo
     public function withUser($user)
     {
         return $this->withComponent('user', $user);
-    }
-
-
-    /**
-     * Returns an instance with the modified component
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified component
-     *
-     * @param string $name  the component to set
-     * @param string $value the component value
-     *
-     * @return static
-     */
-    protected function withComponent($name, $value)
-    {
-        $value = $this->$name->withValue($value);
-        if ($this->$name->sameValueAs($value)) {
-            return $this;
-        }
-        $clone = clone $this;
-        $clone->$name = $value;
-
-        return $clone;
     }
 
     /**

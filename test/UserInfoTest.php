@@ -35,14 +35,27 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testToArray()
+    /**
+     * @param $login
+     * @param $pass
+     * @param $expected
+     * @dataProvider toArrayProvider
+     */
+    public function testToArray($login, $pass, $expected)
     {
-        $this->assertSame(['user' => 'login', 'pass' => 'pass'], (new UserInfo('login', 'pass'))->toArray());
-        $this->assertSame(['user' => 'login', 'pass' => null], (new UserInfo('login', null))->toArray());
-        $this->assertSame(['user' => 'login', 'pass' => null], (new UserInfo('login', ''))->toArray());
-        $this->assertSame(['user' => null, 'pass' => null], (new UserInfo('', ''))->toArray());
-        $this->assertSame(['user' => null, 'pass' => null], (new UserInfo())->toArray());
-        $this->assertSame(['user' => null, 'pass' => 'pass'], (new UserInfo('', 'pass'))->toArray());
-        $this->assertSame(['user' => null, 'pass' => 'pass'], (new UserInfo(null, 'pass'))->toArray());
+        $this->assertSame($expected, (new UserInfo($login, $pass))->toArray());
+    }
+
+    public function toArrayProvider()
+    {
+        return [
+            ['login', 'pass', ['user' => 'login', 'pass' => 'pass']],
+            ['login', null,   ['user' => 'login', 'pass' => '']],
+            ['login', '',     ['user' => 'login', 'pass' => '']],
+            ['', '',          ['user' => ''     , 'pass' => '']],
+            [null, null,      ['user' => ''     , 'pass' => '']],
+            ['', 'pass',      ['user' => ''     , 'pass' => 'pass']],
+            [null, 'pass',    ['user' => ''     , 'pass' => 'pass']],
+        ];
     }
 }

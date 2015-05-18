@@ -78,11 +78,15 @@ class Url implements Interfaces\Url
      */
     use Util\ServerInfo;
 
-
     /**
      * A Factory Trait to create new URL instance
      */
     use Util\UrlFactory;
+
+    /**
+     * Trait for Common methods amongs composed class
+     */
+    use Util\CompositionTrait;
 
     /**
      * Create a new instance of URL
@@ -220,29 +224,6 @@ class Url implements Interfaces\Url
     public function withScheme($scheme)
     {
         return $this->withComponent('scheme', $scheme);
-    }
-
-    /**
-     * Returns an instance with the modified component
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified component
-     *
-     * @param string $name  the component to set
-     * @param string $value the component value
-     *
-     * @return static
-     */
-    protected function withComponent($name, $value)
-    {
-        $value = $this->$name->withValue($value);
-        if ($this->$name->sameValueAs($value)) {
-            return $this;
-        }
-        $clone = clone $this;
-        $clone->$name = $value;
-
-        return $clone;
     }
 
     /**

@@ -187,11 +187,8 @@ class Formatter
         if ('' == $url->getAuthority()) {
             return $str;
         }
-        $userinfo = $url->getUserInfo();
-        if (! empty($userinfo)) {
-            $userinfo .= '@';
-        }
-        $str = '//'.$userinfo.$this->formatHost($url->getHost());
+
+        $str = '//'.$url->getUserInfo()->getUriComponent().$this->formatHost($url->getHost());
         if (! $url->hasStandardPort()) {
             $str .= $url->getPort()->getUriComponent();
         }

@@ -13,7 +13,7 @@
 namespace League\Url\Util;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
+use League\Url\Interfaces;
 
 /**
  * A trait with common methods for Component Value Object
@@ -68,7 +68,7 @@ trait ComponentTrait
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Component $component)
+    public function sameValueAs(Interfaces\UrlPart $component)
     {
         return $component->getUriComponent() == $this->getUriComponent();
     }

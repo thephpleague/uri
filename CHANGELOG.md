@@ -25,12 +25,22 @@ All Notable changes to `League\Url` will be documented in this file
     - implements IPv4 and IPV6 style host
 
 - `League\Url\Interfaces\Path`:
-    - `normalize` the path according to RFC3986 rules;
+    - `withoutDotSegment` remove dot segment according to RFC3986 rules;
+    - `withoutDuplicateDelimiters` remove multiple adjacent delimiters;
     - `getBasename` returns the trailing path;
     - manage the trailing path extension using `getExtension` and `withExtension`;
 
 - `League\Url\Interfaces\Query`:
     - The interface is simplified to remove ambiguity and allow setting default values for missing keys;
+
+- `League\Url\Interfaces\Scheme` and `League\Url\Interfaces\Port`:
+    - support for listing and detecting standard port for a given scheme in both objects with
+        - `Interfaces\Port::getStandardSchemes`
+        - `Interfaces\Port::hasStandardScheme`
+        - `Interfaces\Scheme::getStandardPorts`
+        - `Interfaces\Scheme::hasStandardPort`
+
+- `League\Url\UserInfo` class added to better manipulate URL user info part
 
 - The `Url` class as well as all Components classes are now immutable value objects.
 - The `League\Url\Util\Formatter` class is added to ease Url formatting

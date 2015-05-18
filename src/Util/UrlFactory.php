@@ -77,8 +77,7 @@ trait UrlFactory
 
         $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
         $url->scheme   = new Url\Scheme($components["scheme"]);
-        $url->user     = new Url\User($components["user"]);
-        $url->pass     = new Url\Pass($components["pass"]);
+        $url->userInfo = new Url\UserInfo(new Url\User($components["user"]), new Url\Pass($components["pass"]));
         $url->host     = new Url\Host($components["host"]);
         $url->port     = new Url\Port($components["port"]);
         $url->path     = new Url\Path($components["path"]);

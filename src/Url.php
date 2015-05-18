@@ -34,16 +34,9 @@ class Url implements Interfaces\Url
     /**
      * User Component
      *
-     * @var User
+     * @var UserInfo
      */
-    protected $user;
-
-    /**
-     * Pass Component
-     *
-     * @var Pass
-     */
-    protected $pass;
+    protected $userInfo;
 
     /**
      * Host Component
@@ -94,19 +87,17 @@ class Url implements Interfaces\Url
     /**
      * Create a new instance of URL
      *
-     * @param Interfaces\Scheme $scheme
-     * @param User              $user
-     * @param Pass              $pass
-     * @param Interfaces\Host   $host
-     * @param Interfaces\Port   $port
-     * @param Interfaces\Path   $path
-     * @param Interfaces\Query  $query
-     * @param Fragment          $fragment
+     * @param Interfaces\Scheme   $scheme
+     * @param Interfaces\UserInfo $userInfo
+     * @param Interfaces\Host     $host
+     * @param Interfaces\Port     $port
+     * @param Interfaces\Path     $path
+     * @param Interfaces\Query    $query
+     * @param Fragment            $fragment
      */
     public function __construct(
         Interfaces\Scheme $scheme,
-        User $user,
-        Pass $pass,
+        Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
         Interfaces\Port $port,
         Interfaces\Path $path,
@@ -114,8 +105,7 @@ class Url implements Interfaces\Url
         Fragment $fragment
     ) {
         $this->scheme   = clone $scheme;
-        $this->user     = clone $user;
-        $this->pass     = clone $pass;
+        $this->userInfo = clone $userInfo;
         $this->host     = clone $host;
         $this->port     = clone $port;
         $this->path     = clone $path;
@@ -129,8 +119,7 @@ class Url implements Interfaces\Url
     public function __clone()
     {
         $this->scheme   = clone $this->scheme;
-        $this->user     = clone $this->user;
-        $this->pass     = clone $this->pass;
+        $this->userInfo = clone $this->userInfo;
         $this->host     = clone $this->host;
         $this->port     = clone $this->port;
         $this->path     = clone $this->path;
@@ -150,8 +139,8 @@ class Url implements Interfaces\Url
             return $value;
         }, [
             'scheme'   => $this->scheme->__toString(),
-            'user'     => $this->user->__toString(),
-            'pass'     => $this->pass->__toString(),
+            'user'     => $this->userInfo->getUser()->__toString(),
+            'pass'     => $this->userInfo->getPass()->__toString(),
             'host'     => $this->host->__toString(),
             'port'     => $this->port->toInt(),
             'path'     => $this->path->__toString(),
@@ -185,25 +174,12 @@ class Url implements Interfaces\Url
             return '';
         }
 
-        $userinfo = $this->getUserInfo();
-        if (! empty($userinfo)) {
-            $userinfo .= '@';
-        }
-
         $port = '';
         if (! $this->hasStandardPort()) {
             $port = $this->port->getUriComponent();
         }
 
-        return $userinfo.$this->host->getUriComponent().$port;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAbsolute()
-    {
-        return ! $this->scheme->isEmpty() && '' != $this->getAuthority() && $this->path->isAbsolute();
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
     /**
@@ -212,6 +188,14 @@ class Url implements Interfaces\Url
     public function hasStandardPort()
     {
         return $this->scheme->hasStandardPort($this->port);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAbsolute()
+    {
+        return ! $this->scheme->isEmpty() && '' != $this->getAuthority() && $this->path->isAbsolute();
     }
 
     /**
@@ -264,30 +248,9 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function getUser()
-    {
-        return clone $this->user;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPass()
-    {
-        return clone $this->pass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getUserInfo()
     {
-        $info = $this->user->getUriComponent();
-        if (empty($info)) {
-            return '';
-        }
-
-        return $info.$this->pass->getUriComponent();
+        return clone $this->userInfo;
     }
 
     /**
@@ -295,8 +258,14 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
-        return $this->withComponent('user', $user)
-                    ->withComponent('pass', $pass);
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        if ($this->userInfo->sameValueAs($userInfo)) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
+
+        return $clone;
     }
 
     /**

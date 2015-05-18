@@ -2,15 +2,16 @@
 
 namespace League\Url\Test;
 
-use League\Url\Url;
-use League\Url\Scheme;
-use League\Url\User;
-use League\Url\Pass;
-use League\Url\Host;
-use League\Url\Port;
-use League\Url\Path;
-use League\Url\Query;
 use League\Url\Fragment;
+use League\Url\Host;
+use League\Url\Pass;
+use League\Url\Path;
+use League\Url\Port;
+use League\Url\Query;
+use League\Url\Url;
+use League\Url\User;
+use League\Url\UserInfo;
+use League\Url\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -43,8 +44,9 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $path  = $this->url->getPath();
         $query = $this->url->getQuery();
         $this->assertInstanceof('League\Url\Scheme', $this->url->getScheme());
-        $this->assertInstanceof('League\Url\User', $this->url->getUser());
-        $this->assertInstanceof('League\Url\Pass', $this->url->getPass());
+        $this->assertInstanceof('League\Url\UserInfo', $this->url->getUserInfo());
+        $this->assertInstanceof('League\Url\User', $this->url->getUserInfo()->getUser());
+        $this->assertInstanceof('League\Url\Pass', $this->url->getUserInfo()->getPass());
         $this->assertInstanceof('League\Url\Host', $host);
         $this->assertInstanceof('League\Url\Interfaces\Host', $host);
         $this->assertInstanceof('League\Url\Interfaces\CollectionComponent', $host);
@@ -88,7 +90,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetUserInfo()
     {
-        $this->assertSame('login:pass', $this->url->getUserInfo());
+        $this->assertSame('login:pass', (string) $this->url->getUserInfo());
     }
 
     public function testAutomaticUrlNormalization()
@@ -188,8 +190,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $url = new Url(
             new Scheme(),
-            new User(),
-            new Pass(),
+            new UserInfo(),
             new Host(),
             new Port(),
             new Path(),
@@ -204,8 +205,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $url1 = new Url(
             new Scheme(),
-            new User(),
-            new Pass(),
+            new UserInfo(),
             new Host('example.com'),
             new Port(),
             new Path(),
@@ -215,8 +215,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
         $url2 = new Url(
             new Scheme(),
-            new User(),
-            new Pass(),
+            new UserInfo(),
             new Host('ExAmPLe.cOm'),
             new Port(),
             new Path(),

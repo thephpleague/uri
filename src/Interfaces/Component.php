@@ -23,40 +23,8 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Component
+interface Component extends UrlPart
 {
-    /**
-     * Returns the component string representation
-     *
-     * @return string
-     */
-    public function __toString();
-
-    /**
-     * Returns true if the component is empty
-     *
-     * @return bool
-     */
-    public function isEmpty();
-
-    /**
-     * Returns the component URL string representation
-     * with its optional URL delimiters
-     *
-     * @return string
-     */
-    public function getUriComponent();
-
-    /**
-     * Returns whether two component represent the same value
-     * The Comparaison is based on the getUriComponent method
-     *
-     * @param Component $component
-     *
-     * @return bool
-     */
-    public function sameValueAs(Component $component);
-
     /**
      * Returns an instance with the specified string
      *

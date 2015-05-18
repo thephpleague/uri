@@ -24,6 +24,17 @@ use ReflectionClass;
  */
 trait UrlFactory
 {
+    protected static $defaultComponents = [
+        "scheme"   => null,
+        "user"     => null,
+        "pass"     => null,
+        "host"     => null,
+        "port"     => null,
+        "path"     => null,
+        "query"    => null,
+        "fragment" => null,
+    ];
+
     /**
      * Create a new League\Url\Url object from the environment
      *
@@ -70,14 +81,11 @@ trait UrlFactory
      */
     public static function createFromComponents(array $components)
     {
-        $components += [
-            "scheme" => null, "user" => null, "pass"  => null, "host"     => null,
-            "port"   => null, "path" => null, "query" => null, "fragment" => null
-        ];
+        $components += static::$defaultComponents;
 
         $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
         $url->scheme   = new Url\Scheme($components["scheme"]);
-        $url->userInfo = new Url\UserInfo(new Url\User($components["user"]), new Url\Pass($components["pass"]));
+        $url->userInfo = new Url\UserInfo($components["user"], $components["pass"]);
         $url->host     = new Url\Host($components["host"]);
         $url->port     = new Url\Port($components["port"]);
         $url->path     = new Url\Path($components["path"]);
@@ -101,12 +109,14 @@ trait UrlFactory
     protected static function parseUrl($url)
     {
         $components = @parse_url($url);
-        if (! empty($components)) {
+        if (is_array($components)) {
             return $components;
         }
 
-        $components = static::parseAuthority($url);
-        if (! empty($components)) {
+        $urlfix = static::bugFixAuthority($url);
+        $components = @parse_url($urlfix);
+        if (is_array($components)) {
+            unset($components['scheme']);
             return $components;
         }
 
@@ -126,21 +136,18 @@ trait UrlFactory
      *
      * @return array
      */
-    protected static function parseAuthority($url)
+    protected static function bugFixAuthority($url)
     {
         static $is_parse_url_bugged;
+
         if (is_null($is_parse_url_bugged)) {
             $is_parse_url_bugged = ! is_array(@parse_url("//example.org:80"));
         }
 
-        if ($is_parse_url_bugged &&
-            strpos($url, '/') === 0 &&
-            is_array($components = @parse_url('http:'.$url))
-        ) {
-            unset($components['scheme']);
-            return $components;
+        if ($is_parse_url_bugged && strpos($url, '/') === 0) {
+            return 'http:'.$url;
         }
 
-        return [];
+        throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
     }
 }

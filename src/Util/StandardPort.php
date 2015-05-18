@@ -12,6 +12,9 @@
 */
 namespace League\Url\Util;
 
+use League\Url\Port;
+use League\Url\Scheme;
+
 /**
 * Trait to validate Url standard Port
 *
@@ -58,7 +61,7 @@ trait StandardPort
      *
      * @param  string $scheme
      *
-     * @return array
+     * @return League\Url\Port[]
      */
     protected function getStandardPortsFromScheme($scheme)
     {
@@ -69,15 +72,17 @@ trait StandardPort
         }
         sort($res);
 
-        return $res;
+        return array_map(function ($value) {
+            return new Port($value);
+        }, $res);
     }
 
     /**
      * Return all the scheme attached to a given port
      *
-     * @param  int $port
+     * @param null|int $port
      *
-     * @return array
+     * @return League\Url\Scheme[]
      */
     protected function getStandardSchemesFromPort($port)
     {
@@ -87,6 +92,8 @@ trait StandardPort
         }
         sort($res);
 
-        return $res;
+        return array_map(function ($value) {
+            return new Scheme($value);
+        }, $res);
     }
 }

@@ -28,7 +28,16 @@ interface Scheme extends Component
     /**
      * Return the default ports attached to a scheme
      *
-     * @return array
+     * @return League\Url\Interfaces\Port[]
      */
     public function getStandardPorts();
+
+    /**
+     * Tells whether the given scheme uses the submitted port as standard
+     *
+     * @param League\Url\Interfaces\Port|int|null $port a valid port
+     *
+     * @return bool
+     */
+    public function hasStandardPort($port);
 }

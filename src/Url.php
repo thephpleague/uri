@@ -211,7 +211,7 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        return is_null($this->port->toInt()) || in_array($this->port->toInt(), $this->scheme->getStandardPorts());
+        return $this->scheme->hasStandardPort($this->port);
     }
 
     /**

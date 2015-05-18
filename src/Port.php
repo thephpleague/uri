@@ -79,14 +79,13 @@ class Port extends AbstractComponent implements Interfaces\Port
     public function hasStandardScheme($scheme)
     {
         $scheme = explode('+', $scheme);
-        $scheme = array_pop($scheme);
-        $scheme = new Scheme($scheme);
+        $res    = new Scheme(array_pop($scheme));
         if ($this->isEmpty()) {
             return true;
         }
 
-        $res = array_filter($this->getStandardSchemes(), function ($value) use ($scheme) {
-            return $scheme->sameValueAs($value);
+        $res = array_filter($this->getStandardSchemes(), function ($value) use ($res) {
+            return $res->sameValueAs($value);
         });
 
         return ! empty($res);

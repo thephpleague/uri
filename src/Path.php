@@ -122,7 +122,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function normalize()
+    public function withoutDotSegments()
     {
         $current = $this->__toString();
         if (false === strpos($current, '.')) {
@@ -130,16 +130,16 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
 
         $input = explode(static::$delimiter, $current);
-        $new_path = '';
+        $new   = '';
         if (static::$delimiter == $current[0]) {
-            $new_path = static::$delimiter;
+            $new = static::$delimiter;
         }
-        $new_path .= implode(static::$delimiter, $this->filterDotSegment($input));
+        $new .= implode(static::$delimiter, $this->filterDotSegment($input));
         if (isset(static::$dot_segments[end($input)])) {
-            $new_path .= static::$delimiter;
+            $new .= static::$delimiter;
         }
 
-        return new static($new_path);
+        return new static($new);
     }
 
     /**
@@ -164,6 +164,21 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
 
         return $arr;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutDuplicateDelimiters()
+    {
+        $current = $this->__toString();
+        $new = preg_replace(',/+,', '/', $current);
+
+        if ($current == $new) {
+            return $this;
+        }
+
+        return new static($new);
     }
 
     /**

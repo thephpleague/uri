@@ -352,7 +352,7 @@ class Url implements Interfaces\Url
      */
     public function normalize()
     {
-        return $this->withComponent('path', $this->path->normalize());
+        return $this->withComponent('path', $this->path->withoutDotSegments());
     }
 
     /**
@@ -434,6 +434,6 @@ class Url implements Interfaces\Url
             );
         }
 
-        return $url->withPath($path->normalize())->withQuery($rel->query);
+        return $url->withPath($path->withoutDotSegments())->withQuery($rel->query);
     }
 }

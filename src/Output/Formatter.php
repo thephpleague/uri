@@ -131,7 +131,7 @@ class Formatter
             return $this->formatUrl($input);
         }
 
-        if ($input instanceof Interfaces\Component) {
+        if ($input instanceof Interfaces\UrlPart) {
             return $this->formatComponent($input);
         }
 
@@ -139,13 +139,13 @@ class Formatter
     }
 
     /**
-     * Format a League\Url\Interfaces\Component
+     * Format a League\Url\Interfaces\UrlPart
      *
-     * @param Interfaces\Component $component
+     * @param Interfaces\UrlPart $component
      *
      * @return string
      */
-    protected function formatComponent(Interfaces\Component $component)
+    protected function formatComponent(Interfaces\UrlPart $component)
     {
         if ($component instanceof Interfaces\Query) {
             return $component->format($this->querySeparator, $this->queryEncoding);
@@ -183,17 +183,16 @@ class Formatter
      */
     protected function formatAuthority(Interfaces\Url $url)
     {
-        $str = '';
-        if ('' == $url->getAuthority()) {
-            return $str;
+        if ($url->getHost()->isEmpty()) {
+            return '';
         }
 
-        $str = '//'.$url->getUserInfo()->getUriComponent().$this->formatHost($url->getHost());
+        $port = '';
         if (! $url->hasStandardPort()) {
-            $str .= $url->getPort()->getUriComponent();
+            $port = $url->getPort()->getUriComponent();
         }
 
-        return $str;
+        return '//'.$url->getUserInfo()->getUriComponent().$this->formatHost($url->getHost()).$port;
     }
 
     /**

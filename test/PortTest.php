@@ -136,6 +136,7 @@ class PortTest extends PHPUnit_Framework_TestCase
             ['ftp', 80, false],
             ['ws', 80, true],
             ['', 80, false],
+            ['svn+ssh', 22, true],
         ];
     }
 }

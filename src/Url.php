@@ -34,7 +34,7 @@ class Url implements Interfaces\Url
     /**
      * User Component
      *
-     * @var UserInfo
+     * @var Interfaces\UserInfo
      */
     protected $userInfo;
 

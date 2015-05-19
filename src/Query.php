@@ -18,7 +18,7 @@ use League\Url\Interfaces;
 /**
 * Value object representing a URL query component.
  *
- * @package  League.url
+ * @package League.url
  * @since  1.0.0
  */
 class Query implements Interfaces\Query

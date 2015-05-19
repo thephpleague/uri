@@ -63,24 +63,6 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     }
 
     /**
-     * Validate a component as a Interfaces\CollectionComponent object
-     *
-     * @param  mixed $component
-     *
-     * @throws InvalidArgumentException if the value can not be converted
-     *
-     * @return Interfaces\CollectionComponent
-     */
-    protected function validateComponent($component)
-    {
-        if (! $component instanceof Interfaces\CollectionComponent) {
-            $component = new static($component);
-        }
-
-        return $component;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isAbsolute()
@@ -109,6 +91,14 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * {@inheritdoc}
      */
+    public function prepend($component)
+    {
+        return static::createFromArray(static::validateComponent($component), $this->is_absolute)->append($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function append($component)
     {
         $source = $this->toArray();
@@ -121,36 +111,53 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     }
 
     /**
+     * Validate a component as a Interfaces\CollectionComponent object
+     *
+     * @param  mixed $component
+     *
+     * @throws InvalidArgumentException if the value can not be converted
+     *
+     * @return Interfaces\CollectionComponent
+     */
+    protected function validateComponent($component)
+    {
+        if (! $component instanceof Interfaces\CollectionComponent) {
+            $component = new static($component);
+        }
+
+        return $component;
+    }
+
+    /**
      * return a new CollectionComponent instance from an Array or a traversable object
      *
-     * @param \Traversable|string[] $data         The segments list
-     * @param int                   $is_absolute  One of the constant IS_ABSOLUTE or IS_RELATIVE
+     * @param \Traversable|string[] $data  The segments list
+     * @param int                   $type  One of the constant IS_ABSOLUTE or IS_RELATIVE
      *
      * @throws \InvalidArgumentException If $data is invalid
      * @throws \InvalidArgumentException If $is_absolute is not a recognized constant
      *
      * @return static
      */
-    public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
     {
-        if (! in_array($is_absolute, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
+        if (! in_array($type, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
         $component = implode(static::$delimiter, static::validateIterator($data));
-        if ($is_absolute == self::IS_ABSOLUTE) {
-            $component = static::$delimiter.$component;
-        }
 
-        return new static($component);
+        return new static(static::formatComponentString($component, $type));
     }
 
     /**
-     * {@inheritdoc}
+     * return a formatted component string according to its type
+     *
+     * @param  string $str
+     * @param  int    $type
+     *
+     * @return string
      */
-    public function prepend($component)
-    {
-        return static::createFromArray(static::validateComponent($component), $this->is_absolute)->append($this);
-    }
+    abstract protected static function formatComponentString($str, $type);
 
     /**
      * {@inheritdoc}

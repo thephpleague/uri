@@ -49,8 +49,11 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function __construct($user = null, $pass = null)
     {
-        $this->user = (new User())->withValue($user);
-        $this->pass = (new Pass())->withValue($pass);
+        $this->user = new User($user);
+        if ($this->user->isEmpty()) {
+            $pass = null;
+        }
+        $this->pass = new Pass($pass);
     }
 
     /**
@@ -135,7 +138,12 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withUser($user)
     {
-        return $this->withComponent('user', $user);
+        $res = $this->withComponent('user', $user);
+        if ($res->user->isEmpty()) {
+            $res->pass = new Pass();
+        }
+
+        return $res;
     }
 
     /**
@@ -143,6 +151,9 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withPass($pass)
     {
+        if ($this->user->isEmpty()) {
+            $pass = null;
+        }
         return $this->withComponent('pass', $pass);
     }
 }

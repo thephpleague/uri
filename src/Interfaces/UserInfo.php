@@ -47,7 +47,7 @@ interface UserInfo extends UrlPart
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified user.
      *
-     * An empty user is equivalent to removing the user.
+     * An empty user is equivalent to removing the user information.
      *
      * @param string $user The user to use with the new instance.
      *

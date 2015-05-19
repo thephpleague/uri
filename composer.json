@@ -2,7 +2,7 @@
     "name": "league/url",
     "type": "library",
     "description" : "League/url is a lightweight PHP Url manipulating library",
-    "keywords": ["php", "url", "parse_url"],
+    "keywords": ["php", "url", "parse_url", "psr-7"],
     "license": "MIT",
     "homepage": "http://url.thephpleague.com",
     "authors": [

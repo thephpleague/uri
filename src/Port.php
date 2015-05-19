@@ -74,9 +74,13 @@ class Port extends AbstractComponent implements Interfaces\Port
     }
 
     /**
-     * {@inheritdoc}
+     * Tells whether the given scheme uses the current port as his standard
+     *
+     * @param string $scheme a valid scheme string OR a stringable object
+     *
+     * @return bool
      */
-    public function useStandardScheme($scheme)
+    protected function isStandardFor($scheme)
     {
         $scheme = explode('+', $scheme);
         $res    = new Scheme(array_pop($scheme));
@@ -97,5 +101,17 @@ class Port extends AbstractComponent implements Interfaces\Port
     public function getStandardSchemes()
     {
         return $this->getStandardSchemesFromPort($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function format($scheme)
+    {
+        if ($this->isStandardFor($scheme)) {
+            return '';
+        }
+
+        return $this->getUriComponent();
     }
 }

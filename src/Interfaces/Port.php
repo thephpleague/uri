@@ -40,11 +40,11 @@ interface Port extends Component
     public function getStandardSchemes();
 
     /**
-     * Tells whether the given scheme uses the current port as standard
+     * Format the port output according to a scheme
      *
      * @param string $scheme a valid scheme string OR a stringable object
      *
-     * @return bool
+     * @return string
      */
-    public function useStandardScheme($scheme);
+    public function format($scheme);
 }

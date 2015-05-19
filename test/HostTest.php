@@ -13,11 +13,11 @@ class HostTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Test valid Host
-     * @param string $host
-     * @param bool $isIp
-     * @param bool $isIpv4
-     * @param bool $isIpv6
-     * @param string $uri
+     * @param $host
+     * @param $isIp
+     * @param $isIpv4
+     * @param $isIpv6
+     * @param $uri
      * @dataProvider validHostProvider
      */
     public function testValidHost($host, $isIp, $isIpv4, $isIpv6, $uri)
@@ -92,8 +92,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     /**
      * Test Punycode support
      *
-     * @param string $unicode Unicode Hostname
-     * @param string $ascii   Ascii Hostname
+     * @param $unicode Unicode Hostname
+     * @param $ascii   Ascii Hostname
      * @dataProvider hostnamesProvider
      */
     public function testValidUnicodeHost($unicode, $ascii)
@@ -132,8 +132,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     /**
      * Test Punycode support with IP address
      *
-     * @param string $unicode Unicode Hostname
-     * @param string $ascii   Ascii Hostname
+     * @param $unicode Unicode Hostname
+     * @param $ascii   Ascii Hostname
      * @dataProvider hostnamesIpProvider
      */
     public function testUnicodeWithIP($ip, $res)
@@ -219,6 +219,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'object' => [new \StdClass(), Host::IS_RELATIVE],
             'ip FQDN' => [['127.0.0.1'], Host::IS_ABSOLUTE],
             'ipv6 FQDN' => [['::1'], Host::IS_ABSOLUTE],
+            'unknown flag' => [['all', 'is', 'good'], 23],
         ];
     }
 
@@ -238,9 +239,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $host1
-     * @param string $host2
-     * @param bool $bool
+     * @param $host1
+     * @param $host2
+     * @param $bool
      * @dataProvider sameValueAsProvider
      */
     public function testSameValueAs($host1, $host2, $bool)
@@ -258,7 +259,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $host
+     * @param $host
      * @param $without
      * @param $res
      * @dataProvider withoutProvider
@@ -278,9 +279,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  $raw
-     * @param  $prepend
-     * @param  $expected
+     * @param $raw
+     * @param $prepend
+     * @param $expected
      * @dataProvider validPrepend
      */
     public function testPrepend($raw, $prepend, $expected)
@@ -311,9 +312,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  $raw
-     * @param  $append
-     * @param  $expected
+     * @param $raw
+     * @param $append
+     * @param $expected
      * @dataProvider validAppend
      */
     public function testAppend($raw, $append, $expected)
@@ -374,7 +375,6 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testReplaceIpMustFailed()
     {
-        $host = new Host('secure.example.com');
-        $host->replace(new Host('127.0.0.1'), 2);
+        (new Host('secure.example.com'))->replace(new Host('127.0.0.1'), 2);
     }
 }

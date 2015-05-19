@@ -73,6 +73,9 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
     {
+        if (! in_array($is_absolute, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
+            throw new InvalidArgumentException('Please verify the submitted constant');
+        }
         $component = implode(static::$delimiter, static::validateIterator($data));
         if ($is_absolute == self::IS_ABSOLUTE) {
             $component = $component.static::$delimiter;
@@ -171,7 +174,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
         }
 
         $str = implode(static::$delimiter, $data);
-        if ($this->is_absolute) {
+        if ($this->is_absolute == self::IS_ABSOLUTE) {
             $str .= static::$delimiter;
         }
 
@@ -204,9 +207,9 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     protected function setIsAbsolute($str)
     {
-        $this->is_absolute = false;
+        $this->is_absolute = self::IS_RELATIVE;
         if ('.' == mb_substr($str, -1, 1)) {
-            $this->is_absolute = true;
+            $this->is_absolute = self::IS_ABSOLUTE;
             $str = mb_substr($str, 0, -1);
         }
 

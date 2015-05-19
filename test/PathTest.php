@@ -110,18 +110,19 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @dataProvider createFromArrayInvalid
      * @expectedException \InvalidArgumentException
      */
-    public function testCreateFromArrayFailed($input)
+    public function testCreateFromArrayFailed($input, $flags)
     {
-        Path::createFromArray($input);
+        Path::createFromArray($input, $flags);
     }
 
     public function createFromArrayInvalid()
     {
         return [
-            'string' => ['www.example.com'],
-            'bool' => [true],
-            'integer' => [1],
-            'object' => [new \StdClass()],
+            'string' => ['www.example.com', Path::IS_RELATIVE],
+            'bool' => [true, Path::IS_RELATIVE],
+            'integer' => [1, Path::IS_RELATIVE],
+            'object' => [new \StdClass(), Path::IS_RELATIVE],
+            'unknown flag' => [['all', 'is', 'good'], 23],
         ];
     }
 

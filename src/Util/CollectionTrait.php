@@ -14,6 +14,7 @@ namespace League\Url\Util;
 
 use ArrayIterator;
 use InvalidArgumentException;
+use League\Url\Host;
 use Traversable;
 
 /**
@@ -36,7 +37,7 @@ trait CollectionTrait
      *
      * @var boolean
      */
-    protected $is_absolute = false;
+    protected $is_absolute = Host::IS_RELATIVE;
 
     /**
      * Trait for ComponentTrait method

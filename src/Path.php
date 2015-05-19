@@ -61,14 +61,17 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      */
     protected function init($str)
     {
+        $this->is_absolute = self::IS_RELATIVE;
         $str = $this->validateString($str);
         if (preg_match(',^/+$,', $str)) {
-            $this->is_absolute = true;
+            $this->is_absolute = self::IS_ABSOLUTE;
             return;
         }
 
-        $this->is_absolute = static::$delimiter == mb_substr($str, 0, 1);
-        $append_delimiter  = static::$delimiter === mb_substr($str, -1, 1);
+        if (static::$delimiter == mb_substr($str, 0, 1)) {
+            $this->is_absolute =  self::IS_ABSOLUTE;
+        }
+        $append_delimiter = static::$delimiter === mb_substr($str, -1, 1);
         $str = trim($str, static::$delimiter);
         $this->data = $this->validate($str);
         if ($append_delimiter) {
@@ -112,7 +115,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     public function __toString()
     {
         $front_delimiter = '';
-        if ($this->is_absolute) {
+        if ($this->is_absolute == self::IS_ABSOLUTE) {
             $front_delimiter = static::$delimiter;
         }
 

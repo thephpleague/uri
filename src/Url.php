@@ -136,21 +136,10 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return array_map(function ($value) {
-            if (empty($value)) {
-                return null;
-            }
-            return $value;
-        }, [
-            'scheme'   => $this->scheme->__toString(),
-            'user'     => $this->userInfo->getUser()->__toString(),
-            'pass'     => $this->userInfo->getPass()->__toString(),
-            'host'     => $this->host->__toString(),
-            'port'     => $this->port->toInt(),
-            'path'     => $this->path->__toString(),
-            'query'    => $this->query->__toString(),
-            'fragment' => $this->fragment->__toString(),
-        ]);
+        $res         = array_merge(static::$defaultComponents, static::parseUrl($this));
+        $res['port'] = $this->port->toInt();
+
+        return $res;
     }
 
     /**

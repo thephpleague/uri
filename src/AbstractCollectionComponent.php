@@ -24,7 +24,6 @@ use League\Url\Util;
  */
 abstract class AbstractCollectionComponent implements Interfaces\CollectionComponent
 {
-
     const IS_ABSOLUTE = 1;
 
     const IS_RELATIVE = 2;
@@ -86,7 +85,7 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      */
     public function isAbsolute()
     {
-        return $this->is_absolute;
+        return $this->is_absolute == self::IS_ABSOLUTE;
     }
 
     /**
@@ -133,6 +132,9 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      */
     public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
     {
+        if (! in_array($is_absolute, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
+            throw new InvalidArgumentException('Please verify the submitted constant');
+        }
         $component = implode(static::$delimiter, static::validateIterator($data));
         if ($is_absolute == self::IS_ABSOLUTE) {
             $component = static::$delimiter.$component;

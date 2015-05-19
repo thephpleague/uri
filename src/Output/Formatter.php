@@ -119,7 +119,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Component|Interfaces\Url $input
+     * @param Interfaces\UrlPart|Interfaces\Url $input
      *
      * @throws \InvalidArgumentException if the given $input can not be formatted
      *

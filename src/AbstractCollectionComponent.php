@@ -123,10 +123,11 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * return a new CollectionComponent instance from an Array or a traversable object
      *
-     * @param \Traversable|array $data
-     * @param int               $is_absolute
+     * @param \Traversable|string[] $data         The segments list
+     * @param int                   $is_absolute  One of the constant IS_ABSOLUTE or IS_RELATIVE
      *
      * @throws \InvalidArgumentException If $data is invalid
+     * @throws \InvalidArgumentException If $is_absolute is not a recognized constant
      *
      * @return static
      */

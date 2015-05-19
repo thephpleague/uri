@@ -66,8 +66,6 @@ trait UrlFactory
      */
     public static function createFromUrl($url)
     {
-        $url = trim($url);
-
         return static::createFromComponents(static::parseUrl($url));
     }
 
@@ -82,7 +80,6 @@ trait UrlFactory
     public static function createFromComponents(array $components)
     {
         $components += static::$defaultComponents;
-
         $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
         $url->scheme   = new Url\Scheme($components["scheme"]);
         $url->userInfo = new Url\UserInfo($components["user"], $components["pass"]);
@@ -108,13 +105,13 @@ trait UrlFactory
      */
     protected static function parseUrl($url)
     {
+        $url = trim($url);
         $components = @parse_url($url);
         if (is_array($components)) {
             return $components;
         }
 
-        $urlfix = static::bugFixAuthority($url);
-        $components = @parse_url($urlfix);
+        $components = @parse_url(static::bugFixAuthority($url));
         if (is_array($components)) {
             unset($components['scheme']);
             return $components;

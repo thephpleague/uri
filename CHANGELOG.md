@@ -36,9 +36,9 @@ All Notable changes to `League\Url` will be documented in this file
 - `League\Url\Interfaces\Scheme` and `League\Url\Interfaces\Port`:
     - support for listing and detecting standard port for a given scheme in both objects with
         - `Interfaces\Port::getStandardSchemes`
-        - `Interfaces\Port::hasStandardScheme`
+        - `Interfaces\Port::useStandardScheme`
         - `Interfaces\Scheme::getStandardPorts`
-        - `Interfaces\Scheme::hasStandardPort`
+        - `Interfaces\Scheme::useStandardPort`
 
 - `League\Url\UserInfo` class added to better manipulate URL user info part
 

@@ -95,4 +95,13 @@ interface Path extends CollectionComponent
      * @return static
      */
     public function withExtension($ext);
+
+    /**
+     * Format Path according to PSR-7 output
+     *
+     * @param  string $auth the authority string
+     *
+     * @return string
+     */
+    public function format($auth);
 }

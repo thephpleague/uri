@@ -121,14 +121,14 @@ class PortTest extends PHPUnit_Framework_TestCase
      * @param  $scheme
      * @param  $port
      * @param  $expected
-     * @dataProvider hasStandardProvider
+     * @dataProvider useStandardProvider
      */
-    public function testHasStandardScheme($scheme, $port, $expected)
+    public function testUseStandardScheme($scheme, $port, $expected)
     {
-        $this->assertSame($expected, (new Port($port))->hasStandardScheme($scheme));
+        $this->assertSame($expected, (new Port($port))->useStandardScheme($scheme));
     }
 
-    public function hasStandardProvider()
+    public function useStandardProvider()
     {
         return [
             ['http', 80, true],

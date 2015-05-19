@@ -46,5 +46,5 @@ interface Port extends Component
      *
      * @return bool
      */
-    public function hasStandardScheme($scheme);
+    public function useStandardScheme($scheme);
 }

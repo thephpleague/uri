@@ -76,7 +76,7 @@ class Port extends AbstractComponent implements Interfaces\Port
     /**
      * {@inheritdoc}
      */
-    public function hasStandardScheme($scheme)
+    public function useStandardScheme($scheme)
     {
         $scheme = explode('+', $scheme);
         $res    = new Scheme(array_pop($scheme));

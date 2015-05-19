@@ -24,6 +24,11 @@ use League\Url\Util;
  */
 abstract class AbstractCollectionComponent implements Interfaces\CollectionComponent
 {
+
+    const IS_ABSOLUTE = 1;
+
+    const IS_RELATIVE = 2;
+
     /**
      * Trait for Collection type Component
      */
@@ -120,16 +125,16 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      * return a new CollectionComponent instance from an Array or a traversable object
      *
      * @param \Traversable|array $data
-     * @param bool               $is_absolute
+     * @param int               $is_absolute
      *
      * @throws \InvalidArgumentException If $data is invalid
      *
      * @return static
      */
-    public static function createFromArray($data, $is_absolute = false)
+    public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
     {
         $component = implode(static::$delimiter, static::validateIterator($data));
-        if ($is_absolute) {
+        if ($is_absolute == self::IS_ABSOLUTE) {
             $component = static::$delimiter.$component;
         }
 

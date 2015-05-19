@@ -65,16 +65,16 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      * return a new Host instance from an Array or a traversable object
      *
      * @param \Traversable|array $data
-     * @param bool               $is_absolute
+     * @param int               $is_absolute
      *
      * @throws \InvalidArgumentException If $data is invalid
      *
      * @return static
      */
-    public static function createFromArray($data, $is_absolute = false)
+    public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
     {
         $component = implode(static::$delimiter, static::validateIterator($data));
-        if ($is_absolute) {
+        if ($is_absolute == self::IS_ABSOLUTE) {
             $component = $component.static::$delimiter;
         }
 

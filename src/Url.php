@@ -164,7 +164,7 @@ class Url implements Interfaces\Url
         }
 
         return $this->scheme->getUriComponent().$auth
-            .$this->path->getUriComponent()
+            .$this->path->format($auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }
@@ -191,7 +191,7 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        return $this->scheme->hasStandardPort($this->port);
+        return $this->scheme->useStandardPort($this->port);
     }
 
     /**
@@ -199,7 +199,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return ! $this->scheme->isEmpty() && '' != $this->getAuthority() && $this->path->isAbsolute();
+        return ! $this->scheme->isEmpty() && '' != $this->getAuthority();
     }
 
     /**
@@ -269,6 +269,14 @@ class Url implements Interfaces\Url
      * {@inheritdoc}
      */
     public function getPort()
+    {
+        return $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPortComponent()
     {
         return clone $this->port;
     }
@@ -378,10 +386,11 @@ class Url implements Interfaces\Url
         if (! $rel->path->isAbsolute()) {
             $segments = $url->path->toArray();
             array_pop($segments);
-            $path = Path::createFromArray(
-                array_merge($segments, $rel->path->toArray()),
-                $url->path->isEmpty() || $url->path->isAbsolute()
-            );
+            $is_absolute = Path::IS_RELATIVE;
+            if ($url->path->isEmpty() || $url->path->isAbsolute()) {
+                $is_absolute = Path::IS_ABSOLUTE;
+            }
+            $path = Path::createFromArray(array_merge($segments, $rel->path->toArray()), $is_absolute);
         }
 
         return $url->withPath($path->withoutDotSegments())->withQuery($rel->query);

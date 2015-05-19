@@ -94,14 +94,14 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], false, 'www/example/com'],
-            'array' => [['www', 'example', 'com'], true, '/www/example/com'],
-            'iterator' => [new ArrayIterator(['www', 'example', 'com']), true, '/www/example/com'],
-            'Path object' => [new Path('/foo/bar/baz'), true, '/foo/bar/baz'],
-            'arbitrary cut 1' => [['foo', 'bar', 'baz'], true, '/foo/bar/baz'],
-            'arbitrary cut 2' => [['foo/bar', 'baz'], true, '/foo/bar/baz'],
-            'arbitrary cut 3' => [['foo/bar/baz'], true, '/foo/bar/baz'],
-            'ending delimiter' => [['foo/bar/baz', ''], false, 'foo/bar/baz/'],
+            'array' => [['www', 'example', 'com'], Path::IS_RELATIVE, 'www/example/com'],
+            'array' => [['www', 'example', 'com'], Path::IS_ABSOLUTE, '/www/example/com'],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), Path::IS_ABSOLUTE, '/www/example/com'],
+            'Path object' => [new Path('/foo/bar/baz'), Path::IS_ABSOLUTE, '/foo/bar/baz'],
+            'arbitrary cut 1' => [['foo', 'bar', 'baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
+            'arbitrary cut 2' => [['foo/bar', 'baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
+            'arbitrary cut 3' => [['foo/bar/baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
+            'ending delimiter' => [['foo/bar/baz', ''], Path::IS_RELATIVE, 'foo/bar/baz/'],
         ];
     }
 

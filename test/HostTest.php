@@ -189,13 +189,13 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], false, 'www.example.com',],
-            'iterator' => [new ArrayIterator(['www', 'example', 'com']), false, 'www.example.com',],
-            'host object' => [new Host('::1'), false, '[::1]'],
-            'ip 1' => [[127, 0, 0, 1], false, '127.0.0.1'],
-            'ip 2' => [['127.0', '0.1'], false, '127.0.0.1'],
-            'ip 3' => [['127.0.0.1'], false, '127.0.0.1'],
-            'FQDN' => [['www', 'example', 'com'], true, 'www.example.com.'],
+            'array' => [['www', 'example', 'com'], Host::IS_RELATIVE, 'www.example.com',],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), Host::IS_RELATIVE, 'www.example.com',],
+            'host object' => [new Host('::1'), Host::IS_RELATIVE, '[::1]'],
+            'ip 1' => [[127, 0, 0, 1], Host::IS_RELATIVE, '127.0.0.1'],
+            'ip 2' => [['127.0', '0.1'], Host::IS_RELATIVE, '127.0.0.1'],
+            'ip 3' => [['127.0.0.1'], Host::IS_RELATIVE, '127.0.0.1'],
+            'FQDN' => [['www', 'example', 'com'], Host::IS_ABSOLUTE, 'www.example.com.'],
         ];
     }
 
@@ -213,12 +213,12 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function createFromArrayInvalid()
     {
         return [
-            'string' => ['www.example.com', false],
-            'bool' => [true, false],
-            'integer' => [1, false],
-            'object' => [new \StdClass(), false],
-            'ip FQDN' => [['127.0.0.1'], true],
-            'ipv6 FQDN' => [['::1'], true],
+            'string' => ['www.example.com', Host::IS_RELATIVE],
+            'bool' => [true, Host::IS_RELATIVE],
+            'integer' => [1, Host::IS_RELATIVE],
+            'object' => [new \StdClass(), Host::IS_RELATIVE],
+            'ip FQDN' => [['127.0.0.1'], Host::IS_ABSOLUTE],
+            'ipv6 FQDN' => [['::1'], Host::IS_ABSOLUTE],
         ];
     }
 

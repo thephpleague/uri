@@ -54,8 +54,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
             ['login', '',     ['user' => 'login', 'pass' => '']],
             ['', '',          ['user' => ''     , 'pass' => '']],
             [null, null,      ['user' => ''     , 'pass' => '']],
-            ['', 'pass',      ['user' => ''     , 'pass' => 'pass']],
-            [null, 'pass',    ['user' => ''     , 'pass' => 'pass']],
+            ['', 'pass',      ['user' => ''     , 'pass' => '']],
+            [null, 'pass',    ['user' => ''     , 'pass' => '']],
         ];
     }
 }

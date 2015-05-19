@@ -116,27 +116,4 @@ class PortTest extends PHPUnit_Framework_TestCase
             ['443', [new Scheme('https'), new Scheme('wss')]],
         ];
     }
-
-    /**
-     * @param  $scheme
-     * @param  $port
-     * @param  $expected
-     * @dataProvider useStandardProvider
-     */
-    public function testUseStandardScheme($scheme, $port, $expected)
-    {
-        $this->assertSame($expected, (new Port($port))->useStandardScheme($scheme));
-    }
-
-    public function useStandardProvider()
-    {
-        return [
-            ['http', 80, true],
-            ['http', null, true],
-            ['ftp', 80, false],
-            ['ws', 80, true],
-            ['', 80, false],
-            ['svn+ssh', 22, true],
-        ];
-    }
 }

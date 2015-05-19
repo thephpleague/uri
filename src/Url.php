@@ -136,10 +136,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        $res         = array_merge(static::$defaultComponents, static::parseUrl($this));
-        $res['port'] = $this->port->toInt();
-
-        return $res;
+        return array_merge(static::$defaultComponents, static::parseUrl($this));
     }
 
     /**
@@ -167,12 +164,9 @@ class Url implements Interfaces\Url
             return '';
         }
 
-        $port = '';
-        if (! $this->hasStandardPort()) {
-            $port = $this->port->getUriComponent();
-        }
-
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+        return $this->userInfo->getUriComponent()
+            .$this->host->getUriComponent()
+            .$this->port->format($this->scheme);
     }
 
     /**
@@ -180,7 +174,7 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        return $this->scheme->useStandardPort($this->port);
+        return $this->scheme->hasStandardPort($this->port);
     }
 
     /**
@@ -188,7 +182,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return ! $this->scheme->isEmpty() && '' != $this->getAuthority();
+        return ! $this->scheme->isEmpty() && ! $this->host->isEmpty();
     }
 
     /**
@@ -259,6 +253,10 @@ class Url implements Interfaces\Url
      */
     public function getPort()
     {
+        if ($this->hasStandardPort()) {
+            return null;
+        }
+
         return $this->port->toInt();
     }
 

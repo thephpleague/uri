@@ -121,6 +121,26 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $url
+     * @param $port
+     * @dataProvider portProvider
+     */
+    public function testPort($url, $port)
+    {
+        $this->assertSame($port, Url::createFromUrl($url)->getPort());
+    }
+
+    public function portProvider()
+    {
+        return [
+            ['http://www.example.com:443/', 443],
+            ['http://www.example.com:80/', null],
+            ['http://www.example.com', null],
+            ['//www.example.com:80/', 80],
+        ];
+    }
+
+    /**
+     * @param $url
      * @param $expected
      * @dataProvider toArrayProvider
      */
@@ -133,9 +153,9 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         return [
             'simple' => [
-                'https://toto.com:443/toto.php',
+                'http://toto.com:443/toto.php',
                 [
-                    'scheme' => 'https',
+                    'scheme' => 'http',
                     'user' => null,
                     'pass' => null,
                     'host' => 'toto.com',
@@ -152,7 +172,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
                     'user' => null,
                     'pass' => null,
                     'host' => '[::1]',
-                    'port' => 443,
+                    'port' => null,
                     'path' => '/toto.php',
                     'query' => null,
                     'fragment' => null,

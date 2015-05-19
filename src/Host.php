@@ -64,17 +64,13 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
-    public static function createFromArray($data, $is_absolute = self::IS_RELATIVE)
+    protected static function formatComponentString($str, $type)
     {
-        if (! in_array($is_absolute, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
-            throw new InvalidArgumentException('Please verify the submitted constant');
-        }
-        $component = implode(static::$delimiter, static::validateIterator($data));
-        if ($is_absolute == self::IS_ABSOLUTE) {
-            $component .= static::$delimiter;
+        if (self::IS_ABSOLUTE == $type) {
+            return $str.static::$delimiter;
         }
 
-        return new static($component);
+        return $str;
     }
 
     /**

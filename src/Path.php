@@ -100,6 +100,18 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
+    protected static function formatComponentString($str, $type)
+    {
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$delimiter.$str;
+        }
+
+        return $str;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSegment($offset, $default = null)
     {
         if (isset($this->data[$offset])) {
@@ -251,14 +263,15 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     public function format($auth)
     {
         $auth = trim($auth);
-        if (! empty($auth) && ! $this->isEmpty() && ! $this->isAbsolute()) {
-            return '/'.$this->getUriComponent();
-        }
-
+        $path = $this->getUriComponent();
         if (empty($auth)) {
-            return $this->withoutDuplicateDelimiters()->getUriComponent();
+            return preg_replace(',^/+,', '/', $path);
         }
 
-        return $this->getUriComponent();
+        if (! $this->isEmpty() && ! $this->isAbsolute()) {
+            return '/'.$path;
+        }
+
+        return $path;
     }
 }

@@ -28,6 +28,13 @@ use Psr\Http\Message\UriInterface;
 interface Url extends UriInterface
 {
     /**
+     * Retrieve the port component of the URI as a Value Object
+     *
+     * @return Port
+     */
+    public function getPortComponent();
+
+    /**
      * Return an array representation of the Url
      *
      * @return array
@@ -50,7 +57,6 @@ interface Url extends UriInterface
      * said to be absolute if is has:
      * - a non empty scheme.
      * - an authority part
-     * - an absolute path
      *
      * @return bool
      */

@@ -39,5 +39,5 @@ interface Scheme extends Component
      *
      * @return bool
      */
-    public function hasStandardPort($port);
+    public function useStandardPort($port);
 }

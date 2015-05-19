@@ -54,7 +54,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     /**
      * {@inheritdoc}
      */
-    public function hasStandardPort($port)
+    public function useStandardPort($port)
     {
         if (! $port instanceof Interfaces\Port) {
             $port = new Port($port);

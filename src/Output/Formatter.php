@@ -189,7 +189,7 @@ class Formatter
 
         $port = '';
         if (! $url->hasStandardPort()) {
-            $port = $url->getPort()->getUriComponent();
+            $port = $url->getPortComponent()->getUriComponent();
         }
 
         return '//'.$url->getUserInfo()->getUriComponent().$this->formatHost($url->getHost()).$port;
@@ -209,9 +209,11 @@ class Formatter
             $query = '?'.$query;
         }
 
+        $auth = $this->formatAuthority($url);
+
         return $url->getScheme()->getUriComponent()
-            .$this->formatAuthority($url)
-            .$url->getPath()->getUriComponent()
+            .$auth
+            .$url->getPath()->format($auth)
             .$query
             .$url->getFragment()->getUriComponent();
     }

@@ -241,4 +241,21 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
 
         return "$basename.$ext";
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function format($auth)
+    {
+        $auth = trim($auth);
+        if (! empty($auth) && ! $this->isEmpty() && ! $this->isAbsolute()) {
+            return '/'.$this->getUriComponent();
+        }
+
+        if (empty($auth)) {
+            return $this->withoutDuplicateDelimiters()->getUriComponent();
+        }
+
+        return $this->getUriComponent();
+    }
 }

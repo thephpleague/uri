@@ -43,6 +43,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $host  = $this->url->getHost();
         $path  = $this->url->getPath();
         $query = $this->url->getQuery();
+        $this->assertInternalType('int', $this->url->getPort());
+        $this->assertInstanceof('League\Url\Port', $this->url->getPortComponent());
         $this->assertInstanceof('League\Url\Scheme', $this->url->getScheme());
         $this->assertInstanceof('League\Url\UserInfo', $this->url->getUserInfo());
         $this->assertInstanceof('League\Url\User', $this->url->getUserInfo()->getUser());
@@ -224,6 +226,31 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertTrue($url1->sameValueAs($url2));
+    }
+
+    /**
+     * @param $url
+     * @param $expected
+     * @dataProvider pathFormattingProvider
+     */
+    public function testPathFormatting($url, $expected)
+    {
+        $this->assertSame($expected, $url->__toString());
+    }
+
+    public function pathFormattingProvider()
+    {
+        return [
+            [new Url(
+                new Scheme('http'),
+                new UserInfo(),
+                new Host('ExAmPLe.cOm'),
+                new Port(),
+                new Path('path/to/the/sky'),
+                new Query(),
+                new Fragment()
+            ), 'http://example.com/path/to/the/sky'],
+        ];
     }
 
     public function testHasStandardPort()

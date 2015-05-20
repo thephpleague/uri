@@ -197,7 +197,7 @@ class Url implements Interfaces\Url
 
         return $this->userinfo->getUriComponent()
             .$this->host->getUriComponent()
-            .$this->port->format($this->scheme);
+            .$this->port->getUriComponent();
     }
 
     /**
@@ -253,10 +253,6 @@ class Url implements Interfaces\Url
      */
     public function getPort()
     {
-        if ($this->hasStandardPort()) {
-            return null;
-        }
-
         return $this->port->toInt();
     }
 

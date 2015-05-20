@@ -141,27 +141,27 @@ class Formatter
     /**
      * Format a League\Url\Interfaces\UrlPart
      *
-     * @param Interfaces\UrlPart $component
+     * @param Interfaces\UrlPart $part
      *
      * @return string
      */
-    protected function formatComponent(Interfaces\UrlPart $component)
+    protected function formatComponent(Interfaces\UrlPart $part)
     {
-        if ($component instanceof Interfaces\Query) {
-            return $component->format($this->querySeparator, $this->queryEncoding);
+        if ($part instanceof Interfaces\Query) {
+            return $part->format($this->querySeparator, $this->queryEncoding);
         }
 
-        if ($component instanceof Interfaces\Host) {
-            return $this->formatHost($component);
+        if ($part instanceof Interfaces\Host) {
+            return $this->formatHost($part);
         }
 
-        return $component->__toString();
+        return $part->__toString();
     }
 
     /**
-     * Format a League\Url\Interfaces\Host component
+     * Format a League\Url\Interfaces\Host
      *
-     * @param  Interfaces\Host $host
+     * @param Interfaces\Host $host
      *
      * @return string
      */
@@ -206,12 +206,12 @@ class Formatter
      */
     protected function formatAuthority(Interfaces\Url $url)
     {
-        if ($url->getPart('host')->isEmpty()) {
+        if ('' == $url->getHost()) {
             return '';
         }
 
         return '//'.$url->getPart('userinfo')->getUriComponent()
             .$this->formatHost($url->getPart('host'))
-            .$url->getPart('port')->format($url->getScheme());
+            .$url->getPart('port')->getUriComponent();
     }
 }

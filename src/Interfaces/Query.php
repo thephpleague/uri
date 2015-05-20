@@ -12,8 +12,6 @@
 */
 namespace League\Url\Interfaces;
 
-use Countable;
-use IteratorAggregate;
 use JsonSerializable;
 
 /**
@@ -27,15 +25,8 @@ use JsonSerializable;
  * @package  League.url
  * @since  4.0.0
  */
-interface Query extends Component, Countable, IteratorAggregate, JsonSerializable
+interface Query extends Collection, Component, JsonSerializable
 {
-    /**
-     * Return an array representation of the Query
-     *
-     * @return array
-     */
-    public function toArray();
-
     /**
      * Returns query formatted according to given separator and encoded type
      *
@@ -45,25 +36,6 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * @return string
      */
     public function format($separator, $enc_type);
-
-    /**
-     * Returns the query parameters. If a specific value is specified
-     * only the parameters associated with the given value will be returned
-     *
-     * @param mixed $data
-     *
-     * @return array
-     */
-    public function offsets($data = null);
-
-    /**
-     * Returns whether the given parameter exists in the Query object
-     *
-     * @param string $offset
-     *
-     * @return bool
-     */
-    public function hasOffset($offset);
 
     /**
      * Retrieves a single query parameter.
@@ -89,16 +61,4 @@ interface Query extends Component, Countable, IteratorAggregate, JsonSerializabl
      * @return static
      */
     public function merge($query);
-
-    /**
-     * Returns an instance without the specified parameters
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified query
-     *
-     * @param array $offsets a list of query parameters to be removed
-     *
-     * @return static
-     */
-    public function without(array $offsets);
 }

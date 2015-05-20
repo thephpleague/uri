@@ -180,6 +180,32 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar&baz&to.go=toofan', (string) $res);
     }
 
+    /**
+     * @param $params
+     * @param $callable
+     * @param $expected
+     * @dataProvider filterProvider
+     */
+    public function testFilter($params, $callable, $expected)
+    {
+        $obj = Query::createFromArray($params)->filter($callable);
+        $this->assertSame($expected, $obj->__toString());
+    }
+
+    public function filterProvider()
+    {
+        $func = function ($value) {
+            return stripos($value, '.') !== false;
+        };
+
+        return [
+            'empty query'  => [[], $func, ''],
+            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, 'toto=foo.bar'],
+            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, ''],
+            'remove None'  => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, 'toto=foo.bar&zozo=st.ay'],
+        ];
+    }
+
     public function invalidQueryStrings()
     {
         return [

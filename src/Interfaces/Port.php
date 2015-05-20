@@ -38,13 +38,4 @@ interface Port extends Component
      * @return League\Url\Interfaces\Scheme[]
      */
     public function getStandardSchemes();
-
-    /**
-     * Format the port output according to a scheme
-     *
-     * @param string $scheme a valid scheme string OR a stringable object
-     *
-     * @return string
-     */
-    public function format($scheme);
 }

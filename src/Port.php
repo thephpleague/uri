@@ -74,44 +74,10 @@ class Port extends AbstractComponent implements Interfaces\Port
     }
 
     /**
-     * Tells whether the given scheme uses the current port as his standard
-     *
-     * @param string $scheme a valid scheme string OR a stringable object
-     *
-     * @return bool
-     */
-    protected function isStandardFor($scheme)
-    {
-        $scheme = explode('+', $scheme);
-        $res    = new Scheme(array_pop($scheme));
-        if ($this->isEmpty()) {
-            return true;
-        }
-
-        $res = array_filter($this->getStandardSchemes(), function ($value) use ($res) {
-            return $res->sameValueAs($value);
-        });
-
-        return ! empty($res);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getStandardSchemes()
     {
         return $this->getStandardSchemesFromPort($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function format($scheme)
-    {
-        if ($this->isStandardFor($scheme)) {
-            return '';
-        }
-
-        return $this->getUriComponent();
     }
 }

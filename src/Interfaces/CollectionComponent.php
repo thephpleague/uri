@@ -12,9 +12,6 @@
 */
 namespace League\Url\Interfaces;
 
-use Countable;
-use IteratorAggregate;
-
 /**
  * Value object representing a URL Collection like component.
  *
@@ -26,36 +23,8 @@ use IteratorAggregate;
  * @package  League.url
  * @since  4.0.0
  */
-interface CollectionComponent extends Component, Countable, IteratorAggregate
+interface CollectionComponent extends Collection, Component
 {
-    /**
-     * Return an array representation of the CollectionComponent
-     *
-     * @return array
-     */
-    public function toArray();
-
-    /**
-     * Returns the component offsets.
-     *
-     * Returns the component offsets. If a specific value is specified
-     * only the offsets associated with the given value will be returned
-     *
-     * @param mixed $data
-     *
-     * @return array
-     */
-    public function offsets($data = null);
-
-    /**
-     * Returns whether the given offset exists in the current instance
-     *
-     * @param string|int $offset
-     *
-     * @return bool
-     */
-    public function hasOffset($offset);
-
     /**
      * Returns an instance with the specified component appended
      *
@@ -93,16 +62,4 @@ interface CollectionComponent extends Component, Countable, IteratorAggregate
      * @return static
      */
     public function replace($component, $offset);
-
-    /**
-     * Returns an instance without the specified offsets
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified component
-     *
-     * @param array $offsets a list of segment offset to be removed
-     *
-     * @return static
-     */
-    public function without(array $offsets);
 }

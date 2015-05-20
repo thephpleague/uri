@@ -102,6 +102,14 @@ trait CollectionTrait
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function filter(callable $callable)
+    {
+        return static::createFromArray(array_filter($this->data, $callable), $this->is_absolute);
+    }
+
+    /**
      * Validate an Iterator or an array
      *
      * @param Traversable|array $data

@@ -22,9 +22,6 @@ use InvalidArgumentException;
  */
 trait ServerInfo
 {
-
-    protected static $is_parse_url_bugged;
-
     /**
      * Returns the environment scheme
      *

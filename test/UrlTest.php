@@ -40,27 +40,21 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetterAccess()
     {
-        $host  = $this->url->getHost();
-        $path  = $this->url->getPath();
-        $query = $this->url->getQuery();
-        $this->assertInternalType('int', $this->url->getPort());
-        $this->assertInstanceof('League\Url\Port', $this->url->getPortComponent());
-        $this->assertInstanceof('League\Url\Scheme', $this->url->getScheme());
-        $this->assertInstanceof('League\Url\UserInfo', $this->url->getUserInfo());
-        $this->assertInstanceof('League\Url\User', $this->url->getUserInfo()->getUser());
-        $this->assertInstanceof('League\Url\Pass', $this->url->getUserInfo()->getPass());
-        $this->assertInstanceof('League\Url\Host', $host);
-        $this->assertInstanceof('League\Url\Interfaces\Host', $host);
-        $this->assertInstanceof('League\Url\Interfaces\CollectionComponent', $host);
-        $this->assertInstanceof('League\Url\Interfaces\Component', $host);
-        $this->assertInstanceof('League\Url\Path', $path);
-        $this->assertInstanceof('League\Url\Interfaces\Path', $path);
-        $this->assertInstanceof('League\Url\Interfaces\CollectionComponent', $path);
-        $this->assertInstanceof('League\Url\Interfaces\Component', $path);
-        $this->assertInstanceof('League\Url\Query', $query);
-        $this->assertInstanceof('League\Url\Interfaces\Component', $query);
-        $this->assertInstanceof('League\Url\Interfaces\Query', $query);
-        $this->assertInstanceof('League\Url\Fragment', $this->url->getFragment());
+        $this->assertSame($this->url->getScheme(), $this->url->getPart('scheme')->__toString());
+        $this->assertSame($this->url->getUserInfo(), $this->url->getPart('userinfo')->__toString());
+        $this->assertSame($this->url->getHost(), $this->url->getPart('host')->__toString());
+        $this->assertSame($this->url->getPort(), $this->url->getPart('port')->toInt());
+        $this->assertSame($this->url->getPath(), $this->url->getPart('path')->__toString());
+        $this->assertSame($this->url->getQuery(), $this->url->getPart('query')->__toString());
+        $this->assertSame($this->url->getFragment(), $this->url->getPart('fragment')->__toString());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetPartFailed()
+    {
+        $this->url->getPart('yolo');
     }
 
     public function testImmutabilityAccess()
@@ -92,7 +86,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetUserInfo()
     {
-        $this->assertSame('login:pass', (string) $this->url->getUserInfo());
+        $this->assertSame('login:pass', $this->url->getUserInfo());
     }
 
     public function testAutomaticUrlNormalization()

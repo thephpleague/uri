@@ -30,9 +30,11 @@ interface Url extends UriInterface
     /**
      * Retrieve the port component of the URI as a Value Object
      *
-     * @return Port
+     * @param string $part
+     *
+     * @return UrlPart
      */
-    public function getPortComponent();
+    public function getPart($part);
 
     /**
      * Return an array representation of the Url

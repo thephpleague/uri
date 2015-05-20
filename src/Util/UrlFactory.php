@@ -82,12 +82,15 @@ trait UrlFactory
         $components += static::$defaultComponents;
         $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
         $url->scheme   = new Url\Scheme($components["scheme"]);
-        $url->userInfo = new Url\UserInfo($components["user"], $components["pass"]);
+        $url->userinfo = new Url\UserInfo($components["user"], $components["pass"]);
         $url->host     = new Url\Host($components["host"]);
         $url->port     = new Url\Port($components["port"]);
         $url->path     = new Url\Path($components["path"]);
         $url->query    = new Url\Query($components["query"]);
         $url->fragment = new Url\Fragment($components["fragment"]);
+        if ($url->hasStandardPort()) {
+            $url->port =  $url->port->withValue(null);
+        }
 
         return $url;
     }

@@ -26,7 +26,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame(Formatter::HOST_AS_UNICODE, $formatter->getHostEncoding());
         $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
         $this->assertSame(Formatter::HOST_AS_ASCII, $formatter->getHostEncoding());
-        $this->assertSame('xn--gwd-hna98db.pl', $formatter->format($this->url->getHost()));
+        $this->assertSame('xn--gwd-hna98db.pl', $formatter->format($this->url->getPart('host')));
     }
 
     /**
@@ -63,7 +63,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     {
         $formatter = new Formatter();
         $formatter->setHostEncoding(Formatter::HOST_AS_UNICODE);
-        $this->assertSame('gwóźdź.pl', $formatter->format($this->url->getHost()));
+        $this->assertSame('gwóźdź.pl', $formatter->format($this->url->getPart('host')));
     }
 
     public function testFormatQueryRFC1738()
@@ -72,14 +72,14 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame(PHP_QUERY_RFC3986, $formatter->getQueryEncoding());
         $formatter->setQueryEncoding(PHP_QUERY_RFC1738);
         $this->assertSame(PHP_QUERY_RFC1738, $formatter->getQueryEncoding());
-        $this->assertSame('kingkong=toto&foo=bar+baz', $formatter->format($this->url->getQuery()));
+        $this->assertSame('kingkong=toto&foo=bar+baz', $formatter->format($this->url->getPart('query')));
     }
 
     public function testFormatQueryRFC3986()
     {
         $formatter = new Formatter();
         $formatter->setQueryEncoding(PHP_QUERY_RFC3986);
-        $this->assertSame('kingkong=toto&foo=bar%20baz', $formatter->format($this->url->getQuery()));
+        $this->assertSame('kingkong=toto&foo=bar%20baz', $formatter->format($this->url->getPart('query')));
     }
 
     public function testFormatQueryWithSeparator()
@@ -88,7 +88,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('&', $formatter->getQuerySeparator());
         $formatter->setQuerySeparator('&amp;');
         $this->assertSame('&amp;', $formatter->getQuerySeparator());
-        $this->assertSame('kingkong=toto&amp;foo=bar%20baz', $formatter->format($this->url->getQuery()));
+        $this->assertSame('kingkong=toto&amp;foo=bar%20baz', $formatter->format($this->url->getPart('query')));
     }
 
     public function testFormatURL()

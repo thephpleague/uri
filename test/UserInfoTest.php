@@ -41,21 +41,24 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
      * @param $expected
      * @dataProvider toArrayProvider
      */
-    public function testToArray($login, $pass, $expected)
+    public function testToArray($login, $pass, $expected, $expected_user, $expected_pass)
     {
-        $this->assertSame($expected, (new UserInfo($login, $pass))->toArray());
+        $userinfo = new UserInfo($login, $pass);
+        $this->assertSame($expected, $userinfo->toArray());
+        $this->assertSame($expected_user, $userinfo->getUser()->__toString());
+        $this->assertSame($expected_pass, $userinfo->getPass()->__toString());
     }
 
     public function toArrayProvider()
     {
         return [
-            ['login', 'pass', ['user' => 'login', 'pass' => 'pass']],
-            ['login', null,   ['user' => 'login', 'pass' => '']],
-            ['login', '',     ['user' => 'login', 'pass' => '']],
-            ['', '',          ['user' => ''     , 'pass' => '']],
-            [null, null,      ['user' => ''     , 'pass' => '']],
-            ['', 'pass',      ['user' => ''     , 'pass' => '']],
-            [null, 'pass',    ['user' => ''     , 'pass' => '']],
+            ['login', 'pass', ['user' => 'login', 'pass' => 'pass'], 'login', 'pass'],
+            ['login', null,   ['user' => 'login', 'pass' => ''], 'login', ''],
+            ['login', '',     ['user' => 'login', 'pass' => ''], 'login', ''],
+            ['', '',          ['user' => ''     , 'pass' => ''], '', ''],
+            [null, null,      ['user' => ''     , 'pass' => ''], '', ''],
+            ['', 'pass',      ['user' => ''     , 'pass' => ''], '', ''],
+            [null, 'pass',    ['user' => ''     , 'pass' => ''], '', ''],
         ];
     }
 }

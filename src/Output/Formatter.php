@@ -175,27 +175,6 @@ class Formatter
     }
 
     /**
-     * Format a League\Url\Interfaces\Host
-     *
-     * @param Interfaces\Url $url
-     *
-     * @return string
-     */
-    protected function formatAuthority(Interfaces\Url $url)
-    {
-        if ($url->getHost()->isEmpty()) {
-            return '';
-        }
-
-        $port = '';
-        if (! $url->hasStandardPort()) {
-            $port = $url->getPortComponent()->getUriComponent();
-        }
-
-        return '//'.$url->getUserInfo()->getUriComponent().$this->formatHost($url->getHost()).$port;
-    }
-
-    /**
      * Format a League\Url\Interfaces\Url
      *
      * @param Interfaces\Url $url
@@ -204,17 +183,35 @@ class Formatter
      */
     protected function formatUrl(Interfaces\Url $url)
     {
-        $query = $url->getQuery()->format($this->querySeparator, $this->queryEncoding);
+        $query = $url->getPart('query')->format($this->querySeparator, $this->queryEncoding);
         if (! empty($query)) {
             $query = '?'.$query;
         }
 
         $auth = $this->formatAuthority($url);
 
-        return $url->getScheme()->getUriComponent()
+        return $url->getPart('scheme')->getUriComponent()
             .$auth
-            .$url->getPath()->format($auth)
+            .$url->getPart('path')->format($auth)
             .$query
-            .$url->getFragment()->getUriComponent();
+            .$url->getPart('fragment')->getUriComponent();
+    }
+
+    /**
+     * Format a League\Url\Interfaces\Host
+     *
+     * @param Interfaces\Url $url
+     *
+     * @return string
+     */
+    protected function formatAuthority(Interfaces\Url $url)
+    {
+        if ($url->getPart('host')->isEmpty()) {
+            return '';
+        }
+
+        return '//'.$url->getPart('userinfo')->getUriComponent()
+            .$this->formatHost($url->getPart('host'))
+            .$url->getPart('port')->format($url->getScheme());
     }
 }

@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
+use League\Url\Utilities;
 
 /**
 * Value object representing a URL host component.
@@ -46,7 +46,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     /**
      * Trait to handle host label validation
      */
-    use Util\HostValidator;
+    use Utilities\HostValidator;
 
     /**
      * new Instance

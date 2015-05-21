@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
+use League\Url\Utilities;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -94,17 +94,17 @@ class Url implements Interfaces\Url
     /**
      * A Factory trait fetch info from Server environment variables
      */
-    use Util\ServerInfo;
+    use Utilities\ServerInfo;
 
     /**
      * A Factory Trait to create new URL instance
      */
-    use Util\UrlFactory;
+    use Utilities\UrlFactory;
 
     /**
      * Trait for Common methods amongs composed class
      */
-    use Util\CompositionTrait;
+    use Utilities\CompositionTrait;
 
     /**
      * Create a new instance of URL

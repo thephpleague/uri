@@ -10,9 +10,10 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Output;
+namespace League\Url\Services;
 
 use InvalidArgumentException;
+use League\Url;
 use League\Url\Interfaces;
 
 /**
@@ -119,9 +120,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\UrlPart|Interfaces\Url $input
-     *
-     * @throws \InvalidArgumentException if the given $input can not be formatted
+     * @param Interfaces\UrlPart|Interfaces\Url|string $input
      *
      * @return string
      */
@@ -135,7 +134,7 @@ class Formatter
             return $this->formatComponent($input);
         }
 
-        throw new InvalidArgumentException("The submitted value can not be formatted");
+        return $this->formatUrl(Url\Url::createFromUrl($input));
     }
 
     /**

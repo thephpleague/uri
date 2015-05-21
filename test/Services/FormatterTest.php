@@ -2,7 +2,7 @@
 
 namespace League\Url\Test\Output;
 
-use League\Url\Output\Formatter;
+use League\Url\Services\Formatter;
 use League\Url;
 use PHPUnit_Framework_TestCase;
 
@@ -45,12 +45,14 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         (new Formatter())->setQueryEncoding('toto');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidFormat()
+    public function testFormatWithSimpleString()
     {
-        (new Formatter())->format(new \StdClass);
+        $url       = 'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
+        $expected  = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
+        $formatter = new Formatter();
+        $formatter->setQuerySeparator('&amp;');
+        $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
+        $this->assertSame($expected, $formatter->format($url));
     }
 
     public function testFormatComponent()

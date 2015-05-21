@@ -35,7 +35,7 @@ trait CollectionTrait
     /**
      * is the CollectionComponent absolute
      *
-     * @var boolean
+     * @var int
      */
     protected $is_absolute = Host::IS_RELATIVE;
 

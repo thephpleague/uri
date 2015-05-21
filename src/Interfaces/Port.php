@@ -35,7 +35,7 @@ interface Port extends Component
     /**
      * Return the default schemes attached to a port
      *
-     * @return League\Url\Interfaces\Scheme[]
+     * @return Scheme[]
      */
     public function getStandardSchemes();
 }

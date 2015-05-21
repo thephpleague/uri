@@ -91,11 +91,25 @@ trait CollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function without(array $offsets)
+    public function without($offsets)
     {
+        if (is_callable($offsets)) {
+            $offsets = array_filter(array_keys($this->data), $offsets);
+        }
+
+        if (! is_array($offsets)) {
+            throw new InvalidArgumentException(
+                'You must give a callable or an array as uniquement argument'
+            );
+        }
+
         $data = $this->data;
-        foreach (array_unique($offsets) as $offset) {
+        foreach ($offsets as $offset) {
             unset($data[$offset]);
+        }
+
+        if ($data == $this->data) {
+            return $this;
         }
 
         return static::createFromArray($data, $this->is_absolute);

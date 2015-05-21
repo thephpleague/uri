@@ -187,9 +187,9 @@ class PathTest extends PHPUnit_Framework_TestCase
     /**
      * Test AbstractSegment::without
      *
-     * @param string $origin
-     * @param string $without
-     * @param string $result
+     * @param $origin
+     * @param $without
+     * @param $result
      *
      * @dataProvider withoutProvider
      */
@@ -206,7 +206,18 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/toto/le/heros/masson', [0], '/le/heros/masson'],
             ['/toto/le/heros/masson', [2, 3], '/toto/le'],
             ['/toto/le/heros/masson', [1, 2], '/toto/masson'],
+            ['/toto/le/heros/masson', function ($value) {
+                return $value < 3;
+            }, '/masson'],
         ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithoutFaild()
+    {
+        (new Path('/toofan/orobo'))->without('toofan');
     }
 
     /**

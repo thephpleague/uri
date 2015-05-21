@@ -166,18 +166,37 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, json_decode(json_encode($query), true));
     }
 
-    public function testWithout()
+    /**
+     * Test AbstractSegment::without
+     *
+     * @param $origin
+     * @param $without
+     * @param $result
+     *
+     * @dataProvider withoutProvider
+     */
+    public function testWithout($origin, $without, $result)
     {
-        $query = new Query('foo&bar&baz&to.go=toofan');
-        $res = $query->without(['foo', 'to.go']);
-        $this->assertSame('bar&baz', (string) $res);
+        $this->assertSame($result, (string) (new Query($origin))->without($without));
     }
 
-    public function testWithoutNoDataModified()
+    public function withoutProvider()
     {
-        $query = new Query('foo&bar&baz&to.go=toofan');
-        $res = $query->without(['foo', 'unknown']);
-        $this->assertEquals('bar&baz&to.go=toofan', (string) $res);
+        return [
+            ['foo&bar&baz&to.go=toofan', ['foo', 'to.go'], 'bar&baz'],
+            ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to.go=toofan'],
+            ['foo&bar&baz&to.go=toofan', function ($value) {
+                return strpos($value, 'b') !== false;
+            }, 'foo&to.go=toofan'],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithoutFaild()
+    {
+        (new Query('toofan=orobo'))->without('toofan');
     }
 
     /**
@@ -188,8 +207,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testFilter($params, $callable, $expected)
     {
-        $obj = Query::createFromArray($params)->filter($callable);
-        $this->assertSame($expected, $obj->__toString());
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable));
     }
 
     public function filterProvider()
@@ -206,6 +224,15 @@ class QueryTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider invalidQueryStrings
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
+    {
+        new Query($query);
+    }
+
     public function invalidQueryStrings()
     {
         return [
@@ -214,14 +241,5 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'array'     => [ [ 'baz=bat' ] ],
             'object'    => [ (object) [ 'baz=bat' ] ],
         ];
-    }
-
-    /**
-     * @dataProvider invalidQueryStrings
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
-    {
-        new Query($query);
     }
 }

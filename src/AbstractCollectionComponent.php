@@ -157,7 +157,14 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
      *
      * @return string
      */
-    abstract protected static function formatComponentString($str, $type);
+    protected static function formatComponentString($str, $type)
+    {
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$delimiter.$str;
+        }
+
+        return $str;
+    }
 
     /**
      * {@inheritdoc}

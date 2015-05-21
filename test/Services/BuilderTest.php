@@ -26,6 +26,18 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $url->getQuery());
     }
 
+    public function testReturnSameInstance()
+    {
+        $same = $this->builder
+            ->mergeQueryValues(['rhoo' => null])
+            ->withPathExtension('php')
+            ->withoutQueryValues(['toto'])
+            ->withoutPathSegments([34])
+            ->withoutHostLabels([23, 18]);
+
+        $this->assertSame($same, $this->builder);
+    }
+
     public function testWithoutQueryValues()
     {
         $url = $this->builder->withoutQueryValues(['kingkong'])->getUrl();

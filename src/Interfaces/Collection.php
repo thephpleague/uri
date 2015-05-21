@@ -57,7 +57,7 @@ interface Collection extends Countable, IteratorAggregate
     public function hasOffset($offset);
 
     /**
-     * Returns an instance filtered using a callback function
+     * Returns an instance whose value are filtered using a callback function
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
@@ -74,9 +74,9 @@ interface Collection extends Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param array $offsets a list of segment offset to be removed
+     * @param callable|array $offsets the list of offset to remove from the collection
      *
      * @return static
      */
-    public function without(array $offsets);
+    public function without($offsets);
 }

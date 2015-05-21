@@ -41,19 +41,46 @@ class BuilderTest extends PHPUnit_Framework_TestCase
     public function testWithoutQueryValues()
     {
         $url = $this->builder->withoutQueryValues(['kingkong'])->getUrl();
-        $this->assertSame('foo=bar%20baz', (string) $url->getQuery());
+        $this->assertSame('foo=bar%20baz', $url->getQuery());
     }
 
     public function testWithoutPathSegments()
     {
         $url = $this->builder->withoutPathSegments([0, 1])->getUrl();
-        $this->assertSame('/the/sky.php', (string) $url->getPath());
+        $this->assertSame('/the/sky.php', $url->getPath());
     }
 
     public function testWithoutHostLabels()
     {
         $url = $this->builder->withoutHostLabels([0])->getUrl();
-        $this->assertSame('example.com', (string) $url->getHost());
+        $this->assertSame('example.com', $url->getHost());
+    }
+
+    public function testFilterQueryValues()
+    {
+        $url = $this->builder->filterQueryValues(function ($value) {
+            return $value == 'toto';
+        })->getUrl();
+
+        $this->assertSame('kingkong=toto', $url->getQuery());
+    }
+
+    public function testFilterPathSegments()
+    {
+        $url = $this->builder->filterPathSegments(function ($value) {
+            return strpos($value, 't') === false;
+        })->getUrl();
+
+        $this->assertSame('/sky.php', $url->getPath());
+    }
+
+    public function testFilterHostLabels()
+    {
+        $url = $this->builder->filterHostLabels(function ($value) {
+            return strpos($value, 'w') === false;
+        })->getUrl();
+
+        $this->assertSame('example.com', $url->getHost());
     }
 
     public function testAppendPath()

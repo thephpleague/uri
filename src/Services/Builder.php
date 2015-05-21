@@ -47,7 +47,7 @@ class Builder
     /**
      * Return an instance of Builder
      *
-     * @param  Interfaces\Url $url
+     * @param Interfaces\Url $url
      *
      * @return static
      */
@@ -82,7 +82,7 @@ class Builder
     /**
      * Return an URL with update query values
      *
-     * @param Query|Traversable|array $query the data to be merged
+     * @param Traversable|array $query the data to be merged
      *
      * @return static
      */
@@ -103,6 +103,19 @@ class Builder
     public function withoutQueryValues($query)
     {
         return $this->newInstance($this->url->withQuery($this->url->getPart('query')->without($query)));
+    }
+
+    /**
+     * Return an URL without the filtered query parameters
+     *
+     * @param callable $callable a callable which filter the query parameters
+     *                           according to their content
+     *
+     * @return static
+     */
+    public function filterQueryValues(callable $callable)
+    {
+        return $this->newInstance($this->url->withQuery($this->url->getPart('query')->filter($callable)));
     }
 
     /**
@@ -154,6 +167,19 @@ class Builder
     public function withoutPathSegments($offsets)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->without($offsets)));
+    }
+
+    /**
+     * Return an URL without the submitted path segments
+     *
+     * @param callable $callable a callable which filter the path segment
+     *                           according to the segment content
+     *
+     * @return static
+     */
+    public function filterPathSegments(callable $callable)
+    {
+        return $this->newInstance($this->url->withPath($this->url->getPart('path')->filter($callable)));
     }
 
     /**
@@ -217,5 +243,18 @@ class Builder
     public function withoutHostLabels($offsets)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->without($offsets)));
+    }
+
+    /**
+     * Return an URL without the filtered host labels
+     *
+     * @param callable $callable a callable which filter the host labels
+     *                           according to their content
+     *
+     * @return static
+     */
+    public function filterHostLabels(callable $callable)
+    {
+        return $this->newInstance($this->url->withHost($this->url->getPart('host')->filter($callable)));
     }
 }

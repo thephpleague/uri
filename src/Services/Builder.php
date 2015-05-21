@@ -221,7 +221,7 @@ class Builder
     /**
      * Return an URL with one of its Host label replaced
      *
-     * @param Interfaces\CollectionComponent|string $path   the data to inject
+     * @param Interfaces\CollectionComponent|string $host   the data to inject
      * @param int                                   $offset the Host label offset
      *
      * @return static

@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
+use League\Url\Utilities;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -31,7 +31,7 @@ abstract class AbstractCollectionComponent implements Interfaces\CollectionCompo
     /**
      * Trait for Collection type Component
      */
-    use Util\CollectionTrait;
+    use Utilities\CollectionTrait;
 
     /**
      * New Instance of Path

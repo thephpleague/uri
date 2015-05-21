@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
+use League\Url\Utilities;
 
 /**
 * Value object representing a URL port component.
@@ -24,7 +24,7 @@ use League\Url\Util;
 */
 class Port extends AbstractComponent implements Interfaces\Port
 {
-    use Util\StandardPort;
+    use Utilities\StandardPort;
 
     /**
      * New Instance

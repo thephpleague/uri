@@ -26,7 +26,7 @@ class Query implements Interfaces\Query
     /**
      * Trait for Collection type Component
      */
-    use Util\CollectionTrait;
+    use Utilities\CollectionTrait;
 
     /**
      * a new instance

@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Util;
+use League\Url\Utilities;
 
 /**
 * Value object representing a URL scheme component.
@@ -24,7 +24,7 @@ use League\Url\Util;
 */
 class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
-    use Util\StandardPort;
+    use Utilities\StandardPort;
 
     /**
      * {@inheritdoc}

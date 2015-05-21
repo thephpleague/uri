@@ -39,7 +39,7 @@ class UserInfo implements Interfaces\UserInfo
     /**
      * Trait for Common methods amongs composed class
      */
-    use Util\CompositionTrait;
+    use Utilities\CompositionTrait;
 
     /**
      * Create a new instance of UserInfo

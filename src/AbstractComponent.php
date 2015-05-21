@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces\Component;
-use League\Url\Util;
+use League\Url\Utilities;
 
 /**
  * An abstract class to ease component manipulation
@@ -27,7 +27,7 @@ abstract class AbstractComponent
     /**
      * Trait for ComponentTrait method
      */
-    use Util\ComponentTrait;
+    use Utilities\ComponentTrait;
 
     /**
      * The component data

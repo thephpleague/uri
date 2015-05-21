@@ -10,7 +10,7 @@
 * For the full copyright and license information, please view the LICENSE
 * file that was distributed with this source code.
 */
-namespace League\Url\Util;
+namespace League\Url\Utilities;
 
 use InvalidArgumentException;
 use League\Url;

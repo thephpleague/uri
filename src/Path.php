@@ -100,18 +100,6 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    protected static function formatComponentString($str, $type)
-    {
-        if (self::IS_ABSOLUTE == $type) {
-            return static::$delimiter.$str;
-        }
-
-        return $str;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSegment($offset, $default = null)
     {
         if (isset($this->data[$offset])) {

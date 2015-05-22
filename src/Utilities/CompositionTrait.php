@@ -21,6 +21,11 @@ namespace League\Url\Utilities;
 trait CompositionTrait
 {
     /**
+     * Perfom initial cleanup operation
+     */
+    abstract protected function init();
+
+    /**
      * Returns an instance with the modified component
      *
      * This method MUST retain the state of the current instance, and return
@@ -39,6 +44,7 @@ trait CompositionTrait
         }
         $clone = clone $this;
         $clone->$name = $value;
+        $clone->init();
 
         return $clone;
     }

@@ -50,10 +50,18 @@ class UserInfo implements Interfaces\UserInfo
     public function __construct($user = null, $pass = null)
     {
         $this->user = new Component($user);
-        if ($this->user->isEmpty()) {
-            $pass = null;
-        }
         $this->pass = new Component($pass);
+        $this->init();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function init()
+    {
+        if ($this->user->isEmpty()) {
+            $this->pass = $this->pass->withValue(null);
+        }
     }
 
     /**

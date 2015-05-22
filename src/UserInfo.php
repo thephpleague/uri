@@ -49,11 +49,11 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function __construct($user = null, $pass = null)
     {
-        $this->user = new User($user);
+        $this->user = new Component($user);
         if ($this->user->isEmpty()) {
             $pass = null;
         }
-        $this->pass = new Pass($pass);
+        $this->pass = new Component($pass);
     }
 
     /**
@@ -109,7 +109,7 @@ class UserInfo implements Interfaces\UserInfo
             return '';
         }
 
-        return $this->user->getUriComponent().$this->pass->getUriComponent();
+        return $this->user->__toString().':'.$this->pass->__toString();
     }
 
     /**
@@ -140,7 +140,7 @@ class UserInfo implements Interfaces\UserInfo
     {
         $res = $this->withComponent('user', $user);
         if ($res->user->isEmpty()) {
-            $res->pass = new Pass();
+            $res->pass = new Component();
         }
 
         return $res;

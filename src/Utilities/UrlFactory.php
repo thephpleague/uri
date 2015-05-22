@@ -88,9 +88,7 @@ trait UrlFactory
         $url->path     = new Url\Path($components["path"]);
         $url->query    = new Url\Query($components["query"]);
         $url->fragment = new Url\Fragment($components["fragment"]);
-        if ($url->hasStandardPort()) {
-            $url->port =  $url->port->withValue(null);
-        }
+        $url->init();
 
         return $url;
     }

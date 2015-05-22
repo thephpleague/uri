@@ -133,6 +133,17 @@ class Url implements Interfaces\Url
         $this->path     = clone $path;
         $this->query    = clone $query;
         $this->fragment = clone $fragment;
+        $this->init();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function init()
+    {
+        if ($this->hasStandardPort() && ! $this->port->isEmpty()) {
+            $this->port = $this->port->withValue(null);
+        }
     }
 
     /**
@@ -152,14 +163,14 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function getPart($url_part)
+    public function getPart($part)
     {
-        $url_part = trim(strtolower($url_part));
-        if (! isset(static::$urlParts[$url_part])) {
-            throw new InvalidArgumentException(sprintf('Unknown URL part : `%s`', $url_part));
+        $part = trim(strtolower($part));
+        if (! isset(static::$urlParts[$part])) {
+            throw new InvalidArgumentException(sprintf('Unknown URL part : `%s`', $part));
         }
 
-        return clone $this->$url_part;
+        return clone $this->$part;
     }
 
     /**
@@ -293,12 +304,7 @@ class Url implements Interfaces\Url
      */
     public function withScheme($scheme)
     {
-        $clone = $this->withComponent('scheme', $scheme);
-        if ($clone->hasStandardPort()) {
-            $clone->port = $clone->port->withValue(null);
-        }
-
-        return $clone;
+        return $this->withComponent('scheme', $scheme);
     }
 
     /**
@@ -321,12 +327,7 @@ class Url implements Interfaces\Url
      */
     public function withPort($port)
     {
-        $clone = $this->withComponent('port', $port);
-        if ($clone->hasStandardPort()) {
-            $clone->port = $clone->port->withValue(null);
-        }
-
-        return $clone;
+        return $this->withComponent('port', $port);
     }
 
     /**

@@ -141,7 +141,7 @@ class Url implements Interfaces\Url
      */
     protected function init()
     {
-        if ($this->hasStandardPort() && ! $this->port->isEmpty()) {
+        if (! $this->port->isEmpty() && $this->hasStandardPort()) {
             $this->port = $this->port->withValue(null);
         }
     }
@@ -310,7 +310,7 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function withuserinfo($user, $pass = null)
+    public function withUserInfo($user, $pass = null)
     {
         $userinfo = $this->userinfo->withUser($user)->withPass($pass);
         if ($this->userinfo->sameValueAs($userinfo)) {
@@ -341,14 +341,6 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    public function normalize()
-    {
-        return $this->withComponent('path', $this->path->withoutDotSegments());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function withQuery($query)
     {
         return $this->withComponent('query', $query);
@@ -360,6 +352,14 @@ class Url implements Interfaces\Url
     public function withFragment($fragment)
     {
         return $this->withComponent('fragment', $fragment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize()
+    {
+        return $this->withComponent('path', $this->path->withoutDotSegments());
     }
 
     /**

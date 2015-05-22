@@ -32,7 +32,7 @@ interface Url extends UriInterface
      *
      * @param string $part
      *
-     * @return UrlPart
+     * @return UrlPart|Component|Host|Port|Path|Query
      */
     public function getPart($part);
 

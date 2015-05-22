@@ -22,7 +22,7 @@ use League\Url\Utilities;
 * @package League.url
 * @since 1.0.0
 */
-class Scheme extends AbstractComponent implements Interfaces\Scheme
+class Scheme extends Component implements Interfaces\Scheme
 {
     use Utilities\StandardPort;
 

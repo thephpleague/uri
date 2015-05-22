@@ -2,7 +2,7 @@
 
 namespace League\Url\Test;
 
-use League\Url\User;
+use League\Url\Component;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -31,7 +31,7 @@ class UserTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUriComponent($raw, $parsed)
     {
-        $user = new User(new User($raw));
+        $user = new Component(new Component($raw));
         $this->assertSame($parsed, $user->getUriComponent());
     }
 }

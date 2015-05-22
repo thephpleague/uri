@@ -12,7 +12,7 @@
 */
 namespace League\Url;
 
-use League\Url\Interfaces\Component;
+use League\Url\Interfaces;
 
 /**
 * Value object representing a URL fragment component.
@@ -20,7 +20,7 @@ use League\Url\Interfaces\Component;
 * @package League.url
 * @since 1.0.0
 */
-class Fragment extends AbstractComponent implements Component
+class Fragment extends Component implements Interfaces\Component
 {
     /**
      * {@inheritdoc}

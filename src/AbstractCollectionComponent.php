@@ -22,7 +22,7 @@ use League\Url\Utilities;
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractCollectionComponent implements Interfaces\CollectionComponent
+abstract class AbstractCollectionComponent
 {
     const IS_ABSOLUTE = 1;
 

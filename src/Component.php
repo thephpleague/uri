@@ -13,16 +13,16 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\Component;
+use League\Url\Interfaces;
 use League\Url\Utilities;
 
 /**
  * An abstract class to ease component manipulation
  *
  * @package League.url
- * @since  3.0.0
+ * @since  4.0.0
  */
-abstract class AbstractComponent
+class Component implements Interfaces\Component
 {
     /**
      * Trait for ComponentTrait method

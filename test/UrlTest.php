@@ -41,7 +41,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function testGetterAccess()
     {
         $this->assertSame($this->url->getScheme(), $this->url->scheme->__toString());
-        $this->assertSame($this->url->getUserInfo(), $this->url->userinfo->__toString());
+        $this->assertSame($this->url->getUserInfo(), $this->url->userInfo->__toString());
         $this->assertSame($this->url->getHost(), $this->url->host->__toString());
         $this->assertSame($this->url->getPort(), $this->url->port->toInt());
         $this->assertSame($this->url->getPath(), $this->url->path->__toString());

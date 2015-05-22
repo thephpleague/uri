@@ -209,7 +209,7 @@ class Formatter
             return '';
         }
 
-        return '//'.$url->userinfo->getUriComponent()
+        return '//'.$url->userInfo->getUriComponent()
             .$this->formatHost($url->host)
             .$url->port->getUriComponent();
     }

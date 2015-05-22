@@ -40,13 +40,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testGetterAccess()
     {
-        $this->assertSame($this->url->getScheme(), $this->url->getPart('scheme')->__toString());
-        $this->assertSame($this->url->getUserInfo(), $this->url->getPart('userinfo')->__toString());
-        $this->assertSame($this->url->getHost(), $this->url->getPart('host')->__toString());
-        $this->assertSame($this->url->getPort(), $this->url->getPart('port')->toInt());
-        $this->assertSame($this->url->getPath(), $this->url->getPart('path')->__toString());
-        $this->assertSame($this->url->getQuery(), $this->url->getPart('query')->__toString());
-        $this->assertSame($this->url->getFragment(), $this->url->getPart('fragment')->__toString());
+        $this->assertSame($this->url->getScheme(), $this->url->scheme->__toString());
+        $this->assertSame($this->url->getUserInfo(), $this->url->userinfo->__toString());
+        $this->assertSame($this->url->getHost(), $this->url->host->__toString());
+        $this->assertSame($this->url->getPort(), $this->url->port->toInt());
+        $this->assertSame($this->url->getPath(), $this->url->path->__toString());
+        $this->assertSame($this->url->getQuery(), $this->url->query->__toString());
+        $this->assertSame($this->url->getFragment(), $this->url->fragment->__toString());
     }
 
     /**
@@ -54,7 +54,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testGetPartFailed()
     {
-        $this->url->getPart('yolo');
+        $this->url->yolo;
     }
 
     public function testImmutabilityAccess()

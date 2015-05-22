@@ -160,6 +160,16 @@ class Builder
     }
 
     /**
+     * Return an URL without internal empty segments
+     *
+     * @return static
+     */
+    public function withoutDuplicateSegments()
+    {
+        return $this->newInstance($this->url->withPath($this->url->getPart('path')->withoutDuplicateDelimiters()));
+    }
+
+    /**
      * Return an URL without the submitted path segments
      *
      * @param callable $callable a callable which filter the path segment

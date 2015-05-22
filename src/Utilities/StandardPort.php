@@ -1,26 +1,26 @@
 <?php
 /**
-* This file is part of the League.url library
-*
-* @license http://opensource.org/licenses/MIT
-* @link https://github.com/thephpleague/url/
-* @version 4.0.0
-* @package League.url
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the League.url library
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/thephpleague/url/
+ * @version 4.0.0
+ * @package League.url
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace League\Url\Utilities;
 
 use League\Url\Port;
 use League\Url\Scheme;
 
 /**
-* Trait to validate Url standard Port
-*
-* @package League.url
-* @since 4.0.0
-*/
+ * Trait to validate Url standard Port
+ *
+ * @package League.url
+ * @since 4.0.0
+ */
 trait StandardPort
 {
     /**

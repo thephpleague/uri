@@ -1,27 +1,27 @@
 <?php
 /**
-* This file is part of the League.url library
-*
-* @license http://opensource.org/licenses/MIT
-* @link https://github.com/thephpleague/url/
-* @version 4.0.0
-* @package League.url
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the League.url library
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/thephpleague/url/
+ * @version 4.0.0
+ * @package League.url
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace League\Url\Services;
 
 use InvalidArgumentException;
-use League\Url;
 use League\Url\Interfaces;
+use League\Url\Url;
 
 /**
-* A class to manipulate an URL output
-*
-* @package League.url
-* @since 4.0.0
-*/
+ * A class to manipulate an URL output
+ *
+ * @package League.url
+ * @since 4.0.0
+ */
 class Formatter
 {
     const HOST_AS_UNICODE = 1;
@@ -120,13 +120,13 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\UrlPart|Interfaces\Url|string $input
+     * @param Interfaces\UrlPart|Url|string $input
      *
      * @return string
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\Url) {
+        if ($input instanceof Url) {
             return $this->formatUrl($input);
         }
 
@@ -134,11 +134,11 @@ class Formatter
             return $this->formatComponent($input);
         }
 
-        return $this->formatUrl(Url\Url::createFromUrl($input));
+        return $this->formatUrl(Url::createFromUrl($input));
     }
 
     /**
-     * Format a League\Url\Interfaces\UrlPart
+     * Format a League\Url\Interfaces\UrlPart according to the Formatter properties
      *
      * @param Interfaces\UrlPart $part
      *
@@ -158,7 +158,7 @@ class Formatter
     }
 
     /**
-     * Format a League\Url\Interfaces\Host
+     * Format a League\Url\Interfaces\Host according to the Formatter properties
      *
      * @param Interfaces\Host $host
      *
@@ -174,13 +174,13 @@ class Formatter
     }
 
     /**
-     * Format a League\Url\Interfaces\Url
+     * Format a Url according to the Formatter properties
      *
-     * @param Interfaces\Url $url
+     * @param Url $url
      *
      * @return string
      */
-    protected function formatUrl(Interfaces\Url $url)
+    protected function formatUrl(Url $url)
     {
         $query = $url->query->format($this->querySeparator, $this->queryEncoding);
         if (! empty($query)) {
@@ -197,13 +197,13 @@ class Formatter
     }
 
     /**
-     * Format a League\Url\Interfaces\Host
+     * Format a URL authority according to the Formatter properties
      *
-     * @param Interfaces\Url $url
+     * @param Url $url
      *
      * @return string
      */
-    protected function formatAuthority(Interfaces\Url $url)
+    protected function formatAuthority(Url $url)
     {
         if ('' == $url->getHost()) {
             return '';

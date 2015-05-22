@@ -1,15 +1,15 @@
 <?php
 /**
-* This file is part of the League.url library
-*
-* @license http://opensource.org/licenses/MIT
-* @link https://github.com/thephpleague/url/
-* @version 4.0.0
-* @package League.url
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the League.url library
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/thephpleague/url/
+ * @version 4.0.0
+ * @package League.url
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace League\Url;
 
 use InvalidArgumentException;
@@ -18,11 +18,19 @@ use League\Url\Utilities;
 use Psr\Http\Message\UriInterface;
 
 /**
-* Value object representing a URL.
-*
-* @package League.url
-* @since 1.0.0
-*/
+ * Value object representing a URL.
+ *
+ * @package League.url
+ * @since 1.0.0
+ *
+ * @property-read Interfaces\Scheme   $scheme
+ * @property-read Interfaces\UserInfo $userinfo
+ * @property-read Interfaces\Host     $host
+ * @property-read Interfaces\Port     $port
+ * @property-read Interfaces\Path     $path
+ * @property-read Interfaces\Query    $query
+ * @property-read Fragment            $fragment
+ */
 class Url implements Interfaces\Url
 {
     /**

@@ -70,16 +70,6 @@ class Builder
     }
 
     /**
-     * Return the string representation of the URL
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->url->__toString();
-    }
-
-    /**
      * Return an URL with update query values
      *
      * @param Traversable|array $query the data to be merged
@@ -125,7 +115,7 @@ class Builder
      *
      * @return static
      */
-    public function appendPath($path)
+    public function appendSegments($path)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->append($path)));
     }
@@ -137,7 +127,7 @@ class Builder
      *
      * @return static
      */
-    public function prependPath($path)
+    public function prependSegments($path)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->prepend($path)));
     }
@@ -150,7 +140,7 @@ class Builder
      *
      * @return static
      */
-    public function replacePathSegment($path, $offset)
+    public function replaceSegment($path, $offset)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->replace($path, $offset)));
     }
@@ -164,7 +154,7 @@ class Builder
      *
      * @return static
      */
-    public function withoutPathSegments($offsets)
+    public function withoutSegments($offsets)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->without($offsets)));
     }
@@ -177,7 +167,7 @@ class Builder
      *
      * @return static
      */
-    public function filterPathSegments(callable $callable)
+    public function filterSegments(callable $callable)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->filter($callable)));
     }
@@ -189,7 +179,7 @@ class Builder
      *
      * @return static
      */
-    public function withPathExtension($extension)
+    public function withExtension($extension)
     {
         return $this->newInstance($this->url->withPath($this->url->getPart('path')->withExtension($extension)));
     }
@@ -201,7 +191,7 @@ class Builder
      *
      * @return static
      */
-    public function appendHost($host)
+    public function appendLabels($host)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->append($host)));
     }
@@ -213,7 +203,7 @@ class Builder
      *
      * @return static
      */
-    public function prependHost($host)
+    public function prependLabels($host)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->prepend($host)));
     }
@@ -226,7 +216,7 @@ class Builder
      *
      * @return static
      */
-    public function replaceHostLabel($host, $offset)
+    public function replaceLabel($host, $offset)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->replace($host, $offset)));
     }
@@ -240,7 +230,7 @@ class Builder
      *
      * @return static
      */
-    public function withoutHostLabels($offsets)
+    public function withoutLabels($offsets)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->without($offsets)));
     }
@@ -253,7 +243,7 @@ class Builder
      *
      * @return static
      */
-    public function filterHostLabels(callable $callable)
+    public function filterLabels(callable $callable)
     {
         return $this->newInstance($this->url->withHost($this->url->getPart('host')->filter($callable)));
     }

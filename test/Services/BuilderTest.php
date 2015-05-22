@@ -30,10 +30,10 @@ class BuilderTest extends PHPUnit_Framework_TestCase
     {
         $same = $this->builder
             ->mergeQueryValues(['rhoo' => null])
-            ->withPathExtension('php')
+            ->withExtension('php')
             ->withoutQueryValues(['toto'])
-            ->withoutPathSegments([34])
-            ->withoutHostLabels([23, 18]);
+            ->withoutSegments([34])
+            ->withoutLabels([23, 18]);
 
         $this->assertSame($same, $this->builder);
     }
@@ -44,15 +44,15 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('foo=bar%20baz', $url->getQuery());
     }
 
-    public function testWithoutPathSegments()
+    public function testWithoutSegments()
     {
-        $url = $this->builder->withoutPathSegments([0, 1])->getUrl();
+        $url = $this->builder->withoutSegments([0, 1])->getUrl();
         $this->assertSame('/the/sky.php', $url->getPath());
     }
 
-    public function testWithoutHostLabels()
+    public function testWithoutLabels()
     {
-        $url = $this->builder->withoutHostLabels([0])->getUrl();
+        $url = $this->builder->withoutLabels([0])->getUrl();
         $this->assertSame('example.com', $url->getHost());
     }
 
@@ -65,69 +65,63 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('kingkong=toto', $url->getQuery());
     }
 
-    public function testFilterPathSegments()
+    public function testFilterSegments()
     {
-        $url = $this->builder->filterPathSegments(function ($value) {
+        $url = $this->builder->filterSegments(function ($value) {
             return strpos($value, 't') === false;
         })->getUrl();
 
         $this->assertSame('/sky.php', $url->getPath());
     }
 
-    public function testFilterHostLabels()
+    public function testFilterLabels()
     {
-        $url = $this->builder->filterHostLabels(function ($value) {
+        $url = $this->builder->filterLabels(function ($value) {
             return strpos($value, 'w') === false;
         })->getUrl();
 
         $this->assertSame('example.com', $url->getHost());
     }
 
-    public function testAppendPath()
+    public function testAppendSegments()
     {
-        $url = $this->builder->appendPath('/added')->getUrl();
+        $url = $this->builder->appendSegments('/added')->getUrl();
         $this->assertSame('/path/to/the/sky.php/added', (string) $url->getPath());
     }
 
-    public function testAppendHost()
+    public function testAppendLabels()
     {
-        $url = $this->builder->appendHost('added')->getUrl();
+        $url = $this->builder->appendLabels('added')->getUrl();
         $this->assertSame('www.example.com.added', (string) $url->getHost());
     }
 
-    public function testPrependPath()
+    public function testPrependSegments()
     {
-        $url = $this->builder->prependPath('/added')->getUrl();
+        $url = $this->builder->prependSegments('/added')->getUrl();
         $this->assertSame('/added/path/to/the/sky.php', (string) $url->getPath());
     }
 
-    public function testPrependHost()
+    public function testPrependLabels()
     {
-        $url = $this->builder->prependHost('added')->getUrl();
+        $url = $this->builder->prependLabels('added')->getUrl();
         $this->assertSame('added.www.example.com', (string) $url->getHost());
     }
 
-    public function testReplacePathSegment()
+    public function testReplaceSegment()
     {
-        $url = $this->builder->replacePathSegment('replace', 3)->getUrl();
+        $url = $this->builder->replaceSegment('replace', 3)->getUrl();
         $this->assertSame('/path/to/the/replace', (string) $url->getPath());
     }
 
-    public function testReplaceHostLabel()
+    public function testReplaceLabel()
     {
-        $url = $this->builder->replaceHostLabel('thephpleague', 1)->getUrl();
+        $url = $this->builder->replaceLabel('thephpleague', 1)->getUrl();
         $this->assertSame('www.thephpleague.com', (string) $url->getHost());
     }
 
-    public function testWithPathExtension()
+    public function testWithExtension()
     {
-        $url = $this->builder->withPathExtension('asp')->getUrl();
+        $url = $this->builder->withExtension('asp')->getUrl();
         $this->assertSame('/path/to/the/sky.asp', (string) $url->getPath());
-    }
-
-    public function testToString()
-    {
-        $builder = Url\Url::createFromUrl('http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3');
-        $this->assertSame($builder->__toString(), $this->builder->__toString());
     }
 }

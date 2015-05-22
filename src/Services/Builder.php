@@ -33,7 +33,7 @@ class Builder
     /**
      * Create a new instance of URL
      *
-     * @param mixed $url
+     * @param Interfaces\Url|string $url
      */
     public function __construct($url)
     {

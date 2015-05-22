@@ -19,6 +19,9 @@ use League\Url\Interfaces;
  *
  * @package League.url
  * @since 4.0.0
+ *
+ * @property-read Interfaces\Component $user
+ * @property-read Interfaces\Component $pass
  */
 class UserInfo implements Interfaces\UserInfo
 {
@@ -86,7 +89,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function getUser()
     {
-        return clone $this->user;
+        return $this->user->__toString();
     }
 
     /**
@@ -94,7 +97,19 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function getPass()
     {
-        return clone $this->pass;
+        return $this->pass->__toString();
+    }
+
+    /**
+     * Magic read-only for User Info properties
+     *
+     * @param string $part The property to read from
+     *
+     * @return mixed
+     */
+    public function __get($part)
+    {
+        return clone $this->$part;
     }
 
     /**

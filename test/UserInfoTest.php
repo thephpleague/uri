@@ -35,6 +35,13 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testGetterMethod()
+    {
+        $userinfo = new UserInfo();
+        $this->assertInstanceof('League\Url\Component', $userinfo->user);
+        $this->assertInstanceof('League\Url\Component', $userinfo->pass);
+    }
+
     /**
      * @param $login
      * @param $pass
@@ -45,8 +52,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     {
         $userinfo = new UserInfo($login, $pass);
         $this->assertSame($expected, $userinfo->toArray());
-        $this->assertSame($expected_user, $userinfo->getUser()->__toString());
-        $this->assertSame($expected_pass, $userinfo->getPass()->__toString());
+        $this->assertSame($expected_user, $userinfo->getUser());
+        $this->assertSame($expected_pass, $userinfo->getPass());
     }
 
     public function toArrayProvider()

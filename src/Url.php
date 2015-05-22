@@ -24,7 +24,7 @@ use Psr\Http\Message\UriInterface;
  * @since 1.0.0
  *
  * @property-read Interfaces\Scheme   $scheme
- * @property-read Interfaces\UserInfo $userinfo
+ * @property-read Interfaces\UserInfo $userInfo
  * @property-read Interfaces\Host     $host
  * @property-read Interfaces\Port     $port
  * @property-read Interfaces\Path     $path
@@ -45,7 +45,7 @@ class Url implements Interfaces\Url
      *
      * @var Interfaces\UserInfo
      */
-    protected $userinfo;
+    protected $userInfo;
 
     /**
      * Host Component
@@ -89,7 +89,7 @@ class Url implements Interfaces\Url
      */
     protected static $urlParts = [
         'scheme'   => 1,
-        'userinfo' => 1,
+        'userInfo' => 1,
         'host'     => 1,
         'port'     => 1,
         'path'     => 1,
@@ -118,7 +118,7 @@ class Url implements Interfaces\Url
      * Create a new instance of URL
      *
      * @param Interfaces\Scheme   $scheme
-     * @param Interfaces\UserInfo $userinfo
+     * @param Interfaces\UserInfo $userInfo
      * @param Interfaces\Host     $host
      * @param Interfaces\Port     $port
      * @param Interfaces\Path     $path
@@ -127,7 +127,7 @@ class Url implements Interfaces\Url
      */
     public function __construct(
         Interfaces\Scheme $scheme,
-        Interfaces\UserInfo $userinfo,
+        Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
         Interfaces\Port $port,
         Interfaces\Path $path,
@@ -135,7 +135,7 @@ class Url implements Interfaces\Url
         Fragment $fragment
     ) {
         $this->scheme   = clone $scheme;
-        $this->userinfo = clone $userinfo;
+        $this->userInfo = clone $userInfo;
         $this->host     = clone $host;
         $this->port     = clone $port;
         $this->path     = clone $path;
@@ -160,7 +160,7 @@ class Url implements Interfaces\Url
     public function __clone()
     {
         $this->scheme   = clone $this->scheme;
-        $this->userinfo = clone $this->userinfo;
+        $this->userInfo = clone $this->userInfo;
         $this->host     = clone $this->host;
         $this->port     = clone $this->port;
         $this->path     = clone $this->path;
@@ -177,7 +177,6 @@ class Url implements Interfaces\Url
      */
     public function __get($part)
     {
-        $part = trim(strtolower($part));
         if (! isset(static::$urlParts[$part])) {
             throw new InvalidArgumentException(sprintf('Unknown URL part : `%s`', $part));
         }
@@ -218,7 +217,7 @@ class Url implements Interfaces\Url
             return '';
         }
 
-        return $this->userinfo->getUriComponent()
+        return $this->userInfo->getUriComponent()
             .$this->host->getUriComponent()
             .$this->port->getUriComponent();
     }
@@ -260,7 +259,7 @@ class Url implements Interfaces\Url
      */
     public function getUserInfo()
     {
-        return $this->userinfo->__toString();
+        return $this->userInfo->__toString();
     }
 
     /**
@@ -324,12 +323,12 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
-        $userinfo = $this->userinfo->withUser($user)->withPass($pass);
-        if ($this->userinfo->sameValueAs($userinfo)) {
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        if ($this->userInfo->sameValueAs($userInfo)) {
             return $this;
         }
         $clone = clone $this;
-        $clone->userinfo = $userinfo;
+        $clone->userInfo = $userInfo;
 
         return $clone;
     }

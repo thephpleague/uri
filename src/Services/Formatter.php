@@ -182,18 +182,18 @@ class Formatter
      */
     protected function formatUrl(Interfaces\Url $url)
     {
-        $query = $url->getPart('query')->format($this->querySeparator, $this->queryEncoding);
+        $query = $url->query->format($this->querySeparator, $this->queryEncoding);
         if (! empty($query)) {
             $query = '?'.$query;
         }
 
         $auth = $this->formatAuthority($url);
 
-        return $url->getPart('scheme')->getUriComponent()
+        return $url->scheme->getUriComponent()
             .$auth
-            .$url->getPart('path')->format($auth)
+            .$url->path->format($auth)
             .$query
-            .$url->getPart('fragment')->getUriComponent();
+            .$url->fragment->getUriComponent();
     }
 
     /**
@@ -209,8 +209,8 @@ class Formatter
             return '';
         }
 
-        return '//'.$url->getPart('userinfo')->getUriComponent()
-            .$this->formatHost($url->getPart('host'))
-            .$url->getPart('port')->getUriComponent();
+        return '//'.$url->userinfo->getUriComponent()
+            .$this->formatHost($url->host)
+            .$url->port->getUriComponent();
     }
 }

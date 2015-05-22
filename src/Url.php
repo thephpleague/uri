@@ -161,9 +161,13 @@ class Url implements Interfaces\Url
     }
 
     /**
-     * {@inheritdoc}
+     * Magic read-only for all Part/Component URL properties
+     *
+     * @param string $part The property to read from
+     *
+     * @return mixed
      */
-    public function getPart($part)
+    public function __get($part)
     {
         $part = trim(strtolower($part));
         if (! isset(static::$urlParts[$part])) {

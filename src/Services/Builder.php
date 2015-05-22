@@ -26,14 +26,14 @@ class Builder
     /**
      * Scheme Component
      *
-     * @var Interfaces\Url
+     * @var Url
      */
     protected $url;
 
     /**
      * Create a new instance of URL
      *
-     * @param Interfaces\Url|string $url
+     * @param Url|string $url
      */
     public function __construct($url)
     {
@@ -47,7 +47,7 @@ class Builder
     /**
      * Return an instance of Builder
      *
-     * @param Interfaces\Url $url
+     * @param Url $url
      *
      * @return static
      */
@@ -62,7 +62,7 @@ class Builder
     /**
      * Return the original URL instance
      *
-     * @return Interfaces\Url
+     * @return Url
      */
     public function getUrl()
     {
@@ -78,7 +78,7 @@ class Builder
      */
     public function mergeQueryValues($query)
     {
-        return $this->newInstance($this->url->withQuery($this->url->getPart('query')->merge($query)));
+        return $this->newInstance($this->url->withQuery($this->url->query->merge($query)));
     }
 
     /**
@@ -92,7 +92,7 @@ class Builder
      */
     public function withoutQueryValues($query)
     {
-        return $this->newInstance($this->url->withQuery($this->url->getPart('query')->without($query)));
+        return $this->newInstance($this->url->withQuery($this->url->query->without($query)));
     }
 
     /**
@@ -105,7 +105,7 @@ class Builder
      */
     public function filterQueryValues(callable $callable)
     {
-        return $this->newInstance($this->url->withQuery($this->url->getPart('query')->filter($callable)));
+        return $this->newInstance($this->url->withQuery($this->url->query->filter($callable)));
     }
 
     /**
@@ -117,7 +117,7 @@ class Builder
      */
     public function appendSegments($path)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->append($path)));
+        return $this->newInstance($this->url->withPath($this->url->path->append($path)));
     }
 
     /**
@@ -129,7 +129,7 @@ class Builder
      */
     public function prependSegments($path)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->prepend($path)));
+        return $this->newInstance($this->url->withPath($this->url->path->prepend($path)));
     }
 
     /**
@@ -142,7 +142,7 @@ class Builder
      */
     public function replaceSegment($path, $offset)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->replace($path, $offset)));
+        return $this->newInstance($this->url->withPath($this->url->path->replace($path, $offset)));
     }
 
     /**
@@ -156,7 +156,7 @@ class Builder
      */
     public function withoutSegments($offsets)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->without($offsets)));
+        return $this->newInstance($this->url->withPath($this->url->path->without($offsets)));
     }
 
     /**
@@ -166,7 +166,7 @@ class Builder
      */
     public function withoutDuplicateSegments()
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->withoutDuplicateDelimiters()));
+        return $this->newInstance($this->url->withPath($this->url->path->withoutDuplicateDelimiters()));
     }
 
     /**
@@ -179,7 +179,7 @@ class Builder
      */
     public function filterSegments(callable $callable)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->filter($callable)));
+        return $this->newInstance($this->url->withPath($this->url->path->filter($callable)));
     }
 
     /**
@@ -191,7 +191,7 @@ class Builder
      */
     public function withExtension($extension)
     {
-        return $this->newInstance($this->url->withPath($this->url->getPart('path')->withExtension($extension)));
+        return $this->newInstance($this->url->withPath($this->url->path->withExtension($extension)));
     }
 
     /**
@@ -203,7 +203,7 @@ class Builder
      */
     public function appendLabels($host)
     {
-        return $this->newInstance($this->url->withHost($this->url->getPart('host')->append($host)));
+        return $this->newInstance($this->url->withHost($this->url->host->append($host)));
     }
 
     /**
@@ -215,7 +215,7 @@ class Builder
      */
     public function prependLabels($host)
     {
-        return $this->newInstance($this->url->withHost($this->url->getPart('host')->prepend($host)));
+        return $this->newInstance($this->url->withHost($this->url->host->prepend($host)));
     }
 
     /**
@@ -228,7 +228,7 @@ class Builder
      */
     public function replaceLabel($host, $offset)
     {
-        return $this->newInstance($this->url->withHost($this->url->getPart('host')->replace($host, $offset)));
+        return $this->newInstance($this->url->withHost($this->url->host->replace($host, $offset)));
     }
 
     /**
@@ -242,7 +242,7 @@ class Builder
      */
     public function withoutLabels($offsets)
     {
-        return $this->newInstance($this->url->withHost($this->url->getPart('host')->without($offsets)));
+        return $this->newInstance($this->url->withHost($this->url->host->without($offsets)));
     }
 
     /**
@@ -255,6 +255,6 @@ class Builder
      */
     public function filterLabels(callable $callable)
     {
-        return $this->newInstance($this->url->withHost($this->url->getPart('host')->filter($callable)));
+        return $this->newInstance($this->url->withHost($this->url->host->filter($callable)));
     }
 }

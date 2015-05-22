@@ -28,15 +28,6 @@ use Psr\Http\Message\UriInterface;
 interface Url extends UriInterface
 {
     /**
-     * Retrieve the port component of the URI as a Value Object
-     *
-     * @param string $part
-     *
-     * @return UrlPart|Component|Host|Port|Path|Query
-     */
-    public function getPart($part);
-
-    /**
      * Return an array representation of the Url
      *
      * @return array

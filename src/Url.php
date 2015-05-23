@@ -372,8 +372,21 @@ class Url implements Interfaces\Url
         if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
             return $relative->withScheme($this->scheme)->normalize();
         }
-
         $newUrl = $this->withFragment($relative->fragment);
+
+        return $this->resolveUrl($newUrl, $relative);
+    }
+
+    /**
+     * returns the resolve URL
+     *
+     * @param Url $newUrl   the final URL
+     * @param Url $relative the relative URL
+     *
+     * @return static
+     */
+    protected function resolveUrl(Url $newUrl, Url $relative)
+    {
         if (! $relative->path->isEmpty()) {
             return $this->resolvePath($newUrl, $relative);
         }
@@ -382,7 +395,7 @@ class Url implements Interfaces\Url
             return $newUrl->withQuery($relative->query)->normalize();
         }
 
-        return $newUrl->normalize();
+        return $newUrl->normalize();        
     }
 
     /**

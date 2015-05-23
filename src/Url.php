@@ -175,7 +175,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return static::$defaultComponents + static::parseUrl($this);
+        return array_merge(static::$defaultComponents, static::parseUrl($this));
     }
 
     /**

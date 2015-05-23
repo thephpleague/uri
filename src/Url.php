@@ -364,47 +364,46 @@ class Url implements Interfaces\Url
      */
     public function resolve($url)
     {
-        $rel = static::createFromUrl($url);
-        if ($rel->isAbsolute()) {
-            return $rel->normalize();
+        $relative = static::createFromUrl($url);
+        if ($relative->isAbsolute()) {
+            return $relative->normalize();
         }
 
-        $auth = $rel->getAuthority();
-        if (! empty($auth) && $auth != $this->getAuthority()) {
-            return $rel->withScheme($this->scheme)->normalize();
+        if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
+            return $relative->withScheme($this->scheme)->normalize();
         }
 
-        $res = $this->withFragment($rel->fragment);
-        if (! $rel->path->isEmpty()) {
-            return $this->resolvePath($res, $rel);
+        $newUrl = $this->withFragment($relative->fragment);
+        if (! $relative->path->isEmpty()) {
+            return $this->resolvePath($newUrl, $relative);
         }
 
-        if (! $rel->query->isEmpty()) {
-            return $res->withQuery($rel->query)->normalize();
+        if (! $relative->query->isEmpty()) {
+            return $newUrl->withQuery($relative->query)->normalize();
         }
 
-        return $res->normalize();
+        return $newUrl->normalize();
     }
 
     /**
      * returns the resolve URL components
      *
-     * @param Url $url the final URL
-     * @param Url $rel the relative URL
+     * @param Url $newUrl   the final URL
+     * @param Url $relative the relative URL
      *
      * @return static
      */
-    protected function resolvePath(Url $url, Url $rel)
+    protected function resolvePath(Url $newUrl, Url $relative)
     {
-        $path = $rel->path;
-        if (! $rel->path->isAbsolute()) {
-            $segments = $url->path->toArray();
+        $path = $relative->path;
+        if (! $path->isAbsolute()) {
+            $segments = $newUrl->path->toArray();
             array_pop($segments);
             $is_absolute = Path::IS_RELATIVE;
-            if ($url->path->isEmpty() || $url->path->isAbsolute()) {
+            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
                 $is_absolute = Path::IS_ABSOLUTE;
             }
-            $path = Path::createFromArray(array_merge($segments, $rel->path->toArray()), $is_absolute);
+            $path = Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
         }
 
         return $url->withPath($path->withoutDotSegments())->withQuery($rel->query);

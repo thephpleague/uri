@@ -62,18 +62,9 @@ class UserInfo implements Interfaces\UserInfo
      */
     protected function init()
     {
-        if ($this->user->isEmpty()) {
+        if (! $this->pass->isEmpty() && $this->user->isEmpty()) {
             $this->pass = $this->pass->withValue(null);
         }
-    }
-
-    /**
-     * clone the current instance
-     */
-    public function __clone()
-    {
-        $this->user = clone $this->user;
-        $this->pass = clone $this->pass;
     }
 
     /**
@@ -109,7 +100,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function __get($part)
     {
-        return clone $this->$part;
+        return $this->$part;
     }
 
     /**
@@ -153,7 +144,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function sameValueAs(Interfaces\UrlPart $component)
     {
-        return $component->getUriComponent() == $this->getUriComponent();
+        return $this->getUriComponent() == $component->getUriComponent();
     }
 
     /**
@@ -161,12 +152,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withUser($user)
     {
-        $res = $this->withComponent('user', $user);
-        if ($res->user->isEmpty()) {
-            $res->pass = new Component();
-        }
-
-        return $res;
+        return $this->withComponent('user', $user);
     }
 
     /**
@@ -174,9 +160,6 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withPass($pass)
     {
-        if ($this->user->isEmpty()) {
-            $pass = null;
-        }
         return $this->withComponent('pass', $pass);
     }
 }

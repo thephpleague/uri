@@ -37,11 +37,7 @@ class Builder
      */
     public function __construct($url)
     {
-        if (! $url instanceof Interfaces\Url) {
-            $url = Url::createFromUrl($url);
-        }
-
-        $this->url = $url;
+        $this->setUrl($url);
     }
 
     /**
@@ -53,10 +49,27 @@ class Builder
      */
     protected function newInstance(Interfaces\Url $url)
     {
-        if ($url->sameValueAs($this->url)) {
-            return $this;
+        if (! $this->url->sameValueAs($url)) {
+            $this->url = $url;
         }
-        return new static($url);
+        return $this;
+    }
+
+    /**
+     * Set The URL the builder will use
+     * 
+     * @param Url|string $url
+     * 
+     * @return static
+     */
+    public function setUrl($url)
+    {
+        if (! $url instanceof Interfaces\Url) {
+            $url = Url::createFromUrl($url);
+        }
+        $this->url = $url;
+        
+        return $this;
     }
 
     /**

@@ -34,7 +34,7 @@ class Builder
      *
      * @param Url|string $url
      */
-    public function __construct($url)
+    public function __construct($url = null)
     {
         $this->setUrl($url);
     }

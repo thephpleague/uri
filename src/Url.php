@@ -134,13 +134,13 @@ class Url implements Interfaces\Url
         Interfaces\Query $query,
         Fragment $fragment
     ) {
-        $this->scheme   = clone $scheme;
-        $this->userInfo = clone $userInfo;
-        $this->host     = clone $host;
-        $this->port     = clone $port;
-        $this->path     = clone $path;
-        $this->query    = clone $query;
-        $this->fragment = clone $fragment;
+        $this->scheme   = $scheme;
+        $this->userInfo = $userInfo;
+        $this->host     = $host;
+        $this->port     = $port;
+        $this->path     = $path;
+        $this->query    = $query;
+        $this->fragment = $fragment;
         $this->init();
     }
 
@@ -152,20 +152,6 @@ class Url implements Interfaces\Url
         if (! $this->port->isEmpty() && $this->hasStandardPort()) {
             $this->port = $this->port->withValue(null);
         }
-    }
-
-    /**
-     * clone the current instance
-     */
-    public function __clone()
-    {
-        $this->scheme   = clone $this->scheme;
-        $this->userInfo = clone $this->userInfo;
-        $this->host     = clone $this->host;
-        $this->port     = clone $this->port;
-        $this->path     = clone $this->path;
-        $this->query    = clone $this->query;
-        $this->fragment = clone $this->fragment;
     }
 
     /**
@@ -181,7 +167,7 @@ class Url implements Interfaces\Url
             throw new InvalidArgumentException(sprintf('Unknown URL part : `%s`', $part));
         }
 
-        return clone $this->$part;
+        return $this->$part;
     }
 
     /**

@@ -406,6 +406,6 @@ class Url implements Interfaces\Url
             $path = Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
         }
 
-        return $url->withPath($path->withoutDotSegments())->withQuery($rel->query);
+        return $newUrl->withPath($path->withoutDotSegments())->withQuery($rel->query);
     }
 }

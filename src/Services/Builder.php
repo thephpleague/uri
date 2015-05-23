@@ -34,24 +34,9 @@ class Builder
      *
      * @param Url|string $url
      */
-    public function __construct($url = null)
+    public function __construct($url = '')
     {
         $this->setUrl($url);
-    }
-
-    /**
-     * Return an instance of Builder
-     *
-     * @param Url $url
-     *
-     * @return static
-     */
-    protected function newInstance(Url $url)
-    {
-        if (! $this->url->sameValueAs($url)) {
-            $this->url = $url;
-        }
-        return $this;
     }
 
     /**
@@ -79,6 +64,21 @@ class Builder
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Return an instance of Builder
+     *
+     * @param Url $url
+     *
+     * @return static
+     */
+    protected function newInstance(Url $url)
+    {
+        if (! $this->url->sameValueAs($url)) {
+            $this->url = $url;
+        }
+        return $this;
     }
 
     /**

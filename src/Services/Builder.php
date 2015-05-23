@@ -12,7 +12,6 @@
  */
 namespace League\Url\Services;
 
-use League\Url\Interfaces;
 use League\Url\Url;
 
 /**
@@ -24,14 +23,14 @@ use League\Url\Url;
 class Builder
 {
     /**
-     * Scheme Component
+     * The Url
      *
      * @var Url
      */
     protected $url;
 
     /**
-     * Create a new instance of URL
+     * Create a new instance
      *
      * @param Url|string $url
      */
@@ -47,7 +46,7 @@ class Builder
      *
      * @return static
      */
-    protected function newInstance(Interfaces\Url $url)
+    protected function newInstance(Url $url)
     {
         if (! $this->url->sameValueAs($url)) {
             $this->url = $url;
@@ -64,7 +63,7 @@ class Builder
      */
     public function setUrl($url)
     {
-        if (! $url instanceof Interfaces\Url) {
+        if (! $url instanceof Url) {
             $url = Url::createFromUrl($url);
         }
         $this->url = $url;

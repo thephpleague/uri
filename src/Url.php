@@ -372,23 +372,23 @@ class Url implements Interfaces\Url
         if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
             return $relative->withScheme($this->scheme)->normalize();
         }
-        $newUrl = $this->withFragment($relative->fragment);
-
-        return $this->resolveUrl($newUrl, $relative);
+    
+        return $this->resolveRelative($relative);
     }
 
     /**
      * returns the resolve URL
      *
-     * @param Url $newUrl   the final URL
      * @param Url $relative the relative URL
      *
      * @return static
      */
-    protected function resolveUrl(Url $newUrl, Url $relative)
+    protected function resolveRelative(Url $relative)
     {
+        $newUrl = $this->withFragment($relative->fragment);
         if (! $relative->path->isEmpty()) {
-            return $this->resolvePath($newUrl, $relative);
+            $path = $this->resolvePath($newUrl, $relative);
+            return $newUrl->withPath($path)->withQuery($relative->query)->normalize();
         }
 
         if (! $relative->query->isEmpty()) {
@@ -404,7 +404,7 @@ class Url implements Interfaces\Url
      * @param Url $newUrl   the final URL
      * @param Url $relative the relative URL
      *
-     * @return static
+     * @return Path
      */
     protected function resolvePath(Url $newUrl, Url $relative)
     {
@@ -419,6 +419,6 @@ class Url implements Interfaces\Url
             $path = Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
         }
 
-        return $newUrl->withPath($path->withoutDotSegments())->withQuery($relative->query);
+        return $path;
     }
 }

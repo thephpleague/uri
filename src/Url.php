@@ -373,7 +373,7 @@ class Url implements Interfaces\Url
             return $relative->withScheme($this->scheme)->normalize();
         }
     
-        return $this->resolveRelative($relative);
+        return $this->resolveRelative($relative)->normalize();
     }
 
     /**
@@ -388,14 +388,14 @@ class Url implements Interfaces\Url
         $newUrl = $this->withFragment($relative->fragment);
         if (! $relative->path->isEmpty()) {
             $path = $this->resolvePath($newUrl, $relative);
-            return $newUrl->withPath($path)->withQuery($relative->query)->normalize();
+            return $newUrl->withPath($path)->withQuery($relative->query);
         }
 
         if (! $relative->query->isEmpty()) {
-            return $newUrl->withQuery($relative->query)->normalize();
+            return $newUrl->withQuery($relative->query);
         }
 
-        return $newUrl->normalize();        
+        return $newUrl;        
     }
 
     /**

@@ -49,14 +49,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->url->getFragment(), $this->url->fragment->__toString());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetPartFailed()
-    {
-        $this->url->yolo;
-    }
-
     public function testImmutabilityAccess()
     {
         $this->assertSame($this->url, $this->url->withScheme('http'));

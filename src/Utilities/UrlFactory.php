@@ -24,16 +24,10 @@ use ReflectionClass;
  */
 trait UrlFactory
 {
-    protected static $defaultComponents = [
-        "scheme"   => null,
-        "user"     => null,
-        "pass"     => null,
-        "host"     => null,
-        "port"     => null,
-        "path"     => null,
-        "query"    => null,
-        "fragment" => null,
-    ];
+    /**
+     * A Factory trait fetch info from Server environment variables
+     */
+    use ServerInfo;
 
     /**
      * Create a new League\Url\Url object from the environment
@@ -42,7 +36,7 @@ trait UrlFactory
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return static
+     * @return Url\Url
      */
     public static function createFromServer(array $server)
     {
@@ -62,11 +56,11 @@ trait UrlFactory
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return static
+     * @return Url\Url
      */
     public static function createFromUrl($url)
     {
-        return static::createFromComponents(static::parseUrl($url));
+        return static::createFromComponents(static::parse($url));
     }
 
     /**
@@ -75,22 +69,24 @@ trait UrlFactory
      *
      * @param array $components
      *
-     * @return static
+     * @return Url\Url
      */
     public static function createFromComponents(array $components)
     {
-        $components += static::$defaultComponents;
-        $url = (new ReflectionClass(get_called_class()))->newInstanceWithoutConstructor();
-        $url->scheme   = new Url\Scheme($components["scheme"]);
-        $url->userInfo = new Url\UserInfo($components["user"], $components["pass"]);
-        $url->host     = new Url\Host($components["host"]);
-        $url->port     = new Url\Port($components["port"]);
-        $url->path     = new Url\Path($components["path"]);
-        $url->query    = new Url\Query($components["query"]);
-        $url->fragment = new Url\Fragment($components["fragment"]);
-        $url->init();
+        $components = array_merge([
+            "scheme" => null, "user" => null, "pass" => null, "host" => null,
+            "port" => null, "path" => null, "query" => null, "fragment" => null,
+        ], $components);
 
-        return $url;
+        return new Url\Url(
+            new Url\Scheme($components["scheme"]),
+            new Url\UserInfo($components["user"], $components["pass"]),
+            new Url\Host($components["host"]),
+            new Url\Port($components["port"]),
+            new Url\Path($components["path"]),
+            new Url\Query($components["query"]),
+            new Url\Fragment($components["fragment"])
+        );
     }
 
     /**
@@ -104,18 +100,22 @@ trait UrlFactory
      *
      * @return array
      */
-    protected static function parseUrl($url)
+    protected static function parse($url)
     {
+        $defaultComponents = [
+            "scheme" => null, "user" => null, "pass" => null, "host" => null,
+            "port" => null, "path" => null, "query" => null, "fragment" => null,
+        ];
         $url = trim($url);
         $components = @parse_url($url);
         if (is_array($components)) {
-            return $components;
+            return array_merge($defaultComponents, $components);
         }
 
         $components = @parse_url(static::bugFixAuthority($url));
         if (is_array($components)) {
             unset($components['scheme']);
-            return $components;
+            return array_merge($defaultComponents, $components);
         }
 
         throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
@@ -136,13 +136,13 @@ trait UrlFactory
      */
     protected static function bugFixAuthority($url)
     {
-        static $is_parse_url_bugged;
+        static $is_bugged;
 
-        if (is_null($is_parse_url_bugged)) {
-            $is_parse_url_bugged = ! is_array(@parse_url("//example.org:80"));
+        if (is_null($is_bugged)) {
+            $is_bugged = ! is_array(@parse_url("//a:1"));
         }
 
-        if ($is_parse_url_bugged && strpos($url, '/') === 0) {
+        if ($is_bugged && strpos($url, '/') === 0) {
             return 'http:'.$url;
         }
 

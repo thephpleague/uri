@@ -83,28 +83,6 @@ class Url implements Interfaces\Url
     protected $fragment;
 
     /**
-     * Accessible URL parts
-     *
-     * @var array
-     */
-    protected static $urlParts = [
-        'scheme'   => 1,
-        'userInfo' => 1,
-        'host'     => 1,
-        'port'     => 1,
-        'path'     => 1,
-        'query'    => 1,
-        'fragment' => 1,
-        'user'     => 1,
-        'pass'     => 1,
-    ];
-
-    /**
-     * A Factory trait fetch info from Server environment variables
-     */
-    use Utilities\ServerInfo;
-
-    /**
      * A Factory Trait to create new URL instance
      */
     use Utilities\UrlFactory;
@@ -152,6 +130,9 @@ class Url implements Interfaces\Url
         if (! $this->port->isEmpty() && $this->hasStandardPort()) {
             $this->port = $this->port->withValue(null);
         }
+        if ($this->host->isEmpty()) {
+            $this->userInfo = $this->userInfo->withUser(null);
+        }
     }
 
     /**
@@ -163,10 +144,6 @@ class Url implements Interfaces\Url
      */
     public function __get($part)
     {
-        if (! isset(static::$urlParts[$part])) {
-            throw new InvalidArgumentException(sprintf('Unknown URL part : `%s`', $part));
-        }
-
         return $this->$part;
     }
 
@@ -175,7 +152,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return array_merge(static::$defaultComponents, static::parseUrl($this));
+        return static::parse($this->__toString());
     }
 
     /**
@@ -372,7 +349,7 @@ class Url implements Interfaces\Url
         if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
             return $relative->withScheme($this->scheme)->normalize();
         }
-    
+
         return $this->resolveRelative($relative)->normalize();
     }
 
@@ -395,7 +372,7 @@ class Url implements Interfaces\Url
             return $newUrl->withQuery($relative->query);
         }
 
-        return $newUrl;        
+        return $newUrl;
     }
 
     /**

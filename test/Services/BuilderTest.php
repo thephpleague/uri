@@ -50,12 +50,12 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('/the/sky.php', $url->getPath());
     }
 
-    public function testWithoutDuplicateSegments()
+    public function testWithoutEmptySegments()
     {
         $builder = new Builder(
             'http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
-        $url = $builder->withoutDuplicateSegments()->getUrl();
+        $url = $builder->withoutEmptySegments()->getUrl();
         $this->assertSame('/path/to/the/sky.php', $url->getPath());
     }
 

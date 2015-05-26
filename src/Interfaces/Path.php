@@ -45,7 +45,7 @@ interface Path extends CollectionComponent
      *
      * @return static
      */
-    public function withoutDuplicateDelimiters();
+    public function withoutEmptySegments();
 
     /**
      * Returns whether or not the path is absolute or relative

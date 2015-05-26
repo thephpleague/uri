@@ -311,16 +311,16 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  $path     [description]
-     * @param  $expected [description]
-     * @dataProvider withoutDuplicateDelimitersProvider
+     * @param $path
+     * @param $expected
+     * @dataProvider withoutEmptySegmentsProvider
      */
-    public function testWithoutDuplicateDelimiters($path, $expected)
+    public function testWithoutEmptySegments($path, $expected)
     {
-        $this->assertSame($expected, (new Path($path))->withoutDuplicateDelimiters()->__toString());
+        $this->assertSame($expected, (new Path($path))->withoutEmptySegments()->__toString());
     }
 
-    public function withoutDuplicateDelimitersProvider()
+    public function withoutEmptySegmentsProvider()
     {
         return [
             ['/a/b/c', '/a/b/c'],

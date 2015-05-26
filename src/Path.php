@@ -172,7 +172,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function withoutDuplicateDelimiters()
+    public function withoutEmptySegments()
     {
         $current = $this->__toString();
         $new = preg_replace(',/+,', '/', $current);

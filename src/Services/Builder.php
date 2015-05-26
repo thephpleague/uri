@@ -41,9 +41,9 @@ class Builder
 
     /**
      * Set The URL the builder will use
-     * 
+     *
      * @param Url|string $url
-     * 
+     *
      * @return static
      */
     public function setUrl($url)
@@ -52,7 +52,7 @@ class Builder
             $url = Url::createFromUrl($url);
         }
         $this->url = $url;
-        
+
         return $this;
     }
 
@@ -176,9 +176,9 @@ class Builder
      *
      * @return static
      */
-    public function withoutDuplicateSegments()
+    public function withoutEmptySegments()
     {
-        return $this->newInstance($this->url->withPath($this->url->path->withoutDuplicateDelimiters()));
+        return $this->newInstance($this->url->withPath($this->url->path->withoutEmptySegments()));
     }
 
     /**

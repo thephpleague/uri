@@ -41,6 +41,46 @@ class Query implements Interfaces\Query
     }
 
     /**
+     * sanitize the submitted data
+     *
+     * @param string $str
+     *
+     * @return array
+     */
+    protected function validate($str)
+    {
+        if (is_bool($str)) {
+            throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
+        }
+
+        $str = $this->validateString($str);
+        if (empty($str)) {
+            return [];
+        }
+
+        return static::parse($str);
+    }
+
+    /**
+     * Convert a Query string into a PHP array while
+     * preserving query string keys
+     *
+     * @param  string $str The query string to parse
+     *
+     * @return array
+     */
+    public static function parse($str)
+    {
+        $str = (string) $str;
+        $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
+            return bin2hex(urldecode($match[0]));
+        }, $str);
+        parse_str($str, $arr);
+
+        return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isEmpty()
@@ -72,32 +112,6 @@ class Query implements Interfaces\Query
     public static function createFromArray($data)
     {
         return new static(http_build_query(static::validateIterator($data), '', '&', PHP_QUERY_RFC3986));
-    }
-
-    /**
-     * sanitize the submitted data
-     *
-     * @param string $str
-     *
-     * @return array
-     */
-    protected function validate($str)
-    {
-        if (is_bool($str)) {
-            throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
-        }
-
-        $str = $this->validateString($str);
-        if (empty($str)) {
-            return [];
-        }
-
-        $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
-            return bin2hex(urldecode($match[0]));
-        }, $str);
-        parse_str($str, $arr);
-
-        return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
     }
 
     /**

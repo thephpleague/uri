@@ -320,26 +320,19 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
-    protected function normalize()
-    {
-        return $this->withProperty('path', $this->path->withoutDotSegments());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function resolve($url)
     {
         $relative = static::createFromUrl($url);
         if ($relative->isAbsolute()) {
-            return $relative->normalize();
+            return $relative->withProperty('path', $relative->path->withoutDotSegments());
         }
 
         if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
-            return $relative->withScheme($this->scheme)->normalize();
+            return $relative->withScheme($this->scheme)->withProperty('path', $relative->path->withoutDotSegments());
         }
-
-        return $this->resolveRelative($relative)->normalize();
+    
+        $relative = $this->resolveRelative($relative);
+        return $relative->withProperty('path', $relative->path->withoutDotSegments());
     }
 
     /**

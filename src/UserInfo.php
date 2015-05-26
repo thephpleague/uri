@@ -109,8 +109,8 @@ class UserInfo implements Interfaces\UserInfo
     public function toArray()
     {
         return [
-            'user' => $this->user->__toString(),
-            'pass' => $this->pass->__toString(),
+            'user' => $this->user->isEmpty() ? null : $this->user->__toString(),
+            'pass' => $this->pass->isEmpty() ? null : $this->pass->__toString(),
         ];
     }
 

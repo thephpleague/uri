@@ -135,18 +135,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame(['baz', 'toto'], $query->offsets('troll'));
     }
 
-    public function testDotFromString()
-    {
-        $query = new Query('foo.bar=baz');
-        $this->assertSame('foo.bar=baz', (string) $query);
-    }
-
-    public function testDotFromArray()
-    {
-        $query = Query::createFromArray(['foo.bar' => 'baz']);
-        $this->assertSame('foo.bar=baz', (string) $query);
-    }
-
     public function testStringWithoutContent()
     {
         $query = new Query('foo&bar&baz');
@@ -160,7 +148,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testToArray()
     {
-        $expected = ['foo' => '', 'bar' => '', 'baz' => '', 'to.go' => 'toofan'];
+        $expected = ['foo' => '', 'bar' => '', 'baz' => '', 'to_go' => 'toofan'];
         $query = new Query('foo&bar&baz&to.go=toofan');
         $this->assertSame($expected, $query->toArray());
         $this->assertSame($expected, json_decode(json_encode($query), true));
@@ -183,11 +171,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            ['foo&bar&baz&to.go=toofan', ['foo', 'to.go'], 'bar&baz'],
-            ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to.go=toofan'],
+            ['foo&bar&baz&to.go=toofan', ['foo', 'to_go'], 'bar&baz'],
+            ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to_go=toofan'],
             ['foo&bar&baz&to.go=toofan', function ($value) {
                 return strpos($value, 'b') !== false;
-            }, 'foo&to.go=toofan'],
+            }, 'foo&to_go=toofan'],
         ];
     }
 

@@ -36,24 +36,10 @@ class Builder
      */
     public function __construct($url = '')
     {
-        $this->setUrl($url);
-    }
-
-    /**
-     * Set The URL the builder will use
-     *
-     * @param Url|string $url
-     *
-     * @return static
-     */
-    public function setUrl($url)
-    {
         if (! $url instanceof Url) {
             $url = Url::createFromUrl($url);
         }
         $this->url = $url;
-
-        return $this;
     }
 
     /**
@@ -76,7 +62,7 @@ class Builder
     protected function newInstance(Url $url)
     {
         if (! $this->url->sameValueAs($url)) {
-            $this->url = $url;
+            return new static($url);
         }
         return $this;
     }
@@ -88,7 +74,7 @@ class Builder
      *
      * @return static
      */
-    public function mergeQueryValues($query)
+    public function mergeQueryParameters($query)
     {
         return $this->newInstance($this->url->withQuery($this->url->query->merge($query)));
     }
@@ -102,7 +88,7 @@ class Builder
      *
      * @return static
      */
-    public function withoutQueryValues($query)
+    public function withoutQueryParameters($query)
     {
         return $this->newInstance($this->url->withQuery($this->url->query->without($query)));
     }

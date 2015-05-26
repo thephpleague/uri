@@ -100,7 +100,7 @@ trait UrlFactory
      *
      * @return array
      */
-    protected static function parse($url)
+    public static function parse($url)
     {
         $defaultComponents = [
             "scheme" => null, "user" => null, "pass" => null, "host" => null,

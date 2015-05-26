@@ -59,6 +59,15 @@ class BuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame('/path/to/the/sky.php', $url->getPath());
     }
 
+    public function testWithoutDotSegments()
+    {
+        $urlBuilder = new Builder(
+            'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
+        );
+        $url = $urlBuilder->withoutDotSegments()->getUrl();
+        $this->assertSame('/to/the/sky.php', $url->getPath());
+    }
+
     public function testWithoutLabels()
     {
         $url = $this->urlBuilder->withoutLabels([0])->getUrl();

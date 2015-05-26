@@ -70,7 +70,7 @@ trait ComponentTrait
      */
     public function sameValueAs(Interfaces\UrlPart $component)
     {
-        return $component->getUriComponent() == $this->getUriComponent();
+        return $component->getUriComponent() === $this->getUriComponent();
     }
 
     /**

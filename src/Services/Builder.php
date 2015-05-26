@@ -158,6 +158,16 @@ class Builder
     }
 
     /**
+     * Return an URL without dot segments
+     *
+     * @return static
+     */
+    public function withoutDotSegments()
+    {
+        return $this->newInstance($this->url->withPath($this->url->path->withoutDotSegments()));
+    }
+
+    /**
      * Return an URL without internal empty segments
      *
      * @return static

@@ -118,13 +118,13 @@ class BuilderTest extends PHPUnit_Framework_TestCase
 
     public function testReplaceSegment()
     {
-        $url = $this->builder->replaceSegment('replace', 3)->getUrl();
+        $url = $this->builder->replaceSegment(3, 'replace')->getUrl();
         $this->assertSame('/path/to/the/replace', (string) $url->getPath());
     }
 
     public function testReplaceLabel()
     {
-        $url = $this->builder->replaceLabel('thephpleague', 1)->getUrl();
+        $url = $this->builder->replaceLabel(1, 'thephpleague')->getUrl();
         $this->assertSame('www.thephpleague.com', (string) $url->getHost());
     }
 

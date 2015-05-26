@@ -55,11 +55,11 @@ interface CollectionComponent extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the replaced data
      *
-     * @param CollectionComponent|string $component the component added
      * @param int                        $offset    the label offset to remove and replace by
      *                                              the given component
+     * @param CollectionComponent|string $component the component added
      *
      * @return static
      */
-    public function replace($component, $offset);
+    public function replace($offset, $component);
 }

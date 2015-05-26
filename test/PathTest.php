@@ -230,7 +230,7 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testreplace($raw, $input, $offset, $expected)
     {
         $path = new Path($raw);
-        $newPath = $path->replace($input, $offset);
+        $newPath = $path->replace($offset, $input);
         $this->assertSame($expected, $newPath->__toString());
     }
 

@@ -354,7 +354,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testReplace($raw, $input, $offset, $expected)
     {
         $host = new Host($raw);
-        $newHost = $host->replace($input, $offset);
+        $newHost = $host->replace($offset, $input);
         $this->assertSame($expected, $newHost->__toString());
     }
 
@@ -375,6 +375,6 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testReplaceIpMustFailed()
     {
-        (new Host('secure.example.com'))->replace(new Host('127.0.0.1'), 2);
+        (new Host('secure.example.com'))->replace(2, new Host('127.0.0.1'));
     }
 }

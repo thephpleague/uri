@@ -147,14 +147,14 @@ class Builder
     /**
      * Return an URL with one of its Path segment replaced
      *
-     * @param Interfaces\CollectionComponent|string $path   the data to inject
      * @param int                                   $offset the Path segment offset
+     * @param Interfaces\CollectionComponent|string $value   the data to inject
      *
      * @return static
      */
-    public function replaceSegment($path, $offset)
+    public function replaceSegment($offset, $value)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->replace($path, $offset)));
+        return $this->newInstance($this->url->withPath($this->url->path->replace($offset, $value)));
     }
 
     /**
@@ -233,14 +233,14 @@ class Builder
     /**
      * Return an URL with one of its Host label replaced
      *
-     * @param Interfaces\CollectionComponent|string $host   the data to inject
      * @param int                                   $offset the Host label offset
+     * @param Interfaces\CollectionComponent|string $value  the data to inject
      *
      * @return static
      */
-    public function replaceLabel($host, $offset)
+    public function replaceLabel($offset, $value)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->replace($host, $offset)));
+        return $this->newInstance($this->url->withHost($this->url->host->replace($offset, $value)));
     }
 
     /**

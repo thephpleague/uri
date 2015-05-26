@@ -169,7 +169,7 @@ abstract class AbstractCollectionComponent
     /**
      * {@inheritdoc}
      */
-    public function replace($component, $offset)
+    public function replace($offset, $component)
     {
         if (! empty($this->data) && ! $this->hasOffset($offset)) {
             return $this;

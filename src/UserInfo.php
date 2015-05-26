@@ -40,9 +40,9 @@ class UserInfo implements Interfaces\UserInfo
     protected $pass;
 
     /**
-     * Trait for Common methods amongs composed class
+     * Trait To get/set immutable value property
      */
-    use Utilities\CompositionTrait;
+    use Utilities\ImmutableValue;
 
     /**
      * Create a new instance of UserInfo
@@ -92,18 +92,6 @@ class UserInfo implements Interfaces\UserInfo
     }
 
     /**
-     * Magic read-only for User Info properties
-     *
-     * @param string $part The property to read from
-     *
-     * @return mixed
-     */
-    public function __get($part)
-    {
-        return $this->$part;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function toArray()
@@ -144,7 +132,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function sameValueAs(Interfaces\UrlPart $component)
     {
-        return $this->getUriComponent() == $component->getUriComponent();
+        return $this->getUriComponent() === $component->getUriComponent();
     }
 
     /**
@@ -152,7 +140,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withUser($user)
     {
-        return $this->withComponent('user', $user);
+        return $this->withProperty('user', $user);
     }
 
     /**
@@ -160,6 +148,6 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function withPass($pass)
     {
-        return $this->withComponent('pass', $pass);
+        return $this->withProperty('pass', $pass);
     }
 }

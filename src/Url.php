@@ -83,14 +83,14 @@ class Url implements Interfaces\Url
     protected $fragment;
 
     /**
-     * A Factory Trait to create new URL instance
+     * A Factory Trait to create new URL instances
      */
     use Utilities\UrlFactory;
 
     /**
-     * Trait for Common methods amongs composed class
+     * Trait To get/set immutable value property
      */
-    use Utilities\CompositionTrait;
+    use Utilities\ImmutableValue;
 
     /**
      * Create a new instance of URL
@@ -134,18 +134,6 @@ class Url implements Interfaces\Url
         if (! $this->port->isEmpty() && $this->hasStandardPort()) {
             $this->port = $this->port->withValue(null);
         }
-    }
-
-    /**
-     * Magic read-only for all Part/Component URL properties
-     *
-     * @param string $part The property to read from
-     *
-     * @return mixed
-     */
-    public function __get($part)
-    {
-        return $this->$part;
     }
 
     /**
@@ -207,7 +195,7 @@ class Url implements Interfaces\Url
      */
     public function sameValueAs(UriInterface $url)
     {
-        return $url->__toString() == $this->__toString();
+        return $url->__toString() === $this->__toString();
     }
 
     /**
@@ -271,7 +259,7 @@ class Url implements Interfaces\Url
      */
     public function withHost($host)
     {
-        return $this->withComponent('host', $host);
+        return $this->withProperty('host', $host);
     }
 
     /**
@@ -279,7 +267,7 @@ class Url implements Interfaces\Url
      */
     public function withScheme($scheme)
     {
-        return $this->withComponent('scheme', $scheme);
+        return $this->withProperty('scheme', $scheme);
     }
 
     /**
@@ -291,10 +279,10 @@ class Url implements Interfaces\Url
         if ($this->userInfo->sameValueAs($userInfo)) {
             return $this;
         }
-        $clone = clone $this;
-        $clone->userInfo = $userInfo;
+        $newInstance = clone $this;
+        $newInstance->userInfo = $userInfo;
 
-        return $clone;
+        return $newInstance;
     }
 
     /**
@@ -302,7 +290,7 @@ class Url implements Interfaces\Url
      */
     public function withPort($port)
     {
-        return $this->withComponent('port', $port);
+        return $this->withProperty('port', $port);
     }
 
     /**
@@ -310,7 +298,7 @@ class Url implements Interfaces\Url
      */
     public function withPath($path)
     {
-        return $this->withComponent('path', $path);
+        return $this->withProperty('path', $path);
     }
 
     /**
@@ -318,7 +306,7 @@ class Url implements Interfaces\Url
      */
     public function withQuery($query)
     {
-        return $this->withComponent('query', $query);
+        return $this->withProperty('query', $query);
     }
 
     /**
@@ -326,15 +314,15 @@ class Url implements Interfaces\Url
      */
     public function withFragment($fragment)
     {
-        return $this->withComponent('fragment', $fragment);
+        return $this->withProperty('fragment', $fragment);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function normalize()
+    protected function normalize()
     {
-        return $this->withComponent('path', $this->path->withoutDotSegments());
+        return $this->withProperty('path', $this->path->withoutDotSegments());
     }
 
     /**

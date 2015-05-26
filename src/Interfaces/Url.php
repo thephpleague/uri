@@ -56,16 +56,6 @@ interface Url extends UriInterface
     public function isAbsolute();
 
     /**
-     * Returns an instance with the path normalized
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains a normalize path.
-     *
-     * @return static
-     */
-    public function normalize();
-
-    /**
      * Returns whether the standard port for the given scheme is used, when
      * the scheme is unknown or unsupported will the method return false
      *

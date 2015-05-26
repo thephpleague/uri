@@ -13,15 +13,15 @@
 namespace League\Url\Utilities;
 
 /**
- * A trait with common methods for composed objects
+ * A trait to set and get immutable value
  *
  * @package League.url
  * @since 4.0.0
  */
-trait CompositionTrait
+trait ImmutableValue
 {
     /**
-     * Perfom initial cleanup operation
+     * Perfom cleanup operation
      */
     abstract protected function init();
 
@@ -36,16 +36,28 @@ trait CompositionTrait
      *
      * @return static
      */
-    protected function withComponent($name, $value)
+    protected function withProperty($name, $value)
     {
         $value = $this->$name->withValue($value);
         if ($this->$name->sameValueAs($value)) {
             return $this;
         }
-        $clone = clone $this;
-        $clone->$name = $value;
-        $clone->init();
+        $newInstance = clone $this;
+        $newInstance->$name = $value;
+        $newInstance->init();
 
-        return $clone;
+        return $newInstance;
+    }
+
+    /**
+     * Magic read-only for all Part/Component URL properties
+     *
+     * @param string $property The property to read from
+     *
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        return $this->$property;
     }
 }

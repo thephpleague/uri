@@ -93,18 +93,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testForceUrlNormalization()
-    {
-        $url = Url::createFromUrl(
-            'HtTpS://MaStEr.eXaMpLe.CoM:83/%7ejohndoe/%a1/../index.php?foo.bar=value#fragment'
-        );
-
-        $this->assertSame(
-            'https://master.example.com:83/~johndoe/index.php?foo.bar=value#fragment',
-            (string) $url->normalize()
-        );
-    }
-
     /**
      * @param $url
      * @param $port

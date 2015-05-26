@@ -127,11 +127,12 @@ class Url implements Interfaces\Url
      */
     protected function init()
     {
-        if (! $this->port->isEmpty() && $this->hasStandardPort()) {
-            $this->port = $this->port->withValue(null);
-        }
         if ($this->host->isEmpty()) {
             $this->userInfo = $this->userInfo->withUser(null);
+            $this->port     = $this->port->withValue(null);
+        }
+        if (! $this->port->isEmpty() && $this->hasStandardPort()) {
+            $this->port = $this->port->withValue(null);
         }
     }
 

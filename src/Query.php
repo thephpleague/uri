@@ -53,31 +53,9 @@ class Query implements Interfaces\Query
             throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
         }
 
-        $str = $this->validateString($str);
-        if (empty($str)) {
-            return [];
-        }
+        parse_str($this->validateString($str), $arr);
 
-        return static::parse($str);
-    }
-
-    /**
-     * Convert a Query string into a PHP array while
-     * preserving query string keys
-     *
-     * @param  string $str The query string to parse
-     *
-     * @return array
-     */
-    public static function parse($str)
-    {
-        $str = (string) $str;
-        $str = preg_replace_callback('/(?:^|(?<=&))[^=|&[]+/', function ($match) {
-            return bin2hex(urldecode($match[0]));
-        }, $str);
-        parse_str($str, $arr);
-
-        return array_combine(array_map('hex2bin', array_keys($arr)), $arr);
+        return $arr;
     }
 
     /**

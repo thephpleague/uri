@@ -21,6 +21,13 @@ namespace League\Url\Interfaces;
 interface UserInfo extends UrlPart
 {
     /**
+     * Return an array representation of the UserInfo part
+     *
+     * @return array
+     */
+    public function toArray();
+
+    /**
      * Retrieve the user component of the URL User Info part
      *
      * @return Component
@@ -33,13 +40,6 @@ interface UserInfo extends UrlPart
      * @return Component
      */
     public function getPass();
-
-    /**
-     * Return an array representation of the UserInfo part
-     *
-     * @return array
-     */
-    public function toArray();
 
     /**
      * Return an instance with the specified user.

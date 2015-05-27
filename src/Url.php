@@ -92,7 +92,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return static::parse($this->__toString());
+        return static::parse($this);
     }
 
     /**

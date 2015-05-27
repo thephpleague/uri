@@ -106,7 +106,7 @@ abstract class AbstractCollectionComponent
             array_pop($source);
         }
 
-        return static::createFromArray(array_merge($source, $dest), $this->is_absolute);
+        return $this->newInstance(array_merge($source, $dest));
     }
 
     /**
@@ -179,8 +179,7 @@ abstract class AbstractCollectionComponent
         if ('' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }
-        $dest = array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1));
 
-        return static::createFromArray($dest, $this->is_absolute);
+        return $this->newInstance(array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1)));
     }
 }

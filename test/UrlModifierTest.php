@@ -2,6 +2,7 @@
 
 namespace League\Url\Test;
 
+use League\Url\Interfaces;
 use League\Url\Url;
 use PHPUnit_Framework_TestCase;
 
@@ -73,11 +74,20 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
         $this->assertSame('example.com', $url->getHost());
     }
 
+    public function testFilterQueryParameters()
+    {
+        $url = $this->url->filterQuery(function ($value) {
+            return $value == 'kingkong';
+        }, Interfaces\Collection::FILTER_USE_KEY);
+
+        $this->assertSame('kingkong=toto', $url->getQuery());
+    }
+
     public function testFilterQueryValues()
     {
-        $url = $this->url->filterQueryValues(function ($value) {
+        $url = $this->url->filterQuery(function ($value) {
             return $value == 'toto';
-        });
+        }, Interfaces\Collection::FILTER_USE_VALUE);
 
         $this->assertSame('kingkong=toto', $url->getQuery());
     }

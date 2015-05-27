@@ -422,7 +422,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testFilter($params, $callable, $expected)
     {
-        $obj = Path::createFromArray($params, Path::IS_ABSOLUTE)->filter($callable);
+        $obj = Path::createFromArray($params, Path::IS_ABSOLUTE)->filter($callable, Path::FILTER_USE_VALUE);
         $this->assertSame($expected, $obj->__toString());
     }
 

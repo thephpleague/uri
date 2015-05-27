@@ -28,6 +28,10 @@ use IteratorAggregate;
  */
 interface Collection extends Countable, IteratorAggregate
 {
+    const FILTER_USE_KEY = 2;
+
+    const FILTER_USE_VALUE = 1;
+
     /**
      * Return an array representation of the CollectionComponent
      *
@@ -57,16 +61,17 @@ interface Collection extends Countable, IteratorAggregate
     public function hasOffset($offset);
 
     /**
-     * Returns an instance whose value are filtered using a callback function
+     * Returns an instance with only the specified value
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable $callable the callable function to use
+     * @param callable|array $offsets the list of offset to keep from the collection
+     * @param int            $flag    Flag determining what argument are sent to callback
      *
      * @return static
      */
-    public function filter(callable $callable);
+    public function filter($callable, $flag = self::FILTER_USE_VALUE);
 
     /**
      * Returns an instance without the specified offsets

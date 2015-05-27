@@ -15,6 +15,7 @@ namespace League\Url\Utilities;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Url\Host;
+use League\Url\Interfaces;
 use Traversable;
 
 /**
@@ -108,6 +109,80 @@ trait CollectionTrait
             unset($data[$offset]);
         }
 
+        return $this->newInstance($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filter($offsets, $flag = Interfaces\Collection::FILTER_USE_VALUE)
+    {
+
+        if (! in_array($flag, [Interfaces\Collection::FILTER_USE_VALUE, Interfaces\Collection::FILTER_USE_KEY])) {
+            throw new InvalidArgumentException(
+                'Unknown flag parameter please use one of the defined constant'
+            );
+        }
+
+        if (! is_callable($offsets) && ! is_array($offsets)) {
+            throw new InvalidArgumentException(
+                'You must give a callable or an array as uniquement argument'
+            );
+        }
+
+        if ($flag == Interfaces\Collection::FILTER_USE_KEY) {
+            return $this->filterByOffset($offsets);
+        }
+
+        return $this->filterByContent($offsets);
+    }
+
+    /**
+     * Filter The Collection according to its offsets
+     *
+     * @param array|callable $offsets
+     *
+     * @return static
+     */
+    protected function filterByOffset($offsets)
+    {
+        if (is_callable($offsets)) {
+            $offsets = array_filter(array_keys($this->data), $offsets);
+        }
+
+        $data = [];
+        foreach ($offsets as $offset) {
+            $data[$offset] = $this->data[$offset];
+        }
+
+        return $this->newInstance($data);
+    }
+
+    /**
+     * Filter The Collection according to its value
+     *
+     * @param array|callable $offsets
+     *
+     * @return static
+     */
+    public function filterByContent($offsets)
+    {
+        if (is_callable($offsets)) {
+            $offsets = array_filter($this->data, $offsets);
+        }
+
+        return $this->newInstance($offsets);
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newInstance(array $data)
+    {
         if ($data == $this->data) {
             return $this;
         }
@@ -115,13 +190,6 @@ trait CollectionTrait
         return static::createFromArray($data, $this->is_absolute);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function filter(callable $callable)
-    {
-        return static::createFromArray(array_filter($this->data, $callable), $this->is_absolute);
-    }
 
     /**
      * Validate an Iterator or an array

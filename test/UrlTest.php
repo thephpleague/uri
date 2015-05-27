@@ -88,7 +88,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://master.example.com/~johndoe/%A1/index.php?foo_bar=value#fragment',
+            'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment',
             (string) $url
         );
     }

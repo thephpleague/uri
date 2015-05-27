@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\Test\Output;
+namespace League\Url\Test;
 
 use League\Url\Url;
 use PHPUnit_Framework_TestCase;
@@ -21,14 +21,14 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testMergeQueryParameters()
     {
-        $url = $this->url->mergeQueryParameters(['john' => 'doe the john', 'foo' => '']);
+        $url = $this->url->mergeQueryParameters(['john' => 'doe the john', 'foo' => null]);
         $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $url->getQuery());
     }
 
     public function testReturnSameInstance()
     {
         $same = $this->url
-            ->mergeQueryParameters(['rhoo' => null])
+            ->mergeQueryParameters(['kingkong' => 'toto'])
             ->withExtension('php')
             ->withoutQueryParameters(['toto'])
             ->withoutSegments([34])

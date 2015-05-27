@@ -125,14 +125,6 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
-    {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParameter($offset, $default = null)
     {
         $offset = rawurldecode($offset);

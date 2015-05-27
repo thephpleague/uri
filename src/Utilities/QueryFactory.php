@@ -15,10 +15,10 @@ namespace League\Url\Utilities;
 use InvalidArgumentException;
 
 /**
- * Value object representing a URL query component.
+ * A Trait to parse and build a Query string
  *
  * @package League.url
- * @since  1.0.0
+ * @since  4.0.0
  */
 trait QueryFactory
 {

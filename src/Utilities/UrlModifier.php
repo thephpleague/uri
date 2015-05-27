@@ -12,6 +12,8 @@
  */
 namespace League\Url\Utilities;
 
+use League\Url;
+
 /**
  * a trait to add More modifying methods to League\Url\Url
  *
@@ -271,5 +273,69 @@ trait UrlModifier
     public function filterLabels(callable $callable)
     {
         return $this->withProperty('host', $this->host->filter($callable));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($url)
+    {
+        $relative = Url\Url::createFromUrl($url);
+        if ($relative->isAbsolute()) {
+            return $relative->withoutDotSegments();
+        }
+
+        if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
+            return $relative->withScheme($this->scheme)->withoutDotSegments();
+        }
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
+    }
+
+    /**
+     * returns the resolve URL
+     *
+     * @param Url $relative the relative URL
+     *
+     * @return static
+     */
+    protected function resolveRelative(Url\Url $relative)
+    {
+        $newUrl = $this->withFragment($relative->fragment);
+        if (! $relative->path->isEmpty()) {
+            return $newUrl
+                ->withPath($this->resolvePath($newUrl, $relative))
+                ->withQuery($relative->query);
+        }
+
+        if (! $relative->query->isEmpty()) {
+            return $newUrl->withQuery($relative->query);
+        }
+
+        return $newUrl;
+    }
+
+    /**
+     * returns the resolve URL components
+     *
+     * @param Url $newUrl   the final URL
+     * @param Url $relative the relative URL
+     *
+     * @return Path
+     */
+    protected function resolvePath(Url\Url $newUrl, Url\Url $relative)
+    {
+        $path = $relative->path;
+        if (! $path->isAbsolute()) {
+            $segments = $newUrl->path->toArray();
+            array_pop($segments);
+            $is_absolute = Url\Path::IS_RELATIVE;
+            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
+                $is_absolute = Url\Path::IS_ABSOLUTE;
+            }
+            $path = Url\Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
+        }
+
+        return $path;
     }
 }

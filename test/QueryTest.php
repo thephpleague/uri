@@ -194,7 +194,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testFilter($params, $callable, $expected)
     {
-        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable));
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_VALUE));
     }
 
     public function filterProvider()
@@ -208,6 +208,48 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, 'toto=foo.bar'],
             'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, ''],
             'remove None'  => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, 'toto=foo.bar&zozo=st.ay'],
+        ];
+    }
+
+    /**
+     * @param $params
+     * @param $callable
+     * @param $expected
+     * @dataProvider filterByOffsetsProvider
+     */
+    public function testFilterOffsets($params, $callable, $expected)
+    {
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_KEY));
+    }
+
+    public function filterByOffsetsProvider()
+    {
+        $func = function ($value) {
+            return stripos($value, '.') !== false;
+        };
+
+        return [
+            'empty query'  => [[], $func, ''],
+            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, ''],
+            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, 'to.to=foobar'],
+            'remove None'  => [['to.to' => 'foo.bar', 'zo.zo' => 'st.ay'], $func, 'to.to=foo.bar&zo.zo=st.ay'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidFilter
+     * @expectedException InvalidArgumentException
+     */
+    public function testFilterOffsetsFailed($callable, $flag)
+    {
+        Query::createFromArray([])->filter($callable, $flag);
+    }
+
+    public function invalidFilter()
+    {
+        return [
+            ["toto", Query::FILTER_USE_KEY],
+            [[], "toto"],
         ];
     }
 

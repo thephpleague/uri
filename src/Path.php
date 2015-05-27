@@ -220,7 +220,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
         $data[] = $newBasename;
 
-        return static::createFromArray($data, $this->is_absolute);
+        return $this->newInstance($data);
     }
 
     /**

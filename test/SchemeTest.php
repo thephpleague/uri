@@ -50,6 +50,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         return [
             ['in,valid'],
             ['123'],
+            ['yes']
         ];
     }
 
@@ -86,7 +87,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         return [
-            ['yes', false],
+            ['ftp', false],
             [null, true],
             ['', true]
         ];

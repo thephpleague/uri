@@ -34,6 +34,11 @@ class Scheme extends Component implements Interfaces\Scheme
         if (! preg_match('/^[a-z][-a-z0-9+.]+$/i', $data)) {
             throw new InvalidArgumentException('The submitted data is invalid');
         }
+        $res  = explode('+', $data);
+        $test = strtolower(array_pop($res));
+        if (! empty($test) && ! array_key_exists($test, static::$standardPorts)) {
+            throw new InvalidArgumentException('Unsupported scheme');
+        }
 
         return strtolower($data);
     }

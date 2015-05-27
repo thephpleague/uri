@@ -309,8 +309,8 @@ trait UrlModifier
         $newUrl = $this->withProperty('fragment', $relative->fragment);
         if (! $relative->path->isEmpty()) {
             return $newUrl
-                ->withPath($this->resolvePath($newUrl, $relative))
-                ->withQuery($relative->query);
+                ->withProperty('path', $this->resolvePath($newUrl, $relative))
+                ->withProperty('query', $relative->query);
         }
 
         if (! $relative->query->isEmpty()) {
@@ -326,7 +326,7 @@ trait UrlModifier
      * @param Url\Url $newUrl   the final URL
      * @param Url\Url $relative the relative URL
      *
-     * @return Path
+     * @return Url\Interfaces\Path
      */
     protected function resolvePath(Url\Url $newUrl, Url\Url $relative)
     {

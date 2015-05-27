@@ -141,14 +141,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $query->offsets());
         $this->assertSame(['foo', 'bar', 'baz'], $query->offsets());
-        $this->assertSame('', $query->getParameter('foo'));
-        $this->assertSame('', $query->getParameter('bar'));
-        $this->assertSame('', $query->getParameter('baz'));
+        $this->assertSame(null, $query->getParameter('foo'));
+        $this->assertSame(null, $query->getParameter('bar'));
+        $this->assertSame(null, $query->getParameter('baz'));
     }
 
     public function testToArray()
     {
-        $expected = ['foo' => '', 'bar' => '', 'baz' => '', 'to_go' => 'toofan'];
+        $expected = ['foo' => null, 'bar' => null, 'baz' => null, 'to.go' => 'toofan'];
         $query = new Query('foo&bar&baz&to.go=toofan');
         $this->assertSame($expected, $query->toArray());
         $this->assertSame($expected, json_decode(json_encode($query), true));
@@ -171,11 +171,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            ['foo&bar&baz&to.go=toofan', ['foo', 'to_go'], 'bar&baz'],
-            ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to_go=toofan'],
+            ['foo&bar&baz&to.go=toofan', ['foo', 'to.go'], 'bar&baz'],
+            ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to.go=toofan'],
             ['foo&bar&baz&to.go=toofan', function ($value) {
                 return strpos($value, 'b') !== false;
-            }, 'foo&to_go=toofan'],
+            }, 'foo&to.go=toofan'],
         ];
     }
 
@@ -229,5 +229,88 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'array'     => [ [ 'baz=bat' ] ],
             'object'    => [ (object) [ 'baz=bat' ] ],
         ];
+    }
+
+    /**
+     * @param  $query
+     * @param  $encoding
+     * @param  $expected
+     * @dataProvider parserProvider
+     */
+    public function testParse($query, $expected)
+    {
+        $this->assertSame($expected, Query::parse($query, '&'));
+    }
+
+    public function parserProvider()
+    {
+        return [
+            'empty string'       => ['', []],
+            'identical keys'     => ['a=1&a=2', ['a' => ['1', '2']]],
+            'no value'           => ['a&b', ['a' => null, 'b' => null]],
+            'empty value'        => ['a=&b=', ['a' => '', 'b' => '']],
+            'php array'          => ['a[]=1&a[]=2', ['a[]' => ['1', '2']]],
+            'preserve dot'       => ['a.b=3', ['a.b' => '3']],
+            'decode'             => ['a%20b=c%20d', ['a b' => 'c d']],
+            'no key stripping'   => ['a=&b', ['a' => '', 'b' => null]],
+            'no value stripping' => ['a=b=', ['a' => 'b=']],
+            'key only'           => ['a', ['a' => null]],
+            'preserve falsey 1'  => ['0', ['0' => null]],
+            'preserve falsey 2'  => ['0=', ['0' => '']],
+            'preserve falsey 3'  => ['a=0', ['a' => '0']],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testFailedParsingWithUnknownEncoding()
+    {
+        Query::parse('dfddsf', '&', 'toto');
+    }
+
+
+    public function testParseWithRFC1738()
+    {
+        $raw = 'john+doe=bar';
+        $expected = ['john doe' => 'bar'];
+        $this->assertSame($expected, Query::parse($raw, '&', PHP_QUERY_RFC1738));
+    }
+
+    /**
+     * @param $query
+     * @param $encoding
+     * @param $expected
+     * @dataProvider buildProvider
+     */
+    public function testBuild($query, $expected)
+    {
+        $this->assertSame($expected, Query::build($query, '&', false));
+    }
+
+    public function buildProvider()
+    {
+        return [
+            'empty string'       => [[], ''],
+            'identical keys'     => [['a' => ['1', '2']], 'a=1&a=2'],
+            'no value'           => [['a' => null, 'b' => null], 'a&b'],
+            'empty value'        => [['a' => '', 'b' => ''], 'a=&b='],
+            'php array'          => [['a[]' => ['1', '2']], 'a[]=1&a[]=2'],
+            'preserve dot'       => [['a.b' => '3'], 'a.b=3'],
+            'no key stripping'   => [['a' => '', 'b' => null], 'a=&b'],
+            'no value stripping' => [['a' => 'b='], 'a=b='],
+            'key only'           => [['a' => null], 'a'],
+            'preserve falsey 1'  => [['0' => null], '0'],
+            'preserve falsey 2'  => [['0' => ''], '0='],
+            'preserve falsey 3'  => [['a' => '0'], 'a=0'],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testFailedBuildingWithUnknownEncoding()
+    {
+        Query::build(['dfsq' => 'qdsqdf'], '&', 'toto');
     }
 }

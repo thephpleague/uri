@@ -34,63 +34,14 @@ use Psr\Http\Message\UriInterface;
 class Url implements Interfaces\Url
 {
     /**
-     * Scheme Component
-     *
-     * @var Interfaces\Scheme
-     */
-    protected $scheme;
-
-    /**
-     * User Information Part
-     *
-     * @var Interfaces\UserInfo
-     */
-    protected $userInfo;
-
-    /**
-     * Host Component
-     *
-     * @var Interfaces\Host
-     */
-    protected $host;
-
-    /**
-     * Port Component
-     *
-     * @var Interfaces\Port
-     */
-    protected $port;
-
-    /**
-     * Path Component
-     *
-     * @var Interfaces\Path
-     */
-    protected $path;
-
-    /**
-     * Query Component
-     *
-     * @var Interfaces\Query
-     */
-    protected $query;
-
-    /**
-     * Fragment Component
-     *
-     * @var Fragment
-     */
-    protected $fragment;
-
-    /**
      * A Factory Trait to create new URL instances
      */
     use Utilities\UrlFactory;
 
     /**
-     * Trait To get/set immutable value property
+     * A Modifier Trait to easily update URL instances
      */
-    use Utilities\ImmutableValue;
+    use Utilities\UrlModifier;
 
     /**
      * Create a new instance of URL
@@ -324,15 +275,14 @@ class Url implements Interfaces\Url
     {
         $relative = static::createFromUrl($url);
         if ($relative->isAbsolute()) {
-            return $relative->withProperty('path', $relative->path->withoutDotSegments());
+            return $relative->withoutDotSegments();
         }
 
         if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
-            return $relative->withScheme($this->scheme)->withProperty('path', $relative->path->withoutDotSegments());
+            return $relative->withScheme($this->scheme)->withoutDotSegments();
         }
-    
-        $relative = $this->resolveRelative($relative);
-        return $relative->withProperty('path', $relative->path->withoutDotSegments());
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
     }
 
     /**
@@ -346,8 +296,9 @@ class Url implements Interfaces\Url
     {
         $newUrl = $this->withFragment($relative->fragment);
         if (! $relative->path->isEmpty()) {
-            $path = $this->resolvePath($newUrl, $relative);
-            return $newUrl->withPath($path)->withQuery($relative->query);
+            return $newUrl
+                ->withPath($this->resolvePath($newUrl, $relative))
+                ->withQuery($relative->query);
         }
 
         if (! $relative->query->isEmpty()) {

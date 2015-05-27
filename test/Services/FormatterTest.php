@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\Test\Output;
+namespace League\Url\Test\Services;
 
 use League\Url\Services\Formatter;
 use League\Url;

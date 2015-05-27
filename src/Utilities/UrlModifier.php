@@ -10,62 +10,69 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace League\Url\Services;
-
-use League\Url\Url;
+namespace League\Url\Utilities;
 
 /**
- * an URL Builder to ease URL manipulation
+ * a trait to add More modifying methods to League\Url
  *
  * @package League.url
  * @since 4.0.0
  */
-class Builder
+trait UrlModifier
 {
     /**
-     * The Url
+     * Scheme Component
      *
-     * @var Url
+     * @var Interfaces\Scheme
      */
-    protected $url;
+    protected $scheme;
 
     /**
-     * Create a new instance
+     * User Information Part
      *
-     * @param Url|string $url
+     * @var Interfaces\UserInfo
      */
-    public function __construct($url = '')
-    {
-        if (! $url instanceof Url) {
-            $url = Url::createFromUrl($url);
-        }
-        $this->url = $url;
-    }
+    protected $userInfo;
 
     /**
-     * Return the original URL instance
+     * Host Component
      *
-     * @return Url
+     * @var Interfaces\Host
      */
-    public function getUrl()
-    {
-        return $this->url;
-    }
+    protected $host;
 
     /**
-     * Return an instance of Builder
+     * Port Component
      *
-     * @param Url $url
-     *
-     * @return static
+     * @var Interfaces\Port
      */
-    protected function newInstance(Url $url)
-    {
-        if (! $this->url->sameValueAs($url)) {
-            return new static($url);
-        }
-        return $this;
-    }
+    protected $port;
+
+    /**
+     * Path Component
+     *
+     * @var Interfaces\Path
+     */
+    protected $path;
+
+    /**
+     * Query Component
+     *
+     * @var Interfaces\Query
+     */
+    protected $query;
+
+    /**
+     * Fragment Component
+     *
+     * @var Fragment
+     */
+    protected $fragment;
+
+    /**
+     * Trait To get/set immutable value property
+     */
+    use ImmutableValue;
 
     /**
      * Return an URL with update query values
@@ -76,7 +83,7 @@ class Builder
      */
     public function mergeQueryParameters($query)
     {
-        return $this->newInstance($this->url->withQuery($this->url->query->merge($query)));
+        return $this->withProperty('query', $this->query->merge($query));
     }
 
     /**
@@ -90,7 +97,7 @@ class Builder
      */
     public function withoutQueryParameters($query)
     {
-        return $this->newInstance($this->url->withQuery($this->url->query->without($query)));
+        return $this->withProperty('query', $this->query->without($query));
     }
 
     /**
@@ -103,7 +110,7 @@ class Builder
      */
     public function filterQueryValues(callable $callable)
     {
-        return $this->newInstance($this->url->withQuery($this->url->query->filter($callable)));
+        return $this->withProperty('query', $this->query->filter($callable));
     }
 
     /**
@@ -115,7 +122,7 @@ class Builder
      */
     public function appendSegments($path)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->append($path)));
+        return $this->withProperty('path', $this->path->append($path));
     }
 
     /**
@@ -127,7 +134,7 @@ class Builder
      */
     public function prependSegments($path)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->prepend($path)));
+        return $this->withProperty('path', $this->path->prepend($path));
     }
 
     /**
@@ -140,7 +147,7 @@ class Builder
      */
     public function replaceSegment($offset, $value)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->replace($offset, $value)));
+        return $this->withProperty('path', $this->path->replace($offset, $value));
     }
 
     /**
@@ -154,7 +161,7 @@ class Builder
      */
     public function withoutSegments($offsets)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->without($offsets)));
+        return $this->withProperty('path', $this->path->without($offsets));
     }
 
     /**
@@ -164,7 +171,7 @@ class Builder
      */
     public function withoutDotSegments()
     {
-        return $this->newInstance($this->url->withPath($this->url->path->withoutDotSegments()));
+        return $this->withProperty('path', $this->path->withoutDotSegments());
     }
 
     /**
@@ -174,7 +181,7 @@ class Builder
      */
     public function withoutEmptySegments()
     {
-        return $this->newInstance($this->url->withPath($this->url->path->withoutEmptySegments()));
+        return $this->withProperty('path', $this->path->withoutEmptySegments());
     }
 
     /**
@@ -187,7 +194,7 @@ class Builder
      */
     public function filterSegments(callable $callable)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->filter($callable)));
+        return $this->withProperty('path', $this->path->filter($callable));
     }
 
     /**
@@ -199,7 +206,7 @@ class Builder
      */
     public function withExtension($extension)
     {
-        return $this->newInstance($this->url->withPath($this->url->path->withExtension($extension)));
+        return $this->withProperty('path', $this->path->withExtension($extension));
     }
 
     /**
@@ -211,7 +218,7 @@ class Builder
      */
     public function appendLabels($host)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->append($host)));
+        return $this->withProperty('host', $this->host->append($host));
     }
 
     /**
@@ -223,7 +230,7 @@ class Builder
      */
     public function prependLabels($host)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->prepend($host)));
+        return $this->withProperty('host', $this->host->prepend($host));
     }
 
     /**
@@ -236,7 +243,7 @@ class Builder
      */
     public function replaceLabel($offset, $value)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->replace($offset, $value)));
+        return $this->withProperty('host', $this->host->replace($offset, $value));
     }
 
     /**
@@ -250,7 +257,7 @@ class Builder
      */
     public function withoutLabels($offsets)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->without($offsets)));
+        return $this->withProperty('host', $this->host->without($offsets));
     }
 
     /**
@@ -263,6 +270,6 @@ class Builder
      */
     public function filterLabels(callable $callable)
     {
-        return $this->newInstance($this->url->withHost($this->url->host->filter($callable)));
+        return $this->withProperty('host', $this->host->filter($callable));
     }
 }

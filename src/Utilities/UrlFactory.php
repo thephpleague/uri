@@ -17,7 +17,8 @@ use League\Url;
 use ReflectionClass;
 
 /**
- * A Trait to parse an URL
+ * A Trait to help parse an URL
+ * and create a new League\Url\Url instance
  *
  * @package League.url
  * @since 4.0.0

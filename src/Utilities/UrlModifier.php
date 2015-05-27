@@ -15,7 +15,7 @@ namespace League\Url\Utilities;
 use League\Url;
 
 /**
- * a trait to add More modifying methods to League\Url\Url
+ * a Trait to ease partial update of a League\Url\Url object
  *
  * @package League.url
  * @since 4.0.0
@@ -82,11 +82,7 @@ trait UrlModifier
     abstract public function getAuthority();
 
     /**
-     * Return an URL with update query values
-     *
-     * @param Traversable|array $query the data to be merged
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function mergeQueryParameters($query)
     {
@@ -94,13 +90,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the submitted query parameters
-     *
-     * @param callable|array $query the list of parameter to remove from the query
-     *                              if a callable is given it should filter the list
-     *                              of parameter to remove from the query
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withoutQueryParameters($query)
     {
@@ -108,12 +98,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the filtered query parameters
-     *
-     * @param callable $callable a callable which filter the query parameters
-     *                           according to their content
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function filterQueryValues(callable $callable)
     {
@@ -121,11 +106,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with its path appended
-     *
-     * @param \League\Url\Interfaces\CollectionComponent|string $path the data to append
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function appendSegments($path)
     {
@@ -133,11 +114,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with its path prepended
-     *
-     * @param \League\Url\Interfaces\CollectionComponent|string $path the data to prepend
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function prependSegments($path)
     {
@@ -145,12 +122,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with one of its Path segment replaced
-     *
-     * @param int                                               $offset the Path segment offset
-     * @param \League\Url\Interfaces\CollectionComponent|string $value   the data to inject
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function replaceSegment($offset, $value)
     {
@@ -158,13 +130,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the submitted path segments
-     *
-     * @param callable|array $offsets the list of segments offset to remove from the Path
-     *                                if a callable is given it should filter the list
-     *                                of offset to remove from the Path
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withoutSegments($offsets)
     {
@@ -172,9 +138,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without dot segments
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withoutDotSegments()
     {
@@ -182,9 +146,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without internal empty segments
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withoutEmptySegments()
     {
@@ -192,12 +154,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the submitted path segments
-     *
-     * @param callable $callable a callable which filter the path segment
-     *                           according to the segment content
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function filterSegments(callable $callable)
     {
@@ -205,11 +162,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with the path extension updated
-     *
-     * @param  string $extension the new path extension
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withExtension($extension)
     {
@@ -217,11 +170,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with the Host appended
-     *
-     * @param \League\Url\Interfaces\CollectionComponent|string $host the data to append
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function appendLabels($host)
     {
@@ -229,11 +178,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with the Host prepended
-     *
-     * @param \League\Url\Interfaces\CollectionComponent|string $host the data to prepend
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function prependLabels($host)
     {
@@ -241,12 +186,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL with one of its Host label replaced
-     *
-     * @param int                                               $offset the Host label offset
-     * @param \League\Url\Interfaces\CollectionComponent|string $value  the data to inject
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function replaceLabel($offset, $value)
     {
@@ -254,13 +194,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the submitted host labels
-     *
-     * @param callable|array $offsets the list of label offsets to remove from the Host
-     *                                if a callable is given it should filter the list
-     *                                of offset to remove from the Host
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function withoutLabels($offsets)
     {
@@ -268,12 +202,7 @@ trait UrlModifier
     }
 
     /**
-     * Return an URL without the filtered host labels
-     *
-     * @param callable $callable a callable which filter the host labels
-     *                           according to their content
-     *
-     * @return static
+     * {@inheritdoc}
      */
     public function filterLabels(callable $callable)
     {
@@ -314,7 +243,7 @@ trait UrlModifier
         }
 
         if (! $relative->query->isEmpty()) {
-            return $newUrl->withQuery($relative->query);
+            return $newUrl->withProperty('query', $relative->query);
         }
 
         return $newUrl;

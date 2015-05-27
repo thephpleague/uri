@@ -72,7 +72,7 @@ trait UrlModifier
     /**
      * Trait To get/set immutable value property
      */
-    use ImmutableValue;
+    use ImmutableProperty;
 
     /**
      * Return an URL with update query values

@@ -35,9 +35,7 @@ class Query implements Interfaces\Query
      */
     public function __construct($data = null)
     {
-        if (! is_null($data)) {
-            $this->data = $this->validate($data);
-        }
+        $this->data = $this->validate($data);
     }
 
     /**
@@ -49,12 +47,11 @@ class Query implements Interfaces\Query
      */
     protected function validate($str)
     {
-        if (is_bool($str)) {
-            throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
+        if (is_null($str)) {
+            return [];
         }
 
         parse_str($this->validateString($str), $arr);
-
         return $arr;
     }
 

@@ -13,7 +13,7 @@
 namespace League\Url\Utilities;
 
 /**
- * a trait to add More modifying methods to League\Url
+ * a trait to add More modifying methods to League\Url\Url
  *
  * @package League.url
  * @since 4.0.0
@@ -23,49 +23,49 @@ trait UrlModifier
     /**
      * Scheme Component
      *
-     * @var Interfaces\Scheme
+     * @var \League\Url\Interfaces\Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var Interfaces\UserInfo
+     * @var \League\Url\Interfaces\UserInfo
      */
     protected $userInfo;
 
     /**
      * Host Component
      *
-     * @var Interfaces\Host
+     * @var \League\Url\Interfaces\Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var Interfaces\Port
+     * @var \League\Url\Interfaces\Port
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var Interfaces\Path
+     * @var \League\Url\Interfaces\Path
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var Interfaces\Query
+     * @var \League\Url\Interfaces\Query
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var Fragment
+     * @var \League\Url\Fragment
      */
     protected $fragment;
 
@@ -116,7 +116,7 @@ trait UrlModifier
     /**
      * Return an URL with its path appended
      *
-     * @param Interfaces\CollectionComponent|string $path the data to append
+     * @param \League\Url\Interfaces\CollectionComponent|string $path the data to append
      *
      * @return static
      */
@@ -128,7 +128,7 @@ trait UrlModifier
     /**
      * Return an URL with its path prepended
      *
-     * @param Interfaces\CollectionComponent|string $path the data to prepend
+     * @param \League\Url\Interfaces\CollectionComponent|string $path the data to prepend
      *
      * @return static
      */
@@ -140,8 +140,8 @@ trait UrlModifier
     /**
      * Return an URL with one of its Path segment replaced
      *
-     * @param int                                   $offset the Path segment offset
-     * @param Interfaces\CollectionComponent|string $value   the data to inject
+     * @param int                                               $offset the Path segment offset
+     * @param \League\Url\Interfaces\CollectionComponent|string $value   the data to inject
      *
      * @return static
      */
@@ -212,7 +212,7 @@ trait UrlModifier
     /**
      * Return an URL with the Host appended
      *
-     * @param Interfaces\CollectionComponent|string $host the data to append
+     * @param \League\Url\Interfaces\CollectionComponent|string $host the data to append
      *
      * @return static
      */
@@ -224,7 +224,7 @@ trait UrlModifier
     /**
      * Return an URL with the Host prepended
      *
-     * @param Interfaces\CollectionComponent|string $host the data to prepend
+     * @param \League\Url\Interfaces\CollectionComponent|string $host the data to prepend
      *
      * @return static
      */
@@ -236,8 +236,8 @@ trait UrlModifier
     /**
      * Return an URL with one of its Host label replaced
      *
-     * @param int                                   $offset the Host label offset
-     * @param Interfaces\CollectionComponent|string $value  the data to inject
+     * @param int                                               $offset the Host label offset
+     * @param \League\Url\Interfaces\CollectionComponent|string $value  the data to inject
      *
      * @return static
      */

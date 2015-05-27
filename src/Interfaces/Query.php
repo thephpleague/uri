@@ -12,8 +12,6 @@
  */
 namespace League\Url\Interfaces;
 
-use JsonSerializable;
-
 /**
  * Value object representing a URL Query component.
  *
@@ -25,7 +23,7 @@ use JsonSerializable;
  * @package  League.url
  * @since  4.0.0
  */
-interface Query extends Collection, Component, JsonSerializable
+interface Query extends Collection, Component
 {
     /**
      * Returns query formatted according to given separator and encoded type

@@ -77,6 +77,11 @@ trait UrlModifier
     use ImmutableProperty;
 
     /**
+     * {@inheritdoc}
+     */
+    abstract public function getAuthority();
+
+    /**
      * Return an URL with update query values
      *
      * @param Traversable|array $query the data to be merged
@@ -295,13 +300,13 @@ trait UrlModifier
     /**
      * returns the resolve URL
      *
-     * @param Url $relative the relative URL
+     * @param Url\Url $relative the relative URL
      *
      * @return static
      */
     protected function resolveRelative(Url\Url $relative)
     {
-        $newUrl = $this->withFragment($relative->fragment);
+        $newUrl = $this->withProperty('fragment', $relative->fragment);
         if (! $relative->path->isEmpty()) {
             return $newUrl
                 ->withPath($this->resolvePath($newUrl, $relative))
@@ -318,8 +323,8 @@ trait UrlModifier
     /**
      * returns the resolve URL components
      *
-     * @param Url $newUrl   the final URL
-     * @param Url $relative the relative URL
+     * @param Url\Url $newUrl   the final URL
+     * @param Url\Url $relative the relative URL
      *
      * @return Path
      */

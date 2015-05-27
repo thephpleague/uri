@@ -75,7 +75,6 @@ interface Url extends UriInterface
      */
     public function resolve($rel);
 
-
     /**
      * Return an URL with update query values
      *

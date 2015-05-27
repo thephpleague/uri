@@ -25,7 +25,6 @@ use League\Url\Utilities;
 abstract class AbstractCollectionComponent
 {
     const IS_ABSOLUTE = 1;
-
     const IS_RELATIVE = 2;
 
     /**

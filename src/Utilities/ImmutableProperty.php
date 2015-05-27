@@ -50,7 +50,7 @@ trait ImmutableProperty
     }
 
     /**
-     * Magic read-only for all Part/Component URL properties
+     * Magic read-only for protected properties
      *
      * @param string $property The property to read from
      *

@@ -70,13 +70,13 @@ class Url implements Interfaces\Url
         $this->path     = $path;
         $this->query    = $query;
         $this->fragment = $fragment;
-        $this->init();
+        $this->cleanUp();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function init()
+    protected function cleanUp()
     {
         if ($this->host->isEmpty()) {
             $this->userInfo = $this->userInfo->withUser(null);

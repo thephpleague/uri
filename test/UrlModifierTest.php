@@ -94,7 +94,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testFilterSegments()
     {
-        $url = $this->url->filterSegments(function ($value) {
+        $url = $this->url->filterPath(function ($value) {
             return strpos($value, 't') === false;
         });
 
@@ -103,7 +103,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testFilterLabels()
     {
-        $url = $this->url->filterLabels(function ($value) {
+        $url = $this->url->filterHost(function ($value) {
             return strpos($value, 'w') === false;
         });
 

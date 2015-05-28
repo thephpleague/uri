@@ -202,7 +202,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function filterSegments($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
+    public function filterPath($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
 
     /**
      * Return an URL with the path extension updated
@@ -281,5 +281,5 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function filterLabels($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
+    public function filterHost($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
 }

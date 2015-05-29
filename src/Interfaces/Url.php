@@ -107,15 +107,15 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered query data
      *
-     * @param callable|array $query the list of parameter to remove from the query
-     *                              if a callable is given it should filter the list
-     *                              of segment to remain in the query
+     * @param callable $callable the list of parameter to remove from the query
+     *                           if a callable is given it should filter the list
+     *                           of segment to remain in the query
      *
-     * @param int            $flag    Flag determining what argument are sent to callback
+     * @param int      $flag     Flag determining what argument are sent to callback
      *
      * @return static
      */
-    public function filterQuery($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
+    public function filterQuery(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 
     /**
      * Return an URL with its path appended
@@ -194,15 +194,15 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered segments
      *
-     * @param callable|array $query the list of parameter to remove from the path
-     *                              if a callable is given it should filter the list
-     *                              of segment to remain in the path
+     * @param callable $callable the list of parameter to remove from the path
+     *                           if a callable is given it should filter the list
+     *                           of segment to remain in the path
      *
-     * @param int            $flag    Flag determining what argument are sent to callback
+     * @param int      $flag     Flag determining what argument are sent to callback
      *
      * @return static
      */
-    public function filterPath($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
+    public function filterPath(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 
     /**
      * Return an URL with the path extension updated
@@ -273,13 +273,13 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered labels
      *
-     * @param callable|array $query the list of label to select from the host
-     *                              if a callable is given it should filter the list
-     *                              of label to remain in the host
+     * @param callable $callable the list of label to select from the host
+     *                           if a callable is given it should filter the list
+     *                           of label to remain in the host
      *
-     * @param int            $flag    Flag determining what argument are sent to callback
+     * @param int      $flag     Flag determining what argument are sent to callback
      *
      * @return static
      */
-    public function filterHost($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE);
+    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 }

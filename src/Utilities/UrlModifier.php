@@ -100,7 +100,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterQuery($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterQuery(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('query', $this->query->filter($callable, $flag));
     }
@@ -156,7 +156,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterPath($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterPath(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('path', $this->path->filter($callable, $flag));
     }
@@ -204,7 +204,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterHost($callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterHost(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('host', $this->host->filter($callable, $flag));
     }

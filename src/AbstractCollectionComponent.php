@@ -25,7 +25,7 @@ use League\Url\Utilities;
 abstract class AbstractCollectionComponent
 {
     const IS_ABSOLUTE = 1;
-    const IS_RELATIVE = 2;
+    const IS_RELATIVE = 0;
 
     /**
      * Trait for Collection type Component

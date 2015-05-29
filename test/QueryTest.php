@@ -248,8 +248,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function invalidFilter()
     {
         return [
-            ["toto", Query::FILTER_USE_KEY],
-            [[], "toto"],
+            [function ($value) {
+                return true;
+            }, "toto"],
         ];
     }
 

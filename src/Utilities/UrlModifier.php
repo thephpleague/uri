@@ -108,7 +108,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function appendSegments($path)
+    public function appendPath($path)
     {
         return $this->withProperty('path', $this->path->append($path));
     }
@@ -116,7 +116,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function prependSegments($path)
+    public function prependPath($path)
     {
         return $this->withProperty('path', $this->path->prepend($path));
     }
@@ -172,7 +172,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function appendLabels($host)
+    public function appendHost($host)
     {
         return $this->withProperty('host', $this->host->append($host));
     }
@@ -180,7 +180,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function prependLabels($host)
+    public function prependHost($host)
     {
         return $this->withProperty('host', $this->host->prepend($host));
     }

@@ -66,12 +66,12 @@ interface Collection extends Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable|array $offsets the list of offset to keep from the collection
-     * @param int            $flag    Flag determining what argument are sent to callback
+     * @param callable $callable the list of offset to keep from the collection
+     * @param int      $flag     Flag determining what argument are sent to callback
      *
      * @return static
      */
-    public function filter($callable, $flag = self::FILTER_USE_VALUE);
+    public function filter(callable $callable, $flag = self::FILTER_USE_VALUE);
 
     /**
      * Returns an instance without the specified offsets

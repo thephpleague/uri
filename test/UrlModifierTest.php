@@ -112,25 +112,25 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testAppendSegments()
     {
-        $url = $this->url->appendSegments('/added');
+        $url = $this->url->appendPath('/added');
         $this->assertSame('/path/to/the/sky.php/added', (string) $url->getPath());
     }
 
     public function testAppendLabels()
     {
-        $url = $this->url->appendLabels('added');
+        $url = $this->url->appendHost('added');
         $this->assertSame('www.example.com.added', (string) $url->getHost());
     }
 
     public function testPrependSegments()
     {
-        $url = $this->url->prependSegments('/added');
+        $url = $this->url->prependPath('/added');
         $this->assertSame('/added/path/to/the/sky.php', (string) $url->getPath());
     }
 
     public function testPrependLabels()
     {
-        $url = $this->url->prependLabels('added');
+        $url = $this->url->prependHost('added');
         $this->assertSame('added.www.example.com', (string) $url->getHost());
     }
 

@@ -127,7 +127,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function appendSegments($path);
+    public function appendPath($path);
 
     /**
      * Return an URL with its path prepended
@@ -139,7 +139,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function prependSegments($path);
+    public function prependPath($path);
 
     /**
      * Return an URL with one of its Path segment replaced
@@ -226,7 +226,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function appendLabels($host);
+    public function appendHost($host);
 
     /**
      * Return an URL with the Host prepended
@@ -238,7 +238,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function prependLabels($host);
+    public function prependHost($host);
 
     /**
      * Return an URL with one of its Host label replaced

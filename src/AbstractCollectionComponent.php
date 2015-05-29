@@ -140,7 +140,9 @@ abstract class AbstractCollectionComponent
      */
     public static function createFromArray($data, $type = self::IS_RELATIVE)
     {
-        if (! in_array($type, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
+        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
+
+        if (! isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
         $component = implode(static::$delimiter, static::validateIterator($data));

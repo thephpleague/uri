@@ -150,7 +150,7 @@ trait CollectionTrait
     /**
      * Filter The Collection according to its offsets
      *
-     * @param array|callable $offsets
+     * @param callable $callable
      *
      * @return static
      */

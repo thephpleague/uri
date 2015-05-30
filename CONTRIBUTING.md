@@ -1,6 +1,8 @@
 # Contributing
 
-## Report Bugs and Issues
+Contributions are **welcome** and will be fully **credited**.
+
+## Report Bugs
 
 ### Prior to submitting your report
 
@@ -10,19 +12,15 @@
 
 ### When submitting your report
 
-- Open a new bug report for each issue
+- **Open a new bug report for each issue.**
 
-- Write a clear summary in english. A good summary should quickly and uniquely identify a bug report. It should explain the problem, not your suggested solution.
+- **Write a clear summary in english.** A good summary should quickly and uniquely identify a bug report. It should explain the problem, not your suggested solution.
 
-- Be brief, but don't leave any important details out. Tell us what you did, what you expected to happen, and what happened
+- **Be brief, but don't leave any important details out.** Tell us what you did, what you expected to happen, and what happened. Do not forget to mention your PHP version, the OS Platform and the package version you were using.
 
-- Do not forget to mention your PHP version, the OS Platform and the package version you were using
-
-- Don't report bugs about old versions.
+- **Don't report bugs about old versions.** Only the last stable major version will receive the patch.
 
 ## Pull Requests
-
-Contributions are **welcome** and will be fully **credited**.
 
 We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/url).
 

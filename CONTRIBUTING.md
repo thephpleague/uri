@@ -20,7 +20,7 @@ Contributions are **welcome** and will be fully **credited**.
 
 - **Don't report bugs about old versions** - Only the last stable major version will receive the patch.
 
-## Feature Request
+## Pull Request
 
 We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/url).
 

@@ -38,6 +38,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com'],
             'null' => [null, false, false, false, ''],
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
+            'partial numeric' => ['23.42c.two', false, false, false, '23.42c.two'],
+            'all numeric' => ['98.3.2', false, false, false, '98.3.2'],
         ];
     }
 
@@ -64,9 +66,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             [implode('.', array_fill(0, 23, 'banana-slip'))],
             ['[127.0.0.1]'],
             ['toto.127.0.0.1'],
-            ['98.3.2'],
             ['[[::1]]'],
-            ['23.42c.two'],
         ];
     }
 

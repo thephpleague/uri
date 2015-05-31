@@ -26,26 +26,13 @@ namespace League\Url\Interfaces;
 interface Path extends CollectionComponent
 {
     /**
-     * Returns an instance without dot segments
+     * Format Path according to PSR-7 output
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the path component normalized by removing
-     * the dot segment.
+     * @param  string $auth the authority string
      *
-     * @return static
+     * @return string
      */
-    public function withoutDotSegments();
-
-    /**
-     * Returns an instance without duplicate delimiters
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the path component normalized by removing
-     * multiple consecutive empty segment
-     *
-     * @return static
-     */
-    public function withoutEmptySegments();
+    public function format($auth);
 
     /**
      * Returns whether or not the path is absolute or relative
@@ -97,11 +84,24 @@ interface Path extends CollectionComponent
     public function withExtension($ext);
 
     /**
-     * Format Path according to PSR-7 output
+     * Returns an instance without dot segments
      *
-     * @param  string $auth the authority string
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * the dot segment.
      *
-     * @return string
+     * @return static
      */
-    public function format($auth);
+    public function withoutDotSegments();
+
+    /**
+     * Returns an instance without duplicate delimiters
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * multiple consecutive empty segment
+     *
+     * @return static
+     */
+    public function withoutEmptySegments();
 }

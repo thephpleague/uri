@@ -33,9 +33,10 @@ trait StandardPort
         'ftps'  => [989, 990],
         'https' => [443],
         'http'  => [80],
-        'ldap'  => [389],
-        'ldaps' => [636],
+        'git'   => [22],
+        'rsync' => [22, 873],
         'ssh'   => [22],
+        'svn'   => [22],
         'ws'    => [80],
         'wss'   => [443],
     ];
@@ -47,11 +48,10 @@ trait StandardPort
      */
     protected static $standardSchemes = [
         21  => ['ftp'],
-        22  => ['ssh'],
+        22  => ['git', 'rsync', 'ssh', 'svn'],
         80  => ['http', 'ws'],
-        389 => ['ldap'],
         443 => ['https', 'wss'],
-        636 => ['ldaps'],
+        873 => ['rsync'],
         989 => ['ftps'],
         990 => ['ftps'],
     ];

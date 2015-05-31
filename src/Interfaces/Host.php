@@ -26,26 +26,6 @@ namespace League\Url\Interfaces;
 interface Host extends CollectionComponent
 {
     /**
-     * Retrieves a single host label.
-     *
-     * Retrieves a single host label. If the label offset has not been set,
-     * returns the default value provided.
-     *
-     * @param string $offset  the label offset
-     * @param mixed  $default Default value to return if the offset does not exist.
-     *
-     * @return mixed
-     */
-    public function getLabel($offset, $default = null);
-
-    /**
-     * Returns the string representation of a host using the punycode algorythm
-     *
-     * @return string
-     */
-    public function toAscii();
-
-    /**
      * Returns whether or not the host is a full qualified domain name
      *
      * @return bool
@@ -72,4 +52,24 @@ interface Host extends CollectionComponent
      * @return bool
      */
     public function isIpv6();
+
+    /**
+     * Retrieves a single host label.
+     *
+     * Retrieves a single host label. If the label offset has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the label offset
+     * @param mixed  $default Default value to return if the offset does not exist.
+     *
+     * @return mixed
+     */
+    public function getLabel($offset, $default = null);
+
+    /**
+     * Returns the string representation of a host using the punycode algorythm
+     *
+     * @return string
+     */
+    public function toAscii();
 }

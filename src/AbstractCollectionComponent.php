@@ -25,8 +25,7 @@ use League\Url\Utilities;
 abstract class AbstractCollectionComponent
 {
     const IS_ABSOLUTE = 1;
-
-    const IS_RELATIVE = 2;
+    const IS_RELATIVE = 0;
 
     /**
      * Trait for Collection type Component
@@ -107,7 +106,7 @@ abstract class AbstractCollectionComponent
             array_pop($source);
         }
 
-        return static::createFromArray(array_merge($source, $dest), $this->is_absolute);
+        return $this->newInstance(array_merge($source, $dest));
     }
 
     /**
@@ -141,7 +140,9 @@ abstract class AbstractCollectionComponent
      */
     public static function createFromArray($data, $type = self::IS_RELATIVE)
     {
-        if (! in_array($type, [self::IS_ABSOLUTE, self::IS_RELATIVE])) {
+        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
+
+        if (! isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
         $component = implode(static::$delimiter, static::validateIterator($data));
@@ -180,8 +181,7 @@ abstract class AbstractCollectionComponent
         if ('' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }
-        $dest = array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1));
 
-        return static::createFromArray($dest, $this->is_absolute);
+        return $this->newInstance(array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1)));
     }
 }

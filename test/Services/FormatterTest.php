@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Url\Test\Output;
+namespace League\Url\Test\Services;
 
 use League\Url\Services\Formatter;
 use League\Url;
@@ -57,7 +57,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatComponent()
     {
-        $scheme = new Url\Scheme('ldap');
+        $scheme = new Url\Scheme('git+ssh');
         $this->assertSame($scheme->__toString(), (new Formatter())->format($scheme));
     }
 

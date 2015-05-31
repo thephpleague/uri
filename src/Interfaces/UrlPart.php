@@ -33,6 +33,16 @@ interface UrlPart
     public function isEmpty();
 
     /**
+     * Returns whether two URL part represent the same value
+     * The Comparaison is based on the getUriComponent method
+     *
+     * @param UrlPart $component
+     *
+     * @return bool
+     */
+    public function sameValueAs(UrlPart $component);
+
+    /**
      * Returns the URL part string representation
      *
      * @return string
@@ -46,14 +56,4 @@ interface UrlPart
      * @return string
      */
     public function getUriComponent();
-
-    /**
-     * Returns whether two URL part represent the same value
-     * The Comparaison is based on the getUriComponent method
-     *
-     * @param UrlPart $component
-     *
-     * @return bool
-     */
-    public function sameValueAs(UrlPart $component);
 }

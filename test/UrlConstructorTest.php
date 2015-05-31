@@ -184,7 +184,6 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
         return [
             ["http://user@:80"],
             ["//user@:80"],
-            ["//80"],
         ];
     }
 }

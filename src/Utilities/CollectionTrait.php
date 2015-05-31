@@ -15,6 +15,7 @@ namespace League\Url\Utilities;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Url\Host;
+use League\Url\Interfaces;
 use Traversable;
 
 /**
@@ -108,6 +109,18 @@ trait CollectionTrait
             unset($data[$offset]);
         }
 
+        return $this->newInstance($data);
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newInstance(array $data)
+    {
         if ($data == $this->data) {
             return $this;
         }
@@ -118,9 +131,37 @@ trait CollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function filter(callable $callable)
+    public function filter(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
-        return static::createFromArray(array_filter($this->data, $callable), $this->is_absolute);
+
+        if (! in_array($flag, [Interfaces\Collection::FILTER_USE_VALUE, Interfaces\Collection::FILTER_USE_KEY])) {
+            throw new InvalidArgumentException(
+                'Unknown flag parameter please use one of the defined constant'
+            );
+        }
+
+        if ($flag == Interfaces\Collection::FILTER_USE_KEY) {
+            return $this->filterByOffset($callable);
+        }
+
+        return $this->newInstance(array_filter($this->data, $callable));
+    }
+
+    /**
+     * Filter The Collection according to its offsets
+     *
+     * @param callable $callable
+     *
+     * @return static
+     */
+    protected function filterByOffset(callable $callable)
+    {
+        $data = [];
+        foreach (array_filter(array_keys($this->data), $callable) as $offset) {
+            $data[$offset] = $this->data[$offset];
+        }
+
+        return $this->newInstance($data);
     }
 
     /**

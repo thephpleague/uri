@@ -42,7 +42,7 @@ class UserInfo implements Interfaces\UserInfo
     /**
      * Trait To get/set immutable value property
      */
-    use Utilities\ImmutableValue;
+    use Utilities\ImmutableProperty;
 
     /**
      * Create a new instance of UserInfo
@@ -54,13 +54,13 @@ class UserInfo implements Interfaces\UserInfo
     {
         $this->user = new Component($user);
         $this->pass = new Component($pass);
-        $this->init();
+        $this->cleanUp();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function init()
+    protected function cleanUp()
     {
         if (! $this->pass->isEmpty() && $this->user->isEmpty()) {
             $this->pass = $this->pass->withValue(null);

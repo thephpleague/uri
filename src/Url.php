@@ -34,63 +34,14 @@ use Psr\Http\Message\UriInterface;
 class Url implements Interfaces\Url
 {
     /**
-     * Scheme Component
-     *
-     * @var Interfaces\Scheme
-     */
-    protected $scheme;
-
-    /**
-     * User Information Part
-     *
-     * @var Interfaces\UserInfo
-     */
-    protected $userInfo;
-
-    /**
-     * Host Component
-     *
-     * @var Interfaces\Host
-     */
-    protected $host;
-
-    /**
-     * Port Component
-     *
-     * @var Interfaces\Port
-     */
-    protected $port;
-
-    /**
-     * Path Component
-     *
-     * @var Interfaces\Path
-     */
-    protected $path;
-
-    /**
-     * Query Component
-     *
-     * @var Interfaces\Query
-     */
-    protected $query;
-
-    /**
-     * Fragment Component
-     *
-     * @var Fragment
-     */
-    protected $fragment;
-
-    /**
      * A Factory Trait to create new URL instances
      */
     use Utilities\UrlFactory;
 
     /**
-     * Trait To get/set immutable value property
+     * A Modifier Trait to easily update URL instances
      */
-    use Utilities\ImmutableValue;
+    use Utilities\UrlModifier;
 
     /**
      * Create a new instance of URL
@@ -119,13 +70,13 @@ class Url implements Interfaces\Url
         $this->path     = $path;
         $this->query    = $query;
         $this->fragment = $fragment;
-        $this->init();
+        $this->cleanUp();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function init()
+    protected function cleanUp()
     {
         if ($this->host->isEmpty()) {
             $this->userInfo = $this->userInfo->withUser(null);
@@ -141,7 +92,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return static::parse($this->__toString());
+        return static::parse($this);
     }
 
     /**
@@ -315,69 +266,5 @@ class Url implements Interfaces\Url
     public function withFragment($fragment)
     {
         return $this->withProperty('fragment', $fragment);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve($url)
-    {
-        $relative = static::createFromUrl($url);
-        if ($relative->isAbsolute()) {
-            return $relative->withProperty('path', $relative->path->withoutDotSegments());
-        }
-
-        if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
-            return $relative->withScheme($this->scheme)->withProperty('path', $relative->path->withoutDotSegments());
-        }
-    
-        $relative = $this->resolveRelative($relative);
-        return $relative->withProperty('path', $relative->path->withoutDotSegments());
-    }
-
-    /**
-     * returns the resolve URL
-     *
-     * @param Url $relative the relative URL
-     *
-     * @return static
-     */
-    protected function resolveRelative(Url $relative)
-    {
-        $newUrl = $this->withFragment($relative->fragment);
-        if (! $relative->path->isEmpty()) {
-            $path = $this->resolvePath($newUrl, $relative);
-            return $newUrl->withPath($path)->withQuery($relative->query);
-        }
-
-        if (! $relative->query->isEmpty()) {
-            return $newUrl->withQuery($relative->query);
-        }
-
-        return $newUrl;
-    }
-
-    /**
-     * returns the resolve URL components
-     *
-     * @param Url $newUrl   the final URL
-     * @param Url $relative the relative URL
-     *
-     * @return Path
-     */
-    protected function resolvePath(Url $newUrl, Url $relative)
-    {
-        $path = $relative->path;
-        if (! $path->isAbsolute()) {
-            $segments = $newUrl->path->toArray();
-            array_pop($segments);
-            $is_absolute = Path::IS_RELATIVE;
-            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
-                $is_absolute = Path::IS_ABSOLUTE;
-            }
-            $path = Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
-        }
-
-        return $path;
     }
 }

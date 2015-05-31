@@ -18,12 +18,12 @@ namespace League\Url\Utilities;
  * @package League.url
  * @since 4.0.0
  */
-trait ImmutableValue
+trait ImmutableProperty
 {
     /**
      * Perfom cleanup operation
      */
-    abstract protected function init();
+    abstract protected function cleanUp();
 
     /**
      * Returns an instance with the modified component
@@ -31,26 +31,26 @@ trait ImmutableValue
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param string $name  the component to set
-     * @param string $value the component value
+     * @param string $property  the property to set
+     * @param string $value     the property value
      *
      * @return static
      */
-    protected function withProperty($name, $value)
+    protected function withProperty($property, $value)
     {
-        $value = $this->$name->withValue($value);
-        if ($this->$name->sameValueAs($value)) {
+        $value = $this->$property->withValue($value);
+        if ($this->$property->sameValueAs($value)) {
             return $this;
         }
         $newInstance = clone $this;
-        $newInstance->$name = $value;
-        $newInstance->init();
+        $newInstance->$property = $value;
+        $newInstance->cleanUp();
 
         return $newInstance;
     }
 
     /**
-     * Magic read-only for all Part/Component URL properties
+     * Magic read-only for protected properties
      *
      * @param string $property The property to read from
      *

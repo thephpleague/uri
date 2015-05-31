@@ -29,15 +29,18 @@ class Query implements Interfaces\Query
     use Utilities\CollectionTrait;
 
     /**
+     * Trait for parsing and building query string
+     */
+    use Utilities\QueryFactory;
+
+    /**
      * a new instance
      *
      * @param string $data
      */
     public function __construct($data = null)
     {
-        if (! is_null($data)) {
-            $this->data = $this->validate($data);
-        }
+        $this->data = $this->validate($data);
     }
 
     /**
@@ -49,13 +52,11 @@ class Query implements Interfaces\Query
      */
     protected function validate($str)
     {
-        if (is_bool($str)) {
-            throw new InvalidArgumentException('Data passed must be a valid string; received a boolean');
+        if (is_null($str)) {
+            return [];
         }
 
-        parse_str($this->validateString($str), $arr);
-
-        return $arr;
+        return static::parse($this->validateString($str), '&', false);
     }
 
     /**
@@ -89,7 +90,7 @@ class Query implements Interfaces\Query
      */
     public static function createFromArray($data)
     {
-        return new static(http_build_query(static::validateIterator($data), '', '&', PHP_QUERY_RFC3986));
+        return new static(static::build(static::validateIterator($data), '&'));
     }
 
     /**
@@ -97,16 +98,7 @@ class Query implements Interfaces\Query
      */
     public function format($separator, $enc_type)
     {
-        return preg_replace(
-            [",=".preg_quote($separator, ',').",", ",=$,"],
-            [$separator, ''],
-            http_build_query(
-                $this->data,
-                null,
-                $separator,
-                $enc_type
-            )
-        );
+        return static::build($this->data, $separator, $enc_type);
     }
 
     /**
@@ -128,14 +120,6 @@ class Query implements Interfaces\Query
         }
 
         return '?'.$res;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return $this->data;
     }
 
     /**

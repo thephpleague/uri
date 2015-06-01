@@ -31,16 +31,20 @@ trait ServerInfo
      */
     protected static function fetchServerScheme(array $server)
     {
-        if (isset($server["HTTP_X_FORWARDED_PROTO"]) && ! empty($server['HTTP_X_FORWARDED_PROTO'])) {
-            return strtolower($server["HTTP_X_FORWARDED_PROTO"]).":";
+        $args = filter_var_array($server, [
+            'HTTP_X_FORWARDED_PROTO' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
+            'HTTPS' => ['filter' => FILTER_VALIDATE_BOOLEAN, 'flags' => FILTER_NULL_ON_FAILURE],
+        ]);
+
+        if (! empty($args["HTTP_X_FORWARDED_PROTO"])) {
+            return strtolower($args["HTTP_X_FORWARDED_PROTO"]).":";
         }
 
-        $scheme = "http";
-        if (isset($server["HTTPS"]) && "off" != $server["HTTPS"]) {
-            $scheme .= "s";
+        if ($args["HTTPS"]) {
+            return "https:";
         }
 
-        return $scheme.":";
+        return "http:";
     }
 
     /**
@@ -63,14 +67,15 @@ trait ServerInfo
             return $header;
         }
 
-        if (isset($server["SERVER_ADDR"])) {
-            if (filter_var($server["SERVER_ADDR"], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                return "[".$server["SERVER_ADDR"]."]";
-            }
-            return $server["SERVER_ADDR"];
+        if (! isset($server["SERVER_ADDR"])) {
+            throw new InvalidArgumentException("Host could not be detected");
         }
 
-        throw new InvalidArgumentException("Host could not be detected");
+        if (filter_var($server["SERVER_ADDR"], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return "[".$server["SERVER_ADDR"]."]";
+        }
+
+        return $server["SERVER_ADDR"];
     }
 
     /**
@@ -82,17 +87,15 @@ trait ServerInfo
      */
     protected static function fetchServerUserInfo(array $server)
     {
-        $user = '';
-        if (isset($server['PHP_AUTH_USER'])) {
-            $user = $server['PHP_AUTH_USER'];
+        if (! isset($server['PHP_AUTH_USER'])) {
+            return '';
         }
 
-        $pass = '';
-        if (isset($server['PHP_AUTH_PW']) && ! empty($server['PHP_AUTH_PW'])) {
-            $pass = ':'.$server['PHP_AUTH_PW'];
+        $info = $server['PHP_AUTH_USER'];
+        if (isset($server['PHP_AUTH_PW'])) {
+            $info .= ':'.$server['PHP_AUTH_PW'];
         }
 
-        $info = $user.$pass;
         if (! empty($info)) {
             $info .= '@';
         }
@@ -135,7 +138,7 @@ trait ServerInfo
             $request .= $server["PHP_SELF"];
         }
 
-        if (isset($server["QUERY_STRING"]) && ! empty($server["QUERY_STRING"])) {
+        if (isset($server["QUERY_STRING"])) {
             $request .= "?".$server["QUERY_STRING"];
         }
 

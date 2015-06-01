@@ -58,12 +58,10 @@ trait ComponentTrait
      */
     protected function validateString($str)
     {
-        if (is_bool($str)
-            || is_array($str)
-            || is_resource($str)
-            || (is_object($str) && ! method_exists($str, '__toString'))
-        ) {
-            throw new InvalidArgumentException('Data passed must be a valid string or convertible into a string');
+        if (is_bool($str) || is_array($str)) {
+            throw new InvalidArgumentException(
+                'Data passed must be stringable into a string; received "'.gettype($str).'"'
+            );
         }
 
         $str = (string) $str;

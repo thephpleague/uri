@@ -59,12 +59,7 @@ trait ServerInfo
     protected static function fetchServerHost(array $server)
     {
         if (isset($server["HTTP_HOST"])) {
-            $header = $server["HTTP_HOST"];
-            if (preg_match("/^(.*)(:\d+)$/", $header, $matches)) {
-                return $matches[1];
-            }
-
-            return $header;
+            return static::fetchServerHostname($server["HTTP_HOST"]);
         }
 
         if (! isset($server["SERVER_ADDR"])) {
@@ -76,6 +71,24 @@ trait ServerInfo
         }
 
         return $server["SERVER_ADDR"];
+    }
+
+    /**
+     * Returns the environment hostname
+     *
+     * @param  string $host the environment server hostname
+     *                      the port info can sometimes be
+     *                      associated with the hostname
+     *
+     * @return string
+     */
+    protected static function fetchServerHostname($host)
+    {
+        if (preg_match("/^(.*)(:\d+)$/", $host, $matches)) {
+            return $matches[1];
+        }
+
+        return $host;
     }
 
     /**

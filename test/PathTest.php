@@ -398,23 +398,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $path
-     * @expectedException \InvalidArgumentException
-     * @dataProvider invalidPath
-     */
-    public function testInvalidPath($path)
-    {
-        new Path($path);
-    }
-
-    public function invalidPath()
-    {
-        return [
-            [new \StdClass()],
-        ];
-    }
-
-    /**
      * @param $params
      * @param $callable
      * @param $expected

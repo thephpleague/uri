@@ -107,7 +107,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     public function __toString()
     {
-        return $this->format(self::HOST_AS_UNICODE);
+        return $this->format(self::HOST_AS_ASCII);
     }
 
     /**
@@ -115,7 +115,15 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     public function toAscii()
     {
-        return $this->format(self::HOST_AS_ASCII);
+        return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toUnicode()
+    {
+        return $this->format(self::HOST_AS_UNICODE);
     }
 
     /**

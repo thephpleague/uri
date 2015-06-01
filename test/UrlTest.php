@@ -13,6 +13,7 @@ use League\Url\User;
 use League\Url\UserInfo;
 use League\Url\Scheme;
 use PHPUnit_Framework_TestCase;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @group url
@@ -91,6 +92,16 @@ class UrlTest extends PHPUnit_Framework_TestCase
             'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment',
             (string) $url
         );
+    }
+
+    public function testComparingWithUriInterfaceObject()
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
+
+        $url = Url::createFromUrl('http://xn--gwd-hna98db.pl/toto/path');
+
+        $this->assertTrue($url->sameValueAs($mock));
     }
 
     /**

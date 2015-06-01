@@ -67,9 +67,16 @@ interface Host extends CollectionComponent
     public function getLabel($offset, $default = null);
 
     /**
-     * Returns the string representation of a host using the punycode algorythm
+     * Returns the string representation of a host using the punicode algorithm
      *
      * @return string
      */
     public function toAscii();
+
+    /**
+     * Returns the unicode string representation of a host
+     *
+     * @return string
+     */
+    public function toUnicode();
 }

@@ -57,6 +57,7 @@ trait Punycode
      * Encode a part of a domain name, such as tld, to its Punycode version
      *
      * @param string $input Part of a domain name
+     *
      * @return string Punycode representation of a domain part
      */
     protected function encodeLabel($input)
@@ -71,6 +72,20 @@ trait Punycode
             return $output;
         }
 
+        return static::PREFIX.$this->encodeString($codePoints, $input, $output);
+    }
+
+    /**
+     * Encode a string into its punycode version
+     *
+     * @param  array  $codePoints input code points
+     * @param  string $input      input string
+     * @param  string $output     output string including only basic code points
+     *
+     * @return string
+     */
+    protected function encodeString(array $codePoints, $input, $output)
+    {
         static::initTable();
         $n      = static::INITIAL_N;
         $bias   = static::INITIAL_BIAS;
@@ -87,7 +102,6 @@ trait Punycode
             $m     = $codePoints['nonBasic'][$i++];
             $delta = $delta + ($m - $n) * ($h + 1);
             $n     = $m;
-
             foreach ($codePoints['all'] as $c) {
                 if ($c < $n || $c < static::INITIAL_N) {
                     $delta++;
@@ -110,18 +124,19 @@ trait Punycode
                     $h++;
                 }
             }
-
             $delta++;
             $n++;
         }
 
-        return static::PREFIX.$output;
+        return $output;
     }
+
 
     /**
      * Decode a part of domain name, such as tld
      *
      * @param string $input Part of a domain name
+     *
      * @return string Unicode domain part
      */
     protected function decodeLabel($input)

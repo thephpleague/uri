@@ -169,7 +169,7 @@ class Formatter
             return $host->toAscii();
         }
 
-        return $host->__toString();
+        return $host->toUnicode();
     }
 
     /**

@@ -100,7 +100,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host = new Host($unicode);
         $this->assertSame($ascii, $host->toAscii());
-        $this->assertSame($unicode, $host->__toString());
+        $this->assertSame($unicode, $host->toUnicode());
     }
 
     public function hostnamesProvider()

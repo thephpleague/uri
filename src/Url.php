@@ -78,10 +78,6 @@ class Url implements Interfaces\Url
      */
     protected function cleanUp()
     {
-        if ($this->host->isEmpty()) {
-            $this->userInfo = $this->userInfo->withUser(null);
-            $this->port     = $this->port->withValue(null);
-        }
         if (! $this->port->isEmpty() && $this->hasStandardPort()) {
             $this->port = $this->port->withValue(null);
         }
@@ -146,6 +142,10 @@ class Url implements Interfaces\Url
      */
     public function sameValueAs(UriInterface $url)
     {
+        if (! $url instanceof Interfaces\Url) {
+            $url = static::createFromUrl($url);
+        }
+
         return $url->__toString() === $this->__toString();
     }
 

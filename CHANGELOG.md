@@ -9,13 +9,14 @@ All Notable changes to `League\Url` will be documented in this file
 - Package structure is changed to better reflect the importance of each component.
 
 - `League\Url\Interfaces\Url`
-    -  now extends `Psr\Http\Message\UriInterface`
+    -  now implements `Psr\Http\Message\UriInterface`
     - `normalize` to normalize a URL returns a new Url interface normalized;
     - `hasStandardPort` which returns `true` if the standard port for a given `scheme` is used.
     - `resolve` to create new URL from relative URL
+    - add proxy methods to ease partial component modifications
 
-- `League\Url\Interfaces\Component`
-    -  different component implementing object can be compared using the `sameValueAs`
+- `League\Url\Interfaces\UrlPart`
+    -  UrlParts implementing object can compared using the `sameValueAs`
     - `withValue` to create a new instance from a given component;
 
 - `League\Url\Interfaces\Segment`:
@@ -23,6 +24,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 - `League\Url\Interfaces\Host`:
     - implements IPv4 and IPV6 style host
+    - `__toString` method now always return the ascii version of the hostname
 
 - `League\Url\Interfaces\Path`:
     - `withoutDotSegment` remove dot segment according to RFC3986 rules;
@@ -32,6 +34,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 - `League\Url\Interfaces\Query`:
     - The interface is simplified to remove ambiguity and allow setting default values for missing keys;
+    - The object no longer depends on php `parse_str`
 
 - `League\Url\Interfaces\Scheme` and `League\Url\Interfaces\Port`:
     - support for listing and detecting standard port for a given scheme in both objects with
@@ -42,8 +45,8 @@ All Notable changes to `League\Url` will be documented in this file
 
 - `League\Url\UserInfo` class added to better manipulate URL user info part
 
-- The `Url` class as well as all Components classes are now immutable value objects.
-- The `League\Url\Util\Formatter` class is added to ease Url formatting
+- The `Url` class as well as all components classes are now immutable value objects.
+- The `League\Url\Output\Formatter` class is added to ease Url formatting
 - The package is more RFC3986 compliant
 
 ### Deprecated

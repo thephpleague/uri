@@ -10,7 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace League\Url\Services;
+namespace League\Url\Output;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
@@ -125,15 +125,15 @@ class Formatter
      */
     public function format($input)
     {
-        if ($input instanceof Url) {
-            return $this->formatUrl($input);
-        }
-
         if ($input instanceof Interfaces\UrlPart) {
             return $this->formatComponent($input);
         }
 
-        return $this->formatUrl(Url::createFromUrl($input));
+        if (! $input instanceof Url) {
+            $input = Url::createFromUrl($input);
+        }
+
+        return $this->formatUrl($input);
     }
 
     /**

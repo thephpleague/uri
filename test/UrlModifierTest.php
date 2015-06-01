@@ -22,16 +22,16 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testMergeQueryParameters()
     {
-        $url = $this->url->mergeQueryParameters(['john' => 'doe the john', 'foo' => null]);
+        $url = $this->url->mergeQuery(['john' => 'doe the john', 'foo' => null]);
         $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $url->getQuery());
     }
 
     public function testReturnSameInstance()
     {
         $same = $this->url
-            ->mergeQueryParameters(['kingkong' => 'toto'])
+            ->mergeQuery(['kingkong' => 'toto'])
             ->withExtension('php')
-            ->withoutQueryParameters(['toto'])
+            ->withoutQueryValues(['toto'])
             ->withoutSegments([34])
             ->withoutLabels([23, 18]);
 
@@ -40,7 +40,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutQueryParameters()
     {
-        $url = $this->url->withoutQueryParameters(['kingkong']);
+        $url = $this->url->withoutQueryValues(['kingkong']);
         $this->assertSame('foo=bar%20baz', $url->getQuery());
     }
 

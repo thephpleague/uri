@@ -81,11 +81,11 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified query data
      *
-     * @param Traversable|array $query the data to be merged
+     * @param mixed $query the data to be merged
      *
      * @return static
      */
-    public function mergeQueryParameters($query);
+    public function mergeQuery($query);
 
     /**
      * Return an URL without the submitted query parameters
@@ -93,13 +93,13 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance without the specidied query data
      *
-     * @param callable|array $query the list of parameter to remove from the query
-     *                              if a callable is given it should filter the list
-     *                              of parameter to remove from the query
+     * @param callable|array $offsets the list of offsets to remove from the query
+     *                                if a callable is given it should filter the list
+     *                                of offsets to remove from the query values
      *
      * @return static
      */
-    public function withoutQueryParameters($query);
+    public function withoutQueryValues($offsets);
 
     /**
      * Return an URL with filtered query parameters
@@ -107,9 +107,8 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered query data
      *
-     * @param callable $callable the list of parameter to remove from the query
-     *                           if a callable is given it should filter the list
-     *                           of segment to remain in the query
+     * @param callable $callable the callable should filter the list
+     *                           of keys to remain in the query
      *
      * @param int      $flag     Flag determining what argument are sent to callback
      *
@@ -160,9 +159,9 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified segments
      *
-     * @param callable|array $offsets the list of segments offset to remove from the Path
+     * @param callable|array $offsets the list of offsets to remove from the Path
      *                                if a callable is given it should filter the list
-     *                                of offset to remove from the Path
+     *                                of offsets to remove from the Path
      *
      * @return static
      */
@@ -194,8 +193,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered segments
      *
-     * @param callable $callable the list of parameter to remove from the path
-     *                           if a callable is given it should filter the list
+     * @param callable $callable the callable should filter the list
      *                           of segment to remain in the path
      *
      * @param int      $flag     Flag determining what argument are sent to callback
@@ -273,8 +271,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered labels
      *
-     * @param callable $callable the list of label to select from the host
-     *                           if a callable is given it should filter the list
+     * @param callable $callable the callable should filter the list
      *                           of label to remain in the host
      *
      * @param int      $flag     Flag determining what argument are sent to callback

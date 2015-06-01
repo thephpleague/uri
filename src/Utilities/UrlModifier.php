@@ -84,7 +84,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function mergeQueryParameters($query)
+    public function mergeQuery($query)
     {
         return $this->withProperty('query', $this->query->merge($query));
     }
@@ -92,9 +92,9 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function withoutQueryParameters($query)
+    public function withoutQueryValues($offsets)
     {
-        return $this->withProperty('query', $this->query->without($query));
+        return $this->withProperty('query', $this->query->without($offsets));
     }
 
     /**

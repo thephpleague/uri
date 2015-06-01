@@ -96,11 +96,7 @@ trait QueryFactory
      */
     public static function build(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
-        if (empty($arr)) {
-            return '';
-        }
-
-        $pairs = [];
+        $pairs   = [];
         $encoder = static::getEncoder($encodingType);
         foreach ($arr as $key => $value) {
 

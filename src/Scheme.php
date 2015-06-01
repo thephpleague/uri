@@ -53,7 +53,9 @@ class Scheme extends Component implements Interfaces\Scheme
             $res = explode('+', $this->data);
         }
 
-        return $this->getStandardPortsFromScheme(array_pop($res));
+        return array_map(function ($value) {
+            return new Port($value);
+        }, $this->getAssociatedData(static::$standardPorts, array_pop($res)));
     }
 
     /**

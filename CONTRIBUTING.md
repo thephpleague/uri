@@ -4,9 +4,11 @@ Contributions are **welcome** and will be fully **credited**.
 
 ## Bug Report
 
+We accept bug reports via issues created on [Github](https://github.com/thephpleague/url/issues).
+
 ### Prior to submitting your report
 
-- **Always search the issue or pull request list first** - The odds are good that if you've found a problem, someone else has found it, too. 
+- **Always search the issue or pull request list first** - The odds are good that if you've found a problem, someone else has found it, too.
 
 - **Always try the [master branch](https://github.com/thephpleague/url)** - to see if the reported bug has not already been fixed.
 
@@ -18,11 +20,9 @@ Contributions are **welcome** and will be fully **credited**.
 
 - **Be brief, but don't leave any important details out** - Tell us what you did, what you expected to happen, and what happened. Do not forget to mention your PHP version, the OS Platform and the package version you were using.
 
-- **Don't report bugs about old versions** - Only the last stable major version will receive the patch.
-
 ## Pull Request
 
-We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/url).
+We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/url/pull).
 
 - **[PSR-2 Coding Standard](http://www.php-fig.org/psr/psr-2/)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://packagist.org/packages/squizlabs/php_codesniffer).
 

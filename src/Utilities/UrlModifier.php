@@ -15,7 +15,7 @@ namespace League\Url\Utilities;
 use League\Url;
 
 /**
- * a Trait to ease partial update of a League\Url\Url object
+ * a Trait to proxy partial update of a League\Url\Url object
  *
  * @package League.url
  * @since 4.0.0
@@ -25,49 +25,49 @@ trait UrlModifier
     /**
      * Scheme Component
      *
-     * @var \League\Url\Interfaces\Scheme
+     * @var Url\Interfaces\Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var \League\Url\Interfaces\UserInfo
+     * @var Url\Interfaces\UserInfo
      */
     protected $userInfo;
 
     /**
      * Host Component
      *
-     * @var \League\Url\Interfaces\Host
+     * @var Url\Interfaces\Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var \League\Url\Interfaces\Port
+     * @var Url\Interfaces\Port
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var \League\Url\Interfaces\Path
+     * @var Url\Interfaces\Path
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var \League\Url\Interfaces\Query
+     * @var Url\Interfaces\Query
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var \League\Url\Fragment
+     * @var Url\Fragment
      */
     protected $fragment;
 

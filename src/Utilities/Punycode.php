@@ -126,36 +126,32 @@ trait Punycode
      */
     protected function decodeLabel($input)
     {
-        $n      = static::INITIAL_N;
-        $i      = 0;
-        $bias   = static::INITIAL_BIAS;
         $output = '';
-
-        $pos = strrpos($input, static::DELIMITER);
+        $pos    = strrpos($input, static::DELIMITER);
         if ($pos !== false) {
             $output = substr($input, 0, $pos++);
         }
-        $pos = (int) $pos;
-
         $outputLength = strlen($output);
         $inputLength  = strlen($input);
         static::initTable();
+        $n    = static::INITIAL_N;
+        $i    = 0;
+        $bias = static::INITIAL_BIAS;
+        $pos  = (int) $pos;
         while ($pos < $inputLength) {
-            $oldi = $i;
-            $w    = 1;
-            for ($k = static::BASE;; $k += static::BASE) {
+            for ($oldi = $i, $w = 1, $k = static::BASE;; $k += static::BASE) {
                 $digit = static::$decodeTable[$input[$pos++]];
-                $i = $i + ($digit * $w);
-                $t = $this->calculateThreshold($k, $bias);
+                $i     = $i + ($digit * $w);
+                $t     = $this->calculateThreshold($k, $bias);
                 if ($digit < $t) {
                     break;
                 }
                 $w = $w * (static::BASE - $t);
             }
 
-            $bias   = $this->adapt($i - $oldi, ++$outputLength, ($oldi === 0));
-            $n      = $n + (int) ($i / $outputLength);
-            $i      = $i % ($outputLength);
+            $bias = $this->adapt($i - $oldi, ++$outputLength, ($oldi === 0));
+            $n    = $n + (int) ($i / $outputLength);
+            $i    = $i % ($outputLength);
             $output = mb_substr($output, 0, $i, 'UTF-8')
                 .$this->codePointToChar($n)
                 .mb_substr($output, $i, $outputLength - 1, 'UTF-8');
@@ -238,6 +234,7 @@ trait Punycode
      * Convert a single or multi-byte character to its code point
      *
      * @param string $char
+     *
      * @return int
      */
     protected function charToCodePoint($char)
@@ -252,21 +249,19 @@ trait Punycode
         }
 
         if ($code < 240) {
-            return (($code - 224) * 4096)
-                + ((ord($char[1]) - 128) * 64)
+            return (($code - 224) * 4096) + ((ord($char[1]) - 128) * 64)
                 + (ord($char[2]) - 128);
         }
 
-        return (($code - 240) * 262144)
-            + ((ord($char[1]) - 128) * 4096)
-            + ((ord($char[2]) - 128) * 64)
-            + (ord($char[3]) - 128);
+        return (($code - 240) * 262144) + ((ord($char[1]) - 128) * 4096)
+            + ((ord($char[2]) - 128) * 64) + (ord($char[3]) - 128);
     }
 
     /**
      * Convert a code point to its single or multi-byte character
      *
      * @param int $code
+     *
      * @return string
      */
     protected function codePointToChar($code)
@@ -280,14 +275,10 @@ trait Punycode
         }
 
         if ($code <= 0xFFFF) {
-            return chr(($code >> 12) + 224)
-                .chr((($code >> 6) & 63) + 128)
-                .chr(($code & 63) + 128);
+            return chr(($code >> 12) + 224).chr((($code >> 6) & 63) + 128).chr(($code & 63) + 128);
         }
 
-        return chr(($code >> 18) + 240)
-            .chr((($code >> 12) & 63) + 128)
-            .chr((($code >> 6) & 63) + 128)
-            .chr(($code & 63) + 128);
+        return chr(($code >> 18) + 240).chr((($code >> 12) & 63) + 128)
+            .chr((($code >> 6) & 63) + 128).chr(($code & 63) + 128);
     }
 }

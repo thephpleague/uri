@@ -95,6 +95,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
                 [],
                 'kingkong=toto',
             ],
+            'with string' => [
+                'foo=bar',
+                'kingkong=toto&foo=bar',
+            ],
+            'with empty string' => [
+                '',
+                'kingkong=toto',
+            ]
         ];
     }
 

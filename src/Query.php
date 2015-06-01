@@ -14,6 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
+use Traversable;
 
 /**
  * Value object representing a URL query component.
@@ -140,10 +141,51 @@ class Query implements Interfaces\Query
      */
     public function merge($query)
     {
-        if (! $query instanceof Interfaces\Query) {
-            $query = static::createFromArray($query);
+        if ($query instanceof Interfaces\Query) {
+            return $this->mergeQueryObject($query);
         }
 
+        if ($query instanceof Traversable || is_array($query)) {
+            return $this->mergeArray($query);
+        }
+
+        return $this->mergeQueryString($query);
+    }
+
+    /**
+     * Merge a string to the current object
+     *
+     * @param string $query a string or a stringable object
+     *
+     * @return static
+     */
+    protected function mergeQueryString($query)
+    {
+        return $this->mergeArray($this->validate($query));
+    }
+
+    /**
+     * Merge a Traversable or an Array to the current object
+     *
+     * @param Traversable|array $query
+     *
+     * @return static
+     */
+    protected function mergeArray($query)
+    {
+        return $this->mergeQueryObject(static::createFromArray($query));
+
+    }
+
+    /**
+     * Merge 2 Interfaces\Query objects
+     *
+     * @param Interfaces\Query $query
+     *
+     * @return static
+     */
+    protected function mergeQueryObject(Interfaces\Query $query)
+    {
         if ($this->sameValueAs($query)) {
             return $this;
         }

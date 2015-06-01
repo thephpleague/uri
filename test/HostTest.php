@@ -99,7 +99,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testValidUnicodeHost($unicode, $ascii)
     {
         $host = new Host($unicode);
-        $this->assertSame($ascii, $host->toAscii());
+        $this->assertSame($ascii, $host->__toString());
         $this->assertSame($unicode, $host->toUnicode());
     }
 
@@ -139,9 +139,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testUnicodeWithIP($ip, $res)
     {
         $host = new Host($ip);
-        $this->assertSame($res, $host->toAscii());
-        $this->assertSame($res, $host->__toString());
-        $this->assertSame($res, $host->__toString());
+        $this->assertSame($host->toUnicode(), $host->__toString());
     }
 
     public function hostnamesIpProvider()

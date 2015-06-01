@@ -61,15 +61,8 @@ trait Punycode
      */
     protected function encodeLabel($input)
     {
+        $output     = '';
         $codePoints = $this->codePoints($input);
-
-        $n     = static::INITIAL_N;
-        $bias  = static::INITIAL_BIAS;
-        $delta = 0;
-        $h     = count($codePoints['basic']);
-        $b     = $h;
-
-        $output = '';
         foreach ($codePoints['basic'] as $code) {
             $output .= $this->codePointToChar($code);
         }
@@ -78,13 +71,18 @@ trait Punycode
             return $output;
         }
 
+        static::initTable();
+        $n      = static::INITIAL_N;
+        $bias   = static::INITIAL_BIAS;
+        $delta  = 0;
+        $h      = count($codePoints['basic']);
+        $b      = $h;
+        $i      = 0;
+        $length = mb_strlen($input, 'UTF-8');
         if ($b > 0) {
             $output .= static::DELIMITER;
         }
 
-        static::initTable();
-        $i = 0;
-        $length = mb_strlen($input, 'UTF-8');
         while ($h < $length) {
             $m     = $codePoints['nonBasic'][$i++];
             $delta = $delta + ($m - $n) * ($h + 1);

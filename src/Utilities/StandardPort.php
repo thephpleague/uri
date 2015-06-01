@@ -57,24 +57,39 @@ trait StandardPort
     ];
 
     /**
+     * Return Mapped Data
+     *
+     * @param callable    $callable a callable to apply to each found data
+     * @param array       $arr      the array to look the index into
+     * @param string|null $key      the index we are searching for
+     *
+     * @return League\Url\Interfaces\Component[]
+     */
+    protected function getAssociatedData(callable $callable, array $arr, $key)
+    {
+        $res = [];
+        if (array_key_exists($key, $arr)) {
+            $res = $arr[$key];
+        }
+        sort($res);
+
+        return array_map(function ($value) use ($callable) {
+            return $callable($value);
+        }, $res);
+    }
+
+    /**
      * Return all the port attached to a given scheme
      *
-     * @param  string $scheme
+     * @param string $scheme
      *
      * @return League\Url\Port[]
      */
     protected function getStandardPortsFromScheme($scheme)
     {
-        $res = [];
-        if (array_key_exists($scheme, static::$standardPorts)) {
-            $res = static::$standardPorts[$scheme];
-
-        }
-        sort($res);
-
-        return array_map(function ($value) {
+        return $this->getAssociatedData(function ($value) {
             return new Port($value);
-        }, $res);
+        }, static::$standardPorts, $scheme);
     }
 
     /**
@@ -86,14 +101,8 @@ trait StandardPort
      */
     protected function getStandardSchemesFromPort($port)
     {
-        $res = [];
-        if (array_key_exists($port, static::$standardSchemes)) {
-            $res = static::$standardSchemes[$port];
-        }
-        sort($res);
-
-        return array_map(function ($value) {
+        return $this->getAssociatedData(function ($value) {
             return new Scheme($value);
-        }, $res);
+        }, static::$standardSchemes, $port);
     }
 }

@@ -33,18 +33,18 @@ trait ServerInfo
     {
         $args = filter_var_array($server, [
             'HTTP_X_FORWARDED_PROTO' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
-            'HTTPS' => ['filter' => FILTER_VALIDATE_BOOLEAN, 'options' => ['default' => false]],
+            'HTTPS' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
         ]);
 
         if (! empty($args["HTTP_X_FORWARDED_PROTO"])) {
             return strtolower($args["HTTP_X_FORWARDED_PROTO"]).":";
         }
 
-        if ($args["HTTPS"]) {
-            return "https:";
+        if (empty($server["HTTPS"]) || 'off' == $server["HTTPS"]) {
+            return "http:";
         }
 
-        return "http:";
+        return "https:";
     }
 
     /**

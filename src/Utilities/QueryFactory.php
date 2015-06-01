@@ -99,12 +99,10 @@ trait QueryFactory
         $pairs   = [];
         $encoder = static::getEncoder($encodingType);
         foreach ($arr as $key => $value) {
-
             if (! is_array($value)) {
                 $pairs[] = static::buildKeyPair($encoder, $key, $value);
                 continue;
             }
-
             foreach ($value as $val) {
                 $pairs[] = static::buildKeyPair($encoder, $key, $val);
             }
@@ -146,13 +144,11 @@ trait QueryFactory
                 return rawurldecode($value);
             };
         }
-
         if (PHP_QUERY_RFC1738 == $encodingType) {
             return function ($value) {
                 return urldecode($value);
             };
         }
-
         if (false !== $encodingType) {
             throw new InvalidArgumentException('Unknown encodingType');
         }
@@ -176,13 +172,11 @@ trait QueryFactory
                 return rawurlencode($value);
             };
         }
-
         if (PHP_QUERY_RFC1738 == $encodingType) {
             return function ($value) {
                 return urlencode($value);
             };
         }
-
         if (false !== $encodingType) {
             throw new InvalidArgumentException('Unknown encodingType');
         }

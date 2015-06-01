@@ -14,9 +14,8 @@ Highlights
 ------
 
 - Simple API
-- Treats URL and URL components as Immutable Values Objects
-- Comply to [RFC3986](http://tools.ietf.org/html/rfc3986)
-- Implements the `UriInterface` from the upcoming [PSR-7][]
+- [RFC3986](http://tools.ietf.org/html/rfc3986) compliant
+- Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic
 - Composer ready, [PSR-2][] and [PSR-4][] compliant
@@ -74,6 +73,6 @@ License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
 
-[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
-[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
-[PSR-7]: https://github.com/php-fig/fig-standards/blob/master/proposed/http-message.md
+[PSR-2]: http://www.php-fig.org/psr/psr-2/
+[PSR-4]: http://www.php-fig.org/psr/psr-4/
+[PSR-7]: http://www.php-fig.org/psr/psr-7/

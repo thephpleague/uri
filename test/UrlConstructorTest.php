@@ -73,6 +73,17 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
                     'HTTP_HOST' => 'localhost:23',
                 ],
             ],
+            'with standard http' => [
+                'http://localhost:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'off',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'localhost:23',
+                ],
+            ],
             'with Xforward header' => [
                 'https://localhost:23',
                 [

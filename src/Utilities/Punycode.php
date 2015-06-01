@@ -226,17 +226,11 @@ trait Punycode
      */
     protected function codePoints($input)
     {
-        $codePoints = [
-            'all'      => [],
-            'basic'    => [],
-            'nonBasic' => [],
-        ];
-
+        $codePoints = ['all' => [], 'basic' => [], 'nonBasic' => []];
         $codePoints['all'] = array_map([$this, 'charToCodePoint'], preg_split("//u", $input, -1, PREG_SPLIT_NO_EMPTY));
 
         foreach ($codePoints['all'] as $code) {
-            $offset = ($code < 128) ? 'basic' : 'nonBasic';
-            $codePoints[$offset][] = $code;
+            $codePoints[($code < 128) ? 'basic' : 'nonBasic'][] = $code;
         }
 
         $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);
@@ -264,8 +258,7 @@ trait Punycode
         }
 
         if ($code < 240) {
-            return (($code - 224) * 4096) + ((ord($char[1]) - 128) * 64)
-                + (ord($char[2]) - 128);
+            return (($code - 224) * 4096) + ((ord($char[1]) - 128) * 64) + (ord($char[2]) - 128);
         }
 
         return (($code - 240) * 262144) + ((ord($char[1]) - 128) * 4096)

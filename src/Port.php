@@ -78,6 +78,8 @@ class Port extends Component implements Interfaces\Port
      */
     public function getStandardSchemes()
     {
-        return $this->getStandardSchemesFromPort($this->data);
+        return array_map(function ($value) {
+            return new Scheme($value);
+        }, $this->getAssociatedData(static::$standardSchemes, $this->data));
     }
 }

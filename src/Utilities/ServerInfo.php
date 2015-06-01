@@ -33,7 +33,7 @@ trait ServerInfo
     {
         $args = filter_var_array($server, [
             'HTTP_X_FORWARDED_PROTO' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
-            'HTTPS' => ['filter' => FILTER_VALIDATE_BOOLEAN, 'flags' => FILTER_NULL_ON_FAILURE],
+            'HTTPS' => ['filter' => FILTER_VALIDATE_BOOLEAN, 'options' => ['default' => false]],
         ]);
 
         if (! empty($args["HTTP_X_FORWARDED_PROTO"])) {

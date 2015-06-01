@@ -57,6 +57,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['.example.com'],
+            ['host.com-'],
             ['.......'],
             ['tot.    .coucou.com'],
             ['re view'],

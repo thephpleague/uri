@@ -63,14 +63,6 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
-    {
-        return empty($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function modify($value)
     {
         if ($value == $this->__toString()) {

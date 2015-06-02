@@ -80,16 +80,6 @@ abstract class AbstractCollectionComponent
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
-    {
-        $str = $this->__toString();
-
-        return empty($str);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function prepend($component)
     {
         return static::createFromArray(static::validateComponent($component), $this->is_absolute)->append($this);

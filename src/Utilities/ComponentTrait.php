@@ -41,11 +41,15 @@ trait ComponentTrait
         "%21", "%24", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%3B", "%3D", "%3A",
     ];
 
-
     /**
      * {@inheritdoc}
      */
     public abstract function getUriComponent();
+
+    /**
+     * {@inheritdoc}
+     */
+    public abstract function __toString();
 
     /**
      * validate a string
@@ -87,5 +91,15 @@ trait ComponentTrait
     protected function encode($value)
     {
         return str_replace(static::$characters_set_encoded, static::$characters_set, rawurlencode($value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty()
+    {
+        $str = $this->__toString();
+
+        return empty($str);
     }
 }

@@ -108,13 +108,13 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testGetParameter()
     {
-        $this->assertSame('toto', $this->query->getParameter('kingkong'));
+        $this->assertSame('toto', $this->query->getValue('kingkong'));
     }
 
     public function testGetParameterWithDefaultValue()
     {
         $expected = 'toofan';
-        $this->assertSame($expected, $this->query->getParameter('togo', $expected));
+        $this->assertSame($expected, $this->query->getValue('togo', $expected));
     }
 
     public function testHasOffset()
@@ -149,9 +149,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $query->offsets());
         $this->assertSame(['foo', 'bar', 'baz'], $query->offsets());
-        $this->assertSame(null, $query->getParameter('foo'));
-        $this->assertSame(null, $query->getParameter('bar'));
-        $this->assertSame(null, $query->getParameter('baz'));
+        $this->assertSame(null, $query->getValue('foo'));
+        $this->assertSame(null, $query->getValue('bar'));
+        $this->assertSame(null, $query->getValue('baz'));
     }
 
     public function testToArray()

@@ -52,7 +52,7 @@ abstract class AbstractCollectionComponent
     /**
      * {@inheritdoc}
      */
-    public function withValue($value)
+    public function modify($value)
     {
         if ($value == $this->__toString()) {
             return $this;
@@ -106,7 +106,7 @@ abstract class AbstractCollectionComponent
             array_pop($source);
         }
 
-        return $this->newInstance(array_merge($source, $dest));
+        return $this->newCollectionInstance(array_merge($source, $dest));
     }
 
     /**
@@ -182,6 +182,8 @@ abstract class AbstractCollectionComponent
             array_pop($dest);
         }
 
-        return $this->newInstance(array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1)));
+        return $this->newCollectionInstance(
+            array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1))
+        );
     }
 }

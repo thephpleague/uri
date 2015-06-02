@@ -79,7 +79,7 @@ class Url implements Interfaces\Url
     protected function cleanUp()
     {
         if (! $this->port->isEmpty() && $this->hasStandardPort()) {
-            $this->port = $this->port->withValue(null);
+            $this->port = $this->port->modify(null);
         }
     }
 

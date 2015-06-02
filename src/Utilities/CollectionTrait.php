@@ -109,7 +109,7 @@ trait CollectionTrait
             unset($data[$offset]);
         }
 
-        return $this->newInstance($data);
+        return $this->newCollectionInstance($data);
     }
 
     /**
@@ -119,7 +119,7 @@ trait CollectionTrait
      *
      * @return static
      */
-    protected function newInstance(array $data)
+    protected function newCollectionInstance(array $data)
     {
         if ($data == $this->data) {
             return $this;
@@ -144,7 +144,7 @@ trait CollectionTrait
             return $this->filterByOffset($callable);
         }
 
-        return $this->newInstance(array_filter($this->data, $callable));
+        return $this->newCollectionInstance(array_filter($this->data, $callable));
     }
 
     /**
@@ -161,7 +161,7 @@ trait CollectionTrait
             $data[$offset] = $this->data[$offset];
         }
 
-        return $this->newInstance($data);
+        return $this->newCollectionInstance($data);
     }
 
     /**

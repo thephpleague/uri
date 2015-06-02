@@ -90,7 +90,7 @@ class Component implements Interfaces\Component
     /**
      * {@inheritdoc}
      */
-    public function withValue($value)
+    public function modify($value)
     {
         if ($value == $this->__toString()) {
             return $this;

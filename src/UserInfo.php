@@ -63,7 +63,7 @@ class UserInfo implements Interfaces\UserInfo
     protected function cleanUp()
     {
         if (! $this->pass->isEmpty() && $this->user->isEmpty()) {
-            $this->pass = $this->pass->withValue(null);
+            $this->pass = $this->pass->modify(null);
         }
     }
 

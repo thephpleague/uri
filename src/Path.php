@@ -220,7 +220,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
         $data[] = $newBasename;
 
-        return $this->newInstance($data);
+        return $this->newCollectionInstance($data);
     }
 
     /**

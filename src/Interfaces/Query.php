@@ -46,7 +46,7 @@ interface Query extends Collection, Component
      *
      * @return mixed
      */
-    public function getParameter($offset, $default = null);
+    public function getValue($offset, $default = null);
 
     /**
      * Returns an instance merge with the specified query

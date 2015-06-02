@@ -38,7 +38,7 @@ trait ImmutableProperty
      */
     protected function withProperty($property, $value)
     {
-        $value = $this->$property->withValue($value);
+        $value = $this->$property->modify($value);
         if ($this->$property->sameValueAs($value)) {
             return $this;
         }

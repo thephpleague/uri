@@ -98,10 +98,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
-
-        var_dump($mock);
-
-
         $url = Url::createFromUrl('http://xn--gwd-hna98db.pl/toto/path');
 
         $this->assertTrue($url->sameValueAs($mock));

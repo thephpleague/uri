@@ -71,7 +71,7 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function withValue($value)
+    public function modify($value)
     {
         if ($value == $this->__toString()) {
             return $this;
@@ -126,7 +126,7 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function getParameter($offset, $default = null)
+    public function getValue($offset, $default = null)
     {
         $offset = rawurldecode($offset);
         if (isset($this->data[$offset])) {

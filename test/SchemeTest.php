@@ -15,7 +15,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     public function testWithValue()
     {
         $scheme = new Scheme('ftp');
-        $http_scheme = $scheme->withValue('HTTP');
+        $http_scheme = $scheme->modify('HTTP');
         $this->assertSame('http', $http_scheme->__toString());
         $this->assertSame('http:', $http_scheme->getUriComponent());
     }
@@ -69,7 +69,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $scheme  = new Scheme();
         $scheme1 = new Scheme('https');
         $this->assertFalse($scheme->sameValueAs($scheme1));
-        $newscheme = $scheme1->withValue(null);
+        $newscheme = $scheme1->modify(null);
         $this->assertTrue($scheme->sameValueAs($newscheme));
         $this->assertSame('', $newscheme->getUriComponent());
     }

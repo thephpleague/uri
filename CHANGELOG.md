@@ -17,13 +17,15 @@ All Notable changes to `League\Url` will be documented in this file
 
 - `League\Url\Interfaces\UrlPart`
     -  UrlParts implementing object can compared using the `sameValueAs`
-    - `withValue` to create a new instance from a given component;
+
+- `League\Url\Interfaces\Component`
+    - `modify` to create a new instance from a given component;
 
 - `League\Url\Interfaces\Segment`:
     - The interface is simplified to remove ambiguity when manipulating Host and Path objects.
 
 - `League\Url\Interfaces\Host`:
-    - implements IPv4 and IPV6 style host
+    - implements IPv4 and IPv6 style host
     - `__toString` method now always return the ascii version of the hostname
 
 - `League\Url\Interfaces\Path`:
@@ -62,6 +64,12 @@ All Notable changes to `League\Url` will be documented in this file
     - to comply to `RFC3986`;
     - to enable immutable value object;
     - to implement `PSR7` UriInterface;
+
+## 3.3.2 - 2015-05-13
+
+### Fixed
+
+- Bug fix URL parsing [issue #65](https://github.com/thephpleague/url/issues/58)
 
 ## 3.3.1 - 2015-03-26
 

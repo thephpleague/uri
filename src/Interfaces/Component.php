@@ -35,5 +35,5 @@ interface Component extends UrlPart
      *
      * @return static
      */
-    public function withValue($value);
+    public function modify($value);
 }

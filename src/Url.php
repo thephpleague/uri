@@ -96,10 +96,10 @@ class Url implements Interfaces\Url
      */
     public function __toString()
     {
-        $auth = $this->getAuthority();
+        $auth     = $this->getAuthority();
         $has_auth = false;
         if (! empty($auth)) {
-            $auth = '//'.$auth;
+            $auth     = '//'.$auth;
             $has_auth = true;
         }
 

@@ -56,6 +56,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Handling of legacy hostname suffixed with a "." when using `Url::createFromServer`
 
 ### Remove
+- `League\Url\Components\User` and `League\Url\Components\Pass`
 - Support for `PHP 5.3`
 - `UrlImmutable` class
 - Most of the public API is removed :

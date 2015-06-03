@@ -371,6 +371,30 @@ class PathTest extends PHPUnit_Framework_TestCase
         $this->assertSame('file.txt', $path->getBasename());
     }
 
+    /**
+     * @param $path
+     * @param $dirname
+     * @dataProvider dirnameProvider
+     */
+    public function testGetDirmane($path, $dirname)
+    {
+        $this->assertSame($dirname, (new Path($path))->getDirname());
+    }
+
+    public function dirnameProvider()
+    {
+        return [
+            ['/path/to/my/file.txt', '/path/to/my'],
+            ['/path/to/my/file/', '/path/to/my'],
+            ['/path/to/my\\file/', '/path/to'],
+            ['.', '.'],
+            ['/path/to/my//file/', '/path/to/my'],
+            ['', ''],
+            ['/', '/'],
+            ['/path/to/my/../file.txt', '/path/to/my/..'],
+        ];
+    }
+
     public function testGetBasemaneWithEmptyBasename()
     {
         $path = new Path('/path/to/my/');

@@ -46,6 +46,13 @@ interface Path extends CollectionComponent
     public function getSegment($offset, $default = null);
 
     /**
+     * Returns parent directory's path
+     *
+     * @return string
+     */
+    public function getDirname();
+
+    /**
      * Returns the path basename
      *
      * @return string

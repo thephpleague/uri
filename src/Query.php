@@ -89,17 +89,9 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function format($separator, $enc_type)
-    {
-        return static::build($this->data, $separator, $enc_type);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
-        return $this->format('&', PHP_QUERY_RFC3986);
+        return static::build($this->data, '&', PHP_QUERY_RFC3986);
     }
 
     /**

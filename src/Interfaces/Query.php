@@ -26,16 +26,6 @@ namespace League\Url\Interfaces;
 interface Query extends Collection, Component
 {
     /**
-     * Returns query formatted according to given separator and encoded type
-     *
-     * @param  string $separator query separator
-     * @param  int $enc_type  encoding type using PHP_QUERY_* constant
-     *
-     * @return string
-     */
-    public function format($separator, $enc_type);
-
-    /**
      * Retrieves a single query parameter.
      *
      * Retrieves a single query parameter. If the parameter has not been set,

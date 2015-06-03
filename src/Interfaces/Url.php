@@ -81,14 +81,18 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified query data
      *
-     * @param mixed $query the data to be merged
+     * @param mixed $query the data to be merged query can be
+     *                     - another Interfaces\Query object
+     *                     - a Traversable object
+     *                     - an array
+     *                     - a string or a Stringable object
      *
      * @return static
      */
     public function mergeQuery($query);
 
     /**
-     * Return an URL without the submitted query parameters
+     * Return an URL without the specified query offsets
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without the specidied query data
@@ -102,7 +106,7 @@ interface Url extends UriInterface
     public function withoutQueryValues($offsets);
 
     /**
-     * Return an URL with filtered query parameters
+     * Return an URL with the filtered query values
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered query data
@@ -168,7 +172,7 @@ interface Url extends UriInterface
     public function withoutSegments($offsets);
 
     /**
-     * Return an URL without dot segments
+     * Return an URL without dot segments accordinf to RFC3986 algorithm
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without dot segment according to RFC3986 algorithm
@@ -188,7 +192,7 @@ interface Url extends UriInterface
     public function withoutEmptySegments();
 
     /**
-     * Return an URL without the submitted path segments
+     * Return an URL with the filtered path segments
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered segments
@@ -266,7 +270,7 @@ interface Url extends UriInterface
     public function withoutLabels($offsets);
 
     /**
-     * Return an URL without the filtered host labels
+     * Return an URL with the filtered host label
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered labels

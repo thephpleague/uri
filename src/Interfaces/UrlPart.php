@@ -26,7 +26,22 @@ namespace League\Url\Interfaces;
 interface UrlPart
 {
     /**
-     * Returns true if the URL part considered empty
+     * Returns the URL part string representation
+     *
+     * @return string
+     */
+    public function __toString();
+
+    /**
+     * Returns the URL part string representation
+     * with its optional URL delimiters
+     *
+     * @return string
+     */
+    public function getUriComponent();
+
+    /**
+     * Returns true if the URL part is considered empty
      *
      * @return bool
      */
@@ -41,19 +56,4 @@ interface UrlPart
      * @return bool
      */
     public function sameValueAs(UrlPart $component);
-
-    /**
-     * Returns the URL part string representation
-     *
-     * @return string
-     */
-    public function __toString();
-
-    /**
-     * Returns the URL part string representation
-     * with its optional URL delimiters
-     *
-     * @return string
-     */
-    public function getUriComponent();
 }

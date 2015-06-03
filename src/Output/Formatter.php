@@ -128,7 +128,7 @@ class Formatter
     public function format($input)
     {
         if ($input instanceof Interfaces\UrlPart) {
-            return $this->formatComponent($input);
+            return $this->formatUrlPart($input);
         }
 
         if (! $input instanceof Url) {
@@ -145,7 +145,7 @@ class Formatter
      *
      * @return string
      */
-    protected function formatComponent(Interfaces\UrlPart $part)
+    protected function formatUrlPart(Interfaces\UrlPart $part)
     {
         if ($part instanceof Interfaces\Query) {
             return Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);

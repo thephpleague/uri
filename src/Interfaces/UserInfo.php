@@ -30,14 +30,14 @@ interface UserInfo extends UrlPart
     /**
      * Retrieve the user component of the URL User Info part
      *
-     * @return Component
+     * @return string
      */
     public function getUser();
 
     /**
      * Retrieve the pass component of the URL User Info part
      *
-     * @return Component
+     * @return string
      */
     public function getPass();
 
@@ -53,7 +53,7 @@ interface UserInfo extends UrlPart
      *
      * @throws \InvalidArgumentException for invalid user.
      *
-     * @return self A new instance with the specified user.
+     * @return static
      */
     public function withUser($user);
 
@@ -69,7 +69,7 @@ interface UserInfo extends UrlPart
      *
      * @throws \InvalidArgumentException for invalid password.
      *
-     * @return self A new instance with the specified password.
+     * @return static
      */
     public function withPass($pass);
 }

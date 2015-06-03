@@ -10,18 +10,16 @@ All Notable changes to `League\Url` will be documented in this file
 
 - `League\Url\Interfaces\Url`
     -  now implements `Psr\Http\Message\UriInterface`
-    - `normalize` to normalize a URL returns a new Url interface normalized;
-    - `hasStandardPort` which returns `true` if the standard port for a given `scheme` is used.
     - `resolve` to create new URL from relative URL
     - add proxy methods to ease partial component modifications
 
 - `League\Url\Interfaces\UrlPart`
-    -  UrlParts implementing object can compared using the `sameValueAs`
+    -  UrlParts implementing object can be compared using the `sameValueAs`
 
 - `League\Url\Interfaces\Component`
     - `modify` to create a new instance from a given component;
 
-- `League\Url\Interfaces\Segment`:
+- `League\Url\Interfaces\CollectionComponent`:
     - The interface is simplified to remove ambiguity when manipulating Host and Path objects.
 
 - `League\Url\Interfaces\Host`:

@@ -97,12 +97,14 @@ class Url implements Interfaces\Url
     public function __toString()
     {
         $auth = $this->getAuthority();
+        $has_auth = false;
         if (! empty($auth)) {
             $auth = '//'.$auth;
+            $has_auth = true;
         }
 
         return $this->scheme->getUriComponent().$auth
-            .$this->path->format($auth)
+            .$this->path->getUriComponent(Path::PATH_AS_URLPART, $has_auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

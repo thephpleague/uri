@@ -60,6 +60,41 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $path
+     * @param $context
+     * @param $auth
+     * @param $expected
+     * @dataProvider getUriComponentProvider
+     */
+    public function testGetUriComponent($path, $context, $auth, $expected)
+    {
+        $this->assertSame($expected, (new Path($path))->getUriComponent($context, $auth));
+    }
+
+    public function getUriComponentProvider()
+    {
+        return [
+            'empty path standalone' => ['', Path::PATH_AS_STANDALONE, false, ''],
+            'empty path url with auth' => ['', Path::PATH_AS_URLPART, true, ''],
+            'empty path url without auth' => ['', Path::PATH_AS_URLPART, false, ''],
+            'relative path standalone' => ['a/b', Path::PATH_AS_STANDALONE, false, 'a/b'],
+            'relative path url with auth' => ['a/b', Path::PATH_AS_URLPART, true, '/a/b'],
+            'relative path url without auth' => ['a/b', Path::PATH_AS_URLPART, false, 'a/b'],
+            'absolute path standalone' => ['/a/b', Path::PATH_AS_STANDALONE, false, '/a/b'],
+            'absolute path url with auth' => ['/a/b', Path::PATH_AS_URLPART, true, '/a/b'],
+            'absolute path url without auth' => ['/a/b', Path::PATH_AS_URLPART, false, '/a/b'],
+        ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetUriComponentFailed()
+    {
+        (new Path())->getUriComponent('yolo');
+    }
+
+    /**
      * @param string $raw
      * @param int    $key
      * @param string $value

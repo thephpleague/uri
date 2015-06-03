@@ -14,6 +14,8 @@ namespace League\Url\Output;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
+use League\Url\Path;
+use League\Url\Query;
 use League\Url\Url;
 
 /**
@@ -146,7 +148,7 @@ class Formatter
     protected function formatComponent(Interfaces\UrlPart $part)
     {
         if ($part instanceof Interfaces\Query) {
-            return $part->format($this->querySeparator, $this->queryEncoding);
+            return Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof Interfaces\Host) {
@@ -181,7 +183,7 @@ class Formatter
      */
     protected function formatUrl(Url $url)
     {
-        $query = $url->query->format($this->querySeparator, $this->queryEncoding);
+        $query = Query::build($url->query->toArray(), $this->querySeparator, $this->queryEncoding);
         if (! empty($query)) {
             $query = '?'.$query;
         }
@@ -190,7 +192,7 @@ class Formatter
 
         return $url->scheme->getUriComponent()
             .$auth
-            .$url->path->format($auth)
+            .$url->path->getUriComponent(Path::PATH_AS_URLPART, ! empty($auth))
             .$query
             .$url->fragment->getUriComponent();
     }

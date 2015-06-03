@@ -233,6 +233,14 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
+    public function getDirname()
+    {
+        return str_replace("\0", "\\", dirname(str_replace("\\", "\0", $this->__toString())));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getExtension()
     {
         return pathinfo($this->getBasename(), PATHINFO_EXTENSION);

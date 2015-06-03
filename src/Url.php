@@ -12,7 +12,6 @@
  */
 namespace League\Url;
 
-use InvalidArgumentException;
 use League\Url\Interfaces;
 use League\Url\Utilities;
 use Psr\Http\Message\UriInterface;

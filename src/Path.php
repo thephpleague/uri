@@ -24,9 +24,6 @@ use LogicException;
  */
 class Path extends AbstractCollectionComponent implements Interfaces\Path
 {
-    const PATH_AS_STANDALONE = 1;
-    const PATH_AS_URLPART = 2;
-
     /**
      * {@inheritdoc}
      */
@@ -123,39 +120,6 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
 
         return $front_delimiter.implode(static::$delimiter, array_map([$this, 'encode'], $this->data));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUriComponent($context = self::PATH_AS_STANDALONE, $has_authority_part = false)
-    {
-        if ($context == self::PATH_AS_STANDALONE) {
-            return $this->__toString();
-        }
-
-        if (self::PATH_AS_URLPART != $context) {
-            throw new InvalidArgumentException('Unknown context');
-        }
-
-        return $this->getUrlPart($has_authority_part);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getUrlPart($has_authority_part)
-    {
-        $path = $this->__toString();
-        if (! $has_authority_part) {
-            return preg_replace(',^/+,', '/', $path);
-        }
-
-        if (! $this->isEmpty() && ! $this->isAbsolute()) {
-            return '/'.$path;
-        }
-
-        return $path;
     }
 
     /**

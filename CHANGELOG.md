@@ -2,6 +2,13 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## 4.0.0-beta-2 - 2015-06-03
+
+## Fixed
+- remove useless optional argument from `Path::getUriComponent`
+
+### Added
+
 ## 4.0.0-beta-1 - 2015-06-03
 
 ### Added

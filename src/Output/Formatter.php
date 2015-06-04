@@ -14,9 +14,9 @@ namespace League\Url\Output;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Path;
 use League\Url\Query;
 use League\Url\Url;
+use League\Url\Utilities;
 
 /**
  * A class to manipulate an URL output
@@ -28,6 +28,11 @@ class Formatter
 {
     const HOST_AS_UNICODE = 1;
     const HOST_AS_ASCII   = 2;
+
+    /**
+     * A trait to format a path in a URL string
+     */
+    use Utilities\PathFormatter;
 
     /**
      * host encoding property
@@ -192,7 +197,7 @@ class Formatter
 
         return $url->scheme->getUriComponent()
             .$auth
-            .$url->path->getUriComponent(Path::PATH_AS_URLPART, ! empty($auth))
+            .$this->formatPath($url->path, ! empty($auth))
             .$query
             .$url->fragment->getUriComponent();
     }

@@ -33,6 +33,11 @@ use Psr\Http\Message\UriInterface;
 class Url implements Interfaces\Url
 {
     /**
+     * A trait to format a path in a URL string
+     */
+    use Utilities\PathFormatter;
+
+    /**
      * A Factory Trait to create new URL instances
      */
     use Utilities\UrlFactory;
@@ -103,7 +108,7 @@ class Url implements Interfaces\Url
         }
 
         return $this->scheme->getUriComponent().$auth
-            .$this->path->getUriComponent(Path::PATH_AS_URLPART, $has_auth)
+            .$this->formatPath($this->path, $has_auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

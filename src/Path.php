@@ -199,7 +199,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      */
     public function getDirname()
     {
-        return str_replace("\0", "\\", dirname(str_replace("\\", "\0", $this->__toString())));
+        return str_replace("\0", "\\", pathinfo(str_replace("\\", "\0", $this), PATHINFO_DIRNAME));
     }
 
     /**

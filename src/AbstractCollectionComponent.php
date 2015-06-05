@@ -52,18 +52,6 @@ abstract class AbstractCollectionComponent
     /**
      * {@inheritdoc}
      */
-    public function modify($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isAbsolute()
     {
         return $this->is_absolute == self::IS_ABSOLUTE;

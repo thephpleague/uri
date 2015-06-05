@@ -78,16 +78,4 @@ class Component implements Interfaces\Component
     {
         return $this->__toString();
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function modify($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
 }

@@ -14,6 +14,7 @@ namespace League\Url\Utilities;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
+use ReflectionClass;
 
 /**
  * A trait with common methods for Component Value Object
@@ -40,16 +41,6 @@ trait ComponentTrait
     protected static $characters_set_encoded = [
         "%21", "%24", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%3B", "%3D", "%3A",
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public abstract function getUriComponent();
-
-    /**
-     * {@inheritdoc}
-     */
-    public abstract function __toString();
 
     /**
      * validate a string
@@ -82,6 +73,11 @@ trait ComponentTrait
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public abstract function getUriComponent();
+
+    /**
      * Encoding string according to RFC3986
      *
      * @param  string $value
@@ -101,5 +97,22 @@ trait ComponentTrait
         $str = $this->__toString();
 
         return empty($str);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public abstract function __toString();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function modify($value)
+    {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
     }
 }

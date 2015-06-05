@@ -45,7 +45,7 @@ trait ComponentTrait
     /**
      * validate a string
      *
-     * @param  mixed $str
+     * @param string|null $str
      *
      * @throws \InvalidArgumentException if the submitted data can not be converted to string
      *
@@ -113,6 +113,6 @@ trait ComponentTrait
             return $this;
         }
 
-        return new static($value);
+        return (new ReflectionClass(get_called_class()))->newInstance($value);
     }
 }

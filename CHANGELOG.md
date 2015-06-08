@@ -2,6 +2,12 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## 4.0.0-beta-3 - XXXX-XX-XX
+
+## Fixed
+
+- Invalid Punycode should still be allowed and not produce any error [issue #65](https://github.com/thephpleague/url/issues/65)
+
 ## 4.0.0-beta-2 - 2015-06-05
 
 ## Fixed
@@ -75,7 +81,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Fixed
 
-- Bug fix URL parsing [issue #65](https://github.com/thephpleague/url/issues/58)
+- Bug fix URL parsing [issue #65](https://github.com/thephpleague/url/issues/65)
 
 ## 3.3.1 - 2015-03-26
 

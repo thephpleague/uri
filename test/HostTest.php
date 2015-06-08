@@ -40,6 +40,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
             'partial numeric' => ['23.42c.two', false, false, false, '23.42c.two'],
             'all numeric' => ['98.3.2', false, false, false, '98.3.2'],
+            'invalid punycode' => ['xn--fsqu00a.xn--g6w131251d', false, false, false, 'xn--fsqu00a.xn--g6w131251d']
         ];
     }
 

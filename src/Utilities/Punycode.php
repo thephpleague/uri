@@ -54,25 +54,20 @@ trait Punycode
     }
 
     /**
-     * Encode a part of a domain name, such as tld, to its Punycode version
+     * Encode a hostname label to its Punycode version
      *
-     * @param string $input Part of a domain name
+     * @param string $input hostname label
      *
-     * @return string Punycode representation of a domain part
+     * @return string hostname label punycode representation
      */
-    protected function encodeLabel($input)
+    public static function encodeLabel($input)
     {
-        $output     = '';
-        $codePoints = $this->codePoints($input);
-        foreach ($codePoints['basic'] as $code) {
-            $output .= $this->codePointToChar($code);
+        $codePoints = static::codePoints($input);
+        if (empty($codePoints['nonBasic'])) {
+            return $input;
         }
 
-        if ($input === $output) {
-            return $output;
-        }
-
-        return static::PREFIX.$this->encodeString($codePoints, $input, $output);
+        return static::encodeString($codePoints, $input);
     }
 
     /**
@@ -80,11 +75,10 @@ trait Punycode
      *
      * @param  array  $codePoints input code points
      * @param  string $input      input string
-     * @param  string $output     output string including only basic code points
      *
      * @return string
      */
-    protected function encodeString(array $codePoints, $input, $output)
+    protected static function encodeString(array $codePoints, $input)
     {
         static::initTable();
         $n      = static::INITIAL_N;
@@ -94,6 +88,7 @@ trait Punycode
         $b      = $h;
         $i      = 0;
         $length = mb_strlen($input, 'UTF-8');
+        $output = implode('', array_map([get_called_class(), 'codePointToChar'], $codePoints['basic']));
         if ($b > 0) {
             $output .= static::DELIMITER;
         }
@@ -109,7 +104,7 @@ trait Punycode
                 if ($c === $n) {
                     $q = $delta;
                     for ($k = static::BASE;; $k += static::BASE) {
-                        $t = $this->calculateThreshold($k, $bias);
+                        $t = static::calculateThreshold($k, $bias);
                         if ($q < $t) {
                             break;
                         }
@@ -119,7 +114,7 @@ trait Punycode
                     }
 
                     $output .= static::$encodeTable[$q];
-                    $bias    = $this->adapt($delta, $h + 1, ($h === $b));
+                    $bias    = static::adapt($delta, $h + 1, ($h === $b));
                     $delta   = 0;
                     $h++;
                 }
@@ -128,19 +123,39 @@ trait Punycode
             $n++;
         }
 
-        return $output;
+        return static::PREFIX.$output;
     }
 
+    /**
+     * Is a submitted label a valid punycoded label
+     *
+     * @param  string  $input
+     *
+     * @return boolean  return true if a valid label is submitted
+     */
+    public static function decodeLabel($input)
+    {
+        $decoded = static::decodeString($input);
+        if (static::encodeLabel($decoded) == $input) {
+            return $decoded;
+        }
+
+        return $input;
+    }
 
     /**
-     * Decode a part of domain name, such as tld
+     * Decode a punycode encoded hostname label
      *
-     * @param string $input Part of a domain name
+     * @param string $input the punycode encoded label
      *
-     * @return string Unicode domain part
+     * @return string Unicode hostname
      */
-    protected function decodeLabel($input)
+    protected static function decodeString($input)
     {
+        if (strpos($input, static::PREFIX) !== 0) {
+            return $input;
+        }
+        $input  = substr($input, strlen(static::PREFIX));
         $output = '';
         $pos    = strrpos($input, static::DELIMITER);
         if ($pos !== false) {
@@ -157,18 +172,18 @@ trait Punycode
             for ($oldi = $i, $w = 1, $k = static::BASE;; $k += static::BASE) {
                 $digit = static::$decodeTable[$input[$pos++]];
                 $i     = $i + ($digit * $w);
-                $t     = $this->calculateThreshold($k, $bias);
+                $t     = static::calculateThreshold($k, $bias);
                 if ($digit < $t) {
                     break;
                 }
                 $w = $w * (static::BASE - $t);
             }
 
-            $bias = $this->adapt($i - $oldi, ++$outputLength, ($oldi === 0));
+            $bias = static::adapt($i - $oldi, ++$outputLength, ($oldi === 0));
             $n    = $n + (int) ($i / $outputLength);
             $i    = $i % ($outputLength);
             $output = mb_substr($output, 0, $i, 'UTF-8')
-                .$this->codePointToChar($n)
+                .static::codePointToChar($n)
                 .mb_substr($output, $i, $outputLength - 1, 'UTF-8');
             $i++;
         }
@@ -181,9 +196,10 @@ trait Punycode
      *
      * @param int $k
      * @param int $bias
+     *
      * @return int
      */
-    protected function calculateThreshold($k, $bias)
+    protected static function calculateThreshold($k, $bias)
     {
         if ($k <= $bias + static::TMIN) {
             return static::TMIN;
@@ -199,12 +215,13 @@ trait Punycode
     /**
      * Bias adaptation
      *
-     * @param int $delta
-     * @param int $numPoints
+     * @param int     $delta
+     * @param int     $numPoints
      * @param boolean $firstTime
+     *
      * @return int
      */
-    protected function adapt($delta, $numPoints, $firstTime)
+    protected static function adapt($delta, $numPoints, $firstTime)
     {
         $offset = 0;
         $delta  = $firstTime ? floor($delta / static::DAMP) : $delta >> 1;
@@ -222,12 +239,16 @@ trait Punycode
      * List code points for a given input
      *
      * @param string $input
+     *
      * @return array Multi-dimension array with basic, non-basic and aggregated code points
      */
-    protected function codePoints($input)
+    protected static function codePoints($input)
     {
         $codePoints = ['all' => [], 'basic' => [], 'nonBasic' => []];
-        $codePoints['all'] = array_map([$this, 'charToCodePoint'], preg_split("//u", $input, -1, PREG_SPLIT_NO_EMPTY));
+        $codePoints['all'] = array_map(
+            [get_called_class(), 'charToCodePoint'],
+            preg_split("//u", $input, -1, PREG_SPLIT_NO_EMPTY)
+        );
 
         foreach ($codePoints['all'] as $code) {
             $codePoints[($code < 128) ? 'basic' : 'nonBasic'][] = $code;
@@ -246,7 +267,7 @@ trait Punycode
      *
      * @return int
      */
-    protected function charToCodePoint($char)
+    protected static function charToCodePoint($char)
     {
         $code = ord($char[0]);
         if ($code < 128) {
@@ -272,7 +293,7 @@ trait Punycode
      *
      * @return string
      */
-    protected function codePointToChar($code)
+    protected static function codePointToChar($code)
     {
         if ($code <= 0x7F) {
             return chr($code);

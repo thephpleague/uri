@@ -133,7 +133,6 @@ trait HostValidator
     protected function validateStringHost($str)
     {
         $str = $this->setIsAbsolute($str);
-
         $labels = array_map(function ($value) {
             $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
 
@@ -143,10 +142,7 @@ trait HostValidator
         $this->assertValidHost($labels);
 
         return array_map(function ($label) {
-            if (strpos($label, static::PREFIX) !== 0) {
-                return $label;
-            }
-            return $this->decodeLabel(substr($label, strlen(static::PREFIX)));
+            return $this->decodeLabel($label);
         }, $labels);
     }
 

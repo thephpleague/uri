@@ -4,16 +4,18 @@ All Notable changes to `League\Url` will be documented in this file
 
 ## 4.0.0-beta-3 - XXXX-XX-XX
 
+### Added
+
+- `isEmpty` method to `League\Url\Interfaces\Url`
+
 ## Fixed
 
-- Invalid Punycode should still be allowed and not produce any error [issue #65](https://github.com/thephpleague/url/issues/65)
+- Invalid Punycode should still be allowed and not produce any error [issue #73](https://github.com/thephpleague/url/issues/73)
 
 ## 4.0.0-beta-2 - 2015-06-05
 
 ## Fixed
 - remove useless optional argument from `Path::getUriComponent`
-
-### Added
 
 ## 4.0.0-beta-1 - 2015-06-03
 

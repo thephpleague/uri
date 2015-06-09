@@ -94,15 +94,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testComparingWithUriInterfaceObject()
-    {
-        $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
-        $url = Url::createFromUrl('http://xn--gwd-hna98db.pl/toto/path');
-
-        $this->assertTrue($url->sameValueAs($mock));
-    }
-
     /**
      * @param $url
      * @param $port
@@ -191,44 +182,62 @@ class UrlTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testEmptyConstructor()
+    /**
+     * @param $url
+     * @param $expected
+     * @dataProvider isEmptyProvider
+     */
+    public function testIsEmpty($url, $expected)
     {
-        $url = new Url(
-            new Scheme(),
-            new UserInfo(),
-            new Host(),
-            new Port(),
-            new Path(),
-            new Query(),
-            new Fragment()
-        );
-
-        $this->assertEmpty($url->__toString());
+        $this->assertSame($expected, $url->isEmpty());
     }
 
-    public function testSameValueAs()
+    public function isEmptyProvider()
     {
-        $url1 = new Url(
-            new Scheme(),
-            new UserInfo(),
-            new Host('example.com'),
-            new Port(),
-            new Path(),
-            new Query(),
-            new Fragment()
-        );
+        return [
+            'normal URL' => [Url::createFromUrl('http://a/b/c'), false],
+            'incomplete authority' => [new Url(
+                new Scheme(),
+                new UserInfo('foo', 'bar'),
+                new Host(),
+                new Port(80),
+                new Path(),
+                new Query(),
+                new Fragment()
+            ), true],
+            'empty URL components' => [new Url(
+                new Scheme(),
+                new UserInfo(),
+                new Host(),
+                new Port(),
+                new Path(),
+                new Query(),
+                new Fragment()
+            ), true],
+        ];
+    }
 
-        $url2 = new Url(
-            new Scheme(),
-            new UserInfo(),
-            new Host('ExAmPLe.cOm'),
-            new Port(),
-            new Path(),
-            new Query(),
-            new Fragment()
-        );
-
+    /**
+     * @param  $url1
+     * @param  $url2
+     * @dataProvider sameValueAsProvider
+     */
+    public function testSameValueAs($url1, $url2)
+    {
         $this->assertTrue($url1->sameValueAs($url2));
+    }
+
+    public function sameValueAsProvider()
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
+        $url = Url::createFromUrl('http://xn--gwd-hna98db.pl/toto/path');
+
+        return [
+            [Url::createFromUrl('//example.com'), Url::createFromUrl('//ExamPle.Com')],
+            [Url::createFromUrl('http://مثال.إختبار'), Url::createFromUrl('http://xn--mgbh0fb.xn--kgbechtv')],
+            [$url, $mock],
+        ];
     }
 
     /**

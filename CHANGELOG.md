@@ -2,12 +2,13 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
-## 4.0.0-beta-3 - XXXX-XX-XX
+## 4.0.0-beta-3 - 2015-06-09
 
 ### Added
 
 - `isEmpty` method to `League\Url\Interfaces\Url` to tell whether a URL is empty or not
-- `isSupported` static method to `League\Url\Scheme` to tell wether a specified scheme is supported by the library
+- `isSupported` static method to `League\Url\Scheme` to tell whether a specified scheme is supported by the library
+- Improve decoding invalid punycode host labels
 
 ## Fixed
 

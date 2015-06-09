@@ -132,12 +132,10 @@ trait HostValidator
      */
     protected function validateStringHost($str)
     {
-        $str = $this->setIsAbsolute($str);
+        $str = $this->lower($this->setIsAbsolute($str));
         $labels = array_map(function ($value) {
-            $value = filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]);
-
-            return $this->encodeLabel(trim($value));
-        }, explode(static::$delimiter, $this->lower($str)));
+            return $this->encodeLabel($value);
+        }, explode(static::$delimiter, $str));
 
         $this->assertValidHost($labels);
 

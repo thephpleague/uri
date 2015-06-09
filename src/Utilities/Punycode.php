@@ -12,6 +12,8 @@
  */
 namespace League\Url\Utilities;
 
+use InvalidArgumentException;
+
 /**
  * Punycode implementation as described in RFC 3492
  *
@@ -49,8 +51,8 @@ trait Punycode
         'g' =>  6, 'h' =>  7, 'i' =>  8, 'j' =>  9, 'k' => 10, 'l' => 11,
         'm' => 12, 'n' => 13, 'o' => 14, 'p' => 15, 'q' => 16, 'r' => 17,
         's' => 18, 't' => 19, 'u' => 20, 'v' => 21, 'w' => 22, 'x' => 23,
-        'y' => 24, 'z' => 25, 0   => 26, 1   => 27, 2   => 28, 3   => 29,
-        4   => 30, 5   => 31, 6   => 32, 7   => 33, 8   => 34, 9   => 35,
+        'y' => 24, 'z' => 25,   0 => 26,   1 => 27,   2 => 28,   3 => 29,
+          4 => 30,   5 => 31,   6 => 32,   7 => 33,   8 => 34,   9 => 35,
     ];
 
     /**
@@ -138,18 +140,17 @@ trait Punycode
         $b      = $h;
         $i      = 0;
         $length = mb_strlen($input, 'UTF-8');
-        $output = implode('', array_map([get_called_class(), 'codePointToChar'], $codePoints['basic']));
+        $output = array_map([get_called_class(), 'codePointToChar'], $codePoints['basic']);
         if ($b > 0) {
-            $output .= static::DELIMITER;
+            $output[] = static::DELIMITER;
         }
-
         while ($h < $length) {
             $m     = $codePoints['nonBasic'][$i++];
             $delta = $delta + ($m - $n) * ($h + 1);
             $n     = $m;
             foreach ($codePoints['all'] as $c) {
                 if ($c < $n || $c < static::INITIAL_N) {
-                    $delta++;
+                    ++$delta;
                 }
                 if ($c === $n) {
                     $q = $delta;
@@ -158,21 +159,21 @@ trait Punycode
                         if ($q < $t) {
                             break;
                         }
-                        $code    = $t + (($q - $t) % (static::BASE - $t));
-                        $output .= static::$encodeTable[$code];
-                        $q       = ($q - $t) / (static::BASE - $t);
+                        $code     = $t + (($q - $t) % (static::BASE - $t));
+                        $output[] = static::$encodeTable[$code];
+                        $q        = ($q - $t) / (static::BASE - $t);
                     }
-                    $output .= static::$encodeTable[$q];
-                    $bias    = static::adapt($delta, $h + 1, ($h === $b));
-                    $delta   = 0;
+                    $output[] = static::$encodeTable[$q];
+                    $bias     = static::adapt($delta, $h + 1, $h === $b);
+                    $delta    = 0;
                     $h++;
                 }
             }
-            $delta++;
-            $n++;
+            ++$delta;
+            ++$n;
         }
 
-        return static::PREFIX.$output;
+        return static::PREFIX.implode('', $output);
     }
 
     /**
@@ -245,20 +246,24 @@ trait Punycode
     }
 
     /**
-     * Is a submitted label a valid punycoded label
+     * Return a punycoded host label into its unicode representation
      *
      * @param  string  $input
      *
-     * @return boolean  return true if a valid label is submitted
+     * @return string
      */
     public static function decodeLabel($input)
     {
-        $decoded = static::decodeString($input);
-        if (static::encodeLabel($decoded) == $input) {
-            return $decoded;
+        if (strpos($input, static::PREFIX) !== 0) {
+            return $input;
         }
 
-        return $input;
+        $nonBasic = static::codePoints($input)["nonBasic"];
+        if (! empty($nonBasic) || ! ($decoded = static::decodeString(substr($input, strlen(static::PREFIX))))) {
+            return $input;
+        }
+
+        return $decoded;
     }
 
     /**
@@ -266,44 +271,45 @@ trait Punycode
      *
      * @param string $input the punycode encoded label
      *
-     * @return string Unicode hostname
+     * @return string|false Unicode hostname
      */
     protected static function decodeString($input)
     {
-        if (strpos($input, static::PREFIX) !== 0) {
-            return $input;
-        }
-        $input  = substr($input, strlen(static::PREFIX));
-        $output = '';
+        $output = [];
         $pos    = strrpos($input, static::DELIMITER);
         if ($pos !== false) {
-            $output = substr($input, 0, $pos++);
+            $output = str_split(substr($input, 0, $pos++));
         }
-        $outputLength = strlen($output);
+        $pos = (int) $pos;
+        $outputLength = count($output);
         $inputLength  = strlen($input);
         $n    = static::INITIAL_N;
         $i    = 0;
         $bias = static::INITIAL_BIAS;
-        $pos  = (int) $pos;
         while ($pos < $inputLength) {
             for ($oldi = $i, $w = 1, $k = static::BASE;; $k += static::BASE) {
+                if ($pos >= $inputLength) {
+                    return false;
+                }
                 $digit = static::$decodeTable[$input[$pos++]];
-                $i     = $i + ($digit * $w);
+                $i    += $digit * $w;
                 $t     = static::calculateThreshold($k, $bias);
                 if ($digit < $t) {
                     break;
                 }
-                $w = $w * (static::BASE - $t);
+                $w    *= (static::BASE - $t);
             }
-            $bias = static::adapt($i - $oldi, ++$outputLength, ($oldi === 0));
-            $n    = $n + (int) ($i / $outputLength);
-            $i    = $i % ($outputLength);
-            $output = mb_substr($output, 0, $i, 'UTF-8')
-                .static::codePointToChar($n)
-                .mb_substr($output, $i, $outputLength - 1, 'UTF-8');
+            $bias = static::adapt($i - $oldi, ++$outputLength, $oldi === 0);
+            $n    = $n + floor($i / $outputLength);
+            $i   %= $outputLength;
+            $code = static::codePointToChar($n);
+            if (! mb_check_encoding($code, 'UTF-8')) {
+                return false;
+            }
+            $output = array_merge(array_slice($output, 0, $i), [$code], array_slice($output, $i));
             $i++;
         }
 
-        return $output;
+        return implode('', $output);
     }
 }

@@ -57,18 +57,20 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function invalidHostProvider()
     {
         return [
-            ['.example.com'],
-            ['host.com-'],
-            ['.......'],
-            ['tot.    .coucou.com'],
-            ['re view'],
-            ['_bad.host.com'],
-            [implode('', array_fill(0, 23, 'banana')).'secure.example.com'],
-            [implode('.', array_fill(0, 128, 'a'))],
-            [implode('.', array_fill(0, 23, 'banana-slip'))],
-            ['[127.0.0.1]'],
-            ['toto.127.0.0.1'],
-            ['[[::1]]'],
+            'dot in front' => ['.example.com'],
+            'hyphen suffix' => ['host.com-'],
+            'multiple dot' => ['.......'],
+            'one dot' => ['.'],
+            'empty label' => ['tot.    .coucou.com'],
+            'space in the label' => ['re view'],
+            'underscore in label' => ['_bad.host.com'],
+            'label too long' => [implode('', array_fill(0, 10, 'banana')).'secure.example.com'],
+            'too many labels' => [implode('.', array_fill(0, 128, 'a'))],
+            'Invalid IPv4 format' => ['[127.0.0.1]'],
+            'mix IP format with host label' => ['toto.127.0.0.1'],
+            'Invalid IPv6 format' => ['[[::1]]'],
+            'space character in starting label' => ['example. com'],
+            'invalid character in host label' => ["examp\0le.com"]
         ];
     }
 
@@ -128,27 +130,29 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['𐌀𐌖𐌋𐌄𐌑𐌉·𐌌𐌄𐌕𐌄𐌋𐌉𐌑.gr', 'xn--uba5533kmaba1adkfh6ch2cg.gr'],
             ['guangdong.广东', 'guangdong.xn--xhq521b'],
             ['gwóźdź.pl', 'xn--gwd-hna98db.pl'],
+            ['[::1]', '[::1]'],
+            ['127.0.0.1', '127.0.0.1'],
+            ['例子.xn--1', 'xn--fsqu00a.xn--1'],
         ];
     }
 
     /**
-     * Test Punycode support with IP address
-     *
-     * @param $unicode Unicode Hostname
-     * @param $ascii   Ascii Hostname
-     * @dataProvider hostnamesIpProvider
+     * @param $host
+     * @param $expected
+     * @dataProvider decodeLabelProvider
      */
-    public function testUnicodeWithIP($ip, $res)
+    public function testDecodeLabel($host, $expected)
     {
-        $host = new Host($ip);
-        $this->assertSame($host->toUnicode(), $host->__toString());
+        $this->assertSame($expected, Host::decodeLabel($host));
     }
 
-    public function hostnamesIpProvider()
+    public function decodeLabelProvider()
     {
         return [
-            ['::1', '[::1]'],
-            ['127.0.0.1', '127.0.0.1'],
+            ["xn--1", "xn--1"],
+            ["xn--bébé", "xn--bébé"],
+            ["23", "23"],
+            ["xn--\0bébé", "xn--\0bébé"],
         ];
     }
 
@@ -172,6 +176,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         return [
             'ip' => ['127.0.0.1', 1, ['127.0.0.1']],
             'string' => ['secure.example.com', 3, ['secure', 'example', 'com']],
+            'numeric' => ['92.56.8', 3, ['92', '56', '8']],
         ];
     }
 
@@ -252,9 +257,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function sameValueAsProvider()
     {
         return [
-            ['master.example.com', 'MaStEr.ExAMple.CoM', true],
-            ['::1', '::1', true],
-            ['toto.com', 'barbaz.be', false],
+            'string normalized' => ['master.example.com', 'MaStEr.ExAMple.CoM', true],
+            'ip' => ['::1', '::1', true],
+            'different string' => ['toto.com', 'barbaz.be', false],
         ];
     }
 
@@ -272,9 +277,9 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            ['secure.example.com', [0], 'example.com'],
-            ['127.0.0.1', [0, 1] , ''],
-            ['127.0.0.1', [0], ''],
+            'remove one string label' => ['secure.example.com', [0], 'example.com'],
+            'remove IP based label' => ['127.0.0.1', [0], ''],
+            'remove silent excessive label index' => ['127.0.0.1', [0, 1] , ''],
         ];
     }
 
@@ -294,12 +299,12 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function validPrepend()
     {
         return [
-            ['secure.example.com', new Host('master'), 'master.secure.example.com'],
-            ['secure.example.com', 'master', 'master.secure.example.com'],
-            ['secure.example.com', new Host('master.'), 'master.secure.example.com'],
-            ['secure.example.com', 'master.', 'master.secure.example.com'],
-            ['secure.example.com.', new Host('master'), 'master.secure.example.com.'],
-            ['secure.example.com.', 'master', 'master.secure.example.com.'],
+            'prepend host object' => ['secure.example.com', new Host('master'), 'master.secure.example.com'],
+            'prepend string' => ['secure.example.com', 'master', 'master.secure.example.com'],
+            'prepend FQDN host object' => ['secure.example.com', new Host('master.'), 'master.secure.example.com'],
+            'prepend FQDN host string' => ['secure.example.com', 'master.', 'master.secure.example.com'],
+            'prepend to FQDN host a host object' => ['secure.example.com.', new Host('master'), 'master.secure.example.com.'],
+            'prepend to FQDN host a host string' => ['secure.example.com.', 'master', 'master.secure.example.com.'],
         ];
     }
 

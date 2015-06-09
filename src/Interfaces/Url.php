@@ -27,6 +27,14 @@ use Psr\Http\Message\UriInterface;
  */
 interface Url extends UriInterface
 {
+
+    /**
+     * Returns true if the URL is considered empty
+     *
+     * @return bool
+     */
+    public function isEmpty();
+
     /**
      * Return an array representation of the Url
      *

@@ -116,6 +116,16 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function isEmpty()
+    {
+        $str = $this->__toString();
+
+        return empty($str);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthority()
     {
         if ($this->host->isEmpty()) {

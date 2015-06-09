@@ -31,16 +31,30 @@ class Scheme extends Component implements Interfaces\Scheme
      */
     protected function validate($data)
     {
-        if (! preg_match('/^[a-z][-a-z0-9+.]+$/i', $data)) {
-            throw new InvalidArgumentException('The submitted data is invalid');
-        }
-        $res  = explode('+', $data);
-        $test = strtolower(array_pop($res));
-        if (! empty($test) && ! array_key_exists($test, static::$standardPorts)) {
+        if (! static::isSupported($data)) {
             throw new InvalidArgumentException('Unsupported scheme');
         }
 
         return strtolower($data);
+    }
+
+    /**
+     * Tell wether the submitted scheme is implemented in the package
+     *
+     * @param  string  $scheme
+     *
+     * @throws InvalidArgumentException If the submitted data is not implemented
+     *
+     * @return boolean
+     */
+    public static function isSupported($scheme)
+    {
+        if (! preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+            throw new InvalidArgumentException('The submitted data is invalid');
+        }
+        $res = explode('+', $scheme);
+        $real_scheme = strtolower(array_pop($res));
+        return empty($real_scheme) || isset(static::$standardPorts[$real_scheme]);
     }
 
     /**

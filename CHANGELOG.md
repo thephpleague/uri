@@ -6,7 +6,8 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- `isEmpty` method to `League\Url\Interfaces\Url`
+- `isEmpty` method to `League\Url\Interfaces\Url` to tell whether a URL is empty or not
+- `isSupported` static method to `League\Url\Scheme` to tell wether a specified scheme is supported by the library
 
 ## Fixed
 

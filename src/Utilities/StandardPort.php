@@ -29,16 +29,15 @@ trait StandardPort
      * @var array
      */
     protected static $standardPorts = [
-        'ftp'   => [21],
-        'ftps'  => [989, 990],
-        'https' => [443],
-        'http'  => [80],
-        'git'   => [22],
-        'rsync' => [22, 873],
-        'ssh'   => [22],
-        'svn'   => [22],
-        'ws'    => [80],
-        'wss'   => [443],
+        'ftp'    => [21],
+        'ftps'   => [989, 990],
+        'https'  => [443],
+        'http'   => [80],
+        'rsync'  => [22, 873],
+        'ssh'    => [22],
+        'ws'     => [80],
+        'wss'    => [443],
+        'gopher' => [70],
     ];
 
     /**
@@ -48,12 +47,13 @@ trait StandardPort
      */
     protected static $standardSchemes = [
         21  => ['ftp'],
-        22  => ['git', 'rsync', 'ssh', 'svn'],
+        22  => ['rsync', 'ssh'],
         80  => ['http', 'ws'],
         443 => ['https', 'wss'],
         873 => ['rsync'],
         989 => ['ftps'],
         990 => ['ftps'],
+        70  => ['gopher'],
     ];
 
     /**

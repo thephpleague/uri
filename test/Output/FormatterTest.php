@@ -57,7 +57,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatComponent()
     {
-        $scheme = new Url\Scheme('git+ssh');
+        $scheme = new Url\Scheme('ftp');
         $this->assertSame($scheme->__toString(), (new Formatter())->format($scheme));
     }
 

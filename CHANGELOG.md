@@ -2,6 +2,20 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## 4.0.0-beta-4 - 2015-06-XX
+
+### Added
+
+- A system to manage new Scheme registration using static methods:
+    - `Scheme::register`
+    - `Scheme::unRegister`
+    - `Scheme::isRegistered`
+
+### Remove
+
+- `Scheme::isSupported` replaced by `Scheme::isRegistered`
+- Remove `gopher` and `ssh` scheme. If needed you can use the Scheme registration system.
+
 ## 4.0.0-beta-3 - 2015-06-09
 
 ### Added

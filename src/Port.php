@@ -24,7 +24,7 @@ use League\Url\Utilities;
  */
 class Port extends Component implements Interfaces\Port
 {
-    use Utilities\StandardPort;
+    use Utilities\RegisteredSchemes;
 
     /**
      * New Instance
@@ -78,8 +78,12 @@ class Port extends Component implements Interfaces\Port
      */
     public function getStandardSchemes()
     {
+        $arr = array_filter(static::$registeredSchemes, function ($value) {
+            return in_array($this->data, $value);
+        });
+
         return array_map(function ($value) {
             return new Scheme($value);
-        }, $this->getAssociatedData(static::$standardSchemes, $this->data));
+        }, array_keys($arr));
     }
 }

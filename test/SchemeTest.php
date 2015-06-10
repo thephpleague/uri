@@ -7,7 +7,7 @@ use League\Url\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group components
+ * @group scheme
  */
 class SchemeTest extends PHPUnit_Framework_TestCase
 {
@@ -41,16 +41,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['', ''],
             ['ftp', 'ftp'],
             ['HtTps', 'https'],
-            ['sSh', 'ssh'],
-        ];
-    }
-
-    public function invalidSchemeProvider()
-    {
-        return [
-            ['in,valid'],
-            ['123'],
-            ['yes']
+            ['wSs', 'wss'],
         ];
     }
 
@@ -62,6 +53,16 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     public function testInvalidScheme($scheme)
     {
         new Scheme($scheme);
+    }
+
+    public function invalidSchemeProvider()
+    {
+        return [
+            ['in,valid'],
+            ['123'],
+            ['yes'],
+            ['toto+']
+        ];
     }
 
     public function testSameValueAs()
@@ -109,7 +110,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['http', [new Port(80)]],
             ['', []],
             ['ftps', [new Port(989), new Port(990)]],
-            ['svn+ssh', [new Port(22)]],
         ];
     }
 
@@ -133,6 +133,66 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['ftp', 80, false],
             ['ws', 80, true],
             ['', 80, false],
+        ];
+    }
+
+    public function testRegister()
+    {
+        Scheme::register('yolo', 2020);
+        $scheme = new Scheme('yolo');
+        $this->assertTrue($scheme->hasStandardPort(2020));
+    }
+
+    public function testRegisterAddStandardPorts()
+    {
+        Scheme::register('yolo', 8080);
+        Scheme::register('yolo', 2020);
+        $scheme = new Scheme('yolo');
+        $this->assertTrue($scheme->hasStandardPort(8080));
+        $this->assertTrue($scheme->hasStandardPort(2020));
+    }
+
+    public function testRegisterSchemeWithoutHost()
+    {
+        Scheme::register('toto');
+        $scheme = new Scheme('toto');
+        $this->assertSame([], $scheme->getStandardPorts());
+    }
+
+    public function testUnregisterCustomScheme()
+    {
+        Scheme::register('toto');
+        $this->assertTrue(Scheme::isRegistered('toto'));
+        Scheme::unRegister('toto');
+        $this->assertFalse(Scheme::isRegistered('toto'));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnregisterDefaultSchemeFailed()
+    {
+        Scheme::unRegister('http');
+    }
+
+    /**
+     * @param $scheme
+     * @param $port
+     *
+     * @dataProvider newregisterProvider
+     * @expectedException \InvalidArgumentException
+     */
+    public function testregisterFailed($scheme, $ports)
+    {
+        Scheme::register($scheme, $ports);
+    }
+
+    public function newregisterProvider()
+    {
+        return [
+            'invalid host' => ['yóló', null],
+            'invalid ports' => ['yolo', 'coucou'],
+            'defined scheme' => ['http', 81]
         ];
     }
 }

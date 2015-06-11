@@ -288,6 +288,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         return [
           'baseurl' =>                 [self::BASE_URL, "",               self::BASE_URL],
           'scheme' =>                  [self::BASE_URL, "ftp://d/e/f",    "ftp://d/e/f"],
+          'scheme' =>                  [self::BASE_URL, Url::createFromUrl("ftp://d/e/f"),    "ftp://d/e/f"],
           'path 1' =>                  [self::BASE_URL, "g",              "http://a/b/c/g"],
           'path 2' =>                  [self::BASE_URL, "./g",            "http://a/b/c/g"],
           'path 3' =>                  [self::BASE_URL, "g/",             "http://a/b/c/g/"],

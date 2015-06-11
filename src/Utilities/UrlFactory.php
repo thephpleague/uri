@@ -14,7 +14,8 @@ namespace League\Url\Utilities;
 
 use InvalidArgumentException;
 use League\Url;
-use ReflectionClass;
+use League\Url\Interfaces;
+use League\Url\Utilities;
 
 /**
  * A Trait to help parse an URL
@@ -33,54 +34,58 @@ trait UrlFactory
     /**
      * Create a new League\Url\Url object from the environment
      *
-     * @param array $server the environment server typically $_SERVER
+     * @param array                          $server the environment server typically $_SERVER
+     * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
      * @return Url\Url
      */
-    public static function createFromServer(array $server)
+    public static function createFromServer(array $server, Interfaces\SchemeRegistry $registry = null)
     {
         return static::createFromUrl(
             static::fetchServerScheme($server).'//'
             .static::fetchServerUserInfo($server)
             .static::fetchServerHost($server)
             .static::fetchServerPort($server)
-            .static::fetchServerRequestUri($server)
+            .static::fetchServerRequestUri($server),
+            $registry
         );
     }
 
     /**
      * Create a new League\Url\Url instance from a string
      *
-     * @param string $url
+     * @param string                         $url
+     * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
      * @return Url\Url
      */
-    public static function createFromUrl($url)
+    public static function createFromUrl($url, Interfaces\SchemeRegistry $registry = null)
     {
-        return static::createFromComponents(static::parse($url));
+        return static::createFromComponents(static::parse($url), $registry);
     }
 
     /**
      * Create a new League\Url\Url instance from an array returned by
      * PHP parse_url function
      *
-     * @param array $components
+     * @param array                          $components
+     * @param Interfaces\SchemeRegistry|null $registry
      *
      * @return Url\Url
      */
-    public static function createFromComponents(array $components)
+    public static function createFromComponents(array $components, Interfaces\SchemeRegistry $registry = null)
     {
         $components = array_merge([
-            "scheme" => null, "user" => null, "pass" => null, "host" => null,
-            "port" => null, "path" => null, "query" => null, "fragment" => null,
+            "scheme" => null, "user" => null, "pass"  => null, "host"     => null,
+            "port"   => null, "path" => null, "query" => null, "fragment" => null,
         ], $components);
 
         return new Url\Url(
-            new Url\Scheme($components["scheme"]),
+            new Url\Scheme($components["scheme"], $registry),
             new Url\UserInfo($components["user"], $components["pass"]),
             new Url\Host($components["host"]),
             new Url\Port($components["port"]),

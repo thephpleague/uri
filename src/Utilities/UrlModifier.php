@@ -210,11 +210,27 @@ trait UrlModifier
     }
 
     /**
+     * Convert to an Url object
+     *
+     * @param  Url|string $url
+     *
+     * @return Url
+     */
+    protected function convertToUrlObject($url)
+    {
+        if ($url instanceof Url\Interfaces\Url) {
+            return $url;
+        }
+
+        return Url\Url::createFromUrl($url, $this->scheme->getSchemeRegistry());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resolve($url)
     {
-        $relative = Url\Url::createFromUrl($url);
+        $relative = $this->convertToUrlObject($url);
         if ($relative->isAbsolute()) {
             return $relative->withoutDotSegments();
         }

@@ -4,6 +4,7 @@ namespace League\Url\Test;
 
 use League\Url\Port;
 use League\Url\Scheme;
+use League\Url\Utilities;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -133,66 +134,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['ftp', 80, false],
             ['ws', 80, true],
             ['', 80, false],
-        ];
-    }
-
-    public function testRegister()
-    {
-        Scheme::register('yolo', 2020);
-        $scheme = new Scheme('yolo');
-        $this->assertTrue($scheme->hasStandardPort(2020));
-    }
-
-    public function testRegisterAddStandardPorts()
-    {
-        Scheme::register('yolo', 8080);
-        Scheme::register('yolo', 2020);
-        $scheme = new Scheme('yolo');
-        $this->assertTrue($scheme->hasStandardPort(8080));
-        $this->assertTrue($scheme->hasStandardPort(2020));
-    }
-
-    public function testRegisterSchemeWithoutHost()
-    {
-        Scheme::register('toto');
-        $scheme = new Scheme('toto');
-        $this->assertSame([], $scheme->getStandardPorts());
-    }
-
-    public function testUnregisterCustomScheme()
-    {
-        Scheme::register('toto');
-        $this->assertTrue(Scheme::isRegistered('toto'));
-        Scheme::unRegister('toto');
-        $this->assertFalse(Scheme::isRegistered('toto'));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testUnregisterDefaultSchemeFailed()
-    {
-        Scheme::unRegister('http');
-    }
-
-    /**
-     * @param $scheme
-     * @param $port
-     *
-     * @dataProvider newregisterProvider
-     * @expectedException \InvalidArgumentException
-     */
-    public function testregisterFailed($scheme, $ports)
-    {
-        Scheme::register($scheme, $ports);
-    }
-
-    public function newregisterProvider()
-    {
-        return [
-            'invalid host' => ['yóló', null],
-            'invalid ports' => ['yolo', 'coucou'],
-            'defined scheme' => ['http', 81]
         ];
     }
 }

@@ -12,12 +12,8 @@
  */
 namespace League\Url\Utilities;
 
-use InvalidArgumentException;
-use League\Url\Port;
-use League\Url\Scheme;
-
 /**
- * Trait to validate Url standard Port
+ * Trait to register Schemes and their correspondant Standard Port
  *
  * @package League.url
  * @since 4.0.0

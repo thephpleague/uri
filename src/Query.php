@@ -121,18 +121,6 @@ class Query implements Interfaces\Query
             return $this->mergeArray($query);
         }
 
-        return $this->mergeQueryString($query);
-    }
-
-    /**
-     * Merge a string to the current object
-     *
-     * @param string $query a string or a stringable object
-     *
-     * @return static
-     */
-    protected function mergeQueryString($query)
-    {
         return $this->mergeArray($this->validate($query));
     }
 

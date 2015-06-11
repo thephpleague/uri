@@ -14,7 +14,6 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Utilities;
 
 /**
  * Value object representing a URL port component.
@@ -24,8 +23,6 @@ use League\Url\Utilities;
  */
 class Port extends Component implements Interfaces\Port
 {
-    use Utilities\RegisteredSchemes;
-
     /**
      * New Instance
      *
@@ -71,19 +68,5 @@ class Port extends Component implements Interfaces\Port
     public function toInt()
     {
         return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStandardSchemes()
-    {
-        $arr = array_filter(static::$registeredSchemes, function ($value) {
-            return in_array($this->data, $value);
-        });
-
-        return array_map(function ($value) {
-            return new Scheme($value);
-        }, array_keys($arr));
     }
 }

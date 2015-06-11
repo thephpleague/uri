@@ -45,6 +45,11 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         (new Formatter())->setQueryEncoding('toto');
     }
 
+    public function testGetRegistryScheme()
+    {
+        $this->assertInstanceOf('\League\Url\Interfaces\SchemeRegistry', (new Formatter())->getSchemeRegistry());
+    }
+
     public function testFormatWithSimpleString()
     {
         $url       = 'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';

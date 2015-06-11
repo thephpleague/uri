@@ -22,103 +22,81 @@ use League\Url\Utilities;
  * @package League.url
  * @since 1.0.0
  */
-class Scheme extends Component implements Interfaces\Scheme
+class Scheme extends Component implements Interfaces\Scheme, Interfaces\SchemeRegistryAccess
 {
-    use Utilities\RegisteredSchemes;
+
+    /**
+     * Scheme registry object
+     *
+     * @var Interfaces\SchemeRegistry
+     */
+    protected $registry;
+
+    /**
+     * new instance
+     *
+     * @param string                         $data the component value
+     * @param Interfaces\SchemeRegistry|null $registry
+     *
+     */
+    public function __construct($data = null, Interfaces\SchemeRegistry $registry = null)
+    {
+        $this->setSchemeRegistry($registry);
+        $data = $this->validateString($data);
+        if (! empty($data)) {
+            $this->data = $this->validate($data);
+        }
+    }
+
+    /**
+     * Set the SchemeRegistry object
+     *
+     * @param Interfaces\SchemeRegistry|null $registry
+     */
+    protected function setSchemeRegistry(Interfaces\SchemeRegistry $registry = null)
+    {
+        if (is_null($registry)) {
+            $this->registry = new Utilities\SchemeRegistry();
+            return;
+        }
+
+        $this->registry = clone $registry;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchemeRegistry()
+    {
+        return clone $this->registry;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function modify($value)
+    {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value, $this->registry);
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function validate($data)
     {
-        if (! static::isRegistered($data)) {
+        $data = strtolower($data);
+        if (! $this->registry->has($data)) {
             throw new InvalidArgumentException(sprintf(
                 "the submitted scheme '%s' is no registered you should use `Scheme::register` first",
                 $data
             ));
         }
 
-        return strtolower($data);
-    }
-
-    /**
-     * Tell wether the submitted scheme is implemented in the package
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the submitted scheme is invalid
-     *
-     * @return boolean
-     */
-    public static function isRegistered($scheme)
-    {
-        return isset(static::$registeredSchemes[static::formatScheme($scheme)]);
-    }
-
-    /**
-     * Validate Scheme syntax according to RFC3986
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the submitted scheme is invalid
-     *
-     * @return string
-     */
-    protected static function formatScheme($scheme)
-    {
-        if (! filter_var($scheme, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/^[a-z][-a-z0-9+.]+$/i']])) {
-            throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
-        }
-
-        return strtolower($scheme);
-    }
-
-    /**
-     * Register a new Scheme or add standard Port to an
-     * already registered Scheme
-     *
-     * @param  string   $scheme
-     * @param  int|null $port
-     *
-     * @throws InvalidArgumentException If the submitted port is invalid
-     */
-    public static function register($scheme, $port = null)
-    {
-        $scheme = static::formatScheme($scheme);
-        static::assertValidScheme($scheme);
-        if (! isset(static::$registeredSchemes[$scheme])) {
-            static::$registeredSchemes[$scheme] = [];
-        }
-        if (empty($port)) {
-            return;
-        }
-        if (! filter_var($port, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]])) {
-            throw new InvalidArgumentException('The submitted port is invalid');
-        };
-        static::$registeredSchemes[$scheme][] = $port;
-        sort(static::$registeredSchemes[$scheme]);
-    }
-
-    /**
-     * Restrict action on default Schemes
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the scheme is part
-     *                                     of the defaults list of registered scheme
-     */
-    protected static function assertValidScheme($scheme)
-    {
-        if (in_array($scheme, ['http', 'https', 'ws', 'wss', 'ftp', 'ftps', 'file'])) {
-            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
-        }
-    }
-
-    public static function unRegister($scheme)
-    {
-        $scheme = static::formatScheme($scheme);
-        static::assertValidScheme($scheme);
-        unset(static::$registeredSchemes[$scheme]);
+        return $data;
     }
 
     /**
@@ -126,15 +104,12 @@ class Scheme extends Component implements Interfaces\Scheme
      */
     public function getStandardPorts()
     {
-        $res  = [];
-        if (isset(static::$registeredSchemes[$this->data])) {
-            $res = static::$registeredSchemes[$this->data];
-        }
-        sort($res);
+        $ports = $this->registry->getStandardPorts($this->data);
+        sort($ports);
 
         return array_map(function ($value) {
             return new Port($value);
-        }, $res);
+        }, $ports);
     }
 
     /**

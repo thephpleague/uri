@@ -159,7 +159,7 @@ class Url implements Interfaces\Url
     public function sameValueAs(UriInterface $url)
     {
         if (! $url instanceof Interfaces\Url) {
-            $url = static::createFromUrl($url);
+            $url = static::createFromUrl($url, $this->scheme->getSchemeRegistry());
         }
 
         return $url->__toString() === $this->__toString();

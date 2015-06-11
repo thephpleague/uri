@@ -49,11 +49,23 @@ class Formatter
     protected $queryEncoding = PHP_QUERY_RFC3986;
 
     /**
+     * The Scheme Registry object
+     *
+     * @var Interfaces\SchemeRegistry
+     */
+    protected $registry;
+
+    /**
      * query separator property
      *
      * @var string
      */
     protected $querySeparator = '&';
+
+    public function __construct(Interfaces\SchemeRegistry $registry = null)
+    {
+        $this->registry = $registry ?: new Utilities\SchemeRegistry();
+    }
 
     /**
      * Host encoding setter
@@ -76,6 +88,26 @@ class Formatter
     public function getHostEncoding()
     {
         return $this->hostEncoding;
+    }
+
+    /**
+     * Return the specified registry
+     *
+     * @return Interfaces\SchemeRegistry
+     */
+    public function setSchemeRegistry(Interfaces\SchemeRegistry $registry)
+    {
+        return $this->registry = $registry;
+    }
+
+    /**
+     * Return the specified registry
+     *
+     * @return Interfaces\SchemeRegistry
+     */
+    public function getSchemeRegistry()
+    {
+        return $this->registry;
     }
 
     /**
@@ -137,7 +169,7 @@ class Formatter
         }
 
         if (! $input instanceof Url) {
-            $input = Url::createFromUrl($input);
+            $input = Url::createFromUrl($input, $this->registry);
         }
 
         return $this->formatUrl($input);

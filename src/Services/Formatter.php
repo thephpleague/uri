@@ -10,7 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace League\Url\Output;
+namespace League\Url\Services;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
@@ -64,7 +64,7 @@ class Formatter
 
     public function __construct(Interfaces\SchemeRegistry $registry = null)
     {
-        $this->registry = $registry ?: new Utilities\SchemeRegistry();
+        $this->registry = $registry ?: new SchemeRegistry();
     }
 
     /**

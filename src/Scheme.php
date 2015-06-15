@@ -14,7 +14,7 @@ namespace League\Url;
 
 use InvalidArgumentException;
 use League\Url\Interfaces;
-use League\Url\Utilities;
+use League\Url\Services;
 
 /**
  * Value object representing a URL scheme component.
@@ -22,9 +22,8 @@ use League\Url\Utilities;
  * @package League.url
  * @since 1.0.0
  */
-class Scheme extends Component implements Interfaces\Scheme, Interfaces\SchemeRegistryAccess
+class Scheme extends Component implements Interfaces\Component, Interfaces\SchemeRegistryAccess
 {
-
     /**
      * Scheme registry object
      *
@@ -56,7 +55,7 @@ class Scheme extends Component implements Interfaces\Scheme, Interfaces\SchemeRe
     protected function setSchemeRegistry(Interfaces\SchemeRegistry $registry = null)
     {
         if (is_null($registry)) {
-            $this->registry = new Utilities\SchemeRegistry();
+            $this->registry = new Services\SchemeRegistry();
             return;
         }
 
@@ -97,39 +96,6 @@ class Scheme extends Component implements Interfaces\Scheme, Interfaces\SchemeRe
         }
 
         return $data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStandardPorts()
-    {
-        $ports = $this->registry->getStandardPorts($this->data);
-        sort($ports);
-
-        return array_map(function ($value) {
-            return new Port($value);
-        }, $ports);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort($port)
-    {
-        if (! $port instanceof Interfaces\Port) {
-            $port = new Port($port);
-        }
-
-        if ($port->isEmpty()) {
-            return true;
-        }
-
-        $res = array_filter($this->getStandardPorts(), function ($value) use ($port) {
-            return $port->sameValueAs($value);
-        });
-
-        return ! empty($res);
     }
 
     /**

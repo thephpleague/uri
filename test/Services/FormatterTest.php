@@ -1,8 +1,9 @@
 <?php
 
-namespace League\Url\Test\Output;
+namespace League\Url\Test\Services;
 
-use League\Url\Output\Formatter;
+use League\Url\Services\Formatter;
+use League\Url\Services\SchemeRegistry;
 use League\Url;
 use PHPUnit_Framework_TestCase;
 
@@ -47,7 +48,15 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testGetRegistryScheme()
     {
-        $this->assertInstanceOf('\League\Url\Interfaces\SchemeRegistry', (new Formatter())->getSchemeRegistry());
+        $formatter = new Formatter();
+        $registry  = new SchemeRegistry();
+        $formatter->setSchemeRegistry($registry);
+        $this->assertInstanceOf('\League\Url\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
+    }
+
+    public function testModifyRegistryScheme()
+    {
+
     }
 
     public function testFormatWithSimpleString()

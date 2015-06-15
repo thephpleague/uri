@@ -22,7 +22,7 @@ use Psr\Http\Message\UriInterface;
  * @package League.url
  * @since 1.0.0
  *
- * @property-read Interfaces\Scheme   $scheme
+ * @property-read Scheme              $scheme
  * @property-read Interfaces\UserInfo $userInfo
  * @property-read Interfaces\Host     $host
  * @property-read Interfaces\Port     $port
@@ -50,7 +50,7 @@ class Url implements Interfaces\Url
     /**
      * Create a new instance of URL
      *
-     * @param Interfaces\Scheme   $scheme
+     * @param Scheme              $scheme
      * @param Interfaces\UserInfo $userInfo
      * @param Interfaces\Host     $host
      * @param Interfaces\Port     $port
@@ -59,7 +59,7 @@ class Url implements Interfaces\Url
      * @param Fragment            $fragment
      */
     public function __construct(
-        Interfaces\Scheme $scheme,
+        Scheme $scheme,
         Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
         Interfaces\Port $port,
@@ -82,9 +82,6 @@ class Url implements Interfaces\Url
      */
     protected function cleanUp()
     {
-        if (! $this->port->isEmpty() && $this->hasStandardPort()) {
-            $this->port = $this->port->modify(null);
-        }
     }
 
     /**
@@ -132,9 +129,14 @@ class Url implements Interfaces\Url
             return '';
         }
 
+        $port = $this->port->getUriComponent();
+        if ($this->hasStandardPort()) {
+            $port = '';
+        }
+
         return $this->userInfo->getUriComponent()
             .$this->host->getUriComponent()
-            .$this->port->getUriComponent();
+            .$port;
     }
 
     /**
@@ -142,7 +144,7 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        return $this->scheme->hasStandardPort($this->port);
+        return $this->scheme->getSchemeRegistry()->isStandardPort($this->scheme->__toString(), $this->port);
     }
 
     /**

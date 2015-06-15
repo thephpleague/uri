@@ -10,14 +10,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace League\Url\Utilities;
+namespace League\Url\Services;
 
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Url\Interfaces;
+use League\Url\Port;
 
 /**
- * A Class to manage Scheme registry
+ * A Class to manage schemes registry
  *
  * @package League.url
  * @since 4.0.0
@@ -107,9 +108,29 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     {
         $scheme = $this->formatScheme($scheme);
         if (! isset($this->data[$scheme])) {
-            return [];
+            throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
-        return $this->data[$scheme];
+
+        return array_map(function ($value) {
+            return new Port($value);
+        }, $this->data[$scheme]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isStandardPort($scheme, $port)
+    {
+        $scheme = $this->formatScheme($scheme);
+        if (! isset($this->data[$scheme])) {
+            throw new InvalidArgumentException(sprintf("Unknown scheme '%s'", $scheme));
+        }
+
+        if (! $port instanceof Interfaces\Port) {
+            $port = new Port($port);
+        }
+
+        return $port->isEmpty() || in_array($port->toInt(), $this->data[$scheme]);
     }
 
     /**
@@ -122,13 +143,11 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
         if (! isset($this->data[$scheme])) {
             $this->data[$scheme] = [];
         }
-        if (empty($port)) {
-            return;
+        if (! $port instanceof Interfaces\Port) {
+            $port = new Port($port);
         }
-        if (! filter_var($port, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]])) {
-            throw new InvalidArgumentException('The submitted port is invalid');
-        };
-        $this->data[$scheme][] = $port;
+
+        $this->data[$scheme][] = $port->toInt();
         sort($this->data[$scheme]);
     }
 

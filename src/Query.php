@@ -49,6 +49,8 @@ class Query implements Interfaces\Query
      *
      * @param string $str
      *
+     * @throws InvalidArgumentException If reserved characters are used
+     *
      * @return array
      */
     protected function validate($str)
@@ -57,7 +59,12 @@ class Query implements Interfaces\Query
             return [];
         }
 
-        return static::parse($this->validateString($str), '&', false);
+        $str = $this->validateString($str);
+        if (strpos($str, '#') !== false) {
+            throw new InvalidArgumentException('the query string must not contain a URL fragment');
+        }
+
+        return static::parse($str, '&', false);
     }
 
     /**
@@ -71,7 +78,7 @@ class Query implements Interfaces\Query
      */
     public static function createFromArray($data)
     {
-        return new static(static::build(static::validateIterator($data), '&'));
+        return new static(static::build(static::validateIterator($data), '&', false));
     }
 
     /**

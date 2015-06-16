@@ -84,10 +84,16 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      *
      * @param string $data
      *
+     * @throws InvalidArgumentException If reserved characters are used
+     *
      * @return array
      */
     protected function validate($data)
     {
+        if (preg_match('/[?#]/', $data)) {
+            throw new InvalidArgumentException('the path must not contain a query string or a URL fragment');
+        }
+
         $data = array_values(array_filter(explode(static::$delimiter, $data), function ($value) {
             return ! is_null($value);
         }));

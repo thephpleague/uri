@@ -54,15 +54,10 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\League\Url\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
     }
 
-    public function testModifyRegistryScheme()
-    {
-
-    }
-
     public function testFormatWithSimpleString()
     {
-        $url       = 'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
-        $expected  = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
+        $url       = 'https://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
+        $expected  = 'https://login:pass@xn--gwd-hna98db.pl/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
         $formatter = new Formatter();
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);

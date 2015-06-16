@@ -227,10 +227,8 @@ class Formatter
 
         $auth = $this->formatAuthority($url);
 
-        return $url->scheme->getUriComponent()
-            .$auth
-            .$this->formatPath($url->path, ! empty($auth))
-            .$query
+        return $url->scheme->getUriComponent().$auth
+            .$this->formatPath($url->path, ! empty($auth)).$query
             .$url->fragment->getUriComponent();
     }
 
@@ -247,8 +245,12 @@ class Formatter
             return '';
         }
 
+        $port = $url->port->getUriComponent();
+        if ($url->hasStandardPort()) {
+            $port = '';
+        }
+
         return '//'.$url->userInfo->getUriComponent()
-            .$this->formatHost($url->host)
-            .$url->port->getUriComponent();
+            .$this->formatHost($url->host).$port;
     }
 }

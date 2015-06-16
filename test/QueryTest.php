@@ -45,11 +45,23 @@ class QueryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $input
      * @expectedException \InvalidArgumentException
+     * @dataProvider createFromArrayFailedProvider
      */
-    public function testCreateFromArrayFailed()
+    public function testCreateFromArrayFailed($input)
     {
-        Query::createFromArray(new \StdClass);
+        Query::createFromArray($input);
+    }
+
+    public function createFromArrayFailedProvider()
+    {
+        return [
+            'Non traversable object' => [new \StdClass],
+            'String' => ['toto=23'],
+            'reserved character # used as value' => [['toto' => '#23']],
+            'reserved character # used as key' => [['tot#o' => '23']],
+        ];
     }
 
     public function testSameValueAs()

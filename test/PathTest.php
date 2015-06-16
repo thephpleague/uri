@@ -123,6 +123,8 @@ class PathTest extends PHPUnit_Framework_TestCase
             'integer' => [1, Path::IS_RELATIVE],
             'object' => [new \StdClass(), Path::IS_RELATIVE],
             'unknown flag' => [['all', 'is', 'good'], 23],
+            'use reserved characters #' => [['all', 'i#s', 'good'], Path::IS_ABSOLUTE],
+            'use reserved characters ?' => [['all', 'i?s', 'good'], Path::IS_RELATIVE],
         ];
     }
 

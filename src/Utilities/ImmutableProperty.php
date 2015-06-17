@@ -21,11 +21,6 @@ namespace League\Url\Utilities;
 trait ImmutableProperty
 {
     /**
-     * Perfom cleanup operation
-     */
-    abstract protected function cleanUp();
-
-    /**
      * Returns an instance with the modified component
      *
      * This method MUST retain the state of the current instance, and return
@@ -44,7 +39,6 @@ trait ImmutableProperty
         }
         $newInstance = clone $this;
         $newInstance->$property = $value;
-        $newInstance->cleanUp();
 
         return $newInstance;
     }

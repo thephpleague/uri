@@ -21,7 +21,7 @@ use League\Url\Interfaces;
  * @package League.url
  * @since 1.0.0
  */
-class Port extends Component implements Interfaces\Port
+class Port extends AbstractComponent implements Interfaces\Port
 {
     /**
      * New Instance

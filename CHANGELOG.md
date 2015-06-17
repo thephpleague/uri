@@ -6,13 +6,13 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- A system to manage schemes registration using the `SchemeRegistry` class.
+- A system to manage registration of other schemes using the `SchemeRegistry` Interface.
+- Added default support for the following schemes: `ldap`, `ldaps`, `nntp`, `snews`, `telnet`, `wais`
 
 ### Remove
 
 - `Scheme::isSupported`
-- Remove `file`, `gopher` and `ssh` schemes. If needed you can use the Scheme registration system to add them.
-- `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
+- `Port::getStandardSchemes`
 - `Scheme::getStandardPort` use the `SchemeRegistry` class to get this information.
 - `Scheme::hasStandardPort` use the `SchemeRegistry` class to get this information.
 

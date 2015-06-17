@@ -74,14 +74,6 @@ class Url implements Interfaces\Url
         $this->path     = $path;
         $this->query    = $query;
         $this->fragment = $fragment;
-        $this->cleanUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function cleanUp()
-    {
     }
 
     /**

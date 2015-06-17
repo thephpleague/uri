@@ -20,8 +20,8 @@ use League\Url\Interfaces;
  * @package League.url
  * @since 4.0.0
  *
- * @property-read Interfaces\Component $user
- * @property-read Interfaces\Component $pass
+ * @property-read User $user
+ * @property-read Pass $pass
  */
 class UserInfo implements Interfaces\UserInfo
 {
@@ -52,19 +52,8 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function __construct($user = null, $pass = null)
     {
-        $this->user = new Component($user);
-        $this->pass = new Component($pass);
-        $this->cleanUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function cleanUp()
-    {
-        if (! $this->pass->isEmpty() && $this->user->isEmpty()) {
-            $this->pass = $this->pass->modify(null);
-        }
+        $this->user = new User($user);
+        $this->pass = new Pass($pass);
     }
 
     /**
@@ -96,9 +85,13 @@ class UserInfo implements Interfaces\UserInfo
      */
     public function toArray()
     {
+        if ($this->user->isEmpty()) {
+            return ['user' => null, 'pass' => null];
+        }
+
         return [
-            'user' => $this->user->isEmpty() ? null : $this->user->__toString(),
-            'pass' => $this->pass->isEmpty() ? null : $this->pass->__toString(),
+            'user' => $this->user->__toString(),
+            'pass' => ($this->pass->isEmpty()) ? null : $this->pass->__toString(),
         ];
     }
 

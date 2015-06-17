@@ -27,7 +27,6 @@ use Psr\Http\Message\UriInterface;
  */
 interface Url extends UriInterface
 {
-
     /**
      * Returns true if the URL is considered empty
      *

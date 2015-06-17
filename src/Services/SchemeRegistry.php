@@ -31,13 +31,20 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      * @var array
      */
     protected static $defaultSchemes = [
-        'ftp'   => [21],
-        'ftps'  => [989, 990],
-        'https' => [443],
-        'http'  => [80],
-        'ws'    => [80],
-        'wss'   => [443],
-        ''      => [],
+        'file'   => null,
+        'ftp'    => 21,
+        'gopher' => 70,
+        'http'   => 80,
+        'https'  => 443,
+        'ldap'   => 389,
+        'ldaps'  => 636,
+        'nntp'   => 119,
+        'snews'  => 563,
+        'ssh'    => 22,
+        'telnet' => 23,
+        'wais'   => 210,
+        'ws'     => 80,
+        'wss'    => 443,
     ];
 
     /**
@@ -76,7 +83,8 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     public function has($scheme)
     {
-        return isset($this->data[$this->formatScheme($scheme)]);
+        $scheme = $this->formatScheme($scheme);
+        return empty($scheme) || array_key_exists($scheme, $this->data);
     }
 
     /**
@@ -90,11 +98,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     protected function formatScheme($scheme)
     {
-        if (empty($scheme)) {
-            return '';
-        }
-
-        if (! filter_var($scheme, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '/^[a-z][-a-z0-9+.]+$/i']])) {
+        if (! empty($scheme) && ! preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
         }
 
@@ -104,66 +108,18 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * {@inheritdoc}
      */
-    public function getStandardPorts($scheme)
-    {
-        $scheme = $this->formatScheme($scheme);
-        if (! isset($this->data[$scheme])) {
-            throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
-        }
-
-        return array_map(function ($value) {
-            return new Port($value);
-        }, $this->data[$scheme]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isStandardPort($scheme, $port)
-    {
-        $scheme = $this->formatScheme($scheme);
-        if (! isset($this->data[$scheme])) {
-            throw new InvalidArgumentException(sprintf("Unknown scheme '%s'", $scheme));
-        }
-
-        if (! $port instanceof Interfaces\Port) {
-            $port = new Port($port);
-        }
-
-        return $port->isEmpty() || in_array($port->toInt(), $this->data[$scheme]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function add($scheme, $port = null)
     {
         $scheme = $this->formatScheme($scheme);
-        $this->assertValidScheme($scheme);
-        if (! isset($this->data[$scheme])) {
-            $this->data[$scheme] = [];
+        if (empty($scheme) || array_key_exists($scheme, $this->data)) {
+            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
         }
+
         if (! $port instanceof Interfaces\Port) {
             $port = new Port($port);
         }
 
-        $this->data[$scheme][] = $port->toInt();
-        sort($this->data[$scheme]);
-    }
-
-    /**
-     * Restrict action on default Schemes
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the scheme is part
-     *                                     of the defaults list of registered scheme
-     */
-    protected function assertValidScheme($scheme)
-    {
-        if (isset(static::$defaultSchemes[$scheme])) {
-            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
-        }
+        $this->data[$scheme] = $port->toInt();
     }
 
     /**
@@ -172,7 +128,38 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     public function remove($scheme)
     {
         $scheme = $this->formatScheme($scheme);
-        $this->assertValidScheme($scheme);
+        if (empty($scheme) || isset(static::$defaultSchemes[$scheme])) {
+            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
+        }
         unset($this->data[$scheme]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStandardPort($scheme)
+    {
+        $scheme = $this->formatScheme($scheme);
+        if (empty($scheme)) {
+            return new Port();
+        }
+
+        if (! $this->has($scheme)) {
+            throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
+        }
+
+        return new Port($this->data[$scheme]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isStandardPort($scheme, $port)
+    {
+        if (! $port instanceof Interfaces\Port) {
+            $port = new Port($port);
+        }
+
+        return $port->isEmpty() || $port->sameValueAs($this->getStandardPort($scheme));
     }
 }

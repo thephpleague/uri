@@ -39,9 +39,9 @@ interface SchemeRegistry extends Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException If the submitted scheme is unknown to the registry
      *
-     * @return Port[]
+     * @return Port
      */
-    public function getStandardPorts($scheme);
+    public function getStandardPort($scheme);
 
     /**
      * Tell whether a scheme uses the specified port as
@@ -57,13 +57,14 @@ interface SchemeRegistry extends Countable, IteratorAggregate
     public function isStandardPort($scheme, $port);
 
     /**
-     * Register a new scheme or add a new standard Port to an
+     * Register a new scheme or replace the standard Port to an
      * already registered scheme
      *
      * @param  string       $scheme
      * @param  Port|int|nul $port
      *
      * @throws InvalidArgumentException If the submitted scheme is invalid
+     * @throws InvalidArgumentException If the submitted scheme is already registered
      * @throws InvalidArgumentException If the submitted port is invalid
      */
     public function add($scheme, $port = null);

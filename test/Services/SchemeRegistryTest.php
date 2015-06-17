@@ -16,7 +16,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testCountable()
     {
         $registry = new Services\SchemeRegistry();
-        $this->assertCount(7, $registry);
+        $this->assertCount($registry->count(), $registry);
     }
 
     public function testIterator()
@@ -44,9 +44,8 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testGetStandardPortOnUnknownScheme()
     {
         $registry = new Services\SchemeRegistry();
-        $registry->getStandardPorts('yolo');
+        $registry->getStandardPort('yolo');
     }
-
 
     public function testRemoveCustomScheme()
     {
@@ -55,6 +54,17 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($registry->has('yolo'));
         $registry->remove('yolo');
         $this->assertFalse($registry->has('yolo'));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddCustomSchemeTwiceFailed()
+    {
+        $registry = new Services\SchemeRegistry();
+        $registry->add('yolo');
+        $this->assertTrue($registry->has('yolo'));
+        $registry->add('yolo');
     }
 
     /**
@@ -103,15 +113,14 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultPorts($scheme, $expected)
     {
-        $this->assertEquals($expected, (new Services\SchemeRegistry())->getStandardPorts($scheme));
+        $this->assertEquals($expected, (new Services\SchemeRegistry())->getStandardPort($scheme));
     }
 
     public function portProvider()
     {
         return [
-            ['http', [new Port(80)]],
-            ['', []],
-            ['ftps', [new Port(989), new Port(990)]],
+            ['http', new Port(80)],
+            ['', new Port(null)],
         ];
     }
 

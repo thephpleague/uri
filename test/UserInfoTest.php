@@ -38,8 +38,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();
-        $this->assertInstanceof('League\Url\Component', $userinfo->user);
-        $this->assertInstanceof('League\Url\Component', $userinfo->pass);
+        $this->assertInstanceof('League\Url\User', $userinfo->user);
+        $this->assertInstanceof('League\Url\Pass', $userinfo->pass);
     }
 
     /**
@@ -64,8 +64,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
             ['login', '',     ['user' => 'login', 'pass' => null], 'login', ''],
             ['', '',          ['user' => null   , 'pass' => null], '', ''],
             [null, null,      ['user' => null   , 'pass' => null], '', ''],
-            ['', 'pass',      ['user' => null   , 'pass' => null], '', ''],
-            [null, 'pass',    ['user' => null   , 'pass' => null], '', ''],
+            ['', 'pass',      ['user' => null   , 'pass' => null], '', 'pass'],
+            [null, 'pass',    ['user' => null   , 'pass' => null], '', 'pass'],
         ];
     }
 }

@@ -22,7 +22,7 @@ use League\Url\Services;
  * @package League.url
  * @since 1.0.0
  */
-class Scheme extends Component implements Interfaces\Component, Interfaces\SchemeRegistryAccess
+class Scheme extends AbstractComponent implements Interfaces\Component, Interfaces\SchemeRegistryAccess
 {
     /**
      * Scheme registry object
@@ -90,7 +90,7 @@ class Scheme extends Component implements Interfaces\Component, Interfaces\Schem
         $data = strtolower($data);
         if (! $this->registry->has($data)) {
             throw new InvalidArgumentException(sprintf(
-                "the submitted scheme '%s' is no registered you should use `Scheme::register` first",
+                "the submitted scheme '%s' is no registered you should use `SchemeRegistry::add` first",
                 $data
             ));
         }

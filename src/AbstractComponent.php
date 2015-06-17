@@ -12,7 +12,6 @@
  */
 namespace League\Url;
 
-use League\Url\Interfaces;
 use League\Url\Utilities;
 
 /**
@@ -21,7 +20,7 @@ use League\Url\Utilities;
  * @package League.url
  * @since  4.0.0
  */
-class Component implements Interfaces\Component
+abstract class AbstractComponent
 {
     /**
      * Trait for ComponentTrait method

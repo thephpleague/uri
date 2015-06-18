@@ -68,10 +68,10 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
             return;
         }
 
-        if (static::$delimiter == mb_substr($str, 0, 1)) {
+        if (static::$delimiter == mb_substr($str, 0, 1, 'UTF-8')) {
             $this->is_absolute =  self::IS_ABSOLUTE;
         }
-        $append_delimiter = static::$delimiter === mb_substr($str, -1, 1);
+        $append_delimiter = static::$delimiter === mb_substr($str, -1, 1, 'UTF-8');
         $str = trim($str, static::$delimiter);
         $this->data = $this->validate($str);
         if ($append_delimiter) {
@@ -247,9 +247,9 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
      */
     protected function setBasename($basename, $ext)
     {
-        $length = mb_strlen(pathinfo($basename, PATHINFO_EXTENSION));
+        $length = mb_strlen(pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
         if ($length > 0) {
-            $basename = mb_substr($basename, 0, -($length+1));
+            $basename = mb_substr($basename, 0, -($length+1), 'UTF-8');
         }
 
         if (empty($basename) || empty($ext)) {

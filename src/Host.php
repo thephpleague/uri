@@ -197,9 +197,9 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     protected function setIsAbsolute($str)
     {
         $this->is_absolute = self::IS_RELATIVE;
-        if ('.' == mb_substr($str, -1, 1)) {
+        if ('.' == mb_substr($str, -1, 1, 'UTF-8')) {
             $this->is_absolute = self::IS_ABSOLUTE;
-            $str = mb_substr($str, 0, -1);
+            $str = mb_substr($str, 0, -1, 'UTF-8');
         }
 
         return $str;

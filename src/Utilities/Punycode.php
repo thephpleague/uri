@@ -64,12 +64,57 @@ trait Punycode
      */
     public static function encodeLabel($input)
     {
+        return function_exists('idn_to_ascii') ? idn_to_ascii($input) : static::toAscii($input);
+    }
+
+    /**
+     * Return a punycoded host label into its unicode representation
+     *
+     * @param  string $input
+     *
+     * @return string
+     */
+    public static function decodeLabel($input)
+    {
+        return function_exists('idn_to_utf8') ? idn_to_utf8($input) : static::toUtf8($input);
+    }
+
+    /**
+     * Encode a hostname label to its Punycode version
+     *
+     * @param string $input hostname label
+     *
+     * @return string hostname label punycode representation
+     */
+    protected static function toAscii($input)
+    {
         $codePoints = static::codePoints($input);
         if (empty($codePoints['nonBasic'])) {
             return $input;
         }
 
         return static::encodeString($codePoints, $input);
+    }
+
+    /**
+     * Return a punycoded host label into its unicode representation
+     *
+     * @param  string $input
+     *
+     * @return string
+     */
+    protected static function toUtf8($input)
+    {
+        if (strpos($input, static::PREFIX) !== 0) {
+            return $input;
+        }
+
+        $nonBasic = static::codePoints($input)["nonBasic"];
+        if (! empty($nonBasic) || ! ($decoded = static::decodeString(substr($input, strlen(static::PREFIX))))) {
+            return $input;
+        }
+
+        return $decoded;
     }
 
     /**
@@ -243,27 +288,6 @@ trait Punycode
         }
 
         return floor($offset + ($tmp + 1) * $delta / ($delta + static::SKEW));
-    }
-
-    /**
-     * Return a punycoded host label into its unicode representation
-     *
-     * @param  string  $input
-     *
-     * @return string
-     */
-    public static function decodeLabel($input)
-    {
-        if (strpos($input, static::PREFIX) !== 0) {
-            return $input;
-        }
-
-        $nonBasic = static::codePoints($input)["nonBasic"];
-        if (! empty($nonBasic) || ! ($decoded = static::decodeString(substr($input, strlen(static::PREFIX))))) {
-            return $input;
-        }
-
-        return $decoded;
     }
 
     /**

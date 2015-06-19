@@ -118,14 +118,13 @@ trait HostValidator
 
     public function validateScopeIp($ip)
     {
-        $str = strtoupper($ip);
-        if (0 !== strpos($str, 'FE80') || false === ($pos = strpos($str, '%'))) {
+        if (! preg_match('/^fe80(.*?)%(.*?)$/i', $ip)) {
             return $ip;
         }
-        $ipv6 = strtolower(substr($str, 0, $pos));
-        $zone_id = substr($str, $pos + 1);
-
-        if (preg_match(',[^\x20-\x7f],', $zone_id) || preg_match('/[?#@\[\]]/', $zone_id)) {
+        $pos     = strpos($ip, '%');
+        $ipv6    = strtolower(substr($ip, 0, $pos));
+        $zone_id = rawurldecode(substr($ip, $pos));
+        if (preg_match(',[^\x20-\x7f]|[?#@\[\]],', $zone_id)) {
             return $ip;
         }
 

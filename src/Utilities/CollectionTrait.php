@@ -98,7 +98,7 @@ trait CollectionTrait
             $offsets = array_filter(array_keys($this->data), $offsets);
         }
 
-        if (! is_array($offsets)) {
+        if (!is_array($offsets)) {
             throw new InvalidArgumentException(
                 'You must give a callable or an array as uniquement argument'
             );
@@ -134,7 +134,7 @@ trait CollectionTrait
     public function filter(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
 
-        if (! in_array($flag, [Interfaces\Collection::FILTER_USE_VALUE, Interfaces\Collection::FILTER_USE_KEY])) {
+        if (!in_array($flag, [Interfaces\Collection::FILTER_USE_VALUE, Interfaces\Collection::FILTER_USE_KEY])) {
             throw new InvalidArgumentException(
                 'Unknown flag parameter please use one of the defined constant'
             );
@@ -179,7 +179,7 @@ trait CollectionTrait
             $data = iterator_to_array($data, true);
         }
 
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
         }
 

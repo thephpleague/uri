@@ -108,7 +108,7 @@ trait Punycode
         }
 
         $nonBasic = static::codePoints($input)["nonBasic"];
-        if (! empty($nonBasic) || ! ($decoded = static::decodeString(substr($input, strlen(static::PREFIX))))) {
+        if (!empty($nonBasic) || !($decoded = static::decodeString(substr($input, strlen(static::PREFIX))))) {
             return $input;
         }
 
@@ -325,7 +325,7 @@ trait Punycode
             $n    = $n + floor($i / $outputLength);
             $i   %= $outputLength;
             $code = static::codePointToChar($n);
-            if (! mb_check_encoding($code, 'UTF-8')) {
+            if (!mb_check_encoding($code, 'UTF-8')) {
                 return false;
             }
             $output = array_merge(array_slice($output, 0, $i), [$code], array_slice($output, $i));

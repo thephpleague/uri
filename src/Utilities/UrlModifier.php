@@ -235,7 +235,7 @@ trait UrlModifier
             return $relative->withoutDotSegments();
         }
 
-        if (! $relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
+        if (!$relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
             return $relative->withScheme($this->scheme)->withoutDotSegments();
         }
 
@@ -252,13 +252,13 @@ trait UrlModifier
     protected function resolveRelative(Url\Interfaces\Url $relative)
     {
         $newUrl = $this->withProperty('fragment', $relative->fragment);
-        if (! $relative->path->isEmpty()) {
+        if (!$relative->path->isEmpty()) {
             return $newUrl
                 ->withProperty('path', $this->resolvePath($newUrl, $relative))
                 ->withProperty('query', $relative->query);
         }
 
-        if (! $relative->query->isEmpty()) {
+        if (!$relative->query->isEmpty()) {
             return $newUrl->withProperty('query', $relative->query);
         }
 
@@ -276,7 +276,7 @@ trait UrlModifier
     protected function resolvePath(Url\Url $newUrl, Url\Url $relative)
     {
         $path = $relative->path;
-        if (! $path->isAbsolute()) {
+        if (!$path->isAbsolute()) {
             $segments = $newUrl->path->toArray();
             array_pop($segments);
             $is_absolute = Url\Path::IS_RELATIVE;

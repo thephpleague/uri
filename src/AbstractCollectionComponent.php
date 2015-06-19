@@ -13,8 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
-use League\Url\Utilities;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -90,7 +88,7 @@ abstract class AbstractCollectionComponent
     /**
      * Validate a component as a Interfaces\CollectionComponent object
      *
-     * @param  mixed $component
+     * @param mixed $component
      *
      * @throws InvalidArgumentException if the value can not be converted
      *
@@ -98,7 +96,7 @@ abstract class AbstractCollectionComponent
      */
     protected function validateComponent($component)
     {
-        if (! $component instanceof Interfaces\CollectionComponent) {
+        if (!$component instanceof Interfaces\CollectionComponent) {
             $component = new static($component);
         }
 
@@ -111,8 +109,8 @@ abstract class AbstractCollectionComponent
      * @param \Traversable|string[] $data  The segments list
      * @param int                   $type  One of the constant IS_ABSOLUTE or IS_RELATIVE
      *
-     * @throws \InvalidArgumentException If $data is invalid
-     * @throws \InvalidArgumentException If $is_absolute is not a recognized constant
+     * @throws InvalidArgumentException If $data is invalid
+     * @throws InvalidArgumentException If $is_absolute is not a recognized constant
      *
      * @return static
      */
@@ -120,7 +118,7 @@ abstract class AbstractCollectionComponent
     {
         static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
 
-        if (! isset($type_list[$type])) {
+        if (!isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
         $component = implode(static::$delimiter, static::validateIterator($data));
@@ -131,8 +129,8 @@ abstract class AbstractCollectionComponent
     /**
      * return a formatted component string according to its type
      *
-     * @param  string $str
-     * @param  int    $type
+     * @param string $str
+     * @param int    $type
      *
      * @return string
      */
@@ -150,7 +148,7 @@ abstract class AbstractCollectionComponent
      */
     public function replace($offset, $component)
     {
-        if (! empty($this->data) && ! $this->hasOffset($offset)) {
+        if (!empty($this->data) && !$this->hasOffset($offset)) {
             return $this;
         }
 

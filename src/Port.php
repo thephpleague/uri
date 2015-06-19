@@ -13,7 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
 
 /**
  * Value object representing a URL port component.
@@ -30,7 +29,7 @@ class Port extends AbstractComponent implements Interfaces\Port
      */
     public function __construct($data = null)
     {
-        if (! is_null($data)) {
+        if (!is_null($data)) {
             $this->data = $this->validate($data);
         }
     }

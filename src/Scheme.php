@@ -13,8 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
-use League\Url\Services;
 
 /**
  * Value object representing a URL scheme component.
@@ -42,7 +40,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     {
         $this->setSchemeRegistry($registry);
         $data = $this->validateString($data);
-        if (! empty($data)) {
+        if (!empty($data)) {
             $this->data = $this->validate($data);
         }
     }
@@ -88,7 +86,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     protected function validate($data)
     {
         $data = strtolower($data);
-        if (! $this->registry->has($data)) {
+        if (!$this->registry->has($data)) {
             throw new InvalidArgumentException(sprintf(
                 "the submitted scheme '%s' is no registered you should use `SchemeRegistry::add` first",
                 $data

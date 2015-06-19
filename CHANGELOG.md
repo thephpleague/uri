@@ -2,12 +2,13 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
-## 4.0.0-beta-4 - 2015-06-XX
+## next - 2015-06-XX
 
 ### Added
 
 - A system to manage registration of other schemes using the `SchemeRegistry` Interface.
 - Added default support for the following schemes: `ldap`, `ldaps`, `nntp`, `snews`, `telnet`, `wais`
+- Support for IPv6 zone identifier
 
 ### Remove
 

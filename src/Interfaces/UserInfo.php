@@ -17,6 +17,9 @@ namespace League\Url\Interfaces;
  *
  * @package League.url
  * @since 4.0.0
+ *
+ * @property-read User $user
+ * @property-read Pass $pass
  */
 interface UserInfo extends UrlPart
 {

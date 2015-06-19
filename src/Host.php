@@ -141,11 +141,17 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      */
     protected function formatIp()
     {
-        if ($this->host_as_ipv6) {
-            return "[".$this->data[0]."]";
+        $str = $this->data[0];
+        $tmp = explode('%', $this->data[0]);
+        if (isset($tmp[1])) {
+            $str = $tmp[0].'%25'.rawurlencode($tmp[1]);
         }
 
-        return $this->data[0];
+        if ($this->host_as_ipv6) {
+            return "[$str]";
+        }
+
+        return $str;
     }
 
     /**

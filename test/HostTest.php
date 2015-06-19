@@ -7,7 +7,7 @@ use League\Url\Host;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group segment
+ * @group host
  */
 class HostTest extends PHPUnit_Framework_TestCase
 {
@@ -35,6 +35,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             'ipv4' => ['127.0.0.1', true, true, false, '127.0.0.1'],
             'naked ipv6' => ['::1', true, false, true, '[::1]'],
             'ipv6' => ['[::1]', true, false, true, '[::1]'],
+            'scoped ipv6' => ['[fe80::1234%251]', true, false, true, '[fe80::1234%251]'],
+            'scoped naked ipv6' => ['fe80::1234%251', true, false, true, '[fe80::1234%251]'],
             'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com'],
             'null' => [null, false, false, false, ''],
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
@@ -70,7 +72,9 @@ class HostTest extends PHPUnit_Framework_TestCase
             'mix IP format with host label' => ['toto.127.0.0.1'],
             'Invalid IPv6 format' => ['[[::1]]'],
             'space character in starting label' => ['example. com'],
-            'invalid character in host label' => ["examp\0le.com"]
+            'invalid character in host label' => ["examp\0le.com"],
+            "invalid scope IPv6" => ["fe81::1234%251"],
+            "invalid scope ID" => ["fe80::1234%25?@"],
         ];
     }
 

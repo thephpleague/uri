@@ -43,11 +43,6 @@ trait HostValidator
     protected $host_as_ipv6 = false;
 
     /**
-     * Trait to handle punycode
-     */
-    use Punycode;
-
-    /**
      * {@inheritdoc}
      */
     public function isIp()
@@ -149,14 +144,15 @@ trait HostValidator
     protected function validateStringHost($str)
     {
         $str = $this->lower($this->setIsAbsolute($str));
+
         $labels = array_map(function ($value) {
-            return $this->encodeLabel($value);
+            return idn_to_ascii($value);
         }, explode(static::$delimiter, $str));
 
         $this->assertValidHost($labels);
 
         return array_map(function ($label) {
-            return $this->decodeLabel($label);
+            return idn_to_utf8($label);
         }, $labels);
     }
 
@@ -203,31 +199,12 @@ trait HostValidator
             return !empty($value);
         });
 
-        if ($verifs != $labels) {
+        if (count($verifs) != count($labels)) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels');
         }
 
-        $this->isValidLength($labels);
         $this->isValidLabelsCount($labels);
         $this->isValidContent($labels);
-    }
-
-    /**
-     * Validate Host label length
-     *
-     * @param array $data Host labels
-     *
-     * @throws InvalidArgumentException If the validation fails
-     */
-    protected function isValidLength(array $data)
-    {
-        $res = array_filter($data, function ($label) {
-            return strlen($label) > 63;
-        });
-
-        if (!empty($res)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its length');
-        }
     }
 
     /**

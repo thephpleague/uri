@@ -20,7 +20,7 @@
     "require": {
         "php" : ">=5.4.7",
         "ext-mbstring" : "*",
-        "ext-curl" : "*",
+        "ext-intl" : "*",
         "psr/http-message": "~1.0"
     },
     "require-dev": {
@@ -38,7 +38,6 @@
         }
     },
     "suggest": {
-        "ext-intl": "to use PHP extension for host component encoding/decoding",
         "jeremykendall/php-domain-parser": "Parse hostname into its component subdomain, registerable domain, and public suffix parts"
     },
     "extra": {

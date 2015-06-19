@@ -28,7 +28,13 @@ Full documentation can be found at [url.thephpleague.com](http://url.thephpleagu
 System Requirements
 -------
 
-You need **PHP >= 5.4.7** or **HHVM >= 3.4** and the `mbstring` extension to use the library, but the latest stable version of PHP/HHVM is recommended.
+You need:
+
+- **PHP >= 5.4.7** or **HHVM >= 3.4**, but the latest stable version of PHP/HHVM is recommended
+- the `mbstring` extension
+- the `intl` extension
+
+To use the library.
 
 **Note: The last stable version of `League\Url` [version 3.*](https://github.com/thephpleague/url/tree/3.x) still supports PHP 5.3**
 

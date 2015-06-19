@@ -58,6 +58,7 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     public function invalidHostProvider()
     {
+        $longlabel = implode('', array_fill(0, 12, 'banana'));
         return [
             'dot in front' => ['.example.com'],
             'hyphen suffix' => ['host.com-'],
@@ -66,7 +67,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'empty label' => ['tot.    .coucou.com'],
             'space in the label' => ['re view'],
             'underscore in label' => ['_bad.host.com'],
-            'label too long' => [implode('', array_fill(0, 10, 'banana')).'secure.example.com'],
+            'label too long' => [$longlabel.'.secure.example.com'],
             'too many labels' => [implode('.', array_fill(0, 128, 'a'))],
             'Invalid IPv4 format' => ['[127.0.0.1]'],
             'mix IP format with host label' => ['toto.127.0.0.1'],
@@ -139,26 +140,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['[::1]', '[::1]'],
             ['127.0.0.1', '127.0.0.1'],
             ['例子.xn--1', 'xn--fsqu00a.xn--1'],
-        ];
-    }
-
-    /**
-     * @param $host
-     * @param $expected
-     * @dataProvider decodeLabelProvider
-     */
-    public function testDecodeLabel($host, $expected)
-    {
-        $this->assertSame($expected, Host::decodeLabel($host));
-    }
-
-    public function decodeLabelProvider()
-    {
-        return [
-            ["xn--1", "xn--1"],
-            ["xn--bébé", "xn--bébé"],
-            ["23", "23"],
-            ["xn--\0bébé", "xn--\0bébé"],
         ];
     }
 

@@ -163,7 +163,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     {
         $data = $this->data;
         if ($enc_type == self::HOST_AS_ASCII) {
-            $data = array_map([$this, 'encodeLabel'], $this->data);
+            $data = array_map('idn_to_ascii', $this->data);
         }
 
         $str = implode(static::$delimiter, $data);

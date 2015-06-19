@@ -23,19 +23,6 @@ use InvalidArgumentException;
 class Host extends AbstractCollectionComponent implements Interfaces\Host
 {
     /**
-     * Bootstring parameter values for host punycode
-     */
-    const BASE         = 36;
-    const TMIN         = 1;
-    const TMAX         = 26;
-    const SKEW         = 38;
-    const DAMP         = 700;
-    const INITIAL_BIAS = 72;
-    const INITIAL_N    = 128;
-    const PREFIX       = 'xn--';
-    const DELIMITER    = '-';
-
-    /**
      * Constants for host formatting
      */
     const HOST_AS_UNICODE = 1;

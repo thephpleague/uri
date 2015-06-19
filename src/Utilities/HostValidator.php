@@ -111,14 +111,29 @@ trait HostValidator
      */
     protected function filterIpv6Host($str)
     {
+        $str = strtolower(rawurldecode($str));
         if (preg_match(',^\[(.*)\]$,', $str, $matches)) {
-            if (! filter_var($matches[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $ip = $this->validateScopeIp($matches[1]);
+            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 throw new InvalidArgumentException('Invalid IPV6 format');
             }
             return $matches[1];
         }
+        $ip = $this->validateScopeIp($str);
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? $str : false;
+    }
 
-        return filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+    public function validateScopeIp($ip)
+    {
+        if (0 === strpos($ip, 'fe80') && false !== ($pos = strpos($ip, '%'))) {
+            if (preg_match('/[?#@]/', substr($ip, $pos + 1))) {
+                return $ip;
+            }
+
+            return substr($ip, 0, $pos);
+        }
+
+        return $ip;
     }
 
     /**

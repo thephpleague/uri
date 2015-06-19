@@ -23,19 +23,12 @@ use InvalidArgumentException;
 class Pass extends AbstractComponent implements Interfaces\Component
 {
     /**
-     * validate the incoming data
-     *
-     * @param  string $data
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function validate($data)
+    protected function assertValideString($data)
     {
-        $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
         if (strpos($data, '@') !== false) {
             throw new InvalidArgumentException('The URL pass component contains invalid characters');
         }
-
-        return rawurldecode(trim($data));
     }
 }

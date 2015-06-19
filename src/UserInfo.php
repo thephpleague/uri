@@ -12,16 +12,12 @@
  */
 namespace League\Url;
 
-use League\Url\Interfaces;
-
 /**
  * Value object representing the UserInfo part of an URL.
  *
  * @package League.url
  * @since 4.0.0
  *
- * @property-read User $user
- * @property-read Pass $pass
  */
 class UserInfo implements Interfaces\UserInfo
 {
@@ -113,7 +109,7 @@ class UserInfo implements Interfaces\UserInfo
     public function getUriComponent()
     {
         $info = $this->__toString();
-        if (! empty($info)) {
+        if (!empty($info)) {
             $info .= '@';
         }
 

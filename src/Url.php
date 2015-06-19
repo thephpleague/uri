@@ -12,8 +12,6 @@
  */
 namespace League\Url;
 
-use League\Url\Interfaces;
-use League\Url\Utilities;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -84,7 +82,7 @@ class Url implements Interfaces\Url
     {
         $auth     = $this->getAuthority();
         $has_auth = false;
-        if (! empty($auth)) {
+        if (!empty($auth)) {
             $auth     = '//'.$auth;
             $has_auth = true;
         }
@@ -137,7 +135,7 @@ class Url implements Interfaces\Url
      */
     public function isAbsolute()
     {
-        return ! $this->scheme->isEmpty() && ! $this->host->isEmpty();
+        return !$this->scheme->isEmpty() && !$this->host->isEmpty();
     }
 
     /**
@@ -145,7 +143,7 @@ class Url implements Interfaces\Url
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (! $url instanceof Interfaces\Url) {
+        if (!$url instanceof Interfaces\Url) {
             $url = static::createFromUrl($url, $this->scheme->getSchemeRegistry());
         }
 

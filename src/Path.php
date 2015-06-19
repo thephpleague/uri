@@ -13,8 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
-use LogicException;
 
 /**
  * Value object representing a URL path component.
@@ -95,7 +93,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
         }
 
         $data = array_values(array_filter(explode(static::$delimiter, $data), function ($value) {
-            return ! is_null($value);
+            return !is_null($value);
         }));
 
         return array_map(function ($value) {
@@ -167,7 +165,7 @@ class Path extends AbstractCollectionComponent implements Interfaces\Path
                 continue;
             }
 
-            if (! isset(static::$dot_segments[$CollectionComponent])) {
+            if (!isset(static::$dot_segments[$CollectionComponent])) {
                 $arr[] = $CollectionComponent;
             }
         }

@@ -12,8 +12,6 @@
  */
 namespace League\Url;
 
-use League\Url\Utilities;
-
 /**
  * An abstract class to ease component manipulation
  *
@@ -42,7 +40,7 @@ abstract class AbstractComponent
     public function __construct($data = null)
     {
         $data = $this->validateString($data);
-        if (! empty($data)) {
+        if (!empty($data)) {
             $this->data = $this->validate($data);
         }
     }

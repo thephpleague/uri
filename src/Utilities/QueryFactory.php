@@ -68,11 +68,11 @@ trait QueryFactory
         if (isset($param[1])) {
             $value = $decoder($param[1]);
         }
-        if (! array_key_exists($key, $res)) {
+        if (!array_key_exists($key, $res)) {
             $res[$key] = $value;
             return $res;
         }
-        if (! is_array($res[$key])) {
+        if (!is_array($res[$key])) {
             $res[$key] =[$res[$key]];
         }
         $res[$key][] = $value;
@@ -99,7 +99,7 @@ trait QueryFactory
         $pairs   = [];
         $encoder = static::getEncoder($encodingType);
         foreach ($arr as $key => $value) {
-            if (! is_array($value)) {
+            if (!is_array($value)) {
                 $pairs[] = static::buildKeyPair($encoder, $key, $value);
                 continue;
             }
@@ -123,7 +123,7 @@ trait QueryFactory
     protected static function buildKeyPair(callable $encoder, $key, $value = null)
     {
         $pair = $encoder($key);
-        if (! is_null($value)) {
+        if (!is_null($value)) {
             $pair .= '='.$encoder($value);
         }
 

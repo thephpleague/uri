@@ -13,7 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
 use Traversable;
 
 /**
@@ -70,9 +69,9 @@ class Query implements Interfaces\Query
     /**
      * return a new Query instance from an Array or a traversable object
      *
-     * @param  \Traversable|array $data
+     * @param Traversable|array $data
      *
-     * @throws \InvalidArgumentException If $data is invalid
+     * @throws InvalidArgumentException If $data is invalid
      *
      * @return static
      */

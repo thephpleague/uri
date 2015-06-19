@@ -13,7 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
 
 /**
  * Value object representing a URL user component.

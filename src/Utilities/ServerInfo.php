@@ -36,7 +36,7 @@ trait ServerInfo
             'HTTPS' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
         ]);
 
-        if (! empty($args["HTTP_X_FORWARDED_PROTO"])) {
+        if (!empty($args["HTTP_X_FORWARDED_PROTO"])) {
             return strtolower($args["HTTP_X_FORWARDED_PROTO"]).":";
         }
 
@@ -62,7 +62,7 @@ trait ServerInfo
             return static::fetchServerHostname($server["HTTP_HOST"]);
         }
 
-        if (! isset($server["SERVER_ADDR"])) {
+        if (!isset($server["SERVER_ADDR"])) {
             throw new InvalidArgumentException("Host could not be detected");
         }
 
@@ -100,7 +100,7 @@ trait ServerInfo
      */
     protected static function fetchServerUserInfo(array $server)
     {
-        if (! isset($server['PHP_AUTH_USER'])) {
+        if (!isset($server['PHP_AUTH_USER'])) {
             return '';
         }
 
@@ -109,7 +109,7 @@ trait ServerInfo
             $info .= ':'.$server['PHP_AUTH_PW'];
         }
 
-        if (! empty($info)) {
+        if (!empty($info)) {
             $info .= '@';
         }
 

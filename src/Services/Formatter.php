@@ -74,7 +74,7 @@ class Formatter
      */
     public function setHostEncoding($encode)
     {
-        if (! in_array($encode, [self::HOST_AS_UNICODE, self::HOST_AS_ASCII])) {
+        if (!in_array($encode, [self::HOST_AS_UNICODE, self::HOST_AS_ASCII])) {
             throw new InvalidArgumentException('Unknown Host encoding rule');
         }
         $this->hostEncoding = $encode;
@@ -117,7 +117,7 @@ class Formatter
      */
     public function setQueryEncoding($encode)
     {
-        if (! in_array($encode, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738])) {
+        if (!in_array($encode, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738])) {
             throw new InvalidArgumentException('Unknown Query encoding rule');
         }
         $this->queryEncoding = $encode;
@@ -168,7 +168,7 @@ class Formatter
             return $this->formatUrlPart($input);
         }
 
-        if (! $input instanceof Url) {
+        if (!$input instanceof Url) {
             $input = Url::createFromUrl($input, $this->registry);
         }
 
@@ -221,14 +221,14 @@ class Formatter
     protected function formatUrl(Url $url)
     {
         $query = Query::build($url->query->toArray(), $this->querySeparator, $this->queryEncoding);
-        if (! empty($query)) {
+        if (!empty($query)) {
             $query = '?'.$query;
         }
 
         $auth = $this->formatAuthority($url);
 
         return $url->scheme->getUriComponent().$auth
-            .$this->formatPath($url->path, ! empty($auth)).$query
+            .$this->formatPath($url->path, !empty($auth)).$query
             .$url->fragment->getUriComponent();
     }
 

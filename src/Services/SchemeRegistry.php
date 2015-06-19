@@ -98,7 +98,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     protected function formatScheme($scheme)
     {
-        if (! empty($scheme) && ! preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+        if (!empty($scheme) && !preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
         }
 
@@ -115,7 +115,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
         }
 
-        if (! $port instanceof Interfaces\Port) {
+        if (!$port instanceof Interfaces\Port) {
             $port = new Port($port);
         }
 
@@ -144,7 +144,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             return new Port();
         }
 
-        if (! $this->has($scheme)) {
+        if (!$this->has($scheme)) {
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
 
@@ -156,7 +156,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     public function isStandardPort($scheme, $port)
     {
-        if (! $port instanceof Interfaces\Port) {
+        if (!$port instanceof Interfaces\Port) {
             $port = new Port($port);
         }
 

@@ -12,8 +12,6 @@
  */
 namespace League\Url;
 
-use League\Url\Interfaces;
-
 /**
  * Value object representing a URL fragment component.
  *
@@ -44,7 +42,7 @@ class Fragment extends AbstractComponent implements Interfaces\Fragment
     public function getUriComponent()
     {
         $data = $this->__toString();
-        if (! empty($data)) {
+        if (!empty($data)) {
             return '#'.$data;
         }
 

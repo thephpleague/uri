@@ -15,7 +15,6 @@ namespace League\Url\Utilities;
 use InvalidArgumentException;
 use League\Url;
 use League\Url\Interfaces;
-use League\Url\Utilities;
 
 /**
  * A Trait to help parse an URL
@@ -118,7 +117,7 @@ trait UrlFactory
             return array_merge($defaultComponents, $components);
         }
 
-        $components = @parse_url(static::bugFixAuthority($url));
+        $components = static::bugFixAuthority($url);
         if (is_array($components)) {
             unset($components['scheme']);
             return array_merge($defaultComponents, $components);
@@ -145,13 +144,13 @@ trait UrlFactory
         static $is_bugged;
 
         if (is_null($is_bugged)) {
-            $is_bugged = ! is_array(@parse_url("//a:1"));
+            $is_bugged = !is_array(@parse_url("//a:1"));
         }
 
-        if ($is_bugged && strpos($url, '/') === 0) {
-            return 'http:'.$url;
+        if (! $is_bugged || strpos($url, '/') !== 0) {
+            throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
 
-        throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
+        return @parse_url('php-bugfix-authority:'.$url);
     }
 }

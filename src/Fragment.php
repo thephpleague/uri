@@ -20,7 +20,7 @@ use League\Url\Interfaces;
  * @package League.url
  * @since 1.0.0
  */
-class Fragment extends AbstractComponent implements Interfaces\Component
+class Fragment extends AbstractComponent implements Interfaces\Fragment
 {
     /**
      * {@inheritdoc}

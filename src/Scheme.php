@@ -22,7 +22,7 @@ use League\Url\Services;
  * @package League.url
  * @since 1.0.0
  */
-class Scheme extends AbstractComponent implements Interfaces\Component, Interfaces\SchemeRegistryAccess
+class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
     /**
      * Scheme registry object

@@ -67,7 +67,7 @@ trait UrlModifier
     /**
      * Fragment Component
      *
-     * @var Url\Fragment
+     * @var Url\Interfaces\Fragment
      */
     protected $fragment;
 
@@ -212,9 +212,9 @@ trait UrlModifier
     /**
      * Convert to an Url object
      *
-     * @param  Url|string $url
+     * @param  Url\Interfaces\Url|string $url
      *
-     * @return Url
+     * @return Url\Interfaces\Url
      */
     protected function convertToUrlObject($url)
     {
@@ -245,11 +245,11 @@ trait UrlModifier
     /**
      * returns the resolve URL
      *
-     * @param Url\Url $relative the relative URL
+     * @param Url\Interfaces\Url $relative the relative URL
      *
      * @return static
      */
-    protected function resolveRelative(Url\Url $relative)
+    protected function resolveRelative(Url\Interfaces\Url $relative)
     {
         $newUrl = $this->withProperty('fragment', $relative->fragment);
         if (! $relative->path->isEmpty()) {
@@ -268,8 +268,8 @@ trait UrlModifier
     /**
      * returns the resolve URL components
      *
-     * @param Url\Url $newUrl   the final URL
-     * @param Url\Url $relative the relative URL
+     * @param Url\Interfaces\Url $newUrl   the final URL
+     * @param Url\Interfaces\Url $relative the relative URL
      *
      * @return Url\Interfaces\Path
      */

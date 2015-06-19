@@ -13,9 +13,8 @@
 namespace League\Url\Services;
 
 use InvalidArgumentException;
+use League\Url;
 use League\Url\Interfaces;
-use League\Url\Query;
-use League\Url\Url;
 use League\Url\Utilities;
 
 /**
@@ -158,7 +157,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\UrlPart|Url|string $input
+     * @param Interfaces\Url|Interfaces\UrlPart|string $input
      *
      * @return string
      */
@@ -168,8 +167,8 @@ class Formatter
             return $this->formatUrlPart($input);
         }
 
-        if (!$input instanceof Url) {
-            $input = Url::createFromUrl($input, $this->registry);
+        if (!$input instanceof Interfaces\Url) {
+            $input = Url\Url::createFromUrl($input, $this->registry);
         }
 
         return $this->formatUrl($input);
@@ -185,7 +184,7 @@ class Formatter
     protected function formatUrlPart(Interfaces\UrlPart $part)
     {
         if ($part instanceof Interfaces\Query) {
-            return Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return Url\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof Interfaces\Host) {
@@ -214,13 +213,13 @@ class Formatter
     /**
      * Format a Url according to the Formatter properties
      *
-     * @param Url $url
+     * @param Interfaces\Url $url
      *
      * @return string
      */
-    protected function formatUrl(Url $url)
+    protected function formatUrl(Interfaces\Url $url)
     {
-        $query = Query::build($url->query->toArray(), $this->querySeparator, $this->queryEncoding);
+        $query = Url\Query::build($url->query->toArray(), $this->querySeparator, $this->queryEncoding);
         if (!empty($query)) {
             $query = '?'.$query;
         }
@@ -235,11 +234,11 @@ class Formatter
     /**
      * Format a URL authority according to the Formatter properties
      *
-     * @param Url $url
+     * @param Interfaces\Url $url
      *
      * @return string
      */
-    protected function formatAuthority(Url $url)
+    protected function formatAuthority(Interfaces\Url $url)
     {
         if ('' == $url->getHost()) {
             return '';

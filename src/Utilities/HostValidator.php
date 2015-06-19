@@ -13,7 +13,6 @@
 namespace League\Url\Utilities;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
 
 /**
  * A Trait to validate a Host component

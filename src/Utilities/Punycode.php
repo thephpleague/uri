@@ -12,8 +12,6 @@
  */
 namespace League\Url\Utilities;
 
-use InvalidArgumentException;
-
 /**
  * Punycode implementation as described in RFC 3492
  *

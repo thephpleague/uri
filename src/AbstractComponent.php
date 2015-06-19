@@ -55,8 +55,20 @@ abstract class AbstractComponent
     protected function validate($data)
     {
         $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-
+        $this->assertValideString($data);
         return rawurldecode(trim($data));
+    }
+
+    /**
+     * check the string agains RFC3986 rules
+     *
+     * @param string $data
+     *
+     * @throws \InvalidArgumentException If the string is invalid
+     */
+    protected function assertValideString($data)
+    {
+
     }
 
     /**

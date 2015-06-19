@@ -23,19 +23,12 @@ use InvalidArgumentException;
 class User extends AbstractComponent implements Interfaces\Component
 {
     /**
-     * validate the incoming data
-     *
-     * @param  string $data
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function validate($data)
+    protected function assertValideString($data)
     {
-        $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
         if (preg_match('/[:@]/', $data)) {
             throw new InvalidArgumentException('The URL user component can not contain the URL pass component');
         }
-
-        return rawurldecode(trim($data));
     }
 }

@@ -13,7 +13,7 @@
 namespace League\Url\Utilities;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
+use League\Url\Interfaces\UrlPart;
 use ReflectionClass;
 
 /**
@@ -67,7 +67,7 @@ trait ComponentTrait
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Interfaces\UrlPart $component)
+    public function sameValueAs(UrlPart $component)
     {
         return $component->getUriComponent() === $this->getUriComponent();
     }

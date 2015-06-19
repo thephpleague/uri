@@ -14,8 +14,8 @@ namespace League\Url\Services;
 
 use ArrayIterator;
 use InvalidArgumentException;
+use League\Url;
 use League\Url\Interfaces;
-use League\Url\Port;
 
 /**
  * A Class to manage schemes registry
@@ -116,7 +116,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
         }
 
         if (!$port instanceof Interfaces\Port) {
-            $port = new Port($port);
+            $port = new Url\Port($port);
         }
 
         $this->data[$scheme] = $port->toInt();
@@ -141,14 +141,14 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     {
         $scheme = $this->formatScheme($scheme);
         if (empty($scheme)) {
-            return new Port();
+            return new Url\Port();
         }
 
         if (!$this->has($scheme)) {
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
 
-        return new Port($this->data[$scheme]);
+        return new Url\Port($this->data[$scheme]);
     }
 
     /**
@@ -157,7 +157,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     public function isStandardPort($scheme, $port)
     {
         if (!$port instanceof Interfaces\Port) {
-            $port = new Port($port);
+            $port = new Url\Port($port);
         }
 
         return $port->isEmpty() || $port->sameValueAs($this->getStandardPort($scheme));

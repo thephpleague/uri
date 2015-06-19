@@ -15,7 +15,7 @@ namespace League\Url\Utilities;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Url\Host;
-use League\Url\Interfaces;
+use League\Url\Interfaces\Collection;
 use Traversable;
 
 /**
@@ -131,16 +131,13 @@ trait CollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function filter(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
+    public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
-
-        if (!in_array($flag, [Interfaces\Collection::FILTER_USE_VALUE, Interfaces\Collection::FILTER_USE_KEY])) {
-            throw new InvalidArgumentException(
-                'Unknown flag parameter please use one of the defined constant'
-            );
+        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_KEY])) {
+            throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
         }
 
-        if ($flag == Interfaces\Collection::FILTER_USE_KEY) {
+        if ($flag == Collection::FILTER_USE_KEY) {
             return $this->filterByOffset($callable);
         }
 

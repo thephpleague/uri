@@ -13,6 +13,7 @@
 namespace League\Url\Utilities;
 
 use League\Url;
+use League\Url\Interfaces;
 
 /**
  * a Trait to proxy partial update of a League\Url\Url object
@@ -25,49 +26,49 @@ trait UrlModifier
     /**
      * Scheme Component
      *
-     * @var Url\Interfaces\Scheme
+     * @var Interfaces\Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var Url\Interfaces\UserInfo
+     * @var Interfaces\UserInfo
      */
     protected $userInfo;
 
     /**
      * Host Component
      *
-     * @var Url\Interfaces\Host
+     * @var Interfaces\Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var Url\Interfaces\Port
+     * @var Interfaces\Port
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var Url\Interfaces\Path
+     * @var Interfaces\Path
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var Url\Interfaces\Query
+     * @var Interfaces\Query
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var Url\Interfaces\Fragment
+     * @var Interfaces\Fragment
      */
     protected $fragment;
 
@@ -100,7 +101,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterQuery(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterQuery(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('query', $this->query->filter($callable, $flag));
     }
@@ -156,7 +157,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterPath(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterPath(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('path', $this->path->filter($callable, $flag));
     }
@@ -204,7 +205,7 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function filterHost(callable $callable, $flag = Url\Interfaces\Collection::FILTER_USE_VALUE)
+    public function filterHost(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('host', $this->host->filter($callable, $flag));
     }
@@ -212,13 +213,13 @@ trait UrlModifier
     /**
      * Convert to an Url object
      *
-     * @param  Url\Interfaces\Url|string $url
+     * @param  Interfaces\Url|string $url
      *
-     * @return Url\Interfaces\Url
+     * @return Interfaces\Url
      */
     protected function convertToUrlObject($url)
     {
-        if ($url instanceof Url\Interfaces\Url) {
+        if ($url instanceof Interfaces\Url) {
             return $url;
         }
 
@@ -245,11 +246,11 @@ trait UrlModifier
     /**
      * returns the resolve URL
      *
-     * @param Url\Interfaces\Url $relative the relative URL
+     * @param Interfaces\Url $relative the relative URL
      *
      * @return static
      */
-    protected function resolveRelative(Url\Interfaces\Url $relative)
+    protected function resolveRelative(Interfaces\Url $relative)
     {
         $newUrl = $this->withProperty('fragment', $relative->fragment);
         if (!$relative->path->isEmpty()) {
@@ -268,12 +269,12 @@ trait UrlModifier
     /**
      * returns the resolve URL components
      *
-     * @param Url\Interfaces\Url $newUrl   the final URL
-     * @param Url\Interfaces\Url $relative the relative URL
+     * @param Interfaces\Url $newUrl   the final URL
+     * @param Interfaces\Url $relative the relative URL
      *
-     * @return Url\Interfaces\Path
+     * @return Interfaces\Path
      */
-    protected function resolvePath(Url\Url $newUrl, Url\Url $relative)
+    protected function resolvePath(Interfaces\Url $newUrl, Interfaces\Url $relative)
     {
         $path = $relative->path;
         if (!$path->isAbsolute()) {

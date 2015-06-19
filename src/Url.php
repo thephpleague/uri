@@ -22,13 +22,6 @@ use Psr\Http\Message\UriInterface;
  * @package League.url
  * @since 1.0.0
  *
- * @property-read Scheme              $scheme
- * @property-read Interfaces\UserInfo $userInfo
- * @property-read Interfaces\Host     $host
- * @property-read Interfaces\Port     $port
- * @property-read Interfaces\Path     $path
- * @property-read Interfaces\Query    $query
- * @property-read Fragment            $fragment
  */
 class Url implements Interfaces\Url
 {
@@ -50,22 +43,22 @@ class Url implements Interfaces\Url
     /**
      * Create a new instance of URL
      *
-     * @param Scheme              $scheme
+     * @param Interfaces\Scheme   $scheme
      * @param Interfaces\UserInfo $userInfo
      * @param Interfaces\Host     $host
      * @param Interfaces\Port     $port
      * @param Interfaces\Path     $path
      * @param Interfaces\Query    $query
-     * @param Fragment            $fragment
+     * @param Interfaces\Fragment $fragment
      */
     public function __construct(
-        Scheme $scheme,
+        Interfaces\Scheme $scheme,
         Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
         Interfaces\Port $port,
         Interfaces\Path $path,
         Interfaces\Query $query,
-        Fragment $fragment
+        Interfaces\Fragment $fragment
     ) {
         $this->scheme   = $scheme;
         $this->userInfo = $userInfo;

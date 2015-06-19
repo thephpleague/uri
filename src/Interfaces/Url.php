@@ -24,6 +24,14 @@ use Psr\Http\Message\UriInterface;
  *
  * @package  League.url
  * @since  4.0.0
+ *
+ * @property-read Scheme   $scheme
+ * @property-read UserInfo $userInfo
+ * @property-read Host     $host
+ * @property-read Port     $port
+ * @property-read Path     $path
+ * @property-read Query    $query
+ * @property-read Fragment $fragment
  */
 interface Url extends UriInterface
 {

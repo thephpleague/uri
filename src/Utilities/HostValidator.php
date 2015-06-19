@@ -76,14 +76,14 @@ trait HostValidator
      *
      * @param string $str
      *
-     * @throws \InvalidArgumentException if the IP based host is malformed
+     * @throws InvalidArgumentException if the IP based host is malformed
      *
      * @return array
      */
     protected function validateIpHost($str)
     {
         $res = $this->filterIpv6Host($str);
-        if (! empty($res)) {
+        if (!empty($res)) {
             $this->host_as_ipv4 = false;
             $this->host_as_ipv6 = true;
             return [$res];
@@ -105,43 +105,44 @@ trait HostValidator
      *
      * @param string $str
      *
-     * @return string
-     *
-     * @throws \InvalidArgumentException If malformed IPV6 format
+     * @return string|false
      */
     protected function filterIpv6Host($str)
     {
-        $str = strtolower(rawurldecode($str));
-        if (preg_match(',^\[(.*)\]$,', $str, $matches)) {
-            $ip = $this->validateScopeIp($matches[1]);
-            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                throw new InvalidArgumentException('Invalid IPV6 format');
-            }
-            return $matches[1];
+        preg_match(',^([\[]?)(.*?)([\]]?)$,', $str, $matches);
+        if (!in_array(strlen($matches[1].$matches[3]), [0, 2])) {
+            return false;
         }
-        $ip = $this->validateScopeIp($str);
-        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? $str : false;
+
+        if (!filter_var($this->validateScopeIp($matches[2]), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return false;
+        }
+
+        return strtolower(rawurldecode($matches[2]));
     }
 
     public function validateScopeIp($ip)
     {
-        if (0 === strpos($ip, 'fe80') && false !== ($pos = strpos($ip, '%'))) {
-            if (preg_match('/[?#@]/', substr($ip, $pos + 1))) {
-                return $ip;
-            }
+        $str = strtoupper($ip);
+        if (0 !== strpos($str, 'FE80') || false === ($pos = strpos($str, '%'))) {
+            return $ip;
+        }
+        $ipv6 = strtolower(substr($str, 0, $pos));
+        $zone_id = substr($str, $pos + 1);
 
-            return substr($ip, 0, $pos);
+        if (preg_match(',[^\x20-\x7f],', $zone_id) || preg_match('/[?#@\[\]]/', $zone_id)) {
+            return $ip;
         }
 
-        return $ip;
+        return $ipv6;
     }
 
     /**
      * Validate a string only host
      *
-     * @param  string $str
+     * @param string $str
      *
-     * @throws \InvalidArgumentException If the string failed to be a valid hostname
+     * @throws InvalidArgumentException If the string failed to be a valid hostname
      *
      * @return array
      */
@@ -171,7 +172,7 @@ trait HostValidator
     /**
      * Convert to lowercase a string without modifying unicode characters
      *
-     * @param  string $str
+     * @param string $str
      *
      * @return string
      */
@@ -194,12 +195,12 @@ trait HostValidator
      *
      * @param array $labels found host labels
      *
-     * @throws \InvalidArgumentException If the validation fails
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function assertValidHost(array $labels)
     {
         $verifs = array_filter($labels, function ($value) {
-            return ! empty($value);
+            return !empty($value);
         });
 
         if ($verifs != $labels) {
@@ -214,9 +215,9 @@ trait HostValidator
     /**
      * Validate Host label length
      *
-     * @param  array $data Host labels
+     * @param array $data Host labels
      *
-     * @throws \InvalidArgumentException If the validation fails
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidLength(array $data)
     {
@@ -224,7 +225,7 @@ trait HostValidator
             return strlen($label) > 63;
         });
 
-        if (! empty($res)) {
+        if (!empty($res)) {
             throw new InvalidArgumentException('Invalid Hostname, verify its length');
         }
     }
@@ -232,15 +233,15 @@ trait HostValidator
     /**
      * Validated the Host Label Pattern
      *
-     * @param  array $data Host CollectionComponent
+     * @param array $data Host CollectionComponent
      *
-     * @throws \InvalidArgumentException If the validation fails
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidContent(array $data)
     {
         $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
 
-        if (! empty($res)) {
+        if (!empty($res)) {
             throw new InvalidArgumentException('Invalid Hostname, verify its content');
         }
     }
@@ -248,9 +249,9 @@ trait HostValidator
     /**
      * Validated the Host Label Count
      *
-     * @param  array $data Host CollectionComponent
+     * @param array $data Host CollectionComponent
      *
-     * @throws \InvalidArgumentException If the validation fails
+     * @throws InvalidArgumentException If the validation fails
      */
     abstract protected function isValidLabelsCount(array $data = []);
 }

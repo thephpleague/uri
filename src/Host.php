@@ -13,8 +13,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use League\Url\Interfaces;
-use League\Url\Utilities;
 
 /**
  * Value object representing a URL host component.
@@ -56,7 +54,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     protected function init($str)
     {
         $str = $this->validateString($str);
-        if (! empty($str)) {
+        if (!empty($str)) {
             $this->data = $this->validate($str);
         }
     }
@@ -83,7 +81,7 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
     protected function validate($str)
     {
         $res = $this->validateIpHost($str);
-        if (! empty($res)) {
+        if (!empty($res)) {
             return $res;
         }
 
@@ -181,14 +179,14 @@ class Host extends AbstractCollectionComponent implements Interfaces\Host
      *
      * @param array $data Host CollectionComponent
      *
-     * @throws \InvalidArgumentException If the validation fails
+     * @throws InvalidArgumentException If the validation fails
      */
     protected function isValidLabelsCount(array $data = [])
     {
         $labels       = array_merge($this->data, $data);
         $count_labels = count($labels);
         $res = $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
-        if (! $res) {
+        if (!$res) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
     }

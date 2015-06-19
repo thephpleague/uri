@@ -71,10 +71,12 @@ class HostTest extends PHPUnit_Framework_TestCase
             'Invalid IPv4 format' => ['[127.0.0.1]'],
             'mix IP format with host label' => ['toto.127.0.0.1'],
             'Invalid IPv6 format' => ['[[::1]]'],
+            'Invalid IPv6 format 2' => ['[::1'],
             'space character in starting label' => ['example. com'],
             'invalid character in host label' => ["examp\0le.com"],
             "invalid scope IPv6" => ["fe81::1234%251"],
             "invalid scope ID" => ["fe80::1234%25?@"],
+            "invalid scope ID with utf8 character" => ["fe80::1234%25€"],
         ];
     }
 

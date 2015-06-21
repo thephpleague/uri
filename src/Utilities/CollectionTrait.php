@@ -100,7 +100,7 @@ trait CollectionTrait
 
         if (!is_array($offsets)) {
             throw new InvalidArgumentException(
-                'You must give a callable or an array as uniquement argument'
+                'You must give a callable or an array as only argument'
             );
         }
 

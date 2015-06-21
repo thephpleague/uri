@@ -48,7 +48,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     ];
 
     /**
-     * Registred scheme
+     * Registered scheme
      *
      * @var array
      */

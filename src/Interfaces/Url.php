@@ -51,7 +51,7 @@ interface Url extends UriInterface
 
     /**
      * Returns whether two UriInterface represents the same value
-     * The Comparaison is based on the __toString method.
+     * The comparison is based on the __toString method.
      * No normalization is done
      *
      * @param UriInterface $url
@@ -110,7 +110,7 @@ interface Url extends UriInterface
      * Return an URL without the specified query offsets
      *
      * This method MUST retain the state of the current instance, and return
-     * an instance without the specidied query data
+     * an instance without the specified query data
      *
      * @param callable|array $offsets the list of offsets to remove from the query
      *                                if a callable is given it should filter the list
@@ -187,7 +187,7 @@ interface Url extends UriInterface
     public function withoutSegments($offsets);
 
     /**
-     * Return an URL without dot segments accordinf to RFC3986 algorithm
+     * Return an URL without dot segments according to RFC3986 algorithm
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without dot segment according to RFC3986 algorithm

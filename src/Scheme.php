@@ -71,7 +71,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     protected function validate($data)
     {
         $data = strtolower($data);
-        if (!$this->registry->hasOffset($data)) {
+        if (empty($this->registry->hasOffset($data))) {
             throw new InvalidArgumentException(sprintf(
                 "the submitted scheme '%s' is no registered in the `SchemeRegistry` object",
                 $data

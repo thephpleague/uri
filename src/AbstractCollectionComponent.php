@@ -41,7 +41,7 @@ abstract class AbstractCollectionComponent
     }
 
     /**
-     * Initiliaze the object data
+     * Initialize the object data
      *
      * @param string $str the raw component string
      */

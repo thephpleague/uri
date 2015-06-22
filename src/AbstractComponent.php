@@ -60,7 +60,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * check the string agains RFC3986 rules
+     * Check the string against RFC3986 rules
      *
      * @param string $data
      *

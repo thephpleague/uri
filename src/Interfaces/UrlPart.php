@@ -49,7 +49,7 @@ interface UrlPart
 
     /**
      * Returns whether two URL part represent the same value
-     * The Comparaison is based on the getUriComponent method
+     * The comparison is based on the getUriComponent method
      *
      * @param UrlPart $component
      *

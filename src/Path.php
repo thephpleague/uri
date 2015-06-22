@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @package League.url
  * @since 1.0.0
  */
-class Path extends AbstractCollectionComponent implements Interfaces\Path
+class Path extends AbstractHierarchicalComponent implements Interfaces\Path
 {
     /**
      * {@inheritdoc}

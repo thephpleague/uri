@@ -14,7 +14,6 @@ namespace League\Url\Utilities;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use League\Url\Host;
 use League\Url\Interfaces\Collection;
 use Traversable;
 
@@ -32,18 +31,6 @@ trait CollectionTrait
      * @var array
      */
     protected $data = [];
-
-    /**
-     * is the CollectionComponent absolute
-     *
-     * @var int
-     */
-    protected $is_absolute = Host::IS_RELATIVE;
-
-    /**
-     * Trait for ComponentTrait method
-     */
-    use ComponentTrait;
 
     /**
      * {@inheritdoc}
@@ -80,13 +67,13 @@ trait CollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function offsets($data = null)
+    public function offsets()
     {
-        if (is_null($data)) {
+        if (0 == func_num_args()) {
             return array_keys($this->data);
         }
 
-        return array_keys($this->data, $data, true);
+        return array_keys($this->data, func_get_arg(0), true);
     }
 
     /**
@@ -119,14 +106,7 @@ trait CollectionTrait
      *
      * @return static
      */
-    protected function newCollectionInstance(array $data)
-    {
-        if ($data == $this->data) {
-            return $this;
-        }
-
-        return static::createFromArray($data, $this->is_absolute);
-    }
+    abstract protected function newCollectionInstance(array $data);
 
     /**
      * {@inheritdoc}

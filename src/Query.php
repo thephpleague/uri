@@ -24,6 +24,11 @@ use Traversable;
 class Query implements Interfaces\Query
 {
     /**
+     * Trait for ComponentTrait method
+     */
+    use Utilities\ComponentTrait;
+
+    /**
      * Trait for Collection type Component
      */
     use Utilities\CollectionTrait;
@@ -41,6 +46,22 @@ class Query implements Interfaces\Query
     public function __construct($data = null)
     {
         $this->data = $this->validate($data);
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
+            return $this;
+        }
+
+        return static::createFromArray($data);
     }
 
     /**

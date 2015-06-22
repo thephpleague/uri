@@ -23,7 +23,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface CollectionComponent extends Collection, Component
+interface HierarchicalComponent extends Collection, Component
 {
     /**
      * Returns an instance with the specified component appended

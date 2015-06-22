@@ -127,7 +127,15 @@ class Url implements Interfaces\Url
      */
     public function hasStandardPort()
     {
-        return $this->scheme->getSchemeRegistry()->isStandardPort($this->scheme->__toString(), $this->port);
+        if ($this->scheme->isEmpty()) {
+            return false;
+        }
+
+        if ($this->port->isEmpty()) {
+            return true;
+        }
+
+        return $this->scheme->getSchemeRegistry()->getPort($this->scheme)->sameValueAs($this->port);
     }
 
     /**

@@ -20,10 +20,22 @@ use InvalidArgumentException;
  * @package  League.url
  * @since  3.0.0
  */
-abstract class AbstractCollectionComponent
+abstract class AbstractHierarchicalComponent
 {
     const IS_ABSOLUTE = 1;
     const IS_RELATIVE = 0;
+    /**
+     * is the CollectionComponent absolute
+     *
+     * @var int
+     */
+    protected $is_absolute = self::IS_RELATIVE;
+
+
+    /**
+     * Trait for ComponentTrait method
+     */
+    use Utilities\ComponentTrait;
 
     /**
      * Trait for Collection type Component
@@ -53,6 +65,22 @@ abstract class AbstractCollectionComponent
     public function isAbsolute()
     {
         return $this->is_absolute == self::IS_ABSOLUTE;
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
+            return $this;
+        }
+
+        return static::createFromArray($data, $this->is_absolute);
     }
 
     /**

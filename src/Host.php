@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @package League.url
  * @since 1.0.0
  */
-class Host extends AbstractCollectionComponent implements Interfaces\Host
+class Host extends AbstractHierarchicalComponent implements Interfaces\Host
 {
     /**
      * Constants for host formatting

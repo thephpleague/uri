@@ -27,62 +27,35 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testRegister()
     {
         $registry = new Services\SchemeRegistry(['yolo' => 2020]);
-        $registry->add('yolo', 2020);
-        $this->assertTrue($registry->has('yolo'));
+        $this->assertTrue($registry->hasOffset('yolo'));
     }
 
     public function testRegisterSchemeWithoutHost()
     {
         $registry = new Services\SchemeRegistry();
-        $registry->add('yolo');
-        $this->assertTrue($registry->has('yolo'));
+        $this->assertFalse($registry->hasOffset('yolo'));
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testGetStandardPortOnUnknownScheme()
+    public function testGetPortOnUnknownScheme()
     {
         $registry = new Services\SchemeRegistry();
-        $registry->getStandardPort('yolo');
+        $registry->getPort('yolo');
     }
 
-    public function testRemoveCustomScheme()
+    public function testOffsets()
     {
         $registry = new Services\SchemeRegistry();
-        $registry->add('yolo');
-        $this->assertTrue($registry->has('yolo'));
-        $registry->remove('yolo');
-        $this->assertFalse($registry->has('yolo'));
+        $this->assertSame(array_keys($registry->toArray()), $registry->offsets());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddCustomSchemeTwiceFailed()
+    public function testOffsetsWithArguments()
     {
         $registry = new Services\SchemeRegistry();
-        $registry->add('yolo');
-        $this->assertTrue($registry->has('yolo'));
-        $registry->add('yolo');
+        $this->assertSame(['http', 'ws'], $registry->offsets(80));
     }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testRemoveDefaultSchemeFailed()
-    {
-        (new Services\SchemeRegistry())->remove('http');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testDetectStandardPortFailed()
-    {
-        (new Services\SchemeRegistry())->isStandardPort('yolo', 80);
-    }
-
 
     /**
      * @param $scheme
@@ -93,7 +66,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testAddFailed($scheme, $port)
     {
-        (new Services\SchemeRegistry())->add($scheme, $port);
+        new Services\SchemeRegistry([$scheme => $port]);
     }
 
     public function newregisterProvider()
@@ -101,7 +74,6 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
         return [
             'invalid host' => ['yóló', null],
             'invalid ports' => ['yolo', 'coucou'],
-            'defined scheme' => ['http', 81]
         ];
     }
 
@@ -113,37 +85,73 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultPorts($scheme, $expected)
     {
-        $this->assertEquals($expected, (new Services\SchemeRegistry())->getStandardPort($scheme));
+        $this->assertEquals($expected, (new Services\SchemeRegistry())->getPort($scheme));
     }
 
     public function portProvider()
     {
         return [
             ['http', new Port(80)],
-            ['', new Port(null)],
         ];
     }
 
     /**
+     * @param $input
      * @param $scheme
      * @param $port
-     * @param $expected
-     *
-     * @dataProvider hasStandardProvider
+     * @dataProvider validMergeValue
      */
-    public function testHasStandardPort($scheme, $port, $expected)
+    public function testMerge($input, $scheme, $port)
     {
-        $this->assertSame($expected, (new Services\SchemeRegistry())->isStandardPort($scheme, $port));
+        $registry = (new Services\SchemeRegistry())->merge($input);
+        $this->assertEquals($port, $registry->getPort($scheme));
     }
 
-    public function hasStandardProvider()
+    public function validMergeValue()
     {
         return [
-            ['http', 80, true],
-            ['http', null, true],
-            ['ftp', 80, false],
-            ['ws', 80, true],
-            ['', 80, false],
+            [["yolo" => 2020], "yolo", new Port(2020)],
+            [["YOLo" => 2020], "yolo", new Port(2020)],
+            [["http" => 81], "http", new Port(81)],
+            [new Services\SchemeRegistry(), "http", new Port(80)],
         ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailedMerge()
+    {
+        (new Services\SchemeRegistry())->merge("coucou");
+    }
+
+    /**
+     * @param $input
+     * @param $scheme
+     * @dataProvider validWithoutValue
+     */
+    public function testWithout($input, $scheme)
+    {
+        $registry = (new Services\SchemeRegistry())->without($input);
+        $this->assertFalse($registry->hasOffset($scheme));
+    }
+
+    public function validWithoutValue()
+    {
+        return [
+            [['http'], 'HtTp'],
+            [['YolO'], 'yOlO'],
+            [function ($value) {
+                return strpos($value, 's') !== false;
+            }, 'wss']
+        ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWithoutFailed()
+    {
+        (new Services\SchemeRegistry())->without("foo");
     }
 }

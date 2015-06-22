@@ -23,7 +23,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Host extends CollectionComponent
+interface Host extends HierarchicalComponent
 {
     /**
      * Returns whether or not the host is a full qualified domain name

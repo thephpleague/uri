@@ -16,6 +16,7 @@ use ArrayIterator;
 use InvalidArgumentException;
 use League\Url;
 use League\Url\Interfaces;
+use Traversable;
 
 /**
  * A Class to manage schemes registry
@@ -26,6 +27,11 @@ use League\Url\Interfaces;
 class SchemeRegistry implements Interfaces\SchemeRegistry
 {
     /**
+     * Trait for Collection type Component
+     */
+    use Url\Utilities\CollectionTrait;
+
+    /**
      * Standard ports for known schemes
      *
      * @var array
@@ -33,6 +39,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     protected static $defaultSchemes = [
         'file'   => null,
         'ftp'    => 21,
+        'ftps'   => 989,
         'gopher' => 70,
         'http'   => 80,
         'https'  => 443,
@@ -48,43 +55,75 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     ];
 
     /**
-     * Registered scheme
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
      * New Instance
+     *
+     * @param  array  scheme/standard port pair
      */
-    public function __construct()
+    public function __construct(array $data = [])
     {
-        $this->data = static::$defaultSchemes;
+        if (empty($data)) {
+            $data = static::$defaultSchemes;
+        }
+        foreach ($data as $scheme => $port) {
+            $this->data[$this->formatScheme($scheme)] = (new Url\Port($port))->toInt();
+        }
+        ksort($this->data, SORT_STRING);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function hasOffset($scheme)
     {
-        return count($this->data);
+        return array_key_exists($this->formatScheme($scheme), $this->data);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function offsets()
     {
-        return new ArrayIterator($this->data);
+        if (0 == func_num_args()) {
+            return array_keys($this->data);
+        }
+
+        return array_keys($this->data, (new Url\Port(func_get_arg(0)))->toInt(), true);
     }
 
     /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
+            return $this;
+        }
+
+        return new static($data);
+    }
+    /**
      * {@inheritdoc}
      */
-    public function has($scheme)
+    public function without($offsets)
     {
-        $scheme = $this->formatScheme($scheme);
-        return empty($scheme) || array_key_exists($scheme, $this->data);
+        if (is_callable($offsets)) {
+            $offsets = array_filter(array_keys($this->data), $offsets);
+        }
+
+        if (!is_array($offsets)) {
+            throw new InvalidArgumentException('You must give a callable or an array as only argument');
+        }
+
+        $data = $this->data;
+        foreach ($offsets as $scheme) {
+            unset($data[$this->formatScheme($scheme)]);
+        }
+
+        return $this->newCollectionInstance($data);
     }
 
     /**
@@ -98,7 +137,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     protected function formatScheme($scheme)
     {
-        if (!empty($scheme) && !preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
         }
 
@@ -108,43 +147,10 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * {@inheritdoc}
      */
-    public function add($scheme, $port = null)
+    public function getPort($scheme)
     {
         $scheme = $this->formatScheme($scheme);
-        if (empty($scheme) || array_key_exists($scheme, $this->data)) {
-            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
-        }
-
-        if (!$port instanceof Interfaces\Port) {
-            $port = new Url\Port($port);
-        }
-
-        $this->data[$scheme] = $port->toInt();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($scheme)
-    {
-        $scheme = $this->formatScheme($scheme);
-        if (empty($scheme) || isset(static::$defaultSchemes[$scheme])) {
-            throw new InvalidArgumentException(sprintf("The submitted scheme '%s' is already defined", $scheme));
-        }
-        unset($this->data[$scheme]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStandardPort($scheme)
-    {
-        $scheme = $this->formatScheme($scheme);
-        if (empty($scheme)) {
-            return new Url\Port();
-        }
-
-        if (!$this->has($scheme)) {
+        if (!$this->hasOffset($scheme)) {
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
 
@@ -154,12 +160,16 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * {@inheritdoc}
      */
-    public function isStandardPort($scheme, $port)
+    public function merge($registry)
     {
-        if (!$port instanceof Interfaces\Port) {
-            $port = new Url\Port($port);
+        if (!$registry instanceof Interfaces\SchemeRegistry) {
+            $registry = new static(static::validateIterator($registry));
         }
 
-        return $port->isEmpty() || $port->sameValueAs($this->getStandardPort($scheme));
+        if ($this->toArray() == $registry->toArray()) {
+            return $this;
+        }
+
+        return new static(array_merge($this->toArray(), $registry->toArray()));
     }
 }

@@ -12,9 +12,6 @@
  */
 namespace League\Url\Interfaces;
 
-use Countable;
-use IteratorAggregate;
-
 /**
  * Value object representing a URL Scheme registration system.
  *

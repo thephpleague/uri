@@ -17,6 +17,7 @@ All Notable changes to `League\Url` will be documented in this file
 - `Port::getStandardSchemes`
 - `Scheme::getStandardPort` use the `SchemeRegistry` class to get this information.
 - `Scheme::hasStandardPort` use the `SchemeRegistry` class to get this information.
+- support for `PHP 5.4`
 
 ## 4.0.0-beta-3 - 2015-06-09
 

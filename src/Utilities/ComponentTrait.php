@@ -94,9 +94,7 @@ trait ComponentTrait
      */
     public function isEmpty()
     {
-        $str = $this->__toString();
-
-        return empty($str);
+        return empty($this->__toString());
     }
 
     /**

@@ -23,7 +23,7 @@ use League\Url\Utilities;
  * @package League.url
  * @since 4.0.0
  */
-class Formatter
+class Formatter implements Interfaces\SchemeRegistryAccess
 {
     const HOST_AS_UNICODE = 1;
     const HOST_AS_ASCII   = 2;

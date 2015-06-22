@@ -45,11 +45,11 @@ interface Collection extends Countable, IteratorAggregate
      * Returns the component offsets. If a specific value is specified
      * only the offsets associated with the given value will be returned
      *
-     * @param mixed $data
+     * @param mixed $data optional
      *
      * @return array
      */
-    public function offsets($data = null);
+    public function offsets();
 
     /**
      * Returns whether the given offset exists in the current instance

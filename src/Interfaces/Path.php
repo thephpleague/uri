@@ -23,7 +23,7 @@ namespace League\Url\Interfaces;
  * @package  League.url
  * @since  4.0.0
  */
-interface Path extends CollectionComponent
+interface Path extends HierarchicalComponent
 {
     /**
      * Returns whether or not the path is absolute or relative

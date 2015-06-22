@@ -21,17 +21,8 @@ use IteratorAggregate;
  * @package League.url
  * @since 4.0.0
  */
-interface SchemeRegistry extends Countable, IteratorAggregate
+interface SchemeRegistry extends Collection
 {
-    /**
-     * Tell whether a scheme is present in the registry
-     *
-     * @param string $scheme
-     *
-     * @return bool
-     */
-    public function has($scheme);
-
     /**
      * Return the ports associated to the scheme
      *
@@ -41,38 +32,20 @@ interface SchemeRegistry extends Countable, IteratorAggregate
      *
      * @return Port
      */
-    public function getStandardPort($scheme);
+    public function getPort($scheme);
 
     /**
-     * Tell whether a scheme uses the specified port as
-     * its standard port
+     * Returns an instance merge with the specified registry data
      *
-     * @param  string       $scheme
-     * @param  Port|int|nul $port
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified registry data
      *
-     * @throws InvalidArgumentException If the submitted scheme is unknown to the registry
+     * @param static|\Traversable|array $query the data to be merged can be
+     *                                         - another Interfaces\SchemeRegistry object
+     *                                         - a Traversable object
+     *                                         - an array
      *
-     * @return bool
+     * @return static
      */
-    public function isStandardPort($scheme, $port);
-
-    /**
-     * Register a new scheme or replace the standard Port to an
-     * already registered scheme
-     *
-     * @param  string       $scheme
-     * @param  Port|int|nul $port
-     *
-     * @throws InvalidArgumentException If the submitted scheme is invalid
-     * @throws InvalidArgumentException If the submitted scheme is already registered
-     * @throws InvalidArgumentException If the submitted port is invalid
-     */
-    public function add($scheme, $port = null);
-
-    /**
-     * Remove a scheme from the Registry
-     *
-     * @param string $scheme
-     */
-    public function remove($scheme);
+    public function merge($registry);
 }

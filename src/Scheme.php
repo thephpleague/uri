@@ -38,7 +38,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
      */
     public function __construct($data = null, Interfaces\SchemeRegistry $registry = null)
     {
-        $this->setSchemeRegistry($registry);
+        $this->registry = !is_null($registry) ? $registry : new Services\SchemeRegistry();
         $data = $this->validateString($data);
         if (!empty($data)) {
             $this->data = $this->validate($data);
@@ -46,26 +46,11 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     }
 
     /**
-     * Set the SchemeRegistry object
-     *
-     * @param Interfaces\SchemeRegistry|null $registry
-     */
-    protected function setSchemeRegistry(Interfaces\SchemeRegistry $registry = null)
-    {
-        if (is_null($registry)) {
-            $this->registry = new Services\SchemeRegistry();
-            return;
-        }
-
-        $this->registry = clone $registry;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getSchemeRegistry()
     {
-        return clone $this->registry;
+        return $this->registry;
     }
 
     /**
@@ -86,9 +71,9 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     protected function validate($data)
     {
         $data = strtolower($data);
-        if (!$this->registry->has($data)) {
+        if (!$this->registry->hasOffset($data)) {
             throw new InvalidArgumentException(sprintf(
-                "the submitted scheme '%s' is no registered you should use `SchemeRegistry::add` first",
+                "the submitted scheme '%s' is no registered in the `SchemeRegistry` object",
                 $data
             ));
         }

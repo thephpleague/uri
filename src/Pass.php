@@ -25,7 +25,7 @@ class Pass extends AbstractComponent implements Interfaces\Component
     /**
      * {@inheritdoc}
      */
-    protected function assertValideString($data)
+    protected function assertValidString($data)
     {
         if (strpos($data, '@') !== false) {
             throw new InvalidArgumentException('The URL pass component contains invalid characters');

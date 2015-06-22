@@ -25,7 +25,7 @@ class User extends AbstractComponent implements Interfaces\Component
     /**
      * {@inheritdoc}
      */
-    protected function assertValideString($data)
+    protected function assertValidString($data)
     {
         if (preg_match('/[:@]/', $data)) {
             throw new InvalidArgumentException('The URL user component can not contain the URL pass component');

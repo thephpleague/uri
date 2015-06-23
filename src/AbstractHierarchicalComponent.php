@@ -25,7 +25,7 @@ abstract class AbstractHierarchicalComponent
     const IS_ABSOLUTE = 1;
     const IS_RELATIVE = 0;
     /**
-     * is the CollectionComponent absolute
+     * is the HierarchicalComponent absolute
      *
      * @var int
      */
@@ -114,17 +114,17 @@ abstract class AbstractHierarchicalComponent
     }
 
     /**
-     * Validate a component as a Interfaces\CollectionComponent object
+     * Validate a component as a Interfaces\HierarchicalComponent object
      *
      * @param mixed $component
      *
      * @throws InvalidArgumentException if the value can not be converted
      *
-     * @return Interfaces\CollectionComponent
+     * @return Interfaces\HierarchicalComponent
      */
     protected function validateComponent($component)
     {
-        if (!$component instanceof Interfaces\CollectionComponent) {
+        if (!$component instanceof Interfaces\HierarchicalComponent) {
             $component = new static($component);
         }
 
@@ -132,7 +132,7 @@ abstract class AbstractHierarchicalComponent
     }
 
     /**
-     * return a new CollectionComponent instance from an Array or a traversable object
+     * return a new instance from an array or a traversable object
      *
      * @param \Traversable|string[] $data  The segments list
      * @param int                   $type  One of the constant IS_ABSOLUTE or IS_RELATIVE

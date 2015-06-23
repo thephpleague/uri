@@ -46,7 +46,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     protected static $dot_segments = ['.' => 1, '..' => 1];
 
     /**
-     * CollectionComponent delimiter
+     * HierarchicalComponent delimiter
      *
      * @var string
      */
@@ -150,23 +150,25 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     }
 
     /**
-     * Filter Dot CollectionComponents
+     * Filter Dot segment according to RFC3986
      *
-     * @param array $input
+     * @see http://tools.ietf.org/html/rfc3986#section-5.2.4
+     *
+     * @param array $input Path segments
      *
      * @return array
      */
     protected function filterDotSegments(array $input)
     {
         $arr = [];
-        foreach ($input as $CollectionComponent) {
-            if ('..' == $CollectionComponent) {
+        foreach ($input as $segment) {
+            if ('..' == $segment) {
                 array_pop($arr);
                 continue;
             }
 
-            if (!isset(static::$dot_segments[$CollectionComponent])) {
-                $arr[] = $CollectionComponent;
+            if (!isset(static::$dot_segments[$segment])) {
+                $arr[] = $segment;
             }
         }
 

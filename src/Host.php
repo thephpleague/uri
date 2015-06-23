@@ -164,7 +164,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     /**
      * Validated the Host Label Count
      *
-     * @param array $data Host CollectionComponent
+     * @param array $data Host labels
      *
      * @throws InvalidArgumentException If the validation fails
      */

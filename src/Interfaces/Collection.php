@@ -33,7 +33,7 @@ interface Collection extends Countable, IteratorAggregate
     const FILTER_USE_VALUE = 1;
 
     /**
-     * Return an array representation of the CollectionComponent
+     * Return an array representation of the collection
      *
      * @return array
      */
@@ -42,10 +42,8 @@ interface Collection extends Countable, IteratorAggregate
     /**
      * Returns the component offsets.
      *
-     * Returns the component offsets. If a specific value is specified
+     * Returns the component offsets. If a value is specified
      * only the offsets associated with the given value will be returned
-     *
-     * @param mixed $data optional
      *
      * @return array
      */
@@ -54,7 +52,7 @@ interface Collection extends Countable, IteratorAggregate
     /**
      * Returns whether the given offset exists in the current instance
      *
-     * @param string|int $offset
+     * @param string $offset
      *
      * @return bool
      */

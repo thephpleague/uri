@@ -23,7 +23,7 @@ use InvalidArgumentException;
 trait HostValidator
 {
     /**
-     * CollectionComponent delimiter
+     * HierarchicalComponent delimiter
      *
      * @var string
      */
@@ -208,7 +208,7 @@ trait HostValidator
     /**
      * Validated the Host Label Pattern
      *
-     * @param array $data Host CollectionComponent
+     * @param array $data host labels
      *
      * @throws InvalidArgumentException If the validation fails
      */
@@ -224,7 +224,7 @@ trait HostValidator
     /**
      * Validated the Host Label Count
      *
-     * @param array $data Host CollectionComponent
+     * @param array $data host labels
      *
      * @throws InvalidArgumentException If the validation fails
      */

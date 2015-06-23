@@ -22,15 +22,24 @@ trait IpValidator
 {
     /**
      * Is the Host an IPv4
+     *
      * @var bool
      */
     protected $host_as_ipv4 = false;
 
     /**
      * Is the Host an IPv6
+     *
      * @var bool
      */
     protected $host_as_ipv6 = false;
+
+    /**
+     * IPv6 Local Link binary-like prefix
+     *
+     * @var string
+     */
+    static protected $local_link_prefix = '1111111010';
 
     /**
      * {@inheritdoc}
@@ -125,7 +134,7 @@ trait IpValidator
         }
 
         $ipv6 = substr($ip, 0, $pos);
-        if (! $this->isLocalLink($ipv6)) {
+        if (!$this->isLocalLink($ipv6)) {
             return false;
         }
 
@@ -145,10 +154,7 @@ trait IpValidator
             return false;
         }
 
-        $binaryip  = static::inetToBits(inet_pton($ipv6));
-        $bynarynet = static::inetToBits(inet_pton('fe80::'));
-
-        return substr($binaryip, 0, 10) === substr($bynarynet, 0, 10);
+        return substr(static::inetToBits(inet_pton($ipv6)), 0, 10) === self::$local_link_prefix;
     }
 
     /**

@@ -272,6 +272,27 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $host
+     * @param $expected
+     * @dataProvider withoutZoneIdentifierProvider
+     */
+    public function testWithoutZoneIdentifier($host, $expected)
+    {
+        $this->assertSame($expected, (new Host($host))->withoutZoneIdentifier()->__toString());
+    }
+
+    public function withoutZoneIdentifierProvider()
+    {
+        return [
+            'hostname host' => ['example.com', 'example.com'],
+            'ipv4 host' => ['127.0.0.1', '127.0.0.1'],
+            'ipv6 host' => ['[::1]', '[::1]'],
+            'ipv6 scoped' => ['fe80::%251', '[fe80::]'],
+            'ipv6 scoped' => ['fe80::%1', '[fe80::]'],
+        ];
+    }
+
+    /**
      * @param $raw
      * @param $prepend
      * @param $expected

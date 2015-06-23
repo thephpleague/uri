@@ -147,7 +147,7 @@ trait UrlFactory
             $is_bugged = !is_array(@parse_url("//a:1"));
         }
 
-        if (! $is_bugged || strpos($url, '/') !== 0) {
+        if (!$is_bugged || strpos($url, '/') !== 0) {
             throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
 

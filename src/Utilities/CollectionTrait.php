@@ -61,7 +61,7 @@ trait CollectionTrait
      */
     public function hasOffset($offset)
     {
-        return array_key_exists($offset, $this->data);
+        return array_key_exists($this->validateOffset($offset), $this->data);
     }
 
     /**
@@ -93,7 +93,7 @@ trait CollectionTrait
 
         $data = $this->data;
         foreach ($offsets as $offset) {
-            unset($data[$offset]);
+            unset($data[$this->validateOffset($offset)]);
         }
 
         return $this->newCollectionInstance($data);
@@ -161,5 +161,19 @@ trait CollectionTrait
         }
 
         return $data;
+    }
+
+    /**
+     * Validate offset
+     *
+     * @param  int|string $offset
+     *
+     * @throws InvalidArgumentException if the offset is invalid
+     *
+     * @return int|string
+     */
+    protected function validateOffset($offset)
+    {
+        return $offset;
     }
 }

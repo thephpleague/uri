@@ -20,7 +20,7 @@ use InvalidArgumentException;
  * @package League.url
  * @since 4.0.0
  */
-trait HostValidator
+trait HostnameValidator
 {
     /**
      * HierarchicalComponent delimiter
@@ -28,107 +28,6 @@ trait HostValidator
      * @var string
      */
     protected static $delimiter = '.';
-
-    /**
-     * Is the Host an IPv4
-     * @var bool
-     */
-    protected $host_as_ipv4 = false;
-
-    /**
-     * Is the Host an IPv6
-     * @var bool
-     */
-    protected $host_as_ipv6 = false;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIp()
-    {
-        return $this->host_as_ipv4 || $this->host_as_ipv6;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIpv4()
-    {
-        return $this->host_as_ipv4;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isIpv6()
-    {
-        return $this->host_as_ipv6;
-    }
-
-    /**
-     * Validate a Host as an IP
-     *
-     * @param string $str
-     *
-     * @throws InvalidArgumentException if the IP based host is malformed
-     *
-     * @return array
-     */
-    protected function validateIpHost($str)
-    {
-        $res = $this->filterIpv6Host($str);
-        if (!empty($res)) {
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
-            return [$res];
-        }
-
-        if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->host_as_ipv4 = true;
-            $this->host_as_ipv6 = false;
-            return [$str];
-        }
-
-        $this->host_as_ipv4 = false;
-        $this->host_as_ipv6 = false;
-        return [];
-    }
-
-    /**
-     * validate and filter a Ipv6 Hostname
-     *
-     * @param string $str
-     *
-     * @return string|false
-     */
-    protected function filterIpv6Host($str)
-    {
-        preg_match(',^([\[]?)(.*?)([\]]?)$,', $str, $matches);
-        if (!in_array(strlen($matches[1].$matches[3]), [0, 2])) {
-            return false;
-        }
-
-        if (!filter_var($this->validateScopeIp($matches[2]), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            return false;
-        }
-
-        return strtolower(rawurldecode($matches[2]));
-    }
-
-    public function validateScopeIp($ip)
-    {
-        if (! preg_match('/^fe80(.*?)%(.*?)$/i', $ip)) {
-            return $ip;
-        }
-        $pos     = strpos($ip, '%');
-        $ipv6    = strtolower(substr($ip, 0, $pos));
-        $zone_id = rawurldecode(substr($ip, $pos));
-        if (preg_match(',[^\x20-\x7f]|[?#@\[\]],', $zone_id)) {
-            return $ip;
-        }
-
-        return $ipv6;
-    }
 
     /**
      * Validate a string only host

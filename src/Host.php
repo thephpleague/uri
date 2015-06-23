@@ -29,9 +29,14 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     const HOST_AS_ASCII   = 2;
 
     /**
-     * Trait to handle host label validation
+     * Trait to handle ip host validation
      */
-    use Utilities\HostValidator;
+    use Utilities\IpValidator;
+
+    /**
+     * Trait to handle hostname validation
+     */
+    use Utilities\HostnameValidator;
 
     /**
      * new Instance

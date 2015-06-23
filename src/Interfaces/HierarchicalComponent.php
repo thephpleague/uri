@@ -31,7 +31,7 @@ interface HierarchicalComponent extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the appended data
      *
-     * @param CollectionComponent|string $component the component to append
+     * @param HierarchicalComponent|string $component the component to append
      *
      * @return static
      */
@@ -43,7 +43,7 @@ interface HierarchicalComponent extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the prepended data
      *
-     * @param CollectionComponent|string $component the component to prepend
+     * @param HierarchicalComponent|string $component the component to prepend
      *
      * @return static
      */
@@ -57,7 +57,7 @@ interface HierarchicalComponent extends Collection, Component
      *
      * @param int                        $offset    the label offset to remove and replace by
      *                                              the given component
-     * @param CollectionComponent|string $component the component added
+     * @param HierarchicalComponent|string $component the component added
      *
      * @return static
      */

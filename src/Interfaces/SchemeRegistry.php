@@ -26,7 +26,7 @@ namespace League\Url\Interfaces;
 interface SchemeRegistry extends Collection
 {
     /**
-     * Return the ports associated to the scheme
+     * Return the submitted scheme standard port
      *
      * @param string $scheme
      *
@@ -42,10 +42,7 @@ interface SchemeRegistry extends Collection
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified registry data
      *
-     * @param static|\Traversable|array $query the data to be merged can be
-     *                                         - another Interfaces\SchemeRegistry object
-     *                                         - a Traversable object
-     *                                         - an array
+     * @param SchemeRegistry|\Traversable|array $registry the data to be merged
      *
      * @return static
      */

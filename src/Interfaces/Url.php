@@ -141,7 +141,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the appended path
      *
-     * @param CollectionComponent|string $path the data to append
+     * @param HierarchicalComponent|string $path the data to append
      *
      * @return static
      */
@@ -153,7 +153,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the prepended path
      *
-     * @param CollectionComponent|string $path the data to prepend
+     * @param HierarchicalComponent|string $path the data to prepend
      *
      * @return static
      */
@@ -166,7 +166,7 @@ interface Url extends UriInterface
      * an instance containing the path
      *
      * @param int                        $offset the Path segment offset
-     * @param CollectionComponent|string $value  the data to inject
+     * @param HierarchicalComponent|string $value  the data to inject
      *
      * @return static
      */
@@ -239,7 +239,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the appended labels
      *
-     * @param CollectionComponent|string $host the data to append
+     * @param HierarchicalComponent|string $host the data to append
      *
      * @return static
      */
@@ -251,7 +251,7 @@ interface Url extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the prepended labels
      *
-     * @param CollectionComponent|string $host the data to prepend
+     * @param HierarchicalComponent|string $host the data to prepend
      *
      * @return static
      */
@@ -264,7 +264,7 @@ interface Url extends UriInterface
      * an instance that contains the modified host with the replaced labels
      *
      * @param int                        $offset the Host label offset
-     * @param CollectionComponent|string $value  the data to inject
+     * @param HierarchicalComponent|string $value  the data to inject
      *
      * @return static
      */

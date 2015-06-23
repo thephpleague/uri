@@ -72,4 +72,16 @@ interface Host extends HierarchicalComponent
      * @return string
      */
     public function toUnicode();
+
+    /**
+     * Return an host without its zone identifier according to RFC6874
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance without the host zone identifier according to RFC6874
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     *
+     * @return static
+     */
+    public function withoutZoneIdentifier();
 }

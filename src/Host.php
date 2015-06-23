@@ -109,6 +109,18 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function withoutZoneIdentifier()
+    {
+        if (!$this->host_as_ipv6 || false === ($pos = strpos($this->data[0], '%'))) {
+            return $this;
+        }
+
+        return new static(substr($this->data[0], 0, $pos));
+    }
+
+    /**
      * Format the Host output
      *
      * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE

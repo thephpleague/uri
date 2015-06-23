@@ -258,6 +258,18 @@ interface Url extends UriInterface
     public function prependHost($host);
 
     /**
+     * Return an URL without the host zone identifier according to RFC6874
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance without the host zone identifier according to RFC6874
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     *
+     * @return static
+     */
+    public function withoutZoneIdentifier();
+
+    /**
      * Return an URL with one of its Host label replaced
      *
      * This method MUST retain the state of the current instance, and return

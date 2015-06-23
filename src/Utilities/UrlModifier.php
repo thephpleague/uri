@@ -189,6 +189,14 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
+    public function withoutZoneIdentifier()
+    {
+        return $this->withProperty('host', $this->host->withoutZoneIdentifier());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function replaceLabel($offset, $value)
     {
         return $this->withProperty('host', $this->host->replace($offset, $value));

@@ -74,6 +74,17 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
         $this->assertSame('example.com', $url->getHost());
     }
 
+
+    public function testWithoutZoneIdentifier()
+    {
+        $url = Url::createFromUrl(
+            'http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
+        );
+        $url = $url->withoutZoneIdentifier();
+        $this->assertSame('[fe80::1234]', $url->getHost());
+    }
+
+
     public function testFilterQueryParameters()
     {
         $url = $this->url->filterQuery(function ($value) {

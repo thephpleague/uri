@@ -57,7 +57,21 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * New Instance
      *
-     * @param  array  scheme/standard port pair
+     * The scheme must be valid according to RFC3986 rules
+     * The port can be:
+     * - a positive integer
+     * - an Interfaces\Port object
+     * - null
+     *
+     * <code>
+     * <?php
+     *  $registry = new SchemeRegistry(['http' => 80, 'ws' => 80, 'file' => null]);
+     * ?>
+     * </code>
+     *
+     * @param array scheme/standard port pair
+     *
+     * @throws InvalidArgumentException If the scheme or the port is invalid
      */
     public function __construct(array $data = [])
     {
@@ -65,7 +79,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             $data = static::$defaultSchemes;
         }
         foreach ($data as $scheme => $port) {
-            $this->data[$this->formatScheme($scheme)] = (new Url\Port($port))->toInt();
+            $this->data[$this->validateOffset($scheme)] = (new Url\Port($port))->toInt();
         }
         ksort($this->data, SORT_STRING);
     }
@@ -73,9 +87,11 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * {@inheritdoc}
      */
-    public function hasOffset($scheme)
+    public function getIterator()
     {
-        return array_key_exists($this->formatScheme($scheme), $this->data);
+        return new ArrayIterator(array_map(function ($port) {
+            return new Url\Port($port);
+        }, $this->data));
     }
 
     /**
@@ -91,11 +107,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     }
 
     /**
-     * Return a new instance when needed
-     *
-     * @param array $data
-     *
-     * @return static
+     * {@inheritdoc}
      */
     protected function newCollectionInstance(array $data)
     {
@@ -105,37 +117,11 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
 
         return new static($data);
     }
+
     /**
      * {@inheritdoc}
      */
-    public function without($offsets)
-    {
-        if (is_callable($offsets)) {
-            $offsets = array_filter(array_keys($this->data), $offsets);
-        }
-
-        if (!is_array($offsets)) {
-            throw new InvalidArgumentException('You must give a callable or an array as only argument');
-        }
-
-        $data = $this->data;
-        foreach ($offsets as $scheme) {
-            unset($data[$this->formatScheme($scheme)]);
-        }
-
-        return $this->newCollectionInstance($data);
-    }
-
-    /**
-     * Validate Scheme syntax according to RFC3986
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the submitted scheme is invalid
-     *
-     * @return string
-     */
-    protected function formatScheme($scheme)
+    protected function validateOffset($scheme)
     {
         if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
@@ -149,7 +135,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      */
     public function getPort($scheme)
     {
-        $scheme = $this->formatScheme($scheme);
+        $scheme = $this->validateOffset($scheme);
         if (!$this->hasOffset($scheme)) {
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }

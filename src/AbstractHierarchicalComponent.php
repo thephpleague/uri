@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -17,20 +15,20 @@ use InvalidArgumentException;
 /**
  * An abstract class to ease collection like Component object manipulation
  *
- * @package  League.url
- * @since  3.0.0
+ * @package League.url
+ * @since   4.0.0
  */
 abstract class AbstractHierarchicalComponent
 {
     const IS_ABSOLUTE = 1;
-    const IS_RELATIVE = 0;
+    const IS_RELATIVE = 2;
+
     /**
-     * is the HierarchicalComponent absolute
+     * Is the HierarchicalComponent absolute
      *
      * @var int
      */
     protected $is_absolute = self::IS_RELATIVE;
-
 
     /**
      * Trait for ComponentTrait method
@@ -43,9 +41,9 @@ abstract class AbstractHierarchicalComponent
     use Utilities\CollectionTrait;
 
     /**
-     * New Instance of Path
+     * New Instance
      *
-     * @param string $str the path
+     * @param string $str the component string representation
      */
     public function __construct($str = null)
     {
@@ -105,12 +103,11 @@ abstract class AbstractHierarchicalComponent
     public function append($component)
     {
         $source = $this->toArray();
-        $dest   = static::validateComponent($component)->toArray();
         if (count($source) && '' == $source[count($source) - 1]) {
             array_pop($source);
         }
 
-        return $this->newCollectionInstance(array_merge($source, $dest));
+        return $this->newCollectionInstance(array_merge($source, static::validateComponent($component)->toArray()));
     }
 
     /**
@@ -155,7 +152,7 @@ abstract class AbstractHierarchicalComponent
     }
 
     /**
-     * return a formatted component string according to its type
+     * Return a formatted component string according to its type
      *
      * @param string $str
      * @param int    $type

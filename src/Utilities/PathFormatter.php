@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Utilities;
 
@@ -18,15 +16,15 @@ use League\Url\Interfaces\Path;
  * A trait to set and get immutable value
  *
  * @package League.url
- * @since 4.0.0
+ * @since   4.0.0
  */
 trait PathFormatter
 {
     /**
      * Format the Path in a URL string
      *
-     * @param  Path $path
-     * @param  boolean    $has_authority_part does the URL as an authority part
+     * @param Path $path
+     * @param bool $has_authority_part does the URL as an authority part
      *
      * @return string
      */

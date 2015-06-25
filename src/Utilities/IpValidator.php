@@ -1,22 +1,20 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Utilities;
 
 /**
- * A Trait to validate a Host component
+ * A Trait to validate a IP type Host
  *
  * @package League.url
- * @since 4.0.0
+ * @since   4.0.0
  */
 trait IpValidator
 {
@@ -166,9 +164,11 @@ trait IpValidator
      */
     protected static function inetToBits($inet)
     {
-        return array_reduce(str_split(unpack('A16', $inet)[1]), function ($carry, $char) {
+        $convert = function ($carry, $char) {
             return $carry .= str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
-        }, '');
+        };
+
+        return array_reduce(str_split(unpack('A16', $inet)[1]), $convert, '');
     }
 
 }

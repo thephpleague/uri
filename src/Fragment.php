@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -16,7 +14,7 @@ namespace League\Url;
  * Value object representing a URL fragment component.
  *
  * @package League.url
- * @since 1.0.0
+ * @since   1.0.0
  */
 class Fragment extends AbstractComponent implements Interfaces\Fragment
 {

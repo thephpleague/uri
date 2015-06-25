@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -70,7 +68,6 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
      */
     protected function validate($data)
     {
-        $data = strtolower($data);
         if (empty($this->registry->hasOffset($data))) {
             throw new InvalidArgumentException(sprintf(
                 "the submitted scheme '%s' is no registered in the `SchemeRegistry` object",
@@ -78,7 +75,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
             ));
         }
 
-        return $data;
+        return strtolower($data);
     }
 
     /**

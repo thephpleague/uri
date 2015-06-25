@@ -36,8 +36,6 @@ You need:
 
 To use the library.
 
-**Note: The last stable version of `League\Url` [version 3.*](https://github.com/thephpleague/url/tree/3.x) still supports PHP 5.3**
-
 Install
 -------
 
@@ -58,8 +56,6 @@ $ phpunit
 
 Contributing
 -------
-
-**Note: Contribute to the last stable version of `League\Url` [on the 3.x branch](https://github.com/thephpleague/url/tree/3.x)**
 
 Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 

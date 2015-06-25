@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Services;
 
@@ -18,10 +16,10 @@ use League\Url\Interfaces;
 use League\Url\Utilities;
 
 /**
- * A class to manipulate an URL output
+ * A class to manipulate an URL and URL components output
  *
  * @package League.url
- * @since 4.0.0
+ * @since   4.0.0
  */
 class Formatter implements Interfaces\SchemeRegistryAccess
 {
@@ -100,9 +98,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     }
 
     /**
-     * Return the specified registry
-     *
-     * @return Interfaces\SchemeRegistry
+     * {@inheritdoc}
      */
     public function getSchemeRegistry()
     {
@@ -219,7 +215,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
      */
     protected function formatUrl(Interfaces\Url $url)
     {
-        $query = Url\Query::build($url->query->toArray(), $this->querySeparator, $this->queryEncoding);
+        $query = $this->formatUrlPart($url->query);
         if (!empty($query)) {
             $query = '?'.$query;
         }

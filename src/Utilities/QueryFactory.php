@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Utilities;
 
@@ -18,7 +16,7 @@ use InvalidArgumentException;
  * A Trait to parse and build a Query string
  *
  * @package League.url
- * @since  4.0.0
+ * @since   4.0.0
  */
 trait QueryFactory
 {
@@ -41,8 +39,8 @@ trait QueryFactory
         if ('' == $str) {
             return [];
         }
-        $res   = [];
-        $pairs = explode($separator, $str);
+        $res     = [];
+        $pairs   = explode($separator, $str);
         $decoder = static::getDecoder($encodingType);
         foreach ($pairs as $pair) {
             $res = static::parsePair($decoder, $res, $pair);
@@ -70,6 +68,7 @@ trait QueryFactory
         }
         if (!array_key_exists($key, $res)) {
             $res[$key] = $value;
+
             return $res;
         }
         if (!is_array($res[$key])) {

@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Interfaces;
 
@@ -16,21 +14,20 @@ use Countable;
 use IteratorAggregate;
 
 /**
- * Value object representing a URL Collection like component.
+ * Value object representing a Collection.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
  * state of the current instance and return an instance that contains the
  * changed state.
  *
- * @package  League.url
- * @since  4.0.0
+ * @package League.url
+ * @since   4.0.0
  */
 interface Collection extends Countable, IteratorAggregate
 {
-    const FILTER_USE_KEY = 2;
-
-    const FILTER_USE_VALUE = 1;
+    const FILTER_USE_KEY   = 2;
+    const FILTER_USE_VALUE = 3;
 
     /**
      * Return an array representation of the collection
@@ -65,7 +62,7 @@ interface Collection extends Countable, IteratorAggregate
      * an instance that contains the modified component
      *
      * @param callable $callable the list of offset to keep from the collection
-     * @param int      $flag     Flag determining what argument are sent to callback
+     * @param int      $flag     flag to determine what argument are sent to callback
      *
      * @return static
      */

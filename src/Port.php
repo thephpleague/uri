@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -18,7 +16,7 @@ use InvalidArgumentException;
  * Value object representing a URL port component.
  *
  * @package League.url
- * @since 1.0.0
+ * @since   1.0.0
  */
 class Port extends AbstractComponent implements Interfaces\Port
 {
@@ -35,9 +33,7 @@ class Port extends AbstractComponent implements Interfaces\Port
     }
 
     /**
-     * Validate the port
-     *
-     * @param int $data
+     * {@inheritdoc}
      */
     protected function validate($data)
     {

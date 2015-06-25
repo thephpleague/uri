@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -16,7 +14,7 @@ namespace League\Url;
  * An abstract class to ease component manipulation
  *
  * @package League.url
- * @since  4.0.0
+ * @since   4.0.0
  */
 abstract class AbstractComponent
 {
@@ -56,6 +54,7 @@ abstract class AbstractComponent
     {
         $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
         $this->assertValidString($data);
+
         return rawurldecode(trim($data));
     }
 

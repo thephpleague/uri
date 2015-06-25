@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Utilities;
 
@@ -18,7 +16,7 @@ use League\Url\Interfaces\Collection;
 use Traversable;
 
 /**
- * A trait with common methods for Collection like Component
+ * Common methods for Collection objects
  *
  * @package League.url
  * @since  4.0.0
@@ -86,9 +84,7 @@ trait CollectionTrait
         }
 
         if (!is_array($offsets)) {
-            throw new InvalidArgumentException(
-                'You must give a callable or an array as only argument'
-            );
+            throw new InvalidArgumentException('You must give a callable or an array as only argument');
         }
 
         $data = $this->data;
@@ -98,15 +94,6 @@ trait CollectionTrait
 
         return $this->newCollectionInstance($data);
     }
-
-    /**
-     * Return a new instance when needed
-     *
-     * @param array $data
-     *
-     * @return static
-     */
-    abstract protected function newCollectionInstance(array $data);
 
     /**
      * {@inheritdoc}
@@ -123,6 +110,15 @@ trait CollectionTrait
 
         return $this->newCollectionInstance(array_filter($this->data, $callable));
     }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    abstract protected function newCollectionInstance(array $data);
 
     /**
      * Filter The Collection according to its offsets

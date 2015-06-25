@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -19,7 +17,7 @@ use Traversable;
  * Value object representing a URL query component.
  *
  * @package League.url
- * @since  1.0.0
+ * @since   1.0.0
  */
 class Query implements Interfaces\Query
 {
@@ -141,37 +139,24 @@ class Query implements Interfaces\Query
     public function merge($query)
     {
         if ($query instanceof Interfaces\Query) {
-            return $this->mergeQueryObject($query);
+            return $this->mergeQuery($query);
         }
 
         if ($query instanceof Traversable || is_array($query)) {
-            return $this->mergeArray($query);
+            return $this->mergeQuery(static::createFromArray($query));
         }
 
-        return $this->mergeArray($this->validate($query));
+        return $this->mergeQuery(static::createFromArray($this->validate($query)));
     }
 
     /**
-     * Merge a Traversable or an Array to the current object
-     *
-     * @param Traversable|array $query
-     *
-     * @return static
-     */
-    protected function mergeArray($query)
-    {
-        return $this->mergeQueryObject(static::createFromArray($query));
-
-    }
-
-    /**
-     * Merge 2 Interfaces\Query objects
+     * Merge two Interfaces\Query objects
      *
      * @param Interfaces\Query $query
      *
      * @return static
      */
-    protected function mergeQueryObject(Interfaces\Query $query)
+    protected function mergeQuery(Interfaces\Query $query)
     {
         if ($this->sameValueAs($query)) {
             return $this;

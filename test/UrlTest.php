@@ -240,6 +240,14 @@ class UrlTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testSameValueAsFailed()
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn('yolo://example.com');
+        $url = Url::createFromUrl('http://example.com');
+        $this->assertFalse($url->sameValueAs($mock));
+    }
+
     /**
      * @param $url
      * @param $expected

@@ -1,27 +1,25 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Interfaces;
 
 /**
- * Value object representing a URL Collection like component.
+ * Value object representing an URL hierarchical component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
  * state of the current instance and return an instance that contains the
  * changed state.
  *
- * @package  League.url
- * @since  4.0.0
+ * @package League.url
+ * @since   4.0.0
  */
 interface HierarchicalComponent extends Collection, Component
 {
@@ -55,8 +53,8 @@ interface HierarchicalComponent extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component with the replaced data
      *
-     * @param int                        $offset    the label offset to remove and replace by
-     *                                              the given component
+     * @param int                          $offset    the label offset to remove and replace by
+     *                                                the given component
      * @param HierarchicalComponent|string $component the component added
      *
      * @return static

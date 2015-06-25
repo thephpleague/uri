@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url\Utilities;
 
@@ -21,7 +19,7 @@ use League\Url\Interfaces;
  * and create a new League\Url\Url instance
  *
  * @package League.url
- * @since 4.0.0
+ * @since   4.0.0
  */
 trait UrlFactory
 {
@@ -107,17 +105,17 @@ trait UrlFactory
      */
     public static function parse($url)
     {
+        $url               = trim($url);
+        $components        = @parse_url($url);
         $defaultComponents = [
             "scheme" => null, "user" => null, "pass" => null, "host" => null,
             "port" => null, "path" => null, "query" => null, "fragment" => null,
         ];
-        $url = trim($url);
-        $components = @parse_url($url);
         if (is_array($components)) {
             return array_merge($defaultComponents, $components);
         }
 
-        $components = static::bugFixAuthority($url);
+        $components = @parse_url(static::fixUrlScheme($url));
         if (is_array($components)) {
             unset($components['scheme']);
             return array_merge($defaultComponents, $components);
@@ -127,19 +125,23 @@ trait UrlFactory
     }
 
     /**
-     * Parse an URL bug fix for unpatched PHP version
+     * bug fix for unpatched PHP version
      *
-     * bug fix for https://bugs.php.net/bug.php?id=68917
      * in the following versions
      *    - PHP 5.4.7 => 5.5.24
      *    - PHP 5.6.0 => 5.6.8
      *    - HHVM all versions
      *
+     * We must prepend a temporary missing scheme to allow
+     * parsing with parse_url function
+     *
+     * @see https://bugs.php.net/bug.php?id=68917
+     *
      * @param string $url The URL to parse
      *
      * @return array
      */
-    protected static function bugFixAuthority($url)
+    protected static function fixUrlScheme($url)
     {
         static $is_bugged;
 
@@ -151,6 +153,6 @@ trait UrlFactory
             throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
         }
 
-        return @parse_url('php-bugfix-authority:'.$url);
+        return 'php-bugfix-scheme:'.$url;
     }
 }

@@ -1,24 +1,23 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
  * Value object representing a URL.
  *
  * @package League.url
- * @since 1.0.0
+ * @since   1.0.0
  *
  */
 class Url implements Interfaces\Url
@@ -115,9 +114,7 @@ class Url implements Interfaces\Url
             $port = '';
         }
 
-        return $this->userInfo->getUriComponent()
-            .$this->host->getUriComponent()
-            .$port;
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
     /**
@@ -150,7 +147,11 @@ class Url implements Interfaces\Url
     public function sameValueAs(UriInterface $url)
     {
         if (!$url instanceof Interfaces\Url) {
-            $url = static::createFromUrl($url, $this->scheme->getSchemeRegistry());
+            try {
+                $url = static::createFromUrl($url, $this->scheme->getSchemeRegistry());
+            } catch (InvalidArgumentException $e) {
+                return false;
+            }
         }
 
         return $url->__toString() === $this->__toString();
@@ -234,7 +235,9 @@ class Url implements Interfaces\Url
     public function withUserInfo($user, $pass = null)
     {
         $userInfo = $this->userInfo->withUser($user)->withPass($pass);
-        if ($this->userInfo->sameValueAs($userInfo)) {
+        if ($this->userInfo->user->sameValueAs($userInfo->user)
+            && $this->userInfo->pass->sameValueAs($userInfo->pass)
+        ) {
             return $this;
         }
         $newInstance = clone $this;

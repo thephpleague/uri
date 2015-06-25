@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -18,7 +16,7 @@ use InvalidArgumentException;
  * Value object representing a URL host component.
  *
  * @package League.url
- * @since 1.0.0
+ * @since   1.0.0
  */
 class Host extends AbstractHierarchicalComponent implements Interfaces\Host
 {
@@ -39,9 +37,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     use Utilities\HostnameValidator;
 
     /**
-     * new Instance
-     *
-     * @param string $str the host
+     * {@inheritdoc}
      */
     protected function init($str)
     {
@@ -49,18 +45,6 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
         if (!empty($str)) {
             $this->data = $this->validate($str);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static function formatComponentString($str, $type)
-    {
-        if (self::IS_ABSOLUTE == $type) {
-            return $str.static::$delimiter;
-        }
-
-        return $str;
     }
 
     /**
@@ -109,18 +93,6 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function withoutZoneIdentifier()
-    {
-        if (!$this->host_as_ipv6 || false === ($pos = strpos($this->data[0], '%'))) {
-            return $this;
-        }
-
-        return new static(substr($this->data[0], 0, $pos));
-    }
-
-    /**
      * Format the Host output
      *
      * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE
@@ -135,7 +107,6 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
 
         return $this->formatDomainName($enc_type);
     }
-
     /**
      * Format an IP for string representation of the Host
      *
@@ -179,6 +150,18 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function withoutZoneIdentifier()
+    {
+        if (!$this->host_as_ipv6 || false === ($pos = strpos($this->data[0], '%'))) {
+            return $this;
+        }
+
+        return new static(substr($this->data[0], 0, $pos));
+    }
+
+    /**
      * Validated the Host Label Count
      *
      * @param array $data Host labels
@@ -193,6 +176,18 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
         if (!$res) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function formatComponentString($str, $type)
+    {
+        if (self::IS_ABSOLUTE == $type) {
+            return $str.static::$delimiter;
+        }
+
+        return $str;
     }
 
     /**

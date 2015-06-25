@@ -1,14 +1,12 @@
 <?php
 /**
- * This file is part of the League.url library
+ * League.Url (http://url.thephpleague.com)
  *
- * @license http://opensource.org/licenses/MIT
- * @link https://github.com/thephpleague/url/
- * @version 4.0.0
- * @package League.url
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * @link      https://github.com/thephpleague/url/
+ * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @version   4.0.0
+ * @package   League.url
  */
 namespace League\Url;
 
@@ -225,9 +223,9 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
         if (strpos($ext, static::$delimiter)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext = implode(static::$delimiter, $this->validate($ext));
-        $data = $this->data;
-        $basename = (string) array_pop($data);
+        $ext         = implode(static::$delimiter, $this->validate($ext));
+        $data        = $this->data;
+        $basename    = (string) array_pop($data);
         $newBasename = $this->setBasename($basename, $ext);
         if ($newBasename == $basename) {
             return $this;

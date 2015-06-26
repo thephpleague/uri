@@ -201,6 +201,14 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
+    public function hasTrailingDelimiter()
+    {
+        return empty($this->getBasename());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDirname()
     {
         return str_replace("\0", "\\", pathinfo(str_replace("\\", "\0", $this), PATHINFO_DIRNAME));

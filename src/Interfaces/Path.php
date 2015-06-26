@@ -66,6 +66,13 @@ interface Path extends HierarchicalComponent
     public function getExtension();
 
     /**
+     * Returns whether or not the path has a trailing delimiter
+     *
+     * @return bool
+     */
+    public function hasTrailingDelimiter();
+
+    /**
      * Returns an instance with the specified basename extension
      *
      * This method MUST retain the state of the current instance, and return

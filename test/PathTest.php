@@ -369,6 +369,26 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $path
+     * @param $expected
+     * @dataProvider trailingDelimiterProvider
+     */
+    public function testHasTrailingDelimiter($path, $expected)
+    {
+        $this->assertSame($expected, (new Path($path))->hasTrailingDelimiter());
+    }
+
+    public function trailingDelimiterProvider()
+    {
+        return [
+            ['/path/to/my/', true],
+            ['/path/to/my', false],
+            ['path/to/my', false],
+            ['path/to/my/', true],
+        ];
+    }
+
+    /**
      * @param  string $raw
      * @param  string $parsed
      * @dataProvider extensionProvider

@@ -10,7 +10,8 @@ All Notable changes to `League\Url` will be documented in this file
 - Added default support for the following schemes: `ldap`, `ldaps`, `nntp`, `snews`, `telnet`, `wais`
 - Support for IPv6 zone identifier
 - `Intl` extension is now required to use the library
-- Domain Parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
+- Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
+- Add `Path::hasTrailingDelimiter` method
 
 ### Remove
 

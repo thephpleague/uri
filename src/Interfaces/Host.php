@@ -53,6 +53,34 @@ interface Host extends HierarchicalComponent
     public function isIpv6();
 
     /**
+     * Tell whether the current public suffix is valid
+     *
+     * @return bool
+     */
+    public function isPublicSuffixValid();
+
+    /**
+     * Return the host public suffix
+     *
+     * @return string
+     */
+    public function getPublicSuffix();
+
+    /**
+     * Return the host registrable domain
+     *
+     * @return string
+     */
+    public function getRegisterableDomain();
+
+    /**
+     * Retrun the hostname subdomain
+     *
+     * @return string
+     */
+    public function getSubdomain();
+
+    /**
      * Retrieves a single host label.
      *
      * Retrieves a single host label. If the label offset has not been set,

@@ -391,4 +391,47 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         (new Host('secure.example.com'))->replace(2, new Host('127.0.0.1'));
     }
+
+    /**
+     * @dataProvider parseDataProvider
+     */
+    public function testPublicSuffixListImplementation(
+        $host,
+        $publicSuffix,
+        $registerableDomain,
+        $subdomain,
+        $isValidSuffix
+    ) {
+        $host = new Host($host);
+        $this->assertSame($subdomain, $host->getSubdomain());
+        $this->assertSame($registerableDomain, $host->getRegisterableDomain());
+        $this->assertSame($publicSuffix, $host->getPublicSuffix());
+        $this->assertSame($isValidSuffix, $host->isPublicSuffixValid());
+    }
+
+    public function parseDataProvider()
+    {
+        return [
+            ['www.waxaudio.com.au', 'com.au', 'waxaudio.com.au', 'www', true],
+            ['giant.yyyy', 'yyyy', 'giant.yyyy', null, false],
+            ['localhost', null, null, null, false],
+            ['127.0.0.1', null, null, null, false],
+            ['[::1]', null, null, null, false],
+            ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false],
+            ['xn--p1ai.ru', 'ru', 'рф.ru', null, true],
+        ];
+    }
+
+    public function testLazyLoadingPdpParser()
+    {
+        $host   = new Host();
+        $parser = (new \ReflectionClass($host))->getProperty('parser');
+        $parser->setAccessible(true);
+        $parser  = $parser->setValue(null);
+        $altHost = $host->modify('www.waxaudio.com.au');
+        $this->assertSame('www', $altHost->getSubdomain());
+        $altParser = (new \ReflectionClass($altHost))->getProperty('parser');
+        $altParser->setAccessible(true);
+        $this->assertInstanceOf('\Pdp\Parser', $altParser->getValue());
+    }
 }

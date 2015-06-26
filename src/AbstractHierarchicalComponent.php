@@ -11,6 +11,7 @@
 namespace League\Url;
 
 use InvalidArgumentException;
+use ReflectionClass;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -117,12 +118,12 @@ abstract class AbstractHierarchicalComponent
      *
      * @throws InvalidArgumentException if the value can not be converted
      *
-     * @return Interfaces\HierarchicalComponent
+     * @return static
      */
     protected function validateComponent($component)
     {
         if (!$component instanceof Interfaces\HierarchicalComponent) {
-            $component = new static($component);
+            return $this->modify($component);
         }
 
         return $component;

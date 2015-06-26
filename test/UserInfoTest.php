@@ -43,6 +43,23 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider sameValueAsProvider
+     */
+    public function testSameValueAs($userinfo, $userinfobis, $expected)
+    {
+        $this->assertSame($expected, $userinfo->sameValueAs($userinfobis));
+    }
+
+    public function sameValueAsProvider()
+    {
+        return [
+            [new UserInfo(), new UserInfo('foo', 'bar'), false],
+            [new UserInfo('foo', 'bar'), new UserInfo('foo', 'bar'), true],
+            [new UserInfo('', 'bar'), new UserInfo('', 'coucou'), true],
+        ];
+    }
+
+    /**
      * @param $login
      * @param $pass
      * @param $expected

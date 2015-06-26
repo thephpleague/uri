@@ -11,7 +11,6 @@
 namespace League\Url;
 
 use InvalidArgumentException;
-use ReflectionClass;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -19,7 +18,7 @@ use ReflectionClass;
  * @package League.url
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent
+abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalComponent
 {
     const IS_ABSOLUTE = 1;
     const IS_RELATIVE = 0;

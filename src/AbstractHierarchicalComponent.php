@@ -21,7 +21,7 @@ use InvalidArgumentException;
 abstract class AbstractHierarchicalComponent
 {
     const IS_ABSOLUTE = 1;
-    const IS_RELATIVE = 2;
+    const IS_RELATIVE = 0;
 
     /**
      * Is the HierarchicalComponent absolute

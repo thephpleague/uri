@@ -21,7 +21,8 @@
         "php" : ">=5.5.0",
         "ext-mbstring" : "*",
         "ext-intl" : "*",
-        "psr/http-message": "^1.0"
+        "psr/http-message": "^1.0",
+        "jeremykendall/php-domain-parser": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit" : "^4.0"
@@ -35,9 +36,6 @@
         "psr-4": {
             "League\\Url\\Test\\": "tests"
         }
-    },
-    "suggest": {
-        "jeremykendall/php-domain-parser": "Parse hostname into its component subdomain, registerable domain, and public suffix parts"
     },
     "extra": {
         "branch-alias": {

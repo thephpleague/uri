@@ -11,6 +11,7 @@
 namespace League\Url\Utilities;
 
 use InvalidArgumentException;
+use Pdp;
 
 /**
  * A Trait to validate a Hostname
@@ -28,6 +29,73 @@ trait HostnameValidator
     protected static $delimiter = '.';
 
     /**
+     * hostname subdomain
+     *
+     * @var string|null
+     */
+    protected $subdomain;
+
+    /**
+     * hostname registrable domain
+     *
+     * @var string|null
+     */
+    protected $registerableDomain;
+
+    /**
+     * hostname public suffix
+     *
+     * @var string|null
+     */
+    protected $publicSuffix;
+
+    /**
+     * Tells whether we have a valid suffix
+     *
+     * @var bool
+     */
+    protected $isPublicSuffixValid = false;
+
+    /**
+     * Pdp Parser
+     *
+     * @var Pdp\Parser
+     */
+    protected static $parser;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPublicSuffix()
+    {
+        return $this->publicSuffix;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRegisterableDomain()
+    {
+        return $this->registerableDomain;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubdomain()
+    {
+        return $this->subdomain;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isPublicSuffixValid()
+    {
+        return $this->isPublicSuffixValid;
+    }
+
+    /**
      * Validate a string only host
      *
      * @param string $str
@@ -38,17 +106,24 @@ trait HostnameValidator
      */
     protected function validateStringHost($str)
     {
-        $str = $this->lower($this->setIsAbsolute($str));
-
         $labels = array_map(function ($value) {
             return idn_to_ascii($value);
-        }, explode(static::$delimiter, $str));
-
+        }, explode(static::$delimiter, $this->lower($this->setIsAbsolute($str))));
         $this->assertValidHost($labels);
-
-        return array_map(function ($label) {
+        $labels = array_map(function ($label) {
             return idn_to_utf8($label);
         }, $labels);
+
+        if (!static::$parser instanceof Pdp\Parser) {
+            static::$parser = new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
+        }
+        $host = implode('.', $labels);
+        $info = static::$parser->parseHost($host);
+        $this->subdomain           = $info->subdomain;
+        $this->registerableDomain  = $info->registerableDomain;
+        $this->publicSuffix        = $info->publicSuffix;
+        $this->isPublicSuffixValid = static::$parser->isSuffixValid($host);
+        return $labels;
     }
 
     /**

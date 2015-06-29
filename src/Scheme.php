@@ -70,7 +70,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     {
         if (empty($this->registry->hasOffset($data))) {
             throw new InvalidArgumentException(sprintf(
-                "the submitted scheme '%s' is no registered in the `SchemeRegistry` object",
+                "the submitted scheme `%s` is no registered in the `".get_class($this->registry)."` object",
                 $data
             ));
         }

@@ -326,7 +326,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
           'complex path 3' =>          [self::BASE_URL, "g;x?y#s",        "http://a/b/c/g;x?y#s"],
           'complex path 4' =>          [self::BASE_URL, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
           'complex path 5' =>          [self::BASE_URL, "g;x=1/../y",     "http://a/b/c/y"],
-          'origin url without path' => ["http://h:b@a",     "b/../y",         "http://h:b@a/y"],
+          'origin url without path' => ["http://h:b@a",     "b/../y",     "http://h:b@a/y"],
           '2 relative paths 1'      => ["a/b",          "../..",          "/"],
           '2 relative paths 2'      => ["a/b",          "./.",            "a/"],
           '2 relative paths 3'      => ["a/b",          "../c",           "c"],

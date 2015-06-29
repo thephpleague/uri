@@ -19,9 +19,9 @@ namespace League\Uri;
 abstract class AbstractComponent
 {
     /**
-     * Trait for ComponentTrait method
+     * common immutable value object methods
      */
-    use Utilities\ComponentTrait;
+    use Components\ImmutableValueObject;
 
     /**
      * The component data

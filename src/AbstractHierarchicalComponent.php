@@ -31,14 +31,14 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     protected $is_absolute = self::IS_RELATIVE;
 
     /**
-     * Trait for ComponentTrait method
+     * common immutable value object methods
      */
-    use Utilities\ComponentTrait;
+    use Components\ImmutableValueObject;
 
     /**
-     * Trait for Collection type Component
+     * immutable collection methods
      */
-    use Utilities\CollectionTrait;
+    use Components\ImmutableCollection;
 
     /**
      * New Instance

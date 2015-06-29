@@ -14,16 +14,15 @@ All Notable changes to `League\Url` will be documented in this file
 - `Query::sortOffsets` method
 
 ### Fixed
+
 - Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
 - Renamed `Url::withoutQueryValues` to `Url::withoutQueryOffsets` for consistency
+- Renamed `Collection::FILTER_USE_KEY` to `Collection::FILTER_USE_OFFSET` for consistency
 - Default supported schemes are: `file`, `ftp`, `http`, `https`, `ssh`, `ws`, `wss`
 
 ### Remove
 
-- `Scheme::isSupported`
-- `Port::getStandardSchemes`
-- `Scheme::getStandardPort` use the `SchemeRegistry` class to get this information.
-- `Scheme::hasStandardPort` use the `SchemeRegistry` class to get this information.
+- `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
 
 ## 4.0.0-beta-3 - 2015-06-09

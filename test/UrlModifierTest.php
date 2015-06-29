@@ -96,7 +96,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     {
         $url = $this->url->filterQuery(function ($value) {
             return $value == 'kingkong';
-        }, Interfaces\Collection::FILTER_USE_KEY);
+        }, Interfaces\Collection::FILTER_USE_OFFSET);
 
         $this->assertSame('kingkong=toto', $url->getQuery());
     }

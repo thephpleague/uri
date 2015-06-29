@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Url;
 
 use League\Uri;
 use League\Uri\Interfaces;
@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-trait UrlModifier
+trait Modifier
 {
     /**
      * Scheme Component
@@ -73,7 +73,7 @@ trait UrlModifier
     /**
      * Trait To get/set immutable value property
      */
-    use ImmutableProperty;
+    use Uri\Components\ImmutableProperty;
 
     /**
      * {@inheritdoc}

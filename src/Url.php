@@ -23,19 +23,19 @@ use Psr\Http\Message\UriInterface;
 class Url implements Interfaces\Url
 {
     /**
-     * A trait to format a path in a URL string
+     * a Factory to create new URL instances
      */
-    use Utilities\PathFormatter;
+    use Url\Factory;
 
     /**
-     * A Factory Trait to create new URL instances
+     * Component Path formatting in a URL string
      */
-    use Utilities\UrlFactory;
+    use Url\PathFormatter;
 
     /**
-     * A Modifier Trait to easily update URL instances
+     * partially modifying an URL object
      */
-    use Utilities\UrlModifier;
+    use Url\Modifier;
 
     /**
      * Create a new instance of URL

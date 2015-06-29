@@ -91,7 +91,15 @@ trait UrlModifier
     /**
      * {@inheritdoc}
      */
-    public function withoutQueryValues($offsets)
+    public function sortQueryOffsets($sort = SORT_REGULAR)
+    {
+        return $this->withProperty('query', $this->query->sortOffsets($sort));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutQueryOffsets($offsets)
     {
         return $this->withProperty('query', $this->query->without($offsets));
     }
@@ -229,7 +237,7 @@ trait UrlModifier
             return $url;
         }
 
-        return Url\Url::createFromUrl($url, $this->scheme->getSchemeRegistry());
+        return Url\Url::createFromString($url, $this->scheme->getSchemeRegistry());
     }
 
     /**

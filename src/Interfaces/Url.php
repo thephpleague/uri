@@ -106,6 +106,22 @@ interface Url extends UriInterface
     public function mergeQuery($query);
 
     /**
+     * Return an URL with a query string sorted by offset, maintaining offset to data correlations.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param  callable|int $sort a PHP sort flag constant or a comparaison function
+     *                            which must return an integer less than, equal to,
+     *                            or greater than zero if the first argument is
+     *                            considered to be respectively less than, equal to,
+     *                            or greater than the second.
+     *
+     * @return static
+     */
+    public function sortQueryOffsets($offsets);
+
+    /**
      * Return an URL without the specified query offsets
      *
      * This method MUST retain the state of the current instance, and return
@@ -117,7 +133,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function withoutQueryValues($offsets);
+    public function withoutQueryOffsets($offsets);
 
     /**
      * Return an URL with the filtered query values

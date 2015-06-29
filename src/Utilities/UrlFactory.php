@@ -40,7 +40,7 @@ trait UrlFactory
      */
     public static function createFromServer(array $server, Interfaces\SchemeRegistry $registry = null)
     {
-        return static::createFromUrl(
+        return static::createFromString(
             static::fetchServerScheme($server).'//'
             .static::fetchServerUserInfo($server)
             .static::fetchServerHost($server)
@@ -60,7 +60,7 @@ trait UrlFactory
      *
      * @return Url\Url
      */
-    public static function createFromUrl($url, Interfaces\SchemeRegistry $registry = null)
+    public static function createFromString($url, Interfaces\SchemeRegistry $registry = null)
     {
         return static::createFromComponents(static::parse($url), $registry);
     }

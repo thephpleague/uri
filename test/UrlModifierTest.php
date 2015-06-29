@@ -15,7 +15,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url::createFromUrl(
+        $this->url = Url::createFromString(
             'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }
@@ -31,18 +31,25 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
         $same = $this->url
             ->mergeQuery(['kingkong' => 'toto'])
             ->withExtension('php')
-            ->withoutQueryValues(['toto'])
+            ->withoutQueryOffsets(['toto'])
             ->withoutSegments([34])
             ->withoutLabels([23, 18]);
 
         $this->assertSame($same, $this->url);
     }
 
-    public function testWithoutQueryParameters()
+    public function testWithoutQueryOffsets()
     {
-        $url = $this->url->withoutQueryValues(['kingkong']);
+        $url = $this->url->withoutQueryOffsets(['kingkong']);
         $this->assertSame('foo=bar%20baz', $url->getQuery());
     }
+
+    public function testSortQueryOffsets()
+    {
+        $url = $this->url->sortQueryOffsets();
+        $this->assertSame('foo=bar%20baz&kingkong=toto', $url->getQuery());
+    }
+
 
     public function testWithoutSegments()
     {
@@ -52,7 +59,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutEmptySegments()
     {
-        $url = Url::createFromUrl(
+        $url = Url::createFromString(
             'http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $url = $url->withoutEmptySegments();
@@ -61,7 +68,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutDotSegments()
     {
-        $url = Url::createFromUrl(
+        $url = Url::createFromString(
             'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $url = $url->withoutDotSegments();
@@ -77,7 +84,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutZoneIdentifier()
     {
-        $url = Url::createFromUrl(
+        $url = Url::createFromString(
             'http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $url = $url->withoutZoneIdentifier();

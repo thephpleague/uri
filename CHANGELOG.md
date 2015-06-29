@@ -12,13 +12,15 @@ All Notable changes to `League\Url` will be documented in this file
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - `Path::hasTrailingDelimiter` method
 - `Query::sortOffsets` method
+- Missing `User` and `Pass` Interfaces
 
 ### Fixed
 
 - Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
 - Renamed `Url::withoutQueryValues` to `Url::withoutQueryOffsets` for consistency
 - Renamed `Collection::FILTER_USE_KEY` to `Collection::FILTER_USE_OFFSET` for consistency
-- Default supported schemes are: `file`, `ftp`, `http`, `https`, `ssh`, `ws`, `wss`
+- Default supported schemes are: `ftp`, `http`, `https`, `ssh`, `ws`, `wss`
+- userinfo string representation `:` delimiter was added unnecessarily
 
 ### Remove
 

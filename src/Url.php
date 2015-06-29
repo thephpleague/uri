@@ -71,7 +71,7 @@ class Url implements Interfaces\Url
      */
     public function toArray()
     {
-        return static::parse($this);
+        return static::parse($this->__toString());
     }
 
     /**
@@ -79,15 +79,13 @@ class Url implements Interfaces\Url
      */
     public function __toString()
     {
-        $auth     = $this->getAuthority();
-        $has_auth = false;
+        $auth = $this->getAuthority();
         if (!empty($auth)) {
-            $auth     = '//'.$auth;
-            $has_auth = true;
+            $auth = '//'.$auth;
         }
 
         return $this->scheme->getUriComponent().$auth
-            .$this->formatPath($this->path, $has_auth)
+            .$this->formatPath($this->path, (bool) $auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

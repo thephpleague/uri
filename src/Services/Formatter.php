@@ -8,12 +8,12 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Services;
+namespace League\Uri\Services;
 
 use InvalidArgumentException;
-use League\Url;
-use League\Url\Interfaces;
-use League\Url\Utilities;
+use League\Uri;
+use League\Uri\Interfaces;
+use League\Uri\Utilities;
 
 /**
  * A class to manipulate an URL and URL components output
@@ -164,14 +164,14 @@ class Formatter implements Interfaces\SchemeRegistryAccess
         }
 
         if (!$input instanceof Interfaces\Url) {
-            $input = Url\Url::createFromString($input, $this->registry);
+            $input = Uri\Url::createFromString($input, $this->registry);
         }
 
         return $this->formatUrl($input);
     }
 
     /**
-     * Format a League\Url\Interfaces\UrlPart according to the Formatter properties
+     * Format a League\Uri\Interfaces\UrlPart according to the Formatter properties
      *
      * @param Interfaces\UrlPart $part
      *
@@ -180,7 +180,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     protected function formatUrlPart(Interfaces\UrlPart $part)
     {
         if ($part instanceof Interfaces\Query) {
-            return Url\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return Uri\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof Interfaces\Host) {
@@ -191,7 +191,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     }
 
     /**
-     * Format a League\Url\Interfaces\Host according to the Formatter properties
+     * Format a League\Uri\Interfaces\Host according to the Formatter properties
      *
      * @param Interfaces\Host $host
      *

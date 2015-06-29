@@ -8,10 +8,10 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
 use InvalidArgumentException;
-use League\Url\Interfaces\UrlPart;
+use League\Uri\Interfaces\UrlPart;
 use ReflectionClass;
 
 /**

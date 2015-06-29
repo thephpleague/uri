@@ -1,10 +1,10 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
-use League\Url\Port;
-use League\Url\Scheme;
-use League\Url\Utilities;
+use League\Uri\Port;
+use League\Uri\Scheme;
+use League\Uri\Utilities;
 use PHPUnit_Framework_TestCase;
 
 /**

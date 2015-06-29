@@ -1,9 +1,9 @@
 <?php
 
-namespace League\Url\Test\Components;
+namespace League\Uri\Test\Components;
 
 use ArrayIterator;
-use League\Url\Host;
+use League\Uri\Host;
 use PHPUnit_Framework_TestCase;
 
 /**

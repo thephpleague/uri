@@ -8,15 +8,15 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
 use InvalidArgumentException;
-use League\Url;
-use League\Url\Interfaces;
+use League\Uri;
+use League\Uri\Interfaces;
 
 /**
  * A Trait to help parse an URL
- * and create a new League\Url\Url instance
+ * and create a new League\Uri\Url instance
  *
  * @package League.url
  * @since   4.0.0
@@ -29,14 +29,14 @@ trait UrlFactory
     use ServerInfo;
 
     /**
-     * Create a new League\Url\Url object from the environment
+     * Create a new League\Uri\Url object from the environment
      *
      * @param array                          $server the environment server typically $_SERVER
      * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return Url\Url
+     * @return Uri\Url
      */
     public static function createFromServer(array $server, Interfaces\SchemeRegistry $registry = null)
     {
@@ -51,14 +51,14 @@ trait UrlFactory
     }
 
     /**
-     * Create a new League\Url\Url instance from a string
+     * Create a new League\Uri\Url instance from a string
      *
      * @param string                         $url
      * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return Url\Url
+     * @return Uri\Url
      */
     public static function createFromString($url, Interfaces\SchemeRegistry $registry = null)
     {
@@ -66,13 +66,13 @@ trait UrlFactory
     }
 
     /**
-     * Create a new League\Url\Url instance from an array returned by
+     * Create a new League\Uri\Url instance from an array returned by
      * PHP parse_url function
      *
      * @param array                          $components
      * @param Interfaces\SchemeRegistry|null $registry
      *
-     * @return Url\Url
+     * @return Uri\Url
      */
     public static function createFromComponents(array $components, Interfaces\SchemeRegistry $registry = null)
     {
@@ -81,14 +81,14 @@ trait UrlFactory
             "port"   => null, "path" => null, "query" => null, "fragment" => null,
         ], $components);
 
-        return new Url\Url(
-            new Url\Scheme($components["scheme"], $registry),
-            new Url\UserInfo($components["user"], $components["pass"]),
-            new Url\Host($components["host"]),
-            new Url\Port($components["port"]),
-            new Url\Path($components["path"]),
-            new Url\Query($components["query"]),
-            new Url\Fragment($components["fragment"])
+        return new Uri\Url(
+            new Uri\Scheme($components["scheme"], $registry),
+            new Uri\UserInfo($components["user"], $components["pass"]),
+            new Uri\Host($components["host"]),
+            new Uri\Port($components["port"]),
+            new Uri\Path($components["path"]),
+            new Uri\Query($components["query"]),
+            new Uri\Fragment($components["fragment"])
         );
     }
 

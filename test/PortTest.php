@@ -1,9 +1,9 @@
 <?php
 
-namespace League\Url\Test\Components;
+namespace League\Uri\Test\Components;
 
-use League\Url\Port;
-use League\Url\Scheme;
+use League\Uri\Port;
+use League\Uri\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**

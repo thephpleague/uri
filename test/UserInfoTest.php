@@ -1,10 +1,10 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
-use League\Url\Pass;
-use League\Url\User;
-use League\Url\UserInfo;
+use League\Uri\Pass;
+use League\Uri\User;
+use League\Uri\UserInfo;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -38,8 +38,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();
-        $this->assertInstanceof('League\Url\User', $userinfo->user);
-        $this->assertInstanceof('League\Url\Pass', $userinfo->pass);
+        $this->assertInstanceof('League\Uri\User', $userinfo->user);
+        $this->assertInstanceof('League\Uri\Pass', $userinfo->pass);
     }
 
     /**

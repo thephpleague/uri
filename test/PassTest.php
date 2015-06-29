@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
-use League\Url\Pass;
+use League\Uri\Pass;
 use PHPUnit_Framework_TestCase;
 
 /**

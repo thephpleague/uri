@@ -35,7 +35,6 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
      * @var array
      */
     protected static $defaultSchemes = [
-        'file'   => null,
         'ftp'    => 21,
         'http'   => 80,
         'https'  => 443,

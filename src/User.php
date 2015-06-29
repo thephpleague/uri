@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * @package League.url
  * @since  1.0.0
  */
-class User extends AbstractComponent implements Interfaces\Component
+class User extends AbstractComponent implements Interfaces\User
 {
     /**
      * {@inheritdoc}

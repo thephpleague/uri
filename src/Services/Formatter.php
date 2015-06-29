@@ -22,6 +22,9 @@ use League\Uri\Interfaces;
  */
 class Formatter implements Interfaces\SchemeRegistryAccess
 {
+    /**
+     * Constants for host formatting
+     */
     const HOST_AS_UNICODE = 1;
     const HOST_AS_ASCII   = 2;
 

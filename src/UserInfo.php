@@ -98,6 +98,10 @@ class UserInfo implements Interfaces\UserInfo
             return '';
         }
 
+        if ($this->pass->isEmpty()) {
+            return $this->user->__toString();
+        }
+
         return $this->user->__toString().':'.$this->pass->__toString();
     }
 

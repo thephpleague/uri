@@ -29,7 +29,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url::createFromUrl(
+        $this->url = Url::createFromString(
             'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
@@ -84,7 +84,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testAutomaticUrlNormalization()
     {
-        $url = Url::createFromUrl(
+        $url = Url::createFromString(
             'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment'
         );
 
@@ -101,7 +101,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testPort($url, $port)
     {
-        $this->assertSame($port, Url::createFromUrl($url)->getPort());
+        $this->assertSame($port, Url::createFromString($url)->getPort());
     }
 
     public function portProvider()
@@ -121,7 +121,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testToArray($url, $expected)
     {
-        $this->assertSame($expected, Url::createFromUrl($url)->toArray());
+        $this->assertSame($expected, Url::createFromString($url)->toArray());
     }
 
     public function toArrayProvider()
@@ -195,7 +195,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         return [
-            'normal URL' => [Url::createFromUrl('http://a/b/c'), false],
+            'normal URL' => [Url::createFromString('http://a/b/c'), false],
             'incomplete authority' => [new Url(
                 new Scheme(),
                 new UserInfo('foo', 'bar'),
@@ -231,11 +231,11 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
-        $url = Url::createFromUrl('http://xn--gwd-hna98db.pl/toto/path');
+        $url = Url::createFromString('http://xn--gwd-hna98db.pl/toto/path');
 
         return [
-            [Url::createFromUrl('//example.com'), Url::createFromUrl('//ExamPle.Com')],
-            [Url::createFromUrl('http://مثال.إختبار'), Url::createFromUrl('http://xn--mgbh0fb.xn--kgbechtv')],
+            [Url::createFromString('//example.com'), Url::createFromString('//ExamPle.Com')],
+            [Url::createFromString('http://مثال.إختبار'), Url::createFromString('http://xn--mgbh0fb.xn--kgbechtv')],
             [$url, $mock],
         ];
     }
@@ -244,7 +244,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn('yolo://example.com');
-        $url = Url::createFromUrl('http://example.com');
+        $url = Url::createFromString('http://example.com');
         $this->assertFalse($url->sameValueAs($mock));
     }
 
@@ -275,9 +275,9 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testHasStandardPort()
     {
-        $this->assertFalse(Url::createFromUrl('http://example.com:81/')->hasStandardPort());
-        $this->assertTrue(Url::createFromUrl('http://example.com:80/')->hasStandardPort());
-        $this->assertTrue(Url::createFromUrl('http://example.com/')->hasStandardPort());
+        $this->assertFalse(Url::createFromString('http://example.com:81/')->hasStandardPort());
+        $this->assertTrue(Url::createFromString('http://example.com:80/')->hasStandardPort());
+        $this->assertTrue(Url::createFromString('http://example.com/')->hasStandardPort());
     }
 
     /**
@@ -288,7 +288,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testResolve($url, $relative, $expected)
     {
-        $this->assertSame($expected, Url::createFromUrl($url)->resolve($relative)->__toString());
+        $this->assertSame($expected, Url::createFromString($url)->resolve($relative)->__toString());
     }
 
     public function resolveProvider()
@@ -296,7 +296,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         return [
           'baseurl' =>                 [self::BASE_URL, "",               self::BASE_URL],
           'scheme' =>                  [self::BASE_URL, "ftp://d/e/f",    "ftp://d/e/f"],
-          'scheme' =>                  [self::BASE_URL, Url::createFromUrl("ftp://d/e/f"),    "ftp://d/e/f"],
+          'scheme' =>                  [self::BASE_URL, Url::createFromString("ftp://d/e/f"),    "ftp://d/e/f"],
           'path 1' =>                  [self::BASE_URL, "g",              "http://a/b/c/g"],
           'path 2' =>                  [self::BASE_URL, "./g",            "http://a/b/c/g"],
           'path 3' =>                  [self::BASE_URL, "g/",             "http://a/b/c/g/"],

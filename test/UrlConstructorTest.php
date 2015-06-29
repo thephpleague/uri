@@ -160,9 +160,9 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      * @param $input
      * @dataProvider validUrlArray
      */
-    public function testCreateFromUrl($expected, $input)
+    public function testcreateFromString($expected, $input)
     {
-        $this->assertSame($expected, Url::createFromUrl($input)->__toString());
+        $this->assertSame($expected, Url::createFromString($input)->__toString());
     }
 
     public function validUrlArray()
@@ -198,7 +198,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO($input)
     {
-        Url::createFromUrl($input);
+        Url::createFromString($input);
     }
 
     public function invalidURL()

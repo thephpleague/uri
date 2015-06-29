@@ -164,7 +164,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
         }
 
         if (!$input instanceof Interfaces\Url) {
-            $input = Url\Url::createFromUrl($input, $this->registry);
+            $input = Url\Url::createFromString($input, $this->registry);
         }
 
         return $this->formatUrl($input);

@@ -16,7 +16,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url\Url::createFromUrl(
+        $this->url = Url\Url::createFromString(
             'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }

@@ -148,13 +148,13 @@ class Url implements Interfaces\Url
     {
         if (!$url instanceof Interfaces\Url) {
             try {
-                $url = static::createFromUrl($url, $this->scheme->getSchemeRegistry());
+                $url = static::createFromString($url, $this->scheme->getSchemeRegistry());
             } catch (InvalidArgumentException $e) {
                 return false;
             }
         }
 
-        return $url->__toString() === $this->__toString();
+        return $url->sortQueryOffsets()->__toString() === $this->sortQueryOffsets()->__toString();
     }
 
     /**

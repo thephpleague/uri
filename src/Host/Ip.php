@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Host;
 
 /**
  * A Trait to validate a IP type Host
@@ -16,7 +16,7 @@ namespace League\Uri\Utilities;
  * @package League.url
  * @since   4.0.0
  */
-trait IpValidator
+trait Ip
 {
     /**
      * Is the Host an IPv4
@@ -152,23 +152,11 @@ trait IpValidator
             return false;
         }
 
-        return substr(static::inetToBits(inet_pton($ipv6)), 0, 10) === self::$local_link_prefix;
-    }
-
-    /**
-     * Convert a IPv6 address to its binary like representation
-     *
-     * @param string $inet
-     *
-     * @return string
-     */
-    protected static function inetToBits($inet)
-    {
         $convert = function ($carry, $char) {
             return $carry .= str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
         };
+        $res = array_reduce(str_split(unpack('A16', inet_pton($ipv6))[1]), $convert, '');
 
-        return array_reduce(str_split(unpack('A16', $inet)[1]), $convert, '');
+        return substr($res, 0, 10) === self::$local_link_prefix;
     }
-
 }

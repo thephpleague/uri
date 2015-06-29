@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Url;
 
 use InvalidArgumentException;
 use League\Uri;
@@ -21,7 +21,7 @@ use League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-trait UrlFactory
+trait Factory
 {
     /**
      * A Factory trait fetch info from Server environment variables
@@ -34,7 +34,7 @@ trait UrlFactory
      * @param array                          $server the environment server typically $_SERVER
      * @param Interfaces\SchemeRegistry|null $registry
      *
-     * @throws \InvalidArgumentException If the URL can not be parsed
+     * @throws InvalidArgumentException If the URL can not be parsed
      *
      * @return Uri\Url
      */

@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Url;
 
 use InvalidArgumentException;
 

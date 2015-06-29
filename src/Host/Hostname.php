@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Host;
 
 use InvalidArgumentException;
 use Pdp;
@@ -19,7 +19,7 @@ use Pdp;
  * @package League.url
  * @since   4.0.0
  */
-trait HostnameValidator
+trait Hostname
 {
     /**
      * HierarchicalComponent delimiter

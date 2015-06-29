@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Components;
 
 use ArrayIterator;
 use InvalidArgumentException;
@@ -16,12 +16,12 @@ use League\Uri\Interfaces\Collection;
 use Traversable;
 
 /**
- * Common methods for Collection objects
+ * Common methods for Immutable Collection objects
  *
  * @package League.url
  * @since  4.0.0
  */
-trait CollectionTrait
+trait ImmutableCollection
 {
     /**
      * The Component Data
@@ -100,11 +100,11 @@ trait CollectionTrait
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
-        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_KEY])) {
+        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_OFFSET])) {
             throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
         }
 
-        if ($flag == Collection::FILTER_USE_KEY) {
+        if ($flag == Collection::FILTER_USE_OFFSET) {
             return $this->filterByOffset($callable);
         }
 

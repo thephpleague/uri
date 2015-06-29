@@ -13,7 +13,6 @@ namespace League\Uri\Services;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
-use League\Uri\Utilities;
 
 /**
  * A class to manipulate an URL and URL components output
@@ -29,7 +28,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     /**
      * A trait to format a path in a URL string
      */
-    use Utilities\PathFormatter;
+    use Uri\Url\PathFormatter;
 
     /**
      * host encoding property

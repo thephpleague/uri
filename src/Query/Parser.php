@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Query;
 
 use InvalidArgumentException;
 
@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * @package League.url
  * @since   4.0.0
  */
-trait QueryFactory
+trait Parser
 {
     /**
      * Parse que query string into an associative array

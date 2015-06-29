@@ -22,19 +22,19 @@ use Traversable;
 class Query implements Interfaces\Query
 {
     /**
-     * Trait for ComponentTrait method
+     * common immutable value object methods
      */
-    use Utilities\ComponentTrait;
+    use Components\ImmutableValueObject;
 
     /**
-     * Trait for Collection type Component
+     * immutable collection methods
      */
-    use Utilities\CollectionTrait;
+    use Components\ImmutableCollection;
 
     /**
-     * Trait for parsing and building query string
+     * Parsing and building query string without data loss
      */
-    use Utilities\QueryFactory;
+    use Query\Parser;
 
     /**
      * a new instance

@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Utilities;
+namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\UrlPart;
@@ -20,7 +20,7 @@ use ReflectionClass;
  * @package League.url
  * @since   4.0.0
  */
-trait ComponentTrait
+trait ImmutableValueObject
 {
     /**
      * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2

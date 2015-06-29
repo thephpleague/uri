@@ -239,7 +239,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testFilterOffsets($params, $callable, $expected)
     {
-        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_KEY));
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_OFFSET));
     }
 
     public function filterByOffsetsProvider()

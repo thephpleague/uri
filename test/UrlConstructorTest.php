@@ -1,16 +1,16 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
-use League\Url\Url;
-use League\Url\Scheme;
-use League\Url\User;
-use League\Url\Pass;
-use League\Url\Host;
-use League\Url\Port;
-use League\Url\Path;
-use League\Url\Query;
-use League\Url\Fragment;
+use League\Uri\Url;
+use League\Uri\Scheme;
+use League\Uri\User;
+use League\Uri\Pass;
+use League\Uri\Host;
+use League\Uri\Port;
+use League\Uri\Path;
+use League\Uri\Query;
+use League\Uri\Fragment;
 use PHPUnit_Framework_TestCase;
 
 /**

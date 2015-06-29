@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Interfaces;
+namespace League\Uri\Interfaces;
 
 use Countable;
 use IteratorAggregate;

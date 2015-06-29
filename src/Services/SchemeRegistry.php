@@ -8,12 +8,12 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Services;
+namespace League\Uri\Services;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use League\Url;
-use League\Url\Interfaces;
+use League\Uri;
+use League\Uri\Interfaces;
 use Traversable;
 
 /**
@@ -27,7 +27,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * Collection Trait
      */
-    use Url\Utilities\CollectionTrait;
+    use Uri\Utilities\CollectionTrait;
 
     /**
      * Standard ports for known schemes
@@ -69,7 +69,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             $data = static::$defaultSchemes;
         }
         foreach ($data as $scheme => $port) {
-            $this->data[$this->validateOffset($scheme)] = (new Url\Port($port))->toInt();
+            $this->data[$this->validateOffset($scheme)] = (new Uri\Port($port))->toInt();
         }
         ksort($this->data, SORT_STRING);
     }
@@ -80,7 +80,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     public function getIterator()
     {
         return new ArrayIterator(array_map(function ($port) {
-            return new Url\Port($port);
+            return new Uri\Port($port);
         }, $this->data));
     }
 
@@ -93,7 +93,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             return array_keys($this->data);
         }
 
-        return array_keys($this->data, (new Url\Port(func_get_arg(0)))->toInt(), true);
+        return array_keys($this->data, (new Uri\Port(func_get_arg(0)))->toInt(), true);
     }
 
     /**
@@ -130,7 +130,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
 
-        return new Url\Port($this->data[$scheme]);
+        return new Uri\Port($this->data[$scheme]);
     }
 
     /**

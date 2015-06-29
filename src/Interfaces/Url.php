@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Interfaces;
+namespace League\Uri\Interfaces;
 
 use Psr\Http\Message\UriInterface;
 
@@ -51,7 +51,10 @@ interface Url extends UriInterface
     /**
      * Returns whether two UriInterface represents the same value
      * The comparison is based on the __toString method.
-     * No normalization is done
+     * The following normalization is done prior to comparaison
+     *
+     *  - hosts are converted using the punycode algorithm
+     *  - query strings are sorted using their offsets
      *
      * @param UriInterface $url
      *
@@ -119,7 +122,7 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function sortQueryOffsets($offsets);
+    public function sortQueryOffsets($sort = SORT_REGULAR);
 
     /**
      * Return an URL without the specified query offsets

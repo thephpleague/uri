@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url;
+namespace League\Uri;
 
 /**
  * Value object representing the UserInfo part of an URL.

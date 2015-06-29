@@ -1,9 +1,9 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
-use League\Url\Interfaces;
-use League\Url\Url;
+use League\Uri\Interfaces;
+use League\Uri\Url;
 use PHPUnit_Framework_TestCase;
 
 /**

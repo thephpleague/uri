@@ -8,9 +8,9 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
-use League\Url\Interfaces\Path;
+use League\Uri\Interfaces\Path;
 
 /**
  * A trait to set and get immutable value

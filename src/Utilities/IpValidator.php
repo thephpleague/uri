@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
 /**
  * A Trait to validate a IP type Host

@@ -8,11 +8,11 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use League\Url\Interfaces\Collection;
+use League\Uri\Interfaces\Collection;
 use Traversable;
 
 /**

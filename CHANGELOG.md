@@ -7,11 +7,16 @@ All Notable changes to `League\Url` will be documented in this file
 ### Added
 
 - A system to manage registration of other schemes using the `SchemeRegistry` Interface.
-- Added default support for the following schemes: `ldap`, `ldaps`, `nntp`, `snews`, `telnet`, `wais`
 - Support for IPv6 zone identifier
 - `Intl` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
-- Add `Path::hasTrailingDelimiter` method
+- `Path::hasTrailingDelimiter` method
+- `Query::sortOffsets` method
+
+### Fixed
+- Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
+- Renamed `Url::withoutQueryValues` to `Url::withoutQueryOffsets` for consistency
+- Default supported schemes are: `file`, `ftp`, `http`, `https`, `ssh`, `ws`, `wss`
 
 ### Remove
 

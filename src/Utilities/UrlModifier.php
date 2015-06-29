@@ -8,13 +8,13 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Url\Utilities;
+namespace League\Uri\Utilities;
 
-use League\Url;
-use League\Url\Interfaces;
+use League\Uri;
+use League\Uri\Interfaces;
 
 /**
- * a Trait to proxy partial update of a League\Url\Url object
+ * a Trait to proxy partial update of a League\Uri\Url object
  *
  * @package League.url
  * @since   4.0.0
@@ -237,7 +237,7 @@ trait UrlModifier
             return $url;
         }
 
-        return Url\Url::createFromString($url, $this->scheme->getSchemeRegistry());
+        return Uri\Url::createFromString($url, $this->scheme->getSchemeRegistry());
     }
 
     /**
@@ -294,11 +294,11 @@ trait UrlModifier
         if (!$path->isAbsolute()) {
             $segments = $newUrl->path->toArray();
             array_pop($segments);
-            $is_absolute = Url\Path::IS_RELATIVE;
+            $is_absolute = Uri\Path::IS_RELATIVE;
             if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
-                $is_absolute = Url\Path::IS_ABSOLUTE;
+                $is_absolute = Uri\Path::IS_ABSOLUTE;
             }
-            $path = Url\Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
+            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
         }
 
         return $path;

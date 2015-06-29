@@ -1,10 +1,10 @@
 <?php
 
-namespace League\Url\Test\Services;
+namespace League\Uri\Test\Services;
 
-use League\Url\Services\Formatter;
-use League\Url\Services\SchemeRegistry;
-use League\Url;
+use League\Uri\Services\Formatter;
+use League\Uri\Services\SchemeRegistry;
+use League\Uri;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -16,7 +16,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url\Url::createFromString(
+        $this->url = Uri\Url::createFromString(
             'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }
@@ -51,7 +51,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $formatter = new Formatter();
         $registry  = new SchemeRegistry();
         $formatter->setSchemeRegistry($registry);
-        $this->assertInstanceOf('\League\Url\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
+        $this->assertInstanceOf('\League\Uri\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
     }
 
     public function testFormatWithSimpleString()
@@ -66,7 +66,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatComponent()
     {
-        $scheme = new Url\Scheme('ftp');
+        $scheme = new Uri\Scheme('ftp');
         $this->assertSame($scheme->__toString(), (new Formatter())->format($scheme));
     }
 

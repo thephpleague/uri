@@ -1,9 +1,9 @@
 <?php
 
-namespace League\Url\Test;
+namespace League\Uri\Test;
 
 use ArrayIterator;
-use League\Url\Path;
+use League\Uri\Path;
 use PHPUnit_Framework_TestCase;
 use StdClass;
 

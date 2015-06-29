@@ -29,12 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "League\\Url\\": "src"
+            "League\\Uri\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "League\\Url\\Test\\": "tests"
+            "League\\Uri\\Test\\": "tests"
         }
     },
     "extra": {

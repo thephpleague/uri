@@ -52,4 +52,20 @@ interface Query extends Collection, Component
      * @return static
      */
     public function merge($query);
+
+    /**
+     * Sort the query string by offset, maintaining offset to data correlations.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param  callable|int $sort a PHP sort flag constant or a comparaison function
+     *                            which must return an integer less than, equal to,
+     *                            or greater than zero if the first argument is
+     *                            considered to be respectively less than, equal to,
+     *                            or greater than the second.
+     *
+     * @return static
+     */
+    public function sortOffsets($sort = SORT_REGULAR);
 }

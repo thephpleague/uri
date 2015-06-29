@@ -164,4 +164,22 @@ class Query implements Interfaces\Query
 
         return static::createFromArray(array_merge($this->data, $query->toArray()));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sortOffsets($sort = SORT_REGULAR)
+    {
+        $func = 'ksort';
+        if (is_callable($sort)) {
+            $func = 'uksort';
+        }
+        $data = $this->data;
+        $func($data, $sort);
+        if ($data === $this->data) {
+            return $this;
+        }
+
+        return static::createFromArray($data);
+    }
 }

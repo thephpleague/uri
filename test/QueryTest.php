@@ -374,4 +374,40 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         Query::build(['dfsq' => 'qdsqdf'], '&', 'toto');
     }
+
+    /**
+     * @param $data
+     * @param $sort
+     * @param $expected
+     * @dataProvider sortOffsetsProvider
+     */
+    public function testSortOffsets($data, $sort, $expected)
+    {
+        $this->assertSame($expected, Query::createFromArray($data)->sortOffsets($sort)->toArray());
+    }
+
+    public function sortOffsetsProvider()
+    {
+        return [
+            [
+                ['superman' => 'lex luthor', 'batman' => 'joker',],
+                SORT_REGULAR,
+                [ 'batman' => 'joker', 'superman' => 'lex luthor',]
+            ],
+            [
+                ['superman' => 'lex luthor', 'batman' => 'joker',],
+                function ($dataA, $dataB) {
+                    return strcasecmp($dataA, $dataB);
+                },
+                [ 'batman' => 'joker', 'superman' => 'lex luthor',]
+            ],
+            [
+                ['superman' => 'lex luthor', 'superman' => 'joker',],
+                function ($dataA, $dataB) {
+                    return strcasecmp($dataA, $dataB);
+                },
+                ['superman' => 'lex luthor', 'superman' => 'joker',]
+            ],
+        ];
+    }
 }

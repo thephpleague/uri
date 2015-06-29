@@ -37,17 +37,9 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     protected static $defaultSchemes = [
         'file'   => null,
         'ftp'    => 21,
-        'ftps'   => 989,
-        'gopher' => 70,
         'http'   => 80,
         'https'  => 443,
-        'ldap'   => 389,
-        'ldaps'  => 636,
-        'nntp'   => 119,
-        'snews'  => 563,
         'ssh'    => 22,
-        'telnet' => 23,
-        'wais'   => 210,
         'ws'     => 80,
         'wss'    => 443,
     ];

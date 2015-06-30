@@ -144,9 +144,9 @@ class Url implements Interfaces\Url
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (!$url instanceof Interfaces\Url) {
+        if (!$url instanceof Url) {
             try {
-                $url = static::createFromString($url, $this->scheme->getSchemeRegistry());
+                $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
             } catch (InvalidArgumentException $e) {
                 return false;
             }

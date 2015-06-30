@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Components;
+namespace League\Uri\Types;
 
 /**
  * A trait to set and get immutable value

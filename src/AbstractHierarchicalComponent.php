@@ -33,12 +33,12 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     /**
      * common immutable value object methods
      */
-    use Components\ImmutableValueObject;
+    use Types\ImmutableValueObject;
 
     /**
      * immutable collection methods
      */
-    use Components\ImmutableCollection;
+    use Types\ImmutableCollection;
 
     /**
      * New Instance

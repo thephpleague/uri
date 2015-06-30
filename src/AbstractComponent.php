@@ -21,7 +21,7 @@ abstract class AbstractComponent
     /**
      * common immutable value object methods
      */
-    use Components\ImmutableValueObject;
+    use Types\ImmutableValueObject;
 
     /**
      * The component data

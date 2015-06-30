@@ -24,12 +24,12 @@ class Query implements Interfaces\Query
     /**
      * common immutable value object methods
      */
-    use Components\ImmutableValueObject;
+    use Types\ImmutableValueObject;
 
     /**
      * immutable collection methods
      */
-    use Components\ImmutableCollection;
+    use Types\ImmutableCollection;
 
     /**
      * Parsing and building query string without data loss

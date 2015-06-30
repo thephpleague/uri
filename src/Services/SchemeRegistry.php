@@ -27,7 +27,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * Collection Trait
      */
-    use Uri\Components\ImmutableCollection;
+    use Uri\Types\ImmutableCollection;
 
     /**
      * Standard ports for known schemes

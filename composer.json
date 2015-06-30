@@ -34,7 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "League\\Uri\\Test\\": "tests"
+            "League\\Uri\\Test\\": "test"
         }
     },
     "extra": {

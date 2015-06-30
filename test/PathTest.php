@@ -468,4 +468,30 @@ class PathTest extends PHPUnit_Framework_TestCase
             'remove None'  => [['foo.bar', 'st.ay'], $func, '/foo.bar/st.ay'],
         ];
     }
+
+    public function pathTestProvider()
+    {
+        return [
+            // Percent encode spaces.
+            ['/baz bar', '/baz%20bar'],
+            // Don't encoding something that's already encoded.
+            ['/baz%20bar', '/baz%20bar'],
+            // Percent encode invalid percent encodings
+            ['/baz%2-bar', '/baz%252-bar'],
+            // Don't encode path segments
+            ['/baz/bar/bam~a', '/baz/bar/bam~a'],
+            ['/baz+bar', '/baz+bar'],
+            ['/baz:bar', '/baz:bar'],
+            ['/baz@bar', '/baz@bar'],
+            ['/baz(bar);bam/', '/baz(bar);bam/'],
+            ['/a-zA-Z0-9.-_~!$&\'()*+,;=:@', '/a-zA-Z0-9.-_~!$&\'()*+,;=:@'],
+        ];
+    }
+    /**
+     * @dataProvider pathTestProvider
+     */
+    public function testUriEncodesPathProperly($input, $output)
+    {
+        $this->assertSame($output, (new Path($input))->__toString());
+    }
 }

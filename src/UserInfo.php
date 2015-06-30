@@ -36,7 +36,7 @@ class UserInfo implements Interfaces\UserInfo
     /**
      * Trait To get/set immutable value property
      */
-    use Components\ImmutableProperty;
+    use Types\ImmutableProperty;
 
     /**
      * Create a new instance of UserInfo

@@ -73,7 +73,7 @@ trait Modifier
     /**
      * Trait To get/set immutable value property
      */
-    use Uri\Components\ImmutableProperty;
+    use Uri\Types\ImmutableProperty;
 
     /**
      * {@inheritdoc}

@@ -81,7 +81,11 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function __toString()
     {
-        return $this->isIdn ? $this->toUnicode() : $this->toAscii();
+        if ($this->isIdn) {
+            return $this->toUnicode();
+        }
+
+        return $this->toAscii();
     }
 
     /**
@@ -162,11 +166,11 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function withoutZoneIdentifier()
     {
-        if (!$this->hasZoneIdentifier) {
-            return $this;
+        if ($this->hasZoneIdentifier) {
+            return new static(substr($this->data[0], 0, strpos($this->data[0], '%')));
         }
 
-        return new static(substr($this->data[0], 0, strpos($this->data[0], '%')));
+        return $this;
     }
 
     /**
@@ -178,10 +182,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     protected function isValidLabelsCount(array $data = [])
     {
-        $labels       = array_merge($this->data, $data);
-        $count_labels = count($labels);
-        $res = $count_labels > 0 && $count_labels < 127 && 255 > strlen(implode(static::$delimiter, $labels));
-        if (!$res) {
+        if (127 <= count(array_merge($this->data, $data))) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
     }

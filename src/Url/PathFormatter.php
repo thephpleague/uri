@@ -13,7 +13,7 @@ namespace League\Uri\Url;
 use League\Uri\Interfaces\Path;
 
 /**
- * A trait to set and get immutable value
+ * A trait to format the Path component
  *
  * @package League.url
  * @since   4.0.0

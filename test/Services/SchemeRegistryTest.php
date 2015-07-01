@@ -27,13 +27,13 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testRegister()
     {
         $registry = new Services\SchemeRegistry(['yolo' => 2020]);
-        $this->assertTrue($registry->hasOffset('yolo'));
+        $this->assertTrue($registry->hasKey('yolo'));
     }
 
     public function testRegisterSchemeWithoutHost()
     {
         $registry = new Services\SchemeRegistry();
-        $this->assertFalse($registry->hasOffset('yolo'));
+        $this->assertFalse($registry->hasKey('yolo'));
     }
 
     /**
@@ -48,13 +48,13 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testOffsets()
     {
         $registry = new Services\SchemeRegistry();
-        $this->assertSame(array_keys($registry->toArray()), $registry->offsets());
+        $this->assertSame(array_keys($registry->toArray()), $registry->keys());
     }
 
     public function testOffsetsWithArguments()
     {
         $registry = new Services\SchemeRegistry();
-        $this->assertSame(['http', 'ws'], $registry->offsets(80));
+        $this->assertSame(['http', 'ws'], $registry->keys(80));
     }
 
     /**
@@ -133,7 +133,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
     public function testWithout($input, $scheme)
     {
         $registry = (new Services\SchemeRegistry())->without($input);
-        $this->assertFalse($registry->hasOffset($scheme));
+        $this->assertFalse($registry->hasKey($scheme));
     }
 
     public function validWithoutValue()

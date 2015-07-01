@@ -31,7 +31,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
         $same = $this->url
             ->mergeQuery(['kingkong' => 'toto'])
             ->withExtension('php')
-            ->withoutQueryOffsets(['toto'])
+            ->withoutQueryValues(['toto'])
             ->withoutSegments([34])
             ->withoutLabels([23, 18]);
 
@@ -40,13 +40,13 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutQueryOffsets()
     {
-        $url = $this->url->withoutQueryOffsets(['kingkong']);
+        $url = $this->url->withoutQueryValues(['kingkong']);
         $this->assertSame('foo=bar%20baz', $url->getQuery());
     }
 
     public function testSortQueryOffsets()
     {
-        $url = $this->url->sortQueryOffsets();
+        $url = $this->url->ksortQuery();
         $this->assertSame('foo=bar%20baz&kingkong=toto', $url->getQuery());
     }
 
@@ -96,7 +96,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     {
         $url = $this->url->filterQuery(function ($value) {
             return $value == 'kingkong';
-        }, Interfaces\Collection::FILTER_USE_OFFSET);
+        }, Interfaces\Collection::FILTER_USE_KEY);
 
         $this->assertSame('kingkong=toto', $url->getQuery());
     }

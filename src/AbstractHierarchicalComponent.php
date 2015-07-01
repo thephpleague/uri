@@ -173,7 +173,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      */
     public function replace($offset, $component)
     {
-        if (!empty($this->data) && !$this->hasOffset($offset)) {
+        if (!empty($this->data) && !$this->hasKey($offset)) {
             return $this;
         }
 

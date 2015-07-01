@@ -67,5 +67,5 @@ interface Query extends Collection, Component
      *
      * @return static
      */
-    public function sortOffsets($sort = SORT_REGULAR);
+    public function ksort($sort = SORT_REGULAR);
 }

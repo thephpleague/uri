@@ -91,15 +91,15 @@ trait Modifier
     /**
      * {@inheritdoc}
      */
-    public function sortQueryOffsets($sort = SORT_REGULAR)
+    public function ksortQuery($sort = SORT_REGULAR)
     {
-        return $this->withProperty('query', $this->query->sortOffsets($sort));
+        return $this->withProperty('query', $this->query->ksort($sort));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withoutQueryOffsets($offsets)
+    public function withoutQueryValues($offsets)
     {
         return $this->withProperty('query', $this->query->without($offsets));
     }

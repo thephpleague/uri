@@ -86,7 +86,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     /**
      * {@inheritdoc}
      */
-    public function offsets()
+    public function keys()
     {
         if (0 == func_num_args()) {
             return array_keys($this->data);
@@ -125,7 +125,7 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
     public function getPort($scheme)
     {
         $scheme = $this->validateOffset($scheme);
-        if (!$this->hasOffset($scheme)) {
+        if (!$this->hasKey($scheme)) {
             throw new InvalidArgumentException(sprintf("Unknown submitted scheme: '%s'", $scheme));
         }
 

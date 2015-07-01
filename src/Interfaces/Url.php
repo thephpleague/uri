@@ -122,21 +122,21 @@ interface Url extends UriInterface
      *
      * @return static
      */
-    public function sortQueryOffsets($sort = SORT_REGULAR);
+    public function ksortQuery($sort = SORT_REGULAR);
 
     /**
-     * Return an URL without the specified query offsets
+     * Return an URL without the specified query values
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified query data
      *
-     * @param callable|array $offsets the list of offsets to remove from the query
+     * @param callable|array $offsets the list of keys to remove from the query
      *                                if a callable is given it should filter the list
-     *                                of offsets to remove from the query values
+     *                                of keys to remove from the query string
      *
      * @return static
      */
-    public function withoutQueryOffsets($offsets);
+    public function withoutQueryValues($offsets);
 
     /**
      * Return an URL with the filtered query values

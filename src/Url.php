@@ -152,7 +152,7 @@ class Url implements Interfaces\Url
             }
         }
 
-        return $url->sortQueryOffsets()->__toString() === $this->sortQueryOffsets()->__toString();
+        return $url->ksortQuery()->__toString() === $this->ksortQuery()->__toString();
     }
 
     /**

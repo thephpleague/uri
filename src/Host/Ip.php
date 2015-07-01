@@ -33,6 +33,12 @@ trait Ip
     protected $host_as_ipv6 = false;
 
     /**
+     * Tell whether the IP has a zone Identifier
+     * @var boolean
+     */
+    protected $hasZoneIdentifier = false;
+
+    /**
      * IPv6 Local Link binary-like prefix
      *
      * @var string
@@ -61,6 +67,14 @@ trait Ip
     public function isIpv6()
     {
         return $this->host_as_ipv6;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasZoneIdentifier()
+    {
+        return $this->hasZoneIdentifier;
     }
 
     /**
@@ -135,6 +149,8 @@ trait Ip
         if (!$this->isLocalLink($ipv6)) {
             return false;
         }
+
+        $this->hasZoneIdentifier = true;
 
         return strtolower(rawurldecode($ip));
     }

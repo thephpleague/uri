@@ -121,12 +121,12 @@ trait Hostname
     protected function validateStringHost($str)
     {
         $raw_labels = explode(static::$delimiter, $this->lower($this->setIsAbsolute($str)));
-
-        $labels = array_map(function ($value) {
+        $labels     = array_map(function ($value) {
             return idn_to_ascii($value);
         }, $raw_labels);
 
         $this->assertValidHost($labels);
+
         $this->isIdn = $raw_labels !== $labels;
         $this->getHostnameInfos($raw_labels, $labels);
 
@@ -195,8 +195,8 @@ trait Hostname
             return !empty($value);
         });
 
-        if (count($verifs) != count($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels');
+        if ($verifs !== $labels) {
+            throw new InvalidArgumentException('Invalid Hostname, empty labels are not allowed');
         }
 
         $this->isValidLabelsCount($labels);
@@ -212,10 +212,8 @@ trait Hostname
      */
     protected function isValidContent(array $data)
     {
-        $res = preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT);
-
-        if (!empty($res)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify its content');
+        if (count(preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT))) {
+            throw new InvalidArgumentException('Invalid Hostname, some labels contain invalid characters');
         }
     }
 

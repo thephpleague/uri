@@ -15,8 +15,7 @@ use League\Uri;
 use League\Uri\Interfaces;
 
 /**
- * A Trait to help parse an URL
- * and create a new League\Uri\Url instance
+ * A Factory Trait to help return a new League\Uri\Url instance
  *
  * @package League.url
  * @since   4.0.0

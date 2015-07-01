@@ -38,7 +38,6 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
         'ftp'    => 21,
         'http'   => 80,
         'https'  => 443,
-        'ssh'    => 22,
         'ws'     => 80,
         'wss'    => 443,
     ];

@@ -168,7 +168,7 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function sortOffsets($sort = SORT_REGULAR)
+    public function ksort($sort = SORT_REGULAR)
     {
         $func = 'ksort';
         if (is_callable($sort)) {

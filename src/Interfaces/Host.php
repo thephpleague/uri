@@ -25,13 +25,6 @@ namespace League\Uri\Interfaces;
 interface Host extends HierarchicalComponent
 {
     /**
-     * Returns whether or not the host is a full qualified domain name
-     *
-     * @return bool
-     */
-    public function isAbsolute();
-
-    /**
      * Returns whether or not the host is an IP address
      *
      * @return bool
@@ -51,6 +44,29 @@ interface Host extends HierarchicalComponent
      * @return bool
      */
     public function isIpv6();
+
+    /**
+     * Returns whether or not the host has a ZoneIdentifier
+     *
+     * @return bool
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     */
+    public function hasZoneIdentifier();
+
+    /**
+     * Returns whether or not the host is a full qualified domain name
+     *
+     * @return bool
+     */
+    public function isAbsolute();
+
+    /**
+     * Returns whether or not the host is an IDN
+     *
+     * @return bool
+     */
+    public function isIdn();
 
     /**
      * Tell whether the current public suffix is valid
@@ -99,6 +115,13 @@ interface Host extends HierarchicalComponent
      * @return string
      */
     public function toUnicode();
+
+    /**
+     * Returns the ascii string representation of a host
+     *
+     * @return string
+     */
+    public function toAscii();
 
     /**
      * Return an host without its zone identifier according to RFC6874

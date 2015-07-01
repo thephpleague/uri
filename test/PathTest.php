@@ -255,11 +255,11 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testKeys()
     {
         $path = new Path('/bar/3/troll/3');
-        $this->assertCount(4, $path->offsets());
-        $this->assertCount(0, $path->offsets('foo'));
-        $this->assertSame([0], $path->offsets('bar'));
-        $this->assertCount(2, $path->offsets('3'));
-        $this->assertSame([1, 3], $path->offsets('3'));
+        $this->assertCount(4, $path->keys());
+        $this->assertCount(0, $path->keys('foo'));
+        $this->assertSame([0], $path->keys('bar'));
+        $this->assertCount(2, $path->keys('3'));
+        $this->assertSame([1, 3], $path->keys('3'));
     }
 
     /**

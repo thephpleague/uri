@@ -81,6 +81,14 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function __toString()
     {
+        return $this->isIdn ? $this->toUnicode() : $this->toAscii();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toAscii()
+    {
         return $this->format(self::HOST_AS_ASCII);
     }
 
@@ -154,11 +162,11 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function withoutZoneIdentifier()
     {
-        if (!$this->host_as_ipv6 || false === ($pos = strpos($this->data[0], '%'))) {
+        if (!$this->hasZoneIdentifier) {
             return $this;
         }
 
-        return new static(substr($this->data[0], 0, $pos));
+        return new static(substr($this->data[0], 0, strpos($this->data[0], '%')));
     }
 
     /**

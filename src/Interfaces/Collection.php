@@ -26,7 +26,7 @@ use IteratorAggregate;
  */
 interface Collection extends Countable, IteratorAggregate
 {
-    const FILTER_USE_OFFSET = 2;
+    const FILTER_USE_KEY    = 2;
     const FILTER_USE_VALUE  = 3;
 
     /**
@@ -44,7 +44,7 @@ interface Collection extends Countable, IteratorAggregate
      *
      * @return array
      */
-    public function offsets();
+    public function keys();
 
     /**
      * Returns whether the given offset exists in the current instance
@@ -53,7 +53,7 @@ interface Collection extends Countable, IteratorAggregate
      *
      * @return bool
      */
-    public function hasOffset($offset);
+    public function hasKey($offset);
 
     /**
      * Returns an instance with only the specified value

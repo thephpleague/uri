@@ -102,6 +102,25 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $raw
+     * @param $expected
+     * @dataProvider isIdnProvider
+     */
+    public function testIsIdn($host, $expected)
+    {
+        $this->assertSame($expected, (new Host($host))->isIdn());
+    }
+
+    public function isIdnProvider()
+    {
+        return [
+            ['127.0.0.1', false],
+            ['example.com', false],
+            ['مثال.آزمایشی', true],
+        ];
+    }
+
+    /**
      * Test Punycode support
      *
      * @param $unicode Unicode Hostname
@@ -111,7 +130,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testValidUnicodeHost($unicode, $ascii)
     {
         $host = new Host($unicode);
-        $this->assertSame($ascii, $host->__toString());
+        $this->assertSame($ascii, $host->toAscii());
         $this->assertSame($unicode, $host->toUnicode());
     }
 
@@ -227,8 +246,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testOffsets()
     {
         $host = new Host('master.example.com');
-        $this->assertSame([0, 1, 2], $host->offsets());
-        $this->assertSame([1], $host->offsets('example'));
+        $this->assertSame([0, 1, 2], $host->keys());
+        $this->assertSame([1], $host->keys('example'));
     }
 
     /**
@@ -289,6 +308,26 @@ class HostTest extends PHPUnit_Framework_TestCase
             'ipv6 host' => ['[::1]', '[::1]'],
             'ipv6 scoped' => ['fe80::%251', '[fe80::]'],
             'ipv6 scoped' => ['fe80::%1', '[fe80::]'],
+        ];
+    }
+
+    /**
+     * @param $host
+     * @param $expected
+     * @dataProvider hasZoneIdentifierProvider
+     */
+    public function testHasZoneIdentifier($host, $expected)
+    {
+        $this->assertSame($expected, (new Host($host))->hasZoneIdentifier());
+    }
+
+    public function hasZoneIdentifierProvider()
+    {
+        return [
+            ['127.0.0.1', false],
+            ['www.example.com', false],
+            ['[::1]', false],
+            ['fe80::%251', true],
         ];
     }
 
@@ -418,7 +457,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['127.0.0.1', null, null, null, false],
             ['[::1]', null, null, null, false],
             ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false],
-            ['xn--p1ai.ru', 'ru', 'рф.ru', null, true],
+            ['xn--p1ai.ru', 'ru', 'xn--p1ai.ru', null, true],
         ];
     }
 

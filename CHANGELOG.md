@@ -8,17 +8,17 @@ All Notable changes to `League\Url` will be documented in this file
 
 - A system to manage registration of other schemes using the `SchemeRegistry` Interface.
 - Support for IPv6 zone identifier
+- re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - `Path::hasTrailingDelimiter` method
-- `Query::sortOffsets` method
+- `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
 
 ### Fixed
 
 - Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
-- Renamed `Url::withoutQueryValues` to `Url::withoutQueryOffsets` for consistency
-- Renamed `Collection::FILTER_USE_KEY` to `Collection::FILTER_USE_OFFSET` for consistency
+- Renamed methods for consistency with PHP naming conventions
 - Default supported schemes are: `ftp`, `http`, `https`, `ssh`, `ws`, `wss`
 - userinfo string representation `:` delimiter was added unnecessarily
 

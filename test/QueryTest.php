@@ -129,10 +129,10 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $this->query->getValue('togo', $expected));
     }
 
-    public function testHasOffset()
+    public function testhasKey()
     {
-        $this->assertTrue($this->query->hasOffset('kingkong'));
-        $this->assertFalse($this->query->hasOffset('togo'));
+        $this->assertTrue($this->query->hasKey('kingkong'));
+        $this->assertFalse($this->query->hasKey('togo'));
     }
 
     public function testCountable()
@@ -148,19 +148,19 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'lol' => 3,
             'toto' => 'troll'
         ]);
-        $this->assertCount(0, $query->offsets('foo'));
-        $this->assertSame(['foo'], $query->offsets('bar'));
-        $this->assertCount(1, $query->offsets('3'));
-        $this->assertSame(['lol'], $query->offsets('3'));
-        $this->assertSame(['baz', 'toto'], $query->offsets('troll'));
+        $this->assertCount(0, $query->keys('foo'));
+        $this->assertSame(['foo'], $query->keys('bar'));
+        $this->assertCount(1, $query->keys('3'));
+        $this->assertSame(['lol'], $query->keys('3'));
+        $this->assertSame(['baz', 'toto'], $query->keys('troll'));
     }
 
     public function testStringWithoutContent()
     {
         $query = new Query('foo&bar&baz');
 
-        $this->assertCount(3, $query->offsets());
-        $this->assertSame(['foo', 'bar', 'baz'], $query->offsets());
+        $this->assertCount(3, $query->keys());
+        $this->assertSame(['foo', 'bar', 'baz'], $query->keys());
         $this->assertSame(null, $query->getValue('foo'));
         $this->assertSame(null, $query->getValue('bar'));
         $this->assertSame(null, $query->getValue('baz'));
@@ -239,7 +239,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
      */
     public function testFilterOffsets($params, $callable, $expected)
     {
-        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_OFFSET));
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_KEY));
     }
 
     public function filterByOffsetsProvider()
@@ -379,14 +379,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
      * @param $data
      * @param $sort
      * @param $expected
-     * @dataProvider sortOffsetsProvider
+     * @dataProvider ksortProvider
      */
-    public function testSortOffsets($data, $sort, $expected)
+    public function testksort($data, $sort, $expected)
     {
-        $this->assertSame($expected, Query::createFromArray($data)->sortOffsets($sort)->toArray());
+        $this->assertSame($expected, Query::createFromArray($data)->ksort($sort)->toArray());
     }
 
-    public function sortOffsetsProvider()
+    public function ksortProvider()
     {
         return [
             [

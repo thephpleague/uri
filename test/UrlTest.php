@@ -230,12 +230,12 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function sameValueAsProvider()
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn('http://gwóźdź.pl/toto/path');
+        $mock->method('__toString')->willReturn('http://xn--gwd-hna98db.pl/toto/path');
         $url = Url::createFromString('http://xn--gwd-hna98db.pl/toto/path');
 
         return [
             [Url::createFromString('//example.com'), Url::createFromString('//ExamPle.Com')],
-            [Url::createFromString('http://مثال.إختبار'), Url::createFromString('http://xn--mgbh0fb.xn--kgbechtv')],
+            [Url::createFromString('http://مثال.إختبار'), Url::createFromString('http://مثال.إختبار')],
             [$url, $mock],
         ];
     }

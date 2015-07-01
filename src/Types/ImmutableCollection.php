@@ -57,7 +57,7 @@ trait ImmutableCollection
     /**
      * {@inheritdoc}
      */
-    public function hasOffset($offset)
+    public function hasKey($offset)
     {
         return array_key_exists($this->validateOffset($offset), $this->data);
     }
@@ -65,7 +65,7 @@ trait ImmutableCollection
     /**
      * {@inheritdoc}
      */
-    public function offsets()
+    public function keys()
     {
         if (0 == func_num_args()) {
             return array_keys($this->data);
@@ -100,11 +100,11 @@ trait ImmutableCollection
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
-        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_OFFSET])) {
+        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_KEY])) {
             throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
         }
 
-        if ($flag == Collection::FILTER_USE_OFFSET) {
+        if ($flag == Collection::FILTER_USE_KEY) {
             return $this->filterByOffset($callable);
         }
 

@@ -57,6 +57,12 @@ trait Hostname
     protected $isPublicSuffixValid = false;
 
     /**
+     * Tells whether we have a IDN or not
+     * @var boolean
+     */
+    protected $isIdn = false;
+
+    /**
      * Pdp Parser
      *
      * @var Pdp\Parser
@@ -96,6 +102,14 @@ trait Hostname
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isIdn()
+    {
+        return $this->isIdn;
+    }
+
+    /**
      * Validate a string only host
      *
      * @param string $str
@@ -106,24 +120,36 @@ trait Hostname
      */
     protected function validateStringHost($str)
     {
+        $raw_labels = explode(static::$delimiter, $this->lower($this->setIsAbsolute($str)));
+
         $labels = array_map(function ($value) {
             return idn_to_ascii($value);
-        }, explode(static::$delimiter, $this->lower($this->setIsAbsolute($str))));
+        }, $raw_labels);
+
         $this->assertValidHost($labels);
-        $labels = array_map(function ($label) {
+        $this->isIdn = $raw_labels !== $labels;
+        $this->getHostnameInfos($raw_labels, $labels);
+
+        return array_map(function ($label) {
             return idn_to_utf8($label);
         }, $labels);
+    }
 
+    /**
+     * Get hostname info
+     * @param  array  $raw_labels The submitted labels normalized
+     */
+    protected function getHostnameInfos(array $raw_labels)
+    {
         if (!static::$parser instanceof Pdp\Parser) {
             static::$parser = new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
         }
-        $host = implode('.', $labels);
+        $host = implode('.', $raw_labels);
         $info = static::$parser->parseHost($host);
         $this->subdomain           = $info->subdomain;
         $this->registerableDomain  = $info->registerableDomain;
         $this->publicSuffix        = $info->publicSuffix;
         $this->isPublicSuffixValid = static::$parser->isSuffixValid($host);
-        return $labels;
     }
 
     /**

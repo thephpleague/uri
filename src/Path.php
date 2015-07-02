@@ -204,11 +204,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withTrailingSlash()
     {
-        if ($this->hasTrailingSlash()) {
-            return $this;
-        }
-
-        return $this->modify($this->__toString().static::$delimiter);
+        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().static::$delimiter);
     }
 
     /**
@@ -216,11 +212,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withoutTrailingSlash()
     {
-        if (!$this->hasTrailingSlash()) {
-            return $this;
-        }
-
-        return $this->modify(substr($this->__toString(), 0, -1));
+        return !$this->hasTrailingSlash() ? $this : $this->modify(substr($this->__toString(), 0, -1));
     }
 
     /**
@@ -228,11 +220,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withLeadingSlash()
     {
-        if ($this->isAbsolute) {
-            return $this;
-        }
-
-        return static::createFromArray($this->data, true);
+        return $this->isAbsolute ? $this : static::createFromArray($this->data, self::IS_ABSOLUTE);
     }
 
     /**
@@ -240,11 +228,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withoutLeadingSlash()
     {
-        if (!$this->isAbsolute) {
-            return $this;
-        }
-
-        return static::createFromArray($this->data);
+        return !$this->isAbsolute ? $this : static::createFromArray($this->data);
     }
 
     /**

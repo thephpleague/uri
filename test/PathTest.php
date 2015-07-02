@@ -435,6 +435,50 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $path
+     * @param $expected
+     * @dataProvider withLeadingSlashProvider
+     */
+    public function testWithLeadingSlash($path, $expected)
+    {
+        $this->assertSame($expected, (string) (new Path($path))->withLeadingSlash());
+    }
+
+    public function withLeadingSlashProvider()
+    {
+        return [
+            'relative path without ending slash' => ['toto', '/toto'],
+            'absolute path without ending slash' => ['/toto', '/toto'],
+            'root path'                          => ['/', '/'],
+            'empty path'                         => ['', '/'],
+            'relative path with ending slash'    => ['toto/', '/toto/'],
+            'absolute path with ending slash'    => ['/toto/', '/toto/'],
+        ];
+    }
+
+    /**
+     * @param $path
+     * @param $expected
+     * @dataProvider withoutLeadingSlashProvider
+     */
+    public function testWithoutLeadingSlash($path, $expected)
+    {
+        $this->assertSame($expected, (string) (new Path($path))->withoutLeadingSlash());
+    }
+
+    public function withoutLeadingSlashProvider()
+    {
+        return [
+            'relative path without ending slash' => ['toto', 'toto'],
+            'absolute path without ending slash' => ['/toto', 'toto'],
+            'root path'                          => ['/', ''],
+            'empty path'                         => ['', ''],
+            'relative path with ending slash'    => ['toto/', 'toto/'],
+            'absolute path with ending slash'    => ['/toto/', 'toto/'],
+        ];
+    }
+
+    /**
      * @param  string $raw
      * @param  string $parsed
      * @dataProvider extensionProvider

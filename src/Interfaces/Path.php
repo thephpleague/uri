@@ -94,6 +94,27 @@ interface Path extends HierarchicalComponent
     public function withoutTrailingSlash();
 
     /**
+     * Returns an instance with a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a leading slash
+     *
+     *
+     * @return static
+     */
+    public function withLeadingSlash();
+
+    /**
+     * Returns an instance without a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a leading slash
+     *
+     * @return static
+     */
+    public function withoutLeadingSlash();
+
+    /**
      * Returns an instance with the specified basename extension
      *
      * This method MUST retain the state of the current instance, and return

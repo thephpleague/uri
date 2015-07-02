@@ -202,10 +202,10 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     protected function formatHost(Interfaces\Host $host)
     {
         if (self::HOST_AS_ASCII == $this->hostEncoding) {
-            return $host->toAscii();
+            return $host->toAscii()->__toString();
         }
 
-        return $host->toUnicode();
+        return $host->toUnicode()->__toString();
     }
 
     /**

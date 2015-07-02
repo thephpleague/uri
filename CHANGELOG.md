@@ -11,7 +11,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
-- `Path::hasTrailingDelimiter` method
+- API to add/remove the Path trailing slash.
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
 
@@ -22,6 +22,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Default supported schemes are: `ftp`, `http`, `https`, `ws`, `wss`
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
+- Host::toUnicode now returns a new Host instance
 
 ### Remove
 

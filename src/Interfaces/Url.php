@@ -252,6 +252,66 @@ interface Url extends UriInterface
     public function withExtension($extension);
 
     /**
+     * Returns an URL with the path containing a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a trailing slash
+     *
+     * if the path is an empty rootless path no slash is added
+     *
+     * @return static
+     */
+    public function withTrailingSlash();
+
+    /**
+     * Returns an instance without a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a trailing slash
+     *
+     * if the Path is the root path no slash is removed
+     *
+     * @return static
+     */
+    public function withoutTrailingSlash();
+
+    /**
+     * Returns an URL with the host in his IDN form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host in its IDN form using RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
+     */
+    public function toUnicode();
+
+    /**
+     * Returns an URL with the host in his punycode encoded form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host transcoded using to ascii the RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
+     */
+    public function toAscii();
+
+    /**
+     * Return an URL without the host zone identifier according to RFC6874
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance without the host zone identifier according to RFC6874
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     *
+     * @return static
+     */
+    public function withoutZoneIdentifier();
+
+    /**
      * Return an URL with the Host appended
      *
      * This method MUST retain the state of the current instance, and return
@@ -274,18 +334,6 @@ interface Url extends UriInterface
      * @return static
      */
     public function prependHost($host);
-
-    /**
-     * Return an URL without the host zone identifier according to RFC6874
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance without the host zone identifier according to RFC6874
-     *
-     * @see http://tools.ietf.org/html/rfc6874#section-4
-     *
-     * @return static
-     */
-    public function withoutZoneIdentifier();
 
     /**
      * Return an URL with one of its Host label replaced

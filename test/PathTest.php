@@ -371,20 +371,66 @@ class PathTest extends PHPUnit_Framework_TestCase
     /**
      * @param $path
      * @param $expected
-     * @dataProvider trailingDelimiterProvider
+     * @dataProvider trailingSlashProvider
      */
-    public function testHasTrailingDelimiter($path, $expected)
+    public function testHasTrailingSlash($path, $expected)
     {
-        $this->assertSame($expected, (new Path($path))->hasTrailingDelimiter());
+        $this->assertSame($expected, (new Path($path))->hasTrailingSlash());
     }
 
-    public function trailingDelimiterProvider()
+    public function trailingSlashProvider()
     {
         return [
             ['/path/to/my/', true],
             ['/path/to/my', false],
             ['path/to/my', false],
             ['path/to/my/', true],
+            ['/', true],
+            ['', false],
+        ];
+    }
+
+    /**
+     * @param $path
+     * @param $expected
+     * @dataProvider withTrailingSlashProvider
+     */
+    public function testWithTrailingSlash($path, $expected)
+    {
+        $this->assertSame($expected, (string) (new Path($path))->withTrailingSlash());
+    }
+
+    public function withTrailingSlashProvider()
+    {
+        return [
+            'relative path without ending slash' => ['toto', 'toto/'],
+            'absolute path without ending slash' => ['/toto', '/toto/'],
+            'root path'                          => ['/', '/'],
+            'empty path'                         => ['', '/'],
+            'relative path with ending slash'    => ['toto/', 'toto/'],
+            'absolute path with ending slash'    => ['/toto/', '/toto/'],
+        ];
+    }
+
+    /**
+     * @param $path
+     * @param $expected
+     * @dataProvider withoutTrailingSlashProvider
+     */
+    public function testWithoutTrailingSlash($path, $expected)
+    {
+        $this->assertSame($expected, (string) (new Path($path))->withoutTrailingSlash());
+    }
+
+    public function withoutTrailingSlashProvider()
+    {
+        return [
+            'relative path without ending slash' => ['toto', 'toto'],
+            'absolute path without ending slash' => ['/toto', '/toto'],
+            'root path'                          => ['/', ''],
+            'empty path'                         => ['', ''],
+            'relative path with ending slash'    => ['toto/', 'toto'],
+            'absolute path with ending slash'    => ['/toto/', '/toto'],
         ];
     }
 

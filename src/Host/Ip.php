@@ -23,14 +23,14 @@ trait Ip
      *
      * @var bool
      */
-    protected $host_as_ipv4 = false;
+    protected $hostAsIpv4 = false;
 
     /**
      * Is the Host an IPv6
      *
      * @var bool
      */
-    protected $host_as_ipv6 = false;
+    protected $hostAsIpv6 = false;
 
     /**
      * Tell whether the IP has a zone Identifier
@@ -50,7 +50,7 @@ trait Ip
      */
     public function isIp()
     {
-        return $this->host_as_ipv4 || $this->host_as_ipv6;
+        return $this->hostAsIpv4 || $this->hostAsIpv6;
     }
 
     /**
@@ -58,7 +58,7 @@ trait Ip
      */
     public function isIpv4()
     {
-        return $this->host_as_ipv4;
+        return $this->hostAsIpv4;
     }
 
     /**
@@ -66,7 +66,7 @@ trait Ip
      */
     public function isIpv6()
     {
-        return $this->host_as_ipv6;
+        return $this->hostAsIpv6;
     }
 
     /**
@@ -90,19 +90,19 @@ trait Ip
     {
         $res = $this->filterIpv6Host($str);
         if (!empty($res)) {
-            $this->host_as_ipv4 = false;
-            $this->host_as_ipv6 = true;
+            $this->hostAsIpv4 = false;
+            $this->hostAsIpv6 = true;
             return [$res];
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->host_as_ipv4 = true;
-            $this->host_as_ipv6 = false;
+            $this->hostAsIpv4 = true;
+            $this->hostAsIpv6 = false;
             return [$str];
         }
 
-        $this->host_as_ipv4 = false;
-        $this->host_as_ipv6 = false;
+        $this->hostAsIpv4 = false;
+        $this->hostAsIpv6 = false;
         return [];
     }
 
@@ -115,17 +115,16 @@ trait Ip
      */
     protected function filterIpv6Host($str)
     {
-        preg_match(',^([\[]?)(.*?)([\]]?)$,', $str, $matches);
-
-        if (!in_array(strlen($matches[1].$matches[3]), [0, 2])) {
+        preg_match(',^(?P<ldelim>[\[]?)(?P<ipv6>.*?)(?P<rdelim>[\]]?)$,', $str, $matches);
+        if (!in_array(strlen($matches['ldelim'].$matches['rdelim']), [0, 2])) {
             return false;
         }
 
         if (false === strpos($str, '%')) {
-            return filter_var($matches[2], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+            return filter_var($matches['ipv6'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
         }
 
-        return $this->validateScopedIpv6($matches[2]);
+        return $this->validateScopedIpv6($matches['ipv6']);
     }
 
     /**
@@ -174,5 +173,26 @@ trait Ip
         $res = array_reduce(str_split(unpack('A16', inet_pton($ipv6))[1]), $convert, '');
 
         return substr($res, 0, 10) === self::$local_link_prefix;
+    }
+
+    /**
+     * Format an IP for string representation of the Host
+     *
+     * @param string IP address
+     *
+     * @return string
+     */
+    protected function formatIp($ip_address)
+    {
+        $tmp = explode('%', $ip_address);
+        if (isset($tmp[1])) {
+            $ip_address = $tmp[0].'%25'.rawurlencode($tmp[1]);
+        }
+
+        if ($this->hostAsIpv6) {
+            return "[$ip_address]";
+        }
+
+        return $ip_address;
     }
 }

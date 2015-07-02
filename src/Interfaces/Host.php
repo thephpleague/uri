@@ -110,16 +110,26 @@ interface Host extends HierarchicalComponent
     public function getLabel($offset, $default = null);
 
     /**
-     * Returns the unicode string representation of a host
+     * Returns a host in his IDN form
      *
-     * @return string
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host in its IDN form using RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
      */
     public function toUnicode();
 
     /**
-     * Returns the ascii string representation of a host
+     * Returns a host in his punycode encoded form
      *
-     * @return string
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host transcoded using to ascii the RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
      */
     public function toAscii();
 

@@ -28,7 +28,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      *
      * @var int
      */
-    protected $is_absolute = self::IS_RELATIVE;
+    protected $isAbsolute = self::IS_RELATIVE;
 
     /**
      * common immutable value object methods
@@ -62,7 +62,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      */
     public function isAbsolute()
     {
-        return $this->is_absolute == self::IS_ABSOLUTE;
+        return $this->isAbsolute == self::IS_ABSOLUTE;
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
             return $this;
         }
 
-        return static::createFromArray($data, $this->is_absolute);
+        return static::createFromArray($data, $this->isAbsolute);
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      */
     public function prepend($component)
     {
-        return static::createFromArray(static::validateComponent($component), $this->is_absolute)->append($this);
+        return static::createFromArray(static::validateComponent($component), $this->isAbsolute)->append($this);
     }
 
     /**
@@ -132,10 +132,10 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      * return a new instance from an array or a traversable object
      *
      * @param \Traversable|string[] $data  The segments list
-     * @param int                   $type  One of the constant IS_ABSOLUTE or IS_RELATIVE
+     * @param int                   $type  One of the constant isAbsolute or IS_RELATIVE
      *
      * @throws InvalidArgumentException If $data is invalid
-     * @throws InvalidArgumentException If $is_absolute is not a recognized constant
+     * @throws InvalidArgumentException If $isAbsolute is not a recognized constant
      *
      * @return static
      */

@@ -57,15 +57,15 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     protected function init($str)
     {
-        $this->is_absolute = self::IS_RELATIVE;
+        $this->isAbsolute = self::IS_RELATIVE;
         $str = $this->validateString($str);
         if (preg_match(',^/+$,', $str)) {
-            $this->is_absolute = self::IS_ABSOLUTE;
+            $this->isAbsolute = self::IS_ABSOLUTE;
             return;
         }
 
         if (static::$delimiter == mb_substr($str, 0, 1, 'UTF-8')) {
-            $this->is_absolute =  self::IS_ABSOLUTE;
+            $this->isAbsolute =  self::IS_ABSOLUTE;
         }
         $append_delimiter = static::$delimiter === mb_substr($str, -1, 1, 'UTF-8');
         $str = trim($str, static::$delimiter);
@@ -117,7 +117,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     public function __toString()
     {
         $front_delimiter = '';
-        if ($this->is_absolute == self::IS_ABSOLUTE) {
+        if ($this->isAbsolute == self::IS_ABSOLUTE) {
             $front_delimiter = static::$delimiter;
         }
 
@@ -144,7 +144,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
             $new .= static::$delimiter;
         }
 
-        return new static($new);
+        return $this->modify($new);
     }
 
     /**
@@ -178,14 +178,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withoutEmptySegments()
     {
-        $current = $this->__toString();
-        $new = preg_replace(',/+,', '/', $current);
-
-        if ($current == $new) {
-            return $this;
-        }
-
-        return new static($new);
+        return $this->modify(preg_replace(',/+,', '/', $this->__toString()));
     }
 
     /**
@@ -201,9 +194,33 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function hasTrailingDelimiter()
+    public function hasTrailingSlash()
     {
-        return empty($this->getBasename());
+        return !$this->isEmpty() && empty($this->getBasename());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withTrailingSlash()
+    {
+        if ($this->hasTrailingSlash()) {
+            return $this;
+        }
+
+        return $this->modify($this->__toString().static::$delimiter);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutTrailingSlash()
+    {
+        if (!$this->hasTrailingSlash()) {
+            return $this;
+        }
+
+        return $this->modify(substr($this->__toString(), 0, -1));
     }
 
     /**

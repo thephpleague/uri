@@ -20,13 +20,7 @@ use InvalidArgumentException;
  */
 class Host extends AbstractHierarchicalComponent implements Interfaces\Host
 {
-    /**
-     * Constants for host formatting
-     */
-    const HOST_AS_UNICODE = 1;
-    const HOST_AS_ASCII   = 2;
-
-    /**
+/**
      * Ip host validation and properties
      */
     use Host\Ip;
@@ -81,11 +75,13 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function __toString()
     {
-        if ($this->isIdn) {
-            return $this->toUnicode();
+        if ($this->isIp()) {
+            return $this->formatIp($this->data[0]);
         }
 
-        return $this->toAscii();
+        $data = !$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data;
+
+        return $this->formatHostname($data);
     }
 
     /**
@@ -93,7 +89,11 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function toAscii()
     {
-        return $this->format(self::HOST_AS_ASCII);
+        if ($this->isIp() || !$this->isIdn) {
+            return $this;
+        }
+
+        return $this->modify($this->formatHostname(array_map('idn_to_ascii', $this->data)));
     }
 
     /**
@@ -101,64 +101,28 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     public function toUnicode()
     {
-        return $this->format(self::HOST_AS_UNICODE);
+        if ($this->isIp() || $this->isIdn) {
+            return $this;
+        }
+
+        return $this->modify($this->formatHostname($this->data));
     }
 
     /**
-     * Format the Host output
+     * string representation of a hostname
      *
-     * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE
-     *
-     * @return string
-     */
-    protected function format($enc_type)
-    {
-        if ($this->isIp()) {
-            return $this->formatIp();
-        }
-
-        return $this->formatDomainName($enc_type);
-    }
-    /**
-     * Format an IP for string representation of the Host
+     * @param  array  $labels Hostname labels
      *
      * @return string
      */
-    protected function formatIp()
+    protected function formatHostname(array $labels)
     {
-        $str = $this->data[0];
-        $tmp = explode('%', $this->data[0]);
-        if (isset($tmp[1])) {
-            $str = $tmp[0].'%25'.rawurlencode($tmp[1]);
+        $hostname = implode(static::$delimiter, $labels);
+        if ($this->isAbsolute == self::IS_ABSOLUTE) {
+            $hostname .= static::$delimiter;
         }
 
-        if ($this->host_as_ipv6) {
-            return "[$str]";
-        }
-
-        return $str;
-    }
-
-    /**
-     * Format an Domain name for string representation of the Host
-     *
-     * @param  int $enc_type self::HOST_AS_ASCII or self::HOST_AS_UNICODE
-     *
-     * @return string
-     */
-    protected function formatDomainName($enc_type)
-    {
-        $data = $this->data;
-        if ($enc_type == self::HOST_AS_ASCII) {
-            $data = array_map('idn_to_ascii', $this->data);
-        }
-
-        $str = implode(static::$delimiter, $data);
-        if ($this->is_absolute == self::IS_ABSOLUTE) {
-            $str .= static::$delimiter;
-        }
-
-        return $str;
+        return $hostname;
     }
 
     /**
@@ -167,7 +131,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     public function withoutZoneIdentifier()
     {
         if ($this->hasZoneIdentifier) {
-            return new static(substr($this->data[0], 0, strpos($this->data[0], '%')));
+            return $this->modify(substr($this->data[0], 0, strpos($this->data[0], '%')));
         }
 
         return $this;
@@ -208,9 +172,9 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
      */
     protected function setIsAbsolute($str)
     {
-        $this->is_absolute = self::IS_RELATIVE;
+        $this->isAbsolute = self::IS_RELATIVE;
         if ('.' == mb_substr($str, -1, 1, 'UTF-8')) {
-            $this->is_absolute = self::IS_ABSOLUTE;
+            $this->isAbsolute = self::IS_ABSOLUTE;
             $str = mb_substr($str, 0, -1, 'UTF-8');
         }
 

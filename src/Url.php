@@ -152,7 +152,7 @@ class Url implements Interfaces\Url
             }
         }
 
-        return $url->ksortQuery()->__toString() === $this->ksortQuery()->__toString();
+        return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
     }
 
     /**

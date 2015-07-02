@@ -131,6 +131,38 @@ trait Modifier
     /**
      * {@inheritdoc}
      */
+    public function filterPath(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
+    {
+        return $this->withProperty('path', $this->path->filter($callable, $flag));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withExtension($extension)
+    {
+        return $this->withProperty('path', $this->path->withExtension($extension));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withTrailingSlash()
+    {
+        return $this->withProperty('path', $this->path->withTrailingSlash());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutTrailingSlash()
+    {
+        return $this->withProperty('path', $this->path->withoutTrailingSlash());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function replaceSegment($offset, $value)
     {
         return $this->withProperty('path', $this->path->replace($offset, $value));
@@ -163,22 +195,6 @@ trait Modifier
     /**
      * {@inheritdoc}
      */
-    public function filterPath(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
-    {
-        return $this->withProperty('path', $this->path->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withExtension($extension)
-    {
-        return $this->withProperty('path', $this->path->withExtension($extension));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function appendHost($host)
     {
         return $this->withProperty('host', $this->host->append($host));
@@ -198,6 +214,22 @@ trait Modifier
     public function withoutZoneIdentifier()
     {
         return $this->withProperty('host', $this->host->withoutZoneIdentifier());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toUnicode()
+    {
+        return $this->withProperty('host', $this->host->toUnicode());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toAscii()
+    {
+        return $this->withProperty('host', $this->host->toAscii());
     }
 
     /**
@@ -225,22 +257,6 @@ trait Modifier
     }
 
     /**
-     * Convert to an Url object
-     *
-     * @param  Interfaces\Url|string $url
-     *
-     * @return Interfaces\Url
-     */
-    protected function convertToUrlObject($url)
-    {
-        if ($url instanceof Interfaces\Url) {
-            return $url;
-        }
-
-        return Uri\Url::createFromString($url, $this->scheme->getSchemeRegistry());
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function resolve($url)
@@ -255,6 +271,22 @@ trait Modifier
         }
 
         return $this->resolveRelative($relative)->withoutDotSegments();
+    }
+
+    /**
+     * Convert to an Url object
+     *
+     * @param  Interfaces\Url|string $url
+     *
+     * @return Interfaces\Url
+     */
+    protected function convertToUrlObject($url)
+    {
+        if ($url instanceof Interfaces\Url) {
+            return $url;
+        }
+
+        return Uri\Url::createFromString($url, $this->scheme->getSchemeRegistry());
     }
 
     /**
@@ -294,11 +326,11 @@ trait Modifier
         if (!$path->isAbsolute()) {
             $segments = $newUrl->path->toArray();
             array_pop($segments);
-            $is_absolute = Uri\Path::IS_RELATIVE;
+            $isAbsolute = Uri\Path::IS_RELATIVE;
             if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
-                $is_absolute = Uri\Path::IS_ABSOLUTE;
+                $isAbsolute = Uri\Path::IS_ABSOLUTE;
             }
-            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $is_absolute);
+            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
         }
 
         return $path;

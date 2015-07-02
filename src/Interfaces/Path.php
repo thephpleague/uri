@@ -70,7 +70,28 @@ interface Path extends HierarchicalComponent
      *
      * @return bool
      */
-    public function hasTrailingDelimiter();
+    public function hasTrailingSlash();
+
+    /**
+     * Returns an instance with a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a trailing slash
+     *
+     *
+     * @return static
+     */
+    public function withTrailingSlash();
+
+    /**
+     * Returns an instance without a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a trailing slash
+     *
+     * @return static
+     */
+    public function withoutTrailingSlash();
 
     /**
      * Returns an instance with the specified basename extension

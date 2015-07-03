@@ -35,7 +35,7 @@ abstract class AbstractComponent
      *
      * @param string $data the component value
      */
-    public function __construct($data = null)
+    public function __construct($data = '')
     {
         $data = $this->validateString($data);
         if (!empty($data)) {

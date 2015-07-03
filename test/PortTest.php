@@ -7,7 +7,7 @@ use League\Uri\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group components
+ * @group port
  */
 class PortTest extends PHPUnit_Framework_TestCase
 {
@@ -39,11 +39,14 @@ class PortTest extends PHPUnit_Framework_TestCase
     public function invalidPortProvider()
     {
         return [
-            [new \StdClass],
-            ["toto"],
-            ["-23"],
-            ["10000000"],
-            ["0"],
+            "string"                       => ["toto"],
+            "invalid port number too low"  => ["-23"],
+            "invalid port number too high" => ["10000000"],
+            "invalid port number"          => ["0"],
+            'bool'                         => [true],
+            'Std Class'                    => [(object) 'foo'],
+            'float'                        => [1.2],
+            'array'                        =>[['foo']]
         ];
     }
 

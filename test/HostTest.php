@@ -38,7 +38,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'scoped ipv6' => ['[fe80:1234::%251]', true, false, true, '[fe80:1234::%251]'],
             'scoped naked ipv6' => ['fe80:1234::%251', true, false, true, '[fe80:1234::%251]'],
             'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com'],
-            'null' => [null, false, false, false, ''],
+            'empty string' => ['', false, false, false, ''],
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
             'partial numeric' => ['23.42c.two', false, false, false, '23.42c.two'],
             'all numeric' => ['98.3.2', false, false, false, '98.3.2'],
@@ -79,6 +79,10 @@ class HostTest extends PHPUnit_Framework_TestCase
             "invalid scope IPv6" => ["ab23::1234%251"],
             "invalid scope ID" => ["fe80::1234%25?@"],
             "invalid scope ID with utf8 character" => ["fe80::1234%25€"],
+            'bool'      => [true],
+            'Std Class' => [(object) 'foo'],
+            'null'      => [null],
+            'float'     => [1.2],
         ];
     }
 

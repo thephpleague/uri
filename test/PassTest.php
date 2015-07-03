@@ -6,7 +6,7 @@ use League\Uri\Pass;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group components
+ * @group pass
  */
 class PassTest extends PHPUnit_Framework_TestCase
 {
@@ -16,8 +16,7 @@ class PassTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUriComponent($raw, $parsed)
     {
-        $user = new Pass(new Pass($raw));
-        $this->assertSame($parsed, $user->getUriComponent());
+        $this->assertSame($parsed, (new Pass($raw))->getUriComponent());
     }
 
     public function validUserProvider()
@@ -25,7 +24,7 @@ class PassTest extends PHPUnit_Framework_TestCase
         return [
             ['toto', 'toto'],
             ['bar---', 'bar---'],
-            [null, ''],
+            ['', ''],
             ['"bad"', "%22bad%22"],
             ['<not good>', "%3Cnot%20good%3E"],
             ['{broken}', '%7Bbroken%7D'],
@@ -49,7 +48,11 @@ class PassTest extends PHPUnit_Framework_TestCase
     {
         return [
             'invalid character' => ['to@to'],
-            'array' => [['coucou']]
+            'bool'      => [true],
+            'Std Class' => [(object) 'foo'],
+            'null'      => [null],
+            'float'     => [1.2],
+            'array'      =>[['foo']],
         ];
     }
 }

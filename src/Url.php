@@ -232,6 +232,9 @@ class Url implements Interfaces\Url
      */
     public function withUserInfo($user, $pass = null)
     {
+        if (is_null($pass)) {
+            $pass = '';
+        }
         $userInfo = $this->userInfo->withUser($user)->withPass($pass);
         if ($this->userInfo->user->sameValueAs($userInfo->user)
             && $this->userInfo->pass->sameValueAs($userInfo->pass)

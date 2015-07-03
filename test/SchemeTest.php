@@ -59,10 +59,15 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     public function invalidSchemeProvider()
     {
         return [
-            ['in,valid'],
-            ['123'],
-            ['yes'],
-            ['toto+']
+            'invalid char'         => ['in,valid'],
+            'integer like string'  => ['123'],
+            'unsupported scheme'   => ['yes'],
+            'scheme ending with +' => ['toto+'],
+            'bool'                 => [true],
+            'Std Class'            => [(object) 'foo'],
+            'null'                 => [null],
+            'float'                => [1.2],
+            'array'                =>[['foo']],
         ];
     }
 
@@ -71,7 +76,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $scheme  = new Scheme();
         $scheme1 = new Scheme('https');
         $this->assertFalse($scheme->sameValueAs($scheme1));
-        $newscheme = $scheme1->modify(null);
+        $newscheme = $scheme1->modify('');
         $this->assertTrue($scheme->sameValueAs($newscheme));
         $this->assertSame('', $newscheme->getUriComponent());
     }
@@ -90,7 +95,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['ftp', false],
-            [null, true],
             ['', true]
         ];
     }

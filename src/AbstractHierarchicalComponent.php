@@ -45,7 +45,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      *
      * @param string $str the component string representation
      */
-    public function __construct($str = null)
+    public function __construct($str = '')
     {
         $this->init($str);
     }

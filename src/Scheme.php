@@ -34,7 +34,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
      * @param Interfaces\SchemeRegistry|null $registry
      *
      */
-    public function __construct($data = null, Interfaces\SchemeRegistry $registry = null)
+    public function __construct($data = '', Interfaces\SchemeRegistry $registry = null)
     {
         $this->registry = !is_null($registry) ? $registry : new Services\SchemeRegistry();
         $data = $this->validateString($data);

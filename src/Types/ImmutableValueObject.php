@@ -43,7 +43,7 @@ trait ImmutableValueObject
     /**
      * validate a string
      *
-     * @param string|null $str
+     * @param mixed $str
      *
      * @throws \InvalidArgumentException if the submitted data can not be converted to string
      *
@@ -51,13 +51,11 @@ trait ImmutableValueObject
      */
     protected function validateString($str)
     {
-        if (is_bool($str) || is_array($str)) {
-            throw new InvalidArgumentException(
-                'Data passed must be stringable into a string; received "'.gettype($str).'"'
-            );
+        if (is_object($str) && method_exists($str, '__toString') || is_string($str)) {
+            return trim($str);
         }
 
-        return trim($str);
+        throw new InvalidArgumentException('The data received is not OR can not be converted into a string');
     }
 
     /**

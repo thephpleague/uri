@@ -12,7 +12,7 @@ All Notable changes to `League\Url` will be documented in this file
 - `Intl` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - API to add/remove the Path trailing slash.
-- API to add/remove the Path leading slash.
+- Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
 

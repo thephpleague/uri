@@ -27,9 +27,7 @@ class Port extends AbstractComponent implements Interfaces\Port
      */
     public function __construct($data = null)
     {
-        if (!is_null($data)) {
-            $this->data = $this->validate($data);
-        }
+        $this->data = $this->validate($data);
     }
 
     /**
@@ -37,12 +35,16 @@ class Port extends AbstractComponent implements Interfaces\Port
      */
     protected function validate($data)
     {
-        $data = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]);
-        if (false === $data) {
+        if (is_null($data)) {
+            return $data;
+        }
+
+        $res = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]);
+        if (false === $res || is_bool($data)) {
             throw new InvalidArgumentException('The submitted port is invalid');
         }
 
-        return $data;
+        return $res;
     }
 
     /**

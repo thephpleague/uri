@@ -8,7 +8,7 @@ use League\Uri;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group url
+ * @group formatter
  */
 class FormatterTest extends PHPUnit_Framework_TestCase
 {
@@ -117,7 +117,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
         $expected = '/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
-        $url = $this->url->withScheme(null)->withHost(null)->withPort(null)->withUserInfo(null, null);
+        $url = $this->url->withScheme('')->withHost('')->withPort(null)->withUserInfo('');
         $this->assertSame($expected, $formatter->format($url));
     }
 }

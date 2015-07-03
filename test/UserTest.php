@@ -6,7 +6,7 @@ use League\Uri\User;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group components
+ * @group user
  */
 class UserTest extends PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         return [
             ['toto', 'toto'],
             ['bar---', 'bar---'],
-            [null, ''],
+            ['', ''],
             ['"bad"', "%22bad%22"],
             ['<not good>', "%3Cnot%20good%3E"],
             ['{broken}', '%7Bbroken%7D'],
@@ -50,7 +50,11 @@ class UserTest extends PHPUnit_Framework_TestCase
         return [
             'invalid @ character' => ['to@to'],
             'invalid : character' => ['to:to'],
-            'array' => [['coucou']]
+            'array' => [['coucou']],
+            'bool'      => [true],
+            'Std Class' => [(object) 'foo'],
+            'null'      => [null],
+            'float'     => [1.2],
         ];
     }
 }

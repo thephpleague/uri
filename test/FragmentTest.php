@@ -6,7 +6,7 @@ use League\Uri\Fragment;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group components
+ * @group fragment
  */
 class FragmentTest extends PHPUnit_Framework_TestCase
 {
@@ -25,11 +25,32 @@ class FragmentTest extends PHPUnit_Framework_TestCase
     public function validFragment()
     {
         return [
-            'empty' => [null, ''],
+            'empty' => ['', ''],
             'hash'  => ['#', '#%23'],
             'toofan' => ['toofan', '#toofan'],
             'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@',],
             'encoded' => ["%^[]{}\"<>\\", "#%25%5E%5B%5D%7B%7D%22%3C%3E%5C",],
+        ];
+    }
+
+    /**
+     * @param $str
+     * @expectedException InvalidArgumentException
+     * @dataProvider failedConstructor
+     */
+    public function testInvalidFragment($str)
+    {
+        new Fragment($str);
+    }
+
+    public function failedConstructor()
+    {
+        return [
+            'bool'      => [true],
+            'Std Class' => [(object) 'foo'],
+            'null'      => [null],
+            'float'     => [1.2],
+            'array'      =>[['foo']],
         ];
     }
 
@@ -47,7 +68,6 @@ class FragmentTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['yes', false],
-            [null, true],
             ['', true]
         ];
     }

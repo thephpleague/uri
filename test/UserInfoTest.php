@@ -27,10 +27,9 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['login', 'pass', false],
-            ['login', null, false],
+            ['login', '', false],
             ['', '', true],
-            [null, null, true],
-            [null, 'pass', true],
+            ['', 'pass', true],
             ['', 'pass', true],
         ];
     }
@@ -75,12 +74,9 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['login', 'pass', ['user' => 'login', 'pass' => 'pass'], 'login', 'pass', 'login:pass'],
-            ['login', null,   ['user' => 'login', 'pass' => null], 'login', '', 'login'],
             ['login', '',     ['user' => 'login', 'pass' => null], 'login', '', 'login'],
             ['', '',          ['user' => null   , 'pass' => null], '', '', ''],
-            [null, null,      ['user' => null   , 'pass' => null], '', '', ''],
             ['', 'pass',      ['user' => null   , 'pass' => null], '', 'pass', ''],
-            [null, 'pass',    ['user' => null   , 'pass' => null], '', 'pass', ''],
         ];
     }
 }

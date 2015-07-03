@@ -41,7 +41,7 @@ class Query implements Interfaces\Query
      *
      * @param string $data
      */
-    public function __construct($data = null)
+    public function __construct($data = '')
     {
         $this->data = $this->validate($data);
     }
@@ -73,10 +73,6 @@ class Query implements Interfaces\Query
      */
     protected function validate($str)
     {
-        if (is_null($str)) {
-            return [];
-        }
-
         $str = $this->validateString($str);
         if (strpos($str, '#') !== false) {
             throw new InvalidArgumentException('the query string must not contain a URL fragment');

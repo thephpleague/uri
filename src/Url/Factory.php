@@ -75,10 +75,7 @@ trait Factory
      */
     public static function createFromComponents(array $components, Interfaces\SchemeRegistry $registry = null)
     {
-        $components = array_merge([
-            "scheme" => null, "user" => null, "pass"  => null, "host"     => null,
-            "port"   => null, "path" => null, "query" => null, "fragment" => null,
-        ], $components);
+        $components = static::formatComponents($components);
 
         return new Uri\Url(
             new Uri\Scheme($components["scheme"], $registry),
@@ -90,6 +87,30 @@ trait Factory
             new Uri\Fragment($components["fragment"])
         );
     }
+
+    /**
+     * Format the components to works with all the constructors
+     *
+     * @param  array $components
+     *
+     * @return array
+     */
+    protected static function formatComponents(array $components)
+    {
+        foreach ($components as $name => $value) {
+            if (null === $value && 'port' != $name) {
+                $components[$name] = '';
+            }
+        }
+
+        return array_merge([
+            "scheme" => "", "user"     => "",
+            "pass"   => "", "host"     => "",
+            "port"   => null, "path"   => "",
+            "query"  => "", "fragment" => "",
+        ], $components);
+    }
+
 
     /**
      * Parse a string as an URL

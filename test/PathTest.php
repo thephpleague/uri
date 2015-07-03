@@ -26,7 +26,7 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function validPathProvider()
     {
         return [
-            [null, ''],
+            ['', ''],
             ['/path/to/my/file.csv', '/path/to/my/file.csv'],
             ['you', 'you'],
             ['foo/bar/', 'foo/bar/'],
@@ -35,6 +35,26 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/shop/rev iew/', '/shop/rev%20iew/'],
             ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
             ['/master/toto/%7Eetc', '/master/toto/~etc'],
+        ];
+    }
+
+    /**
+     * @param $str
+     * @expectedException InvalidArgumentException
+     * @dataProvider failedConstructor
+     */
+    public function testInvalidPath($str)
+    {
+        new Path($str);
+    }
+
+    public function failedConstructor()
+    {
+        return [
+            'bool'      => [true],
+            'Std Class' => [(object) 'foo'],
+            'null'      => [null],
+            'float'     => [1.2],
         ];
     }
 
@@ -431,50 +451,6 @@ class PathTest extends PHPUnit_Framework_TestCase
             'empty path'                         => ['', ''],
             'relative path with ending slash'    => ['toto/', 'toto'],
             'absolute path with ending slash'    => ['/toto/', '/toto'],
-        ];
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider withLeadingSlashProvider
-     */
-    public function testWithLeadingSlash($path, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($path))->withLeadingSlash());
-    }
-
-    public function withLeadingSlashProvider()
-    {
-        return [
-            'relative path without ending slash' => ['toto', '/toto'],
-            'absolute path without ending slash' => ['/toto', '/toto'],
-            'root path'                          => ['/', '/'],
-            'empty path'                         => ['', '/'],
-            'relative path with ending slash'    => ['toto/', '/toto/'],
-            'absolute path with ending slash'    => ['/toto/', '/toto/'],
-        ];
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider withoutLeadingSlashProvider
-     */
-    public function testWithoutLeadingSlash($path, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($path))->withoutLeadingSlash());
-    }
-
-    public function withoutLeadingSlashProvider()
-    {
-        return [
-            'relative path without ending slash' => ['toto', 'toto'],
-            'absolute path without ending slash' => ['/toto', 'toto'],
-            'root path'                          => ['/', ''],
-            'empty path'                         => ['', ''],
-            'relative path with ending slash'    => ['toto/', 'toto/'],
-            'absolute path with ending slash'    => ['/toto/', 'toto/'],
         ];
     }
 

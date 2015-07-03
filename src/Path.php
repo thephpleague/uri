@@ -218,22 +218,6 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function withLeadingSlash()
-    {
-        return $this->isAbsolute ? $this : static::createFromArray($this->data, self::IS_ABSOLUTE);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutLeadingSlash()
-    {
-        return !$this->isAbsolute ? $this : static::createFromArray($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getDirname()
     {
         return str_replace("\0", "\\", pathinfo(str_replace("\\", "\0", $this), PATHINFO_DIRNAME));

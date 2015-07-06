@@ -192,7 +192,7 @@ trait Hostname
     protected function assertValidHost(array $labels)
     {
         $verifs = array_filter($labels, function ($value) {
-            return !empty($value);
+            return '' !== trim($value);
         });
 
         if ($verifs !== $labels) {

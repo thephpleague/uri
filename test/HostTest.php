@@ -445,25 +445,27 @@ class HostTest extends PHPUnit_Framework_TestCase
         $publicSuffix,
         $registerableDomain,
         $subdomain,
-        $isValidSuffix
+        $isValidSuffix,
+        $ipLiteral
     ) {
         $host = new Host($host);
         $this->assertSame($subdomain, $host->getSubdomain());
         $this->assertSame($registerableDomain, $host->getRegisterableDomain());
         $this->assertSame($publicSuffix, $host->getPublicSuffix());
         $this->assertSame($isValidSuffix, $host->isPublicSuffixValid());
+        $this->assertSame($ipLiteral, $host->getIpLiteral());
     }
 
     public function parseDataProvider()
     {
         return [
-            ['www.waxaudio.com.au', 'com.au', 'waxaudio.com.au', 'www', true],
-            ['giant.yyyy', 'yyyy', 'giant.yyyy', null, false],
-            ['localhost', null, null, null, false],
-            ['127.0.0.1', null, null, null, false],
-            ['[::1]', null, null, null, false],
-            ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false],
-            ['xn--p1ai.ru', 'ru', 'xn--p1ai.ru', null, true],
+            ['www.waxaudio.com.au', 'com.au', 'waxaudio.com.au', 'www', true, null],
+            ['giant.yyyy', 'yyyy', 'giant.yyyy', null, false, null],
+            ['localhost', null, null, null, false, null],
+            ['127.0.0.1', null, null, null, false, '127.0.0.1'],
+            ['[::1]', null, null, null, false, '::1'],
+            ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false, null],
+            ['xn--p1ai.ru', 'ru', 'xn--p1ai.ru', null, true, null],
         ];
     }
 

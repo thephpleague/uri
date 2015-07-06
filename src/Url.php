@@ -101,6 +101,16 @@ class Url implements Interfaces\Url
     /**
      * {@inheritdoc}
      */
+    public function isOpaque()
+    {
+        return !$this->scheme->isEmpty()
+            && empty($this->getAuthority())
+            && !preg_match(',^[.|..|\/]|[\/?],', $this->path->__toString());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthority()
     {
         if ($this->host->isEmpty()) {

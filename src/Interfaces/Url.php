@@ -42,6 +42,13 @@ interface Url extends UriInterface
     public function isEmpty();
 
     /**
+     * Returns true if the URL is considered to be opaque
+     *
+     * @return bool
+     */
+    public function isOpaque();
+
+    /**
      * Return an array representation of the Url
      *
      * @return array

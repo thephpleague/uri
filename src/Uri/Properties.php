@@ -87,7 +87,7 @@ trait Properties
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (!$url instanceof Uri) {
+        if (!$url instanceof League\Uri\Uri) {
             try {
                 $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
             } catch (InvalidArgumentException $e) {

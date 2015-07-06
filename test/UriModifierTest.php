@@ -3,7 +3,7 @@
 namespace League\Uri\Test;
 
 use League\Uri\Interfaces;
-use League\Uri\Url;
+use League\Uri\Uri;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -15,7 +15,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url::createFromString(
+        $this->url = Uri::createFromString(
             'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }
@@ -59,7 +59,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutEmptySegments()
     {
-        $url = Url::createFromString(
+        $url = Uri::createFromString(
             'http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $url = $url->withoutEmptySegments();
@@ -68,7 +68,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutDotSegments()
     {
-        $url = Url::createFromString(
+        $url = Uri::createFromString(
             'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $url = $url->withoutDotSegments();
@@ -83,7 +83,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutZoneIdentifier()
     {
-        $url = Url::createFromString(
+        $url = Uri::createFromString(
             'http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
         $this->assertSame('[fe80::1234]', $url->withoutZoneIdentifier()->getHost());
@@ -91,13 +91,13 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testToUnicode()
     {
-        $url = Url::createFromString('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go');
+        $url = Uri::createFromString('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go');
         $this->assertSame('مثال.إختبار', $url->toUnicode()->getHost());
     }
 
     public function testToAscii()
     {
-        $url = Url::createFromString('ftp://مثال.إختبار/where/to/go');
+        $url = Uri::createFromString('ftp://مثال.إختبار/where/to/go');
         $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $url->toAscii()->getHost());
     }
 
@@ -187,7 +187,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutTrailingSlash()
     {
-        $url = Url::createFromString('http://www.example.com/');
+        $url = Uri::createFromString('http://www.example.com/');
         $this->assertSame('', (string) $url->withoutTrailingSlash()->getPath());
     }
 }

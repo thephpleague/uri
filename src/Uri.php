@@ -20,22 +20,22 @@ use Psr\Http\Message\UriInterface;
  * @since   1.0.0
  *
  */
-class Url implements Interfaces\Url
+class Uri implements Interfaces\Uri
 {
     /**
      * a Factory to create new URL instances
      */
-    use Url\Factory;
+    use Uri\Factory;
 
     /**
      * Component Path formatting in a URL string
      */
-    use Url\PathFormatter;
+    use Uri\PathFormatter;
 
     /**
      * partially modifying an URL object
      */
-    use Url\Modifier;
+    use Uri\Modifier;
 
     /**
      * Create a new instance of URL

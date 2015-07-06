@@ -31,7 +31,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     /**
      * A trait to format a path in a URL string
      */
-    use Uri\Url\PathFormatter;
+    use Uri\Uri\PathFormatter;
 
     /**
      * host encoding property
@@ -155,31 +155,31 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Url|Interfaces\UrlPart|string $input
+     * @param Interfaces\Uri|Interfaces\UriPart|string $input
      *
      * @return string
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\UrlPart) {
-            return $this->formatUrlPart($input);
+        if ($input instanceof Interfaces\UriPart) {
+            return $this->formatUriPart($input);
         }
 
-        if (!$input instanceof Interfaces\Url) {
-            $input = Uri\Url::createFromString($input, $this->registry);
+        if (!$input instanceof Interfaces\Uri) {
+            $input = Uri\Uri::createFromString($input, $this->registry);
         }
 
         return $this->formatUrl($input);
     }
 
     /**
-     * Format a League\Uri\Interfaces\UrlPart according to the Formatter properties
+     * Format a League\Uri\Interfaces\UriPart according to the Formatter properties
      *
-     * @param Interfaces\UrlPart $part
+     * @param Interfaces\UriPart $part
      *
      * @return string
      */
-    protected function formatUrlPart(Interfaces\UrlPart $part)
+    protected function formatUriPart(Interfaces\UriPart $part)
     {
         if ($part instanceof Interfaces\Query) {
             return Uri\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
@@ -211,13 +211,13 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     /**
      * Format a Url according to the Formatter properties
      *
-     * @param Interfaces\Url $url
+     * @param Interfaces\Uri $url
      *
      * @return string
      */
-    protected function formatUrl(Interfaces\Url $url)
+    protected function formatUrl(Interfaces\Uri $url)
     {
-        $query = $this->formatUrlPart($url->query);
+        $query = $this->formatUriPart($url->query);
         if (!empty($query)) {
             $query = '?'.$query;
         }
@@ -232,11 +232,11 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     /**
      * Format a URL authority according to the Formatter properties
      *
-     * @param Interfaces\Url $url
+     * @param Interfaces\Uri $url
      *
      * @return string
      */
-    protected function formatAuthority(Interfaces\Url $url)
+    protected function formatAuthority(Interfaces\Uri $url)
     {
         if ('' == $url->getHost()) {
             return '';

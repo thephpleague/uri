@@ -11,7 +11,7 @@
 namespace League\Uri\Types;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\UrlPart;
+use League\Uri\Interfaces\UriPart;
 use ReflectionClass;
 
 /**
@@ -61,7 +61,7 @@ trait ImmutableValueObject
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(UrlPart $component)
+    public function sameValueAs(UriPart $component)
     {
         return $component->getUriComponent() === $this->getUriComponent();
     }

@@ -8,7 +8,7 @@ use League\Uri\Pass;
 use League\Uri\Path;
 use League\Uri\Port;
 use League\Uri\Query;
-use League\Uri\Url;
+use League\Uri\Uri;
 use League\Uri\User;
 use League\Uri\UserInfo;
 use League\Uri\Scheme;
@@ -29,7 +29,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Url::createFromString(
+        $this->url = Uri::createFromString(
             'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
@@ -84,7 +84,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testAutomaticUrlNormalization()
     {
-        $url = Url::createFromString(
+        $url = Uri::createFromString(
             'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment'
         );
 
@@ -101,7 +101,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testPort($url, $port)
     {
-        $this->assertSame($port, Url::createFromString($url)->getPort());
+        $this->assertSame($port, Uri::createFromString($url)->getPort());
     }
 
     public function portProvider()
@@ -121,7 +121,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testToArray($url, $expected)
     {
-        $this->assertSame($expected, Url::createFromString($url)->toArray());
+        $this->assertSame($expected, Uri::createFromString($url)->toArray());
     }
 
     public function toArrayProvider()
@@ -195,8 +195,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         return [
-            'normal URL' => [Url::createFromString('http://a/b/c'), false],
-            'incomplete authority' => [new Url(
+            'normal URL' => [Uri::createFromString('http://a/b/c'), false],
+            'incomplete authority' => [new Uri(
                 new Scheme(),
                 new UserInfo('foo', 'bar'),
                 new Host(),
@@ -205,7 +205,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Query(),
                 new Fragment()
             ), true],
-            'empty URL components' => [new Url(
+            'empty URL components' => [new Uri(
                 new Scheme(),
                 new UserInfo(),
                 new Host(),
@@ -224,7 +224,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testIsOpaque($url, $expected)
     {
-        $this->assertSame($expected, Url::createFromString($url)->isOpaque());
+        $this->assertSame($expected, Uri::createFromString($url)->isOpaque());
     }
 
     public function isOpaqueProvider()
@@ -251,11 +251,11 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn('http://xn--gwd-hna98db.pl/toto/path');
-        $url = Url::createFromString('http://xn--gwd-hna98db.pl/toto/path');
+        $url = Uri::createFromString('http://xn--gwd-hna98db.pl/toto/path');
 
         return [
-            [Url::createFromString('//example.com'), Url::createFromString('//ExamPle.Com')],
-            [Url::createFromString('http://مثال.إختبار'), Url::createFromString('http://مثال.إختبار')],
+            [Uri::createFromString('//example.com'), Uri::createFromString('//ExamPle.Com')],
+            [Uri::createFromString('http://مثال.إختبار'), Uri::createFromString('http://مثال.إختبار')],
             [$url, $mock],
         ];
     }
@@ -264,7 +264,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn('yolo://example.com');
-        $url = Url::createFromString('http://example.com');
+        $url = Uri::createFromString('http://example.com');
         $this->assertFalse($url->sameValueAs($mock));
     }
 
@@ -281,7 +281,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function pathFormattingProvider()
     {
         return [
-            [new Url(
+            [new Uri(
                 new Scheme('http'),
                 new UserInfo(),
                 new Host('ExAmPLe.cOm'),
@@ -295,9 +295,9 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testHasStandardPort()
     {
-        $this->assertFalse(Url::createFromString('http://example.com:81/')->hasStandardPort());
-        $this->assertTrue(Url::createFromString('http://example.com:80/')->hasStandardPort());
-        $this->assertTrue(Url::createFromString('http://example.com/')->hasStandardPort());
+        $this->assertFalse(Uri::createFromString('http://example.com:81/')->hasStandardPort());
+        $this->assertTrue(Uri::createFromString('http://example.com:80/')->hasStandardPort());
+        $this->assertTrue(Uri::createFromString('http://example.com/')->hasStandardPort());
     }
 
     /**
@@ -308,7 +308,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testResolve($url, $relative, $expected)
     {
-        $this->assertSame($expected, Url::createFromString($url)->resolve($relative)->__toString());
+        $this->assertSame($expected, Uri::createFromString($url)->resolve($relative)->__toString());
     }
 
     public function resolveProvider()
@@ -316,7 +316,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         return [
           'baseurl' =>                 [self::BASE_URL, "",               self::BASE_URL],
           'scheme' =>                  [self::BASE_URL, "ftp://d/e/f",    "ftp://d/e/f"],
-          'scheme' =>                  [self::BASE_URL, Url::createFromString("ftp://d/e/f"),    "ftp://d/e/f"],
+          'scheme' =>                  [self::BASE_URL, Uri::createFromString("ftp://d/e/f"),    "ftp://d/e/f"],
           'path 1' =>                  [self::BASE_URL, "g",              "http://a/b/c/g"],
           'path 2' =>                  [self::BASE_URL, "./g",            "http://a/b/c/g"],
           'path 3' =>                  [self::BASE_URL, "g/",             "http://a/b/c/g/"],

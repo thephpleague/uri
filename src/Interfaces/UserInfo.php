@@ -20,7 +20,7 @@ namespace League\Uri\Interfaces;
  * @property-read User $user
  * @property-read Pass $pass
  */
-interface UserInfo extends UrlPart
+interface UserInfo extends UriPart
 {
     /**
      * Return an array representation of the UserInfo part

@@ -2,7 +2,7 @@
 
 namespace League\Uri\Test;
 
-use League\Uri\Url;
+use League\Uri\Uri;
 use League\Uri\Scheme;
 use League\Uri\User;
 use League\Uri\Pass;
@@ -25,7 +25,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromServer($expected, $input)
     {
-        $this->assertSame($expected, Url::createFromServer($input)->__toString());
+        $this->assertSame($expected, Uri::createFromServer($input)->__toString());
     }
 
     public function validServerArray()
@@ -152,7 +152,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         ];
 
-        Url::createFromServer($server);
+        Uri::createFromServer($server);
     }
 
     /**
@@ -162,7 +162,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      */
     public function testcreateFromString($expected, $input)
     {
-        $this->assertSame($expected, Url::createFromString($input)->__toString());
+        $this->assertSame($expected, Uri::createFromString($input)->__toString());
     }
 
     public function validUrlArray()
@@ -198,7 +198,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO($input)
     {
-        Url::createFromString($input);
+        Uri::createFromString($input);
     }
 
     public function invalidURL()

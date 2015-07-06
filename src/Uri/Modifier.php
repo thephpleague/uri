@@ -8,13 +8,13 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Url;
+namespace League\Uri\Uri;
 
 use League\Uri;
 use League\Uri\Interfaces;
 
 /**
- * a Trait to proxy partial update of a League\Uri\Url object
+ * a Trait to proxy partial update of a League\Uri\Uri object
  *
  * @package League.url
  * @since   4.0.0
@@ -276,27 +276,27 @@ trait Modifier
     /**
      * Convert to an Url object
      *
-     * @param  Interfaces\Url|string $url
+     * @param  Interfaces\Uri|string $url
      *
-     * @return Interfaces\Url
+     * @return Interfaces\Uri
      */
     protected function convertToUrlObject($url)
     {
-        if ($url instanceof Interfaces\Url) {
+        if ($url instanceof Interfaces\Uri) {
             return $url;
         }
 
-        return Uri\Url::createFromString($url, $this->scheme->getSchemeRegistry());
+        return Uri\Uri::createFromString($url, $this->scheme->getSchemeRegistry());
     }
 
     /**
      * returns the resolve URL
      *
-     * @param Interfaces\Url $relative the relative URL
+     * @param Interfaces\Uri $relative the relative URL
      *
      * @return static
      */
-    protected function resolveRelative(Interfaces\Url $relative)
+    protected function resolveRelative(Interfaces\Uri $relative)
     {
         $newUrl = $this->withProperty('fragment', $relative->fragment);
         if (!$relative->path->isEmpty()) {
@@ -315,12 +315,12 @@ trait Modifier
     /**
      * returns the resolve URL components
      *
-     * @param Interfaces\Url $newUrl   the final URL
-     * @param Interfaces\Url $relative the relative URL
+     * @param Interfaces\Uri $newUrl   the final URL
+     * @param Interfaces\Uri $relative the relative URL
      *
      * @return Interfaces\Path
      */
-    protected function resolvePath(Interfaces\Url $newUrl, Interfaces\Url $relative)
+    protected function resolvePath(Interfaces\Uri $newUrl, Interfaces\Uri $relative)
     {
         $path = $relative->path;
         if (!$path->isAbsolute()) {

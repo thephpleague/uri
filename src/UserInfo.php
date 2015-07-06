@@ -121,7 +121,7 @@ class UserInfo implements Interfaces\UserInfo
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Interfaces\UrlPart $component)
+    public function sameValueAs(Interfaces\UriPart $component)
     {
         return $this->getUriComponent() === $component->getUriComponent();
     }

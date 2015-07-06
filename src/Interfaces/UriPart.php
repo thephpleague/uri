@@ -21,17 +21,17 @@ namespace League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-interface UrlPart
+interface UriPart
 {
     /**
-     * Returns the URL part string representation
+     * Returns the instance string representation
      *
      * @return string
      */
     public function __toString();
 
     /**
-     * Returns the URL part string representation
+     * Returns the instance string representation
      * with its optional URL delimiters
      *
      * @return string
@@ -39,19 +39,19 @@ interface UrlPart
     public function getUriComponent();
 
     /**
-     * Returns true if the URL part is considered empty
+     * Returns true if the instance is considered empty
      *
      * @return bool
      */
     public function isEmpty();
 
     /**
-     * Returns whether two URL part represent the same value
+     * Returns whether two UriPart objects represent the same value
      * The comparison is based on the getUriComponent method
      *
-     * @param UrlPart $component
+     * @param UriPart $component
      *
      * @return bool
      */
-    public function sameValueAs(UrlPart $component);
+    public function sameValueAs(UriPart $component);
 }

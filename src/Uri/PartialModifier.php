@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-trait Modifier
+trait PartialModifier
 {
     /**
      * Scheme Component

@@ -35,14 +35,14 @@ use Psr\Http\Message\UriInterface;
 interface Uri extends UriInterface
 {
     /**
-     * Returns true if the URL is considered empty
+     * Returns true if the URI is considered empty
      *
      * @return bool
      */
     public function isEmpty();
 
     /**
-     * Return an array representation of the Uri
+     * Return an array representation of the URI
      *
      * @return array
      */
@@ -63,7 +63,7 @@ interface Uri extends UriInterface
     public function sameValueAs(UriInterface $uri);
 
     /**
-     * Returns whether a Url is absolute or relative. An Url is
+     * Returns whether a URI is absolute or relative. A URI is
      * said to be absolute if is has:
      * - a non empty scheme.
      * - an authority part

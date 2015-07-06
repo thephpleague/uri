@@ -10,9 +10,6 @@
  */
 namespace League\Uri;
 
-use InvalidArgumentException;
-use Psr\Http\Message\UriInterface;
-
 /**
  * Value object representing a URL.
  *
@@ -23,19 +20,14 @@ use Psr\Http\Message\UriInterface;
 class Uri implements Interfaces\Uri
 {
     /**
-     * a Factory to create new URL instances
-     */
-    use Uri\Factory;
-
-    /**
-     * Component Path formatting in a URL string
+     * Component Path formatting in a URI string
      */
     use Uri\PathFormatter;
 
     /**
-     * partially modifying an URL object
+     * URI complementary methods
      */
-    use Uri\Modifier;
+    use Uri\Properties;
 
     /**
      * Create a new instance of URL
@@ -69,33 +61,9 @@ class Uri implements Interfaces\Uri
     /**
      * {@inheritdoc}
      */
-    public function toArray()
+    public function getScheme()
     {
-        return static::parse($this->__toString());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        $auth = $this->getAuthority();
-        if (!empty($auth)) {
-            $auth = '//'.$auth;
-        }
-
-        return $this->scheme->getUriComponent().$auth
-            .$this->formatPath($this->path, (bool) $auth)
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
-    {
-        return empty($this->__toString());
+        return $this->scheme->__toString();
     }
 
     /**
@@ -113,54 +81,6 @@ class Uri implements Interfaces\Uri
         }
 
         return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        if ($this->scheme->isEmpty()) {
-            return false;
-        }
-
-        if ($this->port->isEmpty()) {
-            return true;
-        }
-
-        return $this->scheme->getSchemeRegistry()->getPort($this->scheme)->sameValueAs($this->port);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAbsolute()
-    {
-        return !$this->scheme->isEmpty() && !$this->host->isEmpty();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(UriInterface $url)
-    {
-        if (!$url instanceof Uri) {
-            try {
-                $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
-            } catch (InvalidArgumentException $e) {
-                return false;
-            }
-        }
-
-        return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScheme()
-    {
-        return $this->scheme->__toString();
     }
 
     /**
@@ -214,14 +134,6 @@ class Uri implements Interfaces\Uri
     /**
      * {@inheritdoc}
      */
-    public function withHost($host)
-    {
-        return $this->withProperty('host', $host);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function withScheme($scheme)
     {
         return $this->withProperty('scheme', $scheme);
@@ -232,7 +144,7 @@ class Uri implements Interfaces\Uri
      */
     public function withUserInfo($user, $pass = null)
     {
-        if (is_null($pass)) {
+        if (null === $pass) {
             $pass = '';
         }
         $userInfo = $this->userInfo->withUser($user)->withPass($pass);
@@ -245,6 +157,14 @@ class Uri implements Interfaces\Uri
         $newInstance->userInfo = $userInfo;
 
         return $newInstance;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
+    {
+        return $this->withProperty('host', $host);
     }
 
     /**
@@ -277,5 +197,21 @@ class Uri implements Interfaces\Uri
     public function withFragment($fragment)
     {
         return $this->withProperty('fragment', $fragment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        $auth = $this->getAuthority();
+        if (!empty($auth)) {
+            $auth = '//'.$auth;
+        }
+
+        return $this->scheme->getUriComponent().$auth
+            .$this->formatPath($this->path, (bool) $auth)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
     }
 }

@@ -23,11 +23,6 @@ use League\Uri\Interfaces;
 trait Factory
 {
     /**
-     * A Factory trait fetch info from Server environment variables
-     */
-    use ServerInfo;
-
-    /**
      * Create a new League\Uri\Uri object from the environment
      *
      * @param array                          $server the environment server typically $_SERVER

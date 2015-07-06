@@ -8,14 +8,14 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Url;
+namespace League\Uri\Uri;
 
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
 
 /**
- * A Factory Trait to help return a new League\Uri\Url instance
+ * A Factory Trait to help return a new League\Uri\Uri instance
  *
  * @package League.url
  * @since   4.0.0
@@ -28,14 +28,14 @@ trait Factory
     use ServerInfo;
 
     /**
-     * Create a new League\Uri\Url object from the environment
+     * Create a new League\Uri\Uri object from the environment
      *
      * @param array                          $server the environment server typically $_SERVER
      * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws InvalidArgumentException If the URL can not be parsed
      *
-     * @return Uri\Url
+     * @return Uri\Uri
      */
     public static function createFromServer(array $server, Interfaces\SchemeRegistry $registry = null)
     {
@@ -50,14 +50,14 @@ trait Factory
     }
 
     /**
-     * Create a new League\Uri\Url instance from a string
+     * Create a new League\Uri\Uri instance from a string
      *
      * @param string                         $url
      * @param Interfaces\SchemeRegistry|null $registry
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return Uri\Url
+     * @return Uri\Uri
      */
     public static function createFromString($url, Interfaces\SchemeRegistry $registry = null)
     {
@@ -65,19 +65,19 @@ trait Factory
     }
 
     /**
-     * Create a new League\Uri\Url instance from an array returned by
+     * Create a new League\Uri\Uri instance from an array returned by
      * PHP parse_url function
      *
      * @param array                          $components
      * @param Interfaces\SchemeRegistry|null $registry
      *
-     * @return Uri\Url
+     * @return Uri\Uri
      */
     public static function createFromComponents(array $components, Interfaces\SchemeRegistry $registry = null)
     {
         $components = static::formatComponents($components);
 
-        return new Uri\Url(
+        return new Uri\Uri(
             new Uri\Scheme($components["scheme"], $registry),
             new Uri\UserInfo($components["user"], $components["pass"]),
             new Uri\Host($components["host"]),

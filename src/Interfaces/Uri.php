@@ -32,7 +32,7 @@ use Psr\Http\Message\UriInterface;
  * @property-read Query    $query
  * @property-read Fragment $fragment
  */
-interface Url extends UriInterface
+interface Uri extends UriInterface
 {
     /**
      * Returns true if the URL is considered empty
@@ -49,7 +49,7 @@ interface Url extends UriInterface
     public function isOpaque();
 
     /**
-     * Return an array representation of the Url
+     * Return an array representation of the Uri
      *
      * @return array
      */
@@ -63,11 +63,11 @@ interface Url extends UriInterface
      *  - hosts are converted using the punycode algorithm
      *  - query strings are sorted using their offsets
      *
-     * @param UriInterface $url
+     * @param UriInterface $uri
      *
      * @return bool
      */
-    public function sameValueAs(UriInterface $url);
+    public function sameValueAs(UriInterface $uri);
 
     /**
      * Returns whether a Url is absolute or relative. An Url is
@@ -100,7 +100,7 @@ interface Url extends UriInterface
     public function resolve($rel);
 
     /**
-     * Return an URL with update query values
+     * Return an instance with update query values
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified query data
@@ -116,7 +116,7 @@ interface Url extends UriInterface
     public function mergeQuery($query);
 
     /**
-     * Return an URL with a query string sorted by offset, maintaining offset to data correlations.
+     * Return an instance with a query string sorted by offset, maintaining offset to data correlations.
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
@@ -132,7 +132,7 @@ interface Url extends UriInterface
     public function ksortQuery($sort = SORT_REGULAR);
 
     /**
-     * Return an URL without the specified query values
+     * Return an instance without the specified query values
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified query data
@@ -146,7 +146,7 @@ interface Url extends UriInterface
     public function withoutQueryValues($offsets);
 
     /**
-     * Return an URL with the filtered query values
+     * Return an instance with the filtered query values
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered query data
@@ -161,7 +161,7 @@ interface Url extends UriInterface
     public function filterQuery(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 
     /**
-     * Return an URL with its path appended
+     * Return an instance with its path appended
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the appended path
@@ -173,7 +173,7 @@ interface Url extends UriInterface
     public function appendPath($path);
 
     /**
-     * Return an URL with its path prepended
+     * Return an instance with its path prepended
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the prepended path
@@ -185,7 +185,7 @@ interface Url extends UriInterface
     public function prependPath($path);
 
     /**
-     * Return an URL with one of its Path segment replaced
+     * Return an instance with one of its Path segment replaced
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the path
@@ -198,7 +198,7 @@ interface Url extends UriInterface
     public function replaceSegment($offset, $value);
 
     /**
-     * Return an URL without the submitted path segments
+     * Return an instance without the submitted path segments
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified segments
@@ -212,7 +212,7 @@ interface Url extends UriInterface
     public function withoutSegments($offsets);
 
     /**
-     * Return an URL without dot segments according to RFC3986 algorithm
+     * Return an instance without dot segments according to RFC3986 algorithm
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without dot segment according to RFC3986 algorithm
@@ -222,7 +222,7 @@ interface Url extends UriInterface
     public function withoutDotSegments();
 
     /**
-     * Return an URL without internal empty segments
+     * Return an instance without internal empty segments
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without adjacent segment delimiters
@@ -232,7 +232,7 @@ interface Url extends UriInterface
     public function withoutEmptySegments();
 
     /**
-     * Return an URL with the filtered path segments
+     * Return an instance with the filtered path segments
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered segments
@@ -247,7 +247,7 @@ interface Url extends UriInterface
     public function filterPath(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 
     /**
-     * Return an URL with the path extension updated
+     * Return an instance with the path extension updated
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the modified path extension
@@ -259,7 +259,7 @@ interface Url extends UriInterface
     public function withExtension($extension);
 
     /**
-     * Returns an URL with the path containing a trailing slash
+     * Return an instance with the path containing a trailing slash
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the path component with a trailing slash
@@ -283,7 +283,7 @@ interface Url extends UriInterface
     public function withoutTrailingSlash();
 
     /**
-     * Returns an URL with the host in his IDN form
+     * Return an instance with the host in his IDN form
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the host in its IDN form using RFC 3492 rules
@@ -295,7 +295,7 @@ interface Url extends UriInterface
     public function toUnicode();
 
     /**
-     * Returns an URL with the host in his punycode encoded form
+     * Return an instance with the host in his punycode encoded form
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the host transcoded using to ascii the RFC 3492 rules
@@ -307,7 +307,7 @@ interface Url extends UriInterface
     public function toAscii();
 
     /**
-     * Return an URL without the host zone identifier according to RFC6874
+     * Return an instance without the host zone identifier according to RFC6874
      *
      * This method MUST retain the state of the current instance, and return
      * an instance without the host zone identifier according to RFC6874
@@ -319,7 +319,7 @@ interface Url extends UriInterface
     public function withoutZoneIdentifier();
 
     /**
-     * Return an URL with the Host appended
+     * Return an instance with the Host appended
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the appended labels
@@ -331,7 +331,7 @@ interface Url extends UriInterface
     public function appendHost($host);
 
     /**
-     * Return an URL with the Host prepended
+     * Return an instance with the Host prepended
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the prepended labels
@@ -343,7 +343,7 @@ interface Url extends UriInterface
     public function prependHost($host);
 
     /**
-     * Return an URL with one of its Host label replaced
+     * Return an instance with one of its Host label replaced
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the replaced labels
@@ -356,7 +356,7 @@ interface Url extends UriInterface
     public function replaceLabel($offset, $value);
 
     /**
-     * Return an URL without the submitted host labels
+     * Return an instance without the submitted host labels
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the modified host without the selected labels
@@ -370,7 +370,7 @@ interface Url extends UriInterface
     public function withoutLabels($offsets);
 
     /**
-     * Return an URL with the filtered host label
+     * Return an instance with the filtered host label
      *
      * This method MUST retain the state of the current instance, and return
      * an instance containing the filtered labels

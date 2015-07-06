@@ -21,7 +21,7 @@ namespace League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-interface Component extends UrlPart
+interface Component extends UriPart
 {
     /**
      * Returns an instance with the specified string

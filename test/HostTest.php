@@ -42,7 +42,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
             'partial numeric' => ['23.42c.two', false, false, false, '23.42c.two'],
             'all numeric' => ['98.3.2', false, false, false, '98.3.2'],
-            'invalid punycode' => ['xn--fsqu00a.xn--g6w131251d', false, false, false, 'xn--fsqu00a.xn--g6w131251d']
+            'invalid punycode' => ['xn--fsqu00a.xn--g6w131251d', false, false, false, 'xn--fsqu00a.xn--g6w131251d'],
+            'mix IP format with host label' => ['toto.127.0.0.1', false, false, false, 'toto.127.0.0.1'],
         ];
     }
 
@@ -70,7 +71,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             'label too long' => [$longlabel.'.secure.example.com'],
             'too many labels' => [implode('.', array_fill(0, 128, 'a'))],
             'Invalid IPv4 format' => ['[127.0.0.1]'],
-            'mix IP format with host label' => ['toto.127.0.0.1'],
             'Invalid IPv6 format' => ['[[::1]]'],
             'Invalid IPv6 format 2' => ['[::1'],
             'space character in starting label' => ['example. com'],
@@ -235,7 +235,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             'bool' => [true, Host::IS_RELATIVE],
             'integer' => [1, Host::IS_RELATIVE],
             'object' => [new \StdClass(), Host::IS_RELATIVE],
-            'ip FQDN' => [['127.0.0.1'], Host::IS_ABSOLUTE],
+            //'ip FQDN' => [['127.0.0.1'], Host::IS_ABSOLUTE],
             'ipv6 FQDN' => [['::1'], Host::IS_ABSOLUTE],
             'unknown flag' => [['all', 'is', 'good'], 23],
         ];
@@ -359,15 +359,16 @@ class HostTest extends PHPUnit_Framework_TestCase
             'prepend FQDN host string' => ['secure.example.com', 'master.', 'master.secure.example.com'],
             'prepend to FQDN host a host object' => ['secure.example.com.', new Host('master'), 'master.secure.example.com.'],
             'prepend to FQDN host a host string' => ['secure.example.com.', 'master', 'master.secure.example.com.'],
+            'prepend IPv4' => ['secure.example.com', '127.0.0.1', '127.0.0.1.secure.example.com'],
         ];
     }
 
     /**
-     * @expectedException LogicException
+     * @expectedException InvalidArgumentException
      */
     public function testPrependIpFailed()
     {
-        (new Host('127.0.0.1'))->prepend(new Host('foo'));
+        (new Host('::1'))->prepend(new Host('foo'));
     }
 
     /**
@@ -392,6 +393,7 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['secure.example.com', 'master.', 'secure.example.com.master'],
             ['secure.example.com.', new Host('master'), 'secure.example.com.master.'],
             ['secure.example.com.', 'master', 'secure.example.com.master.'],
+            ['127.0.0.1', 'toto', '127.0.0.1.toto'],
         ];
     }
 
@@ -400,7 +402,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendIpFailed()
     {
-        (new Host('127.0.0.1'))->append(new Host('foo'));
+        (new Host('::1'))->append(new Host('foo'));
     }
 
     /**
@@ -412,9 +414,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testReplace($raw, $input, $offset, $expected)
     {
-        $host = new Host($raw);
-        $newHost = $host->replace($offset, $input);
-        $this->assertSame($expected, $newHost->__toString());
+        $this->assertSame($expected, (new Host($raw))->replace($offset, $input)->__toString());
     }
 
     public function replaceValid()
@@ -426,6 +426,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['master.example.com', 'shop', 0, 'shop.example.com'],
             ['', '::1', 0, '[::1]'],
             ['toto', '::1', 23, 'toto'],
+            ['127.0.0.1', 'secure.example.com', 2, '127.0.0.1'],
+            ['secure.example.com', '127.0.0.1', 2, 'secure.example.127.0.0.1'],
         ];
     }
 
@@ -434,7 +436,7 @@ class HostTest extends PHPUnit_Framework_TestCase
      */
     public function testReplaceIpMustFailed()
     {
-        (new Host('secure.example.com'))->replace(2, new Host('127.0.0.1'));
+        (new Host('secure.example.com'))->replace(2, new Host('::1'));
     }
 
     /**

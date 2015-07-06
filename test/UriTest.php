@@ -218,26 +218,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $url
-     * @param $expected
-     * @dataProvider isOpaqueProvider
-     */
-    public function testIsOpaque($url, $expected)
-    {
-        $this->assertSame($expected, Uri::createFromString($url)->isOpaque());
-    }
-
-    public function isOpaqueProvider()
-    {
-        return [
-            'normal URL' => ['http://www.example.com', false],
-            'opaque URL' => ['http:example.com', true],
-            'missing authority' => ['http:/example.com', false],
-            'missing scheme' => ['//example.com/toto.php', false],
-        ];
-    }
-
-    /**
      * @param  $url1
      * @param  $url2
      * @dataProvider sameValueAsProvider

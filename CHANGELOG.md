@@ -15,7 +15,6 @@ All Notable changes to `League\Url` will be documented in this file
 - Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
-- Uri::isOpaque to detect Opaque URL
 - Host::getIpLiteral to get the raw IP representation of a Ip Literal hostname
 
 ### Fixed

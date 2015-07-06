@@ -101,16 +101,6 @@ class Uri implements Interfaces\Uri
     /**
      * {@inheritdoc}
      */
-    public function isOpaque()
-    {
-        return !$this->scheme->isEmpty()
-            && empty($this->getAuthority())
-            && !preg_match(',^[.|..|\/]|[\/?],', $this->path->__toString());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getAuthority()
     {
         if ($this->host->isEmpty()) {
@@ -154,7 +144,7 @@ class Uri implements Interfaces\Uri
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (!$url instanceof Url) {
+        if (!$url instanceof Uri) {
             try {
                 $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
             } catch (InvalidArgumentException $e) {

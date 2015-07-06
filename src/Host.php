@@ -79,9 +79,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
             return $this->formatIp($this->data[0]);
         }
 
-        $data = !$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data;
-
-        return $this->formatHostname($data);
+        return $this->formatHostname(!$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data);
     }
 
     /**

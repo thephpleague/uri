@@ -39,6 +39,13 @@ trait Ip
     protected $hasZoneIdentifier = false;
 
     /**
+     * Literal representation of the IP
+     *
+     * @var string|null
+     */
+    protected $ipLiteral;
+
+    /**
      * IPv6 Local Link binary-like prefix
      *
      * @var string
@@ -78,6 +85,14 @@ trait Ip
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getIpLiteral()
+    {
+        return $this->ipLiteral;
+    }
+
+    /**
      * Validate a Host as an IP
      *
      * @param string $str
@@ -92,17 +107,17 @@ trait Ip
         if (!empty($res)) {
             $this->hostAsIpv4 = false;
             $this->hostAsIpv6 = true;
+            $this->ipLiteral  = $res;
             return [$res];
         }
 
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $this->hostAsIpv4 = true;
             $this->hostAsIpv6 = false;
+            $this->ipLiteral  = $str;
             return [$str];
         }
 
-        $this->hostAsIpv4 = false;
-        $this->hostAsIpv6 = false;
         return [];
     }
 

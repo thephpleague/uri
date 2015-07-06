@@ -90,11 +90,18 @@ interface Host extends HierarchicalComponent
     public function getRegisterableDomain();
 
     /**
-     * Retrun the hostname subdomain
+     * Return the hostname subdomain
      *
      * @return string
      */
     public function getSubdomain();
+
+    /**
+     * Return the raw IP literal address
+     *
+     * @return string
+     */
+    public function getIpLiteral();
 
     /**
      * Retrieves a single host label.

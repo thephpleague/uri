@@ -11,6 +11,7 @@
 namespace League\Uri\Uri;
 
 use InvalidArgumentException;
+use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -87,7 +88,7 @@ trait Properties
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (!$url instanceof League\Uri\Uri) {
+        if (!$url instanceof Interfaces\Uri) {
             try {
                 $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
             } catch (InvalidArgumentException $e) {

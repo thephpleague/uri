@@ -270,6 +270,15 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Query(),
                 new Fragment()
             ), 'http://example.com/path/to/the/sky'],
+            [new Uri(
+                new Scheme('http'),
+                new UserInfo(),
+                new Host(),
+                new Port(),
+                new Path('///path/to/the/sky'),
+                new Query(),
+                new Fragment()
+            ), 'http:/path/to/the/sky'],
         ];
     }
 

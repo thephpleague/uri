@@ -35,6 +35,7 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['/shop/rev iew/', '/shop/rev%20iew/'],
             ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
             ['/master/toto/%7Eetc', '/master/toto/~etc'],
+            ['////master/toto/%7Eetc', '////master/toto/~etc'],
         ];
     }
 

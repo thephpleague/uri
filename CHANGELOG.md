@@ -12,7 +12,6 @@ All Notable changes to `League\Url` will be documented in this file
 - `Intl` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - API to add/remove the Path trailing slash.
-- Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
 - Host::getIpLiteral to get the raw IP representation of a Ip Literal hostname
@@ -26,6 +25,9 @@ All Notable changes to `League\Url` will be documented in this file
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
 - Host::toUnicode now returns a new Host instance
+- Host now support append/prepend/replacing to or with IPv4 Host type
+- Path now supports multiple leading slash
+- Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
 
 ### Remove
 

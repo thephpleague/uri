@@ -51,24 +51,23 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     protected static $delimiter = '/';
 
     /**
-     * New Instance of Path
-     *
-     * @param string $str the path
+     * {@inheritdoc}
      */
     protected function init($str)
     {
-        $this->isAbsolute = self::IS_RELATIVE;
         $str = $this->validateString($str);
-        if (preg_match(',^/+$,', $str)) {
+        $this->isAbsolute = self::IS_RELATIVE;
+        if (static::$delimiter == mb_substr($str, 0, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;
-            return;
+            $str = mb_substr($str, 1, mb_strlen($str), 'UTF-8');
         }
 
-        if (static::$delimiter == mb_substr($str, 0, 1, 'UTF-8')) {
-            $this->isAbsolute =  self::IS_ABSOLUTE;
+        $append_delimiter = false;
+        if (static::$delimiter === mb_substr($str, -1, 1, 'UTF-8')) {
+            $str = mb_substr($str, 0, -1, 'UTF-8');
+            $append_delimiter = true;
         }
-        $append_delimiter = static::$delimiter === mb_substr($str, -1, 1, 'UTF-8');
-        $str = trim($str, static::$delimiter);
+
         $this->data = $this->validate($str);
         if ($append_delimiter) {
             $this->data[] = '';
@@ -135,11 +134,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
         }
 
         $input = explode(static::$delimiter, $current);
-        $new   = '';
-        if (static::$delimiter == $current[0]) {
-            $new = static::$delimiter;
-        }
-        $new .= implode(static::$delimiter, $this->filterDotSegments($input));
+        $new   = implode(static::$delimiter, $this->filterDotSegments($input));
         if (isset(static::$dot_segments[end($input)])) {
             $new .= static::$delimiter;
         }

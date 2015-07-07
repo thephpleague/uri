@@ -11,6 +11,7 @@
 namespace League\Uri\Uri;
 
 use InvalidArgumentException;
+use League\Uri;
 use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
 
@@ -42,6 +43,11 @@ trait Properties
      * {@inheritdoc}
      */
     abstract public function __toString();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function getAuthority();
 
     /**
      * {@inheritdoc}
@@ -97,5 +103,85 @@ trait Properties
         }
 
         return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve($url)
+    {
+        $relative = $this->convertToUrlObject($url);
+        if ($relative->isAbsolute()) {
+            return $relative->withoutDotSegments();
+        }
+
+        if (!$relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
+            return $relative->withScheme($this->scheme)->withoutDotSegments();
+        }
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
+    }
+
+    /**
+     * Convert to an Url object
+     *
+     * @param UriInterface|string $url
+     *
+     * @return static
+     */
+    protected function convertToUrlObject($url)
+    {
+        if ($url instanceof Interfaces\Uri) {
+            return $url;
+        }
+
+        return Uri\Uri::createFromString((string) $url, $this->scheme->getSchemeRegistry());
+    }
+
+    /**
+     * returns the resolve URL
+     *
+     * @param Interfaces\Uri $relative the relative URL
+     *
+     * @return static
+     */
+    protected function resolveRelative(Interfaces\Uri $relative)
+    {
+        $newUrl = $this->withProperty('fragment', $relative->fragment->__toString());
+        if (!$relative->path->isEmpty()) {
+            return $newUrl
+                ->withProperty('path', $this->resolvePath($newUrl, $relative)->__toString())
+                ->withProperty('query', $relative->query->__toString());
+        }
+
+        if (!$relative->query->isEmpty()) {
+            return $newUrl->withProperty('query', $relative->query->__toString());
+        }
+
+        return $newUrl;
+    }
+
+    /**
+     * returns the resolve URL components
+     *
+     * @param Interfaces\Uri $newUrl   the final URL
+     * @param Interfaces\Uri $relative the relative URL
+     *
+     * @return Interfaces\Path
+     */
+    protected function resolvePath(Interfaces\Uri $newUrl, Interfaces\Uri $relative)
+    {
+        $path = $relative->path;
+        if (!$path->isAbsolute()) {
+            $segments = $newUrl->path->toArray();
+            array_pop($segments);
+            $isAbsolute = Uri\Path::IS_RELATIVE;
+            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
+                $isAbsolute = Uri\Path::IS_ABSOLUTE;
+            }
+            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        }
+
+        return $path;
     }
 }

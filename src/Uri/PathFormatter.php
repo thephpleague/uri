@@ -30,15 +30,16 @@ trait PathFormatter
      */
     protected function formatPath(Path $path, $has_authority_part = false)
     {
-        $str = $path->getUriComponent();
+        $path = $path->getUriComponent();
+
         if (!$has_authority_part) {
-            return preg_replace(',^/+,', '/', $str);
+            return preg_replace(',^/+,', '/', $path);
         }
 
-        if (!$path->isEmpty() && !$path->isAbsolute()) {
-            return '/'.$str;
+        if (!empty($path) && '/' != $path[0]) {
+            return '/'.$path;
         }
 
-        return $str;
+        return $path;
     }
 }

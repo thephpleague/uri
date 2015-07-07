@@ -10,8 +10,8 @@
  */
 namespace League\Uri\Uri;
 
-use League\Uri;
 use League\Uri\Interfaces;
+use League\Uri\Types;
 
 /**
  * a Trait to proxy partial update of a League\Uri\Uri object
@@ -73,12 +73,7 @@ trait PartialModifier
     /**
      * Trait To get/set immutable value property
      */
-    use Uri\Types\ImmutableProperty;
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getAuthority();
+    use Types\ImmutableProperty;
 
     /**
      * {@inheritdoc}
@@ -254,85 +249,5 @@ trait PartialModifier
     public function filterHost(callable $callable, $flag = Interfaces\Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('host', $this->host->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve($url)
-    {
-        $relative = $this->convertToUrlObject($url);
-        if ($relative->isAbsolute()) {
-            return $relative->withoutDotSegments();
-        }
-
-        if (!$relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
-            return $relative->withScheme($this->scheme)->withoutDotSegments();
-        }
-
-        return $this->resolveRelative($relative)->withoutDotSegments();
-    }
-
-    /**
-     * Convert to an Url object
-     *
-     * @param  Interfaces\Uri|string $url
-     *
-     * @return Interfaces\Uri
-     */
-    protected function convertToUrlObject($url)
-    {
-        if ($url instanceof Interfaces\Uri) {
-            return $url;
-        }
-
-        return Uri\Uri::createFromString($url, $this->scheme->getSchemeRegistry());
-    }
-
-    /**
-     * returns the resolve URL
-     *
-     * @param Interfaces\Uri $relative the relative URL
-     *
-     * @return static
-     */
-    protected function resolveRelative(Interfaces\Uri $relative)
-    {
-        $newUrl = $this->withProperty('fragment', $relative->fragment);
-        if (!$relative->path->isEmpty()) {
-            return $newUrl
-                ->withProperty('path', $this->resolvePath($newUrl, $relative))
-                ->withProperty('query', $relative->query);
-        }
-
-        if (!$relative->query->isEmpty()) {
-            return $newUrl->withProperty('query', $relative->query);
-        }
-
-        return $newUrl;
-    }
-
-    /**
-     * returns the resolve URL components
-     *
-     * @param Interfaces\Uri $newUrl   the final URL
-     * @param Interfaces\Uri $relative the relative URL
-     *
-     * @return Interfaces\Path
-     */
-    protected function resolvePath(Interfaces\Uri $newUrl, Interfaces\Uri $relative)
-    {
-        $path = $relative->path;
-        if (!$path->isAbsolute()) {
-            $segments = $newUrl->path->toArray();
-            array_pop($segments);
-            $isAbsolute = Uri\Path::IS_RELATIVE;
-            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
-                $isAbsolute = Uri\Path::IS_ABSOLUTE;
-            }
-            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
-        }
-
-        return $path;
     }
 }

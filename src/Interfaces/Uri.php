@@ -130,13 +130,13 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified query data
      *
-     * @param callable|array $offsets the list of keys to remove from the query
-     *                                if a callable is given it should filter the list
-     *                                of keys to remove from the query string
+     * @param callable|array $keys the list of keys to remove from the query
+     *                             if a callable is given it should filter the list
+     *                             of keys to remove from the query string
      *
      * @return static
      */
-    public function withoutQueryValues($offsets);
+    public function withoutQueryValues($keys);
 
     /**
      * Return an instance with the filtered query values
@@ -183,12 +183,12 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the path
      *
-     * @param int                        $offset the Path segment offset
+     * @param int                        $key the Path segment offset
      * @param HierarchicalComponent|string $value  the data to inject
      *
      * @return static
      */
-    public function replaceSegment($offset, $value);
+    public function replaceSegment($key, $value);
 
     /**
      * Return an instance without the submitted path segments
@@ -196,13 +196,13 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance without the specified segments
      *
-     * @param callable|array $offsets the list of offsets to remove from the Path
-     *                                if a callable is given it should filter the list
-     *                                of offsets to remove from the Path
+     * @param callable|array $keys the list of offsets to remove from the Path
+     *                             if a callable is given it should filter the list
+     *                             of offsets to remove from the Path
      *
      * @return static
      */
-    public function withoutSegments($offsets);
+    public function withoutSegments($keys);
 
     /**
      * Return an instance without dot segments according to RFC3986 algorithm
@@ -341,12 +341,12 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the replaced labels
      *
-     * @param int                        $offset the Host label offset
+     * @param int                          $key the Host label offset
      * @param HierarchicalComponent|string $value  the data to inject
      *
      * @return static
      */
-    public function replaceLabel($offset, $value);
+    public function replaceLabel($key, $value);
 
     /**
      * Return an instance without the submitted host labels
@@ -354,13 +354,13 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance with the modified host without the selected labels
      *
-     * @param callable|array $offsets the list of label offsets to remove from the Host
-     *                                if a callable is given it should filter the list
-     *                                of offset to remove from the Host
+     * @param callable|array $keys the list of label offsets to remove from the Host
+     *                             if a callable is given it should filter the list
+     *                             of offset to remove from the Host
      *
      * @return static
      */
-    public function withoutLabels($offsets);
+    public function withoutLabels($keys);
 
     /**
      * Return an instance with the filtered host label

@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.5
  */
-interface Fragment extends Individual
+interface Fragment extends Component, LiteralAccess
 {
 
 }

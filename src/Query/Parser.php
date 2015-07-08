@@ -95,16 +95,14 @@ trait Parser
      */
     public static function build(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
-        $pairs   = [];
         $encoder = static::getEncoder($encodingType);
+        $arr     = array_map(function ($value) {
+            return !is_array($value) ? [$value] : $value;
+        }, $arr);
+
+        $pairs = [];
         foreach ($arr as $key => $value) {
-            if (!is_array($value)) {
-                $pairs[] = static::buildKeyPair($encoder, $key, $value);
-                continue;
-            }
-            foreach ($value as $val) {
-                $pairs[] = static::buildKeyPair($encoder, $key, $val);
-            }
+            $pairs = array_merge($pairs, static::buildPair($encoder, $encoder($key), $value));
         }
 
         return implode($separator, $pairs);
@@ -119,14 +117,17 @@ trait Parser
      *
      * @return string
      */
-    protected static function buildKeyPair(callable $encoder, $key, $value = null)
+    protected static function buildPair(callable $encoder, $key, array $value = [])
     {
-        $pair = $encoder($key);
-        if (!is_null($value)) {
-            $pair .= '='.$encoder($value);
-        }
+        return array_reduce($value, function (array $carry, $data) use ($key, $encoder) {
+            $pair = $key;
+            if (null !== $data) {
+                $pair .= '='.$encoder($data);
+            }
+            $carry[] = $pair;
 
-        return $pair;
+            return $carry;
+        }, []);
     }
 
     /**

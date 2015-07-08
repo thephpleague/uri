@@ -61,10 +61,10 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     /**
      * {@inheritdoc}
      */
-    public function getLabel($offset, $default = null)
+    public function getLabel($key, $default = null)
     {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
         }
 
         return $default;

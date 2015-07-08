@@ -119,11 +119,11 @@ class Query implements Interfaces\Query
     /**
      * {@inheritdoc}
      */
-    public function getValue($offset, $default = null)
+    public function getValue($key, $default = null)
     {
-        $offset = rawurldecode($offset);
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
+        $key = rawurldecode($key);
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
         }
 
         return $default;

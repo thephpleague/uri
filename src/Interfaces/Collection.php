@@ -47,9 +47,9 @@ interface Collection extends Countable, IteratorAggregate
     public function keys();
 
     /**
-     * Returns whether the given $key exists in the current instance
+     * Returns whether the given key exists in the current instance
      *
-     * @param string $$key
+     * @param string $key
      *
      * @return bool
      */
@@ -61,7 +61,7 @@ interface Collection extends Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable $callable the list of $key to keep from the collection
+     * @param callable $callable the list of keys to keep from the collection
      * @param int      $flag     flag to determine what argument are sent to callback
      *
      * @return static
@@ -69,12 +69,12 @@ interface Collection extends Countable, IteratorAggregate
     public function filter(callable $callable, $flag = self::FILTER_USE_VALUE);
 
     /**
-     * Returns an instance without the specified $keys
+     * Returns an instance without the specified keys
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable|array $keys the list of $key to remove from the collection
+     * @param callable|array $keys the list of keys to remove from the collection
      *
      * @return static
      */

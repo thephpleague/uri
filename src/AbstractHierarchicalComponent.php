@@ -171,9 +171,9 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     /**
      * {@inheritdoc}
      */
-    public function replace($offset, $component)
+    public function replace($key, $component)
     {
-        if (!empty($this->data) && !$this->hasKey($offset)) {
+        if (!empty($this->data) && !$this->hasKey($key)) {
             return $this;
         }
 
@@ -184,7 +184,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
         }
 
         return $this->newCollectionInstance(
-            array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset+1))
+            array_merge(array_slice($source, 0, $key), $dest, array_slice($source, $key+1))
         );
     }
 }

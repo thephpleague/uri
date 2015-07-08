@@ -101,10 +101,10 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function getSegment($offset, $default = null)
+    public function getSegment($key, $default = null)
     {
-        if (isset($this->data[$offset])) {
-            return $this->data[$offset];
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
         }
 
         return $default;
@@ -147,7 +147,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      *
      * @see http://tools.ietf.org/html/rfc3986#section-5.2.4
      *
-     * @param array  $input Path segments
+     * @param array  $carry   Path segments
      * @param string $segment a path segment
      *
      * @return array

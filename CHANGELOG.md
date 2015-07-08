@@ -14,7 +14,8 @@ All Notable changes to `League\Url` will be documented in this file
 - API to add/remove the Path trailing slash.
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
-- Host::getIpLiteral to get the raw IP representation of a Ip Literal hostname
+- `Host::getIpLiteral` to get the raw IP representation of a Ip Literal hostname
+- `getLiteral` method to `Pass`, `User` and `Fragment` objects to get the component non-encoded string representation
 
 ### Fixed
 

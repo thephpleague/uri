@@ -11,7 +11,7 @@
 namespace League\Uri\Interfaces;
 
 /**
- * Value object representing a URL Fragment component.
+ * Value object representing a URL component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -20,9 +20,14 @@ namespace League\Uri\Interfaces;
  *
  * @package League.url
  * @since   4.0.0
- * @see     https://tools.ietf.org/html/rfc3986#section-3.5
  */
-interface Fragment extends Individual
+interface Individual extends Component
 {
-
+    /**
+     * Returns the instance literal representation
+     * without encoding
+     *
+     * @return string
+     */
+    public function getLiteral();
 }

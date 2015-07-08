@@ -11,12 +11,19 @@ use PHPUnit_Framework_TestCase;
 class PassTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @param  string $value
      * @dataProvider validUserProvider
      */
     public function testGetUriComponent($raw, $parsed)
     {
         $this->assertSame($parsed, (new Pass($raw))->getUriComponent());
+    }
+
+    /**
+     * @dataProvider validUserProvider
+     */
+    public function testGetLiteral($raw)
+    {
+        $this->assertSame($raw, (new Pass($raw))->getLiteral());
     }
 
     public function validUserProvider()
@@ -47,7 +54,8 @@ class PassTest extends PHPUnit_Framework_TestCase
     public function invalidDataProvider()
     {
         return [
-            'invalid character' => ['to@to'],
+            'contains @' => ['to@to'],
+            'contains /' => ['to/to'],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
             'null'      => [null],

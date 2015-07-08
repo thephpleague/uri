@@ -10,8 +10,6 @@
  */
 namespace League\Uri;
 
-use InvalidArgumentException;
-
 /**
  * Value object representing a URL user component.
  *
@@ -20,13 +18,5 @@ use InvalidArgumentException;
  */
 class User extends AbstractComponent implements Interfaces\User
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function assertValidString($data)
-    {
-        if (preg_match('/[:@]/', $data)) {
-            throw new InvalidArgumentException('The URL user component can not contain the URL pass component');
-        }
-    }
+    protected static $invalidCharactersRegex = ",[/:@],";
 }

@@ -134,7 +134,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
         }
 
         $input = explode(static::$delimiter, $current);
-        $new   = implode(static::$delimiter, $this->filterDotSegments($input));
+        $new   = implode(static::$delimiter, array_reduce($input, [$this, 'filterDotSegments'], []));
         if (isset(static::$dot_segments[end($input)])) {
             $new .= static::$delimiter;
         }
@@ -147,25 +147,23 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      *
      * @see http://tools.ietf.org/html/rfc3986#section-5.2.4
      *
-     * @param array $input Path segments
+     * @param array  $input Path segments
+     * @param string $segment a path segment
      *
      * @return array
      */
-    protected function filterDotSegments(array $input)
+    protected function filterDotSegments(array $carry, $segment)
     {
-        $arr = [];
-        foreach ($input as $segment) {
-            if ('..' == $segment) {
-                array_pop($arr);
-                continue;
-            }
-
-            if (!isset(static::$dot_segments[$segment])) {
-                $arr[] = $segment;
-            }
+        if ('..' == $segment) {
+            array_pop($carry);
+            return $carry;
         }
 
-        return $arr;
+        if (!isset(static::$dot_segments[$segment])) {
+            $carry[] = $segment;
+        }
+
+        return $carry;
     }
 
     /**

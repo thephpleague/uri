@@ -94,12 +94,10 @@ trait Properties
      */
     public function sameValueAs(UriInterface $url)
     {
-        if (!$url instanceof Interfaces\Uri) {
-            try {
-                $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
-            } catch (InvalidArgumentException $e) {
-                return false;
-            }
+        try {
+            $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
+        } catch (InvalidArgumentException $e) {
+            return false;
         }
 
         return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
@@ -172,16 +170,17 @@ trait Properties
     protected function resolvePath(Interfaces\Uri $newUrl, Interfaces\Uri $relative)
     {
         $path = $relative->path;
-        if (!$path->isAbsolute()) {
-            $segments = $newUrl->path->toArray();
-            array_pop($segments);
-            $isAbsolute = Uri\Path::IS_RELATIVE;
-            if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
-                $isAbsolute = Uri\Path::IS_ABSOLUTE;
-            }
-            $path = Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        if ($path->isAbsolute()) {
+            return $path;
         }
 
-        return $path;
+        $segments = $newUrl->path->toArray();
+        array_pop($segments);
+        $isAbsolute = Uri\Path::IS_RELATIVE;
+        if ($newUrl->path->isEmpty() || $newUrl->path->isAbsolute()) {
+            $isAbsolute = Uri\Path::IS_ABSOLUTE;
+        }
+
+        return Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 }

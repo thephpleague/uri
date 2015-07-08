@@ -26,8 +26,8 @@ use IteratorAggregate;
  */
 interface Collection extends Countable, IteratorAggregate
 {
-    const FILTER_USE_KEY    = 2;
-    const FILTER_USE_VALUE  = 3;
+    const FILTER_USE_KEY   = 2;
+    const FILTER_USE_VALUE = 0;
 
     /**
      * Return an array representation of the collection
@@ -37,23 +37,23 @@ interface Collection extends Countable, IteratorAggregate
     public function toArray();
 
     /**
-     * Returns the component offsets.
+     * Returns the component $keys.
      *
-     * Returns the component offsets. If a value is specified
-     * only the offsets associated with the given value will be returned
+     * Returns the component $keys. If a value is specified
+     * only the $keys associated with the given value will be returned
      *
      * @return array
      */
     public function keys();
 
     /**
-     * Returns whether the given offset exists in the current instance
+     * Returns whether the given $key exists in the current instance
      *
-     * @param string $offset
+     * @param string $$key
      *
      * @return bool
      */
-    public function hasKey($offset);
+    public function hasKey($key);
 
     /**
      * Returns an instance with only the specified value
@@ -61,7 +61,7 @@ interface Collection extends Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable $callable the list of offset to keep from the collection
+     * @param callable $callable the list of $key to keep from the collection
      * @param int      $flag     flag to determine what argument are sent to callback
      *
      * @return static
@@ -69,14 +69,14 @@ interface Collection extends Countable, IteratorAggregate
     public function filter(callable $callable, $flag = self::FILTER_USE_VALUE);
 
     /**
-     * Returns an instance without the specified offsets
+     * Returns an instance without the specified $keys
      *
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable|array $offsets the list of offset to remove from the collection
+     * @param callable|array $keys the list of $key to remove from the collection
      *
      * @return static
      */
-    public function without($offsets);
+    public function without($keys);
 }

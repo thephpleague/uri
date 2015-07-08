@@ -100,7 +100,9 @@ trait ImmutableCollection
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
-        if (!in_array($flag, [Collection::FILTER_USE_VALUE, Collection::FILTER_USE_KEY])) {
+        static $flags_list = [Collection::FILTER_USE_VALUE => 1, Collection::FILTER_USE_KEY => 1];
+
+        if (!isset($flags_list[$flag])) {
             throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
         }
 

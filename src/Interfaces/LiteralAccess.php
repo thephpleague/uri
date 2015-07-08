@@ -21,7 +21,7 @@ namespace League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-interface Individual extends Component
+interface LiteralAccess
 {
     /**
      * Returns the instance literal representation

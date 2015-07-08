@@ -120,36 +120,24 @@ trait Hostname
      */
     protected function validateStringHost($str)
     {
-        $raw_labels = explode(static::$delimiter, $this->lower($this->setIsAbsolute($str)));
+        $host       = $this->lower($this->setIsAbsolute($str));
+        $raw_labels = explode(static::$delimiter, $host);
         $labels     = array_map(function ($value) {
             return idn_to_ascii($value);
         }, $raw_labels);
 
         $this->assertValidHost($labels);
 
-        $this->isIdn = $raw_labels !== $labels;
-        $this->getHostnameInfos($raw_labels);
+        $this->isIdn               = $raw_labels !== $labels;
+        $info                      = $this->getHostnameParser()->parseHost($host);
+        $this->subdomain           = $info->subdomain;
+        $this->registerableDomain  = $info->registerableDomain;
+        $this->publicSuffix        = $info->publicSuffix;
+        $this->isPublicSuffixValid = $this->getHostnameParser()->isSuffixValid($host);
 
         return array_map(function ($label) {
             return idn_to_utf8($label);
         }, $labels);
-    }
-
-    /**
-     * Get hostname info
-     * @param  array  $raw_labels The submitted labels normalized
-     */
-    protected function getHostnameInfos(array $raw_labels)
-    {
-        if (!static::$parser instanceof Pdp\Parser) {
-            static::$parser = new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
-        }
-        $host = implode('.', $raw_labels);
-        $info = static::$parser->parseHost($host);
-        $this->subdomain           = $info->subdomain;
-        $this->registerableDomain  = $info->registerableDomain;
-        $this->publicSuffix        = $info->publicSuffix;
-        $this->isPublicSuffixValid = static::$parser->isSuffixValid($host);
     }
 
     /**
@@ -204,6 +192,15 @@ trait Hostname
     }
 
     /**
+     * Validated the Host Label Count
+     *
+     * @param array $data host labels
+     *
+     * @throws InvalidArgumentException If the validation fails
+     */
+    abstract protected function isValidLabelsCount(array $data = []);
+
+    /**
      * Validated the Host Label Pattern
      *
      * @param array $data host labels
@@ -218,11 +215,26 @@ trait Hostname
     }
 
     /**
-     * Validated the Host Label Count
+     * Initialize and access a Pdp\Parser object
      *
-     * @param array $data host labels
-     *
-     * @throws InvalidArgumentException If the validation fails
+     * @return Pdp\Parser
      */
-    abstract protected function isValidLabelsCount(array $data = []);
+    protected function getHostnameParser()
+    {
+        if (!static::$parser instanceof Pdp\Parser) {
+            static::$parser = $this->newHostnameParser();
+        }
+
+        return static::$parser;
+    }
+
+    /**
+     * Pdp Factory
+     *
+     * @return Pdp\Parser
+     */
+    protected function newHostnameParser()
+    {
+        return new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
+    }
 }

@@ -10,8 +10,6 @@
  */
 namespace League\Uri;
 
-use InvalidArgumentException;
-
 /**
  * Value object representing a URL pass component.
  *
@@ -20,13 +18,5 @@ use InvalidArgumentException;
  */
 class Pass extends AbstractComponent implements Interfaces\Pass
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function assertValidString($data)
-    {
-        if (strpos($data, '@') !== false) {
-            throw new InvalidArgumentException('The URL pass component contains invalid characters');
-        }
-    }
+    protected static $invalidCharactersRegex = ",[/@],";
 }

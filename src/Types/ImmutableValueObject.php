@@ -83,7 +83,7 @@ trait ImmutableValueObject
      *
      * @return string
      */
-    protected function encode($value)
+    protected static function encode($value)
     {
         return str_replace(static::$characters_set_encoded, static::$characters_set, rawurlencode($value));
     }

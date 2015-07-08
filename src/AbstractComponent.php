@@ -10,6 +10,8 @@
  */
 namespace League\Uri;
 
+use InvalidArgumentException;
+
 /**
  * An abstract class to ease component manipulation
  *
@@ -22,6 +24,13 @@ abstract class AbstractComponent
      * common immutable value object methods
      */
     use Types\ImmutableValueObject;
+
+    /**
+     * Invalid Characters list
+     *
+     * @var string
+     */
+    protected static $invalidCharactersRegex;
 
     /**
      * The component data
@@ -53,7 +62,7 @@ abstract class AbstractComponent
     protected function validate($data)
     {
         $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $this->assertValidString($data);
+        $this->assertValidComponent($data);
 
         return rawurldecode(trim($data));
     }
@@ -65,9 +74,11 @@ abstract class AbstractComponent
      *
      * @throws \InvalidArgumentException If the string is invalid
      */
-    protected function assertValidString($data)
+    protected function assertValidComponent($data)
     {
-
+        if (!empty(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $data)) {
+            throw new InvalidArgumentException('The component contains invalid characters');
+        }
     }
 
     /**
@@ -75,7 +86,15 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return $this->encode($this->data);
+        return static::encode($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLiteral()
+    {
+        return (string) $this->data;
     }
 
     /**

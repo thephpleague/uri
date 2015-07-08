@@ -10,16 +10,22 @@ use PHPUnit_Framework_TestCase;
  */
 class FragmentTest extends PHPUnit_Framework_TestCase
 {
-
     /**
-     * @param $str
-     * @param $encoded
      * @dataProvider validFragment
      */
     public function testFragment($str, $encoded)
     {
         $fragment = new Fragment($str);
         $this->assertSame($encoded, $fragment->getUriComponent());
+    }
+
+    /**
+     * @dataProvider validFragment
+     */
+    public function testGetLiteral($str, $encoded)
+    {
+        $fragment = new Fragment($str);
+        $this->assertSame($str, $fragment->getLiteral());
     }
 
     public function validFragment()

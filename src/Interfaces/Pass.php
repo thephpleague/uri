@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   1.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
  */
-interface Pass extends Component
+interface Pass extends Individual
 {
 
 }

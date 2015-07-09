@@ -203,7 +203,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Port(80),
                 new Path(),
                 new Query(),
-                new Fragment()
+                new Fragment(),
+                new Scheme\Registry()
             ), true],
             'empty URL components' => [new Uri(
                 new Scheme(),
@@ -212,9 +213,43 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Port(),
                 new Path(),
                 new Query(),
-                new Fragment()
+                new Fragment(),
+                new Scheme\Registry()
             ), true],
         ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithSchemeFailedWithUnsupportedScheme()
+    {
+        Uri::createFromString('http://example.com')->withScheme('telnet');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithRegistryFailedWithUnsupportedScheme()
+    {
+        $registry = new Scheme\Registry(['file' => null]);
+        Uri::createFromString('http://example.com')->withSchemeRegistry($registry);
+    }
+
+    public function testWithRegistryUpdateWithTheSameData()
+    {
+        $registry = new Scheme\Registry();
+        $url      = Uri::createFromString('http://example.com');
+        $this->assertSame($url, $url->withSchemeRegistry($registry));
+    }
+
+    public function testWithRegistry()
+    {
+        $registry = (new Scheme\Registry())->merge(['telnet' => 23]);
+        $url      = Uri::createFromString('http://example.com');
+        $alt_url  = $url->withSchemeRegistry($registry);
+        $this->assertNotEquals($url, $alt_url);
+        $this->assertTrue($url->sameValueAs($alt_url));
     }
 
     /**
@@ -240,12 +275,25 @@ class UrlTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testSameValueAsFailed()
+    /**
+     * @dataProvider sameValueAsPsr7InterfaceProvider
+     */
+    public function testSameValueAsFailed($league, $psr7, $expected)
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn('yolo://example.com');
-        $url = Uri::createFromString('http://example.com');
-        $this->assertFalse($url->sameValueAs($mock));
+        $mock->method('__toString')->willReturn($psr7);
+        $this->assertSame($expected, Uri::createFromString($league)->sameValueAs($mock));
+    }
+
+    public function sameValueAsPsr7InterfaceProvider()
+    {
+        return [
+            ['http://example.com', 'yolo://example.com', false],
+            ['http://example.com', 'http://example.com', true],
+            ['//example.com', '//ExamPle.Com', true],
+            ['http://مثال.إختبار', 'http://xn--mgbh0fb.xn--kgbechtv', true],
+            ['http://example.com', 'http:///example.com', false],
+        ];
     }
 
     /**
@@ -268,7 +316,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Port(),
                 new Path('path/to/the/sky'),
                 new Query(),
-                new Fragment()
+                new Fragment(),
+                new Scheme\Registry()
             ), 'http://example.com/path/to/the/sky'],
             [new Uri(
                 new Scheme('http'),
@@ -277,7 +326,8 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Port(),
                 new Path('///path/to/the/sky'),
                 new Query(),
-                new Fragment()
+                new Fragment(),
+                new Scheme\Registry()
             ), 'http:/path/to/the/sky'],
         ];
     }

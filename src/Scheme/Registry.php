@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Services;
+namespace League\Uri\Scheme;
 
 use ArrayIterator;
 use InvalidArgumentException;
@@ -22,7 +22,7 @@ use Traversable;
  * @package League.url
  * @since   4.0.0
  */
-class SchemeRegistry implements Interfaces\SchemeRegistry
+class Registry implements Interfaces\SchemeRegistry
 {
     /**
      * Collection Trait
@@ -145,5 +145,13 @@ class SchemeRegistry implements Interfaces\SchemeRegistry
         }
 
         return new static(array_merge($this->toArray(), $registry->toArray()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs(Interfaces\SchemeRegistry $schemeRegistry)
+    {
+        return $this->toArray() === $schemeRegistry->toArray();
     }
 }

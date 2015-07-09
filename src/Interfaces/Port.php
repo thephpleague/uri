@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.3
  */
-interface Port extends Component
+interface Port extends Component, LiteralAccess
 {
     /**
      * Return an integer representation of the Port component

@@ -40,6 +40,13 @@ trait Properties
     use PartialModifier;
 
     /**
+     * SchemeRegistry Component
+     *
+     * @var Interfaces\SchemeRegistry
+     */
+    protected $schemeRegistry;
+
+    /**
      * {@inheritdoc}
      */
     abstract public function __toString();
@@ -78,7 +85,7 @@ trait Properties
             return true;
         }
 
-        return $this->scheme->getSchemeRegistry()->getPort($this->scheme)->sameValueAs($this->port);
+        return $this->schemeRegistry->getPort($this->scheme)->sameValueAs($this->port);
     }
 
     /**
@@ -95,12 +102,43 @@ trait Properties
     public function sameValueAs(UriInterface $url)
     {
         try {
-            $url = static::createFromString($url->__toString(), $this->scheme->getSchemeRegistry());
+            $url = static::createFromString($url->__toString(), $this->schemeRegistry);
         } catch (InvalidArgumentException $e) {
             return false;
         }
 
         return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withSchemeRegistry(Interfaces\SchemeRegistry $registry)
+    {
+        if (!$this->isSchemeRegistered($this->scheme, $registry)) {
+            throw new InvalidArgumentException('The submitted registry does not support the current scheme');
+        }
+
+        if ($this->schemeRegistry->sameValueAs($registry)) {
+            return $this;
+        }
+
+        $clone                 = clone $this;
+        $clone->schemeRegistry = $registry;
+        return $clone;
+    }
+
+    /**
+     * Return whether the scheme is supported by the Scheme registry
+     *
+     * @param  Interfaces\Scheme         $scheme
+     * @param  Interfaces\SchemeRegistry $registry
+     *
+     * @return bool
+     */
+    protected function isSchemeRegistered(Interfaces\Scheme $scheme, Interfaces\SchemeRegistry $registry)
+    {
+        return $scheme->isEmpty() || $registry->hasKey($scheme);
     }
 
     /**
@@ -133,7 +171,7 @@ trait Properties
             return $url;
         }
 
-        return Uri\Uri::createFromString((string) $url, $this->scheme->getSchemeRegistry());
+        return Uri\Uri::createFromString((string) $url, $this->schemeRegistry);
     }
 
     /**

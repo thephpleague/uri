@@ -73,13 +73,14 @@ trait Factory
         $components = static::formatComponents($components);
 
         return new Uri\Uri(
-            new Uri\Scheme($components["scheme"], $registry),
+            new Uri\Scheme($components["scheme"]),
             new Uri\UserInfo($components["user"], $components["pass"]),
             new Uri\Host($components["host"]),
             new Uri\Port($components["port"]),
             new Uri\Path($components["path"]),
             new Uri\Query($components["query"]),
-            new Uri\Fragment($components["fragment"])
+            new Uri\Fragment($components["fragment"]),
+            $registry ?: new Uri\Scheme\Registry()
         );
     }
 

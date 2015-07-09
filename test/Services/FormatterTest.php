@@ -3,7 +3,7 @@
 namespace League\Uri\Test\Services;
 
 use League\Uri\Services\Formatter;
-use League\Uri\Services\SchemeRegistry;
+use League\Uri\Scheme\Registry;
 use League\Uri;
 use PHPUnit_Framework_TestCase;
 
@@ -49,7 +49,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function testGetRegistryScheme()
     {
         $formatter = new Formatter();
-        $registry  = new SchemeRegistry();
+        $registry  = new Registry();
         $formatter->setSchemeRegistry($registry);
         $this->assertInstanceOf('\League\Uri\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
     }

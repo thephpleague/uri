@@ -45,4 +45,14 @@ interface SchemeRegistry extends Collection
      * @return static
      */
     public function merge($registry);
+
+    /**
+     * Returns whether two SchemeRegistry objects represent the same registry
+     * The comparison is based on the toArray method
+     *
+     * @param SchemeRegistry $schemeRegistry
+     *
+     * @return bool
+     */
+    public function sameValueAs(SchemeRegistry $schemeRegistry);
 }

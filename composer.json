@@ -18,7 +18,7 @@
         "issues": "https://github.com/thephpleague/url/issues"
     },
     "require": {
-        "php" : ">=5.5.0",
+        "php" : ">=5.5.9",
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "psr/http-message": "^1.0",

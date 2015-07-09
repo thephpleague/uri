@@ -30,6 +30,11 @@ class Registry implements Interfaces\SchemeRegistry
     use Uri\Types\ImmutableCollection;
 
     /**
+     * Scheme Validator Trait
+     */
+    use Validator;
+
+    /**
      * Standard ports for known schemes
      *
      * @var array
@@ -41,6 +46,14 @@ class Registry implements Interfaces\SchemeRegistry
         'ws'     => 80,
         'wss'    => 443,
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function validateOffset($scheme)
+    {
+        return $this->validate($scheme);
+    }
 
     /**
      * New Instance
@@ -104,18 +117,6 @@ class Registry implements Interfaces\SchemeRegistry
         }
 
         return new static($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function validateOffset($scheme)
-    {
-        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
-            throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
-        }
-
-        return strtolower($scheme);
     }
 
     /**

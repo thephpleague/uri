@@ -20,30 +20,7 @@ use InvalidArgumentException;
  */
 class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
-    /**
-     * new instance
-     *
-     * @param string $data the component value
-     */
-    public function __construct($data = '')
-    {
-        $data = $this->validateString($data);
-        if (!empty($data)) {
-            $this->data = $this->validate($data);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function validate($data)
-    {
-        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $data)) {
-            throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $data));
-        }
-
-        return strtolower($data);
-    }
+    use Scheme\Validator;
 
     /**
      * {@inheritdoc}

@@ -47,7 +47,7 @@ trait Properties
     protected $schemeRegistry;
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     abstract public function __toString();
 
@@ -163,7 +163,7 @@ trait Properties
      *
      * @param UriInterface|string $url
      *
-     * @return static
+     * @return Interfaces\Uri
      */
     protected function convertToUrlObject($url)
     {
@@ -179,7 +179,7 @@ trait Properties
      *
      * @param Interfaces\Uri $relative the relative URL
      *
-     * @return static
+     * @return Interfaces\Uri
      */
     protected function resolveRelative(Interfaces\Uri $relative)
     {

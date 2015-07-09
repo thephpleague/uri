@@ -24,13 +24,14 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
  *
- * @property-read Scheme   $scheme
- * @property-read UserInfo $userInfo
- * @property-read Host     $host
- * @property-read Port     $port
- * @property-read Path     $path
- * @property-read Query    $query
- * @property-read Fragment $fragment
+ * @property-read Scheme         $scheme
+ * @property-read UserInfo       $userInfo
+ * @property-read Host           $host
+ * @property-read Port           $port
+ * @property-read Path           $path
+ * @property-read Query          $query
+ * @property-read Fragment       $fragment
+ * @property-read SchemeRegistry $schemeRegistry
  */
 interface Uri extends UriInterface
 {
@@ -91,6 +92,18 @@ interface Uri extends UriInterface
      * @return static
      */
     public function resolve($rel);
+
+    /**
+     * Return an instance with a new SchemeRegistry
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the new SchemeRegistry object
+     *
+     * @param SchemeRegistry $schemeRegistry
+     *
+     * @return static
+     */
+    public function withSchemeRegistry(SchemeRegistry $schemeRegistry);
 
     /**
      * Return an instance with update query values

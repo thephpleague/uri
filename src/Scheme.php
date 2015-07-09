@@ -21,22 +21,12 @@ use InvalidArgumentException;
 class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
     /**
-     * Scheme registry object
-     *
-     * @var Interfaces\SchemeRegistry
-     */
-    protected $registry;
-
-    /**
      * new instance
      *
-     * @param string                         $data the component value
-     * @param Interfaces\SchemeRegistry|null $registry
-     *
+     * @param string $data the component value
      */
-    public function __construct($data = '', Interfaces\SchemeRegistry $registry = null)
+    public function __construct($data = '')
     {
-        $this->registry = !is_null($registry) ? $registry : new Services\SchemeRegistry();
         $data = $this->validateString($data);
         if (!empty($data)) {
             $this->data = $this->validate($data);
@@ -46,33 +36,10 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
     /**
      * {@inheritdoc}
      */
-    public function getSchemeRegistry()
-    {
-        return $this->registry;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function modify($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value, $this->registry);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function validate($data)
     {
-        if (empty($this->registry->hasKey($data))) {
-            throw new InvalidArgumentException(sprintf(
-                "the submitted scheme `%s` is no registered in the `".get_class($this->registry)."` object",
-                $data
-            ));
+        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $data)) {
+            throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $data));
         }
 
         return strtolower($data);

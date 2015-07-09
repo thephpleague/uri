@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.1
  */
-interface Scheme extends Component, LiteralAccess, SchemeRegistryAccess
+interface Scheme extends Component, LiteralAccess
 {
 
 }

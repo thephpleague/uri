@@ -49,6 +49,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             ['ftp', 'ftp'],
             ['HtTps', 'https'],
             ['wSs', 'wss'],
+            ['telnEt', 'telnet'],
         ];
     }
 
@@ -67,8 +68,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         return [
             'invalid char'         => ['in,valid'],
             'integer like string'  => ['123'],
-            'unsupported scheme'   => ['yes'],
-            'scheme ending with +' => ['toto+'],
             'bool'                 => [true],
             'Std Class'            => [(object) 'foo'],
             'null'                 => [null],

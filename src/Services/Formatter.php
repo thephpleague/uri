@@ -20,7 +20,7 @@ use League\Uri\Interfaces;
  * @package League.url
  * @since   4.0.0
  */
-class Formatter implements Interfaces\SchemeRegistryAccess
+class Formatter
 {
     /**
      * Constants for host formatting
@@ -63,7 +63,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
 
     public function __construct(Interfaces\SchemeRegistry $registry = null)
     {
-        $this->registry = $registry ?: new SchemeRegistry();
+        $this->registry = $registry ?: new Uri\Scheme\Registry();
     }
 
     /**
@@ -90,7 +90,7 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     }
 
     /**
-     * Return the specified registry
+     * Set a new SchemeRegistry object
      *
      * @return Interfaces\SchemeRegistry
      */
@@ -100,7 +100,9 @@ class Formatter implements Interfaces\SchemeRegistryAccess
     }
 
     /**
-     * {@inheritdoc}
+     * Return the specified registry
+     *
+     * @return Interfaces\SchemeRegistry
      */
     public function getSchemeRegistry()
     {
@@ -247,7 +249,6 @@ class Formatter implements Interfaces\SchemeRegistryAccess
             $port = '';
         }
 
-        return '//'.$url->userInfo->getUriComponent()
-            .$this->formatHost($url->host).$port;
+        return '//'.$url->userInfo->getUriComponent().$this->formatHost($url->host).$port;
     }
 }

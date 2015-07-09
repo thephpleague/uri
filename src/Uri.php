@@ -10,6 +10,8 @@
  */
 namespace League\Uri;
 
+use InvalidArgumentException;
+
 /**
  * Value object representing a URL.
  *
@@ -32,13 +34,14 @@ class Uri implements Interfaces\Uri
     /**
      * Create a new instance of URL
      *
-     * @param Interfaces\Scheme   $scheme
-     * @param Interfaces\UserInfo $userInfo
-     * @param Interfaces\Host     $host
-     * @param Interfaces\Port     $port
-     * @param Interfaces\Path     $path
-     * @param Interfaces\Query    $query
-     * @param Interfaces\Fragment $fragment
+     * @param Interfaces\Scheme         $scheme
+     * @param Interfaces\UserInfo       $userInfo
+     * @param Interfaces\Host           $host
+     * @param Interfaces\Port           $port
+     * @param Interfaces\Path           $path
+     * @param Interfaces\Query          $query
+     * @param Interfaces\Fragment       $fragment
+     * @param Interfaces\SchemeRegistry $schemeRegistry
      */
     public function __construct(
         Interfaces\Scheme $scheme,
@@ -47,15 +50,17 @@ class Uri implements Interfaces\Uri
         Interfaces\Port $port,
         Interfaces\Path $path,
         Interfaces\Query $query,
-        Interfaces\Fragment $fragment
+        Interfaces\Fragment $fragment,
+        Interfaces\SchemeRegistry $schemeRegistry
     ) {
-        $this->scheme   = $scheme;
-        $this->userInfo = $userInfo;
-        $this->host     = $host;
-        $this->port     = $port;
-        $this->path     = $path;
-        $this->query    = $query;
-        $this->fragment = $fragment;
+        $this->scheme         = $scheme;
+        $this->userInfo       = $userInfo;
+        $this->host           = $host;
+        $this->port           = $port;
+        $this->path           = $path;
+        $this->query          = $query;
+        $this->fragment       = $fragment;
+        $this->schemeRegistry = $schemeRegistry;
     }
 
     /**
@@ -136,7 +141,14 @@ class Uri implements Interfaces\Uri
      */
     public function withScheme($scheme)
     {
-        return $this->withProperty('scheme', $scheme);
+        $newScheme = $this->scheme->modify($scheme);
+        if (!$this->isSchemeRegistered($newScheme, $this->schemeRegistry)) {
+            throw new InvalidArgumentException(
+                'The submitted scheme is not supported by the current URI scheme registry'
+            );
+        }
+
+        return $this->withProperty('scheme', $newScheme);
     }
 
     /**
@@ -153,10 +165,10 @@ class Uri implements Interfaces\Uri
         ) {
             return $this;
         }
-        $newInstance = clone $this;
-        $newInstance->userInfo = $userInfo;
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
 
-        return $newInstance;
+        return $clone;
     }
 
     /**

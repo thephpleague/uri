@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test\Services;
+namespace League\Uri\Test\Scheme;
 
 use League\Uri\Port;
 use League\Uri\Scheme;
@@ -10,29 +10,29 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group scheme
  */
-class SchemeRegistryTest extends PHPUnit_Framework_TestCase
+class RegistryTest extends PHPUnit_Framework_TestCase
 {
 
     public function testCountable()
     {
-        $registry = new Services\SchemeRegistry();
+        $registry = new Scheme\Registry();
         $this->assertCount($registry->count(), $registry);
     }
 
     public function testIterator()
     {
-        $this->assertInstanceOf('\Iterator', (new Services\SchemeRegistry())->getIterator());
+        $this->assertInstanceOf('\Iterator', (new Scheme\Registry())->getIterator());
     }
 
     public function testRegister()
     {
-        $registry = new Services\SchemeRegistry(['yolo' => 2020]);
+        $registry = new Scheme\Registry(['yolo' => 2020]);
         $this->assertTrue($registry->hasKey('yolo'));
     }
 
     public function testRegisterSchemeWithoutHost()
     {
-        $registry = new Services\SchemeRegistry();
+        $registry = new Scheme\Registry();
         $this->assertFalse($registry->hasKey('yolo'));
     }
 
@@ -41,19 +41,19 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetPortOnUnknownScheme()
     {
-        $registry = new Services\SchemeRegistry();
+        $registry = new Scheme\Registry();
         $registry->getPort('yolo');
     }
 
     public function testOffsets()
     {
-        $registry = new Services\SchemeRegistry();
+        $registry = new Scheme\Registry();
         $this->assertSame(array_keys($registry->toArray()), $registry->keys());
     }
 
     public function testOffsetsWithArguments()
     {
-        $registry = new Services\SchemeRegistry();
+        $registry = new Scheme\Registry();
         $this->assertSame(['http', 'ws'], $registry->keys(80));
     }
 
@@ -66,7 +66,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testAddFailed($scheme, $port)
     {
-        new Services\SchemeRegistry([$scheme => $port]);
+        new Scheme\Registry([$scheme => $port]);
     }
 
     public function newregisterProvider()
@@ -85,7 +85,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultPorts($scheme, $expected)
     {
-        $this->assertEquals($expected, (new Services\SchemeRegistry())->getPort($scheme));
+        $this->assertEquals($expected, (new Scheme\Registry())->getPort($scheme));
     }
 
     public function portProvider()
@@ -103,7 +103,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testMerge($input, $scheme, $port)
     {
-        $registry = (new Services\SchemeRegistry())->merge($input);
+        $registry = (new Scheme\Registry())->merge($input);
         $this->assertEquals($port, $registry->getPort($scheme));
     }
 
@@ -113,7 +113,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
             [["yolo" => 2020], "yolo", new Port(2020)],
             [["YOLo" => 2020], "yolo", new Port(2020)],
             [["http" => 81], "http", new Port(81)],
-            [new Services\SchemeRegistry(), "http", new Port(80)],
+            [new Scheme\Registry(), "http", new Port(80)],
         ];
     }
 
@@ -122,7 +122,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testFailedMerge()
     {
-        (new Services\SchemeRegistry())->merge("coucou");
+        (new Scheme\Registry())->merge("coucou");
     }
 
     /**
@@ -132,7 +132,7 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testWithout($input, $scheme)
     {
-        $registry = (new Services\SchemeRegistry())->without($input);
+        $registry = (new Scheme\Registry())->without($input);
         $this->assertFalse($registry->hasKey($scheme));
     }
 
@@ -152,6 +152,6 @@ class SchemeRegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testWithoutFailed()
     {
-        (new Services\SchemeRegistry())->without("foo");
+        (new Scheme\Registry())->without("foo");
     }
 }

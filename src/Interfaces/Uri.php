@@ -36,18 +36,26 @@ use Psr\Http\Message\UriInterface;
 interface Uri extends UriInterface
 {
     /**
-     * Returns true if the URI is considered empty
-     *
-     * @return bool
-     */
-    public function isEmpty();
-
-    /**
      * Return an array representation of the URI
      *
      * @return array
      */
     public function toArray();
+
+    /**
+     * Returns whether the standard port for the given scheme is used, when
+     * the scheme is unknown or unsupported will the method return false
+     *
+     * @return bool
+     */
+    public function hasStandardPort();
+
+    /**
+     * Returns true if the URI is considered empty
+     *
+     * @return bool
+     */
+    public function isEmpty();
 
     /**
      * Returns whether two UriInterface represents the same value
@@ -64,34 +72,18 @@ interface Uri extends UriInterface
     public function sameValueAs(UriInterface $uri);
 
     /**
-     * Returns whether a URI is absolute or relative. A URI is
-     * said to be absolute if is has:
-     * - a non empty scheme.
-     * - an authority part
-     *
-     * @return bool
-     */
-    public function isAbsolute();
-
-    /**
-     * Returns whether the standard port for the given scheme is used, when
-     * the scheme is unknown or unsupported will the method return false
-     *
-     * @return bool
-     */
-    public function hasStandardPort();
-
-    /**
      * Returns an instance resolve according to a given URL
      *
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URL
      *
-     * @param Url|UriInterface|string $rel the relative URL
+     * @param Uri $rel the relative URL
      *
      * @return static
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-5.2
      */
-    public function resolve($rel);
+    public function resolve(Uri $rel);
 
     /**
      * Return an instance with a new SchemeRegistry

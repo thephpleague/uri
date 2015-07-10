@@ -29,9 +29,12 @@ All Notable changes to `League\Url` will be documented in this file
 - Host now support append/prepend/replacing to or with IPv4 Host type
 - Path now supports multiple leading slash
 - Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
+- Uri::resolve is now typehinted to the Uri interface
+- Formatter::format only accept Uri and UriPart implemented object
 
 ### Remove
 
+- `Uri::isAbsolute` method
 - `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
 

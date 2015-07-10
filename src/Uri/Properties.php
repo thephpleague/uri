@@ -91,40 +91,32 @@ trait Properties
     /**
      * {@inheritdoc}
      */
-    public function isAbsolute()
-    {
-        return !$this->scheme->isEmpty() && !$this->host->isEmpty();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function sameValueAs(UriInterface $url)
     {
         try {
             $url = static::createFromString($url->__toString(), $this->schemeRegistry);
+
+            return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
         } catch (InvalidArgumentException $e) {
             return false;
         }
-
-        return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withSchemeRegistry(Interfaces\SchemeRegistry $registry)
+    public function withSchemeRegistry(Interfaces\SchemeRegistry $schemeRegistry)
     {
-        if (!$this->isSchemeRegistered($this->scheme, $registry)) {
+        if (!$this->isSchemeRegistered($this->scheme, $schemeRegistry)) {
             throw new InvalidArgumentException('The submitted registry does not support the current scheme');
         }
 
-        if ($this->schemeRegistry->sameValueAs($registry)) {
+        if ($this->schemeRegistry->sameValueAs($schemeRegistry)) {
             return $this;
         }
 
-        $clone                 = clone $this;
-        $clone->schemeRegistry = $registry;
+        $clone = clone $this;
+        $clone->schemeRegistry = $schemeRegistry;
         return $clone;
     }
 
@@ -132,46 +124,48 @@ trait Properties
      * Return whether the scheme is supported by the Scheme registry
      *
      * @param  Interfaces\Scheme         $scheme
-     * @param  Interfaces\SchemeRegistry $registry
+     * @param  Interfaces\SchemeRegistry $schemeRegistry
      *
      * @return bool
      */
-    protected function isSchemeRegistered(Interfaces\Scheme $scheme, Interfaces\SchemeRegistry $registry)
+    protected function isSchemeRegistered(Interfaces\Scheme $scheme, Interfaces\SchemeRegistry $schemeRegistry)
     {
-        return $scheme->isEmpty() || $registry->hasKey($scheme);
+        return $scheme->isEmpty() || $schemeRegistry->hasKey($scheme);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolve($url)
+    public function resolve(Interfaces\Uri $relative)
     {
-        $relative = $this->convertToUrlObject($url);
-        if ($relative->isAbsolute()) {
+        if (!$relative->scheme->isEmpty()) {
             return $relative->withoutDotSegments();
         }
 
-        if (!$relative->host->isEmpty() && $relative->getAuthority() != $this->getAuthority()) {
-            return $relative->withScheme($this->scheme)->withoutDotSegments();
+        if (!$relative->host->isEmpty()) {
+            return $this->resolveAuthority($relative)->withoutDotSegments();
         }
 
         return $this->resolveRelative($relative)->withoutDotSegments();
     }
 
     /**
-     * Convert to an Url object
+     * returns the resolve URL according to the authority
      *
-     * @param UriInterface|string $url
+     * @param Interfaces\Uri $relative the relative URL
      *
      * @return Interfaces\Uri
      */
-    protected function convertToUrlObject($url)
+    protected function resolveAuthority(Interfaces\Uri $relative)
     {
-        if ($url instanceof Interfaces\Uri) {
-            return $url;
+        if (!$relative->schemeRegistry->hasKey($this->scheme)) {
+            $schemeRegistry = $relative->schemeRegistry->merge([
+                $this->scheme->__toString() => $this->schemeRegistry->getPort($this->scheme),
+            ]);
+            $relative = $relative->withSchemeRegistry($schemeRegistry);
         }
 
-        return Uri\Uri::createFromString((string) $url, $this->schemeRegistry);
+        return $relative->withScheme($this->scheme);
     }
 
     /**

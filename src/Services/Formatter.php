@@ -48,23 +48,11 @@ class Formatter
     protected $queryEncoding = PHP_QUERY_RFC3986;
 
     /**
-     * The Scheme Registry object
-     *
-     * @var Interfaces\SchemeRegistry
-     */
-    protected $registry;
-
-    /**
      * query separator property
      *
      * @var string
      */
     protected $querySeparator = '&';
-
-    public function __construct(Interfaces\SchemeRegistry $registry = null)
-    {
-        $this->registry = $registry ?: new Uri\Scheme\Registry();
-    }
 
     /**
      * Host encoding setter
@@ -87,26 +75,6 @@ class Formatter
     public function getHostEncoding()
     {
         return $this->hostEncoding;
-    }
-
-    /**
-     * Set a new SchemeRegistry object
-     *
-     * @return Interfaces\SchemeRegistry
-     */
-    public function setSchemeRegistry(Interfaces\SchemeRegistry $registry)
-    {
-        return $this->registry = $registry;
-    }
-
-    /**
-     * Return the specified registry
-     *
-     * @return Interfaces\SchemeRegistry
-     */
-    public function getSchemeRegistry()
-    {
-        return $this->registry;
     }
 
     /**
@@ -157,7 +125,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Uri|Interfaces\UriPart|string $input
+     * @param Interfaces\Uri|Interfaces\UriPart $input
      *
      * @return string
      */
@@ -167,11 +135,14 @@ class Formatter
             return $this->formatUriPart($input);
         }
 
-        if (!$input instanceof Interfaces\Uri) {
-            $input = Uri\Uri::createFromString($input, $this->registry);
+        if ($input instanceof Interfaces\Uri) {
+            return $this->formatUrl($input);
         }
 
-        return $this->formatUrl($input);
+        throw new InvalidArgumentException(sprintf(
+            'input must be an Uri or an UriPart implemented object; received "%s"',
+            is_object($input) ? get_class($input) : gettype($input)
+        ));
     }
 
     /**

@@ -94,9 +94,7 @@ trait Factory
     protected static function formatComponents(array $components)
     {
         foreach ($components as $name => $value) {
-            if (null === $value && 'port' != $name) {
-                $components[$name] = '';
-            }
+            $components[$name] = (null === $value && 'port' != $name) ? '' : $value;
         }
 
         return array_merge([
@@ -112,6 +110,11 @@ trait Factory
      * Parse a string as an URL
      *
      * Parse an URL string using PHP parse_url while applying bug fixes
+     * and taking into account UTF-8
+     *
+     * Taken from php.net manual comments:
+     *
+     * @see http://php.net/manual/en/function.parse-url.php#114817
      *
      * @param string $url The URL to parse
      *
@@ -121,23 +124,47 @@ trait Factory
      */
     public static function parse($url)
     {
-        $url               = trim($url);
-        $components        = @parse_url($url);
-        $defaultComponents = [
-            "scheme" => null, "user" => null, "pass" => null, "host" => null,
-            "port" => null, "path" => null, "query" => null, "fragment" => null,
-        ];
+        $url     = (string) $url;
+        $pattern = '%([a-zA-Z][a-zA-Z0-9+\-.]*)?(:?//)?([^:/@?&=#\[\]]+)%usD';
+        $enc_url = preg_replace_callback($pattern, function ($matches) {
+            return sprintf('%s%s%s', $matches[1], $matches[2], urlencode($matches[3]));
+        }, $url);
+
+        $components = @parse_url($enc_url);
         if (is_array($components)) {
-            return array_merge($defaultComponents, $components);
+            return static::formatParsedComponents($components);
         }
 
-        $components = @parse_url(static::fixUrlScheme($url));
+        $components = @parse_url(static::fixUrlScheme($enc_url));
         if (is_array($components)) {
             unset($components['scheme']);
-            return array_merge($defaultComponents, $components);
+            return static::formatParsedComponents($components);
         }
 
         throw new InvalidArgumentException(sprintf("The given URL: `%s` could not be parse", $url));
+    }
+
+    /**
+     * Format and Decode UTF-8 components
+     *
+     * @param  array $components
+     *
+     * @return array
+     */
+    protected static function formatParsedComponents(array $components)
+    {
+        $components = array_merge([
+            "scheme" => null, "user"     => null,
+            "pass"   => null, "host"     => null,
+            "port"   => null, "path"     => null,
+            "query"  => null, "fragment" => null,
+        ], array_map('urldecode', $components));
+
+        if (null !== $components['port']) {
+            $components['port'] = (int) $components['port'];
+        }
+
+        return $components;
     }
 
     /**

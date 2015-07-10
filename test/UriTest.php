@@ -25,8 +25,6 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     private $url;
 
-    const BASE_URL = "http://a/b/c/d;p?q";
-
     public function setUp()
     {
         $this->url = Uri::createFromString(
@@ -347,50 +345,64 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testResolve($url, $relative, $expected)
     {
-        $this->assertSame($expected, Uri::createFromString($url)->resolve($relative)->__toString());
+        $this->assertSame($expected, (string) Uri::createFromString($url)->resolve(Uri::createFromString($relative)));
     }
 
     public function resolveProvider()
     {
+        $base_url = "http://a/b/c/d;p?q";
+
         return [
-          'baseurl' =>                 [self::BASE_URL, "",               self::BASE_URL],
-          'scheme' =>                  [self::BASE_URL, "ftp://d/e/f",    "ftp://d/e/f"],
-          'scheme' =>                  [self::BASE_URL, Uri::createFromString("ftp://d/e/f"),    "ftp://d/e/f"],
-          'path 1' =>                  [self::BASE_URL, "g",              "http://a/b/c/g"],
-          'path 2' =>                  [self::BASE_URL, "./g",            "http://a/b/c/g"],
-          'path 3' =>                  [self::BASE_URL, "g/",             "http://a/b/c/g/"],
-          'path 4' =>                  [self::BASE_URL, "/g",             "http://a/g"],
-          'authority' =>               [self::BASE_URL, "//g",            "http://g"],
-          'query' =>                   [self::BASE_URL, "?y",             "http://a/b/c/d;p?y"],
-          'path + query' =>            [self::BASE_URL, "g?y",            "http://a/b/c/g?y"],
-          'fragment' =>                [self::BASE_URL, "#s",             "http://a/b/c/d;p?q#s"],
-          'path + fragment' =>         [self::BASE_URL, "g#s",            "http://a/b/c/g#s"],
-          'path + query + fragment' => [self::BASE_URL, "g?y#s",          "http://a/b/c/g?y#s"],
-          'single dot 1'=>             [self::BASE_URL, ".",              "http://a/b/c/"],
-          'single dot 2' =>            [self::BASE_URL, "./",             "http://a/b/c/"],
-          'single dot 3' =>            [self::BASE_URL, "./g/.",          "http://a/b/c/g/"],
-          'single dot 4' =>            [self::BASE_URL, "g/./h",          "http://a/b/c/g/h"],
-          'double dot 1' =>            [self::BASE_URL, "..",             "http://a/b/"],
-          'double dot 2' =>            [self::BASE_URL, "../",            "http://a/b/"],
-          'double dot 3' =>            [self::BASE_URL, "../g",           "http://a/b/g"],
-          'double dot 4' =>            [self::BASE_URL, "../..",          "http://a/"],
-          'double dot 5' =>            [self::BASE_URL, "../../",         "http://a/"],
-          'double dot 6' =>            [self::BASE_URL, "../../g",        "http://a/g"],
-          'double dot 7' =>            [self::BASE_URL, "../../../g",     "http://a/g"],
-          'double dot 8' =>            [self::BASE_URL, "../../../../g",  "http://a/g"],
-          'double dot 9' =>            [self::BASE_URL, "g/../h" ,        "http://a/b/c/h"],
-          'mulitple slashes' =>        [self::BASE_URL, "foo////g",       "http://a/b/c/foo////g"],
-          'complex path 1' =>          [self::BASE_URL, ";x",             "http://a/b/c/;x"],
-          'complex path 2' =>          [self::BASE_URL, "g;x",            "http://a/b/c/g;x"],
-          'complex path 3' =>          [self::BASE_URL, "g;x?y#s",        "http://a/b/c/g;x?y#s"],
-          'complex path 4' =>          [self::BASE_URL, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
-          'complex path 5' =>          [self::BASE_URL, "g;x=1/../y",     "http://a/b/c/y"],
-          'origin url without path' => ["http://h:b@a",     "b/../y",     "http://h:b@a/y"],
+          'opaque URI' =>              [$base_url, "mailto:email@example.com", "mailto:email@example.com"],
+          'baseurl' =>                 [$base_url, "",               $base_url],
+          'scheme' =>                  [$base_url, "ftp://d/e/f",    "ftp://d/e/f"],
+          'path 1' =>                  [$base_url, "g",              "http://a/b/c/g"],
+          'path 2' =>                  [$base_url, "./g",            "http://a/b/c/g"],
+          'path 3' =>                  [$base_url, "g/",             "http://a/b/c/g/"],
+          'path 4' =>                  [$base_url, "/g",             "http://a/g"],
+          'authority' =>               [$base_url, "//g",            "http://g"],
+          'query' =>                   [$base_url, "?y",             "http://a/b/c/d;p?y"],
+          'path + query' =>            [$base_url, "g?y",            "http://a/b/c/g?y"],
+          'fragment' =>                [$base_url, "#s",             "http://a/b/c/d;p?q#s"],
+          'path + fragment' =>         [$base_url, "g#s",            "http://a/b/c/g#s"],
+          'path + query + fragment' => [$base_url, "g?y#s",          "http://a/b/c/g?y#s"],
+          'single dot 1'=>             [$base_url, ".",              "http://a/b/c/"],
+          'single dot 2' =>            [$base_url, "./",             "http://a/b/c/"],
+          'single dot 3' =>            [$base_url, "./g/.",          "http://a/b/c/g/"],
+          'single dot 4' =>            [$base_url, "g/./h",          "http://a/b/c/g/h"],
+          'double dot 1' =>            [$base_url, "..",             "http://a/b/"],
+          'double dot 2' =>            [$base_url, "../",            "http://a/b/"],
+          'double dot 3' =>            [$base_url, "../g",           "http://a/b/g"],
+          'double dot 4' =>            [$base_url, "../..",          "http://a/"],
+          'double dot 5' =>            [$base_url, "../../",         "http://a/"],
+          'double dot 6' =>            [$base_url, "../../g",        "http://a/g"],
+          'double dot 7' =>            [$base_url, "../../../g",     "http://a/g"],
+          'double dot 8' =>            [$base_url, "../../../../g",  "http://a/g"],
+          'double dot 9' =>            [$base_url, "g/../h" ,        "http://a/b/c/h"],
+          'mulitple slashes' =>        [$base_url, "foo////g",       "http://a/b/c/foo////g"],
+          'complex path 1' =>          [$base_url, ";x",             "http://a/b/c/;x"],
+          'complex path 2' =>          [$base_url, "g;x",            "http://a/b/c/g;x"],
+          'complex path 3' =>          [$base_url, "g;x?y#s",        "http://a/b/c/g;x?y#s"],
+          'complex path 4' =>          [$base_url, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
+          'complex path 5' =>          [$base_url, "g;x=1/../y",     "http://a/b/c/y"],
+          'origin url without path' => ["http://h:b@a", "b/../y",         "http://h:b@a/y"],
           '2 relative paths 1'      => ["a/b",          "../..",          "/"],
           '2 relative paths 2'      => ["a/b",          "./.",            "a/"],
           '2 relative paths 3'      => ["a/b",          "../c",           "c"],
           '2 relative paths 4'      => ["a/b",          "c/..",           "a/"],
           '2 relative paths 5'      => ["a/b",          "c/.",            "a/c/"],
         ];
+    }
+
+    public function testResolveWithDifferentSchemeRegistry()
+    {
+        $schemeRegistry = new Scheme\Registry(['telnet' => 23]);
+        $telnet = Uri::createFromString('telnet://example.com/toto', $schemeRegistry)->withScheme('');
+        $http   = Uri::createFromString('http://example.com/tata/../toto.csv', new Scheme\Registry());
+        $url    = $http->resolve($telnet);
+
+        $this->assertNotEquals($http->schemeRegistry, $telnet->schemeRegistry);
+        $this->assertNotEquals($url->schemeRegistry, $telnet->schemeRegistry);
+        $this->assertNotEquals($url->schemeRegistry, $http->schemeRegistry);
     }
 }

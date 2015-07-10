@@ -3,7 +3,6 @@
 namespace League\Uri\Test\Services;
 
 use League\Uri\Services\Formatter;
-use League\Uri\Scheme\Registry;
 use League\Uri;
 use PHPUnit_Framework_TestCase;
 
@@ -46,14 +45,6 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         (new Formatter())->setQueryEncoding('toto');
     }
 
-    public function testGetRegistryScheme()
-    {
-        $formatter = new Formatter();
-        $registry  = new Registry();
-        $formatter->setSchemeRegistry($registry);
-        $this->assertInstanceOf('\League\Uri\Interfaces\SchemeRegistry', $formatter->getSchemeRegistry());
-    }
-
     public function testFormatWithSimpleString()
     {
         $url       = 'https://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
@@ -61,7 +52,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $formatter = new Formatter();
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
-        $this->assertSame($expected, $formatter->format($url));
+        $this->assertSame($expected, $formatter->format(Uri\Uri::createFromString($url)));
     }
 
     public function testFormatComponent()
@@ -119,5 +110,13 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $expected = '/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
         $url = $this->url->withScheme('')->withHost('')->withPort(null)->withUserInfo('');
         $this->assertSame($expected, $formatter->format($url));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testFormatterFailed()
+    {
+        (new Formatter())->format('http://www.example.com');
     }
 }

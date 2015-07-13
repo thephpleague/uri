@@ -310,11 +310,11 @@ class PathTest extends PHPUnit_Framework_TestCase
      *
      * @param  string $expected
      * @param  string $path
-     * @dataProvider withoutDotSegmentsProvider
+     * @dataProvider normalizeProvider
      */
     public function testWithoutDotSegments($path, $expected)
     {
-        $this->assertSame($expected, (new Path($path))->withoutDotSegments()->__toString());
+        $this->assertSame($expected, (new Path($path))->normalize()->__toString());
     }
 
     /**
@@ -322,7 +322,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function withoutDotSegmentsProvider()
+    public function normalizeProvider()
     {
         return [
             ['/a/b/c/./../../g', '/a/g'],

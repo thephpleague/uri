@@ -217,7 +217,7 @@ interface Uri extends UriInterface
      *
      * @return static
      */
-    public function withoutDotSegments();
+    public function normalize();
 
     /**
      * Return an instance without internal empty segments

@@ -6,6 +6,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
+- A `Http` class to specifically manipulate `http`,`https`,`ws`,`wss`,`ftp` schemed URI
 - A system to manage registration of other schemes using the `SchemeRegistry` Interface.
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
@@ -22,19 +23,21 @@ All Notable changes to `League\Url` will be documented in this file
 - Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
 - Changed class name from `League\Url\Url` to `League\Uri\Uri` to better reflect the class intent
 - Renamed methods for consistency with PHP naming conventions
-- Default supported schemes are: `ftp`, `http`, `https`, `ws`, `wss`
+- The `Uri` class requires a Scheme Registry object to be correctly instantiated
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
 - Host::toUnicode now returns a new Host instance
 - Host now support append/prepend/replacing to or with IPv4 Host type
 - Path now supports multiple leading slash
 - Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
-- Uri::resolve is now typehinted to the Uri interface
+- `Uri::resolve` is now typehinted to the Uri interface
 - Formatter::format only accept Uri and UriPart implemented object
+- `Path::withoutDotSegment` and `Uri::withoutDotSegment` renamed to `Path::normalize` and `Uri::normalize` respectively
+- `Uri::sameValueAs` takes into account `Uri::normalize`
 
 ### Remove
 
-- `Uri::isAbsolute` method
+- `Uri::isAbsolute`
 - `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
 

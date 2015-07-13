@@ -10,6 +10,8 @@
  */
 namespace League\Uri\Types;
 
+use InvalidArgumentException;
+
 /**
  * A trait to set and get immutable value
  *
@@ -37,8 +39,31 @@ trait ImmutableProperty
         }
         $newInstance = clone $this;
         $newInstance->$property = $value;
+        $newInstance->assertValidObject();
 
         return $newInstance;
+    }
+
+    /**
+     * Tell whether the modified object is still valid after modification
+     *
+     * @return bool
+     */
+    protected function isValid()
+    {
+        return true;
+    }
+
+    /**
+     * Assert the object is valid
+     *
+     * @return bool
+     */
+    protected function assertValidObject()
+    {
+        if (! $this->isValid()) {
+            throw new InvalidArgumentException("The submitted properties will produce an invalid object");
+        }
     }
 
     /**

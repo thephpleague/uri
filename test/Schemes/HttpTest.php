@@ -1,22 +1,14 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\Test\Schemes;
 
-use League\Uri\Uri;
-use League\Uri\Scheme;
-use League\Uri\User;
-use League\Uri\Pass;
-use League\Uri\Host;
-use League\Uri\Port;
-use League\Uri\Path;
-use League\Uri\Query;
-use League\Uri\Fragment;
+use League\Uri\Schemes\Http;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group urlconstructor
+ * @group http
  */
-class UrlConstructorTest extends PHPUnit_Framework_TestCase
+class HttpTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @param $expected
@@ -25,7 +17,7 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromServer($expected, $input)
     {
-        $this->assertSame($expected, Uri::createFromServer($input)->__toString());
+        $this->assertSame($expected, Http::createFromServer($input)->__toString());
     }
 
     public function validServerArray()
@@ -152,17 +144,15 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
             'SERVER_PORT' => 23,
         ];
 
-        Uri::createFromServer($server);
+        Http::createFromServer($server);
     }
 
     /**
-     * @param $expected
-     * @param $input
      * @dataProvider validUrlArray
      */
     public function testcreateFromString($expected, $input)
     {
-        $this->assertSame($expected, Uri::createFromString($input)->__toString());
+        $this->assertSame($expected, Http::createFromString($input)->__toString());
     }
 
     public function validUrlArray()
@@ -192,20 +182,19 @@ class UrlConstructorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $input
-     * @dataProvider invalidURL
      * @expectedException InvalidArgumentException
+     * @dataProvider isValidProvider
      */
-    public function testCreateFromInvalidUrlKO($input)
+    public function testIsValid($input)
     {
-        Uri::createFromString($input);
+        Http::createFromString($input);
     }
 
-    public function invalidURL()
+    public function isValidProvider()
     {
         return [
-            ["http://user@:80"],
-            ["//user@:80"],
+            ['ftp:example.com'],
+            ['wss:/example.com'],
         ];
     }
 }

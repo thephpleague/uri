@@ -71,7 +71,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
         $url = Uri::createFromString(
             'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
-        $url = $url->withoutDotSegments();
+        $url = $url->normalize();
         $this->assertSame('/to/the/sky.php', $url->getPath());
     }
 

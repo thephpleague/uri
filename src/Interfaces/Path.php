@@ -117,7 +117,7 @@ interface Path extends HierarchicalComponent
      *
      * @return static
      */
-    public function withoutDotSegments();
+    public function normalize();
 
     /**
      * Returns an instance without duplicate delimiters

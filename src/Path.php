@@ -126,7 +126,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function withoutDotSegments()
+    public function normalize()
     {
         $current = $this->__toString();
         if (false === strpos($current, '.')) {

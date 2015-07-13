@@ -96,7 +96,9 @@ trait Properties
         try {
             $url = static::createFromString($url->__toString(), $this->schemeRegistry);
 
-            return $url->toAscii()->ksortQuery()->__toString() === $this->toAscii()->ksortQuery()->__toString();
+            return $url
+                ->toAscii()->normalize()->ksortQuery()->__toString() === $this
+                ->toAscii()->normalize()->ksortQuery()->__toString();
         } catch (InvalidArgumentException $e) {
             return false;
         }
@@ -139,14 +141,14 @@ trait Properties
     public function resolve(Interfaces\Uri $relative)
     {
         if (!$relative->scheme->isEmpty()) {
-            return $relative->withoutDotSegments();
+            return $relative->normalize();
         }
 
         if (!$relative->host->isEmpty()) {
-            return $this->resolveAuthority($relative)->withoutDotSegments();
+            return $this->resolveAuthority($relative)->normalize();
         }
 
-        return $this->resolveRelative($relative)->withoutDotSegments();
+        return $this->resolveRelative($relative)->normalize();
     }
 
     /**

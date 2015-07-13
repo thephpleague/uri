@@ -35,19 +35,6 @@ class Registry implements Interfaces\SchemeRegistry
     use Validator;
 
     /**
-     * Standard ports for known schemes
-     *
-     * @var array
-     */
-    protected static $defaultSchemes = [
-        'ftp'    => 21,
-        'http'   => 80,
-        'https'  => 443,
-        'ws'     => 80,
-        'wss'    => 443,
-    ];
-
-    /**
      * {@inheritdoc}
      */
     protected function validateOffset($scheme)
@@ -74,11 +61,8 @@ class Registry implements Interfaces\SchemeRegistry
      *
      * @throws InvalidArgumentException If the scheme or the port is invalid
      */
-    public function __construct(array $data = [])
+    public function __construct(array $data)
     {
-        if (empty($data)) {
-            $data = static::$defaultSchemes;
-        }
         foreach ($data as $scheme => $port) {
             $this->data[$this->validateOffset($scheme)] = (new Uri\Port($port))->toInt();
         }

@@ -15,7 +15,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->url = Uri\Uri::createFromComponents(
-            new Uri\Schemes\Registry(),
+            new Uri\Schemes\Registry(['http' => 80, 'https' => 443]),
             Uri\Uri::parse('http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3')
         );
     }
@@ -50,7 +50,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $url       = 'https://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
         $expected  = 'https://login:pass@xn--gwd-hna98db.pl/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
 
-        $url = Uri\Uri::createFromComponents(new Uri\Schemes\Registry(), Uri\Uri::parse($url));
+        $url = Uri\Uri::createFromComponents(new Uri\Schemes\Registry(['http' => 80, 'https' => 443]), Uri\Uri::parse($url));
 
         $formatter = new Uri\Formatter();
         $formatter->setQuerySeparator('&amp;');

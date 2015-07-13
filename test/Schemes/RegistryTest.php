@@ -14,13 +14,13 @@ class RegistryTest extends PHPUnit_Framework_TestCase
 
     public function testCountable()
     {
-        $registry = new Registry();
+        $registry = new Registry(['yolo' => null]);
         $this->assertCount($registry->count(), $registry);
     }
 
     public function testIterator()
     {
-        $this->assertInstanceOf('\Iterator', (new Registry())->getIterator());
+        $this->assertInstanceOf('\Iterator', (new Registry(['yolo' => null]))->getIterator());
     }
 
     public function testRegister()
@@ -31,8 +31,8 @@ class RegistryTest extends PHPUnit_Framework_TestCase
 
     public function testRegisterSchemeWithoutHost()
     {
-        $registry = new Registry();
-        $this->assertFalse($registry->hasKey('yolo'));
+        $registry = new Registry(['yolo' => null]);
+        $this->assertFalse($registry->hasKey('foobar'));
     }
 
     /**
@@ -40,19 +40,19 @@ class RegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetPortOnUnknownScheme()
     {
-        $registry = new Registry();
-        $registry->getPort('yolo');
+        $registry = new Registry(['yolo' => null]);
+        $registry->getPort('foobar');
     }
 
     public function testOffsets()
     {
-        $registry = new Registry();
+        $registry = new Registry(['yolo' => null]);
         $this->assertSame(array_keys($registry->toArray()), $registry->keys());
     }
 
     public function testOffsetsWithArguments()
     {
-        $registry = new Registry();
+        $registry = new Registry(['http' => 80, 'ws' => 80, 'https' => 443, 'wss' => 443]);
         $this->assertSame(['http', 'ws'], $registry->keys(80));
     }
 
@@ -84,7 +84,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testGetDefaultPorts($scheme, $expected)
     {
-        $this->assertEquals($expected, (new Registry())->getPort($scheme));
+        $this->assertEquals($expected, (new Registry(['http' => 80]))->getPort($scheme));
     }
 
     public function portProvider()
@@ -95,14 +95,11 @@ class RegistryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $input
-     * @param $scheme
-     * @param $port
      * @dataProvider validMergeValue
      */
     public function testMerge($input, $scheme, $port)
     {
-        $registry = (new Registry())->merge($input);
+        $registry = (new Registry(['http' => 80]))->merge($input);
         $this->assertEquals($port, $registry->getPort($scheme));
     }
 
@@ -112,7 +109,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase
             [["yolo" => 2020], "yolo", new Port(2020)],
             [["YOLo" => 2020], "yolo", new Port(2020)],
             [["http" => 81], "http", new Port(81)],
-            [new Registry(), "http", new Port(80)],
+            [new Registry(['http' => 80]), "http", new Port(80)],
         ];
     }
 
@@ -121,7 +118,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testFailedMerge()
     {
-        (new Registry())->merge("coucou");
+        (new Registry(['http' => 80]))->merge("coucou");
     }
 
     /**
@@ -131,7 +128,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testWithout($input, $scheme)
     {
-        $registry = (new Registry())->without($input);
+        $registry = (new Registry(['ws' => 80, 'wss' => 443]))->without($input);
         $this->assertFalse($registry->hasKey($scheme));
     }
 
@@ -151,6 +148,6 @@ class RegistryTest extends PHPUnit_Framework_TestCase
      */
     public function testWithoutFailed()
     {
-        (new Registry())->without("foo");
+        (new Registry(['http' => 80]))->without("foo");
     }
 }

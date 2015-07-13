@@ -41,7 +41,7 @@ class Http extends Uri\Uri
      *
      * @throws InvalidArgumentException If the URL can not be parsed
      *
-     * @return Uri\Uri
+     * @return static
      */
     public static function createFromServer(array $server)
     {
@@ -61,11 +61,11 @@ class Http extends Uri\Uri
      *
      * @throws \InvalidArgumentException If the URL can not be parsed
      *
-     * @return Uri\Uri
+     * @return static
      */
     public static function createFromString($url)
     {
-        return static::createFromComponents(new Registry(), static::parse($url));
+        return static::createFromComponents(new Registry(['http' => 80, 'https' => 443]), static::parse($url));
     }
 
     /**
@@ -98,7 +98,7 @@ class Http extends Uri\Uri
      *
      * @param array $server the environment server typically $_SERVER
      *
-     * @throws \InvalidArgumentException If the host can not be detected
+     * @throws InvalidArgumentException If the host can not be detected
      *
      * @return string
      */

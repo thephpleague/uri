@@ -17,7 +17,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->url = Uri::createFromComponents(
-            new Registry(),
+            new Registry(['http' => 80, 'https' => 443]),
             Uri::parse('http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
     }
@@ -62,7 +62,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     public function testWithoutEmptySegments()
     {
         $url = Uri::createFromComponents(
-            new Registry(),
+            new Registry(['http' => 80, 'https' => 443]),
             Uri::parse('http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $url = $url->withoutEmptySegments();
@@ -72,7 +72,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     public function testWithoutDotSegments()
     {
         $url = Uri::createFromComponents(
-            new Registry(),
+            new Registry(['http' => 80, 'https' => 443]),
             Uri::parse('http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $url = $url->normalize();
@@ -88,7 +88,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
     public function testWithoutZoneIdentifier()
     {
         $url = Uri::createFromComponents(
-            new Registry(),
+            new Registry(['http' => 80, 'https' => 443]),
             Uri::parse('http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $this->assertSame('[fe80::1234]', $url->withoutZoneIdentifier()->getHost());
@@ -96,13 +96,19 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testToUnicode()
     {
-        $url = Uri::createFromComponents(new Registry(), Uri::parse('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go'));
+        $url = Uri::createFromComponents(
+            new Registry(['http' => 80, 'https' => 443]),
+            Uri::parse('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go')
+        );
         $this->assertSame('مثال.إختبار', $url->toUnicode()->getHost());
     }
 
     public function testToAscii()
     {
-        $url = Uri::createFromComponents(new Registry(), Uri::parse('ftp://مثال.إختبار/where/to/go'));
+        $url = Uri::createFromComponents(
+            new Registry(['http' => 80, 'https' => 443]),
+            Uri::parse('ftp://مثال.إختبار/where/to/go')
+        );
         $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $url->toAscii()->getHost());
     }
 
@@ -192,7 +198,10 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutTrailingSlash()
     {
-        $url =Uri::createFromComponents(new Registry(), Uri::parse('http://www.example.com/'));
+        $url =Uri::createFromComponents(
+            new Registry(['http' => 80, 'https' => 443]),
+            Uri::parse('http://www.example.com/')
+        );
         $this->assertSame('', (string) $url->withoutTrailingSlash()->getPath());
     }
 }

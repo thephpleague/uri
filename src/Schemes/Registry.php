@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Scheme;
+namespace League\Uri\Schemes;
 
 use ArrayIterator;
 use InvalidArgumentException;

@@ -13,6 +13,7 @@ namespace League\Uri\Uri;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
+use ReflectionClass;
 
 /**
  * A Factory Trait to help return a new League\Uri\Uri instance
@@ -23,64 +24,27 @@ use League\Uri\Interfaces;
 trait Factory
 {
     /**
-     * Create a new League\Uri\Uri object from the environment
-     *
-     * @param array                          $server the environment server typically $_SERVER
-     * @param Interfaces\SchemeRegistry|null $registry
-     *
-     * @throws InvalidArgumentException If the URL can not be parsed
-     *
-     * @return Uri\Uri
-     */
-    public static function createFromServer(array $server, Interfaces\SchemeRegistry $registry = null)
-    {
-        return static::createFromString(
-            static::fetchServerScheme($server).'//'
-            .static::fetchServerUserInfo($server)
-            .static::fetchServerHost($server)
-            .static::fetchServerPort($server)
-            .static::fetchServerRequestUri($server),
-            $registry
-        );
-    }
-
-    /**
-     * Create a new League\Uri\Uri instance from a string
-     *
-     * @param string                         $url
-     * @param Interfaces\SchemeRegistry|null $registry
-     *
-     * @throws \InvalidArgumentException If the URL can not be parsed
-     *
-     * @return Uri\Uri
-     */
-    public static function createFromString($url, Interfaces\SchemeRegistry $registry = null)
-    {
-        return static::createFromComponents(static::parse($url), $registry);
-    }
-
-    /**
      * Create a new League\Uri\Uri instance from an array returned by
      * PHP parse_url function
      *
-     * @param array                          $components
-     * @param Interfaces\SchemeRegistry|null $registry
+     * @param Interfaces\SchemeRegistry $schemeRegistry
+     * @param array                     $components
      *
      * @return Uri\Uri
      */
-    public static function createFromComponents(array $components, Interfaces\SchemeRegistry $registry = null)
+    public static function createFromComponents(Interfaces\SchemeRegistry $schemeRegistry, array $components)
     {
         $components = static::formatComponents($components);
 
-        return new Uri\Uri(
+        return (new ReflectionClass(get_called_class()))->newInstance(
+            $schemeRegistry,
             new Uri\Scheme($components["scheme"]),
             new Uri\UserInfo($components["user"], $components["pass"]),
             new Uri\Host($components["host"]),
             new Uri\Port($components["port"]),
             new Uri\Path($components["path"]),
             new Uri\Query($components["query"]),
-            new Uri\Fragment($components["fragment"]),
-            $registry ?: new Uri\Scheme\Registry()
+            new Uri\Fragment($components["fragment"])
         );
     }
 

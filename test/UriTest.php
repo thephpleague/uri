@@ -12,6 +12,7 @@ use League\Uri\Uri;
 use League\Uri\User;
 use League\Uri\UserInfo;
 use League\Uri\Scheme;
+use League\Uri\Schemes\Registry;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\UriInterface;
 
@@ -23,67 +24,68 @@ class UrlTest extends PHPUnit_Framework_TestCase
     /**
      * @var Url
      */
-    private $url;
+    private $uri;
 
     public function setUp()
     {
-        $this->url = Uri::createFromString(
-            'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
-        );
+        $uri = 'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';
+        $this->uri = Uri::createFromComponents(new Registry, Uri::parse($uri));
     }
 
     public function tearDown()
     {
-        $this->url = null;
+        $this->uri = null;
     }
 
     public function testGetterAccess()
     {
-        $this->assertSame($this->url->getScheme(), $this->url->scheme->__toString());
-        $this->assertSame($this->url->getUserInfo(), $this->url->userInfo->__toString());
-        $this->assertSame($this->url->getHost(), $this->url->host->__toString());
-        $this->assertSame($this->url->getPort(), $this->url->port->toInt());
-        $this->assertSame($this->url->getPath(), $this->url->path->__toString());
-        $this->assertSame($this->url->getQuery(), $this->url->query->__toString());
-        $this->assertSame($this->url->getFragment(), $this->url->fragment->__toString());
+        $this->assertSame($this->uri->getScheme(), $this->uri->scheme->__toString());
+        $this->assertSame($this->uri->getUserInfo(), $this->uri->userInfo->__toString());
+        $this->assertSame($this->uri->getHost(), $this->uri->host->__toString());
+        $this->assertSame($this->uri->getPort(), $this->uri->port->toInt());
+        $this->assertSame($this->uri->getPath(), $this->uri->path->__toString());
+        $this->assertSame($this->uri->getQuery(), $this->uri->query->__toString());
+        $this->assertSame($this->uri->getFragment(), $this->uri->fragment->__toString());
     }
 
     public function testImmutabilityAccess()
     {
-        $this->assertSame($this->url, $this->url->withScheme('http'));
-        $this->assertSame($this->url, $this->url->withUserInfo('login', 'pass'));
-        $this->assertSame($this->url, $this->url->withHost('secure.example.com'));
-        $this->assertSame($this->url, $this->url->withPort(443));
-        $this->assertSame($this->url, $this->url->withPath('/test/query.php'));
-        $this->assertSame($this->url, $this->url->withQuery('kingkong=toto'));
-        $this->assertSame($this->url, $this->url->withFragment('doc3'));
+        $this->assertSame($this->uri, $this->uri->withScheme('http'));
+        $this->assertSame($this->uri, $this->uri->withUserInfo('login', 'pass'));
+        $this->assertSame($this->uri, $this->uri->withHost('secure.example.com'));
+        $this->assertSame($this->uri, $this->uri->withPort(443));
+        $this->assertSame($this->uri, $this->uri->withPath('/test/query.php'));
+        $this->assertSame($this->uri, $this->uri->withQuery('kingkong=toto'));
+        $this->assertSame($this->uri, $this->uri->withFragment('doc3'));
     }
 
     public function testImmutabilityAccess2()
     {
-        $this->assertNotEquals($this->url, $this->url->withScheme('ftp'));
-        $this->assertNotEquals($this->url, $this->url->withUserInfo('login', null));
-        $this->assertNotEquals($this->url, $this->url->withHost('shop.example.com'));
-        $this->assertNotEquals($this->url, $this->url->withPort(81));
-        $this->assertNotEquals($this->url, $this->url->withPath('/test/file.php'));
-        $this->assertNotEquals($this->url, $this->url->withQuery('kingkong=tata'));
-        $this->assertNotEquals($this->url, $this->url->withFragment('doc2'));
+        $this->assertNotEquals($this->uri, $this->uri->withScheme('ftp'));
+        $this->assertNotEquals($this->uri, $this->uri->withUserInfo('login', null));
+        $this->assertNotEquals($this->uri, $this->uri->withHost('shop.example.com'));
+        $this->assertNotEquals($this->uri, $this->uri->withPort(81));
+        $this->assertNotEquals($this->uri, $this->uri->withPath('/test/file.php'));
+        $this->assertNotEquals($this->uri, $this->uri->withQuery('kingkong=tata'));
+        $this->assertNotEquals($this->uri, $this->uri->withFragment('doc2'));
     }
 
     public function testGetAuthority()
     {
-        $this->assertSame('login:pass@secure.example.com:443', $this->url->getAuthority());
+        $this->assertSame('login:pass@secure.example.com:443', $this->uri->getAuthority());
     }
 
     public function testGetUserInfo()
     {
-        $this->assertSame('login:pass', $this->url->getUserInfo());
+        $this->assertSame('login:pass', $this->uri->getUserInfo());
     }
 
     public function testAutomaticUrlNormalization()
     {
-        $url = Uri::createFromString(
-            'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment'
+
+        $url = Uri::createFromComponents(
+            new Registry(),
+            Uri::parse('HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment')
         );
 
         $this->assertSame(
@@ -99,7 +101,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testPort($url, $port)
     {
-        $this->assertSame($port, Uri::createFromString($url)->getPort());
+        $this->assertSame($port, Uri::createFromComponents(new Registry(), Uri::parse($url))->getPort());
     }
 
     public function portProvider()
@@ -119,7 +121,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testToArray($url, $expected)
     {
-        $this->assertSame($expected, Uri::createFromString($url)->toArray());
+        $this->assertSame($expected, Uri::createFromComponents(new Registry(), Uri::parse($url))->toArray());
     }
 
     public function toArrayProvider()
@@ -193,26 +195,26 @@ class UrlTest extends PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         return [
-            'normal URL' => [Uri::createFromString('http://a/b/c'), false],
+            'normal URL' => [Uri::createFromComponents(new Registry(), Uri::parse('http://a/b/c')), false],
             'incomplete authority' => [new Uri(
+                new Registry(),
                 new Scheme(),
                 new UserInfo('foo', 'bar'),
                 new Host(),
                 new Port(80),
                 new Path(),
                 new Query(),
-                new Fragment(),
-                new Scheme\Registry()
+                new Fragment()
             ), true],
             'empty URL components' => [new Uri(
+                new Registry(),
                 new Scheme(),
                 new UserInfo(),
                 new Host(),
                 new Port(),
                 new Path(),
                 new Query(),
-                new Fragment(),
-                new Scheme\Registry()
+                new Fragment()
             ), true],
         ];
     }
@@ -222,7 +224,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
     {
-        Uri::createFromString('http://example.com')->withScheme('telnet');
+        Uri::createFromComponents(new Registry(), Uri::parse('http://example.com'))->withScheme('telnet');
     }
 
     /**
@@ -230,57 +232,34 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testWithRegistryFailedWithUnsupportedScheme()
     {
-        $registry = new Scheme\Registry(['file' => null]);
-        Uri::createFromString('http://example.com')->withSchemeRegistry($registry);
+        Uri::createFromComponents(new Registry(), Uri::parse('http://example.com'))
+            ->withSchemeRegistry(new Registry(['file' => null]));
     }
 
     public function testWithRegistryUpdateWithTheSameData()
     {
-        $registry = new Scheme\Registry();
-        $url      = Uri::createFromString('http://example.com');
-        $this->assertSame($url, $url->withSchemeRegistry($registry));
+        $url = Uri::createFromComponents(new Registry(), Uri::parse('http://example.com'));
+        $this->assertSame($url, $url->withSchemeRegistry(new Registry()));
     }
 
     public function testWithRegistry()
     {
-        $registry = (new Scheme\Registry())->merge(['telnet' => 23]);
-        $url      = Uri::createFromString('http://example.com');
-        $alt_url  = $url->withSchemeRegistry($registry);
+        $url     = Uri::createFromComponents(new Registry(), Uri::parse('http://example.com'));
+        $alt_url = $url->withSchemeRegistry((new Registry())->merge(['telnet' => 23]));
         $this->assertNotEquals($url, $alt_url);
         $this->assertTrue($url->sameValueAs($alt_url));
     }
 
     /**
-     * @param  $url1
-     * @param  $url2
-     * @dataProvider sameValueAsProvider
-     */
-    public function testSameValueAs($url1, $url2)
-    {
-        $this->assertTrue($url1->sameValueAs($url2));
-    }
-
-    public function sameValueAsProvider()
-    {
-        $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn('http://xn--gwd-hna98db.pl/toto/path');
-        $url = Uri::createFromString('http://xn--gwd-hna98db.pl/toto/path');
-
-        return [
-            [Uri::createFromString('//example.com'), Uri::createFromString('//ExamPle.Com')],
-            [Uri::createFromString('http://مثال.إختبار'), Uri::createFromString('http://مثال.إختبار')],
-            [$url, $mock],
-        ];
-    }
-
-    /**
      * @dataProvider sameValueAsPsr7InterfaceProvider
      */
-    public function testSameValueAsFailed($league, $psr7, $expected)
+    public function testSameValueAs($league, $psr7, $expected)
     {
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn($psr7);
-        $this->assertSame($expected, Uri::createFromString($league)->sameValueAs($mock));
+
+        $url = Uri::createFromComponents(new Registry(), Uri::parse($league));
+        $this->assertSame($expected, $url->sameValueAs($mock));
     }
 
     public function sameValueAsPsr7InterfaceProvider()
@@ -291,6 +270,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
             ['//example.com', '//ExamPle.Com', true],
             ['http://مثال.إختبار', 'http://xn--mgbh0fb.xn--kgbechtv', true],
             ['http://example.com', 'http:///example.com', false],
+            ['http:example.com', 'http:///example.com', false],
+            ['http:/example.com', 'http:///example.com', false],
+            ['http://example.org/~foo/', 'HTTP://example.ORG/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org:80/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7Efoo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7efoo/', true],
+            ['http://example.org/~foo/', 'http://example.ORG/bar/./../~foo/', true],
         ];
     }
 
@@ -308,44 +294,55 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         return [
             [new Uri(
+                new Registry(),
                 new Scheme('http'),
                 new UserInfo(),
                 new Host('ExAmPLe.cOm'),
                 new Port(),
                 new Path('path/to/the/sky'),
                 new Query(),
-                new Fragment(),
-                new Scheme\Registry()
+                new Fragment()
             ), 'http://example.com/path/to/the/sky'],
             [new Uri(
+                new Registry(),
                 new Scheme('http'),
                 new UserInfo(),
                 new Host(),
                 new Port(),
                 new Path('///path/to/the/sky'),
                 new Query(),
-                new Fragment(),
-                new Scheme\Registry()
+                new Fragment()
             ), 'http:/path/to/the/sky'],
         ];
     }
 
-    public function testHasStandardPort()
+    /**
+     * @dataProvider hasStandardPortProvider
+     */
+    public function testHasStandardPort($url, $expected)
     {
-        $this->assertFalse(Uri::createFromString('http://example.com:81/')->hasStandardPort());
-        $this->assertTrue(Uri::createFromString('http://example.com:80/')->hasStandardPort());
-        $this->assertTrue(Uri::createFromString('http://example.com/')->hasStandardPort());
+        $uri = Uri::createFromComponents(new Registry(), Uri::parse($url));
+        $this->assertSame($expected, $uri->hasStandardPort());
+    }
+
+    public function hasStandardPortProvider()
+    {
+        return [
+            ['http://example.com:81/', false],
+            ['http://example.com:80/', true],
+            ['http://example.com/', true],
+        ];
     }
 
     /**
-     * @param $relative
-     * @param $expected
-     *
      * @dataProvider resolveProvider
      */
     public function testResolve($url, $relative, $expected)
     {
-        $this->assertSame($expected, (string) Uri::createFromString($url)->resolve(Uri::createFromString($relative)));
+        $url      = Uri::createFromComponents(new Registry(), Uri::parse($url));
+        $relative = Uri::createFromComponents((new Registry())->merge(['mailto' => null]), Uri::parse($relative));
+
+        $this->assertSame($expected, (string) $url->resolve($relative));
     }
 
     public function resolveProvider()
@@ -396,13 +393,32 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testResolveWithDifferentSchemeRegistry()
     {
-        $schemeRegistry = new Scheme\Registry(['telnet' => 23]);
-        $telnet = Uri::createFromString('telnet://example.com/toto', $schemeRegistry)->withScheme('');
-        $http   = Uri::createFromString('http://example.com/tata/../toto.csv', new Scheme\Registry());
+        $schemeRegistry = new Registry(['telnet' => 23]);
+        $telnet = Uri::createFromComponents($schemeRegistry, Uri::parse('telnet://example.com/toto'));
+        $telnet = $telnet->withScheme('');
+        $http   = Uri::createFromComponents(new Registry(), Uri::parse('http://example.com/tata/../toto.csv'));
         $url    = $http->resolve($telnet);
 
         $this->assertNotEquals($http->schemeRegistry, $telnet->schemeRegistry);
         $this->assertNotEquals($url->schemeRegistry, $telnet->schemeRegistry);
         $this->assertNotEquals($url->schemeRegistry, $http->schemeRegistry);
+    }
+
+    /**
+     * @dataProvider invalidURL
+     * @expectedException InvalidArgumentException
+     */
+    public function testCreateFromInvalidUrlKO($input)
+    {
+        Uri::parse($input);
+    }
+
+    public function invalidURL()
+    {
+        return [
+            ["http://user@:80"],
+            ["//user@:80"],
+            ["http:///example.com"],
+        ];
     }
 }

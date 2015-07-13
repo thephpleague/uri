@@ -3,6 +3,7 @@
 namespace League\Uri\Test;
 
 use League\Uri\Interfaces;
+use League\Uri\Schemes\Registry;
 use League\Uri\Uri;
 use PHPUnit_Framework_TestCase;
 
@@ -15,8 +16,9 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->url = Uri::createFromString(
-            'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
+        $this->url = Uri::createFromComponents(
+            new Registry(),
+            Uri::parse('http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
     }
 
@@ -59,8 +61,9 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutEmptySegments()
     {
-        $url = Uri::createFromString(
-            'http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3'
+        $url = Uri::createFromComponents(
+            new Registry(),
+            Uri::parse('http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $url = $url->withoutEmptySegments();
         $this->assertSame('/path/to/the/sky.php', $url->getPath());
@@ -68,8 +71,9 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutDotSegments()
     {
-        $url = Uri::createFromString(
-            'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
+        $url = Uri::createFromComponents(
+            new Registry(),
+            Uri::parse('http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $url = $url->normalize();
         $this->assertSame('/to/the/sky.php', $url->getPath());
@@ -83,21 +87,22 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutZoneIdentifier()
     {
-        $url = Uri::createFromString(
-            'http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
+        $url = Uri::createFromComponents(
+            new Registry(),
+            Uri::parse('http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
         );
         $this->assertSame('[fe80::1234]', $url->withoutZoneIdentifier()->getHost());
     }
 
     public function testToUnicode()
     {
-        $url = Uri::createFromString('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go');
+        $url = Uri::createFromComponents(new Registry(), Uri::parse('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go'));
         $this->assertSame('مثال.إختبار', $url->toUnicode()->getHost());
     }
 
     public function testToAscii()
     {
-        $url = Uri::createFromString('ftp://مثال.إختبار/where/to/go');
+        $url = Uri::createFromComponents(new Registry(), Uri::parse('ftp://مثال.إختبار/where/to/go'));
         $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $url->toAscii()->getHost());
     }
 
@@ -187,7 +192,7 @@ class UrlModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutTrailingSlash()
     {
-        $url = Uri::createFromString('http://www.example.com/');
+        $url =Uri::createFromComponents(new Registry(), Uri::parse('http://www.example.com/'));
         $this->assertSame('', (string) $url->withoutTrailingSlash()->getPath());
     }
 }

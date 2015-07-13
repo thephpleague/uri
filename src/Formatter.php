@@ -8,11 +8,9 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Services;
+namespace League\Uri;
 
 use InvalidArgumentException;
-use League\Uri;
-use League\Uri\Interfaces;
 
 /**
  * A class to manipulate an URL and URL components output
@@ -31,7 +29,7 @@ class Formatter
     /**
      * A trait to format a path in a URL string
      */
-    use Uri\Uri\PathFormatter;
+    use Uri\PathFormatter;
 
     /**
      * host encoding property
@@ -155,7 +153,7 @@ class Formatter
     protected function formatUriPart(Interfaces\UriPart $part)
     {
         if ($part instanceof Interfaces\Query) {
-            return Uri\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof Interfaces\Host) {

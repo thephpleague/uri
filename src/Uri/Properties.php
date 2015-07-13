@@ -25,11 +25,6 @@ use Psr\Http\Message\UriInterface;
 trait Properties
 {
     /**
-     * A Factory trait to fetch info from Server environment variables
-     */
-    use ServerInfo;
-
-    /**
      * a Factory to create new URI instances
      */
     use Factory;
@@ -94,8 +89,7 @@ trait Properties
     public function sameValueAs(UriInterface $url)
     {
         try {
-            $url = static::createFromString($url->__toString(), $this->schemeRegistry);
-
+            $url = static::createFromComponents($this->schemeRegistry, static::parse($url->__toString()));
             return $url
                 ->toAscii()->normalize()->ksortQuery()->__toString() === $this
                 ->toAscii()->normalize()->ksortQuery()->__toString();

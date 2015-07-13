@@ -34,6 +34,7 @@ class Uri implements Interfaces\Uri
     /**
      * Create a new instance of URL
      *
+     * @param Interfaces\SchemeRegistry $schemeRegistry
      * @param Interfaces\Scheme         $scheme
      * @param Interfaces\UserInfo       $userInfo
      * @param Interfaces\Host           $host
@@ -41,18 +42,18 @@ class Uri implements Interfaces\Uri
      * @param Interfaces\Path           $path
      * @param Interfaces\Query          $query
      * @param Interfaces\Fragment       $fragment
-     * @param Interfaces\SchemeRegistry $schemeRegistry
      */
     public function __construct(
+        Interfaces\SchemeRegistry $schemeRegistry,
         Interfaces\Scheme $scheme,
         Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
         Interfaces\Port $port,
         Interfaces\Path $path,
         Interfaces\Query $query,
-        Interfaces\Fragment $fragment,
-        Interfaces\SchemeRegistry $schemeRegistry
+        Interfaces\Fragment $fragment
     ) {
+        $this->schemeRegistry = $schemeRegistry;
         $this->scheme         = $scheme;
         $this->userInfo       = $userInfo;
         $this->host           = $host;
@@ -60,7 +61,7 @@ class Uri implements Interfaces\Uri
         $this->path           = $path;
         $this->query          = $query;
         $this->fragment       = $fragment;
-        $this->schemeRegistry = $schemeRegistry;
+        $this->assertValidObject();
     }
 
     /**

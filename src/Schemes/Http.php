@@ -8,18 +8,66 @@
  * @version   4.0.0
  * @package   League.url
  */
-namespace League\Uri\Uri;
+namespace League\Uri\Schemes;
 
+use League\Uri;
 use InvalidArgumentException;
 
 /**
- * A Trait to fetch URI info from the Server variables
+ * Value object representing popular URI (http, https, ws, wss, ftp).
  *
  * @package League.url
- * @since   4.0.0
+ * @since   1.0.0
+ *
  */
-trait ServerInfo
+class Http extends Uri\Uri
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function isValid()
+    {
+        if ($this->scheme->isEmpty()) {
+            return true;
+        }
+
+        return !$this->host->isEmpty();
+    }
+
+    /**
+     * Create a new League\Uri\Uri object from the environment
+     *
+     * @param array $server the environment server typically $_SERVER
+     *
+     * @throws InvalidArgumentException If the URL can not be parsed
+     *
+     * @return Uri\Uri
+     */
+    public static function createFromServer(array $server)
+    {
+        return static::createFromString(
+            static::fetchServerScheme($server).'//'
+            .static::fetchServerUserInfo($server)
+            .static::fetchServerHost($server)
+            .static::fetchServerPort($server)
+            .static::fetchServerRequestUri($server)
+        );
+    }
+
+    /**
+     * Create a new League\Uri\Uri instance from a string
+     *
+     * @param string $url
+     *
+     * @throws \InvalidArgumentException If the URL can not be parsed
+     *
+     * @return Uri\Uri
+     */
+    public static function createFromString($url)
+    {
+        return static::createFromComponents(new Registry(), static::parse($url));
+    }
+
     /**
      * Returns the environment scheme
      *
@@ -35,7 +83,7 @@ trait ServerInfo
         ]);
 
         if (!empty($args["HTTP_X_FORWARDED_PROTO"])) {
-            return strtolower($args["HTTP_X_FORWARDED_PROTO"]).":";
+            return $args["HTTP_X_FORWARDED_PROTO"].":";
         }
 
         if (empty($server["HTTPS"]) || 'off' == $server["HTTPS"]) {

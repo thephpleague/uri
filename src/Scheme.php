@@ -20,7 +20,7 @@ use InvalidArgumentException;
  */
 class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
-    use Scheme\Validator;
+    use Schemes\Validator;
 
     /**
      * {@inheritdoc}

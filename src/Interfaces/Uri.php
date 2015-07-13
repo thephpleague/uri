@@ -63,6 +63,7 @@ interface Uri extends UriInterface
      * The following normalization is done prior to comparaison
      *
      *  - hosts are converted using the punycode algorithm
+     *  - path strings is normalize by removing dot segments
      *  - query strings are sorted using their offsets
      *
      * @param UriInterface $uri

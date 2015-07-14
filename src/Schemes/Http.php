@@ -63,7 +63,7 @@ class Http extends Uri\Uri
      *
      * @return static
      */
-    public static function createFromString($url)
+    public static function createFromString($url = '')
     {
         return static::createFromComponents(new Registry(['http' => 80, 'https' => 443]), static::parse($url));
     }

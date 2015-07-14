@@ -58,21 +58,6 @@ interface Uri extends UriInterface
     public function isEmpty();
 
     /**
-     * Returns whether two UriInterface represents the same value
-     * The comparison is based on the __toString method.
-     * The following normalization is done prior to comparaison
-     *
-     *  - hosts are converted using the punycode algorithm
-     *  - path strings is normalize by removing dot segments
-     *  - query strings are sorted using their offsets
-     *
-     * @param UriInterface $uri
-     *
-     * @return bool
-     */
-    public function sameValueAs(UriInterface $uri);
-
-    /**
      * Returns an instance resolve according to a given URL
      *
      * This method MUST retain the state of the current instance, and return

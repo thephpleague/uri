@@ -86,21 +86,6 @@ trait Properties
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(UriInterface $url)
-    {
-        try {
-            $url = static::createFromComponents($this->schemeRegistry, static::parse($url->__toString()));
-            return $url
-                ->toAscii()->normalize()->ksortQuery()->__toString() === $this
-                ->toAscii()->normalize()->ksortQuery()->__toString();
-        } catch (InvalidArgumentException $e) {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function withSchemeRegistry(Interfaces\SchemeRegistry $schemeRegistry)
     {
         if (!$this->isSchemeRegistered($this->scheme, $schemeRegistry)) {

@@ -197,4 +197,32 @@ class HttpTest extends PHPUnit_Framework_TestCase
             ['wss:/example.com'],
         ];
     }
+
+    /**
+     * @dataProvider sameValueAsPsr7InterfaceProvider
+     */
+    public function testSameValueAs($league, $psr7, $expected)
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn($psr7);
+        $this->assertSame($expected, Http::createFromString($league)->sameValueAs($mock));
+    }
+
+    public function sameValueAsPsr7InterfaceProvider()
+    {
+        return [
+            ['http://example.com', 'yolo://example.com', false],
+            ['http://example.com', 'http://example.com', true],
+            ['//example.com', '//ExamPle.Com', true],
+            ['http://مثال.إختبار', 'http://xn--mgbh0fb.xn--kgbechtv', true],
+            ['http://example.com', 'http:///example.com', false],
+            ['http://example.com', 'http:example.com', false],
+            ['http://example.com', 'http:/example.com', false],
+            ['http://example.org/~foo/', 'HTTP://example.ORG/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org:80/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7Efoo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7efoo/', true],
+            ['http://example.org/~foo/', 'http://example.ORG/bar/./../~foo/', true],
+        ];
+    }
 }

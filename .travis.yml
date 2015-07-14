@@ -13,6 +13,10 @@ matrix:
     - php: 7.0
   fast_finish: true
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 install:
   - travis_retry composer install
 

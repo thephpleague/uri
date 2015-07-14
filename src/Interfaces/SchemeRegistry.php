@@ -9,6 +9,7 @@
  * @package   League.url
  */
 namespace League\Uri\Interfaces;
+use InvalidArgumentException;
 
 /**
  * Value object representing a URL Scheme registration system.

@@ -9,6 +9,7 @@
  * @package   League.url
  */
 namespace League\Uri\Host;
+use InvalidArgumentException;
 
 /**
  * A Trait to validate a IP type Host

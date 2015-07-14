@@ -213,18 +213,28 @@ class Uri implements Interfaces\Uri
     }
 
     /**
-     * {@inheritdoc}
+     * Get URI relative reference
+     *
+     * @return string
      */
-    public function __toString()
+    protected function getRelativeReference()
     {
         $auth = $this->getAuthority();
         if (!empty($auth)) {
             $auth = '//'.$auth;
         }
 
-        return $this->scheme->getUriComponent().$auth
+        return $auth
             .$this->formatPath($this->path, (bool) $auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->scheme->getUriComponent().$this->getRelativeReference();
     }
 }

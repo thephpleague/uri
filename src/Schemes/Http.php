@@ -31,7 +31,7 @@ class Http extends Uri\Uri
             return true;
         }
 
-        return !$this->host->isEmpty();
+        return !($this->host->isEmpty() && !empty($this->getRelativeReference()));
     }
 
     /**

@@ -10,8 +10,6 @@
  */
 namespace League\Uri;
 
-use InvalidArgumentException;
-
 /**
  * Value object representing a URL scheme component.
  *

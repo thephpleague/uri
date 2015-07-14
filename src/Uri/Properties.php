@@ -13,7 +13,6 @@ namespace League\Uri\Uri;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
-use Psr\Http\Message\UriInterface;
 
 /**
  * a Trait to access URI properties methods

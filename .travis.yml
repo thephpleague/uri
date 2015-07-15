@@ -9,6 +9,13 @@ php:
   - hhvm
 
 matrix:
+  include:
+    - php: 5.5
+      env: COLLECT_COVERAGE=true
+    - php: 5.6
+      env: COLLECT_COVERAGE=true
+    - php: 7.0
+    - php: hhvm
   allow_failures:
     - php: 7.0
   fast_finish: true
@@ -25,5 +32,4 @@ script:
 
 after_script:
  - wget https://scrutinizer-ci.com/ocular.phar
- - if [ "$TRAVIS_PHP_VERSION" == "5.5" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
- - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+ - if [ "$COLLECT_COVERAGE" == "true" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

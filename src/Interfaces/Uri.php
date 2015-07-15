@@ -58,7 +58,22 @@ interface Uri extends UriInterface
     public function isEmpty();
 
     /**
-     * Returns an instance resolve according to a given URL
+     * Returns whether two UriInterface represents the same value
+     * The comparison is based on the __toString method.
+     * The following normalization is done prior to comparaison
+     *
+     *  - hosts are converted using the punycode algorithm
+     *  - path strings is normalize by removing dot segments
+     *  - query strings are sorted using their offsets
+     *
+     * @param UriInterface $uri
+     *
+     * @return bool
+     */
+    public function sameValueAs(UriInterface $uri);
+
+    /**
+     * Returns an instance resolved according to a given URL
      *
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URL
@@ -70,6 +85,18 @@ interface Uri extends UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-5.2
      */
     public function resolve(Uri $rel);
+
+    /**
+     * Returns an instance relativized according to a given URL
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance resolved according to supplied URL
+     *
+     * @param Uri $rel the relative URL
+     *
+     * @return static
+     */
+    public function relativize(Uri $rel);
 
     /**
      * Return an instance with a new SchemeRegistry

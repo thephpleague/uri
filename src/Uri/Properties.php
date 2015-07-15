@@ -13,6 +13,7 @@ namespace League\Uri\Uri;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
+use Psr\Http\Message\UriInterface;
 
 /**
  * a Trait to access URI properties methods
@@ -69,6 +70,20 @@ trait Properties
     /**
      * {@inheritdoc}
      */
+    public function sameValueAs(UriInterface $url)
+    {
+        try {
+            return static::createFromComponents($this->schemeRegistry, static::Parse($url->__toString()))
+                ->toAscii()->normalize()->ksortQuery()->__toString() === $this
+                ->toAscii()->normalize()->ksortQuery()->__toString();
+        } catch (InvalidArgumentException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasStandardPort()
     {
         if ($this->scheme->isEmpty()) {
@@ -111,6 +126,20 @@ trait Properties
     protected function isSchemeRegistered(Interfaces\Scheme $scheme, Interfaces\SchemeRegistry $schemeRegistry)
     {
         return $scheme->isEmpty() || $schemeRegistry->hasKey($scheme);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function relativize(Interfaces\Uri $relative)
+    {
+        if (!$this->scheme->sameValueAs($relative->scheme) || $this->getAuthority() !== $relative->getAuthority()) {
+            return $relative;
+        }
+
+        return $relative
+                ->withScheme('')->withUserInfo('')->withHost('')->withPort('')
+                ->withPath($this->path->relativize($relative->path)->__toString());
     }
 
     /**

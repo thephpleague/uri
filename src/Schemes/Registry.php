@@ -14,7 +14,6 @@ use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
-use Traversable;
 
 /**
  * A class to manage schemes registry
@@ -57,7 +56,7 @@ class Registry implements Interfaces\SchemeRegistry
      * ?>
      * </code>
      *
-     * @param array scheme/standard port pair
+     * @param array $data scheme/standard port pair
      *
      * @throws InvalidArgumentException If the scheme or the port is invalid
      */

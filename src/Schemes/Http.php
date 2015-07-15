@@ -21,7 +21,7 @@ use Psr\Http\Message\UriInterface;
  * @since   1.0.0
  *
  */
-class Http extends Uri\Uri implements Uri\Interfaces\Schemes\Http
+class Http extends Uri\Uri
 {
     /**
      * {@inheritdoc}
@@ -33,20 +33,6 @@ class Http extends Uri\Uri implements Uri\Interfaces\Schemes\Http
         }
 
         return !($this->host->isEmpty() && !empty($this->getRelativeReference()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs(UriInterface $url)
-    {
-        try {
-            return static::createFromString($url->__toString())
-                ->toAscii()->normalize()->ksortQuery()->__toString() === $this
-                ->toAscii()->normalize()->ksortQuery()->__toString();
-        } catch (InvalidArgumentException $e) {
-            return false;
-        }
     }
 
     /**

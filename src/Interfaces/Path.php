@@ -117,7 +117,19 @@ interface Path extends HierarchicalComponent
      *
      * @return static
      */
-    public function normalize();
+    public function withoutDotSegments();
+
+    /**
+     * Returns an instance relativized according to a given Path
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance resolved according to supplied URL
+     *
+     * @param Path $rel the path to relativize
+     *
+     * @return static
+     */
+    public function relativize(Path $rel);
 
     /**
      * Returns an instance without duplicate delimiters

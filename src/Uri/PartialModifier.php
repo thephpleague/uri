@@ -176,7 +176,7 @@ trait PartialModifier
      */
     public function normalize()
     {
-        return $this->withProperty('path', $this->path->normalize());
+        return $this->withProperty('path', $this->path->withoutDotSegments());
     }
 
     /**

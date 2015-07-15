@@ -220,6 +220,37 @@ class UrlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider sameValueAsPsr7InterfaceProvider
+     */
+    public function testSameValueAs($league, $psr7, $expected)
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn($psr7);
+
+        $uri = Uri::createFromComponents(new Registry(['http' => 80]), Uri::parse($league));
+
+        $this->assertSame($expected, $uri->sameValueAs($mock));
+    }
+
+    public function sameValueAsPsr7InterfaceProvider()
+    {
+        return [
+            ['http://example.com', 'yolo://example.com', false],
+            ['http://example.com', 'http://example.com', true],
+            ['//example.com', '//ExamPle.Com', true],
+            ['http://مثال.إختبار', 'http://xn--mgbh0fb.xn--kgbechtv', true],
+            ['http://example.com', 'http:///example.com', false],
+            ['http://example.com', 'http:example.com', false],
+            ['http://example.com', 'http:/example.com', false],
+            ['http://example.org/~foo/', 'HTTP://example.ORG/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org:80/~foo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7Efoo/', true],
+            ['http://example.org/~foo/', 'http://example.org/%7efoo/', true],
+            ['http://example.org/~foo/', 'http://example.ORG/bar/./../~foo/', true],
+        ];
+    }
+
+    /**
      * @expectedException InvalidArgumentException
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
@@ -372,6 +403,31 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $this->assertNotEquals($url->schemeRegistry, $telnet->schemeRegistry);
         $this->assertNotEquals($url->schemeRegistry, $http->schemeRegistry);
     }
+
+    /**
+     * @dataProvider relativizeProvider
+     */
+    public function testRelativize($base, $child, $expected)
+    {
+        $baseUri  = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($base));
+        $childUri = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443, 'mailto' => null]), Uri::parse($child));
+
+        $this->assertSame($expected, (string) $baseUri->relativize($childUri));
+    }
+
+    public function relativizeProvider()
+    {
+        return [
+            ['http://www.example.com/foo/bar', 'http://toto.com', 'http://toto.com'],
+            ['http://www.example.com/foo/bar', 'mailto:foo@example.com', 'mailto:foo@example.com'],
+            ['http://www.example.com/foo/bar', 'http://www.example.com:81/foo', 'http://www.example.com:81/foo'],
+            ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../bar'],
+            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../bar'],
+            ['http://www.example.com/toto/le/../heros/', 'http://www.example.com/../bar', 'bar'],
+            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar?query=value', '../bar?query=value'],
+        ];
+    }
+
 
     /**
      * @dataProvider invalidURL

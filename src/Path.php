@@ -126,7 +126,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function normalize()
+    public function withoutDotSegments()
     {
         $current = $this->__toString();
         if (false === strpos($current, '.')) {
@@ -141,6 +141,28 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
 
         return $this->modify($new);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function relativize(Interfaces\Path $path)
+    {
+        $bSegments = explode(static::$delimiter, $this->withoutDotSegments()->__toString());
+        $cSegments = explode(static::$delimiter, $path->withoutDotSegments()->__toString());
+        if ('' == end($bSegments)) {
+            array_pop($bSegments);
+        }
+
+        $key = 0;
+        $res = [];
+        while (isset($cSegments[$key], $bSegments[$key]) && $cSegments[$key] === $bSegments[$key]) {
+            ++$key;
+            $res[] = '..';
+        }
+
+        return static::createFromArray(array_merge($res, array_slice($cSegments, $key)));
+    }
+
 
     /**
      * Filter Dot segment according to RFC3986

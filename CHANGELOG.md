@@ -17,6 +17,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Missing `User` and `Pass` Interfaces
 - `Host::getIpLiteral` to get the raw IP representation of a Ip Literal hostname
 - `getLiteral` method to `Pass`, `User` and `Fragment` objects to get the component non-encoded string representation
+- `Path::relativize` and `Uri::relativize` to generate relative path and uri respectively
 
 ### Fixed
 

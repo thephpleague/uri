@@ -314,7 +314,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      */
     public function testWithoutDotSegments($path, $expected)
     {
-        $this->assertSame($expected, (new Path($path))->normalize()->__toString());
+        $this->assertSame($expected, (new Path($path))->withoutDotSegments()->__toString());
     }
 
     /**
@@ -330,6 +330,25 @@ class PathTest extends PHPUnit_Framework_TestCase
             ['a/b/c', 'a/b/c'],
             ['a/b/c/.', 'a/b/c/'],
             ['/a/b/c', '/a/b/c'],
+        ];
+    }
+    /**
+     * @dataProvider relativizeProvider
+     */
+    public function testRelativize($base, $child, $expected)
+    {
+        $this->assertSame($expected, (string) (new Path($base))->relativize(new Path($child)));
+    }
+
+    public function relativizeProvider()
+    {
+        return [
+            ['/toto/le/heros', '/bar', '../bar'],
+            ['/toto/le/heros/', '/bar', '../bar'],
+            ['toto/le/heros/', '/bar', '/bar'],
+            ['toto/le/heros', '/bar', '/bar'],
+            ['toto/le/heros/', 'bar', 'bar'],
+            ['toto/le/heros', 'bar', 'bar'],
         ];
     }
 

@@ -1,14 +1,14 @@
-League Url
+URI
 =======
 
-[![Build Status](https://img.shields.io/travis/thephpleague/url/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/url)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/url.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/url/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/url.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/url)
+[![Build Status](https://img.shields.io/travis/thephpleague/uri/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/uri.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/uri.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Latest Version](https://img.shields.io/github/release/thephpleague/url.svg?style=flat-square)](https://github.com/thephpleague/url/releases)
-[![Total Downloads](https://img.shields.io/packagist/dt/league/url.svg?style=flat-square)](https://packagist.org/packages/league/url)
+[![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The `League\Url` package provides simple and intuitive classes to create and manage Urls in PHP.
+The `League\Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
 
 Highlights
 ------
@@ -39,16 +39,16 @@ To use the library.
 Install
 -------
 
-Install `League\Url` using Composer.
+Install `League\Uri` using Composer.
 
 ```
-$ composer require league/url
+$ composer require league/uri
 ```
 
 Testing
 -------
 
-`League\Url` has a [PHPUnit](https://phpunit.de) test suite. To run the tests, run the following command from the project folder.
+`League\Uri` has a [PHPUnit](https://phpunit.de) test suite. To run the tests, run the following command from the project folder.
 
 ``` bash
 $ phpunit
@@ -68,7 +68,7 @@ Credits
 -------
 
 - [ignace nyamagana butera](https://github.com/nyamsprod)
-- [All Contributors](https://github.com/thephpleague/url/contributors)
+- [All Contributors](https://github.com/thephpleague/uri/contributors)
 
 License
 -------

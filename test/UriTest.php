@@ -108,7 +108,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['http://www.example.com:443/', 443],
-            ['http://www.example.com:80/', 80],
+            ['http://www.example.com:80/', null],
             ['http://www.example.com', null],
             ['//www.example.com:80/', 80],
         ];

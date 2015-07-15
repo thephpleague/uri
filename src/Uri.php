@@ -110,7 +110,7 @@ class Uri implements Interfaces\Uri
      */
     public function getPort()
     {
-        return $this->port->toInt();
+        return $this->hasStandardPort() ? null : $this->port->toInt();
     }
 
     /**

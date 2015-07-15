@@ -14,7 +14,6 @@ use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
-use Traversable;
 
 /**
  * A class to manage schemes registry

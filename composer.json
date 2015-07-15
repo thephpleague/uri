@@ -1,8 +1,8 @@
 {
-    "name": "league/url",
+    "name": "league/uri",
     "type": "library",
-    "description" : "League/url is a lightweight PHP Url manipulating library",
-    "keywords": ["url", "psr-7"],
+    "description" : "League/uri is a PHP URI manipulating library",
+    "keywords": ["uri", "url", "psr-7"],
     "license": "MIT",
     "homepage": "http://url.thephpleague.com",
     "authors": [
@@ -15,7 +15,7 @@
     ],
     "support": {
         "forum": "https://groups.google.com/forum/#!forum/thephpleague",
-        "issues": "https://github.com/thephpleague/url/issues"
+        "issues": "https://github.com/thephpleague/uri/issues"
     },
     "require": {
         "php" : ">=5.5.9",

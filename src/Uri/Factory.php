@@ -101,7 +101,7 @@ trait Factory
     {
         $pattern = '%([a-zA-Z][a-zA-Z0-9+\-.]*)?(:?//)?([^:/@?&=#\[\]]+)%usD';
         $enc_uri = preg_replace_callback($pattern, function ($matches) {
-            return sprintf('%s%s%s', $matches[1], $matches[2], urlencode($matches[3]));
+            return sprintf('%s%s%s', $matches[1], $matches[2], rawurlencode($matches[3]));
         }, (string) $uri);
 
         $components = @parse_url($enc_uri);
@@ -133,7 +133,7 @@ trait Factory
             'pass'   => null, 'host'     => null,
             'port'   => null, 'path'     => null,
             'query'  => null, 'fragment' => null,
-        ], array_map('urldecode', $components));
+        ], array_map('rawurldecode', $components));
 
         if (null !== $components['port']) {
             $components['port'] = (int) $components['port'];

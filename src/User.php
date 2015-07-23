@@ -18,5 +18,5 @@ namespace League\Uri;
  */
 class User extends AbstractComponent implements Interfaces\User
 {
-    protected static $invalidCharactersRegex = ',[/:@],';
+    protected static $invalidCharactersRegex = ',[/:@?#],';
 }

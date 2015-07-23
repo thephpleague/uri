@@ -35,7 +35,6 @@ class PassTest extends PHPUnit_Framework_TestCase
             ['"bad"', '%22bad%22'],
             ['<not good>', '%3Cnot%20good%3E'],
             ['{broken}', '%7Bbroken%7D'],
-            ['failure?', 'failure%3F'],
             ['`oops`', '%60oops%60'],
             ['\\slashy', '%5Cslashy'],
         ];
@@ -56,6 +55,8 @@ class PassTest extends PHPUnit_Framework_TestCase
         return [
             'contains @' => ['to@to'],
             'contains /' => ['to/to'],
+            'contains ?' => ['to?to'],
+            'contains #' => ['to#to'],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
             'null'      => [null],

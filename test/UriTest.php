@@ -82,8 +82,8 @@ class UriTest extends PHPUnit_Framework_TestCase
 
     public function testAutomaticUrlNormalization()
     {
-        $raw = 'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment';
-        $normalized = 'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment';
+        $raw = 'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/in+dex.php?foo.bar=value#fragment';
+        $normalized = 'https://master.example.com/~johndoe/%A1/in+dex.php?foo.bar=value#fragment';
         $this->assertSame($normalized, (string) HttpUri::createFromString($raw));
     }
 

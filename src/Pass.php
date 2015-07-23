@@ -18,5 +18,5 @@ namespace League\Uri;
  */
 class Pass extends AbstractComponent implements Interfaces\Pass
 {
-    protected static $invalidCharactersRegex = ',[/@],';
+    protected static $invalidCharactersRegex = ',[/?#@],';
 }

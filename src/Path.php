@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 /**
  * Value object representing a URL path component.
  *
- * @package League.url
+ * @package League.uri
  * @since 1.0.0
  */
 class Path extends AbstractHierarchicalComponent implements Interfaces\Path
@@ -94,7 +94,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
         }));
 
         return array_map(function ($value) {
-            return rawurldecode(filter_var($value, FILTER_UNSAFE_RAW, ["flags" => FILTER_FLAG_STRIP_LOW]));
+            return rawurldecode(filter_var($value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]));
         }, $data);
     }
 
@@ -120,7 +120,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
             $front_delimiter = static::$delimiter;
         }
 
-        return $front_delimiter.implode(static::$delimiter, array_map([$this, 'encode'], $this->data));
+        return $front_delimiter . implode(static::$delimiter, array_map([$this, 'encode'], $this->data));
     }
 
     /**
@@ -163,7 +163,6 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
         return static::createFromArray(array_merge($res, array_slice($cSegments, $key)));
     }
 
-
     /**
      * Filter Dot segment according to RFC3986
      *
@@ -178,6 +177,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     {
         if ('..' == $segment) {
             array_pop($carry);
+
             return $carry;
         }
 
@@ -219,7 +219,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function withTrailingSlash()
     {
-        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().static::$delimiter);
+        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString() . static::$delimiter);
     }
 
     /**
@@ -235,7 +235,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
      */
     public function getDirname()
     {
-        return str_replace("\0", "\\", pathinfo(str_replace("\\", "\0", $this), PATHINFO_DIRNAME));
+        return str_replace("\0", '\\', pathinfo(str_replace('\\', "\0", $this), PATHINFO_DIRNAME));
     }
 
     /**
@@ -279,7 +279,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     {
         $length = mb_strlen(pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
         if ($length > 0) {
-            $basename = mb_substr($basename, 0, -($length+1), 'UTF-8');
+            $basename = mb_substr($basename, 0, -($length + 1), 'UTF-8');
         }
 
         if (empty($basename) || empty($ext)) {

@@ -3,7 +3,6 @@
 namespace League\Uri\Test\Components;
 
 use League\Uri\Port;
-use League\Uri\Scheme;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -32,21 +31,21 @@ class PortTest extends PHPUnit_Framework_TestCase
         return [
             ['443', 443],
             [null, null],
-            [23, 23]
+            [23, 23],
         ];
     }
 
     public function invalidPortProvider()
     {
         return [
-            "string"                       => ["toto"],
-            "invalid port number too low"  => ["-23"],
-            "invalid port number too high" => ["10000000"],
-            "invalid port number"          => ["0"],
+            'string'                       => ['toto'],
+            'invalid port number too low'  => ['-23'],
+            'invalid port number too high' => ['10000000'],
+            'invalid port number'          => ['0'],
             'bool'                         => [true],
             'Std Class'                    => [(object) 'foo'],
             'float'                        => [1.2],
-            'array'                        =>[['foo']]
+            'array'                        => [['foo']],
         ];
     }
 
@@ -77,7 +76,7 @@ class PortTest extends PHPUnit_Framework_TestCase
         return [
             ['443', ':443'],
             [null, ''],
-            [23, ':23']
+            [23, ':23'],
         ];
     }
 
@@ -96,7 +95,7 @@ class PortTest extends PHPUnit_Framework_TestCase
         return [
             ['443', false],
             [null, true],
-            [23, false]
+            [23, false],
         ];
     }
 }

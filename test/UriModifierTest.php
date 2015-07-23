@@ -1,207 +1,192 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use League\Uri\Interfaces;
-use League\Uri\Schemes\Registry;
-use League\Uri\Uri;
+use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @group url
+ * @group uri
  */
-class UrlModifierTest extends PHPUnit_Framework_TestCase
+class UriModifierTest extends PHPUnit_Framework_TestCase
 {
-    private $url;
+    private $uri;
 
     public function setUp()
     {
-        $this->url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3')
+        $this->uri = HttpUri::createFromString(
+            'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
     }
 
     public function testMergeQueryParameters()
     {
-        $url = $this->url->mergeQuery(['john' => 'doe the john', 'foo' => null]);
-        $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $url->getQuery());
+        $uri = $this->uri->mergeQuery(['john' => 'doe the john', 'foo' => null]);
+        $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $uri->getQuery());
     }
 
     public function testReturnSameInstance()
     {
-        $same = $this->url
+        $same = $this->uri
             ->mergeQuery(['kingkong' => 'toto'])
             ->withExtension('php')
             ->withoutQueryValues(['toto'])
             ->withoutSegments([34])
             ->withoutLabels([23, 18]);
 
-        $this->assertSame($same, $this->url);
+        $this->assertSame($same, $this->uri);
     }
 
     public function testWithoutQueryOffsets()
     {
-        $url = $this->url->withoutQueryValues(['kingkong']);
-        $this->assertSame('foo=bar%20baz', $url->getQuery());
+        $uri = $this->uri->withoutQueryValues(['kingkong']);
+        $this->assertSame('foo=bar%20baz', $uri->getQuery());
     }
 
     public function testSortQueryOffsets()
     {
-        $url = $this->url->ksortQuery();
-        $this->assertSame('foo=bar%20baz&kingkong=toto', $url->getQuery());
+        $uri = $this->uri->ksortQuery();
+        $this->assertSame('foo=bar%20baz&kingkong=toto', $uri->getQuery());
     }
-
 
     public function testWithoutSegments()
     {
-        $url = $this->url->withoutSegments([0, 1]);
-        $this->assertSame('/the/sky.php', $url->getPath());
+        $uri = $this->uri->withoutSegments([0, 1]);
+        $this->assertSame('/the/sky.php', $uri->getPath());
     }
 
     public function testWithoutEmptySegments()
     {
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3')
+        $uri = HttpUri::createFromString(
+            'http://www.example.com/path///to/the//sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
-        $url = $url->withoutEmptySegments();
-        $this->assertSame('/path/to/the/sky.php', $url->getPath());
+        $uri = $uri->withoutEmptySegments();
+        $this->assertSame('/path/to/the/sky.php', $uri->getPath());
     }
 
     public function testWithoutDotSegments()
     {
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
+        $uri = HttpUri::createFromString(
+            'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
-        $url = $url->normalize();
-        $this->assertSame('/to/the/sky.php', $url->getPath());
+        $uri = $uri->withoutDotSegments();
+        $this->assertSame('/to/the/sky.php', $uri->getPath());
     }
 
     public function testWithoutLabels()
     {
-        $url = $this->url->withoutLabels([0]);
-        $this->assertSame('example.com', $url->getHost());
+        $uri = $this->uri->withoutLabels([0]);
+        $this->assertSame('example.com', $uri->getHost());
     }
 
     public function testWithoutZoneIdentifier()
     {
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3')
+        $uri = HttpUri::createFromString(
+            'http://[fe80::1234%25eth0-1]/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3'
         );
-        $this->assertSame('[fe80::1234]', $url->withoutZoneIdentifier()->getHost());
+        $this->assertSame('[fe80::1234]', $uri->withoutZoneIdentifier()->getHost());
     }
 
     public function testToUnicode()
     {
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('ftp://xn--mgbh0fb.xn--kgbechtv/where/to/go')
-        );
-        $this->assertSame('مثال.إختبار', $url->toUnicode()->getHost());
+        $uri = HttpUri::createFromString('http://xn--mgbh0fb.xn--kgbechtv/where/to/go');
+        $this->assertSame('مثال.إختبار', $uri->toUnicode()->getHost());
     }
 
     public function testToAscii()
     {
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('ftp://مثال.إختبار/where/to/go')
-        );
-        $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $url->toAscii()->getHost());
+        $uri = HttpUri::createFromString('http://مثال.إختبار/where/to/go');
+        $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $uri->toAscii()->getHost());
     }
 
     public function testFilterQueryParameters()
     {
-        $url = $this->url->filterQuery(function ($value) {
+        $uri = $this->uri->filterQuery(function ($value) {
             return $value == 'kingkong';
         }, Interfaces\Collection::FILTER_USE_KEY);
 
-        $this->assertSame('kingkong=toto', $url->getQuery());
+        $this->assertSame('kingkong=toto', $uri->getQuery());
     }
 
     public function testFilterQueryValues()
     {
-        $url = $this->url->filterQuery(function ($value) {
+        $uri = $this->uri->filterQuery(function ($value) {
             return $value == 'toto';
         }, Interfaces\Collection::FILTER_USE_VALUE);
 
-        $this->assertSame('kingkong=toto', $url->getQuery());
+        $this->assertSame('kingkong=toto', $uri->getQuery());
     }
 
     public function testFilterSegments()
     {
-        $url = $this->url->filterPath(function ($value) {
+        $uri = $this->uri->filterPath(function ($value) {
             return strpos($value, 't') === false;
         });
 
-        $this->assertSame('/sky.php', $url->getPath());
+        $this->assertSame('/sky.php', $uri->getPath());
     }
 
     public function testFilterLabels()
     {
-        $url = $this->url->filterHost(function ($value) {
+        $uri = $this->uri->filterHost(function ($value) {
             return strpos($value, 'w') === false;
         });
 
-        $this->assertSame('example.com', $url->getHost());
+        $this->assertSame('example.com', $uri->getHost());
     }
 
     public function testAppendSegments()
     {
-        $url = $this->url->appendPath('/added');
-        $this->assertSame('/path/to/the/sky.php/added', (string) $url->getPath());
+        $uri = $this->uri->appendPath('/added');
+        $this->assertSame('/path/to/the/sky.php/added', (string) $uri->getPath());
     }
 
     public function testAppendLabels()
     {
-        $url = $this->url->appendHost('added');
-        $this->assertSame('www.example.com.added', (string) $url->getHost());
+        $uri = $this->uri->appendHost('added');
+        $this->assertSame('www.example.com.added', (string) $uri->getHost());
     }
 
     public function testPrependSegments()
     {
-        $url = $this->url->prependPath('/added');
-        $this->assertSame('/added/path/to/the/sky.php', (string) $url->getPath());
+        $uri = $this->uri->prependPath('/added');
+        $this->assertSame('/added/path/to/the/sky.php', (string) $uri->getPath());
     }
 
     public function testPrependLabels()
     {
-        $url = $this->url->prependHost('added');
-        $this->assertSame('added.www.example.com', (string) $url->getHost());
+        $uri = $this->uri->prependHost('added');
+        $this->assertSame('added.www.example.com', (string) $uri->getHost());
     }
 
     public function testReplaceSegment()
     {
-        $url = $this->url->replaceSegment(3, 'replace');
-        $this->assertSame('/path/to/the/replace', (string) $url->getPath());
+        $uri = $this->uri->replaceSegment(3, 'replace');
+        $this->assertSame('/path/to/the/replace', (string) $uri->getPath());
     }
 
     public function testReplaceLabel()
     {
-        $url = $this->url->replaceLabel(1, 'thephpleague');
-        $this->assertSame('www.thephpleague.com', (string) $url->getHost());
+        $uri = $this->uri->replaceLabel(1, 'thephpleague');
+        $this->assertSame('www.thephpleague.com', (string) $uri->getHost());
     }
 
     public function testWithExtension()
     {
-        $url = $this->url->withExtension('asp');
-        $this->assertSame('/path/to/the/sky.asp', (string) $url->getPath());
+        $uri = $this->uri->withExtension('asp');
+        $this->assertSame('/path/to/the/sky.asp', (string) $uri->getPath());
     }
 
     public function testWithTrailingSlash()
     {
-        $url = $this->url->withTrailingSlash();
-        $this->assertSame('/path/to/the/sky.php/', (string) $url->getPath());
+        $uri = $this->uri->withTrailingSlash();
+        $this->assertSame('/path/to/the/sky.php/', (string) $uri->getPath());
     }
 
     public function testWithoutTrailingSlash()
     {
-        $url =Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('http://www.example.com/')
-        );
-        $this->assertSame('', (string) $url->withoutTrailingSlash()->getPath());
+        $uri = HttpUri::createFromString('http://www.example.com/');
+        $this->assertSame('', (string) $uri->withoutTrailingSlash()->getPath());
     }
 }

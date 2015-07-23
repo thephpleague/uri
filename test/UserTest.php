@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use League\Uri\User;
 use PHPUnit_Framework_TestCase;
@@ -34,12 +34,12 @@ class UserTest extends PHPUnit_Framework_TestCase
             ['toto', 'toto'],
             ['bar---', 'bar---'],
             ['', '', ''],
-            ['"bad"', "%22bad%22"],
-            ['<not good>', "%3Cnot%20good%3E"],
+            ['"bad"', '%22bad%22'],
+            ['<not good>', '%3Cnot%20good%3E'],
             ['{broken}', '%7Bbroken%7D'],
             ['failure?', 'failure%3F'],
             ['`oops`', '%60oops%60'],
-            ['\\slashy', "%5Cslashy"],
+            ['\\slashy', '%5Cslashy'],
         ];
     }
 

@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Types;
 
@@ -17,7 +17,7 @@ use ReflectionClass;
 /**
  * Common methods for Component Value Object
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 trait ImmutableValueObject
@@ -28,7 +28,7 @@ trait ImmutableValueObject
      * @var array
      */
     protected static $characters_set = [
-        "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "=", ":",
+        '!', '$', '&', "'", '(', ')', '*', '+', ',', ';', '=', ':',
     ];
 
     /**
@@ -37,7 +37,7 @@ trait ImmutableValueObject
      * @var array
      */
     protected static $characters_set_encoded = [
-        "%21", "%24", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%3B", "%3D", "%3A",
+        '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3A',
     ];
 
     /**
@@ -69,17 +69,17 @@ trait ImmutableValueObject
     /**
      * {@inheritdoc}
      */
-    public abstract function getUriComponent();
+    abstract public function getUriComponent();
 
     /**
      * {@inheritdoc}
      */
-    public abstract function __toString();
+    abstract public function __toString();
 
     /**
      * Encoding string according to RFC3986
      *
-     * @param  string $value
+     * @param string $value
      *
      * @return string
      */

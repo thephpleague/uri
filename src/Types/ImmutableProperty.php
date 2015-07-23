@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Types;
 
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 /**
  * A trait to set and get immutable value
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 trait ImmutableProperty
@@ -62,7 +62,7 @@ trait ImmutableProperty
     protected function assertValidObject()
     {
         if (! $this->isValid()) {
-            throw new InvalidArgumentException("The submitted properties will produce an invalid object");
+            throw new InvalidArgumentException('The submitted properties will produce an invalid object');
         }
     }
 

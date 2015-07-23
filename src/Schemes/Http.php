@@ -2,27 +2,35 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Schemes;
 
-use League\Uri;
 use InvalidArgumentException;
-use Psr\Http\Message\UriInterface;
+use League\Uri;
 
 /**
  * Value object representing popular URI (http, https, ws, wss, ftp).
  *
- * @package League.url
+ * @package League.uri
  * @since   1.0.0
  *
  */
-class Http extends Uri\Uri
+class Http extends AbstractUri
 {
+    /**
+     * Supported Schemes
+     * @var array
+     */
+    protected static $supported_schemes = [
+        'http' => 80,
+        'https' => 443,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -32,13 +40,33 @@ class Http extends Uri\Uri
             return true;
         }
 
-        return !($this->host->isEmpty() && !empty($this->getRelativeReference()));
+        if (!isset(static::$supported_schemes[$this->scheme->__toString()])) {
+            return false;
+        }
+
+        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
     }
 
     /**
-     * Create a new League\Uri\Uri object from the environment
+     * {@inheritdoc}
+     */
+    public function hasStandardPort()
+    {
+        if ($this->scheme->isEmpty()) {
+            return false;
+        }
+
+        if ($this->port->isEmpty()) {
+            return true;
+        }
+
+        return static::$supported_schemes[$this->scheme->__toString()] === $this->port->toInt();
+    }
+
+    /**
+     * Create a new instance from the environment
      *
-     * @param array $server the environment server typically $_SERVER
+     * @param array $server the server and execution environment information array tipycally ($_SERVER)
      *
      * @throws InvalidArgumentException If the URL can not be parsed
      *
@@ -47,51 +75,28 @@ class Http extends Uri\Uri
     public static function createFromServer(array $server)
     {
         return static::createFromString(
-            static::fetchServerScheme($server).'//'
-            .static::fetchServerUserInfo($server)
-            .static::fetchServerHost($server)
-            .static::fetchServerPort($server)
-            .static::fetchServerRequestUri($server)
+            static::fetchServerScheme($server) . '//'
+            . static::fetchServerUserInfo($server)
+            . static::fetchServerHost($server)
+            . static::fetchServerPort($server)
+            . static::fetchServerRequestUri($server)
         );
-    }
-
-    /**
-     * Create a new League\Uri\Uri instance from a string
-     *
-     * @param string $url
-     *
-     * @throws \InvalidArgumentException If the URL can not be parsed
-     *
-     * @return static
-     */
-    public static function createFromString($url = '')
-    {
-        return static::createFromComponents(new Registry(['http' => 80, 'https' => 443]), static::parse($url));
     }
 
     /**
      * Returns the environment scheme
      *
-     * @param  array $server the environment server typically $_SERVER
+     * @param array $server the environment server typically $_SERVER
      *
      * @return string
      */
     protected static function fetchServerScheme(array $server)
     {
         $args = filter_var_array($server, [
-            'HTTP_X_FORWARDED_PROTO' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
             'HTTPS' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
         ]);
 
-        if (!empty($args["HTTP_X_FORWARDED_PROTO"])) {
-            return $args["HTTP_X_FORWARDED_PROTO"].":";
-        }
-
-        if (empty($server["HTTPS"]) || 'off' == $server["HTTPS"]) {
-            return "http:";
-        }
-
-        return "https:";
+        return  (empty($args['HTTPS']) || 'off' == $args['HTTPS'])  ? 'http:' : 'https:';
     }
 
     /**
@@ -105,27 +110,27 @@ class Http extends Uri\Uri
      */
     protected static function fetchServerHost(array $server)
     {
-        if (isset($server["HTTP_HOST"])) {
-            return static::fetchServerHostname($server["HTTP_HOST"]);
+        if (isset($server['HTTP_HOST'])) {
+            return static::fetchServerHostname($server['HTTP_HOST']);
         }
 
-        if (!isset($server["SERVER_ADDR"])) {
-            throw new InvalidArgumentException("Host could not be detected");
+        if (!isset($server['SERVER_ADDR'])) {
+            throw new InvalidArgumentException('Host could not be detected');
         }
 
-        if (filter_var($server["SERVER_ADDR"], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            return "[".$server["SERVER_ADDR"]."]";
+        if (filter_var($server['SERVER_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return '[' . $server['SERVER_ADDR'] . ']';
         }
 
-        return $server["SERVER_ADDR"];
+        return $server['SERVER_ADDR'];
     }
 
     /**
      * Returns the environment hostname
      *
-     * @param  string $host the environment server hostname
-     *                      the port info can sometimes be
-     *                      associated with the hostname
+     * @param string $host the environment server hostname
+     *                     the port info can sometimes be
+     *                     associated with the hostname
      *
      * @return string
      */
@@ -153,7 +158,7 @@ class Http extends Uri\Uri
 
         $info = $server['PHP_AUTH_USER'];
         if (isset($server['PHP_AUTH_PW'])) {
-            $info .= ':'.$server['PHP_AUTH_PW'];
+            $info .= ':' . $server['PHP_AUTH_PW'];
         }
 
         if (!empty($info)) {
@@ -172,9 +177,9 @@ class Http extends Uri\Uri
      */
     protected static function fetchServerPort(array $server)
     {
-        $port = "";
-        if (isset($server["SERVER_PORT"])) {
-            $port = ":".$server["SERVER_PORT"];
+        $port = '';
+        if (isset($server['SERVER_PORT'])) {
+            $port = ':' . $server['SERVER_PORT'];
         }
 
         return $port;
@@ -189,17 +194,17 @@ class Http extends Uri\Uri
      */
     protected static function fetchServerRequestUri(array $server)
     {
-        if (isset($server["REQUEST_URI"])) {
-            return $server["REQUEST_URI"];
+        if (isset($server['REQUEST_URI'])) {
+            return $server['REQUEST_URI'];
         }
 
-        $request = "";
-        if (isset($server["PHP_SELF"])) {
-            $request .= $server["PHP_SELF"];
+        $request = '';
+        if (isset($server['PHP_SELF'])) {
+            $request .= $server['PHP_SELF'];
         }
 
-        if (isset($server["QUERY_STRING"])) {
-            $request .= "?".$server["QUERY_STRING"];
+        if (isset($server['QUERY_STRING'])) {
+            $request .= '?' . $server['QUERY_STRING'];
         }
 
         return $request;

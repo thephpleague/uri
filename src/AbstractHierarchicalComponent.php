@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 /**
  * An abstract class to ease collection like Component object manipulation
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalComponent
@@ -30,12 +30,12 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      */
     protected $isAbsolute = self::IS_RELATIVE;
 
-    /**
+    /*
      * common immutable value object methods
      */
     use Types\ImmutableValueObject;
 
-    /**
+    /*
      * immutable collection methods
      */
     use Types\ImmutableCollection;
@@ -131,11 +131,11 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     /**
      * return a new instance from an array or a traversable object
      *
-     * @param \Traversable|string[] $data  The segments list
-     * @param int                   $type  One of the constant isAbsolute or IS_RELATIVE
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
      * @throws InvalidArgumentException If $data is invalid
-     * @throws InvalidArgumentException If $isAbsolute is not a recognized constant
+     * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
      */
@@ -162,7 +162,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     protected static function formatComponentString($str, $type)
     {
         if (self::IS_ABSOLUTE == $type) {
-            return static::$delimiter.$str;
+            return static::$delimiter . $str;
         }
 
         return $str;
@@ -184,7 +184,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
         }
 
         return $this->newCollectionInstance(
-            array_merge(array_slice($source, 0, $key), $dest, array_slice($source, $key+1))
+            array_merge(array_slice($source, 0, $key), $dest, array_slice($source, $key + 1))
         );
     }
 }

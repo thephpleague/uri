@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use League\Uri\Fragment;
 use League\Uri\Host;
@@ -8,18 +8,17 @@ use League\Uri\Pass;
 use League\Uri\Path;
 use League\Uri\Port;
 use League\Uri\Query;
+use League\Uri\Scheme;
+use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Uri;
 use League\Uri\User;
 use League\Uri\UserInfo;
-use League\Uri\Scheme;
-use League\Uri\Schemes\Registry;
 use PHPUnit_Framework_TestCase;
-use Psr\Http\Message\UriInterface;
 
 /**
- * @group url
+ * @group uri
  */
-class UrlTest extends PHPUnit_Framework_TestCase
+class UriTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Url
@@ -28,8 +27,9 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $uri = 'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';
-        $this->uri = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($uri));
+        $this->uri = HttpUri::createFromString(
+            'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
+        );
     }
 
     public function tearDown()
@@ -82,26 +82,19 @@ class UrlTest extends PHPUnit_Framework_TestCase
 
     public function testAutomaticUrlNormalization()
     {
-
-        $url = Uri::createFromComponents(
-            new Registry(['http' => 80, 'https' => 443]),
-            Uri::parse('HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment')
-        );
-
-        $this->assertSame(
-            'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment',
-            (string) $url
-        );
+        $raw = 'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/index.php?foo.bar=value#fragment';
+        $normalized = 'https://master.example.com/~johndoe/%A1/index.php?foo.bar=value#fragment';
+        $this->assertSame($normalized, (string) HttpUri::createFromString($raw));
     }
 
     /**
-     * @param $url
+     * @param $uri
      * @param $port
      * @dataProvider portProvider
      */
-    public function testPort($url, $port)
+    public function testPort($uri, $port)
     {
-        $this->assertSame($port, Uri::createFromComponents(new Registry(['http' => 80]), Uri::parse($url))->getPort());
+        $this->assertSame($port, HttpUri::createFromString($uri)->getPort());
     }
 
     public function portProvider()
@@ -115,13 +108,13 @@ class UrlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $url
+     * @param $uri
      * @param $expected
      * @dataProvider toArrayProvider
      */
-    public function testToArray($url, $expected)
+    public function testToArray($uri, $expected)
     {
-        $this->assertSame($expected, Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($url))->toArray());
+        $this->assertSame($expected, HttpUri::createFromString($uri)->toArray());
     }
 
     public function toArrayProvider()
@@ -183,21 +176,20 @@ class UrlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $url
+     * @param $uri
      * @param $expected
      * @dataProvider isEmptyProvider
      */
-    public function testIsEmpty($url, $expected)
+    public function testIsEmpty($uri, $expected)
     {
-        $this->assertSame($expected, $url->isEmpty());
+        $this->assertSame($expected, $uri->isEmpty());
     }
 
     public function isEmptyProvider()
     {
         return [
-            'normal URL' => [Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://a/b/c')), false],
-            'incomplete authority' => [new Uri(
-                new Registry(['http' => 80, 'https' => 443]),
+            'normal URL' => [HttpUri::createFromString('http://a/b/c'), false],
+            'incomplete authority' => [new HttpUri(
                 new Scheme(),
                 new UserInfo('foo', 'bar'),
                 new Host(),
@@ -206,8 +198,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Query(),
                 new Fragment()
             ), true],
-            'empty URL components' => [new Uri(
-                new Registry(['http' => 80, 'https' => 443]),
+            'empty URL components' => [new HttpUri(
                 new Scheme(),
                 new UserInfo(),
                 new Host(),
@@ -227,7 +218,7 @@ class UrlTest extends PHPUnit_Framework_TestCase
         $mock = $this->getMock('Psr\Http\Message\UriInterface');
         $mock->method('__toString')->willReturn($psr7);
 
-        $uri = Uri::createFromComponents(new Registry(['http' => 80]), Uri::parse($league));
+        $uri = HttpUri::createFromString($league);
 
         $this->assertSame($expected, $uri->sameValueAs($mock));
     }
@@ -255,46 +246,23 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
     {
-        Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://example.com'))->withScheme('telnet');
+        HttpUri::createFromString('http://example.com')->withScheme('telnet');
     }
 
     /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithRegistryFailedWithUnsupportedScheme()
-    {
-        Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://example.com'))
-            ->withSchemeRegistry(new Registry(['file' => null]));
-    }
-
-    public function testWithRegistryUpdateWithTheSameData()
-    {
-        $url = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://example.com'));
-        $this->assertSame($url, $url->withSchemeRegistry(new Registry(['http' => 80, 'https' => 443])));
-    }
-
-    public function testWithRegistry()
-    {
-        $url     = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://example.com'));
-        $alt_url = $url->withSchemeRegistry((new Registry(['http' => 80, 'https' => 443]))->merge(['telnet' => 23]));
-        $this->assertNotEquals($url, $alt_url);
-    }
-
-    /**
-     * @param $url
+     * @param $uri
      * @param $expected
      * @dataProvider pathFormattingProvider
      */
-    public function testPathFormatting($url, $expected)
+    public function testPathFormatting($uri, $expected)
     {
-        $this->assertSame($expected, $url->__toString());
+        $this->assertSame($expected, $uri->__toString());
     }
 
     public function pathFormattingProvider()
     {
         return [
-            [new Uri(
-                new Registry(['http' => 80, 'https' => 443]),
+            [new HttpUri(
                 new Scheme('http'),
                 new UserInfo(),
                 new Host('ExAmPLe.cOm'),
@@ -303,26 +271,24 @@ class UrlTest extends PHPUnit_Framework_TestCase
                 new Query(),
                 new Fragment()
             ), 'http://example.com/path/to/the/sky'],
-            [new Uri(
-                new Registry(['http' => 80, 'https' => 443]),
-                new Scheme('http'),
+            [new HttpUri(
+                new Scheme(''),
                 new UserInfo(),
                 new Host(),
                 new Port(),
                 new Path('///path/to/the/sky'),
                 new Query(),
                 new Fragment()
-            ), 'http:/path/to/the/sky'],
+            ), '/path/to/the/sky'],
         ];
     }
 
     /**
      * @dataProvider hasStandardPortProvider
      */
-    public function testHasStandardPort($url, $expected)
+    public function testHasStandardPort($uri, $expected)
     {
-        $uri = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($url));
-        $this->assertSame($expected, $uri->hasStandardPort());
+        $this->assertSame($expected, HttpUri::createFromString($uri)->hasStandardPort());
     }
 
     public function hasStandardPortProvider()
@@ -337,71 +303,57 @@ class UrlTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider resolveProvider
      */
-    public function testResolve($url, $relative, $expected)
+    public function testResolve($uri, $relative, $expected)
     {
-        $url      = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($url));
-        $relative = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443, 'mailto' => null]), Uri::parse($relative));
+        $uri      = HttpUri::createFromString($uri);
+        $relative = HttpUri::createFromString($relative);
 
-        $this->assertSame($expected, (string) $url->resolve($relative));
+        $this->assertSame($expected, (string) $uri->resolve($relative));
     }
 
     public function resolveProvider()
     {
-        $base_url = "http://a/b/c/d;p?q";
+        $base_uri = 'http://a/b/c/d;p?q';
 
         return [
-          'opaque URI' =>              [$base_url, "mailto:email@example.com", "mailto:email@example.com"],
-          'baseurl' =>                 [$base_url, "",               $base_url],
-          'scheme' =>                  [$base_url, "ftp://d/e/f",    "ftp://d/e/f"],
-          'path 1' =>                  [$base_url, "g",              "http://a/b/c/g"],
-          'path 2' =>                  [$base_url, "./g",            "http://a/b/c/g"],
-          'path 3' =>                  [$base_url, "g/",             "http://a/b/c/g/"],
-          'path 4' =>                  [$base_url, "/g",             "http://a/g"],
-          'authority' =>               [$base_url, "//g",            "http://g"],
-          'query' =>                   [$base_url, "?y",             "http://a/b/c/d;p?y"],
-          'path + query' =>            [$base_url, "g?y",            "http://a/b/c/g?y"],
-          'fragment' =>                [$base_url, "#s",             "http://a/b/c/d;p?q#s"],
-          'path + fragment' =>         [$base_url, "g#s",            "http://a/b/c/g#s"],
-          'path + query + fragment' => [$base_url, "g?y#s",          "http://a/b/c/g?y#s"],
-          'single dot 1'=>             [$base_url, ".",              "http://a/b/c/"],
-          'single dot 2' =>            [$base_url, "./",             "http://a/b/c/"],
-          'single dot 3' =>            [$base_url, "./g/.",          "http://a/b/c/g/"],
-          'single dot 4' =>            [$base_url, "g/./h",          "http://a/b/c/g/h"],
-          'double dot 1' =>            [$base_url, "..",             "http://a/b/"],
-          'double dot 2' =>            [$base_url, "../",            "http://a/b/"],
-          'double dot 3' =>            [$base_url, "../g",           "http://a/b/g"],
-          'double dot 4' =>            [$base_url, "../..",          "http://a/"],
-          'double dot 5' =>            [$base_url, "../../",         "http://a/"],
-          'double dot 6' =>            [$base_url, "../../g",        "http://a/g"],
-          'double dot 7' =>            [$base_url, "../../../g",     "http://a/g"],
-          'double dot 8' =>            [$base_url, "../../../../g",  "http://a/g"],
-          'double dot 9' =>            [$base_url, "g/../h" ,        "http://a/b/c/h"],
-          'mulitple slashes' =>        [$base_url, "foo////g",       "http://a/b/c/foo////g"],
-          'complex path 1' =>          [$base_url, ";x",             "http://a/b/c/;x"],
-          'complex path 2' =>          [$base_url, "g;x",            "http://a/b/c/g;x"],
-          'complex path 3' =>          [$base_url, "g;x?y#s",        "http://a/b/c/g;x?y#s"],
-          'complex path 4' =>          [$base_url, "g;x=1/./y",      "http://a/b/c/g;x=1/y"],
-          'complex path 5' =>          [$base_url, "g;x=1/../y",     "http://a/b/c/y"],
-          'origin url without path' => ["http://h:b@a", "b/../y",         "http://h:b@a/y"],
-          '2 relative paths 1'      => ["a/b",          "../..",          "/"],
-          '2 relative paths 2'      => ["a/b",          "./.",            "a/"],
-          '2 relative paths 3'      => ["a/b",          "../c",           "c"],
-          '2 relative paths 4'      => ["a/b",          "c/..",           "a/"],
-          '2 relative paths 5'      => ["a/b",          "c/.",            "a/c/"],
+          'base uri' =>                 [$base_uri, '',               $base_uri],
+          'scheme' =>                  [$base_uri, 'http://d/e/f',   'http://d/e/f'],
+          'path 1' =>                  [$base_uri, 'g',              'http://a/b/c/g'],
+          'path 2' =>                  [$base_uri, './g',            'http://a/b/c/g'],
+          'path 3' =>                  [$base_uri, 'g/',             'http://a/b/c/g/'],
+          'path 4' =>                  [$base_uri, '/g',             'http://a/g'],
+          'authority' =>               [$base_uri, '//g',            'http://g'],
+          'query' =>                   [$base_uri, '?y',             'http://a/b/c/d;p?y'],
+          'path + query' =>            [$base_uri, 'g?y',            'http://a/b/c/g?y'],
+          'fragment' =>                [$base_uri, '#s',             'http://a/b/c/d;p?q#s'],
+          'path + fragment' =>         [$base_uri, 'g#s',            'http://a/b/c/g#s'],
+          'path + query + fragment' => [$base_uri, 'g?y#s',          'http://a/b/c/g?y#s'],
+          'single dot 1' =>            [$base_uri, '.',              'http://a/b/c/'],
+          'single dot 2' =>            [$base_uri, './',             'http://a/b/c/'],
+          'single dot 3' =>            [$base_uri, './g/.',          'http://a/b/c/g/'],
+          'single dot 4' =>            [$base_uri, 'g/./h',          'http://a/b/c/g/h'],
+          'double dot 1' =>            [$base_uri, '..',             'http://a/b/'],
+          'double dot 2' =>            [$base_uri, '../',            'http://a/b/'],
+          'double dot 3' =>            [$base_uri, '../g',           'http://a/b/g'],
+          'double dot 4' =>            [$base_uri, '../..',          'http://a/'],
+          'double dot 5' =>            [$base_uri, '../../',         'http://a/'],
+          'double dot 6' =>            [$base_uri, '../../g',        'http://a/g'],
+          'double dot 7' =>            [$base_uri, '../../../g',     'http://a/g'],
+          'double dot 8' =>            [$base_uri, '../../../../g',  'http://a/g'],
+          'double dot 9' =>            [$base_uri, 'g/../h' ,        'http://a/b/c/h'],
+          'mulitple slashes' =>        [$base_uri, 'foo////g',       'http://a/b/c/foo////g'],
+          'complex path 1' =>          [$base_uri, ';x',             'http://a/b/c/;x'],
+          'complex path 2' =>          [$base_uri, 'g;x',            'http://a/b/c/g;x'],
+          'complex path 3' =>          [$base_uri, 'g;x?y#s',        'http://a/b/c/g;x?y#s'],
+          'complex path 4' =>          [$base_uri, 'g;x=1/./y',      'http://a/b/c/g;x=1/y'],
+          'complex path 5' =>          [$base_uri, 'g;x=1/../y',     'http://a/b/c/y'],
+          'origin uri without path' => ['http://h:b@a', 'b/../y',    'http://h:b@a/y'],
+          '2 relative paths 1'      => ['a/b',          '../..',     '/'],
+          '2 relative paths 2'      => ['a/b',          './.',       'a/'],
+          '2 relative paths 3'      => ['a/b',          '../c',      'c'],
+          '2 relative paths 4'      => ['a/b',          'c/..',      'a/'],
+          '2 relative paths 5'      => ['a/b',          'c/.',       'a/c/'],
         ];
-    }
-
-    public function testResolveWithDifferentSchemeRegistry()
-    {
-        $schemeRegistry = new Registry(['telnet' => 23]);
-        $telnet = Uri::createFromComponents($schemeRegistry, Uri::parse('telnet://example.com/toto'));
-        $telnet = $telnet->withScheme('');
-        $http   = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse('http://example.com/tata/../toto.csv'));
-        $url    = $http->resolve($telnet);
-
-        $this->assertNotEquals($http->schemeRegistry, $telnet->schemeRegistry);
-        $this->assertNotEquals($url->schemeRegistry, $telnet->schemeRegistry);
-        $this->assertNotEquals($url->schemeRegistry, $http->schemeRegistry);
     }
 
     /**
@@ -409,17 +361,30 @@ class UrlTest extends PHPUnit_Framework_TestCase
      */
     public function testRelativize($base, $child, $expected)
     {
-        $baseUri  = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443]), Uri::parse($base));
-        $childUri = Uri::createFromComponents(new Registry(['http' => 80, 'https' => 443, 'mailto' => null]), Uri::parse($child));
+        $baseUri  = HttpUri::createFromString($base);
+        $childUri = HttpUri::createFromString($child);
 
         $this->assertSame($expected, (string) $baseUri->relativize($childUri));
+    }
+
+    public function testResolveUriObject()
+    {
+        $mock = $this->getMock('League\Uri\Interfaces\Uri');
+        $mock->method('__toString')->willReturn('//example.com');
+        $mock->method('getScheme')->willReturn('');
+        $mock->method('getHost')->willReturn('example.com');
+        $mock->method('withoutDotSegments')->will($this->returnSelf());
+        $mock->method('withScheme')->will($this->throwException(new \InvalidArgumentException()));
+
+        $uri = HttpUri::createFromString('http://a/b/c/d;p?q');
+
+        $this->assertSame($mock, $uri->resolve($mock));
     }
 
     public function relativizeProvider()
     {
         return [
             ['http://www.example.com/foo/bar', 'http://toto.com', 'http://toto.com'],
-            ['http://www.example.com/foo/bar', 'mailto:foo@example.com', 'mailto:foo@example.com'],
             ['http://www.example.com/foo/bar', 'http://www.example.com:81/foo', 'http://www.example.com:81/foo'],
             ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../bar'],
             ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../bar'],
@@ -428,22 +393,21 @@ class UrlTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
      * @dataProvider invalidURL
      * @expectedException InvalidArgumentException
      */
     public function testCreateFromInvalidUrlKO($input)
     {
-        Uri::parse($input);
+        HttpUri::parse($input);
     }
 
     public function invalidURL()
     {
         return [
-            ["http://user@:80"],
-            ["//user@:80"],
-            ["http:///example.com"],
+            ['http://user@:80'],
+            ['//user@:80'],
+            ['http:///example.com'],
         ];
     }
 }

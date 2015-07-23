@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
@@ -15,17 +15,17 @@ use InvalidArgumentException;
 /**
  * Value object representing a URL host component.
  *
- * @package League.url
+ * @package League.uri
  * @since   1.0.0
  */
 class Host extends AbstractHierarchicalComponent implements Interfaces\Host
 {
-/**
+    /*
      * Ip host validation and properties
      */
     use Host\Ip;
 
-    /**
+    /*
      * hostname validation and properties
      */
     use Host\Hostname;
@@ -109,7 +109,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     /**
      * string representation of a hostname
      *
-     * @param  array  $labels Hostname labels
+     * @param array $labels Hostname labels
      *
      * @return string
      */
@@ -155,7 +155,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Host
     protected static function formatComponentString($str, $type)
     {
         if (self::IS_ABSOLUTE == $type) {
-            return $str.static::$delimiter;
+            return $str . static::$delimiter;
         }
 
         return $str;

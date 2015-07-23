@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Uri;
 
@@ -16,7 +16,7 @@ use League\Uri\Types;
 /**
  * a Trait to proxy partial update of a League\Uri\Uri object
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 trait PartialModifier
@@ -70,7 +70,7 @@ trait PartialModifier
      */
     protected $fragment;
 
-    /**
+    /*
      * Trait To get/set immutable value property
      */
     use Types\ImmutableProperty;
@@ -174,7 +174,7 @@ trait PartialModifier
     /**
      * {@inheritdoc}
      */
-    public function normalize()
+    public function withoutDotSegments()
     {
         return $this->withProperty('path', $this->path->withoutDotSegments());
     }

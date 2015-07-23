@@ -2,18 +2,18 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
 /**
  * Value object representing the UserInfo part of an URL.
  *
- * @package League.url
+ * @package League.uri
  * @since 4.0.0
  *
  */
@@ -33,7 +33,7 @@ class UserInfo implements Interfaces\UserInfo
      */
     protected $pass;
 
-    /**
+    /*
      * Trait To get/set immutable value property
      */
     use Types\ImmutableProperty;
@@ -103,7 +103,7 @@ class UserInfo implements Interfaces\UserInfo
             return $this->user->__toString();
         }
 
-        return $this->user->__toString().':'.$this->pass->__toString();
+        return $this->user->__toString() . ':' . $this->pass->__toString();
     }
 
     /**

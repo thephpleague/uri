@@ -11,9 +11,12 @@ php:
 matrix:
   include:
     - php: 5.5
-      env: COLLECT_COVERAGE=true
+      env:
+        - COLLECT_COVERAGE=true
+        - EXECUTE_CS_CHECK=true
     - php: 5.6
-      env: COLLECT_COVERAGE=true
+      env:
+        - COLLECT_COVERAGE=true
     - php: 7.0
     - php: hhvm
   allow_failures:
@@ -29,6 +32,7 @@ install:
 
 script:
   - phpunit --coverage-text --coverage-clover=coverage.clover
+  - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then ./vendor/bin/php-cs-fixer fix -v --diff --dry-run; fi
 
 after_script:
  - wget https://scrutinizer-ci.com/ocular.phar

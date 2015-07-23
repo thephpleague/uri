@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Query;
 
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 /**
  * A Trait to parse and build a Query string
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 trait Parser
@@ -53,8 +53,8 @@ trait Parser
      * Parse a query string pair
      *
      * @param callable $decoder a Callable to decode the query string pair
-     * @param array    $res  The associative array to add the pair to
-     * @param string   $pair The query string pair
+     * @param array    $res     The associative array to add the pair to
+     * @param string   $pair    The query string pair
      *
      * @return array
      */
@@ -72,7 +72,7 @@ trait Parser
             return $res;
         }
         if (!is_array($res[$key])) {
-            $res[$key] =[$res[$key]];
+            $res[$key] = [$res[$key]];
         }
         $res[$key][] = $value;
 
@@ -122,7 +122,7 @@ trait Parser
         return array_reduce($value, function (array $carry, $data) use ($key, $encoder) {
             $pair = $key;
             if (null !== $data) {
-                $pair .= '='.$encoder($data);
+                $pair .= '=' . $encoder($data);
             }
             $carry[] = $pair;
 

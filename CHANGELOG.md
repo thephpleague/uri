@@ -6,8 +6,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- A `Http` class to specifically manipulate `http`,`https`,`ws`,`wss`,`ftp` schemed URI
-- A system to manage registration of other schemes using the `SchemeRegistry` Interface.
+- A `Http` class to specifically manipulate `http`,`https` schemed URI
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library
@@ -22,19 +21,17 @@ All Notable changes to `League\Url` will be documented in this file
 ### Fixed
 
 - Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
-- Changed class name from `League\Url\Url` to `League\Uri\Uri` to better reflect the class intent
+- Changed class name from `League\Url\Url` to `League\Uri\Schemes\AbstractUri` to better reflect the class intent
 - Renamed methods for consistency with PHP naming conventions
-- The `Uri` class requires a Scheme Registry object to be correctly instantiated
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
 - Host::toUnicode now returns a new Host instance
 - Host now support append/prepend/replacing to or with IPv4 Host type
 - Path now supports multiple leading slash
 - Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
-- `Uri::resolve` is now typehinted to the Uri interface
-- Formatter::format only accept Uri and UriPart implemented object
-- `Path::withoutDotSegment` and `Uri::withoutDotSegment` renamed to `Path::normalize` and `Uri::normalize` respectively
-- `Uri::sameValueAs` takes into account `Uri::normalize`
+- The `::resolve` method is now typehinted to the Uri interface
+- Formatter::format only accept `Uri` and `UriPart` implemented object
+- `Uri::sameValueAs` normalized host encoding, path without dot segments, and query parameters key sorting before comparison
 
 ### Remove
 

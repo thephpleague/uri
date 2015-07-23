@@ -1,11 +1,10 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use ArrayIterator;
 use League\Uri\Path;
 use PHPUnit_Framework_TestCase;
-use StdClass;
 
 /**
  * @group path
@@ -104,6 +103,7 @@ class PathTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $input
+     * @param $has_front_delimiter
      * @param $expected
      * @dataProvider createFromArrayValid
      */
@@ -128,6 +128,7 @@ class PathTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $input
+     * @param $flags
      * @dataProvider createFromArrayInvalid
      * @expectedException \InvalidArgumentException
      */
@@ -308,8 +309,8 @@ class PathTest extends PHPUnit_Framework_TestCase
     /**
      * Test Removing Dot Segment
      *
-     * @param  string $expected
-     * @param  string $path
+     * @param $expected
+     * @param $path
      * @dataProvider normalizeProvider
      */
     public function testWithoutDotSegments($path, $expected)
@@ -475,8 +476,8 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  string $raw
-     * @param  string $parsed
+     * @param $raw
+     * @param $parsed
      * @dataProvider extensionProvider
      */
     public function testGetExtension($raw, $parsed)
@@ -495,10 +496,10 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  string $raw
-     * @param  string $raw_ext
-     * @param  string $new_path
-     * @param  string $parsed_ext
+     * @param $raw
+     * @param $raw_ext
+     * @param $new_path
+     * @param $parsed_ext
      * @dataProvider withExtensionProvider
      */
     public function testWithExtension($raw, $raw_ext, $new_path, $parsed_ext)

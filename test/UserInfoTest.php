@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use League\Uri\Pass;
 use League\Uri\User;

@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
@@ -16,22 +16,22 @@ use Traversable;
 /**
  * Value object representing a URL query component.
  *
- * @package League.url
+ * @package League.uri
  * @since   1.0.0
  */
 class Query implements Interfaces\Query
 {
-    /**
+    /*
      * common immutable value object methods
      */
     use Types\ImmutableValueObject;
 
-    /**
+    /*
      * immutable collection methods
      */
     use Types\ImmutableCollection;
 
-    /**
+    /*
      * Parsing and building query string without data loss
      */
     use Query\Parser;
@@ -113,7 +113,7 @@ class Query implements Interfaces\Query
             return $res;
         }
 
-        return '?'.$res;
+        return '?' . $res;
     }
 
     /**

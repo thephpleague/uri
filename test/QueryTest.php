@@ -1,11 +1,10 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use ArrayIterator;
 use League\Uri\Query;
 use PHPUnit_Framework_TestCase;
-use StdClass;
 
 /**
  * @group query
@@ -39,7 +38,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'Std Class' => [(object) 'foo'],
             'null'      => [null],
             'float'     => [1.2],
-            'array'      =>[['foo']],
+            'array'      => [['foo']],
         ];
     }
 
@@ -78,7 +77,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function createFromArrayFailedProvider()
     {
         return [
-            'Non traversable object' => [new \StdClass],
+            'Non traversable object' => [new \StdClass()],
             'String' => ['toto=23'],
             'reserved character # used as value' => [['toto' => '#23']],
             'reserved character # used as key' => [['tot#o' => '23']],
@@ -135,7 +134,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'with empty string' => [
                 '',
                 'kingkong=toto',
-            ]
+            ],
         ];
     }
 
@@ -167,7 +166,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'baz' => 'troll',
             'lol' => 3,
-            'toto' => 'troll'
+            'toto' => 'troll',
         ]);
         $this->assertCount(0, $query->keys('foo'));
         $this->assertSame(['foo'], $query->keys('bar'));
@@ -291,7 +290,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         return [
             [function ($value) {
                 return true;
-            }, "toto"],
+            }, 'toto'],
         ];
     }
 
@@ -350,7 +349,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         Query::parse('dfddsf', '&', 'toto');
     }
-
 
     public function testParseWithRFC1738()
     {
@@ -411,23 +409,23 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['superman' => 'lex luthor', 'batman' => 'joker',],
+                ['superman' => 'lex luthor', 'batman' => 'joker'],
                 SORT_REGULAR,
-                [ 'batman' => 'joker', 'superman' => 'lex luthor',]
+                [ 'batman' => 'joker', 'superman' => 'lex luthor'],
             ],
             [
-                ['superman' => 'lex luthor', 'batman' => 'joker',],
+                ['superman' => 'lex luthor', 'batman' => 'joker'],
                 function ($dataA, $dataB) {
                     return strcasecmp($dataA, $dataB);
                 },
-                [ 'batman' => 'joker', 'superman' => 'lex luthor',]
+                [ 'batman' => 'joker', 'superman' => 'lex luthor'],
             ],
             [
-                ['superman' => 'lex luthor', 'superman' => 'joker',],
+                ['superman' => 'lex luthor', 'superman' => 'joker'],
                 function ($dataA, $dataB) {
                     return strcasecmp($dataA, $dataB);
                 },
-                ['superman' => 'lex luthor', 'superman' => 'joker',]
+                ['superman' => 'lex luthor', 'superman' => 'joker'],
             ],
         ];
     }

@@ -2,23 +2,40 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
+
+use InvalidArgumentException;
 
 /**
  * Value object representing a URL scheme component.
  *
- * @package League.url
+ * @package League.uri
  * @since 1.0.0
  */
 class Scheme extends AbstractComponent implements Interfaces\Scheme
 {
-    use Schemes\Validator;
+    /**
+     * Validate and format the submitted string scheme
+     *
+     * @param  string                   $scheme
+     * @throws InvalidArgumentException if the scheme is invalid
+     *
+     * @return string
+     */
+    protected function validate($scheme)
+    {
+        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+            throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
+        }
+
+        return strtolower($scheme);
+    }
 
     /**
      * {@inheritdoc}
@@ -29,6 +46,7 @@ class Scheme extends AbstractComponent implements Interfaces\Scheme
         if (empty($data)) {
             return $data;
         }
-        return $data.':';
+
+        return $data . ':';
     }
 }

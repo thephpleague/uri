@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
 use League\Uri\Fragment;
 use PHPUnit_Framework_TestCase;
@@ -34,8 +34,8 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'empty' => ['', ''],
             'hash'  => ['#', '#%23'],
             'toofan' => ['toofan', '#toofan'],
-            'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@',],
-            'encoded' => ["%^[]{}\"<>\\", "#%25%5E%5B%5D%7B%7D%22%3C%3E%5C",],
+            'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@'],
+            'encoded' => ['%^[]{}"<>\\', '#%25%5E%5B%5D%7B%7D%22%3C%3E%5C'],
         ];
     }
 
@@ -56,7 +56,7 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'Std Class' => [(object) 'foo'],
             'null'      => [null],
             'float'     => [1.2],
-            'array'      =>[['foo']],
+            'array'      => [['foo']],
         ];
     }
 
@@ -74,7 +74,7 @@ class FragmentTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['yes', false],
-            ['', true]
+            ['', true],
         ];
     }
 }

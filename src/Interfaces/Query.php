@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Interfaces;
 
@@ -18,7 +18,7 @@ namespace League\Uri\Interfaces;
  * state of the current instance and return an instance that contains the
  * changed state.
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.4
  */
@@ -59,11 +59,11 @@ interface Query extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
      *
-     * @param  callable|int $sort a PHP sort flag constant or a comparaison function
-     *                            which must return an integer less than, equal to,
-     *                            or greater than zero if the first argument is
-     *                            considered to be respectively less than, equal to,
-     *                            or greater than the second.
+     * @param callable|int $sort a PHP sort flag constant or a comparaison function
+     *                           which must return an integer less than, equal to,
+     *                           or greater than zero if the first argument is
+     *                           considered to be respectively less than, equal to,
+     *                           or greater than the second.
      *
      * @return static
      */

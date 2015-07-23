@@ -2,19 +2,20 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Host;
+
 use InvalidArgumentException;
 
 /**
  * A Trait to validate a IP type Host
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 trait Ip
@@ -51,7 +52,7 @@ trait Ip
      *
      * @var string
      */
-    static protected $local_link_prefix = '1111111010';
+    protected static $local_link_prefix = '1111111010';
 
     /**
      * {@inheritdoc}
@@ -109,6 +110,7 @@ trait Ip
             $this->hostAsIpv4 = false;
             $this->hostAsIpv6 = true;
             $this->ipLiteral  = $res;
+
             return [$res];
         }
 
@@ -116,6 +118,7 @@ trait Ip
             $this->hostAsIpv4 = true;
             $this->hostAsIpv6 = false;
             $this->ipLiteral  = $str;
+
             return [$str];
         }
 
@@ -132,7 +135,7 @@ trait Ip
     protected function filterIpv6Host($str)
     {
         preg_match(',^(?P<ldelim>[\[]?)(?P<ipv6>.*?)(?P<rdelim>[\]]?)$,', $str, $matches);
-        if (!in_array(strlen($matches['ldelim'].$matches['rdelim']), [0, 2])) {
+        if (!in_array(strlen($matches['ldelim'] . $matches['rdelim']), [0, 2])) {
             return false;
         }
 
@@ -149,7 +152,7 @@ trait Ip
      * @see http://tools.ietf.org/html/rfc6874#section-2
      * @see http://tools.ietf.org/html/rfc6874#section-4
      *
-     * @param  string $ip The ip to validate
+     * @param string $ip The ip to validate
      *
      * @return string
      */
@@ -173,7 +176,7 @@ trait Ip
     /**
      * Tell whether the submitted string is a local link IPv6
      *
-     * @param  string  $ipv6
+     * @param string $ipv6
      *
      * @return bool
      */
@@ -202,7 +205,7 @@ trait Ip
     {
         $tmp = explode('%', $ip_address);
         if (isset($tmp[1])) {
-            $ip_address = $tmp[0].'%25'.rawurlencode($tmp[1]);
+            $ip_address = $tmp[0] . '%25' . rawurlencode($tmp[1]);
         }
 
         if ($this->hostAsIpv6) {

@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Interfaces;
 
@@ -20,7 +20,7 @@ use Psr\Http\Message\UriInterface;
  * state of the current instance and return an instance that contains the
  * changed state.
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
  *
@@ -99,18 +99,6 @@ interface Uri extends UriInterface
     public function relativize(Uri $rel);
 
     /**
-     * Return an instance with a new SchemeRegistry
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the new SchemeRegistry object
-     *
-     * @param SchemeRegistry $schemeRegistry
-     *
-     * @return static
-     */
-    public function withSchemeRegistry(SchemeRegistry $schemeRegistry);
-
-    /**
      * Return an instance with update query values
      *
      * This method MUST retain the state of the current instance, and return
@@ -132,11 +120,11 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
      *
-     * @param  callable|int $sort a PHP sort flag constant or a comparaison function
-     *                            which must return an integer less than, equal to,
-     *                            or greater than zero if the first argument is
-     *                            considered to be respectively less than, equal to,
-     *                            or greater than the second.
+     * @param callable|int $sort a PHP sort flag constant or a comparaison function
+     *                           which must return an integer less than, equal to,
+     *                           or greater than zero if the first argument is
+     *                           considered to be respectively less than, equal to,
+     *                           or greater than the second.
      *
      * @return static
      */
@@ -165,7 +153,7 @@ interface Uri extends UriInterface
      * @param callable $callable the callable should filter the list
      *                           of keys to remain in the query
      *
-     * @param int      $flag     Flag determining what argument are sent to callback
+     * @param int $flag Flag determining what argument are sent to callback
      *
      * @return static
      */
@@ -201,8 +189,8 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance containing the path
      *
-     * @param int                        $key the Path segment offset
-     * @param HierarchicalComponent|string $value  the data to inject
+     * @param int                          $key   the Path segment offset
+     * @param HierarchicalComponent|string $value the data to inject
      *
      * @return static
      */
@@ -230,7 +218,7 @@ interface Uri extends UriInterface
      *
      * @return static
      */
-    public function normalize();
+    public function withoutDotSegments();
 
     /**
      * Return an instance without internal empty segments
@@ -251,7 +239,7 @@ interface Uri extends UriInterface
      * @param callable $callable the callable should filter the list
      *                           of segment to remain in the path
      *
-     * @param int      $flag     Flag determining what argument are sent to callback
+     * @param int $flag Flag determining what argument are sent to callback
      *
      * @return static
      */
@@ -359,8 +347,8 @@ interface Uri extends UriInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified host with the replaced labels
      *
-     * @param int                          $key the Host label offset
-     * @param HierarchicalComponent|string $value  the data to inject
+     * @param int                          $key   the Host label offset
+     * @param HierarchicalComponent|string $value the data to inject
      *
      * @return static
      */
@@ -389,7 +377,7 @@ interface Uri extends UriInterface
      * @param callable $callable the callable should filter the list
      *                           of label to remain in the host
      *
-     * @param int      $flag     Flag determining what argument are sent to callback
+     * @param int $flag Flag determining what argument are sent to callback
      *
      * @return static
      */

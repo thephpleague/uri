@@ -48,7 +48,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param              string $invalid
+     * @param string $invalid
      * @dataProvider       invalidHostProvider
      * @expectedException \InvalidArgumentException
      */
@@ -60,6 +60,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function invalidHostProvider()
     {
         $longlabel = implode('', array_fill(0, 12, 'banana'));
+
         return [
             'dot in front' => ['.example.com'],
             'hyphen suffix' => ['host.com-'],
@@ -68,21 +69,21 @@ class HostTest extends PHPUnit_Framework_TestCase
             'empty label' => ['tot.    .coucou.com'],
             'space in the label' => ['re view'],
             'underscore in label' => ['_bad.host.com'],
-            'label too long' => [$longlabel.'.secure.example.com'],
+            'label too long' => [$longlabel . '.secure.example.com'],
             'too many labels' => [implode('.', array_fill(0, 128, 'a'))],
             'Invalid IPv4 format' => ['[127.0.0.1]'],
             'Invalid IPv6 format' => ['[[::1]]'],
             'Invalid IPv6 format 2' => ['[::1'],
             'space character in starting label' => ['example. com'],
             'invalid character in host label' => ["examp\0le.com"],
-            "invalid IP with scope" => ["[127.2.0.1%253]"],
-            "invalid scope IPv6" => ["ab23::1234%251"],
-            "invalid scope ID" => ["fe80::1234%25?@"],
-            "invalid scope ID with utf8 character" => ["fe80::1234%25€"],
-            'bool'      => [true],
+            'invalid IP with scope' => ['[127.2.0.1%253]'],
+            'invalid scope IPv6' => ['ab23::1234%251'],
+            'invalid scope ID' => ['fe80::1234%25?@'],
+            'invalid scope ID with utf8 character' => ['fe80::1234%25€'],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'null'      => [null],
-            'float'     => [1.2],
+            'null' => [null],
+            'float' => [1.2],
         ];
     }
 
@@ -207,8 +208,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], Host::IS_RELATIVE, 'www.example.com',],
-            'iterator' => [new ArrayIterator(['www', 'example', 'com']), Host::IS_RELATIVE, 'www.example.com',],
+            'array' => [['www', 'example', 'com'], Host::IS_RELATIVE, 'www.example.com'],
+            'iterator' => [new ArrayIterator(['www', 'example', 'com']), Host::IS_RELATIVE, 'www.example.com'],
             'host object' => [new Host('::1'), Host::IS_RELATIVE, '[::1]'],
             'ip 1' => [[127, 0, 0, 1], Host::IS_RELATIVE, '127.0.0.1'],
             'ip 2' => [['127.0', '0.1'], Host::IS_RELATIVE, '127.0.0.1'],

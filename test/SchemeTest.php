@@ -1,10 +1,8 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\test;
 
-use League\Uri\Port;
 use League\Uri\Scheme;
-use League\Uri\Utilities;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -12,7 +10,6 @@ use PHPUnit_Framework_TestCase;
  */
 class SchemeTest extends PHPUnit_Framework_TestCase
 {
-
     public function testWithValue()
     {
         $scheme = new Scheme('ftp');
@@ -72,7 +69,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             'Std Class'            => [(object) 'foo'],
             'null'                 => [null],
             'float'                => [1.2],
-            'array'                =>[['foo']],
+            'array'                => [['foo']],
         ];
     }
 
@@ -100,7 +97,7 @@ class SchemeTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['ftp', false],
-            ['', true]
+            ['', true],
         ];
     }
 }

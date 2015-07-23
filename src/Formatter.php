@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri;
 
@@ -15,7 +15,7 @@ use InvalidArgumentException;
 /**
  * A class to manipulate an URL and URL components output
  *
- * @package League.url
+ * @package League.uri
  * @since   4.0.0
  */
 class Formatter
@@ -26,7 +26,7 @@ class Formatter
     const HOST_AS_UNICODE = 1;
     const HOST_AS_ASCII   = 2;
 
-    /**
+    /*
      * A trait to format a path in a URL string
      */
     use Uri\PathFormatter;
@@ -78,7 +78,7 @@ class Formatter
     /**
      * Query encoding setter
      *
-     * @param int $encode  a predefined constant value
+     * @param int $encode a predefined constant value
      */
     public function setQueryEncoding($encode)
     {
@@ -144,7 +144,7 @@ class Formatter
     }
 
     /**
-     * Format a League\Uri\Interfaces\UriPart according to the Formatter properties
+     * Format a Interfaces\UriPart implemented object according to the Formatter properties
      *
      * @param Interfaces\UriPart $part
      *
@@ -164,7 +164,7 @@ class Formatter
     }
 
     /**
-     * Format a League\Uri\Interfaces\Host according to the Formatter properties
+     * Format a Interfaces\Host according to the Formatter properties
      *
      * @param Interfaces\Host $host
      *
@@ -180,44 +180,44 @@ class Formatter
     }
 
     /**
-     * Format a Url according to the Formatter properties
+     * Format a Interfaces\Uri according to the Formatter properties
      *
-     * @param Interfaces\Uri $url
+     * @param Interfaces\Uri $uri
      *
      * @return string
      */
-    protected function formatUrl(Interfaces\Uri $url)
+    protected function formatUrl(Interfaces\Uri $uri)
     {
-        $query = $this->formatUriPart($url->query);
+        $query = $this->formatUriPart($uri->query);
         if (!empty($query)) {
-            $query = '?'.$query;
+            $query = '?' . $query;
         }
 
-        $auth = $this->formatAuthority($url);
+        $auth = $this->formatAuthority($uri);
 
-        return $url->scheme->getUriComponent().$auth
-            .$this->formatPath($url->path, !empty($auth)).$query
-            .$url->fragment->getUriComponent();
+        return $uri->scheme->getUriComponent() . $auth
+            . $this->formatPath($uri->path, !empty($auth)) . $query
+            . $uri->fragment->getUriComponent();
     }
 
     /**
      * Format a URL authority according to the Formatter properties
      *
-     * @param Interfaces\Uri $url
+     * @param Interfaces\Uri $uri
      *
      * @return string
      */
-    protected function formatAuthority(Interfaces\Uri $url)
+    protected function formatAuthority(Interfaces\Uri $uri)
     {
-        if ('' == $url->getHost()) {
+        if ('' == $uri->getHost()) {
             return '';
         }
 
-        $port = $url->port->getUriComponent();
-        if ($url->hasStandardPort()) {
+        $port = $uri->port->getUriComponent();
+        if ($uri->hasStandardPort()) {
             $port = '';
         }
 
-        return '//'.$url->userInfo->getUriComponent().$this->formatHost($url->host).$port;
+        return '//' . $uri->userInfo->getUriComponent() . $this->formatHost($uri->host) . $port;
     }
 }

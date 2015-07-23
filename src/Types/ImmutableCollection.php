@@ -2,11 +2,11 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
 namespace League\Uri\Types;
 
@@ -18,7 +18,7 @@ use Traversable;
 /**
  * Common methods for Immutable Collection objects
  *
- * @package League.url
+ * @package League.uri
  * @since  4.0.0
  */
 trait ImmutableCollection
@@ -164,7 +164,7 @@ trait ImmutableCollection
     /**
      * Validate offset
      *
-     * @param  int|string $offset
+     * @param int|string $offset
      *
      * @throws InvalidArgumentException if the offset is invalid
      *

@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test\Schemes;
+namespace League\Uri\test\Schemes;
 
 use League\Uri\Schemes\Http;
 use PHPUnit_Framework_TestCase;
@@ -93,10 +93,10 @@ class HttpTest extends PHPUnit_Framework_TestCase
                     'PHP_SELF' => '',
                     'REQUEST_URI' => '',
                     'SERVER_ADDR' => '127.0.0.1',
-                    'HTTP_X_FORWARDED_PROTO' => 'https',
+                    'HTTPS' => 'on',
                     'SERVER_PORT' => 23,
                     'HTTP_HOST' => 'localhost:23',
-                ]
+                ],
             ],
             'with user info' => [
                 'https://foo:bar@localhost:23',
@@ -150,7 +150,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider validUrlArray
      */
-    public function testcreateFromString($expected, $input)
+    public function testCreateFromString($expected, $input)
     {
         $this->assertSame($expected, Http::createFromString($input)->__toString());
     }
@@ -176,7 +176,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
             ],
             'empty string' => [
                 '',
-                ''
+                '',
             ],
         ];
     }

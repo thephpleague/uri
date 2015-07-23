@@ -2,31 +2,32 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/url/
+ * @link      https://github.com/thephpleague/uri/
  * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
- * @license   https://github.com/thephpleague/url/blob/master/LICENSE (MIT License)
+ * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.url
+ * @package   League.uri
  */
-namespace League\Uri;
+namespace League\Uri\Schemes;
 
-use InvalidArgumentException;
+use League\Uri\Interfaces;
+use League\Uri\Uri;
 
 /**
  * Value object representing a URL.
  *
- * @package League.url
+ * @package League.uri
  * @since   1.0.0
  *
  */
-class Uri implements Interfaces\Uri
+abstract class AbstractUri implements Interfaces\Uri
 {
-    /**
+    /*
      * Component Path formatting in a URI string
      */
     use Uri\PathFormatter;
 
-    /**
+    /*
      * URI complementary methods
      */
     use Uri\Properties;
@@ -34,17 +35,15 @@ class Uri implements Interfaces\Uri
     /**
      * Create a new instance of URL
      *
-     * @param Interfaces\SchemeRegistry $schemeRegistry
-     * @param Interfaces\Scheme         $scheme
-     * @param Interfaces\UserInfo       $userInfo
-     * @param Interfaces\Host           $host
-     * @param Interfaces\Port           $port
-     * @param Interfaces\Path           $path
-     * @param Interfaces\Query          $query
-     * @param Interfaces\Fragment       $fragment
+     * @param Interfaces\Scheme   $scheme
+     * @param Interfaces\UserInfo $userInfo
+     * @param Interfaces\Host     $host
+     * @param Interfaces\Port     $port
+     * @param Interfaces\Path     $path
+     * @param Interfaces\Query    $query
+     * @param Interfaces\Fragment $fragment
      */
     public function __construct(
-        Interfaces\SchemeRegistry $schemeRegistry,
         Interfaces\Scheme $scheme,
         Interfaces\UserInfo $userInfo,
         Interfaces\Host $host,
@@ -53,14 +52,13 @@ class Uri implements Interfaces\Uri
         Interfaces\Query $query,
         Interfaces\Fragment $fragment
     ) {
-        $this->schemeRegistry = $schemeRegistry;
-        $this->scheme         = $scheme;
-        $this->userInfo       = $userInfo;
-        $this->host           = $host;
-        $this->port           = $port;
-        $this->path           = $path;
-        $this->query          = $query;
-        $this->fragment       = $fragment;
+        $this->scheme = $scheme;
+        $this->userInfo = $userInfo;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
         $this->assertValidObject();
     }
 
@@ -86,7 +84,7 @@ class Uri implements Interfaces\Uri
             $port = '';
         }
 
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+        return $this->userInfo->getUriComponent() . $this->host->getUriComponent() . $port;
     }
 
     /**
@@ -142,14 +140,7 @@ class Uri implements Interfaces\Uri
      */
     public function withScheme($scheme)
     {
-        $newScheme = $this->scheme->modify($scheme);
-        if (!$this->isSchemeRegistered($newScheme, $this->schemeRegistry)) {
-            throw new InvalidArgumentException(
-                'The submitted scheme is not supported by the current URI scheme registry'
-            );
-        }
-
-        return $this->withProperty('scheme', $newScheme);
+        return $this->withProperty('scheme', $scheme);
     }
 
     /**
@@ -217,17 +208,17 @@ class Uri implements Interfaces\Uri
      *
      * @return string
      */
-    protected function getRelativeReference()
+    protected function getSchemeSpecificPart()
     {
         $auth = $this->getAuthority();
         if (!empty($auth)) {
-            $auth = '//'.$auth;
+            $auth = '//' . $auth;
         }
 
         return $auth
-            .$this->formatPath($this->path, (bool) $auth)
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
+            . $this->formatPath($this->path, (bool) $auth)
+            . $this->query->getUriComponent()
+            . $this->fragment->getUriComponent();
     }
 
     /**
@@ -235,6 +226,6 @@ class Uri implements Interfaces\Uri
      */
     public function __toString()
     {
-        return $this->scheme->getUriComponent().$this->getRelativeReference();
+        return $this->scheme->getUriComponent() . $this->getSchemeSpecificPart();
     }
 }

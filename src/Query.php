@@ -14,7 +14,7 @@ use InvalidArgumentException;
 use Traversable;
 
 /**
- * Value object representing a URL query component.
+ * Value object representing a URI query component.
  *
  * @package League.uri
  * @since   1.0.0
@@ -75,7 +75,7 @@ class Query implements Interfaces\Query
     {
         $str = $this->validateString($str);
         if (strpos($str, '#') !== false) {
-            throw new InvalidArgumentException('the query string must not contain a URL fragment');
+            throw new InvalidArgumentException('the query string must not contain a URI fragment');
         }
 
         return static::parse($str, '&', false);

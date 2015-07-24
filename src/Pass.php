@@ -11,7 +11,7 @@
 namespace League\Uri;
 
 /**
- * Value object representing a URL pass component.
+ * Value object representing a URI pass component.
  *
  * @package League.uri
  * @since  1.0.0

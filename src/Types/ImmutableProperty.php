@@ -61,7 +61,7 @@ trait ImmutableProperty
      */
     protected function assertValidObject()
     {
-        if (! $this->isValid()) {
+        if (!$this->isValid()) {
             throw new InvalidArgumentException('The submitted properties will produce an invalid object');
         }
     }

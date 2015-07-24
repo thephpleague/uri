@@ -21,10 +21,10 @@ use League\Uri\Interfaces\Path;
 trait PathFormatter
 {
     /**
-     * Format the Path in a URL string
+     * Format the Path in a URI string
      *
      * @param Path $path
-     * @param bool $has_authority_part does the URL as an authority part
+     * @param bool $has_authority_part does the URI as an authority part
      *
      * @return string
      */

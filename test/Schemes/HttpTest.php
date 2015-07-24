@@ -61,33 +61,33 @@ class HttpTest extends PHPUnit_Framework_TestCase
                     'REQUEST_URI' => '',
                     'SERVER_ADDR' => '127.0.0.1',
                     'HTTPS' => 'on',
-                    'SERVER_PORT' => 23,
+                    'SERVER_PORT' => 80,
                     'HTTP_HOST' => 'localhost:23',
                 ],
             ],
-            'with standard http' => [
+            'with standard apache HTTP server' => [
                 'http://localhost:23',
                 [
                     'PHP_SELF' => '',
                     'REQUEST_URI' => '',
                     'SERVER_ADDR' => '127.0.0.1',
                     'HTTPS' => '',
-                    'SERVER_PORT' => 23,
+                    'SERVER_PORT' => 80,
                     'HTTP_HOST' => 'localhost:23',
                 ],
             ],
-            'with standard http on IIS' => [
+            'with IIS HTTP server' => [
                 'http://localhost:23',
                 [
                     'PHP_SELF' => '',
                     'REQUEST_URI' => '',
                     'SERVER_ADDR' => '127.0.0.1',
                     'HTTPS' => 'off',
-                    'SERVER_PORT' => 23,
+                    'SERVER_PORT' => 80,
                     'HTTP_HOST' => 'localhost:23',
                 ],
             ],
-            'with Xforward header' => [
+            'with standard port setting' => [
                 'https://localhost:23',
                 [
                     'PHP_SELF' => '',
@@ -95,7 +95,17 @@ class HttpTest extends PHPUnit_Framework_TestCase
                     'SERVER_ADDR' => '127.0.0.1',
                     'HTTPS' => 'on',
                     'SERVER_PORT' => 23,
-                    'HTTP_HOST' => 'localhost:23',
+                    'HTTP_HOST' => 'localhost',
+                ],
+            ],
+            'without port' => [
+                'https://localhost',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTPS' => 'on',
+                    'HTTP_HOST' => 'localhost',
                 ],
             ],
             'with user info' => [

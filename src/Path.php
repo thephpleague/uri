@@ -13,7 +13,7 @@ namespace League\Uri;
 use InvalidArgumentException;
 
 /**
- * Value object representing a URL path component.
+ * Value object representing a URI path component.
  *
  * @package League.uri
  * @since 1.0.0
@@ -86,7 +86,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     protected function validate($data)
     {
         if (preg_match('/[?#]/', $data)) {
-            throw new InvalidArgumentException('the path must not contain a query string or a URL fragment');
+            throw new InvalidArgumentException('the path must not contain a query string or a URI fragment');
         }
 
         $data = array_values(array_filter(explode(static::$delimiter, $data), function ($value) {

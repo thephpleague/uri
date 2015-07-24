@@ -11,7 +11,7 @@
 namespace League\Uri\Interfaces;
 
 /**
- * Value object representing simple URL part.
+ * Value object representing simple URI part.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -32,7 +32,7 @@ interface UriPart
 
     /**
      * Returns the instance string representation
-     * with its optional URL delimiters
+     * with its optional URI delimiters
      *
      * @return string
      */

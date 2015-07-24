@@ -11,7 +11,7 @@
 namespace League\Uri;
 
 /**
- * Value object representing the UserInfo part of an URL.
+ * Value object representing the UserInfo part of an URI.
  *
  * @package League.uri
  * @since 4.0.0

@@ -11,7 +11,7 @@
 namespace League\Uri\Interfaces;
 
 /**
- * Value object representing a URL Scheme component.
+ * Value object representing a URI Scheme component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal

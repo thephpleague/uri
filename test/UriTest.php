@@ -9,6 +9,7 @@ use League\Uri\Path;
 use League\Uri\Port;
 use League\Uri\Query;
 use League\Uri\Scheme;
+use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Uri;
 use League\Uri\User;
@@ -188,7 +189,7 @@ class UriTest extends PHPUnit_Framework_TestCase
     public function isEmptyProvider()
     {
         return [
-            'normal URL' => [HttpUri::createFromString('http://a/b/c'), false],
+            'normal URI' => [HttpUri::createFromString('http://a/b/c'), false],
             'incomplete authority' => [new HttpUri(
                 new Scheme(),
                 new UserInfo('foo', 'bar'),
@@ -198,7 +199,7 @@ class UriTest extends PHPUnit_Framework_TestCase
                 new Query(),
                 new Fragment()
             ), true],
-            'empty URL components' => [new HttpUri(
+            'empty URI components' => [new HttpUri(
                 new Scheme(),
                 new UserInfo(),
                 new Host(),
@@ -239,6 +240,14 @@ class UriTest extends PHPUnit_Framework_TestCase
             ['http://example.org/~foo/', 'http://example.org/%7efoo/', true],
             ['http://example.org/~foo/', 'http://example.ORG/bar/./../~foo/', true],
         ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSameValueAsFailedWithUnknownType()
+    {
+        HttpUri::createFromString('http://example.com')->sameValueAs('http://example.com');
     }
 
     /**
@@ -369,16 +378,10 @@ class UriTest extends PHPUnit_Framework_TestCase
 
     public function testResolveUriObject()
     {
-        $mock = $this->getMock('League\Uri\Interfaces\Uri');
-        $mock->method('__toString')->willReturn('//example.com');
-        $mock->method('getScheme')->willReturn('');
-        $mock->method('getHost')->willReturn('example.com');
-        $mock->method('withoutDotSegments')->will($this->returnSelf());
-        $mock->method('withScheme')->will($this->throwException(new \InvalidArgumentException()));
+        $ftp = FtpUri::createFromString('ftp://example.com/path/to/file');
+        $uri = HttpUri::createFromString('//a/b/c/d;p?q');
 
-        $uri = HttpUri::createFromString('http://a/b/c/d;p?q');
-
-        $this->assertSame($mock, $uri->resolve($mock));
+        $this->assertSame($uri, $ftp->resolve($uri));
     }
 
     public function relativizeProvider()
@@ -394,7 +397,7 @@ class UriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider invalidURL
+     * @dataProvider invalidURI
      * @expectedException InvalidArgumentException
      */
     public function testCreateFromInvalidUrlKO($input)
@@ -402,7 +405,7 @@ class UriTest extends PHPUnit_Framework_TestCase
         HttpUri::parse($input);
     }
 
-    public function invalidURL()
+    public function invalidURI()
     {
         return [
             ['http://user@:80'],

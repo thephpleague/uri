@@ -11,7 +11,7 @@
 namespace League\Uri\Interfaces;
 
 /**
- * Value object representing a URL Path component.
+ * Value object representing a URI Path component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -123,7 +123,7 @@ interface Path extends HierarchicalComponent
      * Returns an instance relativized according to a given Path
      *
      * This method MUST retain the state of the current instance, and return
-     * an instance resolved according to supplied URL
+     * an instance resolved according to supplied URI
      *
      * @param Path $rel the path to relativize
      *

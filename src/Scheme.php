@@ -13,7 +13,7 @@ namespace League\Uri;
 use InvalidArgumentException;
 
 /**
- * Value object representing a URL scheme component.
+ * Value object representing a URI scheme component.
  *
  * @package League.uri
  * @since 1.0.0

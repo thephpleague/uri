@@ -29,6 +29,10 @@ class WsTest extends PHPUnit_Framework_TestCase
                 'wss://login:pass@example.com/',
                 'wss://login:pass@example.com/',
             ],
+            'empty URI' => [
+                '',
+                '',
+            ],
         ];
     }
 
@@ -47,7 +51,6 @@ class WsTest extends PHPUnit_Framework_TestCase
             ['ftp:example.com'],
             ['wss:/example.com'],
             ['http://example.com'],
-            [''],
             ['ws://example.com:80/foo/bar?foo=bar#content'],
         ];
     }

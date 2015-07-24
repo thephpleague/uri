@@ -1,8 +1,8 @@
 {
     "name": "league/uri",
     "type": "library",
-    "description" : "League/uri is a PHP URI manipulating library",
-    "keywords": ["uri", "url", "psr-7"],
+    "description" : "URI manipulation library",
+    "keywords": ["url", "uri", "rfc3986", "psr-7", "parse_url", "http", "ws", "ftp"],
     "license": "MIT",
     "homepage": "http://url.thephpleague.com",
     "authors": [

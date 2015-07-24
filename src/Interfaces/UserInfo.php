@@ -11,7 +11,7 @@
 namespace League\Uri\Interfaces;
 
 /**
- * Value object representing the UserInfo part of an URL.
+ * Value object representing the UserInfo part of an URI.
  *
  * @package League.uri
  * @since   4.0.0
@@ -30,14 +30,14 @@ interface UserInfo extends UriPart
     public function toArray();
 
     /**
-     * Retrieve the user component of the URL User Info part
+     * Retrieve the user component of the URI User Info part
      *
      * @return string
      */
     public function getUser();
 
     /**
-     * Retrieve the pass component of the URL User Info part
+     * Retrieve the pass component of the URI User Info part
      *
      * @return string
      */

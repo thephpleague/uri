@@ -68,8 +68,15 @@ trait Properties
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(UriInterface $uri)
+    public function sameValueAs($uri)
     {
+        if (!$uri instanceof UriInterface && !$uri instanceof Interfaces\Uri) {
+            throw new InvalidArgumentException(
+                'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
+                the `League\Uri\Interfaces\Uri` interface'
+            );
+        }
+
         try {
             return static::createFromComponents(static::parse($uri->__toString()))
                 ->toAscii()->withoutDotSegments()->ksortQuery()->__toString() === $this

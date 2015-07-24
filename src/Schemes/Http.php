@@ -12,21 +12,22 @@ namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
 use League\Uri;
+use Psr\Http\Message\UriInterface;
 
 /**
- * Value object representing popular URI (http, https, ws, wss, ftp).
+ * Value object representing HTTP and HTTPS Uri.
  *
  * @package League.uri
- * @since   1.0.0
+ * @since   4.0.0
  *
  */
-class Http extends AbstractUri
+class Http extends AbstractUri implements UriInterface
 {
     /**
      * Supported Schemes
      * @var array
      */
-    protected static $supported_schemes = [
+    protected static $supportedSchemes = [
         'http' => 80,
         'https' => 443,
     ];
@@ -40,7 +41,7 @@ class Http extends AbstractUri
             return true;
         }
 
-        if (!isset(static::$supported_schemes[$this->scheme->__toString()])) {
+        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
             return false;
         }
 
@@ -60,7 +61,7 @@ class Http extends AbstractUri
             return true;
         }
 
-        return static::$supported_schemes[$this->scheme->__toString()] === $this->port->toInt();
+        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
     }
 
     /**
@@ -68,7 +69,7 @@ class Http extends AbstractUri
      *
      * @param array $server the server and execution environment information array tipycally ($_SERVER)
      *
-     * @throws InvalidArgumentException If the URL can not be parsed
+     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
@@ -177,12 +178,15 @@ class Http extends AbstractUri
      */
     protected static function fetchServerPort(array $server)
     {
-        $port = '';
-        if (isset($server['SERVER_PORT'])) {
-            $port = ':' . $server['SERVER_PORT'];
+        if (isset($server['HTTP_HOST']) && preg_match("/^(.*)(:\d+)$/", $server['HTTP_HOST'], $matches)) {
+            return $matches[2];
         }
 
-        return $port;
+        if (isset($server['SERVER_PORT'])) {
+            return ':' . $server['SERVER_PORT'];
+        }
+
+        return '';
     }
 
     /**

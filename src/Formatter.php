@@ -13,7 +13,7 @@ namespace League\Uri;
 use InvalidArgumentException;
 
 /**
- * A class to manipulate an URL and URL components output
+ * A class to manipulate URI and URI components output
  *
  * @package League.uri
  * @since   4.0.0
@@ -27,7 +27,7 @@ class Formatter
     const HOST_AS_ASCII   = 2;
 
     /*
-     * A trait to format a path in a URL string
+     * A trait to format a path in a URI string
      */
     use Uri\PathFormatter;
 
@@ -201,7 +201,7 @@ class Formatter
     }
 
     /**
-     * Format a URL authority according to the Formatter properties
+     * Format a URI authority according to the Formatter properties
      *
      * @param Interfaces\Uri $uri
      *

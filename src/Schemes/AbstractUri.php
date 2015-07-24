@@ -14,7 +14,7 @@ use League\Uri\Interfaces;
 use League\Uri\Uri;
 
 /**
- * Value object representing a URL.
+ * Value object representing a URI.
  *
  * @package League.uri
  * @since   1.0.0
@@ -33,7 +33,7 @@ abstract class AbstractUri implements Interfaces\Uri
     use Uri\Properties;
 
     /**
-     * Create a new instance of URL
+     * Create a new instance of URI
      *
      * @param Interfaces\Scheme   $scheme
      * @param Interfaces\UserInfo $userInfo

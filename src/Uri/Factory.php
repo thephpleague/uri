@@ -28,7 +28,7 @@ trait Factory
      *
      * @param string $uri
      *
-     * @throws \InvalidArgumentException If the URL can not be parsed
+     * @throws \InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
@@ -91,7 +91,7 @@ trait Factory
      *
      * @see http://php.net/manual/en/function.parse-url.php#114817
      *
-     * @param string $uri The URL to parse
+     * @param string $uri The URI to parse
      *
      * @throws InvalidArgumentException if the URI can not be parsed
      *
@@ -155,7 +155,7 @@ trait Factory
      *
      * @see https://bugs.php.net/bug.php?id=68917
      *
-     * @param string $uri The URL to parse
+     * @param string $uri The URI to parse
      *
      * @return array
      */

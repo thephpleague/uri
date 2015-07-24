@@ -2,11 +2,13 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
-## next - 2015-XX-XX
+## Next - 2015-XX-XX
 
 ### Added
 
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
+- A `Ftp` class to specifically manipulate `ftp` schemed URI
+- A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library

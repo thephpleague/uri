@@ -44,10 +44,15 @@ class Ftp extends AbstractUri implements Interfaces\Schemes\Ftp
      */
     protected function isValid()
     {
-        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])
-            || !$this->fragment->isEmpty()
-            || !$this->query->isEmpty()
-        ) {
+        if (!$this->fragment->isEmpty() || !$this->query->isEmpty()) {
+            return false;
+        }
+
+        if ($this->scheme->isEmpty()) {
+            return true;
+        }
+
+        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
             return false;
         }
 

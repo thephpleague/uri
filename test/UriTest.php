@@ -376,12 +376,34 @@ class UriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) $baseUri->relativize($childUri));
     }
 
-    public function testResolveUriObject()
+    /**
+     * @dataProvider mixUriProvider
+     */
+    public function testResolveUriObject($input, $relative)
     {
-        $ftp = FtpUri::createFromString('ftp://example.com/path/to/file');
-        $uri = HttpUri::createFromString('//a/b/c/d;p?q');
+        $this->assertSame($relative, $input->resolve($relative));
+    }
 
-        $this->assertSame($uri, $ftp->resolve($uri));
+    public function mixUriProvider()
+    {
+        return [
+            [
+                FtpUri::createFromString('ftp://example.com/path/to/file'),
+                HttpUri::createFromString('//a/b/c/d;p?q'),
+            ],
+            [
+                FtpUri::createFromString('//example.com/path/to/file'),
+                HttpUri::createFromString('./g'),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider mixUriProvider
+     */
+    public function testRelativizeUriObject($input, $relative)
+    {
+        $this->assertSame($relative, $input->relativize($relative));
     }
 
     public function relativizeProvider()

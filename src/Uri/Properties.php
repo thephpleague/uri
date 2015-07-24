@@ -91,6 +91,11 @@ trait Properties
      */
     public function relativize(Interfaces\Uri $relative)
     {
+        $className = get_class($this);
+        if (!$relative instanceof $className) {
+            return $relative;
+        }
+
         if (!$this->scheme->sameValueAs($relative->scheme) || $this->getAuthority() !== $relative->getAuthority()) {
             return $relative;
         }
@@ -105,6 +110,11 @@ trait Properties
      */
     public function resolve(Interfaces\Uri $relative)
     {
+        $className = get_class($this);
+        if (!$relative instanceof $className) {
+            return $relative;
+        }
+
         if (!empty($relative->getScheme())) {
             return $relative->withoutDotSegments();
         }
@@ -125,11 +135,7 @@ trait Properties
      */
     protected function resolveAuthority(Interfaces\Uri $relative)
     {
-        try {
-            return $relative->withScheme($this->scheme);
-        } catch (InvalidArgumentException $e) {
-            return $relative;
-        }
+        return $relative->withScheme($this->scheme);
     }
 
     /**

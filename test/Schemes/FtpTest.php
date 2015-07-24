@@ -11,14 +11,14 @@ use PHPUnit_Framework_TestCase;
 class FtpTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider validUrlArray
+     * @dataProvider validArray
      */
     public function testCreateFromString($expected, $input)
     {
         $this->assertSame($expected, FtpUri::createFromString($input)->__toString());
     }
 
-    public function validUrlArray()
+    public function validArray()
     {
         return [
             'with default port' => [
@@ -28,6 +28,10 @@ class FtpTest extends PHPUnit_Framework_TestCase
             'with user info' => [
                 'ftp://login:pass@example.com/',
                 'ftp://login:pass@example.com/',
+            ],
+            'empty URI' => [
+                '',
+                '',
             ],
         ];
     }
@@ -47,7 +51,6 @@ class FtpTest extends PHPUnit_Framework_TestCase
             ['ftp:example.com'],
             ['wss:/example.com'],
             ['http://example.com'],
-            [''],
             ['ftp://example.com:80/foo/bar?foo=bar#content'],
         ];
     }

@@ -185,4 +185,22 @@ trait Properties
 
         return Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
+
+    /**
+     * Tell whether the Hierarchical URI is valid
+     *
+     * @return bool
+     */
+    protected function isValidHierarchicalUri()
+    {
+        if ($this->scheme->isEmpty()) {
+            return true;
+        }
+
+        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
+            return false;
+        }
+
+        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
+    }
 }

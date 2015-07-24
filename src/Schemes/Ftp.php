@@ -48,15 +48,7 @@ class Ftp extends AbstractUri implements Interfaces\Schemes\Ftp
             return false;
         }
 
-        if ($this->scheme->isEmpty()) {
-            return true;
-        }
-
-        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
-            return false;
-        }
-
-        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
+        return $this->isValidHierarchicalUri();
     }
 
     /**

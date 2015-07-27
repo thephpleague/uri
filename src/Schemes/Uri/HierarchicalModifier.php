@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Uri;
+namespace League\Uri\Schemes\Uri;
 
 use League\Uri\Interfaces;
 use League\Uri\Types;
@@ -19,7 +19,7 @@ use League\Uri\Types;
  * @package League.uri
  * @since   4.0.0
  */
-trait PartialModifier
+trait HierarchicalModifier
 {
     /**
      * Scheme Component

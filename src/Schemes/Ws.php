@@ -10,8 +10,6 @@
  */
 namespace League\Uri\Schemes;
 
-use League\Uri;
-
 /**
  * Value object representing WS and WSS Uri.
  *
@@ -19,11 +17,10 @@ use League\Uri;
  * @since   4.0.0
  *
  */
-class Ws extends AbstractUri
+class Ws extends Uri\AbstractHierarchical
 {
     /**
-     * Supported Schemes
-     * @var array
+     * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'ws' => 80,
@@ -40,17 +37,5 @@ class Ws extends AbstractUri
         }
 
         return $this->isValidHierarchicalUri();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        if ($this->port->isEmpty()) {
-            return true;
-        }
-
-        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
     }
 }

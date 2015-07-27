@@ -11,7 +11,6 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
-use League\Uri;
 use League\Uri\Interfaces;
 
 /**
@@ -21,12 +20,10 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  *
  */
-class Ftp extends AbstractUri implements Interfaces\Schemes\Ftp
+class Ftp extends Uri\AbstractHierarchical implements Interfaces\Schemes\Ftp
 {
     /**
-     * Supported Schemes
-     *
-     * @var array
+     * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'ftp' => 21,
@@ -49,18 +46,6 @@ class Ftp extends AbstractUri implements Interfaces\Schemes\Ftp
         }
 
         return $this->isValidHierarchicalUri();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        if ($this->port->isEmpty()) {
-            return true;
-        }
-
-        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
     }
 
     /**

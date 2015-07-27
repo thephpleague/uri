@@ -8,56 +8,133 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Uri;
+namespace League\Uri\Schemes\Uri;
 
 use InvalidArgumentException;
 use League\Uri;
-use ReflectionClass;
+use League\Uri\Interfaces;
 
 /**
- * A Factory Trait to help return a new League\Uri\Interfaces\Uri
- * implemented object
+ * a Trait to access URI properties methods
  *
  * @package League.uri
- * @since   4.0.0
+ * @since   1.0.0
+ *
  */
-trait Factory
+trait Properties
 {
     /**
-     * Create a new instance from a string
-     *
-     * @param string $uri
-     *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
+     * {@inheritdoc}
      */
-    public static function createFromString($uri = '')
+    abstract public function getScheme();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function getSchemeSpecificPart();
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract protected function withProperty($property, $value);
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
     {
-        return static::createFromComponents(static::parse($uri));
+        return $this->getScheme() . ':' . $this->getSchemeSpecificPart();
     }
 
     /**
-     * Create a new instance from an array returned by
-     * PHP parse_url function
-     *
-     * @param array $components
-     *
-     * @return Uri\Uri
+     * {@inheritdoc}
      */
-    public static function createFromComponents(array $components)
+    public function isEmpty()
     {
-        $components = static::formatComponents($components);
+        return empty($this->__toString());
+    }
 
-        return (new ReflectionClass(get_called_class()))->newInstance(
-            new Uri\Scheme($components['scheme']),
-            new Uri\UserInfo($components['user'], $components['pass']),
-            new Uri\Host($components['host']),
-            new Uri\Port($components['port']),
-            new Uri\Path($components['path']),
-            new Uri\Query($components['query']),
-            new Uri\Fragment($components['fragment'])
-        );
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve(Interfaces\Schemes\Uri $relative)
+    {
+        $className = get_class($this);
+        if (!$relative instanceof Interfaces\Schemes\HierarchicalUri || !$relative instanceof $className) {
+            return $relative;
+        }
+
+        if (!empty($relative->getScheme())) {
+            return $relative->withoutDotSegments();
+        }
+
+        if (!empty($relative->getHost())) {
+            return $this->resolveAuthority($relative)->withoutDotSegments();
+        }
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
+    }
+
+    /**
+     * returns the resolve URI according to the authority
+     *
+     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     *
+     * @return Interfaces\Schemes\HierarchicalUri
+     */
+    protected function resolveAuthority(Interfaces\Schemes\HierarchicalUri $relative)
+    {
+        return $relative->withScheme($this->scheme);
+    }
+
+    /**
+     * returns the resolve URI
+     *
+     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     *
+     * @return Interfaces\Schemes\HierarchicalUri
+     */
+    protected function resolveRelative(Interfaces\Schemes\HierarchicalUri $relative)
+    {
+        $newUri = $this->withProperty('fragment', $relative->fragment->__toString());
+        if (!$relative->path->isEmpty()) {
+            return $newUri
+                ->withProperty('path', $this->resolvePath($newUri, $relative)->__toString())
+                ->withProperty('query', $relative->query->__toString());
+        }
+
+        if (!$relative->query->isEmpty()) {
+            return $newUri->withProperty('query', $relative->query->__toString());
+        }
+
+        return $newUri;
+    }
+
+    /**
+     * returns the resolve URI components
+     *
+     * @param Interfaces\Schemes\HierarchicalUri $newUri   the final URI
+     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     *
+     * @return Interfaces\Path
+     */
+    protected function resolvePath(
+        Interfaces\Schemes\HierarchicalUri $newUri,
+        Interfaces\Schemes\HierarchicalUri $relative
+    ) {
+        $path = $relative->path;
+        if ($path->isAbsolute()) {
+            return $path;
+        }
+
+        $segments = $newUri->path->toArray();
+        array_pop($segments);
+        $isAbsolute = Uri\Path::IS_RELATIVE;
+        if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
+            $isAbsolute = Uri\Path::IS_ABSOLUTE;
+        }
+
+        return Uri\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 
     /**
@@ -80,6 +157,7 @@ trait Factory
             'query'  => '', 'fragment' => '',
         ], $components);
     }
+
 
     /**
      * Parse a string as an URI
@@ -157,7 +235,7 @@ trait Factory
      *
      * @param string $uri The URI to parse
      *
-     * @return array
+     * @return string
      */
     protected static function fixUrlScheme($uri)
     {

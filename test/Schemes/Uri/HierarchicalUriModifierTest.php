@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test;
+namespace League\Uri\test\Schemes\Uri;
 
 use League\Uri\Interfaces;
 use League\Uri\Schemes\Http as HttpUri;
@@ -9,7 +9,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group uri
  */
-class UriModifierTest extends PHPUnit_Framework_TestCase
+class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
 {
     private $uri;
 

@@ -10,8 +10,6 @@
  */
 namespace League\Uri\Interfaces\Schemes;
 
-use League\Uri\Interfaces;
-
 /**
  * Value object representing a FTP URI.
  *
@@ -25,7 +23,7 @@ use League\Uri\Interfaces;
  * @see     https://tools.ietf.org/html/rfc3986
  *
  */
-interface Ftp extends Interfaces\Uri
+interface Ftp extends HierarchicalUri
 {
     /**
      * Retrieve the optional typecode associated to the path component of the URI.

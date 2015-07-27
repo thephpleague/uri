@@ -16,9 +16,9 @@ namespace League\Uri;
  * @package League.uri
  * @since   1.0.0
  */
-class Query extends AbstractParameterComponent implements Interfaces\Query
+class Parameters extends AbstractParameterComponent implements Interfaces\Parameters
 {
-    protected static $separator = '&';
+    protected static $separator = ';';
 
-    protected static $delimiter = '?';
+    protected static $delimiter = ';';
 }

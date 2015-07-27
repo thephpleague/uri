@@ -8,7 +8,9 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Schemes;
+
+use League\Uri\Interfaces;
 
 /**
  * Value object representing a URI.
@@ -22,34 +24,16 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
  *
- * @property-read Scheme         $scheme
- * @property-read UserInfo       $userInfo
- * @property-read Host           $host
- * @property-read Port           $port
- * @property-read Path           $path
- * @property-read Query          $query
- * @property-read Fragment       $fragment
- * @property-read SchemeRegistry $schemeRegistry
+ * @property-read Interfaces\Scheme   $scheme
+ * @property-read Interfaces\UserInfo $userInfo
+ * @property-read Interfaces\Host     $host
+ * @property-read Interfaces\Port     $port
+ * @property-read Interfaces\Path     $path
+ * @property-read Interfaces\Query    $query
+ * @property-read Interfaces\Fragment $fragment
  */
-interface Uri
+interface HierarchicalUri extends Uri
 {
-    /**
-     * Retrieve the scheme component of the URI.
-     *
-     * If no scheme is present, this method MUST return an empty string.
-     *
-     * The value returned MUST be normalized to lowercase, per RFC 3986
-     * Section 3.1.
-     *
-     * The trailing ":" character is not part of the scheme and MUST NOT be
-     * added.
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.1
-     *
-     * @return string The URI scheme.
-     */
-    public function getScheme();
-
     /**
      * Retrieve the authority component of the URI.
      *
@@ -201,7 +185,8 @@ interface Uri
      *
      * @throws \InvalidArgumentException for invalid schemes.
      * @throws \InvalidArgumentException for unsupported schemes.
-     * @return self                      A new instance with the specified scheme.
+     *
+     * @return self A new instance with the specified scheme.
      *
      */
     public function withScheme($scheme);
@@ -323,39 +308,6 @@ interface Uri
     public function withFragment($fragment);
 
     /**
-     * Return the string representation as a URI reference.
-     *
-     * Depending on which components of the URI are present, the resulting
-     * string is either a full URI or relative reference according to RFC 3986,
-     * Section 4.1. The method concatenates the various components of the URI,
-     * using the appropriate delimiters:
-     *
-     * - If a scheme is present, it MUST be suffixed by ":".
-     * - If an authority is present, it MUST be prefixed by "//".
-     * - The path can be concatenated without delimiters. But there are two
-     *   cases where the path has to be adjusted to make the URI reference
-     *   valid as PHP does not allow to throw an exception in __toString():
-     *     - If the path is rootless and an authority is present, the path MUST
-     *       be prefixed by "/".
-     *     - If the path is starting with more than one "/" and no authority is
-     *       present, the starting slashes MUST be reduced to one.
-     * - If a query is present, it MUST be prefixed by "?".
-     * - If a fragment is present, it MUST be prefixed by "#".
-     *
-     * @see http://tools.ietf.org/html/rfc3986#section-4.1
-     *
-     * @return string
-     */
-    public function __toString();
-
-    /**
-     * Return an array representation of the URI
-     *
-     * @return array
-     */
-    public function toArray();
-
-    /**
      * Returns whether the standard port for the given scheme is used, when
      * the scheme is unknown or unsupported will the method return false
      *
@@ -364,52 +316,16 @@ interface Uri
     public function hasStandardPort();
 
     /**
-     * Returns true if the URI is considered empty
-     *
-     * @return bool
-     */
-    public function isEmpty();
-
-    /**
-     * Returns whether two objects represents the same value
-     * The comparison is based on the __toString method.
-     * The following normalization is done prior to comparaison
-     *
-     *  - hosts if present are converted using the punycode algorithm
-     *  - paths if present are normalized by removing dot segments
-     *  - query strings if present are sorted using their offsets
-     *
-     * @param Uri|UriInterface $uri
-     *
-     * @return bool
-     */
-    public function sameValueAs($uri);
-
-    /**
-     * Returns an instance resolved according to a given URI
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance resolved according to supplied URI
-     *
-     * @param Uri $rel the relative URI
-     *
-     * @return static
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-5.2
-     */
-    public function resolve(Uri $rel);
-
-    /**
      * Returns an instance relativized according to a given URI
      *
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URI
      *
-     * @param Uri $rel the relative URI
+     * @param HierarchicalUri $rel the relative URI
      *
      * @return static
      */
-    public function relativize(Uri $rel);
+    public function relativize(HierarchicalUri $rel);
 
     /**
      * Return an instance with update query values

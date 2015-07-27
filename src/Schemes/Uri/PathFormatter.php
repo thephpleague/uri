@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Uri;
+namespace League\Uri\Schemes\Uri;
 
 use League\Uri\Interfaces\Path;
 

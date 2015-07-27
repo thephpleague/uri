@@ -11,7 +11,6 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
-use League\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -21,11 +20,10 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-class Http extends AbstractUri implements UriInterface
+class Http extends Uri\AbstractHierarchical implements UriInterface
 {
     /**
-     * Supported Schemes
-     * @var array
+     * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'http' => 80,
@@ -38,22 +36,6 @@ class Http extends AbstractUri implements UriInterface
     protected function isValid()
     {
         return $this->isValidHierarchicalUri();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        if ($this->scheme->isEmpty()) {
-            return false;
-        }
-
-        if ($this->port->isEmpty()) {
-            return true;
-        }
-
-        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
     }
 
     /**

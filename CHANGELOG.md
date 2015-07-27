@@ -6,6 +6,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
+- A `Data` class to specifically manipulate `data` schemed URI
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI

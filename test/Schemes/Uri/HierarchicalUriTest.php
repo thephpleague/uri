@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test;
+namespace League\Uri\test\Schemes\Uri;
 
 use League\Uri\Fragment;
 use League\Uri\Host;
@@ -19,7 +19,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group uri
  */
-class UriTest extends PHPUnit_Framework_TestCase
+class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Url
@@ -86,6 +86,11 @@ class UriTest extends PHPUnit_Framework_TestCase
         $raw = 'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/in+dex.php?foo.bar=value#fragment';
         $normalized = 'https://master.example.com/~johndoe/%A1/in+dex.php?foo.bar=value#fragment';
         $this->assertSame($normalized, (string) HttpUri::createFromString($raw));
+    }
+
+    public function testIsOpaque()
+    {
+        $this->assertFalse($this->uri->isOpaque());
     }
 
     /**

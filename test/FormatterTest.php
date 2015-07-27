@@ -105,6 +105,16 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $formatter->format($this->uri));
     }
 
+    public function testFormatOpaqueUri()
+    {
+        $formatter = new Uri\Formatter();
+        $formatter->setQuerySeparator('&amp;');
+        $formatter->setHostEncoding(Uri\Formatter::HOST_AS_ASCII);
+        $opaqueUri = Uri\Schemes\Data::createFromString();
+        $this->assertSame($opaqueUri->__toString(), $formatter->format($opaqueUri));
+    }
+
+
     public function testFormatWithoutAuthority()
     {
         $formatter = new Uri\Formatter();

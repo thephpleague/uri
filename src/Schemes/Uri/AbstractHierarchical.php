@@ -8,10 +8,9 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Schemes;
+namespace League\Uri\Schemes\Uri;
 
 use League\Uri\Interfaces;
-use League\Uri\Uri;
 
 /**
  * Value object representing a URI.
@@ -20,17 +19,17 @@ use League\Uri\Uri;
  * @since   1.0.0
  *
  */
-abstract class AbstractUri implements Interfaces\Uri
+abstract class AbstractHierarchical implements Interfaces\Schemes\HierarchicalUri
 {
     /*
      * Component Path formatting in a URI string
      */
-    use Uri\PathFormatter;
+    use PathFormatter;
 
     /*
      * URI complementary methods
      */
-    use Uri\Properties;
+    use HierarchicalMethods;
 
     /**
      * Create a new instance of URI
@@ -208,7 +207,7 @@ abstract class AbstractUri implements Interfaces\Uri
      *
      * @return string
      */
-    protected function getSchemeSpecificPart()
+    public function getSchemeSpecificPart()
     {
         $auth = $this->getAuthority();
         if (!empty($auth)) {
@@ -219,13 +218,5 @@ abstract class AbstractUri implements Interfaces\Uri
             . $this->formatPath($this->path, (bool) $auth)
             . $this->query->getUriComponent()
             . $this->fragment->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return $this->scheme->getUriComponent() . $this->getSchemeSpecificPart();
     }
 }

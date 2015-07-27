@@ -29,7 +29,7 @@ class Formatter
     /*
      * A trait to format a path in a URI string
      */
-    use Uri\PathFormatter;
+    use Schemes\Uri\PathFormatter;
 
     /**
      * host encoding property
@@ -123,7 +123,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Uri|Interfaces\UriPart $input
+     * @param Interfaces\Schemes\Uri|Interfaces\UriPart $input
      *
      * @return string
      */
@@ -133,8 +133,8 @@ class Formatter
             return $this->formatUriPart($input);
         }
 
-        if ($input instanceof Interfaces\Uri) {
-            return $this->formatUrl($input);
+        if ($input instanceof Interfaces\Schemes\Uri) {
+            return $this->formatUri($input);
         }
 
         throw new InvalidArgumentException(sprintf(
@@ -180,14 +180,18 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\Uri according to the Formatter properties
+     * Format a Interfaces\Schemes\Uri according to the Formatter properties
      *
-     * @param Interfaces\Uri $uri
+     * @param Interfaces\Schemes\Uri $uri
      *
      * @return string
      */
-    protected function formatUrl(Interfaces\Uri $uri)
+    protected function formatUri(Interfaces\Schemes\Uri $uri)
     {
+        if (!$uri instanceof Interfaces\Schemes\HierarchicalUri) {
+            return $uri->__toString();
+        }
+
         $query = $this->formatUriPart($uri->query);
         if (!empty($query)) {
             $query = '?' . $query;
@@ -203,11 +207,11 @@ class Formatter
     /**
      * Format a URI authority according to the Formatter properties
      *
-     * @param Interfaces\Uri $uri
+     * @param Interfaces\Schemes\HierarchicalUri $uri
      *
      * @return string
      */
-    protected function formatAuthority(Interfaces\Uri $uri)
+    protected function formatAuthority(Interfaces\Schemes\HierarchicalUri $uri)
     {
         if ('' == $uri->getHost()) {
             return '';

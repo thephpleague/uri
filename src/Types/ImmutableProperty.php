@@ -57,7 +57,7 @@ trait ImmutableProperty
     /**
      * Assert the object is valid
      *
-     * @return bool
+     * @throws InvalidArgumentException if the resulting URI is not valid
      */
     protected function assertValidObject()
     {

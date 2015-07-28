@@ -20,7 +20,7 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-class Http extends Uri\AbstractHierarchical implements UriInterface
+class Http extends Generic\AbstractHierarchical implements UriInterface
 {
     /**
      * {@inheritdoc}
@@ -50,11 +50,11 @@ class Http extends Uri\AbstractHierarchical implements UriInterface
     public static function createFromServer(array $server)
     {
         return static::createFromString(
-            static::fetchServerScheme($server) . '//'
-            . static::fetchServerUserInfo($server)
-            . static::fetchServerHost($server)
-            . static::fetchServerPort($server)
-            . static::fetchServerRequestUri($server)
+            static::fetchServerScheme($server).'//'
+            .static::fetchServerUserInfo($server)
+            .static::fetchServerHost($server)
+            .static::fetchServerPort($server)
+            .static::fetchServerRequestUri($server)
         );
     }
 
@@ -94,7 +94,7 @@ class Http extends Uri\AbstractHierarchical implements UriInterface
         }
 
         if (filter_var($server['SERVER_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            return '[' . $server['SERVER_ADDR'] . ']';
+            return '['.$server['SERVER_ADDR'].']';
         }
 
         return $server['SERVER_ADDR'];
@@ -133,7 +133,7 @@ class Http extends Uri\AbstractHierarchical implements UriInterface
 
         $info = $server['PHP_AUTH_USER'];
         if (isset($server['PHP_AUTH_PW'])) {
-            $info .= ':' . $server['PHP_AUTH_PW'];
+            $info .= ':'.$server['PHP_AUTH_PW'];
         }
 
         if (!empty($info)) {
@@ -157,7 +157,7 @@ class Http extends Uri\AbstractHierarchical implements UriInterface
         }
 
         if (isset($server['SERVER_PORT'])) {
-            return ':' . $server['SERVER_PORT'];
+            return ':'.$server['SERVER_PORT'];
         }
 
         return '';
@@ -182,7 +182,7 @@ class Http extends Uri\AbstractHierarchical implements UriInterface
         }
 
         if (isset($server['QUERY_STRING'])) {
-            $request .= '?' . $server['QUERY_STRING'];
+            $request .= '?'.$server['QUERY_STRING'];
         }
 
         return $request;

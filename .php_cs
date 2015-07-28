@@ -3,7 +3,6 @@
 return Symfony\CS\Config\Config::create()
     ->level(Symfony\CS\FixerInterface::PSR2_LEVEL)
     ->fixers([
-        'psr0',
         'ordered_use',
         'unused_use',
         'remove_lines_between_uses',
@@ -15,7 +14,7 @@ return Symfony\CS\Config\Config::create()
         'short_array_syntax',
         'single_array_no_trailing_comma',
         'multiline_array_trailing_comma',
-        'concat_with_spaces',
+        'concat_without_spaces',
         'single_quote',
         'ternary_spaces',
         'operators_spaces',

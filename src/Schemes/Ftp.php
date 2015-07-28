@@ -20,7 +20,7 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  *
  */
-class Ftp extends Uri\AbstractHierarchical implements Interfaces\Schemes\Ftp
+class Ftp extends Generic\AbstractHierarchical implements Interfaces\Schemes\Ftp
 {
     /**
      * {@inheritdoc}
@@ -76,9 +76,9 @@ class Ftp extends Uri\AbstractHierarchical implements Interfaces\Schemes\Ftp
         }
 
         if (!empty($extension)) {
-            $extension = ';type=' . $extension;
+            $extension = ';type='.$extension;
         }
 
-        return $this->withProperty('path', $this->path->replace(count($this->path) - 1, $basename . $extension));
+        return $this->withProperty('path', $this->path->replace(count($this->path) - 1, $basename.$extension));
     }
 }

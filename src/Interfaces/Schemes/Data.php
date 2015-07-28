@@ -13,7 +13,7 @@ namespace League\Uri\Interfaces\Schemes;
 use League\Uri\Interfaces;
 
 /**
- * Value object representing a FTP URI.
+ * Value object representing a Data URI.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -22,7 +22,7 @@ use League\Uri\Interfaces;
  *
  * @package League.uri
  * @since   4.0.0
- * @see     https://tools.ietf.org/html/rfc3986
+ * @see     https://tools.ietf.org/html/rfc2397
  *
  * @property-read Interfaces\Scheme     $scheme
  * @property-read Interfaces\Parameters $parameters
@@ -57,8 +57,7 @@ interface Data extends Uri
      * @param string $path The path to the file where to save the data
      * @param string $mode The mode parameter specifies the type of access you require to the stream.
      *
-     * @throws \InvalidArgumentException if the path is not reachable
-     * @throws \InvalidArgumentException if an error occurs while writing the data
+     * @throws \RuntimeException if the path is not reachable
      *
      * @return \SplFileObject
      */

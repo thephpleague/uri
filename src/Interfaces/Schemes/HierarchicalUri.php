@@ -174,24 +174,6 @@ interface HierarchicalUri extends Uri
     public function getFragment();
 
     /**
-     * Return an instance with the specified scheme.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified scheme.
-     *
-     * An empty scheme is equivalent to removing the scheme.
-     *
-     * @param string $scheme The scheme to use with the new instance.
-     *
-     * @throws \InvalidArgumentException for invalid schemes.
-     * @throws \InvalidArgumentException for unsupported schemes.
-     *
-     * @return self A new instance with the specified scheme.
-     *
-     */
-    public function withScheme($scheme);
-
-    /**
      * Return an instance with the specified user information.
      *
      * This method MUST retain the state of the current instance, and return

@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.2
  */
-interface Host extends HierarchicalComponent
+interface Host extends HierarchicalComponent, LiteralAccess
 {
     /**
      * Returns whether or not the host is an IP address
@@ -95,13 +95,6 @@ interface Host extends HierarchicalComponent
      * @return string
      */
     public function getSubdomain();
-
-    /**
-     * Return the raw IP literal address
-     *
-     * @return string
-     */
-    public function getIpLiteral();
 
     /**
      * Retrieves a single host label.

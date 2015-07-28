@@ -43,6 +43,24 @@ interface Uri
     public function getScheme();
 
     /**
+     * Return an instance with the specified scheme.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified scheme.
+     *
+     * An empty scheme is equivalent to removing the scheme.
+     *
+     * @param string $scheme The scheme to use with the new instance.
+     *
+     * @throws \InvalidArgumentException for invalid schemes.
+     * @throws \InvalidArgumentException for unsupported schemes.
+     *
+     * @return self A new instance with the specified scheme.
+     *
+     */
+    public function withScheme($scheme);
+
+    /**
      * Retrieve the scheme specific part of the URI.
      *
      * If no specific part information is present, this method MUST return an empty
@@ -106,13 +124,6 @@ interface Uri
      * @return bool
      */
     public function sameValueAs($uri);
-
-    /**
-     * Returns true if the URI scheme specific part is considered to be opaque
-     *
-     * @return bool
-     */
-    public function isOpaque();
 
     /**
      * Returns an instance resolved according to a given URI

@@ -3,6 +3,8 @@
 namespace League\Uri\test\Schemes;
 
 use League\Uri;
+use League\Uri\Components\Parameters;
+use League\Uri\Components\Scheme;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -25,21 +27,21 @@ class DataTest extends PHPUnit_Framework_TestCase
     {
         return [
             'invalid scheme' => [
-                'scheme' => new Uri\Scheme('http'),
+                'scheme' => new Scheme('http'),
                 'mimetype' => 'application/json',
-                'parameters' => new Uri\Parameters('charset=us-ascii'),
+                'parameters' => new Parameters('charset=us-ascii'),
                 'data' => rawurlencode('Bonjour le monde!'),
             ],
             'invalid mimetype' => [
-                'scheme' => new Uri\Scheme('data'),
+                'scheme' => new Scheme('data'),
                 'mimetype' => 'application_json',
-                'parameters' => new Uri\Parameters('charset=us-ascii'),
+                'parameters' => new Parameters('charset=us-ascii'),
                 'data' => rawurlencode('Bonjour le monde!'),
             ],
             'invalid data' => [
-                'scheme' => new Uri\Scheme('data'),
+                'scheme' => new Scheme('data'),
                 'mimetype' => 'application/json',
-                'parameters' => new Uri\Parameters('charset=us-ascii;base64'),
+                'parameters' => new Parameters('charset=us-ascii;base64'),
                 'data' => rawurlencode('Bonjour le monde!'),
             ],
         ];
@@ -52,11 +54,6 @@ class DataTest extends PHPUnit_Framework_TestCase
     {
         $uri = 'data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21';
         DataUri::createFromString($uri)->sameValueAs($uri);
-    }
-
-    public function testIsOpaque()
-    {
-        $this->assertTrue(DataUri::createFromString()->isOpaque());
     }
 
     /**
@@ -182,6 +179,7 @@ class DataTest extends PHPUnit_Framework_TestCase
             'integer' => [23],
             'invalid format' => ['foo:bar'],
             'invalid data' => ['data:image/png;base64,°28'],
+            'invalid data 2' => ['data:image/png;base64,zzz28'],
             'invalid mime type' => ['data:image_png;base64,zzz'],
         ];
     }
@@ -226,7 +224,7 @@ class DataTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromPath($path, $expected)
     {
-        $uri = DataUri::createFromPath(__DIR__ . '/' . $path);
+        $uri = DataUri::createFromPath(__DIR__.'/'.$path);
         $this->assertSame($expected, $uri->getMimeType());
     }
 
@@ -282,8 +280,8 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     public function testBinarySave()
     {
-        $newFilePath = __DIR__ . '/temp.gif';
-        $uri = DataUri::createFromPath(__DIR__ . '/red-nose.gif');
+        $newFilePath = __DIR__.'/temp.gif';
+        $uri = DataUri::createFromPath(__DIR__.'/red-nose.gif');
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
@@ -292,13 +290,21 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     public function testRawSave()
     {
-        $newFilePath = __DIR__ . '/temp.txt';
-        $uri = DataUri::createFromPath(__DIR__ . '/hello-world.txt');
+        $newFilePath = __DIR__.'/temp.txt';
+        $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
         $data = file_get_contents($newFilePath);
         $this->assertSame(rawurlencode($data), $uri->getData());
         unlink($newFilePath);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testSaveFailedWithUnReachableFilePath()
+    {
+        DataUri::createFromPath(__DIR__.'/hello-world.txt')->save('/usr/bin/yolo', 'w');
     }
 }

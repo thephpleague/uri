@@ -29,7 +29,7 @@ class Formatter
     /*
      * A trait to format a path in a URI string
      */
-    use Schemes\Uri\PathFormatter;
+    use Components\PathFormatterTrait;
 
     /**
      * host encoding property
@@ -153,7 +153,7 @@ class Formatter
     protected function formatUriPart(Interfaces\UriPart $part)
     {
         if ($part instanceof Interfaces\Query) {
-            return Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return Components\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof Interfaces\Host) {
@@ -194,14 +194,14 @@ class Formatter
 
         $query = $this->formatUriPart($uri->query);
         if (!empty($query)) {
-            $query = '?' . $query;
+            $query = '?'.$query;
         }
 
         $auth = $this->formatAuthority($uri);
 
-        return $uri->scheme->getUriComponent() . $auth
-            . $this->formatPath($uri->path, !empty($auth)) . $query
-            . $uri->fragment->getUriComponent();
+        return $uri->scheme->getUriComponent().$auth
+            .$this->formatPath($uri->path, !empty($auth)).$query
+            .$uri->fragment->getUriComponent();
     }
 
     /**
@@ -222,6 +222,6 @@ class Formatter
             $port = '';
         }
 
-        return '//' . $uri->userInfo->getUriComponent() . $this->formatHost($uri->host) . $port;
+        return '//'.$uri->userInfo->getUriComponent().$this->formatHost($uri->host).$port;
     }
 }

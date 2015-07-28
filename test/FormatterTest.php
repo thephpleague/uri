@@ -60,7 +60,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatComponent()
     {
-        $scheme = new Uri\Scheme('ftp');
+        $scheme = new Uri\Components\Scheme('ftp');
         $this->assertSame($scheme->__toString(), (new Uri\Formatter())->format($scheme));
     }
 

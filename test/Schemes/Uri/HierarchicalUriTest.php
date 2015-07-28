@@ -2,18 +2,9 @@
 
 namespace League\Uri\test\Schemes\Uri;
 
-use League\Uri\Fragment;
-use League\Uri\Host;
-use League\Uri\Pass;
-use League\Uri\Path;
-use League\Uri\Port;
-use League\Uri\Query;
-use League\Uri\Scheme;
+use League\Uri\Components;
 use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Schemes\Http as HttpUri;
-use League\Uri\Uri;
-use League\Uri\User;
-use League\Uri\UserInfo;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -86,11 +77,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $raw = 'HtTpS://MaStEr.eXaMpLe.CoM:443/%7ejohndoe/%a1/in+dex.php?foo.bar=value#fragment';
         $normalized = 'https://master.example.com/~johndoe/%A1/in+dex.php?foo.bar=value#fragment';
         $this->assertSame($normalized, (string) HttpUri::createFromString($raw));
-    }
-
-    public function testIsOpaque()
-    {
-        $this->assertFalse($this->uri->isOpaque());
     }
 
     /**
@@ -196,22 +182,22 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         return [
             'normal URI' => [HttpUri::createFromString('http://a/b/c'), false],
             'incomplete authority' => [new HttpUri(
-                new Scheme(),
-                new UserInfo('foo', 'bar'),
-                new Host(),
-                new Port(80),
-                new Path(),
-                new Query(),
-                new Fragment()
+                new Components\Scheme(),
+                new Components\UserInfo('foo', 'bar'),
+                new Components\Host(),
+                new Components\Port(80),
+                new Components\Path(),
+                new Components\Query(),
+                new Components\Fragment()
             ), true],
             'empty URI components' => [new HttpUri(
-                new Scheme(),
-                new UserInfo(),
-                new Host(),
-                new Port(),
-                new Path(),
-                new Query(),
-                new Fragment()
+                new Components\Scheme(),
+                new Components\UserInfo(),
+                new Components\Host(),
+                new Components\Port(),
+                new Components\Path(),
+                new Components\Query(),
+                new Components\Fragment()
             ), true],
         ];
     }
@@ -277,22 +263,22 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     {
         return [
             [new HttpUri(
-                new Scheme('http'),
-                new UserInfo(),
-                new Host('ExAmPLe.cOm'),
-                new Port(),
-                new Path('path/to/the/sky'),
-                new Query(),
-                new Fragment()
+                new Components\Scheme('http'),
+                new Components\UserInfo(),
+                new Components\Host('ExAmPLe.cOm'),
+                new Components\Port(),
+                new Components\Path('path/to/the/sky'),
+                new Components\Query(),
+                new Components\Fragment()
             ), 'http://example.com/path/to/the/sky'],
             [new HttpUri(
-                new Scheme(''),
-                new UserInfo(),
-                new Host(),
-                new Port(),
-                new Path('///path/to/the/sky'),
-                new Query(),
-                new Fragment()
+                new Components\Scheme(''),
+                new Components\UserInfo(),
+                new Components\Host(),
+                new Components\Port(),
+                new Components\Path('///path/to/the/sky'),
+                new Components\Query(),
+                new Components\Fragment()
             ), '/path/to/the/sky'],
         ];
     }

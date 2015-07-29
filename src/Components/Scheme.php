@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since 1.0.0
  */
-class Scheme extends AbstractComponent implements Interfaces\Scheme
+class Scheme extends AbstractComponent implements Interfaces\Components\Scheme
 {
     /**
      * Validate and format the submitted string scheme

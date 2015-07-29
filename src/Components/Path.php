@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since 1.0.0
  */
-class Path extends AbstractHierarchicalComponent implements Interfaces\Path
+class Path extends AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalPath
 {
     /**
      * {@inheritdoc}
@@ -146,7 +146,7 @@ class Path extends AbstractHierarchicalComponent implements Interfaces\Path
     /**
      * {@inheritdoc}
      */
-    public function relativize(Interfaces\Path $path)
+    public function relativize(Interfaces\Components\HierarchicalPath $path)
     {
         $bSegments = explode(static::$delimiter, $this->withoutDotSegments()->__toString());
         $cSegments = explode(static::$delimiter, $path->withoutDotSegments()->__toString());

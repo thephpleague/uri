@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since  1.0.0
  */
-class User extends AbstractComponent implements Interfaces\User
+class User extends AbstractComponent implements Interfaces\Components\User
 {
     protected static $invalidCharactersRegex = ',[/:@?#],';
 }

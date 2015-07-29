@@ -12,7 +12,7 @@ namespace League\Uri\Types;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use League\Uri\Interfaces\Collection;
+use League\Uri\Interfaces\Components\Collection;
 use Traversable;
 
 /**

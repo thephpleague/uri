@@ -42,7 +42,9 @@ trait NamedConstructorsTrait
      *
      * @param array $components
      *
-     * @return Uri\Schemes\HierarchicalUri
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return Uri\Interfaces\Schemes\Uri
      */
     public static function createFromComponents(array $components)
     {

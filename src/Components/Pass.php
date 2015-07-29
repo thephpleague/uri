@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since  1.0.0
  */
-class Pass extends AbstractComponent implements Interfaces\Pass
+class Pass extends AbstractComponent implements Interfaces\Components\Pass
 {
     protected static $invalidCharactersRegex = ',[/?#@],';
 }

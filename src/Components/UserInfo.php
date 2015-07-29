@@ -20,7 +20,7 @@ use League\Uri\Types;
  * @since 4.0.0
  *
  */
-class UserInfo implements Interfaces\UserInfo
+class UserInfo implements Interfaces\Components\UserInfo
 {
     /**
      * User Component
@@ -125,7 +125,7 @@ class UserInfo implements Interfaces\UserInfo
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Interfaces\UriPart $component)
+    public function sameValueAs(Interfaces\Components\UriPart $component)
     {
         return $this->getUriComponent() === $component->getUriComponent();
     }

@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Components;
 
 /**
  * Value object representing a URI Path component.
@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.3
  */
-interface Path extends HierarchicalComponent
+interface HierarchicalPath extends Path, HierarchicalComponent
 {
     /**
      * Returns whether or not the path is absolute or relative
@@ -30,33 +30,6 @@ interface Path extends HierarchicalComponent
      * @return bool
      */
     public function isAbsolute();
-
-    /**
-     * Retrieves a single path segment.
-     *
-     * Retrieves a single path segment. If the segment offset has not been set,
-     * returns the default value provided.
-     *
-     * @param string $offset  the segment offset
-     * @param mixed  $default Default value to return if the offset does not exist.
-     *
-     * @return mixed
-     */
-    public function getSegment($offset, $default = null);
-
-    /**
-     * Returns parent directory's path
-     *
-     * @return string
-     */
-    public function getDirname();
-
-    /**
-     * Returns the path basename
-     *
-     * @return string
-     */
-    public function getBasename();
 
     /**
      * Returns the basename extension
@@ -109,15 +82,31 @@ interface Path extends HierarchicalComponent
     public function withExtension($ext);
 
     /**
-     * Returns an instance without dot segments
+     * Retrieves a single path segment.
      *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the path component normalized by removing
-     * the dot segment.
+     * Retrieves a single path segment. If the segment offset has not been set,
+     * returns the default value provided.
      *
-     * @return static
+     * @param string $offset  the segment offset
+     * @param mixed  $default Default value to return if the offset does not exist.
+     *
+     * @return mixed
      */
-    public function withoutDotSegments();
+    public function getSegment($offset, $default = null);
+
+    /**
+     * Returns parent directory's path
+     *
+     * @return string
+     */
+    public function getDirname();
+
+    /**
+     * Returns the path basename
+     *
+     * @return string
+     */
+    public function getBasename();
 
     /**
      * Returns an instance relativized according to a given Path
@@ -129,7 +118,18 @@ interface Path extends HierarchicalComponent
      *
      * @return static
      */
-    public function relativize(Path $rel);
+    public function relativize(HierarchicalPath $rel);
+
+    /**
+     * Returns an instance without dot segments
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * the dot segment.
+     *
+     * @return static
+     */
+    public function withoutDotSegments();
 
     /**
      * Returns an instance without duplicate delimiters

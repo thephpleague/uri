@@ -8,10 +8,10 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Components;
 
 /**
- * Value object representing a URI Pass component.
+ * Value object representing a URI Fragment component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -19,9 +19,9 @@ namespace League\Uri\Interfaces;
  * changed state.
  *
  * @package League.uri
- * @since   1.0.0
- * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
+ * @since   4.0.0
+ * @see     https://tools.ietf.org/html/rfc3986#section-3.5
  */
-interface Pass extends Component, LiteralAccess
+interface Fragment extends Component, LiteralAccess
 {
 }

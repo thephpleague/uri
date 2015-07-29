@@ -10,6 +10,7 @@
  */
 namespace League\Uri\Schemes\Generic;
 
+use Exception;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
@@ -31,6 +32,48 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     protected $scheme;
 
+    /**
+     * User Information Part
+     *
+     * @var Interfaces\UserInfo
+     */
+    protected $userInfo;
+
+    /**
+     * Host Component
+     *
+     * @var Interfaces\Host
+     */
+    protected $host;
+
+    /**
+     * Port Component
+     *
+     * @var Interfaces\Port
+     */
+    protected $port;
+
+    /**
+     * Path Component
+     *
+     * @var Interfaces\Path
+     */
+    protected $path;
+
+    /**
+     * Query Component
+     *
+     * @var Interfaces\Query
+     */
+    protected $query;
+
+    /**
+     * Fragment Component
+     *
+     * @var Interfaces\Fragment
+     */
+    protected $fragment;
+
     /*
      * Trait To get/set immutable value property
      */
@@ -47,11 +90,124 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     use ParserTrait;
 
     /**
+     * Create a new instance of URI
+     *
+     * @param Interfaces\Components\Scheme   $scheme
+     * @param Interfaces\Components\UserInfo $userInfo
+     * @param Interfaces\Components\Host     $host
+     * @param Interfaces\Components\Port     $port
+     * @param Interfaces\Components\Path     $path
+     * @param Interfaces\Components\Query    $query
+     * @param Interfaces\Components\Fragment $fragment
+     */
+    public function __construct(
+        Interfaces\Components\Scheme $scheme,
+        Interfaces\Components\UserInfo $userInfo,
+        Interfaces\Components\Host $host,
+        Interfaces\Components\Port $port,
+        Interfaces\Components\Path $path,
+        Interfaces\Components\Query $query,
+        Interfaces\Components\Fragment $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->userInfo = $userInfo;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
+        $this->assertValidObject();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getScheme()
     {
         return $this->scheme->__toString();
+    }
+
+    /**
+     * Get URI relative reference
+     *
+     * @return string
+     */
+    public function getSchemeSpecificPart()
+    {
+        $auth = $this->getAuthority();
+        if (!empty($auth)) {
+            $auth = '//'.$auth;
+        }
+
+        return $auth
+            .$this->formatPath($this->path, (bool) $auth)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        if ($this->host->isEmpty()) {
+            return '';
+        }
+
+        $port = $this->port->getUriComponent();
+        if ($this->hasStandardPort()) {
+            $port = '';
+        }
+
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHost()
+    {
+        return $this->host->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPort()
+    {
+        return $this->hasStandardPort() ? null : $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery()
+    {
+        return $this->query->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFragment()
+    {
+        return $this->fragment->__toString();
     }
 
     /**
@@ -65,7 +221,94 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * {@inheritdoc}
      */
-    abstract public function getSchemeSpecificPart();
+    public function withUserInfo($user, $pass = null)
+    {
+        if (null === $pass) {
+            $pass = '';
+        }
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        if ($this->userInfo->user->sameValueAs($userInfo->user)
+            && $this->userInfo->pass->sameValueAs($userInfo->pass)
+        ) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
+    {
+        return $this->withProperty('host', $host);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPort($port)
+    {
+        return $this->withProperty('port', $port);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        return $this->withProperty('path', $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withQuery($query)
+    {
+        return $this->withProperty('query', $query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withFragment($fragment)
+    {
+        return $this->withProperty('fragment', $fragment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mergeQuery($query)
+    {
+        return $this->withProperty('query', $this->query->merge($query));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function ksortQuery($sort = SORT_REGULAR)
+    {
+        return $this->withProperty('query', $this->query->ksort($sort));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutQueryValues($offsets)
+    {
+        return $this->withProperty('query', $this->query->without($offsets));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterQuery(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
+    {
+        return $this->withProperty('query', $this->query->filter($callable, $flag));
+    }
 
     /**
      * {@inheritdoc}
@@ -98,12 +341,18 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     {
         if (!$uri instanceof UriInterface && !$uri instanceof Interfaces\Schemes\Uri) {
             throw new InvalidArgumentException(
-                'This method requires an object implementing the `League\Uri\Interfaces\Schemes\Uri` interface
-                or the PSR-7 `Psr\Http\Message\UriInterface` interface'
+                'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
+                the `League\Uri\Interfaces\Schemes\Uri` interface'
             );
         }
 
-        return $uri->__toString() === $this->__toString();
+        try {
+            return static::createFromComponents(static::parse($uri->__toString()))
+                ->toAscii()->ksortQuery()->__toString() === $this
+                ->toAscii()->ksortQuery()->__toString();
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**

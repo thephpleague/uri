@@ -17,7 +17,7 @@ namespace League\Uri\Schemes;
  * @since   4.0.0
  *
  */
-class Ws extends Generic\AbstractHierarchical
+class Ws extends Generic\AbstractHierarchicalUri
 {
     /**
      * {@inheritdoc}

@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Components;
 
 /**
  * Value object representing a URI Query component.
@@ -22,7 +22,7 @@ namespace League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.4
  */
-interface Parameters extends Collection, Component
+interface Query extends Collection, Component
 {
     /**
      * Retrieves a single query parameter.

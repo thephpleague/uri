@@ -20,7 +20,7 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  *
  */
-class Ftp extends Generic\AbstractHierarchical implements Interfaces\Schemes\Ftp
+class Ftp extends Generic\AbstractHierarchicalUri implements Interfaces\Schemes\Ftp
 {
     /**
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class Ftp extends Generic\AbstractHierarchical implements Interfaces\Schemes\Ftp
      */
     protected function isValid()
     {
-        if (!$this->fragment->isEmpty() || !$this->query->isEmpty()) {
+        if (! empty($this->fragment->__toString().$this->query->__toString())) {
             return false;
         }
 

@@ -8,10 +8,10 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Components;
 
 /**
- * Value object representing a URI component.
+ * Value object representing a URI Path component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -20,18 +20,8 @@ namespace League\Uri\Interfaces;
  *
  * @package League.uri
  * @since   4.0.0
+ * @see     https://tools.ietf.org/html/rfc3986#section-3.3
  */
-interface Component extends UriPart
+interface Path extends Component
 {
-    /**
-     * Returns an instance with the specified string
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified data
-     *
-     * @param string $value
-     *
-     * @return static
-     */
-    public function modify($value);
 }

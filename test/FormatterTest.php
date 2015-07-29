@@ -110,7 +110,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $formatter = new Uri\Formatter();
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Uri\Formatter::HOST_AS_ASCII);
-        $opaqueUri = Uri\Schemes\Data::createFromString();
+        $opaqueUri = Uri\Schemes\Data::createFromString('data:,');
         $this->assertSame($opaqueUri->__toString(), $formatter->format($opaqueUri));
     }
 

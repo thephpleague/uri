@@ -28,49 +28,49 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * Scheme Component
      *
-     * @var Interfaces\Scheme
+     * @var Interfaces\Components\Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var Interfaces\UserInfo
+     * @var Interfaces\Components\UserInfo
      */
     protected $userInfo;
 
     /**
      * Host Component
      *
-     * @var Interfaces\Host
+     * @var Interfaces\Components\Host
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var Interfaces\Port
+     * @var Interfaces\Components\Port
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var Interfaces\Path
+     * @var Interfaces\Components\Path
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var Interfaces\Query
+     * @var Interfaces\Components\Query
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var Interfaces\Fragment
+     * @var Interfaces\Components\Fragment
      */
     protected $fragment;
 
@@ -78,6 +78,11 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      * Trait To get/set immutable value property
      */
     use Uri\Types\ImmutablePropertyTrait;
+
+    /*
+     * Component Path formatting in a URI string
+     */
+    use Uri\Components\PathFormatterTrait;
 
     /*
      * a trait to add named constructors
@@ -393,7 +398,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      *
      * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
      *
-     * @return Interfaces\Schemes\HierarchicalUri
+     * @return static
      */
     protected function resolveRelative(Interfaces\Schemes\HierarchicalUri $relative)
     {
@@ -417,7 +422,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      * @param Interfaces\Schemes\HierarchicalUri $newUri   the final URI
      * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
      *
-     * @return Interfaces\Path
+     * @return Interfaces\Components\Path
      */
     protected function resolvePath(
         Interfaces\Schemes\HierarchicalUri $newUri,

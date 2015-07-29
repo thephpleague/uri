@@ -123,13 +123,13 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Schemes\Uri|Interfaces\UriPart $input
+     * @param Interfaces\Schemes\Uri|Interfaces\Components\UriPart $input
      *
      * @return string
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\UriPart) {
+        if ($input instanceof Interfaces\Components\UriPart) {
             return $this->formatUriPart($input);
         }
 
@@ -144,19 +144,19 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\UriPart implemented object according to the Formatter properties
+     * Format a Interfaces\Components\UriPart implemented object according to the Formatter properties
      *
-     * @param Interfaces\UriPart $part
+     * @param Interfaces\Components\UriPart $part
      *
      * @return string
      */
-    protected function formatUriPart(Interfaces\UriPart $part)
+    protected function formatUriPart(Interfaces\Components\UriPart $part)
     {
-        if ($part instanceof Interfaces\Query) {
+        if ($part instanceof Interfaces\Components\Query) {
             return Components\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
-        if ($part instanceof Interfaces\Host) {
+        if ($part instanceof Interfaces\Components\Host) {
             return $this->formatHost($part);
         }
 
@@ -164,13 +164,13 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\Host according to the Formatter properties
+     * Format a Interfaces\Components\Host according to the Formatter properties
      *
-     * @param Interfaces\Host $host
+     * @param Interfaces\Components\Host $host
      *
      * @return string
      */
-    protected function formatHost(Interfaces\Host $host)
+    protected function formatHost(Interfaces\Components\Host $host)
     {
         if (self::HOST_AS_ASCII == $this->hostEncoding) {
             return $host->toAscii()->__toString();

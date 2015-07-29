@@ -3,8 +3,6 @@
 namespace League\Uri\test\Schemes;
 
 use League\Uri;
-use League\Uri\Components\Parameters;
-use League\Uri\Components\Scheme;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -14,39 +12,6 @@ use PHPUnit_Framework_TestCase;
  */
 class DataTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @dataProvider invalidDataUriDefaultConstructor
-     */
-    public function testDefaultConstructorFailed($scheme, $mimeType, $parameters, $data)
-    {
-        new DataUri($scheme, $mimeType, $parameters, $data);
-    }
-
-    public function invalidDataUriDefaultConstructor()
-    {
-        return [
-            'invalid scheme' => [
-                'scheme' => new Scheme('http'),
-                'mimetype' => 'application/json',
-                'parameters' => new Parameters('charset=us-ascii'),
-                'data' => rawurlencode('Bonjour le monde!'),
-            ],
-            'invalid mimetype' => [
-                'scheme' => new Scheme('data'),
-                'mimetype' => 'application_json',
-                'parameters' => new Parameters('charset=us-ascii'),
-                'data' => rawurlencode('Bonjour le monde!'),
-            ],
-            'invalid data' => [
-                'scheme' => new Scheme('data'),
-                'mimetype' => 'application/json',
-                'parameters' => new Parameters('charset=us-ascii;base64'),
-                'data' => rawurlencode('Bonjour le monde!'),
-            ],
-        ];
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -68,8 +33,8 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($data, $uri->getData());
         $this->assertSame($asArray, $uri->toArray());
         $this->assertSame($isBinaryData, $uri->isBinaryData());
-        $this->assertInstanceOf('League\Uri\Interfaces\Scheme', $uri->scheme);
-        $this->assertInstanceOf('League\Uri\Interfaces\Parameters', $uri->parameters);
+        $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
+        $this->assertInstanceOf('League\Uri\Interfaces\Components\Media', $uri->path);
     }
 
     public function validStringUri()
@@ -112,7 +77,7 @@ class DataTest extends PHPUnit_Framework_TestCase
             'string without parameters' => [
                 'uri' => 'data:text/plain,Bonjour%20le%20monde%21',
                 'mimetype' => 'text/plain',
-                'parameters' => '',
+                'parameters' => 'charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
                 'asArray' => [
                     'scheme' => 'data',
@@ -120,14 +85,14 @@ class DataTest extends PHPUnit_Framework_TestCase
                     'pass' => null,
                     'host' => null,
                     'port' => null,
-                    'path' => 'text/plain,Bonjour%20le%20monde%21',
+                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
                     'query' => null,
                     'fragment' => null,
                 ],
                 'isBinaryData' => false,
             ],
             'empty string' => [
-                'uri' => '',
+                'uri' => 'data:,',
                 'mimetype' => 'text/plain',
                 'parameters' => 'charset=us-ascii',
                 'data' => '',
@@ -146,7 +111,7 @@ class DataTest extends PHPUnit_Framework_TestCase
             'binary data' => [
                 'uri' => 'data:image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
                 'mimetype' => 'image/gif',
-                'parameters' => 'charset=binary;base64',
+                'parameters' => 'charset=binary',
                 'data' => 'R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
                 'asArray' => [
                     'scheme' => 'data',
@@ -181,6 +146,7 @@ class DataTest extends PHPUnit_Framework_TestCase
             'invalid data' => ['data:image/png;base64,°28'],
             'invalid data 2' => ['data:image/png;base64,zzz28'],
             'invalid mime type' => ['data:image_png;base64,zzz'],
+            'invalid parameter' => ['data:image/png;base64;base64,zzz'],
         ];
     }
 
@@ -236,28 +202,37 @@ class DataTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testMergeParameters()
-    {
-        $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-
-        $newUri = $uri->mergeParameters(['charset' => 'utf-8']);
-        $this->assertSame('charset=utf-8', (string) $newUri->getParameters());
-    }
-
-    public function testWithoutParameters()
-    {
-        $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-
-        $newUri = $uri->withoutParameters(['charset']);
-        $this->assertSame('', (string) $newUri->getParameters());
-    }
-
     public function testWithParameters()
     {
         $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
 
         $newUri = $uri->withParameters('charset=us-ascii');
         $this->assertTrue($newUri->sameValueAS($uri));
+    }
+
+    public function testWithParametersOnBinaryData()
+    {
+        $expected = 'charset=binary;foo=bar';
+        $uri = DataUri::createFromPath(__DIR__.'/red-nose.gif');
+        $newUri = $uri->withParameters($expected);
+        $this->assertSame($expected, $newUri->getParameters());
+    }
+
+    /**
+     * @dataProvider fileProvider
+     */
+    public function testToBinary($path)
+    {
+        $uri = DataUri::createFromPath($path);
+        $this->assertTrue($uri->toBinary()->isBinaryData());
+    }
+
+    public function fileProvider()
+    {
+        return [
+            [__DIR__.'/hello-world.txt'],
+            [__DIR__.'/red-nose.gif'],
+        ];
     }
 
     /**
@@ -306,5 +281,13 @@ class DataTest extends PHPUnit_Framework_TestCase
     public function testSaveFailedWithUnReachableFilePath()
     {
         DataUri::createFromPath(__DIR__.'/hello-world.txt')->save('/usr/bin/yolo', 'w');
+    }
+
+    public function testSameValueAs()
+    {
+        $mock = $this->getMock('Psr\Http\Message\UriInterface');
+        $mock->method('__toString')->willReturn('http://www.example.com');
+
+        $this->assertFalse(DataUri::createFromPath(__DIR__.'/hello-world.txt')->sameValueAs($mock));
     }
 }

@@ -23,7 +23,7 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-abstract class AbstractHierarchical extends AbstractUri implements Interfaces\Schemes\HierarchicalUri
+abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces\Schemes\HierarchicalUri
 {
     /**
      * Supported Schemes
@@ -37,182 +37,148 @@ abstract class AbstractHierarchical extends AbstractUri implements Interfaces\Sc
      */
     use Uri\Components\PathFormatterTrait;
 
-    /*
-     * a trait to partially modify an HierarchicalUri object
-     */
-    use HierarchicalModifierTrait;
-
     /**
-     * Create a new instance of URI
-     *
-     * @param Interfaces\Scheme   $scheme
-     * @param Interfaces\UserInfo $userInfo
-     * @param Interfaces\Host     $host
-     * @param Interfaces\Port     $port
-     * @param Interfaces\Path     $path
-     * @param Interfaces\Query    $query
-     * @param Interfaces\Fragment $fragment
+     * {@inheritdoc}
      */
-    public function __construct(
-        Interfaces\Scheme $scheme,
-        Interfaces\UserInfo $userInfo,
-        Interfaces\Host $host,
-        Interfaces\Port $port,
-        Interfaces\Path $path,
-        Interfaces\Query $query,
-        Interfaces\Fragment $fragment
-    ) {
-        $this->scheme = $scheme;
-        $this->userInfo = $userInfo;
-        $this->host = $host;
-        $this->port = $port;
-        $this->path = $path;
-        $this->query = $query;
-        $this->fragment = $fragment;
-        $this->assertValidObject();
+    public function appendPath($path)
+    {
+        return $this->withProperty('path', $this->path->append($path));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuthority()
+    public function prependPath($path)
     {
-        if ($this->host->isEmpty()) {
-            return '';
-        }
-
-        $port = $this->port->getUriComponent();
-        if ($this->hasStandardPort()) {
-            $port = '';
-        }
-
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+        return $this->withProperty('path', $this->path->prepend($path));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUserInfo()
+    public function filterPath(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
     {
-        return $this->userInfo->__toString();
+        return $this->withProperty('path', $this->path->filter($callable, $flag));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getHost()
+    public function withExtension($extension)
     {
-        return $this->host->__toString();
+        return $this->withProperty('path', $this->path->withExtension($extension));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPort()
+    public function withTrailingSlash()
     {
-        return $this->hasStandardPort() ? null : $this->port->toInt();
+        return $this->withProperty('path', $this->path->withTrailingSlash());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPath()
+    public function withoutTrailingSlash()
     {
-        return $this->path->__toString();
+        return $this->withProperty('path', $this->path->withoutTrailingSlash());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQuery()
+    public function replaceSegment($offset, $value)
     {
-        return $this->query->__toString();
+        return $this->withProperty('path', $this->path->replace($offset, $value));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFragment()
+    public function withoutSegments($offsets)
     {
-        return $this->fragment->__toString();
+        return $this->withProperty('path', $this->path->without($offsets));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withUserInfo($user, $pass = null)
+    public function withoutDotSegments()
     {
-        if (null === $pass) {
-            $pass = '';
-        }
-        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
-        if ($this->userInfo->user->sameValueAs($userInfo->user)
-            && $this->userInfo->pass->sameValueAs($userInfo->pass)
-        ) {
-            return $this;
-        }
-        $clone = clone $this;
-        $clone->userInfo = $userInfo;
-
-        return $clone;
+        return $this->withProperty('path', $this->path->withoutDotSegments());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withHost($host)
+    public function withoutEmptySegments()
     {
-        return $this->withProperty('host', $host);
+        return $this->withProperty('path', $this->path->withoutEmptySegments());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withPort($port)
+    public function appendHost($host)
     {
-        return $this->withProperty('port', $port);
+        return $this->withProperty('host', $this->host->append($host));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withPath($path)
+    public function prependHost($host)
     {
-        return $this->withProperty('path', $path);
+        return $this->withProperty('host', $this->host->prepend($host));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withQuery($query)
+    public function withoutZoneIdentifier()
     {
-        return $this->withProperty('query', $query);
+        return $this->withProperty('host', $this->host->withoutZoneIdentifier());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withFragment($fragment)
+    public function toUnicode()
     {
-        return $this->withProperty('fragment', $fragment);
+        return $this->withProperty('host', $this->host->toUnicode());
     }
 
     /**
-     * Get URI relative reference
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getSchemeSpecificPart()
+    public function toAscii()
     {
-        $auth = $this->getAuthority();
-        if (!empty($auth)) {
-            $auth = '//'.$auth;
-        }
+        return $this->withProperty('host', $this->host->toAscii());
+    }
 
-        return $auth
-            .$this->formatPath($this->path, (bool) $auth)
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceLabel($offset, $value)
+    {
+        return $this->withProperty('host', $this->host->replace($offset, $value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutLabels($offsets)
+    {
+        return $this->withProperty('host', $this->host->without($offsets));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterHost(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
+    {
+        return $this->withProperty('host', $this->host->filter($callable, $flag));
     }
 
     /**

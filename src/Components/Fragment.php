@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Fragment extends AbstractComponent implements Interfaces\Fragment
+class Fragment extends AbstractComponent implements Interfaces\Components\Fragment
 {
     /**
      * {@inheritdoc}

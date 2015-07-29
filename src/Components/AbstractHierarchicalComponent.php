@@ -20,7 +20,7 @@ use League\Uri\Types;
  * @package League.uri
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalComponent
+abstract class AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalComponent
 {
     const IS_ABSOLUTE = 1;
     const IS_RELATIVE = 0;
@@ -35,7 +35,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     /*
      * common immutable value object methods
      */
-    use Types\ImmutableValueObjectTrait;
+    use Types\ImmutableComponentTrait;
 
     /*
      * immutable collection methods
@@ -113,7 +113,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
     }
 
     /**
-     * Validate a component as a Interfaces\HierarchicalComponent object
+     * Validate a component as a Interfaces\Components\HierarchicalComponent object
      *
      * @param mixed $component
      *
@@ -123,7 +123,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\HierarchicalC
      */
     protected function validateComponent($component)
     {
-        if (!$component instanceof Interfaces\HierarchicalComponent) {
+        if (!$component instanceof Interfaces\Components\HierarchicalComponent) {
             return $this->modify($component);
         }
 

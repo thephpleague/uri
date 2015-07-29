@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Port extends AbstractComponent implements Interfaces\Port
+class Port extends AbstractComponent implements Interfaces\Components\Port
 {
     /**
      * New Instance

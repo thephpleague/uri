@@ -37,8 +37,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();
-        $this->assertInstanceof('League\Uri\Interfaces\User', $userinfo->user);
-        $this->assertInstanceof('League\Uri\Interfaces\Pass', $userinfo->pass);
+        $this->assertInstanceof('League\Uri\Interfaces\Components\User', $userinfo->user);
+        $this->assertInstanceof('League\Uri\Interfaces\Components\Pass', $userinfo->pass);
     }
 
     /**

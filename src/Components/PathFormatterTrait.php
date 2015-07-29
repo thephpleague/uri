@@ -28,7 +28,7 @@ trait PathFormatterTrait
      *
      * @return string
      */
-    protected function formatPath(Interfaces\Path $path, $has_authority_part = false)
+    protected function formatPath(Interfaces\Components\Path $path, $has_authority_part = false)
     {
         $path = $path->getUriComponent();
 

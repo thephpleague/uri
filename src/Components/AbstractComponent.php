@@ -24,7 +24,7 @@ abstract class AbstractComponent
     /*
      * common immutable value object methods
      */
-    use Types\ImmutableValueObjectTrait;
+    use Types\ImmutableComponentTrait;
 
     /**
      * Invalid Characters list

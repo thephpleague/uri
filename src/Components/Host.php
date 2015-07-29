@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Host extends AbstractHierarchicalComponent implements Interfaces\Host
+class Host extends AbstractHierarchicalComponent implements Interfaces\Components\Host
 {
     /*
      * Ip host validation and properties

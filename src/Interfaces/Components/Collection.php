@@ -8,7 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Interfaces;
+namespace League\Uri\Interfaces\Components;
 
 use Countable;
 use IteratorAggregate;

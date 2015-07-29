@@ -1,5 +1,14 @@
 <?php
 
+$header = <<<'EOF'
+This file is part of League\Uri, a URI manipulation library
+
+@copyright 2015 Ignace Nyamagana Butera. All rights reserved
+@license MIT See LICENSE.md at the root of the project for more info
+EOF;
+
+Symfony\CS\Fixer\Contrib\HeaderCommentFixer::setHeader($header);
+
 return Symfony\CS\Config\Config::create()
     ->level(Symfony\CS\FixerInterface::PSR2_LEVEL)
     ->fixers([
@@ -23,6 +32,6 @@ return Symfony\CS\Config\Config::create()
     ])
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()
-            ->in('src')
-            ->in('test')
+            ->in(__DIR__.'/src')
+            ->in(__DIR__.'/test')
     );

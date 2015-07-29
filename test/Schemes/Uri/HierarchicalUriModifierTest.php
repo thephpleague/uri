@@ -104,7 +104,7 @@ class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
     {
         $uri = $this->uri->filterQuery(function ($value) {
             return $value == 'kingkong';
-        }, Interfaces\Collection::FILTER_USE_KEY);
+        }, Interfaces\Components\Collection::FILTER_USE_KEY);
 
         $this->assertSame('kingkong=toto', $uri->getQuery());
     }
@@ -113,7 +113,7 @@ class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
     {
         $uri = $this->uri->filterQuery(function ($value) {
             return $value == 'toto';
-        }, Interfaces\Collection::FILTER_USE_VALUE);
+        }, Interfaces\Components\Collection::FILTER_USE_VALUE);
 
         $this->assertSame('kingkong=toto', $uri->getQuery());
     }

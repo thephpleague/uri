@@ -11,7 +11,7 @@
 namespace League\Uri\Types;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\UriPart;
+use League\Uri\Interfaces\Components\UriPart;
 use ReflectionClass;
 
 /**
@@ -20,7 +20,7 @@ use ReflectionClass;
  * @package League.uri
  * @since   4.0.0
  */
-trait ImmutableValueObjectTrait
+trait ImmutableComponentTrait
 {
     /**
      * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2

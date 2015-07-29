@@ -20,7 +20,7 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-class Http extends Generic\AbstractHierarchical implements UriInterface
+class Http extends Generic\AbstractHierarchicalUri implements UriInterface
 {
     /**
      * {@inheritdoc}

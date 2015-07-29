@@ -24,8 +24,13 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc2397
  *
- * @property-read Interfaces\Scheme     $scheme
- * @property-read Interfaces\Parameters $parameters
+ * @property-read Interfaces\Components\Scheme   $scheme
+ * @property-read Interfaces\Components\UserInfo $userInfo
+ * @property-read Interfaces\Components\Host     $host
+ * @property-read Interfaces\Components\Port     $port
+ * @property-read Interfaces\Components\Media    $path
+ * @property-read Interfaces\Components\Query    $query
+ * @property-read Interfaces\Components\Fragment $fragment
  */
 interface Data extends Uri
 {
@@ -50,6 +55,17 @@ interface Data extends Uri
      * @return string The URI scheme.
      */
     public function getParameters();
+
+    /**
+     * Retrieve the data associated with the URI.
+     *
+     * If no data is present, this method MUST return a empty string.
+     *
+     * @see http://tools.ietf.org/html/rfc2397#section-2
+     *
+     * @return string The URI scheme.
+     */
+    public function getData();
 
     /**
      * Save the data to a specific file
@@ -90,32 +106,22 @@ interface Data extends Uri
     public function withParameters($parameters);
 
     /**
-     * Return an instance with update mediatype arameters
+     * Returns an instance where the data part is base64 encoded
      *
      * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified mediatype parameters data
-     *
-     * @param mixed $parameters the data to be merged can be
-     *                          - another Interfaces\Parameters object
-     *                          - a Traversable object
-     *                          - an array
-     *                          - a string or a Stringable object
+     * an instance where the data part is base64 encoded
      *
      * @return static
      */
-    public function mergeParameters($parameters);
+    public function toBinary();
 
     /**
-     * Return an instance without the specified parameters
+     * Returns an instance where the data part is url encoded following RFC3986 rules
      *
      * This method MUST retain the state of the current instance, and return
-     * an instance without the specified query data
-     *
-     * @param callable|array $keys the list of keys to remove from the parameters
-     *                             if a callable is given it should filter the list
-     *                             of keys to remove from the query string
+     * an instance where the data part is url encoded
      *
      * @return static
      */
-    public function withoutParameters($keys);
+    public function toAscii();
 }

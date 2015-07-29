@@ -31,6 +31,13 @@ class Media implements Interfaces\Components\Media
     const BINARY_PARAMETER = 'base64';
 
     /**
+     * The File Data
+     *
+     * @var string
+     */
+    protected $data;
+
+    /**
      * The File MimeType
      *
      * @var string
@@ -39,6 +46,7 @@ class Media implements Interfaces\Components\Media
 
     /**
      * The File optional parameters
+     *
      * @var array
      */
     protected $parameters = [];
@@ -80,7 +88,7 @@ class Media implements Interfaces\Components\Media
     /**
      * Validate the string
      *
-     * @param array $matches
+     * @param string[] $matches
      *
      * @throws InvalidArgumentException if the object can not be instantiated
      */
@@ -158,18 +166,18 @@ class Media implements Interfaces\Components\Media
     /**
      * Filter and Set the Parameter property
      *
-     * @param string $str
+     * @param string $parameters
      *
      * @throws new InvalidArgumentException If the parameter is invalid
      */
-    protected function filterParameters($str)
+    protected function filterParameters($parameters)
     {
-        if (empty($str)) {
+        if (empty($parameters)) {
             $this->parameters = [static::DEFAULT_PARAMETER];
             return;
         }
 
-        $parameters = explode(';', $str);
+        $parameters = explode(';', $parameters);
         $checkValidParameters = array_filter($parameters, function ($value) {
             return 0 === strpos($value, static::BINARY_PARAMETER.'=') || 2 != count(explode('=', $value));
         });
@@ -184,7 +192,7 @@ class Media implements Interfaces\Components\Media
     /**
      * Filter and Set the mimeType property
      *
-     * @param string $str
+     * @param string $mimeType
      *
      * @throws new InvalidArgumentException If the mimetype is invalid
      */
@@ -255,17 +263,35 @@ class Media implements Interfaces\Components\Media
      */
     public function __toString()
     {
-        $str = $this->mimeType;
-        $parameters = $this->getParameters();
+        return $this->format(
+            $this->mimeType,
+            $this->getParameters(),
+            $this->isBinaryData,
+            $this->data
+        );
+    }
+
+    /**
+     * Format the DataURI string
+     *
+     * @param string $mimeType
+     * @param string $parameters
+     * @param bool   $isBinaryData
+     * @param string $data
+     *
+     * @return string
+     */
+    protected function format($mimeType, $parameters, $isBinaryData, $data)
+    {
+        $str = $mimeType;
         if (!empty($parameters)) {
             $str .= ';'.$parameters;
         }
-
-        if ($this->isBinaryData) {
+        if ($isBinaryData) {
             $str .= ';'.static::BINARY_PARAMETER;
         }
 
-        return $str.','.$this->data;
+        return $str.','.$data;
     }
 
     /**
@@ -285,16 +311,12 @@ class Media implements Interfaces\Components\Media
             return $this;
         }
 
-        $str = $this->mimeType;
-        if (!empty($parameters)) {
-            $str .= ';'.$parameters;
-        }
-
-        if ($this->isBinaryData) {
-            $str .= ';'.static::BINARY_PARAMETER;
-        }
-
-        return new static($str.','.$this->data);
+        return new static($this->format(
+            $this->mimeType,
+            $parameters,
+            $this->isBinaryData,
+            $this->data
+        ));
     }
 
     /**
@@ -306,13 +328,12 @@ class Media implements Interfaces\Components\Media
             return $this;
         }
 
-        $str = $this->mimeType;
-        $parameters = $this->getParameters();
-        if (!empty($parameters)) {
-            $str .= ';'.$parameters;
-        }
-
-        return new static($str.';'.static::BINARY_PARAMETER.','.base64_encode(rawurldecode($this->data)));
+        return new static($this->format(
+            $this->mimeType,
+            $this->getParameters(),
+            true,
+            base64_encode(rawurldecode($this->data))
+        ));
     }
 
     /**
@@ -324,13 +345,12 @@ class Media implements Interfaces\Components\Media
             return $this;
         }
 
-        $str = $this->mimeType;
-        $parameters = $this->getParameters();
-        if (!empty($parameters)) {
-            $str .= ';'.$parameters;
-        }
-
-        return new static($str.','.rawurlencode(base64_decode($this->data)));
+        return new static($this->format(
+            $this->mimeType,
+            $this->getParameters(),
+            false,
+            rawurlencode(base64_decode($this->data))
+        ));
     }
 
     /**

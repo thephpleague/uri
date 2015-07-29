@@ -32,11 +32,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      */
     protected static $supportedSchemes = [];
 
-    /*
-     * Component Path formatting in a URI string
-     */
-    use Uri\Components\PathFormatterTrait;
-
     /**
      * {@inheritdoc}
      */

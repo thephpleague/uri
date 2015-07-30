@@ -165,6 +165,8 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      *
      * @param array $components
      *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
      * @return static
      */
     public static function createFromComponents(array $components)

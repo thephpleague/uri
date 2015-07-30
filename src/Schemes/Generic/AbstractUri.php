@@ -117,12 +117,9 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
             return '';
         }
 
-        $port = $this->port->getUriComponent();
-        if ($this->hasStandardPort()) {
-            $port = '';
-        }
-
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+        return $this->userInfo->getUriComponent()
+            .$this->host->getUriComponent()
+            .$this->port->getUriComponent();
     }
 
     /**
@@ -332,10 +329,10 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         if (!empty($relative->getHost())) {
-            return $this->resolveAuthority($relative)->withoutDotSegments();
+            return $this->resolveAuthority($relative);
         }
 
-        return $this->resolveRelative($relative)->withoutDotSegments();
+        return $this->resolveRelative($relative);
     }
 
     /**
@@ -349,10 +346,10 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     {
         $className = get_class($this);
         if (!$relative instanceof $className) {
-            return $relative;
+            return $relative->withoutDotSegments();
         }
 
-        return $relative->withScheme($this->scheme);
+        return $relative->withScheme($this->scheme)->withoutDotSegments();
     }
 
     /**
@@ -364,18 +361,23 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     protected function resolveRelative(Interfaces\Schemes\HierarchicalUri $relative)
     {
+        if (!$this instanceof Interfaces\Schemes\HierarchicalUri) {
+            return $relative;
+        }
+
         $newUri = $this->withFragment($relative->fragment->__toString());
         if (!$relative->path->isEmpty()) {
             return $newUri
                 ->withPath($this->resolvePath($newUri, $relative)->__toString())
-                ->withQuery($relative->query->__toString());
+                ->withQuery($relative->query->__toString())
+                ->withoutDotSegments();
         }
 
         if (!$relative->query->isEmpty()) {
-            return $newUri->withQuery($relative->query->__toString());
+            return $newUri->withQuery($relative->query->__toString())->withoutDotSegments();
         }
 
-        return $newUri;
+        return $newUri->withoutDotSegments();
     }
 
     /**

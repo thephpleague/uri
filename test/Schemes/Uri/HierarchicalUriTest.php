@@ -368,18 +368,30 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) $baseUri->relativize($childUri));
     }
 
-    public function testResolveHierarachicalUriObject()
+    /**
+     * @dataProvider resolveUriProvider
+     */
+    public function testResolveUri($uri1, $uri2)
     {
-        $ftp  = FtpUri::createFromString('ftp://example.com/path/to/file');
-        $http = HttpUri::createFromString('//a/b/c/d;p?q');
-        $this->assertSame($http, $ftp->resolve($http));
+        $this->assertSame($uri2, $uri1->resolve($uri2));
     }
 
-    public function testResolveUriObject()
+    public function resolveUriProvider()
     {
-        $ftp  = FtpUri::createFromString('ftp://example.com/path/to/file');
-        $data = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-        $this->assertSame($data, $ftp->resolve($data));
+        return [
+            'two hierarchical uri' => [
+                FtpUri::createFromString('ftp://example.com/path/to/file'),
+                HttpUri::createFromString('//a/b/c/d;p?q'),
+            ],
+            'hierarchical uri resolve opaque uri' => [
+                FtpUri::createFromString('ftp://example.com/path/to/file'),
+                DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21'),
+            ],
+            'opaque uri resolve hierarchical uri' => [
+                DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21'),
+                FtpUri::createFromString('/toto/le/heros'),
+            ],
+        ];
     }
 
     /**

@@ -63,14 +63,13 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     }
 
     /**
-     * Create a new instance from an array returned by
-     * PHP parse_url function
+     * Create a new instance from a hash of parse_url parts
      *
      * @param array $components
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return Uri\Interfaces\Schemes\Uri
+     * @return Interfaces\Schemes\HierarchicalUri
      */
     public static function createFromComponents(array $components)
     {
@@ -93,6 +92,22 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      * @var array
      */
     protected static $supportedSchemes = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        if (!$this->hasStandardPort()) {
+            return parent::getAuthority();
+        }
+
+        if ($this->host->isEmpty()) {
+            return '';
+        }
+
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent();
+    }
 
     /**
      * {@inheritdoc}

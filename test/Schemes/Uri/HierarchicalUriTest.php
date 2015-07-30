@@ -3,6 +3,7 @@
 namespace League\Uri\test\Schemes\Uri;
 
 use League\Uri\Components;
+use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -186,7 +187,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\UserInfo('foo', 'bar'),
                 new Components\Host(),
                 new Components\Port(80),
-                new Components\Path(),
+                new Components\HierarchicalPath(),
                 new Components\Query(),
                 new Components\Fragment()
             ), true],
@@ -195,7 +196,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\UserInfo(),
                 new Components\Host(),
                 new Components\Port(),
-                new Components\Path(),
+                new Components\HierarchicalPath(),
                 new Components\Query(),
                 new Components\Fragment()
             ), true],
@@ -267,7 +268,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\UserInfo(),
                 new Components\Host('ExAmPLe.cOm'),
                 new Components\Port(),
-                new Components\Path('path/to/the/sky'),
+                new Components\HierarchicalPath('path/to/the/sky'),
                 new Components\Query(),
                 new Components\Fragment()
             ), 'http://example.com/path/to/the/sky'],
@@ -276,7 +277,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\UserInfo(),
                 new Components\Host(),
                 new Components\Port(),
-                new Components\Path('///path/to/the/sky'),
+                new Components\HierarchicalPath('///path/to/the/sky'),
                 new Components\Query(),
                 new Components\Fragment()
             ), '/path/to/the/sky'],
@@ -367,12 +368,26 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) $baseUri->relativize($childUri));
     }
 
+    public function testResolveHierarachicalUriObject()
+    {
+        $ftp  = FtpUri::createFromString('ftp://example.com/path/to/file');
+        $http = HttpUri::createFromString('//a/b/c/d;p?q');
+        $this->assertSame($http, $ftp->resolve($http));
+    }
+
+    public function testResolveUriObject()
+    {
+        $ftp  = FtpUri::createFromString('ftp://example.com/path/to/file');
+        $data = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
+        $this->assertSame($data, $ftp->resolve($data));
+    }
+
     /**
      * @dataProvider mixUriProvider
      */
-    public function testResolveUriObject($input, $relative)
+    public function testRelativizeUriObject($input, $relative)
     {
-        $this->assertSame($relative, $input->resolve($relative));
+        $this->assertSame($relative, $input->relativize($relative));
     }
 
     public function mixUriProvider()
@@ -387,14 +402,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 HttpUri::createFromString('./g'),
             ],
         ];
-    }
-
-    /**
-     * @dataProvider mixUriProvider
-     */
-    public function testRelativizeUriObject($input, $relative)
-    {
-        $this->assertSame($relative, $input->relativize($relative));
     }
 
     public function relativizeProvider()

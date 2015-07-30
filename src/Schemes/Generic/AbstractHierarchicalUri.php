@@ -11,13 +11,12 @@
 namespace League\Uri\Schemes\Generic;
 
 use Exception;
-use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Value object representing a URI.
+ * Value object representing a Hierarchical URI.
  *
  * @package League.uri
  * @since   4.0.0
@@ -197,11 +196,8 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      */
     public function sameValueAs($uri)
     {
-        if (!$uri instanceof UriInterface && !$uri instanceof Interfaces\Schemes\Uri) {
-            throw new InvalidArgumentException(
-                'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
-                the `League\Uri\Interfaces\Schemes\Uri` interface'
-            );
+        if (!$uri instanceof Interfaces\Schemes\HierarchicalUri && !$uri instanceof UriInterface) {
+            return parent::sameValueAs($uri);
         }
 
         try {

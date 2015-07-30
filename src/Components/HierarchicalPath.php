@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since 1.0.0
  */
-class Path extends AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalPath
+class HierarchicalPath extends AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalPath
 {
     /**
      * {@inheritdoc}

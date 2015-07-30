@@ -69,14 +69,6 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
     /**
      * {@inheritdoc}
      */
-    public function getSchemeSpecificPart()
-    {
-        return $this->path->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getMimeType()
     {
         return $this->path->getMimeType();
@@ -151,12 +143,12 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
     {
         return new static(
             new Components\Scheme('data'),
-            new Components\UserInfo(''),
-            new Components\Host(''),
-            new Components\Port(null),
+            new Components\UserInfo(),
+            new Components\Host(),
+            new Components\Port(),
             Components\DataPath::createFromPath($path),
-            new Components\Query(''),
-            new Components\Fragment('')
+            new Components\Query(),
+            new Components\Fragment()
         );
     }
 

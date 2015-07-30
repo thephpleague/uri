@@ -49,7 +49,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
      *
      * @var string
      */
-    protected static $delimiter = '/';
+    protected static $separator = '/';
 
     /**
      * {@inheritdoc}
@@ -58,13 +58,13 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
     {
         $str = $this->validateString($str);
         $this->isAbsolute = self::IS_RELATIVE;
-        if (static::$delimiter == mb_substr($str, 0, 1, 'UTF-8')) {
+        if (static::$separator == mb_substr($str, 0, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;
             $str = mb_substr($str, 1, mb_strlen($str), 'UTF-8');
         }
 
         $append_delimiter = false;
-        if (static::$delimiter === mb_substr($str, -1, 1, 'UTF-8')) {
+        if (static::$separator === mb_substr($str, -1, 1, 'UTF-8')) {
             $str = mb_substr($str, 0, -1, 'UTF-8');
             $append_delimiter = true;
         }
@@ -90,7 +90,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
             throw new InvalidArgumentException('the path must not contain a query string or a URI fragment');
         }
 
-        $data = array_values(array_filter(explode(static::$delimiter, $data), function ($value) {
+        $data = array_values(array_filter(explode(static::$separator, $data), function ($value) {
             return !is_null($value);
         }));
 
@@ -118,10 +118,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
     {
         $front_delimiter = '';
         if ($this->isAbsolute == self::IS_ABSOLUTE) {
-            $front_delimiter = static::$delimiter;
+            $front_delimiter = static::$separator;
         }
 
-        return $front_delimiter.implode(static::$delimiter, array_map([$this, 'encode'], $this->data));
+        return $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data));
     }
 
     /**
@@ -134,10 +134,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
             return $this;
         }
 
-        $input = explode(static::$delimiter, $current);
-        $new   = implode(static::$delimiter, array_reduce($input, [$this, 'filterDotSegments'], []));
+        $input = explode(static::$separator, $current);
+        $new   = implode(static::$separator, array_reduce($input, [$this, 'filterDotSegments'], []));
         if (isset(static::$dot_segments[end($input)])) {
-            $new .= static::$delimiter;
+            $new .= static::$separator;
         }
 
         return $this->modify($new);
@@ -148,8 +148,8 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
      */
     public function relativize(Interfaces\Components\HierarchicalPath $path)
     {
-        $bSegments = explode(static::$delimiter, $this->withoutDotSegments()->__toString());
-        $cSegments = explode(static::$delimiter, $path->withoutDotSegments()->__toString());
+        $bSegments = explode(static::$separator, $this->withoutDotSegments()->__toString());
+        $cSegments = explode(static::$separator, $path->withoutDotSegments()->__toString());
         if ('' == end($bSegments)) {
             array_pop($bSegments);
         }
@@ -220,7 +220,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
      */
     public function withTrailingSlash()
     {
-        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().static::$delimiter);
+        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().static::$separator);
     }
 
     /**
@@ -253,10 +253,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
     public function withExtension($ext)
     {
         $ext = ltrim($ext, '.');
-        if (strpos($ext, static::$delimiter)) {
+        if (strpos($ext, static::$separator)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
-        $ext         = implode(static::$delimiter, $this->validate($ext));
+        $ext         = implode(static::$separator, $this->validate($ext));
         $data        = $this->data;
         $basename    = (string) array_pop($data);
         $newBasename = $this->setBasename($basename, $ext);

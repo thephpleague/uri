@@ -10,8 +10,6 @@
  */
 namespace League\Uri\Interfaces\Schemes;
 
-use League\Uri\Interfaces;
-
 /**
  * Value object representing a URI.
  *
@@ -24,13 +22,13 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
  *
- * @property-read Interfaces\Components\Scheme           $scheme
- * @property-read Interfaces\Components\UserInfo         $userInfo
- * @property-read Interfaces\Components\Host             $host
- * @property-read Interfaces\Components\Port             $port
- * @property-read Interfaces\Components\HierarchicalPath $path
- * @property-read Interfaces\Components\Query            $query
- * @property-read Interfaces\Components\Fragment         $fragment
+ * @property-read \League\Uri\Interfaces\Components\Scheme           $scheme
+ * @property-read \League\Uri\Interfaces\Components\UserInfo         $userInfo
+ * @property-read \League\Uri\Interfaces\Components\Host             $host
+ * @property-read \League\Uri\Interfaces\Components\Port             $port
+ * @property-read \League\Uri\Interfaces\Components\HierarchicalPath $path
+ * @property-read \League\Uri\Interfaces\Components\Query            $query
+ * @property-read \League\Uri\Interfaces\Components\Fragment         $fragment
  */
 interface HierarchicalUri extends Uri
 {

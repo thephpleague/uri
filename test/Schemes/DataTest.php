@@ -34,7 +34,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($asArray, $uri->toArray());
         $this->assertSame($isBinaryData, $uri->isBinaryData());
         $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
-        $this->assertInstanceOf('League\Uri\Interfaces\Components\Media', $uri->path);
+        $this->assertInstanceOf('League\Uri\Interfaces\Components\DataPath', $uri->path);
     }
 
     public function validStringUri()
@@ -151,7 +151,7 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \RuntimeException
      * @dataProvider invalidDataUriPath
      */
     public function testCreateFromPathFailed($path)
@@ -221,17 +221,16 @@ class DataTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider fileProvider
      */
-    public function testToBinary($path)
+    public function testToBinary($uri)
     {
-        $uri = DataUri::createFromPath($path);
         $this->assertTrue($uri->toBinary()->isBinaryData());
     }
 
     public function fileProvider()
     {
         return [
-            [__DIR__.'/hello-world.txt'],
-            [__DIR__.'/red-nose.gif'],
+            [DataUri::createFromPath(__DIR__.'/red-nose.gif')],
+            [DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21')],
         ];
     }
 
@@ -271,7 +270,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\SplFileObject', $res);
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
         $data = file_get_contents($newFilePath);
-        $this->assertSame(rawurlencode($data), $uri->getData());
+        $this->assertSame(base64_encode($data), $uri->getData());
         unlink($newFilePath);
     }
 

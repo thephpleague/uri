@@ -3,13 +3,13 @@
 namespace League\Uri\test\Components;
 
 use ArrayIterator;
-use League\Uri\Components\Path;
+use League\Uri\Components\HierarchicalPath as Path;
 use PHPUnit_Framework_TestCase;
 
 /**
  * @group path
  */
-class PathTest extends PHPUnit_Framework_TestCase
+class HierarchicalPathTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @param string $raw

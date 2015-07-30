@@ -14,7 +14,7 @@ use League\Uri;
 use ReflectionClass;
 
 /**
- * a Trait to add more convenient Named constructors
+ * a Trait to add more convenient named constructors
  *
  * @package League.uri
  * @since   4.0.0
@@ -55,7 +55,7 @@ trait NamedConstructorsTrait
             new Uri\Components\UserInfo($components['user'], $components['pass']),
             new Uri\Components\Host($components['host']),
             new Uri\Components\Port($components['port']),
-            new Uri\Components\Path($components['path']),
+            new Uri\Components\HierarchicalPath($components['path']),
             new Uri\Components\Query($components['query']),
             new Uri\Components\Fragment($components['fragment'])
         );

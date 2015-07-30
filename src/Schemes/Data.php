@@ -28,7 +28,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      * @param Interfaces\Components\UserInfo $userInfo
      * @param Interfaces\Components\Host     $host
      * @param Interfaces\Components\Port     $port
-     * @param Interfaces\Components\Media    $path
+     * @param Interfaces\Components\DataPath $path
      * @param Interfaces\Components\Query    $query
      * @param Interfaces\Components\Fragment $fragment
      */
@@ -37,7 +37,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
         Interfaces\Components\UserInfo $userInfo,
         Interfaces\Components\Host $host,
         Interfaces\Components\Port $port,
-        Interfaces\Components\Media $path,
+        Interfaces\Components\DataPath $path,
         Interfaces\Components\Query $query,
         Interfaces\Components\Fragment $fragment
     ) {
@@ -56,14 +56,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      */
     protected function isValid()
     {
-        $str = $this->fragment->__toString()
-            .$this->query->__toString()
-            .$this->port->__toString()
-            .$this->host->__toString()
-            .$this->userInfo->user->__toString()
-            .$this->userInfo->pass->__toString();
-
-        return empty($str) && 'data' === $this->scheme->__toString();
+        return $this->__toString() === 'data:'.$this->path->getUriComponent();
     }
 
     /**
@@ -149,7 +142,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      */
     public static function createFromPath($path)
     {
-        return static::createFromString('data:'.Components\Media::createFromPath($path)->__toString());
+        return static::createFromString('data:'.Components\DataPath::createFromPath($path)->__toString());
     }
 
     /**
@@ -167,7 +160,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
             new Components\UserInfo($components['user'], $components['pass']),
             new Components\Host($components['host']),
             new Components\Port($components['port']),
-            new Components\Media($components['path']),
+            new Components\DataPath($components['path']),
             new Components\Query($components['query']),
             new Components\Fragment($components['fragment'])
         );

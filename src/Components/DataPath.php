@@ -14,6 +14,7 @@ namespace League\Uri\Components;
 use InvalidArgumentException;
 use League\Uri\Interfaces;
 use League\Uri\Types;
+use RuntimeException;
 use SplFileObject;
 
 /**
@@ -22,7 +23,7 @@ use SplFileObject;
  * @package League.uri
  * @since 1.0.0
  */
-class Media implements Interfaces\Components\Media
+class DataPath implements Interfaces\Components\DataPath
 {
     const DEFAULT_MIMETYPE = 'text/plain';
 
@@ -35,21 +36,21 @@ class Media implements Interfaces\Components\Media
      *
      * @var string
      */
-    protected $data;
+    protected $data = '';
 
     /**
      * The File MimeType
      *
      * @var string
      */
-    protected $mimeType;
+    protected $mimeType = self::DEFAULT_MIMETYPE;
 
     /**
      * The File optional parameters
      *
-     * @var array
+     * @var string[]
      */
-    protected $parameters = [];
+    protected $parameters = [self::DEFAULT_PARAMETER];
 
     /**
      * is the file save as a binary data
@@ -71,18 +72,31 @@ class Media implements Interfaces\Components\Media
     public function __construct($str = '')
     {
         $str = $this->validateString($str);
-        if (empty($str)) {
-            $this->filterMimeType('');
-            $this->filterParameters(static::DEFAULT_PARAMETER);
-            $this->data = '';
-            return;
+        if (!empty($str)) {
+            $this->validate($this->extractPathParts($str));
         }
+    }
+
+    /**
+     * Extract Path part according to RFC2937
+     *
+     * @param string $str
+     *
+     * @throws InvalidArgumentException if the string is not valid according to RFC2937
+     *
+     * @return string[]
+     */
+    protected function extractPathParts($str)
+    {
         if (!mb_detect_encoding($str, 'US-ASCII', true)
             || !preg_match('|^(?<mediatype>.*)?,(?<data>.*)$|i', $str, $matches)
         ) {
-            throw new InvalidArgumentException('The submitted uri is invalid');
+            throw new InvalidArgumentException(
+                sprintf('The submitted path `%s` is invalid according to RFC2937', $str)
+            );
         }
-        $this->validate($matches);
+
+        return $matches;
     }
 
     /**
@@ -94,16 +108,17 @@ class Media implements Interfaces\Components\Media
      */
     protected function validate($matches)
     {
-        $mimeType = '';
+        $mimeType = self::DEFAULT_MIMETYPE;
         $parameters = static::DEFAULT_PARAMETER;
         if (!empty($matches['mediatype'])) {
             $data = explode(';', $matches['mediatype'], 2);
             $mimeType = array_shift($data);
             $parameters = (string) array_pop($data);
         }
+        $parameters = trim($parameters);
         $this->filterMimeType($mimeType);
         $this->data = $matches['data'];
-        $parameters = $this->extractEncoding($parameters);
+        $parameters = $this->extractBinaryFlag($parameters);
         $this->filterParameters($parameters);
         if (!$this->validateData()) {
             throw new InvalidArgumentException(sprintf('The submitted data `%s` is invalid', $matches['data']));
@@ -111,27 +126,19 @@ class Media implements Interfaces\Components\Media
     }
 
     /**
-     * Create a new instance from a file path
+     * Filter and Set the mimeType property
      *
-     * @param string $path
+     * @param string $mimeType
      *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
+     * @throws new InvalidArgumentException If the mimetype is invalid
      */
-    public static function createFromPath($path)
+    protected function filterMimeType($mimeType)
     {
-        if (!is_readable($path)) {
-            throw new InvalidArgumentException(sprintf('The specified file `%s` is not readable', $path));
+        if (!preg_match(',^[a-z-\/+]+$,i', $mimeType)) {
+            throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimeType));
         }
 
-        $data = file_get_contents($path);
-        $res = (new \finfo(FILEINFO_MIME))->file($path);
-        if (0 !== strpos($res, 'text/')) {
-            return new static($res.';'.static::BINARY_PARAMETER.','.base64_encode($data));
-        }
-
-        return new static($res.','.rawurlencode($data));
+        $this->mimeType = $mimeType;
     }
 
     /**
@@ -143,13 +150,13 @@ class Media implements Interfaces\Components\Media
      *
      * @return string
      */
-    protected function extractEncoding($str)
+    protected function extractBinaryFlag($str)
     {
         $parameters = explode(';', $str);
         $res = array_keys($parameters, static::BINARY_PARAMETER, true);
         $binCount = count($res);
         if ($binCount > 1) {
-            throw new InvalidArgumentException(sprintf('The mediatype string is invalid `%s`', $str));
+            throw new InvalidArgumentException(sprintf('The parameter string is invalid `%s`', $str));
         }
 
         if (empty($binCount)) {
@@ -190,27 +197,6 @@ class Media implements Interfaces\Components\Media
     }
 
     /**
-     * Filter and Set the mimeType property
-     *
-     * @param string $mimeType
-     *
-     * @throws new InvalidArgumentException If the mimetype is invalid
-     */
-    protected function filterMimeType($mimeType)
-    {
-        if (empty($mimeType)) {
-            $this->mimeType = static::DEFAULT_MIMETYPE;
-            return;
-        }
-
-        if (!preg_match(',^[a-z-\/+]+$,i', $mimeType)) {
-            throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimeType));
-        }
-
-        $this->mimeType = $mimeType;
-    }
-
-    /**
      * Validate the media body
      *
      * @return bool
@@ -224,6 +210,26 @@ class Media implements Interfaces\Components\Media
         $res = base64_decode($this->data, true);
 
         return false !== $res && $this->data === base64_encode($res);
+    }
+
+    /**
+     * Create a new instance from a file path
+     *
+     * @param string $path
+     *
+     * @throws \RuntimeException If the File is not readable
+     *
+     * @return static
+     */
+    public static function createFromPath($path)
+    {
+        if (!is_readable($path)) {
+            throw new RuntimeException(sprintf('The specified file `%s` is not readable', $path));
+        }
+
+        $data = file_get_contents($path);
+        $res = (new \finfo(FILEINFO_MIME))->file($path);
+        return new static($res.';'.static::BINARY_PARAMETER.','.base64_encode($data));
     }
 
     /**
@@ -331,7 +337,7 @@ class Media implements Interfaces\Components\Media
         return new static($this->format(
             $this->mimeType,
             $this->getParameters(),
-            true,
+            !$this->isBinaryData,
             base64_encode(rawurldecode($this->data))
         ));
     }
@@ -341,14 +347,14 @@ class Media implements Interfaces\Components\Media
      */
     public function toAscii()
     {
-        if (!$this->isBinaryData || preg_match(',^text/,i', $this->mimeType)) {
+        if (!$this->isBinaryData) {
             return $this;
         }
 
         return new static($this->format(
             $this->mimeType,
             $this->getParameters(),
-            false,
+            !$this->isBinaryData,
             rawurlencode(base64_decode($this->data))
         ));
     }

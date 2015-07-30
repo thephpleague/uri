@@ -17,7 +17,7 @@ use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
 
 /**
- * a Trait to access URI properties methods
+ * Value object representing a URI.
  *
  * @package League.uri
  * @since   4.0.0
@@ -365,8 +365,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     public function resolve(Interfaces\Schemes\Uri $relative)
     {
-        $className = get_class($this);
-        if (!$relative instanceof Interfaces\Schemes\HierarchicalUri || !$relative instanceof $className) {
+        if (!$relative instanceof Interfaces\Schemes\HierarchicalUri) {
             return $relative;
         }
 
@@ -382,7 +381,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     }
 
     /**
-     * returns the resolve URI according to the authority
+     * Returns the resolve URI according to the authority
      *
      * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
      *
@@ -390,6 +389,11 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     protected function resolveAuthority(Interfaces\Schemes\HierarchicalUri $relative)
     {
+        $className = get_class($this);
+        if (!$relative instanceof $className) {
+            return $relative;
+        }
+
         return $relative->withScheme($this->scheme);
     }
 
@@ -435,11 +439,11 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
 
         $segments = $newUri->path->toArray();
         array_pop($segments);
-        $isAbsolute = Uri\Components\Path::IS_RELATIVE;
+        $isAbsolute = Uri\Components\HierarchicalPath::IS_RELATIVE;
         if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
-            $isAbsolute = Uri\Components\Path::IS_ABSOLUTE;
+            $isAbsolute = Uri\Components\HierarchicalPath::IS_ABSOLUTE;
         }
 
-        return Uri\Components\Path::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        return Uri\Components\HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 }

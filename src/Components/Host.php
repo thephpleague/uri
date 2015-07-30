@@ -144,9 +144,9 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
      */
     protected function formatHostname(array $labels)
     {
-        $hostname = implode(static::$delimiter, $labels);
+        $hostname = implode(static::$separator, $labels);
         if ($this->isAbsolute == self::IS_ABSOLUTE) {
-            $hostname .= static::$delimiter;
+            $hostname .= static::$separator;
         }
 
         return $hostname;
@@ -184,7 +184,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
     protected static function formatComponentString($str, $type)
     {
         if (self::IS_ABSOLUTE == $type) {
-            return $str.static::$delimiter;
+            return $str.static::$separator;
         }
 
         return $str;

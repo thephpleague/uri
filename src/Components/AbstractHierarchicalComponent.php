@@ -148,7 +148,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
         if (!isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
-        $component = implode(static::$delimiter, static::validateIterator($data));
+        $component = implode(static::$separator, static::validateIterator($data));
 
         return new static(static::formatComponentString($component, $type));
     }
@@ -164,7 +164,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
     protected static function formatComponentString($str, $type)
     {
         if (self::IS_ABSOLUTE == $type) {
-            return static::$delimiter.$str;
+            return static::$separator.$str;
         }
 
         return $str;

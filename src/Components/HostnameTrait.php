@@ -26,7 +26,7 @@ trait HostnameTrait
      *
      * @var string
      */
-    protected static $delimiter = '.';
+    protected static $separator = '.';
 
     /**
      * hostname subdomain
@@ -121,7 +121,7 @@ trait HostnameTrait
     protected function validateStringHost($str)
     {
         $host       = $this->lower($this->setIsAbsolute($str));
-        $raw_labels = explode(static::$delimiter, $host);
+        $raw_labels = explode(static::$separator, $host);
         $labels     = array_map(function ($value) {
             return idn_to_ascii($value);
         }, $raw_labels);

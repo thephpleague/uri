@@ -10,28 +10,30 @@ All Notable changes to `League\Url` will be documented in this file
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
-- A `Media` component class to manipulate Data-uri path component
+- A `DataPath` component class to manipulate Data-uri path component
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library
+- `FileInfo` extension is now required to use the library
 - Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
-- API to add/remove the Path trailing slash.
+- API to add/remove the `HierarchicalPath` trailing slash.
 - `Query::ksort` and `Url::ksortQuery` method
 - Missing `User` and `Pass` Interfaces
 - `Host::getIpLiteral` to get the raw IP representation of a Ip Literal hostname
 - `getLiteral` method to `Pass`, `User` and `Fragment` objects to get the component non-encoded string representation
-- `Path::relativize` and `Uri::relativize` to generate relative path and uri respectively
+- `HierarchicalPath::relativize` and `Uri::relativize` to generate relative path and uri respectively
 
 ### Fixed
 
-- Changed namespace from `League\Url` to `League\Uri` to avoid dependency hell
-- Changed class name from `League\Url\Url` to `League\Uri\Schemes\AbstractUri` to better reflect the class intent
+- Move namespace from `League\Url` to `League\Uri` to avoid dependency hell
+- Move class name from `League\Url\Url` to `League\Uri\Schemes\AbstractUri` to enable easy extension
 - Renamed methods for consistency with PHP naming conventions
+- Renamed `Path` component to `HierarchicalPath` for clarification
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
 - Host::toUnicode now returns a new Host instance
 - Host now support append/prepend/replacing to or with IPv4 Host type
-- Path now supports multiple leading slash
+- `HierarchicalPath` now supports multiple leading slash
 - Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
 - The `::resolve` method is now typehinted to the Uri interface
 - Formatter::format only accept `Uri` and `UriPart` implemented object

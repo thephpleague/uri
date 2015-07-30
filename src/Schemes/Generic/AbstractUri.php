@@ -78,11 +78,6 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     use Uri\Components\PathFormatterTrait;
 
     /*
-     * a trait to add named constructors
-     */
-    use NamedConstructorsTrait;
-
-    /*
      * Trait To get/set immutable value property
      */
     use ParserTrait;

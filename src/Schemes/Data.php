@@ -149,7 +149,15 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      */
     public static function createFromPath($path)
     {
-        return static::createFromString('data:'.Components\DataPath::createFromPath($path)->__toString());
+        return new static(
+            new Components\Scheme('data'),
+            new Components\UserInfo(''),
+            new Components\Host(''),
+            new Components\Port(null),
+            Components\DataPath::createFromPath($path),
+            new Components\Query(''),
+            new Components\Fragment('')
+        );
     }
 
     /**

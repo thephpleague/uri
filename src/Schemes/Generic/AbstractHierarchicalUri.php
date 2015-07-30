@@ -14,6 +14,7 @@ use Exception;
 use League\Uri;
 use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
+use ReflectionClass;
 
 /**
  * Value object representing a Hierarchical URI.
@@ -59,6 +60,31 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
         $this->query = $query;
         $this->fragment = $fragment;
         $this->assertValidObject();
+    }
+
+    /**
+     * Create a new instance from an array returned by
+     * PHP parse_url function
+     *
+     * @param array $components
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return Uri\Interfaces\Schemes\Uri
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components = static::formatComponents($components);
+
+        return (new ReflectionClass(get_called_class()))->newInstance(
+            new Uri\Components\Scheme($components['scheme']),
+            new Uri\Components\UserInfo($components['user'], $components['pass']),
+            new Uri\Components\Host($components['host']),
+            new Uri\Components\Port($components['port']),
+            new Uri\Components\HierarchicalPath($components['path']),
+            new Uri\Components\Query($components['query']),
+            new Uri\Components\Fragment($components['fragment'])
+        );
     }
 
     /**

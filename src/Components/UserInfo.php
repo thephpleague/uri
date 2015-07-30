@@ -49,8 +49,8 @@ class UserInfo implements Interfaces\Components\UserInfo
      */
     public function __construct($user = '', $pass = '')
     {
-        $this->user = !$user instanceof Interfaces\User ? new User($user) : $user;
-        $this->pass = !$pass instanceof Interfaces\Pass ? new Pass($pass) : $pass;
+        $this->user = !$user instanceof Interfaces\Components\User ? new User($user) : $user;
+        $this->pass = !$pass instanceof Interfaces\Components\Pass ? new Pass($pass) : $pass;
         $this->assertValidObject();
     }
 

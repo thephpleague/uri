@@ -22,6 +22,25 @@ use InvalidArgumentException;
 trait ParserTrait
 {
     /**
+     * {@inheritdoc}
+     */
+    abstract public static function createFromComponents(array $components);
+
+    /**
+     * Create a new instance from a string
+     *
+     * @param string $uri
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromString($uri = '')
+    {
+        return static::createFromComponents(static::parse($uri));
+    }
+
+    /**
      * Format the components to works with all the constructors
      *
      * @param array $components

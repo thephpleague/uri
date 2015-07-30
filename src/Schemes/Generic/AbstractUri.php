@@ -54,13 +54,6 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     protected $port;
 
     /**
-     * Path Component
-     *
-     * @var Interfaces\Components\Path
-     */
-    protected $path;
-
-    /**
      * Query Component
      *
      * @var Interfaces\Components\Query
@@ -93,36 +86,6 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      * Trait To get/set immutable value property
      */
     use ParserTrait;
-
-    /**
-     * Create a new instance of URI
-     *
-     * @param Interfaces\Components\Scheme   $scheme
-     * @param Interfaces\Components\UserInfo $userInfo
-     * @param Interfaces\Components\Host     $host
-     * @param Interfaces\Components\Port     $port
-     * @param Interfaces\Components\Path     $path
-     * @param Interfaces\Components\Query    $query
-     * @param Interfaces\Components\Fragment $fragment
-     */
-    public function __construct(
-        Interfaces\Components\Scheme $scheme,
-        Interfaces\Components\UserInfo $userInfo,
-        Interfaces\Components\Host $host,
-        Interfaces\Components\Port $port,
-        Interfaces\Components\Path $path,
-        Interfaces\Components\Query $query,
-        Interfaces\Components\Fragment $fragment
-    ) {
-        $this->scheme = $scheme;
-        $this->userInfo = $userInfo;
-        $this->host = $host;
-        $this->port = $port;
-        $this->path = $path;
-        $this->query = $query;
-        $this->fragment = $fragment;
-        $this->assertValidObject();
-    }
 
     /**
      * {@inheritdoc}

@@ -25,6 +25,43 @@ use Psr\Http\Message\UriInterface;
 abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces\Schemes\HierarchicalUri
 {
     /**
+     * Path Component
+     *
+     * @var Interfaces\Components\HierarchicalPath
+     */
+    protected $path;
+
+    /**
+     * Create a new instance of URI
+     *
+     * @param Interfaces\Components\Scheme           $scheme
+     * @param Interfaces\Components\UserInfo         $userInfo
+     * @param Interfaces\Components\Host             $host
+     * @param Interfaces\Components\Port             $port
+     * @param Interfaces\Components\HierarchicalPath $path
+     * @param Interfaces\Components\Query            $query
+     * @param Interfaces\Components\Fragment         $fragment
+     */
+    public function __construct(
+        Interfaces\Components\Scheme $scheme,
+        Interfaces\Components\UserInfo $userInfo,
+        Interfaces\Components\Host $host,
+        Interfaces\Components\Port $port,
+        Interfaces\Components\HierarchicalPath $path,
+        Interfaces\Components\Query $query,
+        Interfaces\Components\Fragment $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->userInfo = $userInfo;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
+        $this->assertValidObject();
+    }
+
+    /**
      * Supported Schemes
      *
      * @var array

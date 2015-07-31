@@ -82,98 +82,86 @@ trait FactoryTrait
     }
 
     /**
-     * Parse a string as an URI
+     * Parse a string as an URI according to the Regexp form rfc3986
      *
-     * Parse an URI string using PHP parse_url while applying bug fixes
-     * and taking into account UTF-8
+     * Parse an URI string and return a hash similar to PHP's parse_url
      *
-     * Taken from php.net manual comments:
-     *
-     * @see http://php.net/manual/en/function.parse-url.php#114817
+     * @see http://tools.ietf.org/html/rfc3986#appendix-B
      *
      * @param string $uri The URI to parse
      *
      * @throws InvalidArgumentException if the URI can not be parsed
      *
-     * @return array
+     * @return array  the array is similar to PHP's parse_url hash response
      */
-    public static function parse($uri)
+    protected static function parse($uri)
     {
-        $pattern = '%([a-zA-Z][a-zA-Z0-9+\-.]*)?(:?//)?([^:/@?&=#\[\]]+)%usD';
-        $enc_uri = preg_replace_callback($pattern, function ($matches) {
-            return sprintf('%s%s%s', $matches[1], $matches[2], rawurlencode($matches[3]));
-        }, (string) $uri);
+        $regexp = ',^((?<scheme>[^:/?\#]+):)?(//(?<authority>[^/?\#]*))?
+            (?<path>[^?\#]*)(\?(?<query>[^\#]*))?(\#(?<fragment>.*))?,x';
+        preg_match($regexp, $uri, $matches);
+        $matches = array_merge(['authority' => ''], $matches);
+        $components = array_merge(static::parseAuthority($matches['authority']), $matches);
 
-        foreach (['parseUri', 'parseUriFixScheme'] as $func) {
-            $components = static::$func($enc_uri);
-            if (!empty($components)) {
-                return static::formatParsedComponents($components);
-            }
-        }
-
-        throw new InvalidArgumentException(sprintf('The given URI: `%s` could not be parse', (string) $uri));
-    }
-
-    /**
-     *
-     * @param string $uri The URI to parse
-     *
-     * @return array|false
-     */
-    protected static function parseUri($uri)
-    {
-        return @parse_url($uri);
-    }
-
-    /**
-     * bug fix for unpatched PHP version
-     *
-     * in the following versions
-     *    - PHP 5.4.7 => 5.5.24
-     *    - PHP 5.6.0 => 5.6.8
-     *    - HHVM all versions
-     *
-     * We must prepend a temporary missing scheme to allow
-     * parsing with parse_url function
-     *
-     * @see https://bugs.php.net/bug.php?id=68917
-     *
-     * @param string $uri The URI to parse
-     *
-     * @return array|false
-     */
-    protected static function parseUriFixScheme($uri)
-    {
-        if (is_array(@parse_url('//a:1')) || strpos($uri, '/') !== 0) {
-            return false;
-        }
-
-        $res = @parse_url('php-bugfix-scheme:'.$uri);
-        if (is_array($res)) {
-            unset($res['scheme']);
-        }
-
-        return $res;
-    }
-
-    /**
-     * Format and Decode UTF-8 components
-     *
-     * @param array $components
-     *
-     * @return array
-     */
-    protected static function formatParsedComponents(array $components)
-    {
-        $components = array_merge([
-            'scheme' => null, 'user'     => null,
-            'pass'   => null, 'host'     => null,
-            'port'   => null, 'path'     => null,
-            'query'  => null, 'fragment' => null,
-        ], array_map('rawurldecode', $components));
+        $default = [
+            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
+            'port' => null, 'path' => null, 'query' => null, 'fragment' => null,
+        ];
+        $components = array_map(function ($value) {
+            return ('' === $value) ? null : $value;
+        }, array_merge($default, $components));
 
         if (null !== $components['port']) {
             $components['port'] = (int) $components['port'];
+        }
+
+        return array_intersect_key($components, $default);
+    }
+
+    /**
+     * Parse a URI authority part into its components
+     *
+     * @param string $authority
+     *
+     * @throws \InvalidArgumentException If the authority is not empty with an empty host
+     *
+     * @return array
+     */
+    protected static function parseAuthority($authority)
+    {
+        $components = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
+        if (empty($authority)) {
+            return $components;
+        }
+        preg_match(',^((?<userinfo>.*?)@)?(?<hostname>.*?)?$,', $authority, $matches);
+        $matches = array_merge(['userinfo' => '', 'hostname' => ''], $matches);
+        $userinfo = explode(':', $matches['userinfo'], 2);
+        $components['user'] = array_shift($userinfo);
+        $components['pass'] = array_pop($userinfo);
+        $components = array_merge($components, static::parseHostname($matches['hostname']));
+        if (empty($components['host'])) {
+            throw new InvalidArgumentException('The submitted uri is invalid');
+        }
+
+        return $components;
+    }
+
+    /**
+     * Parse the hostname into its components Host and Port
+     *
+     * No validation is done on the port or host component found
+     *
+     * @param string $hostname
+     *
+     * @return array
+     */
+    protected static function parseHostname($hostname)
+    {
+        $components = ['host' => '', 'port' => ''];
+        $hostname = strrev($hostname);
+        if (preg_match("/^((?<port>[^(\[\])]+?):)?(?<host>.*)?$/", $hostname, $res)) {
+            $res = array_merge($components, $res);
+            $components['host'] = strrev($res['host']);
+            $components['port'] = strrev($res['port']);
         }
 
         return $components;

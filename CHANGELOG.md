@@ -22,6 +22,7 @@ All Notable changes to `League\Url` will be documented in this file
 - `Host::getIpLiteral` to get the raw IP representation of a Ip Literal hostname
 - `getLiteral` method to `Pass`, `User` and `Fragment` objects to get the component non-encoded string representation
 - `HierarchicalPath::relativize` and `Uri::relativize` to generate relative path and uri respectively
+- The library no longer depend on PHP `parse_url` function
 
 ### Fixed
 

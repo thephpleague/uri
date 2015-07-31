@@ -11,6 +11,7 @@
 namespace League\Uri\Schemes\Generic;
 
 use InvalidArgumentException;
+use League\Uri\Components;
 
 /**
  * a Trait to parse a URI string
@@ -19,13 +20,8 @@ use InvalidArgumentException;
  * @since   4.0.0
  *
  */
-trait ParserTrait
+trait FactoryTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    abstract public static function createFromComponents(array $components);
-
     /**
      * Create a new instance from a string
      *
@@ -38,6 +34,30 @@ trait ParserTrait
     public static function createFromString($uri = '')
     {
         return static::createFromComponents(static::parse($uri));
+    }
+
+    /**
+     * Create a new instance from a hash of parse_url parts
+     *
+     * @param array $components
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return \League\Uri\Interfaces\Schemes\Uri
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components = static::formatComponents($components);
+
+        return new static(
+            new Components\Scheme($components['scheme']),
+            new Components\UserInfo($components['user'], $components['pass']),
+            new Components\Host($components['host']),
+            new Components\Port($components['port']),
+            new Components\HierarchicalPath($components['path']),
+            new Components\Query($components['query']),
+            new Components\Fragment($components['fragment'])
+        );
     }
 
     /**
@@ -84,19 +104,56 @@ trait ParserTrait
             return sprintf('%s%s%s', $matches[1], $matches[2], rawurlencode($matches[3]));
         }, (string) $uri);
 
-        $components = @parse_url($enc_uri);
-        if (is_array($components)) {
-            return static::formatParsedComponents($components);
-        }
-
-        $components = @parse_url(static::fixUrlScheme($enc_uri));
-        if (is_array($components)) {
-            unset($components['scheme']);
-
-            return static::formatParsedComponents($components);
+        foreach (['parseUri', 'parseUriFixScheme'] as $func) {
+            $components = static::$func($enc_uri);
+            if (!empty($components)) {
+                return static::formatParsedComponents($components);
+            }
         }
 
         throw new InvalidArgumentException(sprintf('The given URI: `%s` could not be parse', (string) $uri));
+    }
+
+    /**
+     *
+     * @param string $uri The URI to parse
+     *
+     * @return array|false
+     */
+    protected static function parseUri($uri)
+    {
+        return @parse_url($uri);
+    }
+
+    /**
+     * bug fix for unpatched PHP version
+     *
+     * in the following versions
+     *    - PHP 5.4.7 => 5.5.24
+     *    - PHP 5.6.0 => 5.6.8
+     *    - HHVM all versions
+     *
+     * We must prepend a temporary missing scheme to allow
+     * parsing with parse_url function
+     *
+     * @see https://bugs.php.net/bug.php?id=68917
+     *
+     * @param string $uri The URI to parse
+     *
+     * @return array|false
+     */
+    protected static function parseUriFixScheme($uri)
+    {
+        if (is_array(@parse_url('//a:1')) || strpos($uri, '/') !== 0) {
+            return false;
+        }
+
+        $res = @parse_url('php-bugfix-scheme:'.$uri);
+        if (is_array($res)) {
+            unset($res['scheme']);
+        }
+
+        return $res;
     }
 
     /**
@@ -120,37 +177,5 @@ trait ParserTrait
         }
 
         return $components;
-    }
-
-    /**
-     * bug fix for unpatched PHP version
-     *
-     * in the following versions
-     *    - PHP 5.4.7 => 5.5.24
-     *    - PHP 5.6.0 => 5.6.8
-     *    - HHVM all versions
-     *
-     * We must prepend a temporary missing scheme to allow
-     * parsing with parse_url function
-     *
-     * @see https://bugs.php.net/bug.php?id=68917
-     *
-     * @param string $uri The URI to parse
-     *
-     * @return string
-     */
-    protected static function fixUrlScheme($uri)
-    {
-        static $is_bugged;
-
-        if (is_null($is_bugged)) {
-            $is_bugged = !is_array(@parse_url('//a:1'));
-        }
-
-        if (!$is_bugged || strpos($uri, '/') !== 0) {
-            throw new InvalidArgumentException(sprintf('The given URI: `%s` could not be parse', $url));
-        }
-
-        return 'php-bugfix-scheme:'.$uri;
     }
 }

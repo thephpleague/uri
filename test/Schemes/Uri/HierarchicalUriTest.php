@@ -434,7 +434,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromInvalidUrlKO($input)
     {
-        HttpUri::parse($input);
+        HttpUri::createFromString($input);
     }
 
     public function invalidURI()
@@ -442,7 +442,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         return [
             ['http://user@:80'],
             ['//user@:80'],
-            ['http:///example.com'],
         ];
     }
 }

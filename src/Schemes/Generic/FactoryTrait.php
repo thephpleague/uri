@@ -92,7 +92,7 @@ trait FactoryTrait
      *
      * @throws InvalidArgumentException if the URI can not be parsed
      *
-     * @return array  the array is similar to PHP's parse_url hash response
+     * @return array the array is similar to PHP's parse_url hash response
      */
     protected static function parse($uri)
     {

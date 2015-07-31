@@ -22,13 +22,6 @@ use League\Uri\Interfaces;
 class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
 {
     /**
-     * Path Component
-     *
-     * @var Interfaces\Components\DataPath
-     */
-    protected $path;
-
-    /**
      * Create a new instance of URI
      *
      * @param Interfaces\Components\Scheme   $scheme

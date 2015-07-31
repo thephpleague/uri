@@ -54,6 +54,13 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     protected $port;
 
     /**
+     * Path Component
+     *
+     * @var Interfaces\Components\Path
+     */
+    protected $path;
+
+    /**
      * Query Component
      *
      * @var Interfaces\Components\Query
@@ -78,9 +85,9 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     use Uri\Components\PathFormatterTrait;
 
     /*
-     * Trait To get/set immutable value property
+     * Trait to add Factory methods
      */
-    use ParserTrait;
+    use FactoryTrait;
 
     /**
      * {@inheritdoc}

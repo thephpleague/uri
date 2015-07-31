@@ -14,7 +14,6 @@ use Exception;
 use League\Uri;
 use League\Uri\Interfaces;
 use Psr\Http\Message\UriInterface;
-use ReflectionClass;
 
 /**
  * Value object representing a Hierarchical URI.
@@ -25,13 +24,6 @@ use ReflectionClass;
  */
 abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces\Schemes\HierarchicalUri
 {
-    /**
-     * Path Component
-     *
-     * @var Interfaces\Components\HierarchicalPath
-     */
-    protected $path;
-
     /**
      * Create a new instance of URI
      *
@@ -63,30 +55,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     }
 
     /**
-     * Create a new instance from a hash of parse_url parts
-     *
-     * @param array $components
-     *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return Interfaces\Schemes\HierarchicalUri
-     */
-    public static function createFromComponents(array $components)
-    {
-        $components = static::formatComponents($components);
-
-        return (new ReflectionClass(get_called_class()))->newInstance(
-            new Uri\Components\Scheme($components['scheme']),
-            new Uri\Components\UserInfo($components['user'], $components['pass']),
-            new Uri\Components\Host($components['host']),
-            new Uri\Components\Port($components['port']),
-            new Uri\Components\HierarchicalPath($components['path']),
-            new Uri\Components\Query($components['query']),
-            new Uri\Components\Fragment($components['fragment'])
-        );
-    }
-
-    /**
      * Supported Schemes
      *
      * @var array
@@ -98,12 +66,8 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      */
     public function getAuthority()
     {
-        if (!$this->hasStandardPort()) {
+        if ($this->host->isEmpty() || !$this->hasStandardPort()) {
             return parent::getAuthority();
-        }
-
-        if ($this->host->isEmpty()) {
-            return '';
         }
 
         return $this->userInfo->getUriComponent().$this->host->getUriComponent();

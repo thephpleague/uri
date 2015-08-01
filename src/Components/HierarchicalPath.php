@@ -236,11 +236,11 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
      */
     public function getDirname()
     {
-        $parentDirectory = str_replace("\\", "\0", $this);
+        $parentDirectory = str_replace('\\', "\0", $this);
         $parentDirectory = dirname($parentDirectory);
         // The `dirname` call exchanges a single slash with a backslash on Windows platform.
-        $parentDirectory = str_replace("\\", static::$separator, $parentDirectory);
-        $parentDirectory = str_replace("\0", "\\", $parentDirectory);
+        $parentDirectory = str_replace('\\', static::$separator, $parentDirectory);
+        $parentDirectory = str_replace("\0", '\\', $parentDirectory);
 
         return $parentDirectory;
     }

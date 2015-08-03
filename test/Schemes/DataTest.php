@@ -259,6 +259,9 @@ class DataTest extends PHPUnit_Framework_TestCase
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
+
+        // Ensure file handle of \SplFileObject gets closed.
+        $res = null;
         unlink($newFilePath);
     }
 
@@ -271,6 +274,9 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
         $data = file_get_contents($newFilePath);
         $this->assertSame(base64_encode($data), $uri->getData());
+
+        // Ensure file handle of \SplFileObject gets closed.
+        $res = null;
         unlink($newFilePath);
     }
 

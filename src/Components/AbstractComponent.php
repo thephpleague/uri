@@ -47,12 +47,12 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if ($data === null) {
-            return;
-        }
-        $data = $this->validateString($data);
-        if (!empty($data)) {
-            $this->data = $this->validate($data);
+        if ($data !== null) {
+            $data = $this->validateString($data);
+
+            if (!empty($data)) {
+                $this->data = $this->validate($data);
+            }
         }
     }
 

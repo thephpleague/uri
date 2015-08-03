@@ -116,17 +116,15 @@ abstract class AbstractComponent
     /**
      * Set data.
      *
-     * @param mixed $data
-     *   The data to set.
+     * @param mixed $data The data to set.
      * @return $this
-     * @throws InvalidArgumentException
-     *   If data is invalid.
+     * @throws InvalidArgumentException If data is invalid.
      */
     protected function setData($data)
     {
         $data = $this->validateString($data);
 
-        if ($data !== "") {
+        if ($data !== '') {
             $this->data = $this->validate($data);
         }
 

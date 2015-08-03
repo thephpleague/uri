@@ -11,7 +11,6 @@ use PHPUnit_Framework_TestCase;
  */
 class FragmentTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @dataProvider validFragment
      * @param $str

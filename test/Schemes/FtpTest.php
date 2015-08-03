@@ -11,7 +11,6 @@ use PHPUnit_Framework_TestCase;
  */
 class FtpTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @dataProvider validArray
      * @param $expected

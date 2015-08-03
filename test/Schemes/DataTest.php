@@ -2,11 +2,13 @@
 
 namespace League\Uri\test\Schemes;
 
+use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Components\DataPath as Path;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 /**
  * @group data

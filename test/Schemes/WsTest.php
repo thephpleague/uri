@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Schemes;
 
+use InvalidArgumentException;
 use League\Uri\Schemes\Ws;
 use PHPUnit_Framework_TestCase;
 

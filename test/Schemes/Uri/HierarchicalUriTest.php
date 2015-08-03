@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Schemes\Uri;
 
+use InvalidArgumentException;
 use League\Uri\Components;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Ftp as FtpUri;

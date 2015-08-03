@@ -14,7 +14,6 @@ use Exception;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
-use League\Uri\Parser;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -26,8 +25,6 @@ use Psr\Http\Message\UriInterface;
  */
 abstract class AbstractUri implements Interfaces\Schemes\Uri
 {
-    protected static $uriParser;
-
     /**
      * Scheme Component
      *
@@ -91,15 +88,6 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      * Trait to add Factory methods
      */
     use FactoryTrait;
-
-    protected static function getUriParser()
-    {
-        if (!static::$uriParser instanceof Parser) {
-            static::$uriParser = new Parser();
-        }
-
-        return static::$uriParser;
-    }
 
     /**
      * {@inheritdoc}
@@ -424,5 +412,22 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         return Uri\Components\HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+    }
+
+    /**
+     * Check if a URI is valid
+     *
+     * @return bool
+     */
+    protected function isValid()
+    {
+        $path = $this->path->getUriComponent();
+        if (false === strpos($path, ':')) {
+            return true;
+        }
+        $path = explode(':', $path);
+        $path = array_shift($path);
+
+        return !(empty($this->scheme->getUriComponent().$this->getAuthority()) && strpos($path, '/') === false);
     }
 }

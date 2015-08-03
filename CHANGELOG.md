@@ -12,6 +12,7 @@ All Notable changes to `League\Url` will be documented in this file
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - A `DataPath` component class to manipulate Data-uri path component
+- Uri part object now expose a `isNull` method to tell if the component is specified or not
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library

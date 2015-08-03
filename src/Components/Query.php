@@ -57,9 +57,11 @@ class Query implements Interfaces\Components\Query
      *
      * @param string $data
      */
-    public function __construct($data = '')
+    public function __construct($data = null)
     {
-        $this->data = $this->validate($data);
+        if (null !== $data) {
+            $this->data = $this->validate($data);
+        }
     }
 
     /**
@@ -124,12 +126,7 @@ class Query implements Interfaces\Components\Query
      */
     public function getUriComponent()
     {
-        $res = $this->__toString();
-        if (empty($res)) {
-            return $res;
-        }
-
-        return static::$delimiter.$res;
+        return $this->isNull() ? '' : static::$delimiter.$this->__toString();
     }
 
     /**

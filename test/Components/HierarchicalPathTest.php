@@ -53,7 +53,6 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
         return [
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
-            'null'      => [null],
             'float'     => [1.2],
         ];
     }

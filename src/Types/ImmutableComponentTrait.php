@@ -93,7 +93,7 @@ trait ImmutableComponentTrait
      */
     public function isEmpty()
     {
-        return empty($this->__toString());
+        return '' === $this->__toString();
     }
 
     /**

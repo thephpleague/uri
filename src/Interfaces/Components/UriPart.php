@@ -46,6 +46,13 @@ interface UriPart
     public function isEmpty();
 
     /**
+     * Returns true if the instance is considered null
+     *
+     * @return bool
+     */
+    public function isNull();
+
+    /**
      * Returns whether two UriPart objects represent the same value
      * The comparison is based on the getUriComponent method
      *

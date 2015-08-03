@@ -11,7 +11,6 @@ use PHPUnit_Framework_TestCase;
  */
 class UserTest extends PHPUnit_Framework_TestCase
 {
-
     /**
      * @dataProvider validUserProvider
      * @param $raw

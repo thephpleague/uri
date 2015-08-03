@@ -205,6 +205,9 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider sameValueAsPsr7InterfaceProvider
+     * @param $league
+     * @param $psr7
+     * @param $expected
      */
     public function testSameValueAs($league, $psr7, $expected)
     {
@@ -286,6 +289,8 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider hasStandardPortProvider
+     * @param $uri
+     * @param $expected
      */
     public function testHasStandardPort($uri, $expected)
     {
@@ -303,6 +308,9 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider resolveProvider
+     * @param $uri
+     * @param $relative
+     * @param $expected
      */
     public function testResolve($uri, $relative, $expected)
     {
@@ -359,6 +367,9 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider relativizeProvider
+     * @param $base
+     * @param $child
+     * @param $expected
      */
     public function testRelativize($base, $child, $expected)
     {
@@ -370,6 +381,8 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider resolveUriProvider
+     * @param $uri1
+     * @param $uri2
      */
     public function testResolveUri($uri1, $uri2)
     {
@@ -396,6 +409,8 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider mixUriProvider
+     * @param $input
+     * @param $relative
      */
     public function testRelativizeUriObject($input, $relative)
     {
@@ -431,6 +446,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidURI
      * @expectedException InvalidArgumentException
+     * @param $input
      */
     public function testCreateFromInvalidUrlKO($input)
     {

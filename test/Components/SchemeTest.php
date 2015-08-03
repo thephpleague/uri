@@ -25,6 +25,8 @@ class SchemeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validSchemeProvider
+     * @param $scheme
+     * @param $toString
      */
     public function testValidScheme($scheme, $toString)
     {
@@ -33,6 +35,8 @@ class SchemeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validSchemeProvider
+     * @param $scheme
+     * @param $toString
      */
     public function testGetLiteral($scheme, $toString)
     {

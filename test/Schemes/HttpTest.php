@@ -159,6 +159,8 @@ class HttpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validUrlArray
+     * @param $expected
+     * @param $input
      */
     public function testCreateFromString($expected, $input)
     {
@@ -192,8 +194,9 @@ class HttpTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider isValidProvider
+     * @expectedException InvalidArgumentException
+     * @param $input
      */
     public function testIsValid($input)
     {

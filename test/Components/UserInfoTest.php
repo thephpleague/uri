@@ -43,6 +43,9 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider sameValueAsProvider
+     * @param $userinfo
+     * @param $userinfobis
+     * @param $expected
      */
     public function testSameValueAs($userinfo, $userinfobis, $expected)
     {
@@ -60,6 +63,12 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider toArrayProvider
+     * @param $login
+     * @param $pass
+     * @param $expected
+     * @param $expected_user
+     * @param $expected_pass
+     * @param $expected_str
      */
     public function testToArray($login, $pass, $expected, $expected_user, $expected_pass, $expected_str)
     {

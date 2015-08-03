@@ -10,8 +10,11 @@ use PHPUnit_Framework_TestCase;
  */
 class FragmentTest extends PHPUnit_Framework_TestCase
 {
+
     /**
      * @dataProvider validFragment
+     * @param $str
+     * @param $encoded
      */
     public function testFragment($str, $encoded)
     {
@@ -21,6 +24,8 @@ class FragmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validFragment
+     * @param $str
+     * @param $encoded
      */
     public function testGetLiteral($str, $encoded)
     {

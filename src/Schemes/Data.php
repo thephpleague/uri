@@ -56,7 +56,7 @@ class Data extends Generic\AbstractUri implements Interfaces\Schemes\Uri
      */
     protected function isValid()
     {
-        return $this->__toString() === 'data:'.$this->path->getUriComponent();
+        return parent::isValid() && $this->__toString() === 'data:'.$this->path->getUriComponent();
     }
 
     /**

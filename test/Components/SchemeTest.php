@@ -67,7 +67,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
             'integer like string'  => ['123'],
             'bool'                 => [true],
             'Std Class'            => [(object) 'foo'],
-            'null'                 => [null],
             'float'                => [1.2],
             'array'                => [['foo']],
         ];

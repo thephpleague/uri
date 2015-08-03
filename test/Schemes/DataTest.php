@@ -3,6 +3,7 @@
 namespace League\Uri\test\Schemes;
 
 use League\Uri;
+use League\Uri\Components\DataPath as Path;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -301,5 +302,17 @@ class DataTest extends PHPUnit_Framework_TestCase
         $uri1 = DataUri::createFromPath(__DIR__.'/hello-world.txt');
         $uri2 = DataUri::createFromPath(__DIR__.'/red-nose.gif');
         $this->assertFalse($uri1->sameValueAs($uri2));
+    }
+
+    public function testIsNullDataPath()
+    {
+        $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
+        $this->assertFalse($uri->path->isNull());
+    }
+
+    public function testDataPathConstructor()
+    {
+        $data = new Path();
+        $this->assertSame('text/plain;charset=us-ascii,', (string) $data);
     }
 }

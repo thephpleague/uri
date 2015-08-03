@@ -82,7 +82,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             'invalid scope ID with utf8 character' => ['fe80::1234%25€'],
             'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'null' => [null],
             'float' => [1.2],
         ];
     }

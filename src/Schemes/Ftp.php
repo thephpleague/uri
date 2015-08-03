@@ -41,7 +41,7 @@ class Ftp extends Generic\AbstractHierarchicalUri implements Interfaces\Schemes\
      */
     protected function isValid()
     {
-        if (! empty($this->fragment->__toString().$this->query->__toString())) {
+        if (!empty($this->fragment->__toString().$this->query->__toString())) {
             return false;
         }
 

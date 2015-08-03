@@ -277,6 +277,10 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      */
     protected function isValidHierarchicalUri()
     {
+        if (!parent::isValid()) {
+            return false;
+        }
+
         if ($this->scheme->isEmpty()) {
             return true;
         }

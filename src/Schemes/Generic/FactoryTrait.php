@@ -11,6 +11,7 @@
 namespace League\Uri\Schemes\Generic;
 
 use League\Uri\Components;
+use League\Uri\Parser;
 
 /**
  * a Trait to parse a URI string
@@ -21,7 +22,26 @@ use League\Uri\Components;
  */
 trait FactoryTrait
 {
-    abstract protected static function getUriParser();
+    /**
+     * URI Parser
+     *
+     * @var Parser
+     */
+    protected static $uriParser;
+
+    /**
+     * Return a UriParser object
+     *
+     * @return Parser
+     */
+    protected static function getUriParser()
+    {
+        if (!static::$uriParser instanceof Parser) {
+            static::$uriParser = new Parser();
+        }
+
+        return static::$uriParser;
+    }
 
     /**
      * Create a new instance from a string
@@ -30,7 +50,7 @@ trait FactoryTrait
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return static
+     * @return FactoryTrait
      */
     public static function createFromString($uri = '')
     {
@@ -44,7 +64,7 @@ trait FactoryTrait
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return \League\Uri\Interfaces\Schemes\Uri
+     * @return FactoryTrait
      */
     public static function createFromComponents(array $components)
     {
@@ -70,15 +90,9 @@ trait FactoryTrait
      */
     protected static function formatComponents(array $components)
     {
-        foreach ($components as $name => $value) {
-            $components[$name] = (null === $value && 'port' != $name) ? '' : $value;
-        }
-
         return array_merge([
-            'scheme' => '', 'user'     => '',
-            'pass'   => '', 'host'     => '',
-            'port'   => null, 'path'   => '',
-            'query'  => '', 'fragment' => '',
+            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
+            'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
         ], $components);
     }
 }

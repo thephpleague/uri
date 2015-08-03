@@ -47,9 +47,11 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
      *
      * @param string $str the component string representation
      */
-    public function __construct($str = '')
+    public function __construct($str = null)
     {
-        $this->init($str);
+        if (null !== $str) {
+            $this->init($str);
+        }
     }
 
     /**
@@ -88,7 +90,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
      */
     public function getUriComponent()
     {
-        return $this->__toString();
+        return $this->isNull() ? '' : $this->__toString();
     }
 
     /**
@@ -156,14 +158,14 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
     /**
      * Return a formatted component string according to its type
      *
-     * @param string $str
-     * @param int    $type
+     * @param null|string $str
+     * @param int         $type
      *
      * @return string
      */
     protected static function formatComponentString($str, $type)
     {
-        if (self::IS_ABSOLUTE == $type) {
+        if (null !== $str && self::IS_ABSOLUTE == $type) {
             return static::$separator.$str;
         }
 

@@ -457,4 +457,15 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $altParser->setAccessible(true);
         $this->assertInstanceOf('\League\Uri\Parser', $altParser->getValue());
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testModificationFailed()
+    {
+        HttpUri::createFromString('http://example.com/path')
+            ->withScheme('')
+            ->withHost('')
+            ->withPath('data:go');
+    }
 }

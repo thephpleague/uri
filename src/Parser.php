@@ -77,21 +77,19 @@ class Parser
     public function parse($uri)
     {
         preg_match(self::URI_REGEXP, $uri, $parts);
-        $parts = array_merge([
+        $parts += [
             'scheme' => '',
             'authority' => '', 'acontent' => '',
             'path' => '',
             'query' => '', 'qcontent' => '',
             'fragment' => '', 'fcontent' => '',
-        ], $parts);
-
+        ];
         $parts['scheme'] = $this->formatScheme($parts['scheme']);
+        $parts['query'] = (empty($parts['query'])) ? null : $parts['qcontent'];
+        $parts['fragment'] = (empty($parts['fragment'])) ? null : $parts['fcontent'];
+        $parts += $this->parseAuthority($parts);
 
-        $components = array_merge($this->parseAuthority($parts), $parts);
-        $components['query'] = (empty($components['query'])) ? null : $components['qcontent'];
-        $components['fragment'] = (empty($components['fragment'])) ? null : $components['fcontent'];
-
-        return array_merge($this->components, array_intersect_key($components, $this->components));
+        return array_replace($this->components, array_intersect_key($parts, $this->components));
     }
 
     /**
@@ -119,7 +117,7 @@ class Parser
     /**
      * Parse a URI authority part into its components
      *
-     * @param string[] $authority
+     * @param string[] $parts
      *
      * @throws InvalidArgumentException If the authority is not empty with an empty host
      *
@@ -136,10 +134,9 @@ class Parser
         }
 
         preg_match(self::AUTHORITY_REGEXP, $parts['acontent'], $parts);
-        $parts = array_merge(['userinfo' => null, 'ucontent' => null, 'hostname' => null], $parts);
-        $components = $this->parseHostname($parts['hostname']);
+        $parts += ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
 
-        return array_merge($components, $this->parseUserInfo($parts));
+        return $this->parseUserInfo($parts) + $this->parseHostname($parts['hostname']);
     }
 
 
@@ -157,7 +154,7 @@ class Parser
         $components = ['host' => null, 'port' => null];
         $hostname = strrev($hostname);
         if (preg_match(self::REVERSE_HOSTNAME_REGEXP, $hostname, $res)) {
-            $res = array_merge($components, $res);
+            $res += $components;
             $components['host'] = strrev($res['host']);
             $components['port'] = strrev($res['port']);
         }
@@ -206,17 +203,17 @@ class Parser
     /**
      * Parse a URI user information part into its components
      *
-     * @param string[] $authority
+     * @param string[] $parts
      *
      * @return array
      */
-    protected function parseUserInfo($userinfo)
+    protected function parseUserInfo($parts)
     {
-        if (empty($userinfo['userinfo'])) {
+        if (empty($parts['userinfo'])) {
             return ['user' => null, 'pass' => null];
         }
 
-        $res = explode(':', $userinfo['ucontent'], 2);
+        $res = explode(':', $parts['ucontent'], 2);
 
         return [
             'user' => array_shift($res),

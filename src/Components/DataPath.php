@@ -133,7 +133,7 @@ class DataPath implements Interfaces\Components\DataPath
      *
      * @param string $mimeType
      *
-     * @throws new InvalidArgumentException If the mimetype is invalid
+     * @throws InvalidArgumentException If the mimetype is invalid
      */
     protected function filterMimeType($mimeType)
     {
@@ -178,7 +178,7 @@ class DataPath implements Interfaces\Components\DataPath
      *
      * @param string $parameters
      *
-     * @throws new InvalidArgumentException If the parameter is invalid
+     * @throws InvalidArgumentException If the parameter is invalid
      */
     protected function filterParameters($parameters)
     {

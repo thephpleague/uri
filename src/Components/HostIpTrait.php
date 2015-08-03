@@ -180,7 +180,7 @@ trait HostIpTrait
     /**
      * Format an IP for string representation of the Host
      *
-     * @param string IP address
+     * @param string $ip_address IP address
      *
      * @return string
      */

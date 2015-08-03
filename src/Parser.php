@@ -77,17 +77,15 @@ class Parser
     public function parse($uri)
     {
         preg_match(self::URI_REGEXP, $uri, $parts);
-        $parts += [
-            'scheme' => '',
-            'authority' => '', 'acontent' => '',
-            'path' => '',
-            'query' => '', 'qcontent' => '',
+        $parts = $parts + [
+            'scheme' => '', 'authority' => '', 'acontent' => '',
+            'path' => '', 'query' => '', 'qcontent' => '',
             'fragment' => '', 'fcontent' => '',
         ];
         $parts['scheme'] = $this->formatScheme($parts['scheme']);
         $parts['query'] = (empty($parts['query'])) ? null : $parts['qcontent'];
         $parts['fragment'] = (empty($parts['fragment'])) ? null : $parts['fcontent'];
-        $parts += $this->parseAuthority($parts);
+        $parts = $parts + $this->parseAuthority($parts);
 
         return array_replace($this->components, array_intersect_key($parts, $this->components));
     }
@@ -107,11 +105,11 @@ class Parser
             return;
         }
 
-        if (!preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
-            throw new InvalidArgumentException(sprintf('The submitted scheme is invalid: `%s`', $scheme));
+        if (preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+            return $scheme;
         }
 
-        return $scheme;
+        throw new InvalidArgumentException(sprintf('The submitted scheme is invalid: `%s`', $scheme));
     }
 
     /**
@@ -134,7 +132,7 @@ class Parser
         }
 
         preg_match(self::AUTHORITY_REGEXP, $parts['acontent'], $parts);
-        $parts += ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
+        $parts = $parts + ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
 
         return $this->parseUserInfo($parts) + $this->parseHostname($parts['hostname']);
     }
@@ -154,7 +152,7 @@ class Parser
         $components = ['host' => null, 'port' => null];
         $hostname = strrev($hostname);
         if (preg_match(self::REVERSE_HOSTNAME_REGEXP, $hostname, $res)) {
-            $res += $components;
+            $res = $res + $components;
             $components['host'] = strrev($res['host']);
             $components['port'] = strrev($res['port']);
         }

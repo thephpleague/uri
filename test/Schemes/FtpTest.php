@@ -10,8 +10,11 @@ use PHPUnit_Framework_TestCase;
  */
 class FtpTest extends PHPUnit_Framework_TestCase
 {
+
     /**
      * @dataProvider validArray
+     * @param $expected
+     * @param $input
      */
     public function testCreateFromString($expected, $input)
     {
@@ -37,8 +40,9 @@ class FtpTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider isValidProvider
+     * @expectedException InvalidArgumentException
+     * @param $input
      */
     public function testIsValid($input)
     {
@@ -57,6 +61,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider typecodeProvider
+     * @param $input
+     * @param $expected
      */
     public function testGetTypecode($input, $expected)
     {
@@ -77,6 +83,9 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider typecodeModifierProvider
+     * @param $input
+     * @param $typecode
+     * @param $expected
      */
     public function testWithTypecode($input, $typecode, $expected)
     {

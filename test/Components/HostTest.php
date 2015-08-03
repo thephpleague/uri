@@ -106,7 +106,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $raw
+     * @param $host
      * @param $expected
      * @dataProvider isIdnProvider
      */
@@ -441,6 +441,12 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider parseDataProvider
+     * @param $host
+     * @param $publicSuffix
+     * @param $registerableDomain
+     * @param $subdomain
+     * @param $isValidSuffix
+     * @param $ipLiteral
      */
     public function testPublicSuffixListImplementation(
         $host,

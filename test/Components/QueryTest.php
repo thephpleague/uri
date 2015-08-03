@@ -278,6 +278,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidFilter
      * @expectedException InvalidArgumentException
+     * @param $callable
+     * @param $flag
      */
     public function testFilterOffsetsFailed($callable, $flag)
     {
@@ -296,6 +298,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidQueryStrings
      * @expectedException InvalidArgumentException
+     * @param $query
      */
     public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
     {
@@ -313,7 +316,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param  $query
-     * @param  $encoding
      * @param  $expected
      * @dataProvider parserProvider
      */
@@ -358,7 +360,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $query
-     * @param $encoding
      * @param $expected
      * @dataProvider buildProvider
      */

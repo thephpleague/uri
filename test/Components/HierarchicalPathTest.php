@@ -332,8 +332,12 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             ['/a/b/c', '/a/b/c'],
         ];
     }
+
     /**
      * @dataProvider relativizeProvider
+     * @param $base
+     * @param $child
+     * @param $expected
      */
     public function testRelativize($base, $child, $expected)
     {
@@ -573,8 +577,11 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             ['/a-zA-Z0-9.-_~!$&\'()*+,;=:@', '/a-zA-Z0-9.-_~!$&\'()*+,;=:@'],
         ];
     }
+
     /**
      * @dataProvider pathTestProvider
+     * @param $input
+     * @param $output
      */
     public function testUriEncodesPathProperly($input, $output)
     {

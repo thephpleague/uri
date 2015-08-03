@@ -10,8 +10,11 @@ use PHPUnit_Framework_TestCase;
  */
 class PassTest extends PHPUnit_Framework_TestCase
 {
+
     /**
      * @dataProvider validUserProvider
+     * @param $raw
+     * @param $parsed
      */
     public function testGetUriComponent($raw, $parsed)
     {
@@ -20,6 +23,7 @@ class PassTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validUserProvider
+     * @param $raw
      */
     public function testGetLiteral($raw)
     {

@@ -94,7 +94,6 @@ trait HostIpTrait
         if (!empty($res)) {
             $this->hostAsIpv4 = false;
             $this->hostAsIpv6 = true;
-            $this->setLiteral($res);
 
             return [$res];
         }
@@ -102,18 +101,12 @@ trait HostIpTrait
         if (filter_var($str, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $this->hostAsIpv4 = true;
             $this->hostAsIpv6 = false;
-            $this->setLiteral($str);
 
             return [$str];
         }
 
         return [];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract protected function setLiteral($host);
 
     /**
      * validate and filter a Ipv6 Hostname

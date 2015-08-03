@@ -2,8 +2,6 @@
 
 namespace League\Uri\test\Components;
 
-use League\Uri\Components\Pass;
-use League\Uri\Components\User;
 use League\Uri\Components\UserInfo;
 use PHPUnit_Framework_TestCase;
 

@@ -10,6 +10,9 @@
  */
 namespace League\Uri\Interfaces\Schemes;
 
+use League\Uri\Interfaces\Components\Collection;
+use Psr\Http\Message\UriInterface;
+
 /**
  * Value object representing a URI.
  *
@@ -441,7 +444,7 @@ interface Uri
      *  - paths if present are normalized by removing dot segments
      *  - query strings if present are sorted using their offsets
      *
-     * @param Uri|Psr\Http\Message\UriInterface $uri
+     * @param Uri|UriInterface $uri
      *
      * @return bool
      */

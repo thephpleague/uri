@@ -10,7 +10,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Path;
 
 /**
  * A trait to format the Path component
@@ -23,12 +23,12 @@ trait PathFormatterTrait
     /**
      * Format the Path in a URI string
      *
-     * @param Interfaces\Path $path
-     * @param bool            $has_authority_part does the URI as an authority part
+     * @param Path $path
+     * @param bool $has_authority_part does the URI as an authority part
      *
      * @return string
      */
-    protected function formatPath(Interfaces\Components\Path $path, $has_authority_part = false)
+    protected function formatPath(Path $path, $has_authority_part = false)
     {
         $path = $path->getUriComponent();
 

@@ -482,7 +482,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host   = new Host();
         $parser = (new \ReflectionClass($host))->getProperty('parser');
         $parser->setAccessible(true);
-        $parser  = $parser->setValue(null);
+        $parser->setValue(null);
         $altHost = $host->modify('www.waxaudio.com.au');
         $this->assertSame('www', $altHost->getSubdomain());
         $altParser = (new \ReflectionClass($altHost))->getProperty('parser');

@@ -466,7 +466,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $uri = DataUri::createFromString('data:,');
         $parser = (new \ReflectionClass($uri))->getProperty('uriParser');
         $parser->setAccessible(true);
-        $parser = $parser->setValue(null);
+        $parser->setValue(null);
         $newUri = $uri->withParameters('charset=utf-8');
         $this->assertInternalType('array', $newUri->toArray());
         $altParser = (new \ReflectionClass($newUri))->getProperty('uriParser');

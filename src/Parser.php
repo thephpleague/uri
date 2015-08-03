@@ -230,7 +230,7 @@ class Parser
     /**
      * {@inheritdoc}
      */
-    protected function isValidLabelsCount(array $labels)
+    protected function isValidLabelsCount(array $labels = [])
     {
         if (127 <= count($labels)) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');

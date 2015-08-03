@@ -288,11 +288,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function invalidFilter()
     {
-        return [
-            [function ($value) {
-                return true;
-            }, 'toto'],
-        ];
+        $callback = function () {
+            return true;
+        };
+
+        return [[$callback, 'toto']];
     }
 
     /**

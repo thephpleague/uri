@@ -25,9 +25,8 @@ class FragmentTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider validFragment
      * @param $str
-     * @param $encoded
      */
-    public function testGetLiteral($str, $encoded)
+    public function testGetLiteral($str)
     {
         $fragment = new Fragment($str);
         $this->assertSame($str, $fragment->getLiteral());

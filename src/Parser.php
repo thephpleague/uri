@@ -102,7 +102,7 @@ class Parser
     protected function formatScheme($scheme)
     {
         if (empty($scheme)) {
-            return;
+            return null;
         }
 
         if (preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
@@ -188,7 +188,7 @@ class Parser
     protected function formatPort($port)
     {
         if (empty($port)) {
-            return;
+            return null;
         }
 
         if (!($res = filter_var($port, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]))) {

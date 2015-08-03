@@ -2,6 +2,7 @@
 
 namespace League\Uri\test;
 
+use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -30,7 +31,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testInvalidHostEncoding()
     {
@@ -38,7 +39,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testInvalidQueryEncoding()
     {

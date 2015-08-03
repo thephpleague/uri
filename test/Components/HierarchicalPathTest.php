@@ -3,6 +3,7 @@
 namespace League\Uri\test\Components;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath as Path;
 use PHPUnit_Framework_TestCase;
 

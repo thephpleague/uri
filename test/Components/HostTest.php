@@ -3,7 +3,9 @@
 namespace League\Uri\test\Components;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use League\Uri\Components\Host;
+use LogicException;
 use PHPUnit_Framework_TestCase;
 
 /**

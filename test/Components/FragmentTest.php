@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Components;
 
+use InvalidArgumentException;
 use League\Uri\Components\Fragment;
 use PHPUnit_Framework_TestCase;
 

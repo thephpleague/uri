@@ -312,8 +312,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             'hostname host' => ['example.com', 'example.com'],
             'ipv4 host' => ['127.0.0.1', '127.0.0.1'],
             'ipv6 host' => ['[::1]', '[::1]'],
-            'ipv6 scoped' => ['fe80::%251', '[fe80::]'],
-            'ipv6 scoped' => ['fe80::%1', '[fe80::]'],
+            'ipv6 scoped (1)' => ['fe80::%251', '[fe80::]'],
+            'ipv6 scoped (2)' => ['fe80::%1', '[fe80::]'],
         ];
     }
 

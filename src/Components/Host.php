@@ -58,7 +58,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
     /**
      * Host literal setter
      *
-     * @param string $host
+     * @return void
      */
     protected function setLiteral()
     {

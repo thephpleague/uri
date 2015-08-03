@@ -6,11 +6,13 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
+- A `Parser` class to parse an URI according to RFC3986 rules, the library no longer depend on PHP `parse_url` function
 - A `Data` class to specifically manipulate `data` schemed URI
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - A `DataPath` component class to manipulate Data-uri path component
+- Uri part object now expose a `isNull` method to tell if the component is specified or not
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
 - `Intl` extension is now required to use the library
@@ -22,7 +24,6 @@ All Notable changes to `League\Url` will be documented in this file
 - `Host::getIpLiteral` to get the raw IP representation of a Ip Literal hostname
 - `getLiteral` method to `Pass`, `User` and `Fragment` objects to get the component non-encoded string representation
 - `HierarchicalPath::relativize` and `Uri::relativize` to generate relative path and uri respectively
-- The library no longer depend on PHP `parse_url` function
 
 ### Fixed
 

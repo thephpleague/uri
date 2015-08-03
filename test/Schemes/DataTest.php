@@ -3,6 +3,7 @@
 namespace League\Uri\test\Schemes;
 
 use League\Uri;
+use League\Uri\Components\DataPath as Path;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
@@ -259,6 +260,9 @@ class DataTest extends PHPUnit_Framework_TestCase
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
+
+        // Ensure file handle of \SplFileObject gets closed.
+        $res = null;
         unlink($newFilePath);
     }
 
@@ -271,6 +275,9 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
         $data = file_get_contents($newFilePath);
         $this->assertSame(base64_encode($data), $uri->getData());
+
+        // Ensure file handle of \SplFileObject gets closed.
+        $res = null;
         unlink($newFilePath);
     }
 
@@ -288,5 +295,24 @@ class DataTest extends PHPUnit_Framework_TestCase
         $mock->method('__toString')->willReturn('http://www.example.com');
 
         $this->assertFalse(DataUri::createFromPath(__DIR__.'/hello-world.txt')->sameValueAs($mock));
+    }
+
+    public function testSameValueAsSimple()
+    {
+        $uri1 = DataUri::createFromPath(__DIR__.'/hello-world.txt');
+        $uri2 = DataUri::createFromPath(__DIR__.'/red-nose.gif');
+        $this->assertFalse($uri1->sameValueAs($uri2));
+    }
+
+    public function testIsNullDataPath()
+    {
+        $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
+        $this->assertFalse($uri->path->isNull());
+    }
+
+    public function testDataPathConstructor()
+    {
+        $data = new Path();
+        $this->assertSame('text/plain;charset=us-ascii,', (string) $data);
     }
 }

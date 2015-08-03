@@ -82,7 +82,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             'invalid scope ID with utf8 character' => ['fe80::1234%25€'],
             'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'null' => [null],
             'float' => [1.2],
         ];
     }
@@ -463,12 +462,12 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['www.waxaudio.com.au', 'com.au', 'waxaudio.com.au', 'www', true, 'www.waxaudio.com.au'],
-            ['giant.yyyy', 'yyyy', 'giant.yyyy', null, false, 'giant.yyyy'],
+            ['giant.yyyy.', 'yyyy', 'giant.yyyy', null, false, 'giant.yyyy.'],
             ['localhost', null, null, null, false, 'localhost'],
             ['127.0.0.1', null, null, null, false, '127.0.0.1'],
             ['[::1]', null, null, null, false, '::1'],
             ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false, 'مثال.إختبار'],
-            ['xn--p1ai.ru', 'ru', 'xn--p1ai.ru', null, true, 'xn--p1ai.ru'],
+            ['xn--p1ai.ru.', 'ru', 'xn--p1ai.ru', null, true, 'xn--p1ai.ru.'],
         ];
     }
 

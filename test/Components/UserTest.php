@@ -63,7 +63,6 @@ class UserTest extends PHPUnit_Framework_TestCase
             'array' => [['coucou']],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
-            'null'      => [null],
             'float'     => [1.2],
         ];
     }

@@ -43,10 +43,13 @@ abstract class AbstractComponent
     /**
      * new instance
      *
-     * @param string $data the component value
+     * @param string|null $data the component value
      */
-    public function __construct($data = '')
+    public function __construct($data = null)
     {
+        if ($data === null) {
+            return;
+        }
         $data = $this->validateString($data);
         if (!empty($data)) {
             $this->data = $this->validate($data);
@@ -85,6 +88,14 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
+    public function isNull()
+    {
+        return null === $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         return static::encode($this->data);
@@ -103,6 +114,6 @@ abstract class AbstractComponent
      */
     public function getUriComponent()
     {
-        return $this->__toString();
+        return $this->isNull() ? '' : $this->__toString();
     }
 }

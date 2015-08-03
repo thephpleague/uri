@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test\Services;
+namespace League\Uri\test;
 
 use League\Uri;
 use League\Uri\Schemes\Http as HttpUri;

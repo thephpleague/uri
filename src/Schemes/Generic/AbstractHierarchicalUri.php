@@ -243,7 +243,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
         }
 
         try {
-            return static::createFromComponents(static::parse($uri->__toString()))
+            return static::createFromComponents(static::getUriParser()->parse($uri->__toString()))
                 ->toAscii()->withoutDotSegments()->ksortQuery()->__toString() === $this
                 ->toAscii()->withoutDotSegments()->ksortQuery()->__toString();
         } catch (Exception $e) {
@@ -277,6 +277,10 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
      */
     protected function isValidHierarchicalUri()
     {
+        if (!parent::isValid()) {
+            return false;
+        }
+
         if ($this->scheme->isEmpty()) {
             return true;
         }

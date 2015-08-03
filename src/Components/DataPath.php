@@ -36,7 +36,7 @@ class DataPath implements Interfaces\Components\DataPath
      *
      * @var string
      */
-    protected $data = '';
+    protected $data;
 
     /**
      * The File MimeType
@@ -69,8 +69,11 @@ class DataPath implements Interfaces\Components\DataPath
      *
      * @param string $str
      */
-    public function __construct($str = '')
+    public function __construct($str = null)
     {
+        if (empty($str)) {
+            $str = '';
+        }
         $str = $this->validateString($str);
         if (!empty($str)) {
             $this->validate($this->extractPathParts($str));
@@ -306,6 +309,14 @@ class DataPath implements Interfaces\Components\DataPath
     public function getUriComponent()
     {
         return $this->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isNull()
+    {
+        return false;
     }
 
     /**

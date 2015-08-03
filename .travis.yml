@@ -25,9 +25,10 @@ install:
   - travis_retry composer install --prefer-dist
 
 script:
-  - phpunit --coverage-text --coverage-clover=coverage.clover
+  - if [ "$COLLECT_COVERAGE" != "true" ]; then phpunit; fi
+  - if [ "$COLLECT_COVERAGE" == "true" ]; then phpunit --coverage-text --coverage-clover=coverage.clover; fi
   - if [ "$EXECUTE_CS_CHECK" == "true" ]; then vendor/bin/php-cs-fixer fix -v --diff --dry-run; fi
 
 after_script:
- - wget https://scrutinizer-ci.com/ocular.phar
+ - if [ "$COLLECT_COVERAGE" == "true" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
  - if [ "$COLLECT_COVERAGE" == "true" ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

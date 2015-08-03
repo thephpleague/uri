@@ -59,7 +59,6 @@ class PassTest extends PHPUnit_Framework_TestCase
             'contains #' => ['to#to'],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
-            'null'      => [null],
             'float'     => [1.2],
             'array'      => [['foo']],
         ];

@@ -31,6 +31,11 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
      */
     use HostnameTrait;
 
+    /*
+     * hostname info from Public Suffix List
+     */
+    use HostnameInfoTrait;
+
     /**
      * Host literal representation
      *
@@ -47,9 +52,7 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
         if (!empty($str)) {
             $this->data = $this->validate($str);
         }
-        if (!$this->isIp()) {
-            $this->setLiteral($this->__toString());
-        }
+        $this->setLiteral();
     }
 
     /**
@@ -57,9 +60,9 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
      *
      * @param string $host
      */
-    protected function setLiteral($host)
+    protected function setLiteral()
     {
-        $this->host = $host;
+        $this->host = !$this->isIp() ? $this->__toString() : $this->data[0];
     }
 
     /**

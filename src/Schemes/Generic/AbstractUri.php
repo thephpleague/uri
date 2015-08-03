@@ -290,7 +290,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     public function toArray()
     {
-        return static::parse($this->__toString());
+        return static::getUriParser()->parse($this->__toString());
     }
 
     /**
@@ -314,7 +314,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         try {
-            return static::createFromComponents(static::parse($uri->__toString()))
+            return static::createFromComponents(static::getUriParser()->parse($uri->__toString()))
                 ->toAscii()->ksortQuery()->__toString() === $this
                 ->toAscii()->ksortQuery()->__toString();
         } catch (Exception $e) {
@@ -412,5 +412,22 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         return Uri\Components\HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+    }
+
+    /**
+     * Check if a URI is valid
+     *
+     * @return bool
+     */
+    protected function isValid()
+    {
+        $path = $this->path->getUriComponent();
+        if (false === strpos($path, ':')) {
+            return true;
+        }
+        $path = explode(':', $path);
+        $path = array_shift($path);
+
+        return !(empty($this->scheme->getUriComponent().$this->getAuthority()) && strpos($path, '/') === false);
     }
 }

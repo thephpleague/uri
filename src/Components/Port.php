@@ -22,25 +22,15 @@ use League\Uri\Interfaces;
 class Port extends AbstractComponent implements Interfaces\Components\Port
 {
     /**
-     * New Instance
-     *
-     * @param int $data
-     */
-    public function __construct($data = null)
-    {
-        $this->data = $this->validate($data);
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function validate($data)
     {
-        if (is_null($data)) {
+        if (null === $data) {
             return $data;
         }
 
-        $res = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 65535]]);
+        $res = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => static::MINIMUM, 'max_range' => static::MAXIMUM]]);
         if (false === $res || is_bool($data)) {
             throw new InvalidArgumentException('The submitted port is invalid');
         }
@@ -67,5 +57,15 @@ class Port extends AbstractComponent implements Interfaces\Components\Port
     public function toInt()
     {
         return $this->data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setData($data)
+    {
+        $this->data = $this->validate($data);
+
+        return $this;
     }
 }

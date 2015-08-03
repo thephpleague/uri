@@ -421,11 +421,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
                 [ 'batman' => 'joker', 'superman' => 'lex luthor'],
             ],
             [
-                ['superman' => 'lex luthor', 'superman' => 'joker'],
+                ['superman' => 'lex luthor', 'superwoman' => 'joker'],
                 function ($dataA, $dataB) {
                     return strcasecmp($dataA, $dataB);
                 },
-                ['superman' => 'lex luthor', 'superman' => 'joker'],
+                ['superman' => 'lex luthor', 'superwoman' => 'joker'],
             ],
         ];
     }

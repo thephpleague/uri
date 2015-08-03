@@ -114,8 +114,8 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], Path::IS_RELATIVE, 'www/example/com'],
-            'array' => [['www', 'example', 'com'], Path::IS_ABSOLUTE, '/www/example/com'],
+            'array (1)' => [['www', 'example', 'com'], Path::IS_RELATIVE, 'www/example/com'],
+            'array (2)' => [['www', 'example', 'com'], Path::IS_ABSOLUTE, '/www/example/com'],
             'iterator' => [new ArrayIterator(['www', 'example', 'com']), Path::IS_ABSOLUTE, '/www/example/com'],
             'Path object' => [new Path('/foo/bar/baz'), Path::IS_ABSOLUTE, '/foo/bar/baz'],
             'arbitrary cut 1' => [['foo', 'bar', 'baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],

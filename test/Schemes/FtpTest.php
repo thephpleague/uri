@@ -95,8 +95,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
     public function typecodeModifierProvider()
     {
         return [
-            'no modification' => ['ftp://example.com/foo/bar', '', 'ftp://example.com/foo/bar'],
-            'no modification' => ['ftp://example.com/foo;type=a/bar', 'd', 'ftp://example.com/foo;type=a/bar;type=d'],
+            'no modification (1)' => ['ftp://example.com/foo/bar', '', 'ftp://example.com/foo/bar'],
+            'no modification (2)' => ['ftp://example.com/foo;type=a/bar', 'd', 'ftp://example.com/foo;type=a/bar;type=d'],
             'adding' => ['ftp://example.com/foo/bar', 'a', 'ftp://example.com/foo/bar;type=a'],
             'adding to empty path' => ['ftp://example.com', 'd', 'ftp://example.com/;type=d'],
             'replacing' => ['ftp://example.com/foo/bar;type=i', 'a', 'ftp://example.com/foo/bar;type=a'],

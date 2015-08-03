@@ -11,7 +11,7 @@ use PHPUnit_Framework_TestCase;
 class WsTest extends PHPUnit_Framework_TestCase
 {
 
-    /**'
+    /**
      * @dataProvider validUrlArray
      * @param $expected
      * @param $input

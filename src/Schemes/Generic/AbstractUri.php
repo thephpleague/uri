@@ -14,6 +14,7 @@ use Exception;
 use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Interfaces;
+use League\Uri\Parser;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -25,6 +26,8 @@ use Psr\Http\Message\UriInterface;
  */
 abstract class AbstractUri implements Interfaces\Schemes\Uri
 {
+    protected static $uriParser;
+
     /**
      * Scheme Component
      *
@@ -88,6 +91,15 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      * Trait to add Factory methods
      */
     use FactoryTrait;
+
+    protected static function getUriParser()
+    {
+        if (!static::$uriParser instanceof Parser) {
+            static::$uriParser = new Parser();
+        }
+
+        return static::$uriParser;
+    }
 
     /**
      * {@inheritdoc}
@@ -290,7 +302,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     public function toArray()
     {
-        return static::parse($this->__toString());
+        return static::getUriParser()->parse($this->__toString());
     }
 
     /**
@@ -314,7 +326,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         try {
-            return static::createFromComponents(static::parse($uri->__toString()))
+            return static::createFromComponents(static::getUriParser()->parse($uri->__toString()))
                 ->toAscii()->ksortQuery()->__toString() === $this
                 ->toAscii()->ksortQuery()->__toString();
         } catch (Exception $e) {

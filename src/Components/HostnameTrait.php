@@ -11,7 +11,6 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use Pdp;
 
 /**
  * A Trait to validate a Hostname
@@ -63,45 +62,6 @@ trait HostnameTrait
     protected $isIdn = false;
 
     /**
-     * Pdp Parser
-     *
-     * @var Pdp\Parser
-     */
-    protected static $parser;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPublicSuffix()
-    {
-        return $this->publicSuffix;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRegisterableDomain()
-    {
-        return $this->registerableDomain;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubdomain()
-    {
-        return $this->subdomain;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isPublicSuffixValid()
-    {
-        return $this->isPublicSuffixValid;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isIdn()
@@ -127,13 +87,7 @@ trait HostnameTrait
         }, $raw_labels);
 
         $this->assertValidHost($labels);
-
-        $this->isIdn               = $raw_labels !== $labels;
-        $info                      = $this->getHostnameParser()->parseHost($host);
-        $this->subdomain           = $info->subdomain;
-        $this->registerableDomain  = $info->registerableDomain;
-        $this->publicSuffix        = $info->publicSuffix;
-        $this->isPublicSuffixValid = $this->getHostnameParser()->isSuffixValid($host);
+        $this->isIdn = $raw_labels !== $labels;
 
         return array_map(function ($label) {
             return idn_to_utf8($label);
@@ -212,29 +166,5 @@ trait HostnameTrait
         if (count(preg_grep('/^[0-9a-z]([0-9a-z-]{0,61}[0-9a-z])?$/i', $data, PREG_GREP_INVERT))) {
             throw new InvalidArgumentException('Invalid Hostname, some labels contain invalid characters');
         }
-    }
-
-    /**
-     * Initialize and access a Pdp\Parser object
-     *
-     * @return Pdp\Parser
-     */
-    protected function getHostnameParser()
-    {
-        if (!static::$parser instanceof Pdp\Parser) {
-            static::$parser = $this->newHostnameParser();
-        }
-
-        return static::$parser;
-    }
-
-    /**
-     * Pdp Factory
-     *
-     * @return Pdp\Parser
-     */
-    protected function newHostnameParser()
-    {
-        return new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
     }
 }

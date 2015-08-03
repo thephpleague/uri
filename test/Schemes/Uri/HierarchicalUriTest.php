@@ -444,4 +444,17 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
             ['//user@:80'],
         ];
     }
+
+    public function testLazyLoadingUriParser()
+    {
+        $uri = DataUri::createFromString('data:,');
+        $parser = (new \ReflectionClass($uri))->getProperty('uriParser');
+        $parser->setAccessible(true);
+        $parser = $parser->setValue(null);
+        $newUri = $uri->withParameters('charset=utf-8');
+        $this->assertInternalType('array', $newUri->toArray());
+        $altParser = (new \ReflectionClass($newUri))->getProperty('uriParser');
+        $altParser->setAccessible(true);
+        $this->assertInstanceOf('\League\Uri\Parser', $altParser->getValue());
+    }
 }

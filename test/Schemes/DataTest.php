@@ -289,4 +289,11 @@ class DataTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse(DataUri::createFromPath(__DIR__.'/hello-world.txt')->sameValueAs($mock));
     }
+
+    public function testSameValueAsSimple()
+    {
+        $uri1 = DataUri::createFromPath(__DIR__.'/hello-world.txt');
+        $uri2 = DataUri::createFromPath(__DIR__.'/red-nose.gif');
+        $this->assertFalse($uri1->sameValueAs($uri2));
+    }
 }

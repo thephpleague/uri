@@ -114,7 +114,7 @@ interface HierarchicalPath extends Path, HierarchicalComponent
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URI
      *
-     * @param Path $rel the path to relativize
+     * @param HierarchicalPath $rel the path to relativize
      *
      * @return static
      */

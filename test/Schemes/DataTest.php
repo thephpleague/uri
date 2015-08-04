@@ -2,11 +2,13 @@
 
 namespace League\Uri\test\Schemes;
 
+use InvalidArgumentException;
 use League\Uri;
 use League\Uri\Components\DataPath as Path;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 /**
  * @group data
@@ -24,6 +26,12 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validStringUri
+     * @param $str
+     * @param $mimetype
+     * @param $parameters
+     * @param $data
+     * @param $asArray
+     * @param $isBinaryData
      */
     public function testCreateFromString($str, $mimetype, $parameters, $data, $asArray, $isBinaryData)
     {
@@ -130,8 +138,9 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider invalidDataUriString
+     * @expectedException InvalidArgumentException
+     * @param $str
      */
     public function testCreateFromStringFailed($str)
     {
@@ -152,8 +161,9 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
      * @dataProvider invalidDataUriPath
+     * @expectedException RuntimeException
+     * @param $path
      */
     public function testCreateFromPathFailed($path)
     {
@@ -170,8 +180,9 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider invalidDataUriComponents
+     * @expectedException InvalidArgumentException
+     * @param $path
      */
     public function testCreateFromComponentsFailed($path)
     {
@@ -188,6 +199,8 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validFilePath
+     * @param $path
+     * @param $expected
      */
     public function testCreateFromPath($path, $expected)
     {
@@ -221,6 +234,7 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider fileProvider
+     * @param $uri
      */
     public function testToBinary($uri)
     {
@@ -236,8 +250,9 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider invalidParameters
+     * @expectedException InvalidArgumentException
+     * @param $parameters
      */
     public function testUpdateParametersFailed($parameters)
     {

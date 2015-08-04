@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Components;
 
+use InvalidArgumentException;
 use League\Uri\Components\Fragment;
 use PHPUnit_Framework_TestCase;
 
@@ -12,6 +13,8 @@ class FragmentTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider validFragment
+     * @param $str
+     * @param $encoded
      */
     public function testFragment($str, $encoded)
     {
@@ -21,8 +24,9 @@ class FragmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validFragment
+     * @param $str
      */
-    public function testGetLiteral($str, $encoded)
+    public function testGetLiteral($str)
     {
         $fragment = new Fragment($str);
         $this->assertSame($str, $fragment->getLiteral());

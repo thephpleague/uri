@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Schemes;
 
+use InvalidArgumentException;
 use League\Uri\Schemes\Ws;
 use PHPUnit_Framework_TestCase;
 
@@ -12,6 +13,8 @@ class WsTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider validUrlArray
+     * @param $expected
+     * @param $input
      */
     public function testCreateFromString($expected, $input)
     {
@@ -37,8 +40,9 @@ class WsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider isValidProvider
+     * @expectedException InvalidArgumentException
+     * @param $input
      */
     public function testIsValid($input)
     {

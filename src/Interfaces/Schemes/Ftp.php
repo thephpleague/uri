@@ -10,6 +10,8 @@
  */
 namespace League\Uri\Interfaces\Schemes;
 
+use InvalidArgumentException;
+
 /**
  * Value object representing a FTP URI.
  *

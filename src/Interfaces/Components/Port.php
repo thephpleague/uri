@@ -25,6 +25,20 @@ namespace League\Uri\Interfaces\Components;
 interface Port extends Component, LiteralAccess
 {
     /**
+     * Maximum port number.
+     *
+     * @var int
+     */
+    const MAXIMUM = 65535;
+
+    /**
+     * Minimum port number.
+     *
+     * @var int
+     */
+    const MINIMUM = 1;
+
+    /**
      * Return an integer representation of the Port component
      *
      * @return null|int

@@ -2,6 +2,7 @@
 
 namespace League\Uri\test;
 
+use InvalidArgumentException;
 use League\Uri;
 use PHPUnit_Framework_TestCase;
 
@@ -19,6 +20,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider testValidURI
+     * @param $uri
+     * @param $expected
      */
     public function testParseSucced($uri, $expected)
     {
@@ -266,8 +269,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider testInvalidURI
+     * @expectedException InvalidArgumentException
+     * @param $uri
      */
     public function testParseFailed($uri)
     {

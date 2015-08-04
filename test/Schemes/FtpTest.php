@@ -2,6 +2,7 @@
 
 namespace League\Uri\test\Schemes;
 
+use InvalidArgumentException;
 use League\Uri\Schemes\Ftp as FtpUri;
 use PHPUnit_Framework_TestCase;
 
@@ -12,6 +13,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider validArray
+     * @param $expected
+     * @param $input
      */
     public function testCreateFromString($expected, $input)
     {
@@ -37,8 +40,9 @@ class FtpTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider isValidProvider
+     * @expectedException InvalidArgumentException
+     * @param $input
      */
     public function testIsValid($input)
     {
@@ -57,6 +61,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider typecodeProvider
+     * @param $input
+     * @param $expected
      */
     public function testGetTypecode($input, $expected)
     {
@@ -77,6 +83,9 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider typecodeModifierProvider
+     * @param $input
+     * @param $typecode
+     * @param $expected
      */
     public function testWithTypecode($input, $typecode, $expected)
     {
@@ -86,8 +95,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
     public function typecodeModifierProvider()
     {
         return [
-            'no modification' => ['ftp://example.com/foo/bar', '', 'ftp://example.com/foo/bar'],
-            'no modification' => ['ftp://example.com/foo;type=a/bar', 'd', 'ftp://example.com/foo;type=a/bar;type=d'],
+            'no modification (1)' => ['ftp://example.com/foo/bar', '', 'ftp://example.com/foo/bar'],
+            'no modification (2)' => ['ftp://example.com/foo;type=a/bar', 'd', 'ftp://example.com/foo;type=a/bar;type=d'],
             'adding' => ['ftp://example.com/foo/bar', 'a', 'ftp://example.com/foo/bar;type=a'],
             'adding to empty path' => ['ftp://example.com', 'd', 'ftp://example.com/;type=d'],
             'replacing' => ['ftp://example.com/foo/bar;type=i', 'a', 'ftp://example.com/foo/bar;type=a'],

@@ -3,7 +3,9 @@
 namespace League\Uri\test\Components;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use League\Uri\Components\Host;
+use LogicException;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -106,7 +108,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $raw
+     * @param $host
      * @param $expected
      * @dataProvider isIdnProvider
      */
@@ -312,8 +314,8 @@ class HostTest extends PHPUnit_Framework_TestCase
             'hostname host' => ['example.com', 'example.com'],
             'ipv4 host' => ['127.0.0.1', '127.0.0.1'],
             'ipv6 host' => ['[::1]', '[::1]'],
-            'ipv6 scoped' => ['fe80::%251', '[fe80::]'],
-            'ipv6 scoped' => ['fe80::%1', '[fe80::]'],
+            'ipv6 scoped (1)' => ['fe80::%251', '[fe80::]'],
+            'ipv6 scoped (2)' => ['fe80::%1', '[fe80::]'],
         ];
     }
 
@@ -441,6 +443,12 @@ class HostTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider parseDataProvider
+     * @param $host
+     * @param $publicSuffix
+     * @param $registerableDomain
+     * @param $subdomain
+     * @param $isValidSuffix
+     * @param $ipLiteral
      */
     public function testPublicSuffixListImplementation(
         $host,
@@ -476,7 +484,7 @@ class HostTest extends PHPUnit_Framework_TestCase
         $host   = new Host();
         $parser = (new \ReflectionClass($host))->getProperty('parser');
         $parser->setAccessible(true);
-        $parser  = $parser->setValue(null);
+        $parser->setValue(null);
         $altHost = $host->modify('www.waxaudio.com.au');
         $this->assertSame('www', $altHost->getSubdomain());
         $altParser = (new \ReflectionClass($altHost))->getProperty('parser');

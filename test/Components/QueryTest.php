@@ -3,6 +3,7 @@
 namespace League\Uri\test\Components;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use League\Uri\Components\Query;
 use PHPUnit_Framework_TestCase;
 
@@ -278,6 +279,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidFilter
      * @expectedException InvalidArgumentException
+     * @param $callable
+     * @param $flag
      */
     public function testFilterOffsetsFailed($callable, $flag)
     {
@@ -286,16 +289,17 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function invalidFilter()
     {
-        return [
-            [function ($value) {
-                return true;
-            }, 'toto'],
-        ];
+        $callback = function () {
+            return true;
+        };
+
+        return [[$callback, 'toto']];
     }
 
     /**
      * @dataProvider invalidQueryStrings
      * @expectedException InvalidArgumentException
+     * @param $query
      */
     public function testWithQueryRaisesExceptionForInvalidQueryStrings($query)
     {
@@ -313,7 +317,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param  $query
-     * @param  $encoding
      * @param  $expected
      * @dataProvider parserProvider
      */
@@ -358,7 +361,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @param $query
-     * @param $encoding
      * @param $expected
      * @dataProvider buildProvider
      */
@@ -420,11 +422,11 @@ class QueryTest extends PHPUnit_Framework_TestCase
                 [ 'batman' => 'joker', 'superman' => 'lex luthor'],
             ],
             [
-                ['superman' => 'lex luthor', 'superman' => 'joker'],
+                ['superman' => 'lex luthor', 'superwoman' => 'joker'],
                 function ($dataA, $dataB) {
                     return strcasecmp($dataA, $dataB);
                 },
-                ['superman' => 'lex luthor', 'superman' => 'joker'],
+                ['superman' => 'lex luthor', 'superwoman' => 'joker'],
             ],
         ];
     }

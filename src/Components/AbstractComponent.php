@@ -47,12 +47,8 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if ($data === null) {
-            return;
-        }
-        $data = $this->validateString($data);
-        if (!empty($data)) {
-            $this->data = $this->validate($data);
+        if ($data !== null) {
+            $this->setData($data);
         }
     }
 
@@ -115,5 +111,23 @@ abstract class AbstractComponent
     public function getUriComponent()
     {
         return $this->isNull() ? '' : $this->__toString();
+    }
+
+    /**
+     * Set data.
+     *
+     * @param mixed $data The data to set.
+     * @return $this
+     * @throws InvalidArgumentException If data is invalid.
+     */
+    protected function setData($data)
+    {
+        $data = $this->validateString($data);
+
+        if ($data !== '') {
+            $this->data = $this->validate($data);
+        }
+
+        return $this;
     }
 }

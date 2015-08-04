@@ -11,6 +11,7 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
+use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -20,7 +21,7 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-class Http extends Generic\AbstractHierarchicalUri implements UriInterface
+class Http extends AbstractHierarchicalUri implements UriInterface
 {
     /**
      * {@inheritdoc}

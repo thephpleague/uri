@@ -11,7 +11,8 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Schemes\Ftp as FtpInterface;
+use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 
 /**
  * Value object representing FTP Uri.
@@ -20,7 +21,7 @@ use League\Uri\Interfaces;
  * @since   4.0.0
  *
  */
-class Ftp extends Generic\AbstractHierarchicalUri implements Interfaces\Schemes\Ftp
+class Ftp extends AbstractHierarchicalUri implements FtpInterface
 {
     /**
      * {@inheritdoc}

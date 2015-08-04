@@ -10,10 +10,21 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use Exception;
-use League\Uri;
-use League\Uri\Interfaces;
-use Psr\Http\Message\UriInterface;
+use League\Uri\Components\Fragment;
+use League\Uri\Components\Host;
+use League\Uri\Components\Port;
+use League\Uri\Components\Query;
+use League\Uri\Components\Scheme;
+use League\Uri\Components\UserInfo;
+use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Interfaces\Schemes\HierarchicalUri;
 
 /**
  * Value object representing a Hierarchical URI.
@@ -22,27 +33,28 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces\Schemes\HierarchicalUri
+abstract class AbstractHierarchicalUri extends AbstractUri implements HierarchicalUri
 {
     /**
      * Create a new instance of URI
      *
-     * @param Interfaces\Components\Scheme           $scheme
-     * @param Interfaces\Components\UserInfo         $userInfo
-     * @param Interfaces\Components\Host             $host
-     * @param Interfaces\Components\Port             $port
-     * @param Interfaces\Components\HierarchicalPath $path
-     * @param Interfaces\Components\Query            $query
-     * @param Interfaces\Components\Fragment         $fragment
+     *
+     * @param SchemeInterface           $scheme
+     * @param UserInfoInterface         $userInfo
+     * @param HostInterface             $host
+     * @param PortInterface             $port
+     * @param HierarchicalPathInterface $path
+     * @param QueryInterface            $query
+     * @param FragmentInterface         $fragment
      */
     public function __construct(
-        Interfaces\Components\Scheme $scheme,
-        Interfaces\Components\UserInfo $userInfo,
-        Interfaces\Components\Host $host,
-        Interfaces\Components\Port $port,
-        Interfaces\Components\HierarchicalPath $path,
-        Interfaces\Components\Query $query,
-        Interfaces\Components\Fragment $fragment
+        SchemeInterface $scheme,
+        UserInfoInterface $userInfo,
+        HostInterface $host,
+        PortInterface $port,
+        HierarchicalPathInterface $path,
+        QueryInterface $query,
+        FragmentInterface $fragment
     ) {
         $this->scheme = $scheme;
         $this->userInfo = $userInfo;
@@ -92,7 +104,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     /**
      * {@inheritdoc}
      */
-    public function filterPath(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
+    public function filterPath(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('path', $this->path->filter($callable, $flag));
     }
@@ -135,14 +147,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     public function withoutSegments($offsets)
     {
         return $this->withProperty('path', $this->path->without($offsets));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutDotSegments()
-    {
-        return $this->withProperty('path', $this->path->withoutDotSegments());
     }
 
     /**
@@ -212,7 +216,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     /**
      * {@inheritdoc}
      */
-    public function filterHost(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
+    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('host', $this->host->filter($callable, $flag));
     }
@@ -236,25 +240,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Interfaces
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs($uri)
-    {
-        if (!$uri instanceof Interfaces\Schemes\HierarchicalUri && !$uri instanceof UriInterface) {
-            return parent::sameValueAs($uri);
-        }
-
-        try {
-            return static::createFromComponents(static::getUriParser()->parse($uri->__toString()))
-                ->toAscii()->withoutDotSegments()->ksortQuery()->__toString() === $this
-                ->toAscii()->withoutDotSegments()->ksortQuery()->__toString();
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function relativize(Interfaces\Schemes\HierarchicalUri $relative)
+    public function relativize(HierarchicalUri $relative)
     {
         $className = get_class($this);
         if (!$relative instanceof $className) {

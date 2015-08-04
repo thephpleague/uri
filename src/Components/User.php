@@ -10,7 +10,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\User as UserInterface;
 
 /**
  * Value object representing a URI user component.
@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since  1.0.0
  */
-class User extends AbstractComponent implements Interfaces\Components\User
+class User extends AbstractComponent implements UserInterface
 {
     protected static $invalidCharactersRegex = ',[/:@?#],';
 }

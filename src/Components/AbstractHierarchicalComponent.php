@@ -11,8 +11,9 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
-use League\Uri\Types;
+use League\Uri\Interfaces\Components\HierarchicalComponent as HierarchicalComponentInterface;
+use League\Uri\Types\ImmutableCollectionTrait;
+use League\Uri\Types\ImmutableComponentTrait;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -20,32 +21,33 @@ use League\Uri\Types;
  * @package League.uri
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalComponent
+abstract class AbstractHierarchicalComponent implements HierarchicalComponentInterface
 {
+    /*
+     * immutable collection methods
+     */
+    use ImmutableCollectionTrait;
+
+    /*
+     * common immutable value object methods
+     */
+    use ImmutableComponentTrait;
+
     const IS_ABSOLUTE = 1;
+
     const IS_RELATIVE = 0;
 
     /**
-     * Is the HierarchicalComponent absolute
+     * Is the object considered absolute
      *
      * @var int
      */
     protected $isAbsolute = self::IS_RELATIVE;
 
-    /*
-     * common immutable value object methods
-     */
-    use Types\ImmutableComponentTrait;
-
-    /*
-     * immutable collection methods
-     */
-    use Types\ImmutableCollectionTrait;
-
     /**
      * New Instance
      *
-     * @param string $str the component string representation
+     * @param string|null $str the component string representation
      */
     public function __construct($str = null)
     {
@@ -115,7 +117,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
     }
 
     /**
-     * Validate a component as a Interfaces\Components\HierarchicalComponent object
+     * Validate a component as a HierarchicalComponentInterface object
      *
      * @param mixed $component
      *
@@ -125,7 +127,7 @@ abstract class AbstractHierarchicalComponent implements Interfaces\Components\Hi
      */
     protected function validateComponent($component)
     {
-        if (!$component instanceof Interfaces\Components\HierarchicalComponent) {
+        if (!$component instanceof HierarchicalComponentInterface) {
             return $this->modify($component);
         }
 

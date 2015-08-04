@@ -11,7 +11,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 
 /**
  * Value object representing a URI path component.
@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since 1.0.0
  */
-class HierarchicalPath extends AbstractHierarchicalComponent implements Interfaces\Components\HierarchicalPath
+class HierarchicalPath extends AbstractHierarchicalComponent implements HierarchicalPathInterface
 {
     /**
      * {@inheritdoc}
@@ -146,7 +146,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Interfac
     /**
      * {@inheritdoc}
      */
-    public function relativize(Interfaces\Components\HierarchicalPath $path)
+    public function relativize(HierarchicalPathInterface $path)
     {
         $bSegments = explode(static::$separator, $this->withoutDotSegments()->__toString());
         $cSegments = explode(static::$separator, $path->withoutDotSegments()->__toString());

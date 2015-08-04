@@ -10,6 +10,8 @@
  */
 namespace League\Uri\Schemes;
 
+use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
+
 /**
  * Value object representing WS and WSS Uri.
  *
@@ -17,7 +19,7 @@ namespace League\Uri\Schemes;
  * @since   4.0.0
  *
  */
-class Ws extends Generic\AbstractHierarchicalUri
+class Ws extends AbstractHierarchicalUri
 {
     /**
      * {@inheritdoc}

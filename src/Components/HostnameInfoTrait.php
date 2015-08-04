@@ -10,7 +10,8 @@
  */
 namespace League\Uri\Components;
 
-use Pdp;
+use Pdp\Parser;
+use Pdp\PublicSuffixListManager;
 
 /**
  * Value object representing a URI host component.
@@ -23,9 +24,9 @@ trait HostnameInfoTrait
     /**
      * Pdp Parser
      *
-     * @var Pdp\Parser
+     * @var Parser
      */
-    protected static $parser;
+    protected static $pdpParser;
 
     /**
      * Hostname public info
@@ -45,30 +46,6 @@ trait HostnameInfoTrait
      * @var bool
      */
     protected $hostnameInfoLoaded = false;
-
-    /**
-     * Initialize and access a Pdp\Parser object
-     *
-     * @return Pdp\Parser
-     */
-    protected function getHostnameParser()
-    {
-        if (!static::$parser instanceof Pdp\Parser) {
-            static::$parser = $this->newHostnameParser();
-        }
-
-        return static::$parser;
-    }
-
-    /**
-     * Pdp Factory
-     *
-     * @return Pdp\Parser
-     */
-    protected function newHostnameParser()
-    {
-        return new Pdp\Parser((new Pdp\PublicSuffixListManager())->getList());
-    }
 
     /**
      * {@inheritdoc}
@@ -115,6 +92,9 @@ trait HostnameInfoTrait
         return $this->hostnameInfo[$key];
     }
 
+    /**
+     * parse and save the Hostname information from the Parser
+     */
     protected function loadHostnameInfo()
     {
         if ($this->isIp() || $this->hostnameInfoLoaded) {
@@ -126,11 +106,11 @@ trait HostnameInfoTrait
             $host = mb_substr($host, 0, -1, 'UTF-8');
         }
 
-        $info = $this->getHostnameParser()->parseHost($host);
+        $info = $this->getPdpParser()->parseHost($host);
         $this->hostnameInfo['subdomain'] = $info->subdomain;
         $this->hostnameInfo['registerableDomain'] = $info->registerableDomain;
         $this->hostnameInfo['publicSuffix'] = $info->publicSuffix;
-        $this->hostnameInfo['isPublicSuffixValid'] = $this->getHostnameParser()->isSuffixValid($host);
+        $this->hostnameInfo['isPublicSuffixValid'] = $this->getPdpParser()->isSuffixValid($host);
         $this->hostnameInfoLoaded = true;
     }
 
@@ -143,4 +123,18 @@ trait HostnameInfoTrait
      * {@inheritdoc}
      */
     abstract public function isAbsolute();
+
+    /**
+     * Initialize and access the Parser object
+     *
+     * @return Parser
+     */
+    protected function getPdpParser()
+    {
+        if (!static::$pdpParser instanceof Parser) {
+            static::$pdpParser = new Parser((new PublicSuffixListManager())->getList());
+        }
+
+        return static::$pdpParser;
+    }
 }

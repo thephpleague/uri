@@ -10,7 +10,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Pass as PassInterface;
 
 /**
  * Value object representing a URI pass component.
@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since  1.0.0
  */
-class Pass extends AbstractComponent implements Interfaces\Components\Pass
+class Pass extends AbstractComponent implements PassInterface
 {
     protected static $invalidCharactersRegex = ',[/?#@],';
 }

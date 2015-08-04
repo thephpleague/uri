@@ -11,6 +11,12 @@
 namespace League\Uri;
 
 use InvalidArgumentException;
+use League\Uri\Components\PathFormatterTrait;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\UriPart;
+use League\Uri\Interfaces\Schemes\HierarchicalUri;
+use League\Uri\Interfaces\Schemes\Uri;
 
 /**
  * A class to manipulate URI and URI components output
@@ -29,7 +35,7 @@ class Formatter
     /*
      * A trait to format a path in a URI string
      */
-    use Components\PathFormatterTrait;
+    use PathFormatterTrait;
 
     /**
      * host encoding property
@@ -129,11 +135,11 @@ class Formatter
      */
     public function format($input)
     {
-        if ($input instanceof Interfaces\Components\UriPart) {
+        if ($input instanceof UriPart) {
             return $this->formatUriPart($input);
         }
 
-        if ($input instanceof Interfaces\Schemes\Uri) {
+        if ($input instanceof Uri) {
             return $this->formatUri($input);
         }
 
@@ -144,19 +150,19 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\Components\UriPart implemented object according to the Formatter properties
+     * Format a UriPart implemented object according to the Formatter properties
      *
-     * @param Interfaces\Components\UriPart $part
+     * @param UriPart $part
      *
      * @return string
      */
-    protected function formatUriPart(Interfaces\Components\UriPart $part)
+    protected function formatUriPart(UriPart $part)
     {
-        if ($part instanceof Interfaces\Components\Query) {
-            return Components\Query::build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+        if ($part instanceof QueryInterface) {
+            return (new Parser())->buildQuery($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
-        if ($part instanceof Interfaces\Components\Host) {
+        if ($part instanceof HostInterface) {
             return $this->formatHost($part);
         }
 
@@ -164,13 +170,13 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\Components\Host according to the Formatter properties
+     * Format a HostInterface according to the Formatter properties
      *
-     * @param Interfaces\Components\Host $host
+     * @param HostInterface $host
      *
      * @return string
      */
-    protected function formatHost(Interfaces\Components\Host $host)
+    protected function formatHost(HostInterface $host)
     {
         if (self::HOST_AS_ASCII == $this->hostEncoding) {
             return $host->toAscii()->__toString();
@@ -182,13 +188,13 @@ class Formatter
     /**
      * Format a Interfaces\Schemes\Uri according to the Formatter properties
      *
-     * @param Interfaces\Schemes\Uri $uri
+     * @param Uri $uri
      *
      * @return string
      */
-    protected function formatUri(Interfaces\Schemes\Uri $uri)
+    protected function formatUri(Uri $uri)
     {
-        if (!$uri instanceof Interfaces\Schemes\HierarchicalUri) {
+        if (!$uri instanceof HierarchicalUri) {
             return $uri->__toString();
         }
 
@@ -207,11 +213,11 @@ class Formatter
     /**
      * Format a URI authority according to the Formatter properties
      *
-     * @param Interfaces\Schemes\HierarchicalUri $uri
+     * @param HierarchicalUri $uri
      *
      * @return string
      */
-    protected function formatAuthority(Interfaces\Schemes\HierarchicalUri $uri)
+    protected function formatAuthority(Uri $uri)
     {
         if ('' == $uri->getHost()) {
             return '';

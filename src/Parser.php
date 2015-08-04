@@ -13,7 +13,7 @@ namespace League\Uri;
 use InvalidArgumentException;
 use League\Uri\Components\HostIpTrait;
 use League\Uri\Components\HostnameTrait;
-use League\Uri\Interfaces\Components\Port;
+use League\Uri\Components\PortValidatorTrait;
 
 /**
  * a class to parse a URI string according to RFC3986
@@ -32,6 +32,11 @@ class Parser
      * hostname validation
      */
     use HostnameTrait;
+
+    /*
+     * Port validation
+     */
+    use PortValidatorTrait;
 
     /**
      * RFC3986 URI Regexp expression
@@ -194,17 +199,7 @@ class Parser
             return null;
         }
 
-        $res = filter_var(
-            $port,
-            FILTER_VALIDATE_INT,
-            ['options' => ['min_range' => Port::MINIMUM, 'max_range' => Port::MAXIMUM]]
-        );
-
-        if (!$res) {
-            throw new InvalidArgumentException(sprintf('The submitted port is invalid: `%s`', $port));
-        }
-
-        return $res;
+        return $this->validatePort($port);
     }
 
     /**

@@ -12,7 +12,7 @@
          stopOnFailure="false">
 
     <testsuites>
-        <testsuite name="League Url Test Suite">
+        <testsuite name="League uri Test Suite">
             <directory>test</directory>
         </testsuite>
     </testsuites>

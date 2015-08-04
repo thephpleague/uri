@@ -121,17 +121,6 @@ interface HierarchicalPath extends Path, HierarchicalComponent
     public function relativize(HierarchicalPath $rel);
 
     /**
-     * Returns an instance without dot segments
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the path component normalized by removing
-     * the dot segment.
-     *
-     * @return static
-     */
-    public function withoutDotSegments();
-
-    /**
      * Returns an instance without duplicate delimiters
      *
      * This method MUST retain the state of the current instance, and return

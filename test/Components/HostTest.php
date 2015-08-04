@@ -478,17 +478,4 @@ class HostTest extends PHPUnit_Framework_TestCase
             ['xn--p1ai.ru.', 'ru', 'xn--p1ai.ru', null, true, 'xn--p1ai.ru.'],
         ];
     }
-
-    public function testLazyLoadingPdpParser()
-    {
-        $host   = new Host();
-        $parser = (new \ReflectionClass($host))->getProperty('parser');
-        $parser->setAccessible(true);
-        $parser->setValue(null);
-        $altHost = $host->modify('www.waxaudio.com.au');
-        $this->assertSame('www', $altHost->getSubdomain());
-        $altParser = (new \ReflectionClass($altHost))->getProperty('parser');
-        $altParser->setAccessible(true);
-        $this->assertInstanceOf('\Pdp\Parser', $altParser->getValue());
-    }
 }

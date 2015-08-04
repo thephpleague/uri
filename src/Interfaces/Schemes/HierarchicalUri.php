@@ -107,16 +107,6 @@ interface HierarchicalUri extends Uri
     public function withoutSegments($keys);
 
     /**
-     * Return an instance without dot segments according to RFC3986 algorithm
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance without dot segment according to RFC3986 algorithm
-     *
-     * @return static
-     */
-    public function withoutDotSegments();
-
-    /**
      * Return an instance without internal empty segments
      *
      * This method MUST retain the state of the current instance, and return

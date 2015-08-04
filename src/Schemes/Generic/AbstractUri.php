@@ -12,8 +12,19 @@ namespace League\Uri\Schemes\Generic;
 
 use Exception;
 use InvalidArgumentException;
-use League\Uri;
-use League\Uri\Interfaces;
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\PathFormatterTrait;
+use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Interfaces\Schemes\HierarchicalUri;
+use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Parser;
+use League\Uri\Types\ImmutablePropertyTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -23,71 +34,71 @@ use Psr\Http\Message\UriInterface;
  * @since   4.0.0
  *
  */
-abstract class AbstractUri implements Interfaces\Schemes\Uri
+abstract class AbstractUri implements Uri
 {
+    /*
+     * Trait to add Factory methods
+     */
+    use FactoryTrait;
+
+    /*
+     * Trait To get/set immutable value property
+     */
+    use ImmutablePropertyTrait;
+
+    /*
+     * Component Path formatting in a URI string
+     */
+    use PathFormatterTrait;
+
     /**
      * Scheme Component
      *
-     * @var Interfaces\Components\Scheme
+     * @var SchemeInterface
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var Interfaces\Components\UserInfo
+     * @var UserInfoInterface
      */
     protected $userInfo;
 
     /**
      * Host Component
      *
-     * @var Interfaces\Components\Host
+     * @var HostInterface
      */
     protected $host;
 
     /**
      * Port Component
      *
-     * @var Interfaces\Components\Port
+     * @var PortInterface
      */
     protected $port;
 
     /**
      * Path Component
      *
-     * @var Interfaces\Components\Path
+     * @var PathInterface
      */
     protected $path;
 
     /**
      * Query Component
      *
-     * @var Interfaces\Components\Query
+     * @var QueryInterface
      */
     protected $query;
 
     /**
      * Fragment Component
      *
-     * @var Interfaces\Components\Fragment
+     * @var FragmentInterface
      */
     protected $fragment;
-
-    /*
-     * Trait To get/set immutable value property
-     */
-    use Uri\Types\ImmutablePropertyTrait;
-
-    /*
-     * Component Path formatting in a URI string
-     */
-    use Uri\Components\PathFormatterTrait;
-
-    /*
-     * Trait to add Factory methods
-     */
-    use FactoryTrait;
 
     /**
      * {@inheritdoc}
@@ -248,6 +259,14 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * {@inheritdoc}
      */
+    public function withoutDotSegments()
+    {
+        return $this->withProperty('path', $this->path->withoutDotSegments());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function mergeQuery($query)
     {
         return $this->withProperty('query', $this->query->merge($query));
@@ -272,7 +291,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * {@inheritdoc}
      */
-    public function filterQuery(callable $callable, $flag = Interfaces\Components\Collection::FILTER_USE_VALUE)
+    public function filterQuery(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
         return $this->withProperty('query', $this->query->filter($callable, $flag));
     }
@@ -290,7 +309,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     public function toArray()
     {
-        return static::getUriParser()->parse($this->__toString());
+        return (new Parser())->parseUri($this->__toString());
     }
 
     /**
@@ -306,7 +325,7 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
      */
     public function sameValueAs($uri)
     {
-        if (!$uri instanceof UriInterface && !$uri instanceof Interfaces\Schemes\Uri) {
+        if (!$uri instanceof UriInterface && !$uri instanceof Uri) {
             throw new InvalidArgumentException(
                 'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
                 the `League\Uri\Interfaces\Schemes\Uri` interface'
@@ -314,9 +333,9 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
         }
 
         try {
-            return static::createFromComponents(static::getUriParser()->parse($uri->__toString()))
-                ->toAscii()->ksortQuery()->__toString() === $this
-                ->toAscii()->ksortQuery()->__toString();
+            return static::createFromComponents((new Parser())->parseUri($uri->__toString()))
+                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
+                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString();
         } catch (Exception $e) {
             return false;
         }
@@ -325,9 +344,9 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * {@inheritdoc}
      */
-    public function resolve(Interfaces\Schemes\Uri $relative)
+    public function resolve(Uri $relative)
     {
-        if (!$relative instanceof Interfaces\Schemes\HierarchicalUri) {
+        if (!$relative instanceof HierarchicalUri) {
             return $relative;
         }
 
@@ -345,11 +364,11 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * Returns the resolve URI according to the authority
      *
-     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     * @param HierarchicalUri $relative the relative URI
      *
-     * @return Interfaces\Schemes\HierarchicalUri
+     * @return HierarchicalUri
      */
-    protected function resolveAuthority(Interfaces\Schemes\HierarchicalUri $relative)
+    protected function resolveAuthority(HierarchicalUri $relative)
     {
         $className = get_class($this);
         if (!$relative instanceof $className) {
@@ -362,13 +381,13 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * returns the resolve URI
      *
-     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     * @param HierarchicalUri $relative the relative URI
      *
      * @return static
      */
-    protected function resolveRelative(Interfaces\Schemes\HierarchicalUri $relative)
+    protected function resolveRelative(HierarchicalUri $relative)
     {
-        if (!$this instanceof Interfaces\Schemes\HierarchicalUri) {
+        if (!$this instanceof HierarchicalUri) {
             return $relative;
         }
 
@@ -390,15 +409,13 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
     /**
      * returns the resolve URI components
      *
-     * @param Interfaces\Schemes\HierarchicalUri $newUri   the final URI
-     * @param Interfaces\Schemes\HierarchicalUri $relative the relative URI
+     * @param HierarchicalUri $newUri   the final URI
+     * @param HierarchicalUri $relative the relative URI
      *
-     * @return Interfaces\Components\Path
+     * @return HierarchicalPathInterface
      */
-    protected function resolvePath(
-        Interfaces\Schemes\HierarchicalUri $newUri,
-        Interfaces\Schemes\HierarchicalUri $relative
-    ) {
+    protected function resolvePath(HierarchicalUri $newUri, HierarchicalUri $relative)
+    {
         $path = $relative->path;
         if ($path->isAbsolute()) {
             return $path;
@@ -406,12 +423,12 @@ abstract class AbstractUri implements Interfaces\Schemes\Uri
 
         $segments = $newUri->path->toArray();
         array_pop($segments);
-        $isAbsolute = Uri\Components\HierarchicalPath::IS_RELATIVE;
+        $isAbsolute = HierarchicalPath::IS_RELATIVE;
         if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
-            $isAbsolute = Uri\Components\HierarchicalPath::IS_ABSOLUTE;
+            $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
         }
 
-        return Uri\Components\HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        return HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 
     /**

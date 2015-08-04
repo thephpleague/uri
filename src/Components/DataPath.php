@@ -12,8 +12,8 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
-use League\Uri\Types;
+use League\Uri\Interfaces\Components\DataPath as DataPathInterface;
+use League\Uri\Types\ImmutableComponentTrait;
 use RuntimeException;
 use SplFileObject;
 
@@ -23,8 +23,13 @@ use SplFileObject;
  * @package League.uri
  * @since 1.0.0
  */
-class DataPath implements Interfaces\Components\DataPath
+class DataPath implements DataPathInterface
 {
+    /*
+     * common immutable value object methods
+     */
+    use ImmutableComponentTrait;
+
     const DEFAULT_MIMETYPE = 'text/plain';
 
     const DEFAULT_PARAMETER = 'charset=us-ascii';
@@ -58,11 +63,6 @@ class DataPath implements Interfaces\Components\DataPath
      * @var bool
      */
     protected $isBinaryData = false;
-
-    /*
-     * common immutable value object methods
-     */
-    use Types\ImmutableComponentTrait;
 
     /**
      * a new Media Instance
@@ -278,6 +278,14 @@ class DataPath implements Interfaces\Components\DataPath
             $this->isBinaryData,
             $this->data
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutDotSegments()
+    {
+        return $this;
     }
 
     /**

@@ -23,7 +23,6 @@ use InvalidArgumentException;
  * @package League.uri
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
- *
  */
 interface Ftp extends HierarchicalUri
 {

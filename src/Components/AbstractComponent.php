@@ -11,7 +11,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Types;
+use League\Uri\Types\ImmutableComponentTrait;
 
 /**
  * An abstract class to ease component manipulation
@@ -24,7 +24,7 @@ abstract class AbstractComponent
     /*
      * common immutable value object methods
      */
-    use Types\ImmutableComponentTrait;
+    use ImmutableComponentTrait;
 
     /**
      * Invalid Characters list
@@ -48,7 +48,23 @@ abstract class AbstractComponent
     public function __construct($data = null)
     {
         if ($data !== null) {
-            $this->setData($data);
+            $this->init($data);
+        }
+    }
+
+    /**
+     * Set data.
+     *
+     * @param mixed $data The data to set.
+     *
+     * @throws InvalidArgumentException If data is invalid.
+     */
+    protected function init($data)
+    {
+        $data = $this->validateString($data);
+
+        if ($data !== '') {
+            $this->data = $this->validate($data);
         }
     }
 
@@ -111,23 +127,5 @@ abstract class AbstractComponent
     public function getUriComponent()
     {
         return $this->isNull() ? '' : $this->__toString();
-    }
-
-    /**
-     * Set data.
-     *
-     * @param mixed $data The data to set.
-     * @return $this
-     * @throws InvalidArgumentException If data is invalid.
-     */
-    protected function setData($data)
-    {
-        $data = $this->validateString($data);
-
-        if ($data !== '') {
-            $this->data = $this->validate($data);
-        }
-
-        return $this;
     }
 }

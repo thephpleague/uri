@@ -10,8 +10,11 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces;
-use League\Uri\Types;
+use League\Uri\Interfaces\Components\Pass as PassInterface;
+use League\Uri\Interfaces\Components\UriPart;
+use League\Uri\Interfaces\Components\User as UserInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Types\ImmutablePropertyTrait;
 
 /**
  * Value object representing the UserInfo part of an URI.
@@ -20,8 +23,13 @@ use League\Uri\Types;
  * @since 4.0.0
  *
  */
-class UserInfo implements Interfaces\Components\UserInfo
+class UserInfo implements UserInfoInterface
 {
+    /*
+     * Trait To get/set immutable value property
+     */
+    use ImmutablePropertyTrait;
+
     /**
      * User Component
      *
@@ -36,11 +44,6 @@ class UserInfo implements Interfaces\Components\UserInfo
      */
     protected $pass;
 
-    /*
-     * Trait To get/set immutable value property
-     */
-    use Types\ImmutablePropertyTrait;
-
     /**
      * Create a new instance of UserInfo
      *
@@ -49,8 +52,8 @@ class UserInfo implements Interfaces\Components\UserInfo
      */
     public function __construct($user = '', $pass = '')
     {
-        $this->user = !$user instanceof Interfaces\Components\User ? new User($user) : $user;
-        $this->pass = !$pass instanceof Interfaces\Components\Pass ? new Pass($pass) : $pass;
+        $this->user = !$user instanceof UserInterface ? new User($user) : $user;
+        $this->pass = !$pass instanceof PassInterface ? new Pass($pass) : $pass;
         $this->assertValidObject();
     }
 
@@ -129,7 +132,7 @@ class UserInfo implements Interfaces\Components\UserInfo
     /**
      * {@inheritdoc}
      */
-    public function sameValueAs(Interfaces\Components\UriPart $component)
+    public function sameValueAs(UriPart $component)
     {
         return $this->getUriComponent() === $component->getUriComponent();
     }

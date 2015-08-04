@@ -11,7 +11,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Port as PortInterface;
 
 /**
  * Value object representing a URI port component.
@@ -19,17 +19,13 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Port extends AbstractComponent implements Interfaces\Components\Port
+class Port extends AbstractComponent implements PortInterface
 {
     /**
      * {@inheritdoc}
      */
     protected function validate($data)
     {
-        if (null === $data) {
-            return $data;
-        }
-
         $res = filter_var($data, FILTER_VALIDATE_INT, ['options' => ['min_range' => static::MINIMUM, 'max_range' => static::MAXIMUM]]);
         if (false === $res || is_bool($data)) {
             throw new InvalidArgumentException('The submitted port is invalid');
@@ -62,10 +58,8 @@ class Port extends AbstractComponent implements Interfaces\Components\Port
     /**
      * {@inheritdoc}
      */
-    protected function setData($data)
+    protected function init($data)
     {
         $this->data = $this->validate($data);
-
-        return $this;
     }
 }

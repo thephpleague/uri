@@ -10,7 +10,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
 
 /**
  * Value object representing a URI fragment component.
@@ -18,7 +18,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Fragment extends AbstractComponent implements Interfaces\Components\Fragment
+class Fragment extends AbstractComponent implements FragmentInterface
 {
     /**
      * {@inheritdoc}

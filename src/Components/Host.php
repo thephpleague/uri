@@ -11,7 +11,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Host as HostInterface;
 
 /**
  * Value object representing a URI host component.
@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since   1.0.0
  */
-class Host extends AbstractHierarchicalComponent implements Interfaces\Components\Host
+class Host extends AbstractHierarchicalComponent implements HostInterface
 {
     /*
      * Ip host validation and properties
@@ -27,14 +27,14 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
     use HostIpTrait;
 
     /*
-     * hostname validation and properties
-     */
-    use HostnameTrait;
-
-    /*
      * hostname info from Public Suffix List
      */
     use HostnameInfoTrait;
+
+    /*
+     * hostname validation and properties
+     */
+    use HostnameTrait;
 
     /**
      * Host literal representation
@@ -57,8 +57,6 @@ class Host extends AbstractHierarchicalComponent implements Interfaces\Component
 
     /**
      * Host literal setter
-     *
-     * @return void
      */
     protected function setLiteral()
     {

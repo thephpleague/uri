@@ -10,7 +10,13 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use League\Uri\Components;
+use League\Uri\Components\Fragment;
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Host;
+use League\Uri\Components\Port;
+use League\Uri\Components\Query;
+use League\Uri\Components\Scheme;
+use League\Uri\Components\UserInfo;
 use League\Uri\Parser;
 
 /**
@@ -23,68 +29,47 @@ use League\Uri\Parser;
 trait FactoryTrait
 {
     /**
-     * URI Parser
-     *
-     * @var Parser
-     */
-    protected static $uriParser;
-
-    /**
-     * Return a UriParser object
-     *
-     * @return Parser
-     */
-    protected static function getUriParser()
-    {
-        if (!static::$uriParser instanceof Parser) {
-            static::$uriParser = new Parser();
-        }
-
-        return static::$uriParser;
-    }
-
-    /**
      * Create a new instance from a string
      *
      * @param string $uri
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return FactoryTrait
+     * @return $this
      */
     public static function createFromString($uri = '')
     {
-        return static::createFromComponents(static::getUriParser()->parse($uri));
+        return static::createFromComponents((new Parser())->parseUri($uri));
     }
 
     /**
      * Create a new instance from a hash of parse_url parts
      *
-     * @param array $components
+     * @param array $components a hash representation of the URI similar to PHP parse_url function result
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return FactoryTrait
+     * @return $this
      */
     public static function createFromComponents(array $components)
     {
         $components = static::formatComponents($components);
 
         return new static(
-            new Components\Scheme($components['scheme']),
-            new Components\UserInfo($components['user'], $components['pass']),
-            new Components\Host($components['host']),
-            new Components\Port($components['port']),
-            new Components\HierarchicalPath($components['path']),
-            new Components\Query($components['query']),
-            new Components\Fragment($components['fragment'])
+            new Scheme($components['scheme']),
+            new UserInfo($components['user'], $components['pass']),
+            new Host($components['host']),
+            new Port($components['port']),
+            new HierarchicalPath($components['path']),
+            new Query($components['query']),
+            new Fragment($components['fragment'])
         );
     }
 
     /**
      * Format the components to works with all the constructors
      *
-     * @param array $components
+     * @param array $components a hash representation of the URI similar to PHP parse_url function result
      *
      * @return array
      */

@@ -11,7 +11,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 
 /**
  * Value object representing a URI scheme component.
@@ -19,7 +19,7 @@ use League\Uri\Interfaces;
  * @package League.uri
  * @since 1.0.0
  */
-class Scheme extends AbstractComponent implements Interfaces\Components\Scheme
+class Scheme extends AbstractComponent implements SchemeInterface
 {
     /**
      * Validate and format the submitted string scheme

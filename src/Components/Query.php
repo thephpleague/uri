@@ -11,8 +11,10 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces;
-use League\Uri\Types;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Parser;
+use League\Uri\Types\ImmutableCollectionTrait;
+use League\Uri\Types\ImmutableComponentTrait;
 use Traversable;
 
 /**
@@ -21,8 +23,18 @@ use Traversable;
  * @package League.uri
  * @since   1.0.0
  */
-class Query implements Interfaces\Components\Query
+class Query implements QueryInterface
 {
+    /*
+     * common immutable value object methods
+     */
+    use ImmutableComponentTrait;
+
+    /*
+     * immutable collection methods
+     */
+    use ImmutableCollectionTrait;
+
     /**
      * Key/pair separator character
      *
@@ -36,21 +48,6 @@ class Query implements Interfaces\Components\Query
      * @var string
      */
     protected static $delimiter = '?';
-
-    /*
-     * common immutable value object methods
-     */
-    use Types\ImmutableComponentTrait;
-
-    /*
-     * immutable collection methods
-     */
-    use Types\ImmutableCollectionTrait;
-
-    /*
-     * Parsing and building query string without data loss
-     */
-    use QueryParserTrait;
 
     /**
      * a new instance
@@ -96,7 +93,7 @@ class Query implements Interfaces\Components\Query
             throw new InvalidArgumentException('the query string must not contain a URI fragment');
         }
 
-        return static::parse($str, static::$separator, false);
+        return (new Parser())->parseQuery($str, static::$separator, false);
     }
 
     /**
@@ -110,7 +107,13 @@ class Query implements Interfaces\Components\Query
      */
     public static function createFromArray($data)
     {
-        return new static(static::build(static::validateIterator($data), static::$separator, false));
+        $query = (new Parser())->buildQuery(
+            static::validateIterator($data),
+            static::$separator,
+            false
+        );
+
+        return new static($query);
     }
 
     /**
@@ -118,7 +121,7 @@ class Query implements Interfaces\Components\Query
      */
     public function __toString()
     {
-        return static::build($this->data, static::$separator, PHP_QUERY_RFC3986);
+        return (new Parser())->buildQuery($this->data, static::$separator, PHP_QUERY_RFC3986);
     }
 
     /**
@@ -147,7 +150,7 @@ class Query implements Interfaces\Components\Query
      */
     public function merge($query)
     {
-        if ($query instanceof Interfaces\Components\Query) {
+        if ($query instanceof QueryInterface) {
             return $this->mergeQuery($query);
         }
 
@@ -159,13 +162,13 @@ class Query implements Interfaces\Components\Query
     }
 
     /**
-     * Merge two Interfaces\Components\Query objects
+     * Merge two QueryInterface objects
      *
-     * @param Interfaces\Components\Query $query
+     * @param QueryInterface $query
      *
      * @return static
      */
-    protected function mergeQuery(Interfaces\Components\Query $query)
+    protected function mergeQuery(QueryInterface $query)
     {
         if ($this->sameValueAs($query)) {
             return $this;

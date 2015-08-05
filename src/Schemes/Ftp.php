@@ -82,4 +82,36 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
 
         return $this->withProperty('path', $this->path->replace(count($this->path) - 1, $basename.$extension));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withExtension($extension)
+    {
+        $typecode = $this->getTypecode();
+        if (empty($typecode)) {
+            return parent::withExtension($extension);
+        }
+        preg_match(static::$typeCodeRegex, $this->path->getBasename(), $matches);
+
+        return $this->withProperty(
+            'path',
+            $this->path
+                ->replace(count($this->path) - 1, $matches['basename'])->withExtension($extension)
+        )->withTypecode($typecode);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtension()
+    {
+        $typecode = $this->getTypecode();
+        $extension = $this->path->getExtension();
+        if (empty($typecode)) {
+            return $extension;
+        }
+
+        return substr($extension, 0, -strlen(';type='.$typecode));
+    }
 }

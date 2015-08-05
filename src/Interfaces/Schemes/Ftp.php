@@ -59,4 +59,11 @@ interface Ftp extends HierarchicalUri
      *
      */
     public function withTypecode($type);
+
+    /**
+     * Returns the basename extension
+     *
+     * @return string
+     */
+    public function getExtension();
 }

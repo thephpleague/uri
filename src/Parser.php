@@ -258,7 +258,7 @@ class Parser
         if ('' == $str) {
             return $res;
         }
-        $this->validateEncodingType($encodingType);
+        $encodingType = $this->validateEncodingType($encodingType);
         $decoder = $this->getDecoder($encodingType);
         foreach (explode($separator, $str) as $pair) {
             $res = $this->parsePair($res, $decoder, $pair);
@@ -271,14 +271,14 @@ class Parser
      * validate the encoding type for the query related methods
      *
      * @param int|false $encodingType
-     *
-     * @throws InvalidArgumentException if the given encode type is invalid
      */
     protected function validateEncodingType($encodingType)
     {
         if (!in_array($encodingType, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738, false])) {
-            throw new InvalidArgumentException('Unknown encodingType');
+            return PHP_QUERY_RFC3986;
         }
+
+        return $encodingType;
     }
 
     /**
@@ -327,7 +327,7 @@ class Parser
      */
     public function buildQuery(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
-        $this->validateEncodingType($encodingType);
+        $encodingType = $this->validateEncodingType($encodingType);
         $encoder = $this->getEncoder($encodingType);
         $arr = array_map(function ($value) {
             return !is_array($value) ? [$value] : $value;

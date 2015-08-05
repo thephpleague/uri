@@ -322,14 +322,6 @@ class ParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testFailedParsingWithUnknownEncoding()
-    {
-        $this->parser->parseQuery('dfddsf', '&', 'toto');
-    }
-
-    /**
      * @param $query
      * @param $expected
      * @dataProvider buildProvider
@@ -355,13 +347,5 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'preserve falsey 2'  => [['0' => ''], '0='],
             'preserve falsey 3'  => [['a' => '0'], 'a=0'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testFailedBuildingWithUnknownEncoding()
-    {
-        $this->parser->buildQuery(['dfsq' => 'qdsqdf'], '&', 'toto');
     }
 }

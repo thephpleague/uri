@@ -24,18 +24,16 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 class Ftp extends AbstractHierarchicalUri implements FtpInterface
 {
     /**
+     * Typecode Regular expression
+     */
+    const TYPECODE_REGEXP = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
+
+    /**
      * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'ftp' => 21,
     ];
-
-    /**
-     * Typecode Regular expression detection
-     *
-     * @var string
-     */
-    protected static $typeCodeRegex = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
 
     /**
      * {@inheritdoc}
@@ -54,7 +52,7 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
      */
     public function getTypecode()
     {
-        if (preg_match(static::$typeCodeRegex, $this->path->getBasename(), $matches)) {
+        if (preg_match(self::TYPECODE_REGEXP, $this->path->getBasename(), $matches)) {
             return $matches['typecode'];
         }
 
@@ -72,7 +70,7 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
         }
 
         $basename = $this->path->getBasename();
-        if (preg_match(static::$typeCodeRegex, $basename, $matches)) {
+        if (preg_match(self::TYPECODE_REGEXP, $basename, $matches)) {
             $basename = $matches['basename'];
         }
 
@@ -92,7 +90,7 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
         if (empty($typecode)) {
             return parent::withExtension($extension);
         }
-        preg_match(static::$typeCodeRegex, $this->path->getBasename(), $matches);
+        preg_match(self::TYPECODE_REGEXP, $this->path->getBasename(), $matches);
 
         return $this->withProperty(
             'path',

@@ -21,19 +21,10 @@ use League\Uri\Interfaces\Components\Host as HostInterface;
  */
 class Host extends AbstractHierarchicalComponent implements HostInterface
 {
-    /*
-     * Ip host validation and properties
-     */
     use HostIpTrait;
 
-    /*
-     * hostname info from Public Suffix List
-     */
     use HostnameInfoTrait;
 
-    /*
-     * hostname validation and properties
-     */
     use HostnameTrait;
 
     /**
@@ -168,13 +159,13 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     /**
      * Validated the Host Label Count
      *
-     * @param array $data Host labels
+     * @param array $labels Host labels
      *
      * @throws InvalidArgumentException If the validation fails
      */
-    protected function isValidLabelsCount(array $data = [])
+    protected function isValidLabelsCount(array $labels)
     {
-        if (127 <= count(array_merge($this->data, $data))) {
+        if (127 <= count(array_merge($this->data, $labels))) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
     }

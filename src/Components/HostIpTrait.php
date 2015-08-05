@@ -170,7 +170,7 @@ trait HostIpTrait
         }
 
         $convert = function ($carry, $char) {
-            $carry = $carry . str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
+            $carry = $carry.str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
 
             return $carry;
         };

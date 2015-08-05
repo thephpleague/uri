@@ -25,9 +25,6 @@ use SplFileObject;
  */
 class DataPath implements DataPathInterface
 {
-    /*
-     * common immutable value object methods
-     */
     use ImmutableComponentTrait;
 
     const DEFAULT_MIMETYPE = 'text/plain';

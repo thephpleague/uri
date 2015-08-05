@@ -25,9 +25,6 @@ use League\Uri\Types\ImmutablePropertyTrait;
  */
 class UserInfo implements UserInfoInterface
 {
-    /*
-     * Trait To get/set immutable value property
-     */
     use ImmutablePropertyTrait;
 
     /**

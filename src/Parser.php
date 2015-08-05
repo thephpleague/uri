@@ -23,19 +23,10 @@ use League\Uri\Components\PortValidatorTrait;
  */
 class Parser
 {
-    /*
-     * Ip host validation
-     */
     use HostIpTrait;
 
-    /*
-     * hostname validation
-     */
     use HostnameTrait;
 
-    /*
-     * Port validation
-     */
     use PortValidatorTrait;
 
     /**
@@ -58,6 +49,11 @@ class Parser
      * Reverse Host + port URI Regular Expression
      */
     const REVERSE_HOSTNAME_REGEXP = ",^((?<port>[^(\[\])]+?):)?(?<host>.*)?$,";
+
+    /**
+     * Scheme Regular expression
+     */
+    const SCHEME_REGEXP = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
     /**
      * default components hash table
@@ -113,7 +109,7 @@ class Parser
             return null;
         }
 
-        if (preg_match('/^[a-z][-a-z0-9+.]+$/i', $scheme)) {
+        if (preg_match(self::SCHEME_REGEXP, $scheme)) {
             return $scheme;
         }
 
@@ -131,12 +127,13 @@ class Parser
      */
     protected function parseAuthority($parts)
     {
+        $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
         if (empty($parts['authority'])) {
-            return ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
+            return $res;
         }
 
         if (empty($parts['acontent'])) {
-            return ['user' => null, 'pass' => null, 'host' => '', 'port' => null];
+            return array_merge($res, ['host' => '']);
         }
 
         preg_match(self::AUTHORITY_REGEXP, $parts['acontent'], $parts);
@@ -234,7 +231,7 @@ class Parser
     /**
      * {@inheritdoc}
      */
-    protected function isValidLabelsCount(array $labels = [])
+    protected function isValidLabelsCount(array $labels)
     {
         if (127 <= count($labels)) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
@@ -257,17 +254,31 @@ class Parser
      */
     public function parseQuery($str, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
+        $res = [];
         if ('' == $str) {
-            return [];
+            return $res;
         }
-        $res     = [];
-        $pairs   = explode($separator, $str);
+        $this->validateEncodingType($encodingType);
         $decoder = $this->getDecoder($encodingType);
-        foreach ($pairs as $pair) {
-            $res = $this->parsePair($decoder, $res, $pair);
+        foreach (explode($separator, $str) as $pair) {
+            $res = $this->parsePair($res, $decoder, $pair);
         }
 
         return $res;
+    }
+
+    /**
+     * validate the encoding type for the query related methods
+     *
+     * @param int|false $encodingType
+     *
+     * @throws InvalidArgumentException if the given encode type is invalid
+     */
+    protected function validateEncodingType($encodingType)
+    {
+        if (!in_array($encodingType, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738, false])) {
+            throw new InvalidArgumentException('Unknown encodingType');
+        }
     }
 
     /**
@@ -279,17 +290,19 @@ class Parser
      *
      * @return array
      */
-    protected function parsePair(callable $decoder, array $res, $pair)
+    protected function parsePair(array $res, callable $decoder, $pair)
     {
         $param = explode('=', $pair, 2);
         $key   = $decoder(array_shift($param));
-        $value = $decoder(array_shift($param));
+        $value = array_shift($param);
+        if (!empty($value)) {
+            $value = $decoder($value);
+        }
 
         if (!array_key_exists($key, $res)) {
-            $res[$key] = $value;
-
-            return $res;
+            return array_merge($res, [$key => $value]);
         }
+
         if (!is_array($res[$key])) {
             $res[$key] = [$res[$key]];
         }
@@ -314,14 +327,15 @@ class Parser
      */
     public function buildQuery(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
+        $this->validateEncodingType($encodingType);
         $encoder = $this->getEncoder($encodingType);
-        $arr     = array_map(function ($value) {
+        $arr = array_map(function ($value) {
             return !is_array($value) ? [$value] : $value;
         }, $arr);
 
         $pairs = [];
         foreach ($arr as $key => $value) {
-            $pairs = array_merge($pairs, $this->buildPair($encoder, $encoder($key), $value));
+            $pairs = array_merge($pairs, $this->buildPair($encoder, $value, $encoder($key)));
         }
 
         return implode($separator, $pairs);
@@ -330,13 +344,13 @@ class Parser
     /**
      * Build a query key/pair association
      *
-     * @param callable $encoder a Callable to encode the key/pair association
+     * @param callable $encoder a callable to encode the key/pair association
+     * @param array    $value   The query string value
      * @param string   $key     The query string key
-     * @param string   $value   The query string value
      *
      * @return string
      */
-    protected function buildPair(callable $encoder, $key, array $value = [])
+    protected function buildPair(callable $encoder, array $value, $key)
     {
         return array_reduce($value, function (array $carry, $data) use ($key, $encoder) {
             $pair = $key;
@@ -358,22 +372,20 @@ class Parser
      */
     protected function getDecoder($encodingType)
     {
-        if (PHP_QUERY_RFC3986 == $encodingType) {
+        if (PHP_QUERY_RFC3986 === $encodingType) {
             return function ($value) {
-                return null !== $value ? rawurldecode($value) : null;
+                return rawurldecode($value);
             };
         }
-        if (PHP_QUERY_RFC1738 == $encodingType) {
+
+        if (PHP_QUERY_RFC1738 === $encodingType) {
             return function ($value) {
-                return null !== $value ? urldecode($value) : null;
+                return urldecode($value);
             };
-        }
-        if (false !== $encodingType) {
-            throw new InvalidArgumentException('Unknown encodingType');
         }
 
         return function ($value) {
-            return null !== $value ? rawurldecode(str_replace('+', ' ', $value)) : null;
+            return rawurldecode(str_replace('+', ' ', $value));
         };
     }
 
@@ -386,18 +398,16 @@ class Parser
      */
     protected function getEncoder($encodingType)
     {
-        if (PHP_QUERY_RFC3986 == $encodingType) {
+        if (PHP_QUERY_RFC3986 === $encodingType) {
             return function ($value) {
                 return rawurlencode($value);
             };
         }
-        if (PHP_QUERY_RFC1738 == $encodingType) {
+
+        if (PHP_QUERY_RFC1738 === $encodingType) {
             return function ($value) {
                 return urlencode($value);
             };
-        }
-        if (false !== $encodingType) {
-            throw new InvalidArgumentException('Unknown encodingType');
         }
 
         return function ($value) {

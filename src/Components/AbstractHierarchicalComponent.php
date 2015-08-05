@@ -23,14 +23,8 @@ use League\Uri\Types\ImmutableComponentTrait;
  */
 abstract class AbstractHierarchicalComponent implements HierarchicalComponentInterface
 {
-    /*
-     * immutable collection methods
-     */
     use ImmutableCollectionTrait;
 
-    /*
-     * common immutable value object methods
-     */
     use ImmutableComponentTrait;
 
     const IS_ABSOLUTE = 1;

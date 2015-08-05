@@ -112,4 +112,46 @@ class FtpTest extends PHPUnit_Framework_TestCase
     {
         FtpUri::createFromString('ftp://example.com/foo/bar')->withTypecode('Z');
     }
+
+    /**
+     * @dataProvider withExtensionProvider
+     */
+    public function testWithExtensionPreserveTypeCode($uri, $extension, $expected)
+    {
+        $this->assertSame(
+            $expected,
+            (string) FtpUri::createFromString($uri)->withExtension($extension)
+        );
+    }
+
+    public function withExtensionProvider()
+    {
+        return [
+            'no typecode' => ['ftp://example.com/foo/bar.csv', 'txt', 'ftp://example.com/foo/bar.txt'],
+            'with typecode' => ['ftp://example.com/foo/bar.csv;type=a', 'txt', 'ftp://example.com/foo/bar.txt;type=a'],
+            'remove extension with no typecode' => ['ftp://example.com/foo/bar.csv', '', 'ftp://example.com/foo/bar'],
+            'remove extension with typecode' => ['ftp://example.com/foo/bar.csv;type=a', '', 'ftp://example.com/foo/bar;type=a'],
+        ];
+    }
+
+    /**
+     * @dataProvider getExtensionProvider
+     *
+     * @param $uri
+     * @param $extension
+     */
+    public function testGetExtensionPreserveTypeCode($uri, $uri_extension, $path_extension)
+    {
+        $ftp = FtpUri::createFromString($uri);
+        $this->assertSame($uri_extension, $ftp->getExtension());
+        $this->assertSame($path_extension, $ftp->path->getExtension());
+    }
+
+    public function getExtensionProvider()
+    {
+        return [
+            'no typecode' => ['ftp://example.com/foo/bar.csv', 'csv', 'csv'],
+            'with typecode' => ['ftp://example.com/foo/bar.csv;type=a', 'csv', 'csv;type=a'],
+        ];
+    }
 }

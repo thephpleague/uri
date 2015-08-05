@@ -170,7 +170,9 @@ trait HostIpTrait
         }
 
         $convert = function ($carry, $char) {
-            return $carry .= str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
+            $carry = $carry . str_pad(decbin(ord($char)), 8, '0', STR_PAD_LEFT);
+
+            return $carry;
         };
         $res = array_reduce(str_split(unpack('A16', inet_pton($ipv6))[1]), $convert, '');
 

@@ -28,34 +28,6 @@ trait HostnameTrait
     protected static $separator = '.';
 
     /**
-     * hostname subdomain
-     *
-     * @var string|null
-     */
-    protected $subdomain;
-
-    /**
-     * hostname registrable domain
-     *
-     * @var string|null
-     */
-    protected $registerableDomain;
-
-    /**
-     * hostname public suffix
-     *
-     * @var string|null
-     */
-    protected $publicSuffix;
-
-    /**
-     * Tells whether we have a valid suffix
-     *
-     * @var bool
-     */
-    protected $isPublicSuffixValid = false;
-
-    /**
      * Tells whether we have a IDN or not
      * @var boolean
      */
@@ -148,11 +120,11 @@ trait HostnameTrait
     /**
      * Validated the Host Label Count
      *
-     * @param array $data host labels
+     * @param array $labels host labels
      *
      * @throws InvalidArgumentException If the validation fails
      */
-    abstract protected function isValidLabelsCount(array $data = []);
+    abstract protected function isValidLabelsCount(array $labels);
 
     /**
      * Validated the Host Label Pattern

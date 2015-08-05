@@ -20,5 +20,8 @@ use League\Uri\Interfaces\Components\Pass as PassInterface;
  */
 class Pass extends AbstractComponent implements PassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     protected static $invalidCharactersRegex = ',[/?#@],';
 }

@@ -25,14 +25,8 @@ use Traversable;
  */
 class Query implements QueryInterface
 {
-    /*
-     * common immutable value object methods
-     */
     use ImmutableComponentTrait;
 
-    /*
-     * immutable collection methods
-     */
     use ImmutableCollectionTrait;
 
     /**

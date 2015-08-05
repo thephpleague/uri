@@ -22,7 +22,13 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
 trait PortValidatorTrait
 {
     /**
-     * {@inheritdoc}
+     * Validate a Port number
+     *
+     * @param int $port the port number
+     *
+     * @throws InvalidArgumentException If the port number is invalid
+     *
+     * @return int
      */
     protected function validatePort($port)
     {

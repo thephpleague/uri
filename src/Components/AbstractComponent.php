@@ -21,9 +21,6 @@ use League\Uri\Types\ImmutableComponentTrait;
  */
 abstract class AbstractComponent
 {
-    /*
-     * common immutable value object methods
-     */
     use ImmutableComponentTrait;
 
     /**

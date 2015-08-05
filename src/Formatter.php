@@ -26,16 +26,13 @@ use League\Uri\Interfaces\Schemes\Uri;
  */
 class Formatter
 {
+    use PathFormatterTrait;
+
     /**
      * Constants for host formatting
      */
     const HOST_AS_UNICODE = 1;
     const HOST_AS_ASCII   = 2;
-
-    /*
-     * A trait to format a path in a URI string
-     */
-    use PathFormatterTrait;
 
     /**
      * host encoding property

@@ -20,9 +20,6 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
  */
 class Port extends AbstractComponent implements PortInterface
 {
-    /*
-     * A trait to validate the Port
-     */
     use PortValidatorTrait;
 
     /**

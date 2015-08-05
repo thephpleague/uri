@@ -16,6 +16,7 @@ use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\PathFormatterTrait;
 use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
@@ -36,19 +37,10 @@ use Psr\Http\Message\UriInterface;
  */
 abstract class AbstractUri implements Uri
 {
-    /*
-     * Trait to add Factory methods
-     */
     use FactoryTrait;
 
-    /*
-     * Trait To get/set immutable value property
-     */
     use ImmutablePropertyTrait;
 
-    /*
-     * Component Path formatting in a URI string
-     */
     use PathFormatterTrait;
 
     /**
@@ -346,36 +338,32 @@ abstract class AbstractUri implements Uri
      */
     public function resolve(Uri $relative)
     {
-        if (!$relative instanceof HierarchicalUri) {
-            return $relative;
-        }
-
         if (!empty($relative->getScheme())) {
             return $relative->withoutDotSegments();
         }
 
         if (!empty($relative->getHost())) {
-            return $this->resolveAuthority($relative);
+            return $this->resolveAuthority($relative)->withoutDotSegments();
         }
 
-        return $this->resolveRelative($relative);
+        return $this->resolveRelative($relative)->withoutDotSegments();
     }
 
     /**
      * Returns the resolve URI according to the authority
      *
-     * @param HierarchicalUri $relative the relative URI
+     * @param Uri $relative the relative URI
      *
-     * @return HierarchicalUri
+     * @return static
      */
-    protected function resolveAuthority(HierarchicalUri $relative)
+    protected function resolveAuthority(Uri $relative)
     {
         $className = get_class($this);
         if (!$relative instanceof $className) {
-            return $relative->withoutDotSegments();
+            return $relative;
         }
 
-        return $relative->withScheme($this->scheme)->withoutDotSegments();
+        return $relative->withScheme($this->scheme);
     }
 
     /**
@@ -385,9 +373,9 @@ abstract class AbstractUri implements Uri
      *
      * @return static
      */
-    protected function resolveRelative(HierarchicalUri $relative)
+    protected function resolveRelative(Uri $relative)
     {
-        if (!$this instanceof HierarchicalUri) {
+        if (!$this->path instanceof HierarchicalPathInterface) {
             return $relative;
         }
 
@@ -395,26 +383,25 @@ abstract class AbstractUri implements Uri
         if (!$relative->path->isEmpty()) {
             return $newUri
                 ->withPath($this->resolvePath($newUri, $relative)->__toString())
-                ->withQuery($relative->query->__toString())
-                ->withoutDotSegments();
+                ->withQuery($relative->query->__toString());
         }
 
         if (!$relative->query->isEmpty()) {
-            return $newUri->withQuery($relative->query->__toString())->withoutDotSegments();
+            return $newUri->withQuery($relative->query->__toString());
         }
 
-        return $newUri->withoutDotSegments();
+        return $newUri;
     }
 
     /**
      * returns the resolve URI components
      *
-     * @param HierarchicalUri $newUri   the final URI
-     * @param HierarchicalUri $relative the relative URI
+     * @param Uri $newUri   the final URI
+     * @param Uri $relative the relative URI
      *
      * @return HierarchicalPathInterface
      */
-    protected function resolvePath(HierarchicalUri $newUri, HierarchicalUri $relative)
+    protected function resolvePath(Uri $newUri, Uri $relative)
     {
         $path = $relative->path;
         if ($path->isAbsolute()) {
@@ -428,7 +415,7 @@ abstract class AbstractUri implements Uri
             $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
         }
 
-        return HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        return $newUri->path->createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 
     /**

@@ -380,6 +380,15 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) $baseUri->relativize($childUri));
     }
 
+    public function testRelativizeWithNonHierarchicalUri()
+    {
+        $httpUri = HttpUri::createFromString('http://www.example.com/path');
+        $dataUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
+
+        $this->assertSame($dataUri, $httpUri->relativize($dataUri));
+    }
+
+
     /**
      * @dataProvider resolveUriProvider
      * @param $uri1

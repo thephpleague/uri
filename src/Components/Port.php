@@ -23,11 +23,17 @@ class Port extends AbstractComponent implements PortInterface
     use PortValidatorTrait;
 
     /**
-     * {@inheritdoc}
+     * Validate Port data
+     *
+     * @param int $port
+     *
+     * @throws \InvalidArgumentException if the submitted port is invalid
+     *
+     * @return int
      */
-    protected function validate($data)
+    protected function validate($port)
     {
-        return $this->validatePort($data);
+        return $this->validatePort($port);
     }
 
     /**

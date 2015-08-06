@@ -97,17 +97,9 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function isNull()
+    public function getContent()
     {
-        return null === $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return static::encode($this->data);
+        return (null === $this->data) ? null : static::encode($this->data);
     }
 
     /**
@@ -123,6 +115,6 @@ abstract class AbstractComponent
      */
     public function getUriComponent()
     {
-        return $this->isNull() ? '' : $this->__toString();
+        return $this->__toString();
     }
 }

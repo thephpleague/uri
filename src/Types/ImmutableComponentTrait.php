@@ -69,12 +69,20 @@ trait ImmutableComponentTrait
     /**
      * {@inheritdoc}
      */
+    abstract public function getContent();
+
+    /**
+     * {@inheritdoc}
+     */
     abstract public function getUriComponent();
 
     /**
      * {@inheritdoc}
      */
-    abstract public function __toString();
+    public function __toString()
+    {
+        return (string) $this->getContent();
+    }
 
     /**
      * Encoding string according to RFC3986

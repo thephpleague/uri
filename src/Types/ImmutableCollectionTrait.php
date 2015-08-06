@@ -49,14 +49,6 @@ trait ImmutableCollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function isNull()
-    {
-        return empty($this->data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return $this->data;

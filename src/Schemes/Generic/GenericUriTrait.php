@@ -294,11 +294,7 @@ trait GenericUriTrait
     public function resolve(Uri $relative)
     {
         $className = get_class($this);
-        if (!$relative instanceof $className) {
-            return $relative;
-        }
-
-        if (!empty($relative->getScheme())) {
+        if (!$relative instanceof $className || !empty($relative->getScheme())) {
             return $relative->withoutDotSegments();
         }
 
@@ -319,7 +315,7 @@ trait GenericUriTrait
     protected function resolveRelative(Uri $relative)
     {
         $newUri = $this->withFragment($relative->getFragment());
-        if (!$relative->path->isEmpty()) {
+        if (!empty($relative->getPath())) {
             return $newUri
                 ->withPath($this->resolvePath($newUri, $relative)->__toString())
                 ->withQuery($relative->getQuery());

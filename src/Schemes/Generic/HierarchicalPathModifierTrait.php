@@ -22,6 +22,13 @@ use League\Uri\Interfaces\Components\Collection;
 trait HierarchicalPathModifierTrait
 {
     /**
+     * Path Component
+     *
+     * @var PathInterface
+     */
+    protected $path;
+
+    /**
      * {@inheritdoc}
      */
     abstract protected function withProperty($name, $value);

@@ -54,7 +54,7 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
             return $relative->withScheme($this->getScheme())->withoutDotSegments();
         }
 
-        return $this->resolveRelative($relative)->withoutDotSegments();
+        return $this->resolveRelative($relative)->withFragment($relative->getFragment())->withoutDotSegments();
     }
 
     /**
@@ -66,43 +66,47 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected function resolveRelative(HttpUriInterface $relative)
     {
-        $newUri = $this->withFragment($relative->getFragment());
-        if (!empty($relative->getPath())) {
-            return $newUri
-                ->withPath($this->resolvePath($newUri, $relative)->__toString())
-                ->withQuery($relative->getQuery());
+        $path  = $relative->getPath();
+        $query = $relative->getQuery();
+        if (!empty($path)) {
+            return $this->resolveRelativePath($path, $query);
         }
 
-        if (!$relative->query->isEmpty()) {
-            return $newUri->withQuery($relative->getQuery());
+        if (!empty($query)) {
+            return $this->withQuery($query);
         }
 
-        return $newUri;
+        return $this;
     }
 
     /**
-     * returns the resolve URI components
+     * Return the resolve URI with a updated path and query
      *
-     * @param HttpUriInterface $newUri   the final URI
-     * @param HttpUriInterface $relative the relative URI
+     * @param string $path  The relative path string
+     * @param string $query The relative query string
      *
-     * @return HierarchicalPathInterface
+     * @return static
      */
-    protected function resolvePath(HttpUriInterface $newUri, HttpUriInterface $relative)
+    protected function resolveRelativePath($path, $query)
     {
-        $path = new HierarchicalPath($relative->getPath());
-        if ($path->isAbsolute()) {
-            return $path;
+        $relativePath = $this->path->modify($path);
+        if ($relativePath->isAbsolute()) {
+            return $this->withPath($relativePath)->withQuery($query);
         }
 
-        $segments = $newUri->path->toArray();
+        $segments = $this->path->toArray();
         array_pop($segments);
         $isAbsolute = HierarchicalPath::IS_RELATIVE;
-        if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
+        if ($this->path->isEmpty() || $this->path->isAbsolute()) {
             $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
         }
 
-        return HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
+        $relativePath = $relativePath->createFromArray(
+            array_merge($segments, $relativePath->toArray()),
+            $isAbsolute
+        );
+
+        return $this->withPath($relativePath)->withQuery($query);
     }
 
     /**

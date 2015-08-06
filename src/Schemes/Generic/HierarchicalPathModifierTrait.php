@@ -31,6 +31,22 @@ trait HierarchicalPathModifierTrait
     /**
      * {@inheritdoc}
      */
+    public function getPath()
+    {
+        return $this->path->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        return $this->withProperty('path', $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     abstract protected function withProperty($name, $value);
 
     /**

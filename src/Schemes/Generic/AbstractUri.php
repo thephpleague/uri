@@ -17,6 +17,7 @@ use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
+use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Parser;
 
 /**
@@ -25,7 +26,7 @@ use League\Uri\Parser;
  * @package League.uri
  * @since   4.0.0
  */
-abstract class AbstractUri
+abstract class AbstractUri implements Uri
 {
     use GenericUriTrait;
 
@@ -43,7 +44,7 @@ abstract class AbstractUri
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return $this
+     * @return static
      */
     public static function createFromString($uri = '')
     {
@@ -57,7 +58,7 @@ abstract class AbstractUri
      *
      * @throws \InvalidArgumentException If the URI can not be parsed
      *
-     * @return $this
+     * @return static
      */
     public static function createFromComponents(array $components)
     {

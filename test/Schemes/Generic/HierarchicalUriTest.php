@@ -308,65 +308,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider resolveProvider
-     * @param $uri
-     * @param $relative
-     * @param $expected
-     */
-    public function testResolve($uri, $relative, $expected)
-    {
-        $uri      = HttpUri::createFromString($uri);
-        $relative = HttpUri::createFromString($relative);
-
-        $this->assertSame($expected, (string) $uri->resolve($relative));
-    }
-
-    public function resolveProvider()
-    {
-        $base_uri = 'http://a/b/c/d;p?q';
-
-        return [
-          'base uri' =>                 [$base_uri, '',               $base_uri],
-          'scheme' =>                  [$base_uri, 'http://d/e/f',   'http://d/e/f'],
-          'path 1' =>                  [$base_uri, 'g',              'http://a/b/c/g'],
-          'path 2' =>                  [$base_uri, './g',            'http://a/b/c/g'],
-          'path 3' =>                  [$base_uri, 'g/',             'http://a/b/c/g/'],
-          'path 4' =>                  [$base_uri, '/g',             'http://a/g'],
-          'authority' =>               [$base_uri, '//g',            'http://g'],
-          'query' =>                   [$base_uri, '?y',             'http://a/b/c/d;p?y'],
-          'path + query' =>            [$base_uri, 'g?y',            'http://a/b/c/g?y'],
-          'fragment' =>                [$base_uri, '#s',             'http://a/b/c/d;p?q#s'],
-          'path + fragment' =>         [$base_uri, 'g#s',            'http://a/b/c/g#s'],
-          'path + query + fragment' => [$base_uri, 'g?y#s',          'http://a/b/c/g?y#s'],
-          'single dot 1' =>            [$base_uri, '.',              'http://a/b/c/'],
-          'single dot 2' =>            [$base_uri, './',             'http://a/b/c/'],
-          'single dot 3' =>            [$base_uri, './g/.',          'http://a/b/c/g/'],
-          'single dot 4' =>            [$base_uri, 'g/./h',          'http://a/b/c/g/h'],
-          'double dot 1' =>            [$base_uri, '..',             'http://a/b/'],
-          'double dot 2' =>            [$base_uri, '../',            'http://a/b/'],
-          'double dot 3' =>            [$base_uri, '../g',           'http://a/b/g'],
-          'double dot 4' =>            [$base_uri, '../..',          'http://a/'],
-          'double dot 5' =>            [$base_uri, '../../',         'http://a/'],
-          'double dot 6' =>            [$base_uri, '../../g',        'http://a/g'],
-          'double dot 7' =>            [$base_uri, '../../../g',     'http://a/g'],
-          'double dot 8' =>            [$base_uri, '../../../../g',  'http://a/g'],
-          'double dot 9' =>            [$base_uri, 'g/../h' ,        'http://a/b/c/h'],
-          'mulitple slashes' =>        [$base_uri, 'foo////g',       'http://a/b/c/foo////g'],
-          'complex path 1' =>          [$base_uri, ';x',             'http://a/b/c/;x'],
-          'complex path 2' =>          [$base_uri, 'g;x',            'http://a/b/c/g;x'],
-          'complex path 3' =>          [$base_uri, 'g;x?y#s',        'http://a/b/c/g;x?y#s'],
-          'complex path 4' =>          [$base_uri, 'g;x=1/./y',      'http://a/b/c/g;x=1/y'],
-          'complex path 5' =>          [$base_uri, 'g;x=1/../y',     'http://a/b/c/y'],
-          'origin uri without path' => ['http://h:b@a', 'b/../y',    'http://h:b@a/y'],
-          '2 relative paths 1'      => ['a/b',          '../..',     '/'],
-          '2 relative paths 2'      => ['a/b',          './.',       'a/'],
-          '2 relative paths 3'      => ['a/b',          '../c',      'c'],
-          '2 relative paths 4'      => ['a/b',          'c/..',      'a/'],
-          '2 relative paths 5'      => ['a/b',          'c/.',       'a/c/'],
-        ];
-    }
-
-    /**
      * @dataProvider relativizeProvider
      * @param $base
      * @param $child
@@ -388,34 +329,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($dataUri, $httpUri->relativize($dataUri));
     }
 
-
-    /**
-     * @dataProvider resolveUriProvider
-     * @param $uri1
-     * @param $uri2
-     */
-    public function testResolveUri($uri1, $uri2)
-    {
-        $this->assertSame($uri2, $uri1->resolve($uri2));
-    }
-
-    public function resolveUriProvider()
-    {
-        return [
-            'two hierarchical uri' => [
-                FtpUri::createFromString('ftp://example.com/path/to/file'),
-                HttpUri::createFromString('//a/b/c/d;p?q'),
-            ],
-            'hierarchical uri resolve opaque uri' => [
-                FtpUri::createFromString('ftp://example.com/path/to/file'),
-                DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21'),
-            ],
-            'opaque uri resolve hierarchical uri' => [
-                DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21'),
-                FtpUri::createFromString('/toto/le/heros'),
-            ],
-        ];
-    }
 
     /**
      * @dataProvider mixUriProvider

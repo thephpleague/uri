@@ -42,6 +42,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($data, $uri->getData());
         $this->assertSame($asArray, $uri->toArray());
         $this->assertSame($isBinaryData, $uri->isBinaryData());
+        $this->assertSame($uri->getPath(), $uri->getSchemeSpecificPart());
         $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
         $this->assertInstanceOf('League\Uri\Interfaces\Components\DataPath', $uri->path);
     }
@@ -195,6 +196,13 @@ class DataTest extends PHPUnit_Framework_TestCase
             'HierarchicalURI' => [HttpUri::createFromString('http://www.example.com')->toArray()],
             'invalid DataUri format' => [parse_url('data:image/png;base64,°28')],
         ];
+    }
+
+    public function testWithPath()
+    {
+        $path = 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21';
+        $uri = DataUri::createFromString('data:'.$path);
+        $this->assertSame($uri, $uri->withPath($path));
     }
 
     /**

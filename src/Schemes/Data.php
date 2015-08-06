@@ -74,6 +74,28 @@ class Data extends AbstractUri implements DataUriInterface
     }
 
     /**
+     * Path Component
+     *
+     * @var DataPathInterface
+     */
+    protected $path;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        return $this->withProperty('path', $path);
+    }
+    /**
      * {@inheritdoc}
      */
     protected function isValid()

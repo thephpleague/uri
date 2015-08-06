@@ -49,7 +49,9 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Initialize the Port data
+     *
+     * @param int $data
      */
     protected function init($data)
     {

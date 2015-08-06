@@ -25,8 +25,7 @@ use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\Data as DataUriInterface;
-use League\Uri\Schemes\Generic\FactoryTrait;
-use League\Uri\Schemes\Generic\GenericUriTrait;
+use League\Uri\Schemes\Generic\AbstractUri;
 
 /**
  * Value object representing Data Uri.
@@ -42,12 +41,8 @@ use League\Uri\Schemes\Generic\GenericUriTrait;
  * @property-read QueryInterface    $query
  * @property-read FragmentInterface $fragment
  */
-class Data implements DataUriInterface
+class Data extends AbstractUri implements DataUriInterface
 {
-    use FactoryTrait;
-
-    use GenericUriTrait;
-
     /**
      * Create a new instance of URI
      *

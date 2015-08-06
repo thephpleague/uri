@@ -14,7 +14,6 @@ use Exception;
 use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\PathFormatterTrait;
-use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
 use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
@@ -29,7 +28,7 @@ use League\Uri\Types\ImmutablePropertyTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Value object representing a URI.
+ * common URI Object properties and methods
  *
  * @package League.uri
  * @since   4.0.0
@@ -48,6 +47,10 @@ trait GenericUriTrait
 
     use PathFormatterTrait;
 
+    use HostModifierTrait;
+
+    use QueryModifierTrait;
+
     /**
      * Scheme Component
      *
@@ -63,13 +66,6 @@ trait GenericUriTrait
     protected $userInfo;
 
     /**
-     * Host Component
-     *
-     * @var HostInterface
-     */
-    protected $host;
-
-    /**
      * Port Component
      *
      * @var PortInterface
@@ -82,13 +78,6 @@ trait GenericUriTrait
      * @var PathInterface
      */
     protected $path;
-
-    /**
-     * Query Component
-     *
-     * @var QueryInterface
-     */
-    protected $query;
 
     /**
      * Fragment Component
@@ -115,6 +104,14 @@ trait GenericUriTrait
     /**
      * {@inheritdoc}
      */
+    public function withScheme($scheme)
+    {
+        return $this->withProperty('scheme', $scheme);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUserInfo()
     {
         return $this->userInfo->__toString();
@@ -123,9 +120,21 @@ trait GenericUriTrait
     /**
      * {@inheritdoc}
      */
-    public function getHost()
+    public function withUserInfo($user, $pass = null)
     {
-        return $this->host->__toString();
+        if (null === $pass) {
+            $pass = '';
+        }
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        if ($this->userInfo->user->sameValueAs($userInfo->user)
+            && $this->userInfo->pass->sameValueAs($userInfo->pass)
+        ) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
+
+        return $clone;
     }
 
     /**
@@ -134,6 +143,62 @@ trait GenericUriTrait
     public function getPort()
     {
         return $this->hasStandardPort() ? null : $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPort($port)
+    {
+        return $this->withProperty('port', $port);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPath()
+    {
+        return $this->path->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        return $this->withProperty('path', $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutDotSegments()
+    {
+        return $this->withProperty('path', $this->path->withoutDotSegments());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFragment()
+    {
+        return $this->fragment->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withFragment($fragment)
+    {
+        return $this->withProperty('fragment', $fragment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->scheme->getUriComponent().$this->getSchemeSpecificPart();
     }
 
     /**
@@ -169,209 +234,6 @@ trait GenericUriTrait
         return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getQuery()
-    {
-        return $this->query->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFragment()
-    {
-        return $this->fragment->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withScheme($scheme)
-    {
-        return $this->withProperty('scheme', $scheme);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withUserInfo($user, $pass = null)
-    {
-        if (null === $pass) {
-            $pass = '';
-        }
-        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
-        if ($this->userInfo->user->sameValueAs($userInfo->user)
-            && $this->userInfo->pass->sameValueAs($userInfo->pass)
-        ) {
-            return $this;
-        }
-        $clone = clone $this;
-        $clone->userInfo = $userInfo;
-
-        return $clone;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withHost($host)
-    {
-        return $this->withProperty('host', $host);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPort($port)
-    {
-        return $this->withProperty('port', $port);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPath($path)
-    {
-        return $this->withProperty('path', $path);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withQuery($query)
-    {
-        return $this->withProperty('query', $query);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withFragment($fragment)
-    {
-        return $this->withProperty('fragment', $fragment);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutDotSegments()
-    {
-        return $this->withProperty('path', $this->path->withoutDotSegments());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mergeQuery($query)
-    {
-        return $this->withProperty('query', $this->query->merge($query));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function ksortQuery($sort = SORT_REGULAR)
-    {
-        return $this->withProperty('query', $this->query->ksort($sort));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutQueryValues($offsets)
-    {
-        return $this->withProperty('query', $this->query->without($offsets));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filterQuery(callable $callable, $flag = Collection::FILTER_USE_VALUE)
-    {
-        return $this->withProperty('query', $this->query->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function appendHost($host)
-    {
-        return $this->withProperty('host', $this->host->append($host));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prependHost($host)
-    {
-        return $this->withProperty('host', $this->host->prepend($host));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutZoneIdentifier()
-    {
-        return $this->withProperty('host', $this->host->withoutZoneIdentifier());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toUnicode()
-    {
-        return $this->withProperty('host', $this->host->toUnicode());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toAscii()
-    {
-        return $this->withProperty('host', $this->host->toAscii());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceLabel($offset, $value)
-    {
-        return $this->withProperty('host', $this->host->replace($offset, $value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutLabels($offsets)
-    {
-        return $this->withProperty('host', $this->host->without($offsets));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE)
-    {
-        return $this->withProperty('host', $this->host->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        return $this->scheme->getUriComponent().$this->getSchemeSpecificPart();
-    }
 
     /**
      * {@inheritdoc}
@@ -456,15 +318,15 @@ trait GenericUriTrait
      */
     protected function resolveRelative(Uri $relative)
     {
-        $newUri = $this->withFragment($relative->fragment->__toString());
+        $newUri = $this->withFragment($relative->getFragment());
         if (!$relative->path->isEmpty()) {
             return $newUri
                 ->withPath($this->resolvePath($newUri, $relative)->__toString())
-                ->withQuery($relative->query->__toString());
+                ->withQuery($relative->getQuery());
         }
 
         if (!$relative->query->isEmpty()) {
-            return $newUri->withQuery($relative->query->__toString());
+            return $newUri->withQuery($relative->getQuery());
         }
 
         return $newUri;

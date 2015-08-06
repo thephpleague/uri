@@ -33,10 +33,6 @@ class Ws extends AbstractHierarchicalUri
      */
     protected function isValid()
     {
-        if (!$this->fragment->isEmpty()) {
-            return false;
-        }
-
-        return $this->isValidHierarchicalUri();
+        return $this->fragment->isEmpty() && $this->isValidHierarchicalUri();
     }
 }

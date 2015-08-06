@@ -49,11 +49,11 @@ interface HierarchicalUri extends Uri
      * This method MUST retain the state of the current instance, and return
      * an instance resolved according to supplied URI
      *
-     * @param HierarchicalUri $rel the relative URI
+     * @param Uri $rel the relative URI
      *
      * @return static
      */
-    public function relativize(HierarchicalUri $rel);
+    public function relativize(Uri $rel);
 
     /**
      * Return an instance with its path appended

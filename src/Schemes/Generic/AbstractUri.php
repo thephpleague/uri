@@ -20,14 +20,22 @@ use League\Uri\Components\UserInfo;
 use League\Uri\Parser;
 
 /**
- * a Trait to parse a URI string
+ * An abstract class to ease URI object creation.
  *
  * @package League.uri
  * @since   4.0.0
- *
  */
-trait FactoryTrait
+abstract class AbstractUri
 {
+    use GenericUriTrait;
+
+    /**
+     * Check if a URI is valid
+     *
+     * @return bool
+     */
+    abstract protected function isValid();
+
     /**
      * Create a new instance from a string
      *

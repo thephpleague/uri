@@ -16,7 +16,6 @@ use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
-use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
 use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
@@ -25,6 +24,7 @@ use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\HierarchicalUri;
+use League\Uri\Interfaces\Schemes\Uri;
 
 /**
  * Value object representing a Hierarchical URI.
@@ -40,11 +40,9 @@ use League\Uri\Interfaces\Schemes\HierarchicalUri;
  * @property-read QueryInterface            $query
  * @property-read FragmentInterface         $fragment
  */
-abstract class AbstractHierarchicalUri implements HierarchicalUri
+abstract class AbstractHierarchicalUri extends AbstractUri implements HierarchicalUri
 {
-    use FactoryTrait;
-
-    use GenericUriTrait;
+    use HierarchicalPathModifierTrait;
 
     /**
      * Create a new instance of URI
@@ -77,13 +75,6 @@ abstract class AbstractHierarchicalUri implements HierarchicalUri
     }
 
     /**
-     * Check if a URI is valid
-     *
-     * @return bool
-     */
-    abstract protected function isValid();
-
-    /**
      * Tell whether the Hierarchical URI is valid
      *
      * @return bool
@@ -108,86 +99,15 @@ abstract class AbstractHierarchicalUri implements HierarchicalUri
     /**
      * {@inheritdoc}
      */
-    public function appendPath($path)
+    public function relativize(Uri $relative)
     {
-        return $this->withProperty('path', $this->path->append($path));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prependPath($path)
-    {
-        return $this->withProperty('path', $this->path->prepend($path));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filterPath(callable $callable, $flag = Collection::FILTER_USE_VALUE)
-    {
-        return $this->withProperty('path', $this->path->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withExtension($extension)
-    {
-        return $this->withProperty('path', $this->path->withExtension($extension));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withTrailingSlash()
-    {
-        return $this->withProperty('path', $this->path->withTrailingSlash());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutTrailingSlash()
-    {
-        return $this->withProperty('path', $this->path->withoutTrailingSlash());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceSegment($offset, $value)
-    {
-        return $this->withProperty('path', $this->path->replace($offset, $value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutSegments($offsets)
-    {
-        return $this->withProperty('path', $this->path->without($offsets));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutEmptySegments()
-    {
-        return $this->withProperty('path', $this->path->withoutEmptySegments());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function relativize(HierarchicalUri $relative)
-    {
-        $className = get_class($this);
-        if (!$relative instanceof $className) {
+        if (!$relative instanceof HierarchicalUri) {
             return $relative;
         }
 
-        if (!$this->scheme->sameValueAs($relative->scheme) || $this->getAuthority() !== $relative->getAuthority()) {
+        if ($this->getScheme() !== $relative->getScheme()
+            || $this->getAuthority() !== $relative->getAuthority()
+        ) {
             return $relative;
         }
 

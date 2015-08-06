@@ -117,6 +117,11 @@ trait HostnameInfoTrait
     /**
      * {@inheritdoc}
      */
+    abstract public function __toString();
+
+    /**
+     * {@inheritdoc}
+     */
     abstract public function isIp();
 
     /**

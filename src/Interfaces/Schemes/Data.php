@@ -21,14 +21,6 @@ namespace League\Uri\Interfaces\Schemes;
  * @package League.uri
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc2397
- *
- * @property-read \League\Uri\Interfaces\Components\Scheme   $scheme
- * @property-read \League\Uri\Interfaces\Components\UserInfo $userInfo
- * @property-read \League\Uri\Interfaces\Components\Host     $host
- * @property-read \League\Uri\Interfaces\Components\Port     $port
- * @property-read \League\Uri\Interfaces\Components\DataPath $path
- * @property-read \League\Uri\Interfaces\Components\Query    $query
- * @property-read \League\Uri\Interfaces\Components\Fragment $fragment
  */
 interface Data extends Uri
 {

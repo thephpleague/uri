@@ -33,7 +33,7 @@ abstract class AbstractComponent
     /**
      * The component data
      *
-     * @var string
+     * @var int|string
      */
     protected $data;
 

@@ -220,7 +220,7 @@ trait GenericUriTrait
         }
 
         return $auth
-            .$this->formatPath($this->path, (bool) $auth)
+            .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

@@ -19,7 +19,6 @@ use Psr\Http\Message\UriInterface;
  *
  * @package League.uri
  * @since   4.0.0
- *
  */
 class Http extends AbstractHierarchicalUri implements UriInterface
 {

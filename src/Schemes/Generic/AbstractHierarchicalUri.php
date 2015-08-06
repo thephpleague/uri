@@ -32,12 +32,22 @@ use League\Uri\Interfaces\Schemes\HierarchicalUri;
  * @package League.uri
  * @since   4.0.0
  *
+ * @property-read SchemeInterface           $scheme
+ * @property-read UserInfoInterface         $userInfo
+ * @property-read HostInterface             $host
+ * @property-read PortInterface             $port
+ * @property-read HierarchicalPathInterface $path
+ * @property-read QueryInterface            $query
+ * @property-read FragmentInterface         $fragment
  */
-abstract class AbstractHierarchicalUri extends AbstractUri implements HierarchicalUri
+abstract class AbstractHierarchicalUri implements HierarchicalUri
 {
+    use FactoryTrait;
+
+    use GenericUriTrait;
+
     /**
      * Create a new instance of URI
-     *
      *
      * @param SchemeInterface           $scheme
      * @param UserInfoInterface         $userInfo
@@ -67,22 +77,32 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     }
 
     /**
-     * Supported Schemes
+     * Check if a URI is valid
      *
-     * @var array
+     * @return bool
      */
-    protected static $supportedSchemes = [];
+    abstract protected function isValid();
 
     /**
-     * {@inheritdoc}
+     * Tell whether the Hierarchical URI is valid
+     *
+     * @return bool
      */
-    public function getAuthority()
+    protected function isValidHierarchicalUri()
     {
-        if ($this->host->isEmpty() || !$this->hasStandardPort()) {
-            return parent::getAuthority();
+        if (!$this->isValidGenericUri()) {
+            return false;
         }
 
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent();
+        if ($this->scheme->isEmpty()) {
+            return true;
+        }
+
+        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
+            return false;
+        }
+
+        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
     }
 
     /**
@@ -160,86 +180,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     /**
      * {@inheritdoc}
      */
-    public function appendHost($host)
-    {
-        return $this->withProperty('host', $this->host->append($host));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function prependHost($host)
-    {
-        return $this->withProperty('host', $this->host->prepend($host));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutZoneIdentifier()
-    {
-        return $this->withProperty('host', $this->host->withoutZoneIdentifier());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toUnicode()
-    {
-        return $this->withProperty('host', $this->host->toUnicode());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toAscii()
-    {
-        return $this->withProperty('host', $this->host->toAscii());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replaceLabel($offset, $value)
-    {
-        return $this->withProperty('host', $this->host->replace($offset, $value));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutLabels($offsets)
-    {
-        return $this->withProperty('host', $this->host->without($offsets));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE)
-    {
-        return $this->withProperty('host', $this->host->filter($callable, $flag));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStandardPort()
-    {
-        if ($this->port->isEmpty()) {
-            return true;
-        }
-
-        if ($this->scheme->isEmpty()) {
-            return false;
-        }
-
-        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function relativize(HierarchicalUri $relative)
     {
         $className = get_class($this);
@@ -254,27 +194,5 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
         return $relative
                 ->withScheme('')->withUserInfo('')->withHost('')->withPort('')
                 ->withPath($this->path->relativize($relative->path)->__toString());
-    }
-
-    /**
-     * Tell whether the Hierarchical URI is valid
-     *
-     * @return bool
-     */
-    protected function isValidHierarchicalUri()
-    {
-        if (!parent::isValid()) {
-            return false;
-        }
-
-        if ($this->scheme->isEmpty()) {
-            return true;
-        }
-
-        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
-            return false;
-        }
-
-        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
     }
 }

@@ -19,7 +19,6 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
  *
  * @package League.uri
  * @since   4.0.0
- *
  */
 class Ftp extends AbstractHierarchicalUri implements FtpInterface
 {

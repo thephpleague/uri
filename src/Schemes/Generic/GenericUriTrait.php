@@ -34,11 +34,16 @@ use Psr\Http\Message\UriInterface;
  * @package League.uri
  * @since   4.0.0
  *
+ * @property-read SchemeInterface   $scheme
+ * @property-read UserInfoInterface $userInfo
+ * @property-read HostInterface     $host
+ * @property-read PortInterface     $port
+ * @property-read PathInterface     $path
+ * @property-read QueryInterface    $query
+ * @property-read FragmentInterface $fragment
  */
-abstract class AbstractUri implements Uri
+trait GenericUriTrait
 {
-    use FactoryTrait;
-
     use ImmutablePropertyTrait;
 
     use PathFormatterTrait;
@@ -93,43 +98,18 @@ abstract class AbstractUri implements Uri
     protected $fragment;
 
     /**
+     * Supported Schemes
+     *
+     * @var array
+     */
+    protected static $supportedSchemes = [];
+
+    /**
      * {@inheritdoc}
      */
     public function getScheme()
     {
         return $this->scheme->__toString();
-    }
-
-    /**
-     * Get URI relative reference
-     *
-     * @return string
-     */
-    public function getSchemeSpecificPart()
-    {
-        $auth = $this->getAuthority();
-        if (!empty($auth)) {
-            $auth = '//'.$auth;
-        }
-
-        return $auth
-            .$this->formatPath($this->path, (bool) $auth)
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthority()
-    {
-        if ($this->host->isEmpty()) {
-            return '';
-        }
-
-        return $this->userInfo->getUriComponent()
-            .$this->host->getUriComponent()
-            .$this->port->getUriComponent();
     }
 
     /**
@@ -154,6 +134,39 @@ abstract class AbstractUri implements Uri
     public function getPort()
     {
         return $this->hasStandardPort() ? null : $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasStandardPort()
+    {
+        if ($this->port->isEmpty()) {
+            return true;
+        }
+
+        if ($this->scheme->isEmpty()) {
+            return false;
+        }
+
+        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        if ($this->host->isEmpty()) {
+            return '';
+        }
+
+        $port = '';
+        if (!$this->hasStandardPort()) {
+            $port = $this->port->getUriComponent();
+        }
+
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
     /**
@@ -291,6 +304,70 @@ abstract class AbstractUri implements Uri
     /**
      * {@inheritdoc}
      */
+    public function appendHost($host)
+    {
+        return $this->withProperty('host', $this->host->append($host));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prependHost($host)
+    {
+        return $this->withProperty('host', $this->host->prepend($host));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutZoneIdentifier()
+    {
+        return $this->withProperty('host', $this->host->withoutZoneIdentifier());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toUnicode()
+    {
+        return $this->withProperty('host', $this->host->toUnicode());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toAscii()
+    {
+        return $this->withProperty('host', $this->host->toAscii());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceLabel($offset, $value)
+    {
+        return $this->withProperty('host', $this->host->replace($offset, $value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutLabels($offsets)
+    {
+        return $this->withProperty('host', $this->host->without($offsets));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE)
+    {
+        return $this->withProperty('host', $this->host->filter($callable, $flag));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         return $this->scheme->getUriComponent().$this->getSchemeSpecificPart();
@@ -299,9 +376,17 @@ abstract class AbstractUri implements Uri
     /**
      * {@inheritdoc}
      */
-    public function toArray()
+    public function getSchemeSpecificPart()
     {
-        return (new Parser())->parseUri($this->__toString());
+        $auth = $this->getAuthority();
+        if (!empty($auth)) {
+            $auth = '//'.$auth;
+        }
+
+        return $auth
+            .$this->formatPath($this->path, (bool) $auth)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
     }
 
     /**
@@ -310,6 +395,14 @@ abstract class AbstractUri implements Uri
     public function isEmpty()
     {
         return empty($this->__toString());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return (new Parser())->parseUri($this->__toString());
     }
 
     /**
@@ -338,32 +431,20 @@ abstract class AbstractUri implements Uri
      */
     public function resolve(Uri $relative)
     {
-        if (!empty($relative->getScheme())) {
-            return $relative->withoutDotSegments();
-        }
-
-        if (!empty($relative->getHost())) {
-            return $this->resolveAuthority($relative)->withoutDotSegments();
-        }
-
-        return $this->resolveRelative($relative)->withoutDotSegments();
-    }
-
-    /**
-     * Returns the resolve URI according to the authority
-     *
-     * @param Uri $relative the relative URI
-     *
-     * @return static
-     */
-    protected function resolveAuthority(Uri $relative)
-    {
         $className = get_class($this);
         if (!$relative instanceof $className) {
             return $relative;
         }
 
-        return $relative->withScheme($this->scheme);
+        if (!empty($relative->getScheme())) {
+            return $relative->withoutDotSegments();
+        }
+
+        if (!empty($relative->getHost())) {
+            return $relative->withScheme($this->scheme)->withoutDotSegments();
+        }
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
     }
 
     /**
@@ -375,10 +456,6 @@ abstract class AbstractUri implements Uri
      */
     protected function resolveRelative(Uri $relative)
     {
-        if (!$this->path instanceof HierarchicalPathInterface) {
-            return $relative;
-        }
-
         $newUri = $this->withFragment($relative->fragment->__toString());
         if (!$relative->path->isEmpty()) {
             return $newUri
@@ -404,7 +481,7 @@ abstract class AbstractUri implements Uri
     protected function resolvePath(Uri $newUri, Uri $relative)
     {
         $path = $relative->path;
-        if ($path->isAbsolute()) {
+        if (!$path instanceof HierarchicalPathInterface || $path->isAbsolute()) {
             return $path;
         }
 
@@ -423,7 +500,7 @@ abstract class AbstractUri implements Uri
      *
      * @return bool
      */
-    protected function isValid()
+    protected function isValidGenericUri()
     {
         $path = $this->path->getUriComponent();
         if (false === strpos($path, ':')) {

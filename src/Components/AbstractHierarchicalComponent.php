@@ -86,7 +86,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
      */
     public function getUriComponent()
     {
-        return $this->isNull() ? '' : $this->__toString();
+        return $this->__toString();
     }
 
     /**

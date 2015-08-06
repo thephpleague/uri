@@ -319,12 +319,6 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($uri1->sameValueAs($uri2));
     }
 
-    public function testIsNullDataPath()
-    {
-        $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
-        $this->assertFalse($uri->path->isNull());
-    }
-
     public function testDataPathConstructor()
     {
         $data = new Path();

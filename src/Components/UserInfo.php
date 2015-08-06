@@ -65,14 +65,6 @@ class UserInfo implements UserInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function isNull()
-    {
-        return $this->user->isNull();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getUser()
     {
         return $this->user->__toString();
@@ -104,14 +96,14 @@ class UserInfo implements UserInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function getContent()
     {
-        if ($this->user->isNull()) {
-            return '';
+        if (null === $this->user->getContent()) {
+            return null;
         }
 
         $str = $this->user->__toString();
-        if ($this->pass->isNull()) {
+        if (null === $this->pass->getContent()) {
             return $str;
         }
 
@@ -121,9 +113,19 @@ class UserInfo implements UserInfoInterface
     /**
      * {@inheritdoc}
      */
+    public function __toString()
+    {
+        return (string) $this->getContent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getUriComponent()
     {
-        return $this->isNull() ? '' : $this->__toString().'@';
+        $component = $this->getContent();
+
+        return null === $component ? '' : $component.'@';
     }
 
     /**

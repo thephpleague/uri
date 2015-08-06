@@ -348,4 +348,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'preserve falsey 3'  => [['a' => '0'], 'a=0'],
         ];
     }
+
+    public function testFailSafeQueryParsing()
+    {
+        $arr = ['a' => '1', 'b' => 'le heros'];
+        $expected = 'a=1&b=le%20heros';
+
+        $this->assertSame($expected, $this->parser->buildQuery($arr, '&', 'yolo'));
+    }
 }

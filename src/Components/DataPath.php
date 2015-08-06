@@ -267,19 +267,6 @@ class DataPath implements DataPathInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
-    {
-        return $this->format(
-            $this->mimeType,
-            $this->getParameters(),
-            $this->isBinaryData,
-            $this->data
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function withoutDotSegments()
     {
         return $this;
@@ -313,15 +300,20 @@ class DataPath implements DataPathInterface
      */
     public function getUriComponent()
     {
-        return $this->__toString();
+        return $this->getContent();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isNull()
+    public function getContent()
     {
-        return false;
+        return $this->format(
+            $this->mimeType,
+            $this->getParameters(),
+            $this->isBinaryData,
+            $this->data
+        );
     }
 
     /**

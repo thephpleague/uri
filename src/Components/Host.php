@@ -94,8 +94,12 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function getContent()
     {
+        if (empty($this->data)) {
+            return null;
+        }
+
         if ($this->isIp()) {
             return $this->formatIp($this->data[0]);
         }

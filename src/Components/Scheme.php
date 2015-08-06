@@ -44,11 +44,8 @@ class Scheme extends AbstractComponent implements SchemeInterface
      */
     public function getUriComponent()
     {
-        $data = $this->__toString();
-        if (empty($data)) {
-            return $data;
-        }
+        $component = $this->getContent();
 
-        return $data.':';
+        return null === $component ? '' : $component.':';
     }
 }

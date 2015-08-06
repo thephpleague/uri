@@ -48,9 +48,9 @@ interface UriPart
     /**
      * Returns true if the instance is considered null
      *
-     * @return bool
+     * @return null|string
      */
-    public function isNull();
+    public function getContent();
 
     /**
      * Returns whether two UriPart objects represent the same value

@@ -193,6 +193,12 @@ class Formatter
      */
     protected function formatUri(Uri $uri)
     {
+        $scheme = $uri->getScheme();
+        if (!empty($scheme)) {
+            $scheme .= ':';
+        }
+        $auth = $this->formatAuthority($uri);
+
         $query = $this->formatUriPart(new Query($uri->getQuery()));
         if (!empty($query)) {
             $query = '?'.$query;
@@ -203,13 +209,7 @@ class Formatter
             $fragment = '#'.$fragment;
         }
 
-        $scheme = $uri->getScheme();
-        if (!empty($scheme)) {
-            $scheme .= ':';
-        }
-
-        return $scheme.$this->formatAuthority($uri)
-            .$this->formatPath($uri->getPath(), !empty($auth)).$query.$fragment;
+        return $scheme.$auth.$this->formatPath($uri->getPath(), !empty($auth)).$query.$fragment;
     }
 
     /**

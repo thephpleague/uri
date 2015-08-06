@@ -24,17 +24,30 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
-use League\Uri\Interfaces\Schemes\Uri;
-use League\Uri\Schemes\Generic\AbstractUri;
+use League\Uri\Interfaces\Schemes\Data as DataUriInterface;
+use League\Uri\Schemes\Generic\FactoryTrait;
+use League\Uri\Schemes\Generic\GenericUriTrait;
 
 /**
  * Value object representing Data Uri.
  *
  * @package League.uri
  * @since   4.0.0
+ *
+ * @property-read SchemeInterface   $scheme
+ * @property-read UserInfoInterface $userInfo
+ * @property-read HostInterface     $host
+ * @property-read PortInterface     $port
+ * @property-read DataPathInterface $path
+ * @property-read QueryInterface    $query
+ * @property-read FragmentInterface $fragment
  */
-class Data extends AbstractUri implements Uri
+class Data implements DataUriInterface
 {
+    use FactoryTrait;
+
+    use GenericUriTrait;
+
     /**
      * Create a new instance of URI
      *
@@ -70,7 +83,7 @@ class Data extends AbstractUri implements Uri
      */
     protected function isValid()
     {
-        return parent::isValid() && $this->__toString() === 'data:'.$this->path->getUriComponent();
+        return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
     }
 
     /**
@@ -171,6 +184,7 @@ class Data extends AbstractUri implements Uri
     public static function createFromComponents(array $components)
     {
         $components = static::formatComponents($components);
+
         return new static(
             new Scheme($components['scheme']),
             new UserInfo($components['user'], $components['pass']),

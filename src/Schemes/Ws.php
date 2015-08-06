@@ -17,7 +17,6 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
  *
  * @package League.uri
  * @since   4.0.0
- *
  */
 class Ws extends AbstractHierarchicalUri
 {

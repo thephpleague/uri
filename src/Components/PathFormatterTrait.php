@@ -23,15 +23,13 @@ trait PathFormatterTrait
     /**
      * Format the Path in a URI string
      *
-     * @param Path $path
-     * @param bool $has_authority_part does the URI as an authority part
+     * @param string $path
+     * @param bool   $has_authority_part does the URI as an authority part
      *
      * @return string
      */
-    protected function formatPath(Path $path, $has_authority_part = false)
+    protected function formatPath($path, $has_authority_part = false)
     {
-        $path = $path->getUriComponent();
-
         if (!$has_authority_part) {
             return preg_replace(',^/+,', '/', $path);
         }

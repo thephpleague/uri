@@ -11,7 +11,9 @@
 namespace League\Uri;
 
 use InvalidArgumentException;
+use League\Uri\Components\Host;
 use League\Uri\Components\PathFormatterTrait;
+use League\Uri\Components\Query;
 use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\UriPart;
@@ -191,20 +193,48 @@ class Formatter
      */
     protected function formatUri(Uri $uri)
     {
-        if (!$uri instanceof HierarchicalUri) {
-            return $uri->__toString();
-        }
-
-        $query = $this->formatUriPart($uri->query);
+        $query = $this->formatUriPart(new Query($uri->getQuery()));
         if (!empty($query)) {
             $query = '?'.$query;
         }
 
-        $auth = $this->formatAuthority($uri);
+        $fragment = $uri->getFragment();
+        if (!empty($fragment)) {
+            $fragment = '#'.$fragment;
+        }
 
-        return $uri->scheme->getUriComponent().$auth
-            .$this->formatPath($uri->path, !empty($auth)).$query
-            .$uri->fragment->getUriComponent();
+        $scheme = $uri->getScheme();
+        if (!empty($scheme)) {
+            $scheme .= ':';
+        }
+
+        return $scheme.$this->formatAuthority($uri)
+            .$this->formatPath($uri->getPath(), !empty($auth)).$query.$fragment;
+    }
+
+    /**
+     * Format the user info
+     *
+     * @param array $components Uri Components
+     *
+     * @return string
+     */
+    protected function getUserInfo(array $components)
+    {
+        $userinfo = '';
+        if (isset($components['user'])) {
+            $userinfo .= $components['user'];
+        }
+
+        if (isset($components['pass'])) {
+            $userinfo .= ':'.$components['pass'];
+        }
+
+        if (!empty($userinfo)) {
+            $userinfo .= '@';
+        }
+
+        return $userinfo;
     }
 
     /**
@@ -220,11 +250,15 @@ class Formatter
             return '';
         }
 
-        $port = $uri->port->getUriComponent();
-        if ($uri->hasStandardPort()) {
-            $port = '';
+        $components = $uri->toArray();
+        $port = $components['port'];
+        if (!empty($port)) {
+            $port = ':'.$port;
         }
 
-        return '//'.$uri->userInfo->getUriComponent().$this->formatHost($uri->host).$port;
+        return '//'
+            .$this->getUserInfo($components)
+            .$this->formatHost(new Host($components['host']))
+            .$port;
     }
 }

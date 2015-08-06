@@ -111,8 +111,10 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
             return $relative;
         }
 
+        $relativePath = $this->path->modify($relative->getPath());
+
         return $relative
                 ->withScheme('')->withUserInfo('')->withHost('')->withPort('')
-                ->withPath($this->path->relativize($relative->path)->__toString());
+                ->withPath($this->path->relativize($relativePath));
     }
 }

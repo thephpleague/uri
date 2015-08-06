@@ -11,6 +11,9 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Interfaces\Schemes\Http as HttpUriInterface;
+use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 use Psr\Http\Message\UriInterface;
 
@@ -20,7 +23,7 @@ use Psr\Http\Message\UriInterface;
  * @package League.uri
  * @since   4.0.0
  */
-class Http extends AbstractHierarchicalUri implements UriInterface
+class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInterface
 {
     /**
      * {@inheritdoc}
@@ -36,6 +39,70 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     protected function isValid()
     {
         return $this->isValidHierarchicalUri();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve(Uri $relative)
+    {
+        if (!$relative instanceof HttpUriInterface || !empty($relative->getScheme())) {
+            return $relative->withoutDotSegments();
+        }
+
+        if (!empty($relative->getHost())) {
+            return $relative->withScheme($this->getScheme())->withoutDotSegments();
+        }
+
+        return $this->resolveRelative($relative)->withoutDotSegments();
+    }
+
+    /**
+     * returns the resolve URI
+     *
+     * @param HttpUriInterface $relative the relative URI
+     *
+     * @return static
+     */
+    protected function resolveRelative(HttpUriInterface $relative)
+    {
+        $newUri = $this->withFragment($relative->getFragment());
+        if (!empty($relative->getPath())) {
+            return $newUri
+                ->withPath($this->resolvePath($newUri, $relative)->__toString())
+                ->withQuery($relative->getQuery());
+        }
+
+        if (!$relative->query->isEmpty()) {
+            return $newUri->withQuery($relative->getQuery());
+        }
+
+        return $newUri;
+    }
+
+    /**
+     * returns the resolve URI components
+     *
+     * @param HttpUriInterface $newUri   the final URI
+     * @param HttpUriInterface $relative the relative URI
+     *
+     * @return HierarchicalPathInterface
+     */
+    protected function resolvePath(HttpUriInterface $newUri, HttpUriInterface $relative)
+    {
+        $path = new HierarchicalPath($relative->getPath());
+        if ($path->isAbsolute()) {
+            return $path;
+        }
+
+        $segments = $newUri->path->toArray();
+        array_pop($segments);
+        $isAbsolute = HierarchicalPath::IS_RELATIVE;
+        if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
+            $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
+        }
+
+        return HierarchicalPath::createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 
     /**

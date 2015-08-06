@@ -451,18 +451,4 @@ interface Uri
      * @return bool
      */
     public function sameValueAs($uri);
-
-    /**
-     * Returns an instance resolved according to a given URI
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance resolved according to supplied URI
-     *
-     * @param Uri $rel the relative URI
-     *
-     * @return static
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-5.2
-     */
-    public function resolve(Uri $rel);
 }

@@ -12,16 +12,13 @@ namespace League\Uri\Schemes\Generic;
 
 use Exception;
 use InvalidArgumentException;
-use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\PathFormatterTrait;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
-use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
-use League\Uri\Interfaces\Schemes\HierarchicalUri;
 use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Parser;
 use League\Uri\Types\ImmutablePropertyTrait;
@@ -71,13 +68,6 @@ trait GenericUriTrait
      * @var PortInterface
      */
     protected $port;
-
-    /**
-     * Path Component
-     *
-     * @var PathInterface
-     */
-    protected $path;
 
     /**
      * Fragment Component
@@ -151,22 +141,6 @@ trait GenericUriTrait
     public function withPort($port)
     {
         return $this->withProperty('port', $port);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPath($path)
-    {
-        return $this->withProperty('path', $path);
     }
 
     /**
@@ -286,71 +260,6 @@ trait GenericUriTrait
         } catch (Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(Uri $relative)
-    {
-        $className = get_class($this);
-        if (!$relative instanceof $className || !empty($relative->getScheme())) {
-            return $relative->withoutDotSegments();
-        }
-
-        if (!empty($relative->getHost())) {
-            return $relative->withScheme($this->scheme)->withoutDotSegments();
-        }
-
-        return $this->resolveRelative($relative)->withoutDotSegments();
-    }
-
-    /**
-     * returns the resolve URI
-     *
-     * @param HierarchicalUri $relative the relative URI
-     *
-     * @return static
-     */
-    protected function resolveRelative(Uri $relative)
-    {
-        $newUri = $this->withFragment($relative->getFragment());
-        if (!empty($relative->getPath())) {
-            return $newUri
-                ->withPath($this->resolvePath($newUri, $relative)->__toString())
-                ->withQuery($relative->getQuery());
-        }
-
-        if (!$relative->query->isEmpty()) {
-            return $newUri->withQuery($relative->getQuery());
-        }
-
-        return $newUri;
-    }
-
-    /**
-     * returns the resolve URI components
-     *
-     * @param Uri $newUri   the final URI
-     * @param Uri $relative the relative URI
-     *
-     * @return HierarchicalPathInterface
-     */
-    protected function resolvePath(Uri $newUri, Uri $relative)
-    {
-        $path = $relative->path;
-        if (!$path instanceof HierarchicalPathInterface || $path->isAbsolute()) {
-            return $path;
-        }
-
-        $segments = $newUri->path->toArray();
-        array_pop($segments);
-        $isAbsolute = HierarchicalPath::IS_RELATIVE;
-        if ($newUri->path->isEmpty() || $newUri->path->isAbsolute()) {
-            $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
-        }
-
-        return $newUri->path->createFromArray(array_merge($segments, $path->toArray()), $isAbsolute);
     }
 
     /**

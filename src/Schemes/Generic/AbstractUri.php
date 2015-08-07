@@ -151,8 +151,9 @@ abstract class AbstractUri
             $pass = '';
         }
         $userInfo = $this->userInfo->withUser($user)->withPass($pass);
-        if ($this->userInfo->user->sameValueAs($userInfo->user)
-            && $this->userInfo->pass->sameValueAs($userInfo->pass)
+
+        if ($this->userInfo->getUser() == $userInfo->getUser()
+            && $this->userInfo->getPass() == ($userInfo->getPass())
         ) {
             return $this;
         }

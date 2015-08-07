@@ -41,4 +41,9 @@ trait PathModifierTrait
     {
         return $this->withProperty('path', $path);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract protected function withProperty($name, $value);
 }

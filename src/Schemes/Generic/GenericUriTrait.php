@@ -20,9 +20,10 @@ use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\Uri;
-use League\Uri\Parser;
 use League\Uri\Types\ImmutablePropertyTrait;
+use League\Uri\UriParser;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
 /**
  * common URI Object properties and methods
@@ -82,6 +83,18 @@ trait GenericUriTrait
      * @var array
      */
     protected static $supportedSchemes = [];
+
+    /**
+     * Assert the object is valid
+     *
+     * @throws RuntimeException if the resulting URI is not valid
+     */
+    protected function assertValidObject()
+    {
+        if (!$this->isValid()) {
+            throw new RuntimeException('The submitted properties will produce an invalid object');
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -238,7 +251,7 @@ trait GenericUriTrait
      */
     public function toArray()
     {
-        return (new Parser())->parseUri($this->__toString());
+        return (new UriParser())->parse($this->__toString());
     }
 
     /**
@@ -254,7 +267,7 @@ trait GenericUriTrait
         }
 
         try {
-            return static::createFromComponents((new Parser())->parseUri($uri->__toString()))
+            return static::createFromComponents((new UriParser())->parse($uri->__toString()))
                 ->toAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
                 ->toAscii()->ksortQuery()->withoutDotSegments()->__toString();
         } catch (Exception $e) {
@@ -269,13 +282,10 @@ trait GenericUriTrait
      */
     protected function isValidGenericUri()
     {
-        $path = $this->path->getUriComponent();
-        if (false === strpos($path, ':')) {
-            return true;
-        }
-        $path = explode(':', $path);
-        $path = array_shift($path);
-
-        return !(empty($this->scheme->getUriComponent().$this->getAuthority()) && strpos($path, '/') === false);
+        return (new UriParser())->isValidUri(
+            $this->scheme->getUriComponent(),
+            $this->getAuthority(),
+            $this->path->getUriComponent()
+        );
     }
 }

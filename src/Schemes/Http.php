@@ -15,6 +15,7 @@ use League\Uri\Components\HierarchicalPath;
 use League\Uri\Interfaces\Schemes\Http as HttpUriInterface;
 use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
+use League\Uri\UriParser;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -198,20 +199,10 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerUserInfo(array $server)
     {
-        if (!isset($server['PHP_AUTH_USER'])) {
-            return '';
-        }
+        $user = (array_key_exists('PHP_AUTH_USER', $server)) ? $server['PHP_AUTH_USER'] : null;
+        $pass = (array_key_exists('PHP_AUTH_PW', $server)) ? $server['PHP_AUTH_PW'] : null;
 
-        $info = $server['PHP_AUTH_USER'];
-        if (isset($server['PHP_AUTH_PW'])) {
-            $info .= ':'.$server['PHP_AUTH_PW'];
-        }
-
-        if (!empty($info)) {
-            $info .= '@';
-        }
-
-        return $info;
+        return (new UriParser())->getUserInfo($user, $pass);
     }
 
     /**

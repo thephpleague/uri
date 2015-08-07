@@ -11,6 +11,7 @@
 namespace League\Uri\Schemes\Generic;
 
 use League\Uri\Components\Fragment;
+use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Host;
 use League\Uri\Components\Port;
 use League\Uri\Components\Query;
@@ -72,6 +73,24 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
         $this->query = $query;
         $this->fragment = $fragment;
         $this->assertValidObject();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components = static::formatComponents($components);
+
+        return new static(
+            new Scheme($components['scheme']),
+            new UserInfo($components['user'], $components['pass']),
+            new Host($components['host']),
+            new Port($components['port']),
+            new HierarchicalPath($components['path']),
+            new Query($components['query']),
+            new Fragment($components['fragment'])
+        );
     }
 
     /**

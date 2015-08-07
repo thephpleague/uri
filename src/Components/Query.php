@@ -12,7 +12,7 @@ namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Parser;
+use League\Uri\QueryParser;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
 use Traversable;
@@ -87,7 +87,7 @@ class Query implements QueryInterface
             throw new InvalidArgumentException('the query string must not contain a URI fragment');
         }
 
-        return (new Parser())->parseQuery($str, static::$separator, false);
+        return (new QueryParser())->parse($str, static::$separator, false);
     }
 
     /**
@@ -101,7 +101,7 @@ class Query implements QueryInterface
      */
     public static function createFromArray($data)
     {
-        $query = (new Parser())->buildQuery(
+        $query = (new QueryParser())->build(
             static::validateIterator($data),
             static::$separator,
             false
@@ -119,7 +119,7 @@ class Query implements QueryInterface
             return null;
         }
 
-        return (new Parser())->buildQuery($this->data, static::$separator, PHP_QUERY_RFC3986);
+        return (new QueryParser())->build($this->data, static::$separator, PHP_QUERY_RFC3986);
     }
 
     /**

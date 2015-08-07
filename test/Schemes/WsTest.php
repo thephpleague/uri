@@ -2,7 +2,6 @@
 
 namespace League\Uri\test\Schemes;
 
-use InvalidArgumentException;
 use League\Uri\Schemes\Ws;
 use PHPUnit_Framework_TestCase;
 
@@ -41,7 +40,7 @@ class WsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isValidProvider
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      * @param $input
      */
     public function testIsValid($input)

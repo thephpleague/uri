@@ -12,7 +12,7 @@ namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
-use League\Uri\Parser;
+use League\Uri\UriParser;
 
 /**
  * Value object representing a URI scheme component.
@@ -32,7 +32,7 @@ class Scheme extends AbstractComponent implements SchemeInterface
      */
     protected function validate($scheme)
     {
-        if (!preg_match(Parser::SCHEME_REGEXP, $scheme)) {
+        if (!preg_match(UriParser::SCHEME_REGEXP, $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
         }
 

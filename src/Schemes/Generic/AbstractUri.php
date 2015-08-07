@@ -10,15 +10,8 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use League\Uri\Components\Fragment;
-use League\Uri\Components\HierarchicalPath;
-use League\Uri\Components\Host;
-use League\Uri\Components\Port;
-use League\Uri\Components\Query;
-use League\Uri\Components\Scheme;
-use League\Uri\Components\UserInfo;
 use League\Uri\Interfaces\Schemes\Uri;
-use League\Uri\Parser;
+use League\Uri\UriParser;
 
 /**
  * An abstract class to ease URI object creation.
@@ -48,7 +41,7 @@ abstract class AbstractUri implements Uri
      */
     public static function createFromString($uri = '')
     {
-        return static::createFromComponents((new Parser())->parseUri($uri));
+        return static::createFromComponents((new UriParser())->parse($uri));
     }
 
     /**
@@ -60,20 +53,7 @@ abstract class AbstractUri implements Uri
      *
      * @return static
      */
-    public static function createFromComponents(array $components)
-    {
-        $components = static::formatComponents($components);
-
-        return new static(
-            new Scheme($components['scheme']),
-            new UserInfo($components['user'], $components['pass']),
-            new Host($components['host']),
-            new Port($components['port']),
-            new HierarchicalPath($components['path']),
-            new Query($components['query']),
-            new Fragment($components['fragment'])
-        );
-    }
+    abstract public static function createFromComponents(array $components);
 
     /**
      * Format the components to works with all the constructors

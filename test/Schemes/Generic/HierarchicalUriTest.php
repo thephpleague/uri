@@ -247,7 +247,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
     {
@@ -385,7 +385,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      */
     public function testModificationFailed()
     {

@@ -39,7 +39,9 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
      */
     protected function isValid()
     {
-        return empty($this->fragment->__toString().$this->query->__toString()) && $this->isValidHierarchicalUri();
+        return empty($this->fragment->__toString().$this->query->__toString())
+            && $this->isValidGenericUri()
+            && $this->isValidHierarchicalUri();
     }
 
     /**

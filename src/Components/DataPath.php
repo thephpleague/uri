@@ -13,7 +13,6 @@ namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Components\DataPath as DataPathInterface;
-use League\Uri\Types\ImmutableComponentTrait;
 use RuntimeException;
 use SplFileObject;
 
@@ -23,10 +22,8 @@ use SplFileObject;
  * @package League.uri
  * @since 1.0.0
  */
-class DataPath implements DataPathInterface
+class DataPath extends Path implements DataPathInterface
 {
-    use ImmutableComponentTrait;
-
     const DEFAULT_MIMETYPE = 'text/plain';
 
     const DEFAULT_PARAMETER = 'charset=us-ascii';
@@ -88,6 +85,7 @@ class DataPath implements DataPathInterface
      */
     protected function extractPathParts($str)
     {
+        $this->assertValidComponent($str);
         if (!mb_detect_encoding($str, 'US-ASCII', true)
             || !preg_match('|^(?<mediatype>.*)?,(?<data>.*)$|i', $str, $matches)
         ) {
@@ -262,14 +260,6 @@ class DataPath implements DataPathInterface
     public function isBinaryData()
     {
         return $this->isBinaryData;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutDotSegments()
-    {
-        return $this;
     }
 
     /**

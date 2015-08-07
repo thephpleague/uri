@@ -38,6 +38,11 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    protected static $invalidCharactersRegex = ',[?#],';
+
+    /**
      * Dot Segment pattern
      *
      * @var array
@@ -57,6 +62,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected function init($str)
     {
         $str = $this->validateString($str);
+        $this->assertValidComponent($str);
         $this->isAbsolute = self::IS_RELATIVE;
         if (static::$separator == mb_substr($str, 0, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;
@@ -86,10 +92,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function validate($data)
     {
-        if (preg_match('/[?#]/', $data)) {
-            throw new InvalidArgumentException('the path must not contain a query string or a URI fragment');
-        }
-
         $data = array_values(array_filter(explode(static::$separator, $data), function ($value) {
             return !is_null($value);
         }));

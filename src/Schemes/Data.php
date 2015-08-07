@@ -10,6 +10,7 @@
  */
 namespace League\Uri\Schemes;
 
+use InvalidArgumentException;
 use League\Uri\Components\DataPath;
 use League\Uri\Components\Fragment;
 use League\Uri\Components\Host;
@@ -26,6 +27,8 @@ use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\Data as DataUriInterface;
 use League\Uri\Schemes\Generic\AbstractUri;
+use League\Uri\Schemes\Generic\PathModifierTrait;
+use League\Uri\UriParser;
 
 /**
  * Value object representing Data Uri.
@@ -43,6 +46,8 @@ use League\Uri\Schemes\Generic\AbstractUri;
  */
 class Data extends AbstractUri implements DataUriInterface
 {
+    use PathModifierTrait;
+
     /**
      * Create a new instance of URI
      *
@@ -74,11 +79,62 @@ class Data extends AbstractUri implements DataUriInterface
     }
 
     /**
-     * Path Component
+     * Create a new instance from a file path
      *
-     * @var DataPathInterface
+     * @param string $path
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
      */
-    protected $path;
+    public static function createFromPath($path)
+    {
+        return new static(
+            new Scheme('data'),
+            new UserInfo(),
+            new Host(),
+            new Port(),
+            DataPath::createFromPath($path),
+            new Query(),
+            new Fragment()
+        );
+    }
+
+    /**
+     * Create a new instance from a hash of parse_url parts
+     *
+     * @param array $components
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components = (new UriParser())->formatComponents($components);
+
+        return new static(
+            new Scheme($components['scheme']),
+            new UserInfo($components['user'], $components['pass']),
+            new Host($components['host']),
+            new Port($components['port']),
+            new DataPath($components['path']),
+            new Query($components['query']),
+            new Fragment($components['fragment'])
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isValid()
+    {
+        if ($this->scheme->getContent() !== 'data') {
+            throw new InvalidArgumentException('The submitted scheme is invalid for the class '.get_class($this));
+        }
+
+        return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
+    }
 
     /**
      * {@inheritdoc}
@@ -94,13 +150,6 @@ class Data extends AbstractUri implements DataUriInterface
     public function withPath($path)
     {
         return $this->withProperty('path', $path);
-    }
-    /**
-     * {@inheritdoc}
-     */
-    protected function isValid()
-    {
-        return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
     }
 
     /**
@@ -165,51 +214,5 @@ class Data extends AbstractUri implements DataUriInterface
     public function withParameters($parameters)
     {
         return $this->withProperty('path', $this->path->withParameters($parameters));
-    }
-
-    /**
-     * Create a new instance from a file path
-     *
-     * @param string $path
-     *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
-     */
-    public static function createFromPath($path)
-    {
-        return new static(
-            new Scheme('data'),
-            new UserInfo(),
-            new Host(),
-            new Port(),
-            DataPath::createFromPath($path),
-            new Query(),
-            new Fragment()
-        );
-    }
-
-    /**
-     * Create a new instance from a hash of parse_url parts
-     *
-     * @param array $components
-     *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
-     */
-    public static function createFromComponents(array $components)
-    {
-        $components = static::formatComponents($components);
-
-        return new static(
-            new Scheme($components['scheme']),
-            new UserInfo($components['user'], $components['pass']),
-            new Host($components['host']),
-            new Port($components['port']),
-            new DataPath($components['path']),
-            new Query($components['query']),
-            new Fragment($components['fragment'])
-        );
     }
 }

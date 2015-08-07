@@ -12,13 +12,13 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Components\Host;
-use League\Uri\Components\PathFormatterTrait;
 use League\Uri\Components\Query;
 use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\UriPart;
 use League\Uri\Interfaces\Schemes\HierarchicalUri;
 use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Schemes\Generic\PathFormatterTrait;
 
 /**
  * A class to manipulate URI and URI components output

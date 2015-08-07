@@ -10,21 +10,83 @@
  */
 namespace League\Uri\Schemes\Generic;
 
+use Exception;
+use InvalidArgumentException;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Types\ImmutablePropertyTrait;
 use League\Uri\UriParser;
+use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
 /**
- * An abstract class to ease URI object creation.
+ * common URI Object properties and methods
  *
  * @package League.uri
  * @since   4.0.0
+ *
+ * @property-read SchemeInterface   $scheme
+ * @property-read UserInfoInterface $userInfo
+ * @property-read HostInterface     $host
+ * @property-read PortInterface     $port
+ * @property-read PathInterface     $path
+ * @property-read QueryInterface    $query
+ * @property-read FragmentInterface $fragment
  */
-abstract class AbstractUri implements Uri
+abstract class AbstractUri
 {
-    use GenericUriTrait;
+    use ImmutablePropertyTrait;
+
+    use PathFormatterTrait;
+
+    use HostModifierTrait;
+
+    use QueryModifierTrait;
+
+    /**
+     * Scheme Component
+     *
+     * @var SchemeInterface
+     */
+    protected $scheme;
+
+    /**
+     * User Information Part
+     *
+     * @var UserInfoInterface
+     */
+    protected $userInfo;
+
+    /**
+     * Port Component
+     *
+     * @var PortInterface
+     */
+    protected $port;
+
+    /**
+     * Fragment Component
+     *
+     * @var FragmentInterface
+     */
+    protected $fragment;
+
+    /**
+     * Supported Schemes
+     *
+     * @var array
+     */
+    protected static $supportedSchemes = [];
 
     /**
      * Check if a URI is valid
+     *
+     * @throws \InvalidArgumentException If the scheme is not supported
      *
      * @return bool
      */
@@ -45,28 +107,207 @@ abstract class AbstractUri implements Uri
     }
 
     /**
-     * Create a new instance from a hash of parse_url parts
+     * Assert the object is valid
      *
-     * @param array $components a hash representation of the URI similar to PHP parse_url function result
-     *
-     * @throws \InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
+     * @throws RuntimeException if the resulting URI is not valid
      */
-    abstract public static function createFromComponents(array $components);
+    protected function assertValidObject()
+    {
+        if (!$this->isValid()) {
+            throw new RuntimeException('The submitted properties will produce an invalid object');
+        }
+    }
 
     /**
-     * Format the components to works with all the constructors
-     *
-     * @param array $components a hash representation of the URI similar to PHP parse_url function result
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    protected static function formatComponents(array $components)
+    public function getScheme()
     {
-        return array_merge([
-            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
-            'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
-        ], $components);
+        return $this->scheme->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withScheme($scheme)
+    {
+        return $this->withProperty('scheme', $scheme);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withUserInfo($user, $pass = null)
+    {
+        if (null === $pass) {
+            $pass = '';
+        }
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        if ($this->userInfo->user->sameValueAs($userInfo->user)
+            && $this->userInfo->pass->sameValueAs($userInfo->pass)
+        ) {
+            return $this;
+        }
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
+
+        return $clone;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPort()
+    {
+        return $this->hasStandardPort() ? null : $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPort($port)
+    {
+        return $this->withProperty('port', $port);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutDotSegments()
+    {
+        return $this->withProperty('path', $this->path->withoutDotSegments());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFragment()
+    {
+        return $this->fragment->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withFragment($fragment)
+    {
+        return $this->withProperty('fragment', $fragment);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->scheme->getUriComponent().$this->getSchemeSpecificPart();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasStandardPort()
+    {
+        if ($this->port->isEmpty()) {
+            return true;
+        }
+
+        if ($this->scheme->isEmpty()) {
+            return false;
+        }
+
+        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        if ($this->host->isEmpty()) {
+            return '';
+        }
+
+        $port = '';
+        if (!$this->hasStandardPort()) {
+            $port = $this->port->getUriComponent();
+        }
+
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchemeSpecificPart()
+    {
+        $auth = $this->getAuthority();
+        if (!empty($auth)) {
+            $auth = '//'.$auth;
+        }
+
+        return $auth
+            .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty()
+    {
+        return empty($this->__toString());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return (new UriParser())->parse($this->__toString());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sameValueAs($uri)
+    {
+        if (!$uri instanceof UriInterface && !$uri instanceof Uri) {
+            throw new InvalidArgumentException(
+                'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
+                the `League\Uri\Interfaces\Schemes\Uri` interface'
+            );
+        }
+
+        try {
+            return static::createFromComponents((new UriParser())->parse($uri->__toString()))
+                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
+                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if any generic URI is valid
+     *
+     * @return bool
+     */
+    protected function isValidGenericUri()
+    {
+        return (new UriParser())->isValidUri(
+            $this->scheme->getUriComponent(),
+            $this->getAuthority(),
+            $this->path->getUriComponent()
+        );
     }
 }

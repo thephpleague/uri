@@ -8,9 +8,7 @@
  * @version   4.0.0
  * @package   League.uri
  */
-namespace League\Uri\Components;
-
-use League\Uri\Interfaces\Components\Path;
+namespace League\Uri\Schemes\Generic;
 
 /**
  * A trait to format the Path component

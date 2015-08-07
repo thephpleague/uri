@@ -20,16 +20,10 @@ use League\Uri\Interfaces\Components\Path as PathInterface;
  */
 class Path extends AbstractComponent implements PathInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected static $invalidCharactersRegex = ',[?#],';
+    use RemoveDotSegmentsTrait;
 
     /**
      * {@inheritdoc}
      */
-    public function withoutDotSegments()
-    {
-        return $this;
-    }
+    protected static $invalidCharactersRegex = ',[?#],';
 }

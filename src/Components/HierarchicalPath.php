@@ -21,6 +21,8 @@ use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterfa
  */
 class HierarchicalPath extends AbstractHierarchicalComponent implements HierarchicalPathInterface
 {
+    use RemoveDotSegmentsTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -41,13 +43,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * {@inheritdoc}
      */
     protected static $invalidCharactersRegex = ',[?#],';
-
-    /**
-     * Dot Segment pattern
-     *
-     * @var array
-     */
-    protected static $dot_segments = ['.' => 1, '..' => 1];
 
     /**
      * HierarchicalComponent delimiter
@@ -126,25 +121,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
-    public function withoutDotSegments()
-    {
-        $current = $this->__toString();
-        if (false === strpos($current, '.')) {
-            return $this;
-        }
-
-        $input = explode(static::$separator, $current);
-        $new   = implode(static::$separator, array_reduce($input, [$this, 'filterDotSegments'], []));
-        if (isset(static::$dot_segments[end($input)])) {
-            $new .= static::$separator;
-        }
-
-        return $this->modify($new);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function relativize(HierarchicalPathInterface $path)
     {
         $bSegments = explode(static::$separator, $this->withoutDotSegments()->__toString());
@@ -161,31 +137,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         return static::createFromArray(array_merge($res, array_slice($cSegments, $key)));
-    }
-
-    /**
-     * Filter Dot segment according to RFC3986
-     *
-     * @see http://tools.ietf.org/html/rfc3986#section-5.2.4
-     *
-     * @param array  $carry   Path segments
-     * @param string $segment a path segment
-     *
-     * @return array
-     */
-    protected function filterDotSegments(array $carry, $segment)
-    {
-        if ('..' == $segment) {
-            array_pop($carry);
-
-            return $carry;
-        }
-
-        if (!isset(static::$dot_segments[$segment])) {
-            $carry[] = $segment;
-        }
-
-        return $carry;
     }
 
     /**

@@ -40,22 +40,38 @@ class FtpTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider isValidProvider
-     * @expectedException RuntimeException
+     * @dataProvider invalidArgumentExceptionProvider
+     * @expectedException InvalidArgumentException
      * @param $input
      */
-    public function testIsValid($input)
+    public function testConstructorThrowInvalidArgumentException($input)
     {
         FtpUri::createFromString($input);
     }
 
-    public function isValidProvider()
+    public function invalidArgumentExceptionProvider()
+    {
+        return [
+            ['wss:/example.com'],
+            ['http://example.com'],
+        ];
+    }
+
+    /**
+     * @dataProvider runtimeExceptionExceptionProvider
+     * @expectedException RuntimeException
+     * @param $input
+     */
+    public function testConstructorThrowRuntimeException($input)
+    {
+        FtpUri::createFromString($input);
+    }
+
+    public function runtimeExceptionExceptionProvider()
     {
         return [
             ['ftp:example.com'],
-            ['wss:/example.com'],
-            ['http://example.com'],
-            ['ftp://example.com:80/foo/bar?foo=bar#content'],
+            ['ftp://example.com?query#fragment'],
         ];
     }
 

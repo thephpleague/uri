@@ -39,21 +39,37 @@ class WsTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider isValidProvider
-     * @expectedException RuntimeException
+     * @dataProvider invalidArgumentExceptionProvider
+     * @expectedException InvalidArgumentException
      * @param $input
      */
-    public function testIsValid($input)
+    public function testConstructorThrowInvalidArgumentException($input)
     {
         Ws::createFromString($input);
     }
 
-    public function isValidProvider()
+    public function invalidArgumentExceptionProvider()
     {
         return [
             ['ftp:example.com'],
-            ['wss:/example.com'],
             ['http://example.com'],
+        ];
+    }
+
+    /**
+     * @dataProvider runtimeExceptionExceptionProvider
+     * @expectedException RuntimeException
+     * @param $input
+     */
+    public function testConstructorThrowRuntimeException($input)
+    {
+        Ws::createFromString($input);
+    }
+
+    public function runtimeExceptionExceptionProvider()
+    {
+        return [
+            ['wss:/example.com'],
             ['ws://example.com:80/foo/bar?foo=bar#content'],
         ];
     }

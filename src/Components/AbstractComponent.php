@@ -24,13 +24,6 @@ abstract class AbstractComponent
     use ImmutableComponentTrait;
 
     /**
-     * Invalid Characters list
-     *
-     * @var string
-     */
-    protected static $invalidCharactersRegex;
-
-    /**
      * The component data
      *
      * @var int|string
@@ -78,20 +71,6 @@ abstract class AbstractComponent
         $this->assertValidComponent($data);
 
         return rawurldecode(trim($data));
-    }
-
-    /**
-     * Check the string against RFC3986 rules
-     *
-     * @param string $data
-     *
-     * @throws \InvalidArgumentException If the string is invalid
-     */
-    protected function assertValidComponent($data)
-    {
-        if (!empty(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $data)) {
-            throw new InvalidArgumentException('The component contains invalid characters');
-        }
     }
 
     /**

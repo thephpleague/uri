@@ -198,7 +198,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isValidProvider
-     * @expectedException RuntimeException
+     * @expectedException InvalidArgumentException
      * @param $input
      */
     public function testIsValid($input)

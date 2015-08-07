@@ -47,7 +47,8 @@ trait ImmutablePropertyTrait
     /**
      * Assert the object is valid
      *
-     * @throws InvalidArgumentException if the resulting URI is not valid
+     * @throws InvalidArgumentException if an object component is considered invalid
+     * @throws RuntimeException         if the resulting object is invalid
      */
     abstract protected function assertValidObject();
 

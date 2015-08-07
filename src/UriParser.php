@@ -72,6 +72,18 @@ class UriParser
     ];
 
     /**
+     * Format the components to works with all the constructors
+     *
+     * @param array $components a hash representation of the URI similar to PHP parse_url function result
+     *
+     * @return array
+     */
+    public function formatComponents(array $components)
+    {
+        return array_merge($this->components, $components);
+    }
+
+    /**
      * Parse a string as an URI according to the regexp form rfc3986
      *
      * Parse an URI string and return a hash similar to PHP's parse_url
@@ -113,7 +125,7 @@ class UriParser
      */
     public function build(array $components)
     {
-        $components = array_merge($this->components, $components);
+        $components = $this->formatComponents($components);
         $scheme = $this->filterScheme($components['scheme']);
         $userinfo = $this->getUserInfo($components['user'], $components['pass']);
         $port = $this->filterPort($components['port']);

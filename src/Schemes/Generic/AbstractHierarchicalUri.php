@@ -10,6 +10,7 @@
  */
 namespace League\Uri\Schemes\Generic;
 
+use InvalidArgumentException;
 use League\Uri\Components\Fragment;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Host;
@@ -17,6 +18,7 @@ use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
+use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
 use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
@@ -26,6 +28,7 @@ use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\HierarchicalUri;
 use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\UriParser;
 
 /**
  * Value object representing a Hierarchical URI.
@@ -43,7 +46,7 @@ use League\Uri\Interfaces\Schemes\Uri;
  */
 abstract class AbstractHierarchicalUri extends AbstractUri implements HierarchicalUri
 {
-    use HierarchicalPathModifierTrait;
+    use PathModifierTrait;
 
     /**
      * Create a new instance of URI
@@ -76,11 +79,17 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     }
 
     /**
-     * {@inheritdoc}
+     * Create a new instance from a hash of parse_url parts
+     *
+     * @param array $components a hash representation of the URI similar to PHP parse_url function result
+     *
+     * @throws \InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
      */
     public static function createFromComponents(array $components)
     {
-        $components = static::formatComponents($components);
+        $components = (new UriParser())->formatComponents($components);
 
         return new static(
             new Scheme($components['scheme']),
@@ -109,7 +118,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
         }
 
         if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
-            return false;
+            throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
         }
 
         return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
@@ -135,5 +144,78 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
         return $relative
                 ->withScheme('')->withUserInfo('')->withHost('')->withPort('')
                 ->withPath($this->path->relativize($relativePath));
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function appendPath($path)
+    {
+        return $this->withProperty('path', $this->path->append($path));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prependPath($path)
+    {
+        return $this->withProperty('path', $this->path->prepend($path));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterPath(callable $callable, $flag = Collection::FILTER_USE_VALUE)
+    {
+        return $this->withProperty('path', $this->path->filter($callable, $flag));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withExtension($extension)
+    {
+        return $this->withProperty('path', $this->path->withExtension($extension));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withTrailingSlash()
+    {
+        return $this->withProperty('path', $this->path->withTrailingSlash());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutTrailingSlash()
+    {
+        return $this->withProperty('path', $this->path->withoutTrailingSlash());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replaceSegment($offset, $value)
+    {
+        return $this->withProperty('path', $this->path->replace($offset, $value));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutSegments($offsets)
+    {
+        return $this->withProperty('path', $this->path->without($offsets));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withoutEmptySegments()
+    {
+        return $this->withProperty('path', $this->path->withoutEmptySegments());
     }
 }

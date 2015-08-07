@@ -45,26 +45,11 @@ trait ImmutablePropertyTrait
     }
 
     /**
-     * Tell whether the modified object is still valid after modification
-     *
-     * @return bool
-     */
-    protected function isValid()
-    {
-        return true;
-    }
-
-    /**
      * Assert the object is valid
      *
      * @throws InvalidArgumentException if the resulting URI is not valid
      */
-    protected function assertValidObject()
-    {
-        if (!$this->isValid()) {
-            throw new InvalidArgumentException('The submitted properties will produce an invalid object');
-        }
-    }
+    abstract protected function assertValidObject();
 
     /**
      * Magic read-only for protected properties

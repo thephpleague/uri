@@ -181,21 +181,19 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider invalidDataUriComponents
      * @expectedException InvalidArgumentException
-     * @param $path
      */
-    public function testCreateFromComponentsFailed($path)
+    public function testCreateFromComponentsFailedWithInvalidArgumentException()
     {
-        DataUri::createFromComponents($path);
+        DataUri::createFromComponents(parse_url('data:image/png;base64,°28'));
     }
 
-    public function invalidDataUriComponents()
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromComponentsFailedWithRuntimeException()
     {
-        return [
-            'HierarchicalURI' => [HttpUri::createFromString('http://www.example.com')->toArray()],
-            'invalid DataUri format' => [parse_url('data:image/png;base64,°28')],
-        ];
+        DataUri::createFromComponents(HttpUri::createFromString('http://www.example.com')->toArray());
     }
 
     public function testWithPath()

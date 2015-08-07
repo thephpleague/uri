@@ -41,7 +41,7 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider isValidProvider
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      * @param $input
      */
     public function testIsValid($input)

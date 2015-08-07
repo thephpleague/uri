@@ -151,4 +151,11 @@ class UserInfo implements UserInfoInterface
     {
         return $this->withProperty('pass', $pass);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function assertValidObject()
+    {
+    }
 }

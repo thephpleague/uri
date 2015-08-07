@@ -16,9 +16,6 @@ namespace League\Uri\Interfaces\Components;
  * @package League.uri
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
- *
- * @property-read User $user
- * @property-read Pass $pass
  */
 interface UserInfo extends UriPart
 {

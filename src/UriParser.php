@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use League\Uri\Components\HostIpTrait;
 use League\Uri\Components\HostnameTrait;
 use League\Uri\Components\PortValidatorTrait;
+use RuntimeException;
 
 /**
  * a class to parse a URI string according to RFC3986
@@ -21,7 +22,7 @@ use League\Uri\Components\PortValidatorTrait;
  * @package League.uri
  * @since   4.0.0
  */
-class Parser
+class UriParser
 {
     use HostIpTrait;
 
@@ -56,6 +57,11 @@ class Parser
     const SCHEME_REGEXP = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
     /**
+     * Path regular expression
+     */
+    const INVALID_PATH_REGEXP = ',[?#],';
+
+    /**
      * default components hash table
      *
      * @var array
@@ -78,7 +84,7 @@ class Parser
      *
      * @return array the array is similar to PHP's parse_url hash response
      */
-    public function parseUri($uri)
+    public function parse($uri)
     {
         preg_match(self::URI_REGEXP, $uri, $parts);
         $parts = $parts + [
@@ -92,6 +98,179 @@ class Parser
         $parts = $parts + $this->parseAuthority($parts);
 
         return array_replace($this->components, array_intersect_key($parts, $this->components));
+    }
+
+    /**
+     * Build a URI according to RFC3986 from a hash similar to PHP's parse_url
+     * No normalization is done on the build uri
+     *
+     * @param array $components The hash part array
+     *
+     * @throws InvalidArgumentException if some components value are invalid
+     * @throws RuntimeException         if the build array is invalid
+     *
+     * @return string
+     */
+    public function build(array $components)
+    {
+        $components = array_merge($this->components, $components);
+        $scheme = $this->filterScheme($components['scheme']);
+        $userinfo = $this->getUserInfo($components['user'], $components['pass']);
+        $port = $this->filterPort($components['port']);
+        $auth = $this->getAuthority($components['host'], $userinfo, $port);
+        $path  = $this->filterPath($components['path']);
+        $query = $this->filterQuery($components['query']);
+        $fragment = (null === $components['fragment']) ? '' : '#'.$components['fragment'];
+
+        if (!$this->isValidUri($scheme, $auth, $path)) {
+            throw new RuntimeException('The submitted components will produce an invalid URI');
+        }
+
+        return $scheme.$auth.$path.$query.$fragment;
+    }
+
+    /**
+     * Tell whether the build URI is valid
+     *
+     * @param string $scheme URI scheme component
+     * @param string $auth   URI auth part
+     * @param string $path   URI path component
+     *
+     * @return bool
+     */
+    public function isValidUri($scheme, $auth, $path)
+    {
+        if (false === strpos($path, ':')) {
+            return true;
+        }
+        $path = explode(':', $path);
+        $path = array_shift($path);
+
+        return !(empty($scheme.$auth) && strpos($path, '/') === false);
+    }
+
+    /**
+     * Filter and format the scheme for URI string representation
+     *
+     * @param string $scheme
+     *
+     * @throws InvalidArgumentException If the scheme is invalid
+     *
+     * @return string
+     */
+    protected function filterScheme($scheme)
+    {
+        $scheme = (string) $this->formatScheme($scheme);
+        if (!empty($scheme)) {
+            $scheme .= ':';
+        }
+
+        return $scheme;
+    }
+
+    /**
+     * Filter and format the path for URI string representation
+     *
+     * @param string $path
+     *
+     * @throws InvalidArgumentException If the path is invalid
+     *
+     * @return string
+     */
+    protected function filterPath($path)
+    {
+        if (preg_match(self::INVALID_PATH_REGEXP, $path)) {
+            throw new InvalidArgumentException('the path must not contain a query string or a URI fragment');
+        }
+
+        return $path;
+    }
+
+    /**
+     * Filter and format the query for URI string representation
+     *
+     * @param string $query
+     *
+     * @throws InvalidArgumentException If the query is invalid
+     *
+     * @return string
+     */
+    protected function filterQuery($query)
+    {
+        if (strpos($query, '#') !== false) {
+            throw new InvalidArgumentException('the query string must not contain a URI fragment');
+        }
+
+        if (null !== $query) {
+            $query = '?'.$query;
+        }
+
+        return $query;
+    }
+
+    /**
+     * Format the user info
+     *
+     * @return string
+     */
+    public function getUserInfo($user, $pass)
+    {
+        if (null === $user) {
+            return '';
+        }
+
+        $userinfo = (string) $user;
+        if (isset($pass)) {
+            $userinfo .= ':'.$pass;
+        }
+
+        return $userinfo.'@';
+    }
+
+    /**
+     * Format a URI authority according to the Formatter properties
+     *
+     * @param string $host the URI Host component
+     * @param string $host the URI userinfo part
+     * @param string $host the URI Port component
+     *
+     * @throws InvalidArgumentException If the host is invalid
+     *
+     * @return string
+     */
+    public function getAuthority($host, $userinfo, $port)
+    {
+        if (null === $host) {
+            return '';
+        }
+
+        if (!empty($host)) {
+            $this->validateHost($host);
+        }
+
+        return '//'.$userinfo.$host.$port;
+    }
+
+    /**
+     * Filter and format the port for URI string representation
+     *
+     * @param string $port
+     *
+     * @throws InvalidArgumentException If the port is invalid
+     *
+     * @return string
+     */
+    protected function filterPort($port)
+    {
+        if (null === $port) {
+            return '';
+        }
+        $port = $this->validatePort($port);
+        if (isset($port)) {
+            $port = ':'.$port;
+        }
+
+        return $port;
     }
 
     /**
@@ -236,182 +415,5 @@ class Parser
         if (127 <= count($labels)) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
-    }
-
-    /**
-     * Parse a query string into an associative array
-     *
-     * Multiple identical key will generate an array. This function
-     * differ from PHP parse_str as:
-     *    - it does not modify or remove parameters keys
-     *    - it does not create nested array
-     *
-     * @param string    $str          The query string to parse
-     * @param array     $separator    The query string separator
-     * @param int|false $encodingType The query string encoding mechanism
-     *
-     * @return array
-     */
-    public function parseQuery($str, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
-    {
-        $res = [];
-        if ('' == $str) {
-            return $res;
-        }
-        $encodingType = $this->validateEncodingType($encodingType);
-        $decoder = $this->getDecoder($encodingType);
-        foreach (explode($separator, $str) as $pair) {
-            $res = $this->parsePair($res, $decoder, $pair);
-        }
-
-        return $res;
-    }
-
-    /**
-     * validate the encoding type for the query related methods
-     *
-     * @param int|false $encodingType
-     */
-    protected function validateEncodingType($encodingType)
-    {
-        if (!in_array($encodingType, [PHP_QUERY_RFC3986, PHP_QUERY_RFC1738, false])) {
-            return PHP_QUERY_RFC3986;
-        }
-
-        return $encodingType;
-    }
-
-    /**
-     * Parse a query string pair
-     *
-     * @param callable $decoder a Callable to decode the query string pair
-     * @param array    $res     The associative array to add the pair to
-     * @param string   $pair    The query string pair
-     *
-     * @return array
-     */
-    protected function parsePair(array $res, callable $decoder, $pair)
-    {
-        $param = explode('=', $pair, 2);
-        $key   = $decoder(array_shift($param));
-        $value = array_shift($param);
-        if (!empty($value)) {
-            $value = $decoder($value);
-        }
-
-        if (!array_key_exists($key, $res)) {
-            return array_merge($res, [$key => $value]);
-        }
-
-        if (!is_array($res[$key])) {
-            $res[$key] = [$res[$key]];
-        }
-        $res[$key][] = $value;
-
-        return $res;
-    }
-
-    /**
-     * Build a query string from an associative array
-     *
-     * The method expects the return value from Query::parse to build
-     * a valid query string. This method differs from PHP http_build_query as:
-     *
-     *    - it does not modify parameters keys
-     *
-     * @param array     $arr          Query string parameters
-     * @param array     $separator    Query string separator
-     * @param int|false $encodingType Query string encoding
-     *
-     * @return string
-     */
-    public function buildQuery(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
-    {
-        $encodingType = $this->validateEncodingType($encodingType);
-        $encoder = $this->getEncoder($encodingType);
-        $arr = array_map(function ($value) {
-            return !is_array($value) ? [$value] : $value;
-        }, $arr);
-
-        $pairs = [];
-        foreach ($arr as $key => $value) {
-            $pairs = array_merge($pairs, $this->buildPair($encoder, $value, $encoder($key)));
-        }
-
-        return implode($separator, $pairs);
-    }
-
-    /**
-     * Build a query key/pair association
-     *
-     * @param callable $encoder a callable to encode the key/pair association
-     * @param array    $value   The query string value
-     * @param string   $key     The query string key
-     *
-     * @return string
-     */
-    protected function buildPair(callable $encoder, array $value, $key)
-    {
-        return array_reduce($value, function (array $carry, $data) use ($key, $encoder) {
-            $pair = $key;
-            if (null !== $data) {
-                $pair .= '='.$encoder($data);
-            }
-            $carry[] = $pair;
-
-            return $carry;
-        }, []);
-    }
-
-    /**
-     * Return the query string decoding mechanism
-     *
-     * @param int|false $encodingType
-     *
-     * @return callable
-     */
-    protected function getDecoder($encodingType)
-    {
-        if (PHP_QUERY_RFC3986 === $encodingType) {
-            return function ($value) {
-                return rawurldecode($value);
-            };
-        }
-
-        if (PHP_QUERY_RFC1738 === $encodingType) {
-            return function ($value) {
-                return urldecode($value);
-            };
-        }
-
-        return function ($value) {
-            return rawurldecode(str_replace('+', ' ', $value));
-        };
-    }
-
-    /**
-     * Return the query string encoding mechanism
-     *
-     * @param int|false $encodingType
-     *
-     * @return callable
-     */
-    protected function getEncoder($encodingType)
-    {
-        if (PHP_QUERY_RFC3986 === $encodingType) {
-            return function ($value) {
-                return rawurlencode($value);
-            };
-        }
-
-        if (PHP_QUERY_RFC1738 === $encodingType) {
-            return function ($value) {
-                return urlencode($value);
-            };
-        }
-
-        return function ($value) {
-            return $value;
-        };
     }
 }

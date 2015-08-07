@@ -158,7 +158,7 @@ class Formatter
     protected function formatUriPart(UriPart $part)
     {
         if ($part instanceof QueryInterface) {
-            return (new Parser())->buildQuery($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return (new QueryParser())->build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof HostInterface) {
@@ -213,31 +213,6 @@ class Formatter
     }
 
     /**
-     * Format the user info
-     *
-     * @param array $components Uri Components
-     *
-     * @return string
-     */
-    protected function getUserInfo(array $components)
-    {
-        $userinfo = '';
-        if (isset($components['user'])) {
-            $userinfo .= $components['user'];
-        }
-
-        if (isset($components['pass'])) {
-            $userinfo .= ':'.$components['pass'];
-        }
-
-        if (!empty($userinfo)) {
-            $userinfo .= '@';
-        }
-
-        return $userinfo;
-    }
-
-    /**
      * Format a URI authority according to the Formatter properties
      *
      * @param HierarchicalUri $uri
@@ -257,7 +232,7 @@ class Formatter
         }
 
         return '//'
-            .$this->getUserInfo($components)
+            .(new UriParser())->getUserInfo($components['user'], $components['pass'])
             .$this->formatHost(new Host($components['host']))
             .$port;
     }

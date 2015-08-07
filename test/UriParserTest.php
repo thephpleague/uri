@@ -3,19 +3,19 @@
 namespace League\Uri\test;
 
 use InvalidArgumentException;
-use League\Uri\Parser;
+use League\Uri\UriParser;
 use PHPUnit_Framework_TestCase;
 
 /**
  * @group parser
  */
-class ParserTest extends PHPUnit_Framework_TestCase
+class UriParserTest extends PHPUnit_Framework_TestCase
 {
     protected $parser;
 
     public function setUp()
     {
-        $this->parser = new Parser();
+        $this->parser = new UriParser();
     }
 
     /**
@@ -25,7 +25,17 @@ class ParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseSucced($uri, $expected)
     {
-        $this->assertSame($expected, $this->parser->parseUri($uri));
+        $this->assertSame($expected, $this->parser->parse($uri));
+    }
+
+    /**
+     * @dataProvider testValidURI
+     * @param $uri
+     * @param $expected
+     */
+    public function testBuildSucced($expected, $components)
+    {
+        $this->assertSame($expected, $this->parser->build($components));
     }
 
     public function testValidURI()
@@ -275,7 +285,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseFailed($uri)
     {
-        $this->parser->parseUri($uri);
+        $this->parser->parse($uri);
     }
 
     public function testInvalidURI()
@@ -290,70 +300,65 @@ class ParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  $query
-     * @param  $expected
-     * @dataProvider parserProvider
+     * @dataProvider testInvalidComponents
+     * @expectedException InvalidArgumentException
+     * @param $components
      */
-    public function testParse($query, $separator, $encoding, $expected)
+    public function testBuildThrowInvalidArgumentException($components)
     {
-        $this->assertSame($expected, $this->parser->parseQuery($query, $separator, $encoding));
+        $this->parser->build($components);
     }
 
-    public function parserProvider()
+    public function testInvalidComponents()
     {
         return [
-            'empty string' => ['', '&', PHP_QUERY_RFC3986, []],
-            'identical keys' => ['a=1&a=2', '&', PHP_QUERY_RFC3986, ['a' => ['1', '2']]],
-            'no value' => ['a&b', '&', PHP_QUERY_RFC3986, ['a' => null, 'b' => null]],
-            'empty value' => ['a=&b=', '&', PHP_QUERY_RFC3986, ['a' => '', 'b' => '']],
-            'php array' => ['a[]=1&a[]=2', '&', PHP_QUERY_RFC3986, ['a[]' => ['1', '2']]],
-            'preserve dot' => ['a.b=3', '&', PHP_QUERY_RFC3986, ['a.b' => '3']],
-            'decode' => ['a%20b=c%20d', '&', PHP_QUERY_RFC3986, ['a b' => 'c d']],
-            'no key stripping' => ['a=&b', '&', PHP_QUERY_RFC3986, ['a' => '', 'b' => null]],
-            'no value stripping' => ['a=b=', '&', PHP_QUERY_RFC3986, ['a' => 'b=']],
-            'key only' => ['a', '&', PHP_QUERY_RFC3986, ['a' => null]],
-            'preserve falsey 1' => ['0', '&', PHP_QUERY_RFC3986, ['0' => null]],
-            'preserve falsey 2' => ['0=', '&', PHP_QUERY_RFC3986, ['0' => '']],
-            'preserve falsey 3' => ['a=0', '&', PHP_QUERY_RFC3986, ['a' => '0']],
-            'no encoding' => ['a=0&toto=le+heros', '&', false, ['a' => '0', 'toto' => 'le heros']],
-            'legacy encoding' => ['john+doe=bar&a=0', '&', PHP_QUERY_RFC1738, ['john doe' => 'bar', 'a' => '0']],
-            'different separator' => ['a=0;b=0&c=4', ';', false, ['a' => '0', 'b' => '0&c=4']],
+            'invalid query' => [[
+                'scheme' => null,
+                'user' => null,
+                'pass' => null,
+                'host' => null,
+                'port' => null,
+                'path' => 'path',
+                'query' => 'yo#lo',
+                'fragment' => 'fragment',
+            ]],
+            'invalid path with query' => [[
+                'scheme' => null,
+                'user' => null,
+                'pass' => null,
+                'host' => null,
+                'port' => null,
+                'path' => 'pa?th',
+                'query' => 'query',
+                'fragment' => 'fragment',
+            ]],
+            'invalid path with fragment' => [[
+                'scheme' => null,
+                'user' => null,
+                'pass' => null,
+                'host' => null,
+                'port' => null,
+                'path' => 'pa#th',
+                'query' => 'query',
+                'fragment' => 'fragment',
+            ]],
         ];
     }
 
     /**
-     * @param $query
-     * @param $expected
-     * @dataProvider buildProvider
+     * @expectedException RuntimeException
      */
-    public function testBuild($query, $expected)
+    public function testBuildThrowRuntimeException()
     {
-        $this->assertSame($expected, $this->parser->buildQuery($query, '&', false));
-    }
-
-    public function buildProvider()
-    {
-        return [
-            'empty string'       => [[], ''],
-            'identical keys'     => [['a' => ['1', '2']], 'a=1&a=2'],
-            'no value'           => [['a' => null, 'b' => null], 'a&b'],
-            'empty value'        => [['a' => '', 'b' => ''], 'a=&b='],
-            'php array'          => [['a[]' => ['1', '2']], 'a[]=1&a[]=2'],
-            'preserve dot'       => [['a.b' => '3'], 'a.b=3'],
-            'no key stripping'   => [['a' => '', 'b' => null], 'a=&b'],
-            'no value stripping' => [['a' => 'b='], 'a=b='],
-            'key only'           => [['a' => null], 'a'],
-            'preserve falsey 1'  => [['0' => null], '0'],
-            'preserve falsey 2'  => [['0' => ''], '0='],
-            'preserve falsey 3'  => [['a' => '0'], 'a=0'],
-        ];
-    }
-
-    public function testFailSafeQueryParsing()
-    {
-        $arr = ['a' => '1', 'b' => 'le heros'];
-        $expected = 'a=1&b=le%20heros';
-
-        $this->assertSame($expected, $this->parser->buildQuery($arr, '&', 'yolo'));
+        $this->parser->build([
+            'scheme' => null,
+            'user' => null,
+            'pass' => null,
+            'host' => null,
+            'port' => null,
+            'path' => 'pa:th',
+            'query' => 'query',
+            'fragment' => 'fragment',
+        ]);
     }
 }

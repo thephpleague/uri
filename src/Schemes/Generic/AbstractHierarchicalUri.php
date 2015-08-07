@@ -105,14 +105,12 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     /**
      * Tell whether the Hierarchical URI is valid
      *
+     * @throws \InvalidArgumentException If the Scheme is not supported
+     *
      * @return bool
      */
     protected function isValidHierarchicalUri()
     {
-        if (!$this->isValidGenericUri()) {
-            return false;
-        }
-
         if ($this->scheme->isEmpty()) {
             return true;
         }

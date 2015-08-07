@@ -39,7 +39,8 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected function isValid()
     {
-        return $this->isValidHierarchicalUri();
+        return $this->isValidGenericUri()
+            && $this->isValidHierarchicalUri();
     }
 
     /**

@@ -14,6 +14,7 @@ use Exception;
 use InvalidArgumentException;
 use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
 use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Path as PathInterface;
 use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;

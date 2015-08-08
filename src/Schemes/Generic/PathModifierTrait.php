@@ -10,6 +10,8 @@
  */
 namespace League\Uri\Schemes\Generic;
 
+use League\Uri\Interfaces\Components\Path;
+
 /**
  * common URI Object path properties modifiers
  *
@@ -22,7 +24,7 @@ trait PathModifierTrait
     /**
      * Path Component
      *
-     * @var PathInterface
+     * @var Path
      */
     protected $path;
 

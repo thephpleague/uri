@@ -11,6 +11,7 @@
 namespace League\Uri\Types;
 
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * A trait to set and get immutable value

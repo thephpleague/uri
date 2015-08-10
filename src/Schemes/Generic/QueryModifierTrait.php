@@ -11,6 +11,7 @@
 namespace League\Uri\Schemes\Generic;
 
 use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Components\Query;
 
 /**
  * common URI Object query properties modifiers
@@ -23,7 +24,7 @@ trait QueryModifierTrait
     /**
      * Query Component
      *
-     * @var QueryInterface
+     * @var Query
      */
     protected $query;
 

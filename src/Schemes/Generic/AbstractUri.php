@@ -24,13 +24,13 @@ use RuntimeException;
  * @package League.uri
  * @since   4.0.0
  *
- * @property-read Scheme   $scheme
- * @property-read UserInfo $userInfo
- * @property-read Host     $host
- * @property-read Port     $port
- * @property-read Path     $path
- * @property-read Query    $query
- * @property-read Fragment $fragment
+ * @property-read \League\Uri\Interfaces\Components\Scheme   $scheme
+ * @property-read \League\Uri\Interfaces\Components\UserInfo $userInfo
+ * @property-read \League\Uri\Interfaces\Components\Host     $host
+ * @property-read \League\Uri\Interfaces\Components\Port     $port
+ * @property-read \League\Uri\Interfaces\Components\Path     $path
+ * @property-read \League\Uri\Interfaces\Components\Query    $query
+ * @property-read \League\Uri\Interfaces\Components\Fragment $fragment
  */
 abstract class AbstractUri
 {
@@ -45,28 +45,28 @@ abstract class AbstractUri
     /**
      * Scheme Component
      *
-     * @var Scheme
+     * @var \League\Uri\Interfaces\Components\Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var UserInfo
+     * @var \League\Uri\Interfaces\Components\UserInfo
      */
     protected $userInfo;
 
     /**
      * Port Component
      *
-     * @var Port
+     * @var \League\Uri\Interfaces\Components\Port
      */
     protected $port;
 
     /**
      * Fragment Component
      *
-     * @var Fragment
+     * @var \League\Uri\Interfaces\Components\Fragment
      */
     protected $fragment;
 

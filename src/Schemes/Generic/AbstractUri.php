@@ -12,13 +12,6 @@ namespace League\Uri\Schemes\Generic;
 
 use Exception;
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
-use League\Uri\Interfaces\Components\Host as HostInterface;
-use League\Uri\Interfaces\Components\Path as PathInterface;
-use League\Uri\Interfaces\Components\Port as PortInterface;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
-use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Types\ImmutablePropertyTrait;
 use League\Uri\UriParser;
@@ -31,13 +24,13 @@ use RuntimeException;
  * @package League.uri
  * @since   4.0.0
  *
- * @property-read SchemeInterface   $scheme
- * @property-read UserInfoInterface $userInfo
- * @property-read HostInterface     $host
- * @property-read PortInterface     $port
- * @property-read PathInterface     $path
- * @property-read QueryInterface    $query
- * @property-read FragmentInterface $fragment
+ * @property-read Scheme   $scheme
+ * @property-read UserInfo $userInfo
+ * @property-read Host     $host
+ * @property-read Port     $port
+ * @property-read Path     $path
+ * @property-read Query    $query
+ * @property-read Fragment $fragment
  */
 abstract class AbstractUri
 {
@@ -52,28 +45,28 @@ abstract class AbstractUri
     /**
      * Scheme Component
      *
-     * @var SchemeInterface
+     * @var Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var UserInfoInterface
+     * @var UserInfo
      */
     protected $userInfo;
 
     /**
      * Port Component
      *
-     * @var PortInterface
+     * @var Port
      */
     protected $port;
 
     /**
      * Fragment Component
      *
-     * @var FragmentInterface
+     * @var Fragment
      */
     protected $fragment;
 
@@ -87,7 +80,7 @@ abstract class AbstractUri
     /**
      * Check if a URI is valid
      *
-     * @throws \InvalidArgumentException If the scheme is not supported
+     * @throws InvalidArgumentException If the scheme is not supported
      *
      * @return bool
      */
@@ -98,7 +91,7 @@ abstract class AbstractUri
      *
      * @param string $uri
      *
-     * @throws \InvalidArgumentException If the URI can not be parsed
+     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */

@@ -25,11 +25,11 @@ class Port extends AbstractComponent implements PortInterface
     /**
      * Validate Port data
      *
-     * @param int $port
+     * @param null|int $port
      *
      * @throws \InvalidArgumentException if the submitted port is invalid
      *
-     * @return int
+     * @return null|int
      */
     protected function validate($port)
     {
@@ -57,7 +57,7 @@ class Port extends AbstractComponent implements PortInterface
     /**
      * Initialize the Port data
      *
-     * @param int $data
+     * @param null|int $data
      */
     protected function init($data)
     {

@@ -203,7 +203,7 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
         $user = (array_key_exists('PHP_AUTH_USER', $server)) ? $server['PHP_AUTH_USER'] : null;
         $pass = (array_key_exists('PHP_AUTH_PW', $server)) ? $server['PHP_AUTH_PW'] : null;
 
-        return (new UriParser())->getUserInfo($user, $pass);
+        return (new UriParser())->buildUserInfo($user, $pass);
     }
 
     /**

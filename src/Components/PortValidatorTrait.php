@@ -24,19 +24,26 @@ trait PortValidatorTrait
     /**
      * Validate a Port number
      *
-     * @param int $port the port number
+     * @param mixed $port the port number
      *
      * @throws InvalidArgumentException If the port number is invalid
      *
-     * @return int
+     * @return null|int
      */
     protected function validatePort($port)
     {
+        if (is_bool($port)) {
+            throw new InvalidArgumentException('The submitted port is invalid');
+        }
+
+        if (in_array($port, [null, ''])) {
+            return null;
+        }
         $res = filter_var($port, FILTER_VALIDATE_INT, ['options' => [
             'min_range' => PortInterface::MINIMUM,
             'max_range' => PortInterface::MAXIMUM,
         ]]);
-        if (false === $res || is_bool($port)) {
+        if (false === $res) {
             throw new InvalidArgumentException('The submitted port is invalid');
         }
 

@@ -25,19 +25,14 @@ class DataTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validStringUri
-     * @param $str
-     * @param $mimetype
-     * @param $parameters
-     * @param $data
-     * @param $asArray
-     * @param $isBinaryData
      */
-    public function testCreateFromString($str, $mimetype, $parameters, $data, $asArray, $isBinaryData)
+    public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $asArray, $isBinaryData)
     {
         $uri = DataUri::createFromString($str);
         $this->assertSame('data', $uri->getScheme());
         $this->assertSame($mimetype, $uri->getMimeType());
         $this->assertSame($parameters, $uri->getParameters());
+        $this->assertSame($mediatype, $uri->getMediatype());
         $this->assertSame($data, $uri->getData());
         $this->assertSame($asArray, $uri->toArray());
         $this->assertSame($isBinaryData, $uri->isBinaryData());
@@ -53,6 +48,7 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'uri' => 'data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
                 'mimetype' => 'text/plain',
                 'parameters' => 'charset=us-ascii',
+                'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
                 'asArray' => [
                     'scheme' => 'data',
@@ -70,6 +66,7 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'uri' => 'data:,Bonjour%20le%20monde%21',
                 'mimetype' => 'text/plain',
                 'parameters' => 'charset=us-ascii',
+                'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
                 'asArray' => [
                     'scheme' => 'data',
@@ -87,6 +84,7 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'uri' => 'data:text/plain,Bonjour%20le%20monde%21',
                 'mimetype' => 'text/plain',
                 'parameters' => 'charset=us-ascii',
+                'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
                 'asArray' => [
                     'scheme' => 'data',
@@ -104,6 +102,7 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'uri' => 'data:,',
                 'mimetype' => 'text/plain',
                 'parameters' => 'charset=us-ascii',
+                'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => '',
                 'asArray' => [
                     'scheme' => 'data',
@@ -121,6 +120,7 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'uri' => 'data:image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
                 'mimetype' => 'image/gif',
                 'parameters' => 'charset=binary',
+                'mediatype' => 'image/gif;charset=binary',
                 'data' => 'R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
                 'asArray' => [
                     'scheme' => 'data',

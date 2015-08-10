@@ -171,6 +171,14 @@ class Data extends AbstractUri implements DataUriInterface
     /**
      * {@inheritdoc}
      */
+    public function getMediatype()
+    {
+        return $this->path->getMimeType().';'.$this->path->getParameters();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getData()
     {
         return $this->path->getData();

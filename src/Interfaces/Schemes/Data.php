@@ -47,6 +47,17 @@ interface Data extends Uri
     public function getParameters();
 
     /**
+     * Retrieve the mediatype associated with the URI.
+     *
+     * If no mediatype is present, this method MUST return the default parameter 'text/plain;charset=US-ASCII'.
+     *
+     * @see http://tools.ietf.org/html/rfc2397#section-3
+     *
+     * @return string The URI scheme.
+     */
+    public function getMediatype();
+
+    /**
      * Retrieve the data associated with the URI.
      *
      * If no data is present, this method MUST return a empty string.

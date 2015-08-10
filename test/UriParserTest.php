@@ -275,6 +275,19 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => 'fragment',
                 ],
             ],
+            'URI with emtpy query and fragment' => [
+                '?#',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '',
+                    'query' => '',
+                    'fragment' => '',
+                ],
+            ],
         ];
     }
 
@@ -342,23 +355,51 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                 'query' => 'query',
                 'fragment' => 'fragment',
             ]],
+            'invalid user component' => [[
+                'scheme' => 'scheme',
+                'user' => 'user:pass',
+                'pass' => null,
+                'host' => null,
+                'port' => null,
+                'path' => 'path',
+                'query' => 'query',
+                'fragment' => 'fragment',
+            ]],
+            'invalid pass' => [[
+                'scheme' => 'scheme',
+                'user' => 'user',
+                'pass' => 'pass?yeah',
+                'host' => null,
+                'port' => null,
+                'path' => 'path',
+                'query' => 'query',
+                'fragment' => 'fragment',
+            ]],
         ];
     }
 
     /**
+     * @dataProvider testBuildFailedProvider
      * @expectedException RuntimeException
      */
-    public function testBuildThrowRuntimeException()
+    public function testBuildThrowRuntimeException($components)
     {
-        $this->parser->build([
-            'scheme' => null,
-            'user' => null,
-            'pass' => null,
-            'host' => null,
-            'port' => null,
-            'path' => 'pa:th',
-            'query' => 'query',
-            'fragment' => 'fragment',
-        ]);
+        $this->parser->build($components);
+    }
+
+    public function testBuildFailedProvider()
+    {
+        return [
+            'invalid path' => [[
+                'scheme' => null,
+                'user' => null,
+                'pass' => null,
+                'host' => null,
+                'port' => null,
+                'path' => 'pa:th',
+                'query' => 'query',
+                'fragment' => 'fragment',
+            ]],
+        ];
     }
 }

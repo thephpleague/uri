@@ -285,8 +285,8 @@ abstract class AbstractUri
 
         try {
             return static::createFromComponents((new UriParser())->parse($uri->__toString()))
-                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
-                ->toAscii()->ksortQuery()->withoutDotSegments()->__toString();
+                ->hostToAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
+                ->hostToAscii()->ksortQuery()->withoutDotSegments()->__toString();
         } catch (Exception $e) {
             return false;
         }

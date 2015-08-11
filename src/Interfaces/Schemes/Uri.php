@@ -388,6 +388,108 @@ interface Uri
     public function filterQuery(callable $callable, $flag = Collection::FILTER_USE_VALUE);
 
     /**
+     * Return an instance with the host in his IDN form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host in its IDN form using RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
+     */
+    public function hostToUnicode();
+
+    /**
+     * Return an instance with the host in his punycode encoded form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host transcoded using to ascii the RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
+     */
+    public function hostToAscii();
+
+    /**
+     * Return an instance without the host zone identifier according to RFC6874
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance without the host zone identifier according to RFC6874
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     *
+     * @return static
+     */
+    public function withoutZoneIdentifier();
+
+    /**
+     * Return an instance with the Host appended
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified host with the appended labels
+     *
+     * @param HierarchicalComponent|string $host the data to append
+     *
+     * @return static
+     */
+    public function appendHost($host);
+
+    /**
+     * Return an instance with the Host prepended
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified host with the prepended labels
+     *
+     * @param HierarchicalComponent|string $host the data to prepend
+     *
+     * @return static
+     */
+    public function prependHost($host);
+
+    /**
+     * Return an instance with one of its Host label replaced
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified host with the replaced labels
+     *
+     * @param int                          $key   the Host label offset
+     * @param HierarchicalComponent|string $value the data to inject
+     *
+     * @return static
+     */
+    public function replaceLabel($key, $value);
+
+    /**
+     * Return an instance without the submitted host labels
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the modified host without the selected labels
+     *
+     * @param callable|array $keys the list of label offsets to remove from the Host
+     *                             if a callable is given it should filter the list
+     *                             of offset to remove from the Host
+     *
+     * @return static
+     */
+    public function withoutLabels($keys);
+
+    /**
+     * Return an instance with the filtered host label
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance containing the filtered labels
+     *
+     * @param callable $callable the callable should filter the list
+     *                           of label to remain in the host
+     *
+     * @param int $flag Flag determining what argument are sent to callback
+     *
+     * @return static
+     */
+    public function filterHost(callable $callable, $flag = Collection::FILTER_USE_VALUE);
+
+    /**
      * Retrieve the scheme specific part of the URI.
      *
      * If no specific part information is present, this method MUST return an empty

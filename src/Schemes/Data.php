@@ -111,7 +111,7 @@ class Data extends AbstractUri implements DataUriInterface
      */
     public static function createFromComponents(array $components)
     {
-        $components = (new UriParser())->formatComponents($components);
+        $components = (new UriParser())->normalizeUriComponents($components);
 
         return new static(
             new Scheme($components['scheme']),
@@ -195,7 +195,7 @@ class Data extends AbstractUri implements DataUriInterface
     /**
      * {@inheritdoc}
      */
-    public function toBinary()
+    public function dataToBinary()
     {
         return $this->withProperty('path', $this->path->toBinary());
     }
@@ -203,7 +203,7 @@ class Data extends AbstractUri implements DataUriInterface
     /**
      * {@inheritdoc}
      */
-    public function toAscii()
+    public function dataToAscii()
     {
         return $this->withProperty('path', $this->path->toAscii());
     }

@@ -114,7 +114,7 @@ interface Data extends Uri
      *
      * @return static
      */
-    public function toBinary();
+    public function dataToBinary();
 
     /**
      * Returns an instance where the data part is url encoded following RFC3986 rules
@@ -124,5 +124,5 @@ interface Data extends Uri
      *
      * @return static
      */
-    public function toAscii();
+    public function dataToAscii();
 }

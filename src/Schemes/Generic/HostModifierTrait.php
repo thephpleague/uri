@@ -14,7 +14,7 @@ use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\Host;
 
 /**
- * common URI Object query properties modifiers
+ * common URI Object host properties modifiers
  *
  * @package League.uri
  * @since   4.0.0
@@ -76,7 +76,7 @@ trait HostModifierTrait
     /**
      * {@inheritdoc}
      */
-    public function toUnicode()
+    public function hostToUnicode()
     {
         return $this->withProperty('host', $this->host->toUnicode());
     }
@@ -84,7 +84,7 @@ trait HostModifierTrait
     /**
      * {@inheritdoc}
      */
-    public function toAscii()
+    public function hostToAscii()
     {
         return $this->withProperty('host', $this->host->toAscii());
     }

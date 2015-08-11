@@ -91,13 +91,13 @@ class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
     public function testToUnicode()
     {
         $uri = HttpUri::createFromString('http://xn--mgbh0fb.xn--kgbechtv/where/to/go');
-        $this->assertSame('مثال.إختبار', $uri->toUnicode()->getHost());
+        $this->assertSame('مثال.إختبار', $uri->hostToUnicode()->getHost());
     }
 
     public function testToAscii()
     {
         $uri = HttpUri::createFromString('http://مثال.إختبار/where/to/go');
-        $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $uri->toAscii()->getHost());
+        $this->assertSame('xn--mgbh0fb.xn--kgbechtv', $uri->HostToAscii()->getHost());
     }
 
     public function testFilterQueryParameters()

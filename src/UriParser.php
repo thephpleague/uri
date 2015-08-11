@@ -44,13 +44,14 @@ class UriParser
     ];
 
     /**
-     * Format the components to works with all the constructors
+     * Normalize URI components hash
      *
-     * @param array $components a hash representation of the URI similar to PHP parse_url function result
+     * @param array $components a hash representation of the URI components
+     *                          similar to PHP parse_url function result
      *
      * @return array
      */
-    public function formatComponents(array $components)
+    public function normalizeUriComponents(array $components)
     {
         return array_merge($this->components, $components);
     }
@@ -91,22 +92,21 @@ class UriParser
     public function parse($uri)
     {
         $uriRegexp = ',^((?<scheme>[^:/?\#]+):)?(?<authority>//(?<acontent>[^/?\#]*))?
-            (?<path>[^?\#]*)(?<query>\?(?<qcontent>[^\#]*))?
-            (?<fragment>\#(?<fcontent>.*))?,x';
+            (?<path>[^?\#]*)(?<query>\?(?<qcontent>[^\#]*))?(?<fragment>\#(?<fcontent>.*))?,x';
         preg_match($uriRegexp, $uri, $parts);
 
         $parts = $parts + [
             'scheme' => '', 'authority' => '', 'acontent' => '',
-            'path' => '', 'query' => '', 'qcontent' => '',
-            'fragment' => '', 'fcontent' => '',
+            'path' => '', 'query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => '',
         ];
-        $parts['scheme'] = $this->filterScheme($parts['scheme']);
-        $parts['scheme'] = empty($parts['scheme']) ? null : $parts['scheme'];
-        $parts['query'] = empty($parts['query']) ? null : $parts['qcontent'];
-        $parts['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
-        $parts = $parts + $this->parseAuthority($parts);
 
-        return array_replace($this->components, array_intersect_key($parts, $this->components));
+        $components             = array_replace($this->components, $this->parseAuthority($parts));
+        $components['path']     = $parts['path'];
+        $components['scheme']   = empty($this->filterScheme($parts['scheme'])) ? null : $parts['scheme'];
+        $components['query']    = empty($parts['query']) ? null : $parts['qcontent'];
+        $components['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
+
+        return $components;
     }
 
     /**
@@ -141,7 +141,7 @@ class UriParser
      */
     public function build(array $components)
     {
-        $components = $this->formatComponents($components);
+        $components = $this->normalizeUriComponents($components);
         $scheme = $this->buildScheme($components['scheme']);
         $userinfo = $this->buildUserInfo($components['user'], $components['pass']);
         $auth = $this->buildAuthority($components['host'], $userinfo, $components['port']);

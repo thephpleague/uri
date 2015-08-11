@@ -89,7 +89,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
      */
     public static function createFromComponents(array $components)
     {
-        $components = (new UriParser())->formatComponents($components);
+        $components = (new UriParser())->normalizeUriComponents($components);
 
         return new static(
             new Scheme($components['scheme']),

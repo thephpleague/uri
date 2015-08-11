@@ -243,7 +243,16 @@ class DataTest extends PHPUnit_Framework_TestCase
      */
     public function testToBinary($uri)
     {
-        $this->assertTrue($uri->toBinary()->isBinaryData());
+        $this->assertTrue($uri->dataToBinary()->isBinaryData());
+    }
+
+    /**
+     * @dataProvider fileProvider
+     * @param $uri
+     */
+    public function testToAscii($uri)
+    {
+        $this->assertFalse($uri->dataToAscii()->isBinaryData());
     }
 
     public function fileProvider()

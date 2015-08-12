@@ -183,15 +183,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     {
         return [
             'normal URI' => [HttpUri::createFromString('http://a/b/c'), false],
-            'incomplete authority' => [new HttpUri(
-                new Components\Scheme(),
-                new Components\UserInfo('foo', 'bar'),
-                new Components\Host(),
-                new Components\Port(80),
-                new Components\HierarchicalPath(),
-                new Components\Query(),
-                new Components\Fragment()
-            ), true],
             'empty URI components' => [new HttpUri(
                 new Components\Scheme(),
                 new Components\UserInfo(),
@@ -368,7 +359,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider invalidURI
-     * @expectedException InvalidArgumentException
+     * @expectedException RuntimeException
      * @param $input
      */
     public function testCreateFromInvalidUrlKO($input)

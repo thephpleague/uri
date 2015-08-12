@@ -29,7 +29,8 @@ trait HostnameTrait
 
     /**
      * Tells whether we have a IDN or not
-     * @var boolean
+     *
+     * @var bool
      */
     protected $isIdn = false;
 
@@ -52,9 +53,12 @@ trait HostnameTrait
      */
     protected function validateStringHost($str)
     {
-        $host       = $this->lower($this->setIsAbsolute($str));
+        if (empty($str)) {
+            return [];
+        }
+        $host = $this->lower($this->setIsAbsolute($str));
         $raw_labels = explode(static::$separator, $host);
-        $labels     = array_map(function ($value) {
+        $labels = array_map(function ($value) {
             return idn_to_ascii($value);
         }, $raw_labels);
 
@@ -113,7 +117,7 @@ trait HostnameTrait
             throw new InvalidArgumentException('Invalid Hostname, empty labels are not allowed');
         }
 
-        $this->isValidLabelsCount($labels);
+        $this->assertLabelsCount($labels);
         $this->isValidContent($labels);
     }
 
@@ -124,7 +128,7 @@ trait HostnameTrait
      *
      * @throws InvalidArgumentException If the validation fails
      */
-    abstract protected function isValidLabelsCount(array $labels);
+    abstract protected function assertLabelsCount(array $labels);
 
     /**
      * Validated the Host Label Pattern

@@ -40,9 +40,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected function init($str)
     {
         $str = $this->validateString($str);
-        if (!empty($str)) {
-            $this->data = $this->validate($str);
-        }
+        $this->data = $this->validate($str);
         $this->setLiteral();
     }
 
@@ -167,7 +165,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      *
      * @throws InvalidArgumentException If the validation fails
      */
-    protected function isValidLabelsCount(array $labels)
+    protected function assertLabelsCount(array $labels)
     {
         if (127 <= count(array_merge($this->data, $labels))) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');

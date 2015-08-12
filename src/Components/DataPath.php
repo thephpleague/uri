@@ -3,11 +3,12 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @link      https://github.com/thephpleague/uri/
- * @copyright Copyright (c) 2013-2015 Ignace Nyamagana Butera
+ * @package   League.uri
+ * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
+ * @copyright 2013-2015 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.0.0
- * @package   League.uri
+ * @link      https://github.com/thephpleague/uri/
  */
 namespace League\Uri\Components;
 
@@ -20,7 +21,8 @@ use SplFileObject;
  * Value object representing a URI path component.
  *
  * @package League.uri
- * @since 1.0.0
+ * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
+ * @since   4.0.0
  */
 class DataPath extends Path implements DataPathInterface
 {
@@ -65,12 +67,9 @@ class DataPath extends Path implements DataPathInterface
      */
     public function __construct($str = null)
     {
-        if (empty($str)) {
-            $str = '';
-        }
-        $str = $this->validateString($str);
         if (!empty($str)) {
-            $this->validate($this->extractPathParts($str));
+            $parts = $this->extractPathParts($this->validateString($str));
+            $this->validate($parts);
         }
     }
 
@@ -87,14 +86,14 @@ class DataPath extends Path implements DataPathInterface
     {
         $this->assertValidComponent($str);
         if (!mb_detect_encoding($str, 'US-ASCII', true)
-            || !preg_match('|^(?<mediatype>.*)?,(?<data>.*)$|i', $str, $matches)
+            || !preg_match('|(^(?<mediatype>.*)?,(?<data>.*)$)?|i', $str, $matches)
         ) {
             throw new InvalidArgumentException(
                 sprintf('The submitted path `%s` is invalid according to RFC2937', $str)
             );
         }
 
-        return $matches;
+        return $matches + ['mediatype' => '', 'data' => ''];
     }
 
     /**

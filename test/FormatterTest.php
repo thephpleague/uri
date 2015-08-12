@@ -122,7 +122,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $formatter->setQuerySeparator('&amp;');
         $formatter->setHostEncoding(Uri\Formatter::HOST_AS_ASCII);
         $expected = '/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
-        $uri = $this->uri->withScheme('')->withHost('')->withPort(null)->withUserInfo('');
+        $uri = $this->uri->withScheme('')->withPort(null)->withUserInfo('')->withHost('');
         $this->assertSame($expected, $formatter->format($uri));
     }
 

@@ -226,10 +226,6 @@ abstract class AbstractUri
      */
     public function getAuthority()
     {
-        if ($this->host->isEmpty()) {
-            return '';
-        }
-
         $port = '';
         if (!$this->hasStandardPort()) {
             $port = $this->port->getUriComponent();

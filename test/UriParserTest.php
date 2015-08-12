@@ -28,16 +28,6 @@ class UriParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $this->parser->parse($uri));
     }
 
-    /**
-     * @dataProvider testValidURI
-     * @param $uri
-     * @param $expected
-     */
-    public function testBuildSucced($expected, $components)
-    {
-        $this->assertSame($expected, $this->parser->build($components));
-    }
-
     public function testValidURI()
     {
         return [
@@ -108,6 +98,19 @@ class UriParserTest extends PHPUnit_Framework_TestCase
             ],
             'URI without port' => [
                 'scheme://user:pass@host/path?query#fragment',
+                [
+                    'scheme' => 'scheme',
+                    'user' => 'user',
+                    'pass' => 'pass',
+                    'host' => 'host',
+                    'port' => null,
+                    'path' => '/path',
+                    'query' => 'query',
+                    'fragment' => 'fragment',
+                ],
+            ],
+            'URI with an empty port' => [
+                'scheme://user:pass@host:/path?query#fragment',
                 [
                     'scheme' => 'scheme',
                     'user' => 'user',
@@ -294,7 +297,6 @@ class UriParserTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider testInvalidURI
      * @expectedException InvalidArgumentException
-     * @param $uri
      */
     public function testParseFailed($uri)
     {
@@ -313,93 +315,19 @@ class UriParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testInvalidComponents
+     * @dataProvider testInvalidBuildUserInfoProvider
      * @expectedException InvalidArgumentException
-     * @param $components
      */
-    public function testBuildThrowInvalidArgumentException($components)
+    public function testBuildUserInfoFailed($user, $pass)
     {
-        $this->parser->build($components);
+        $this->parser->buildUserInfo($user, $pass);
     }
 
-    public function testInvalidComponents()
+    public function testInvalidBuildUserInfoProvider()
     {
         return [
-            'invalid query' => [[
-                'scheme' => null,
-                'user' => null,
-                'pass' => null,
-                'host' => null,
-                'port' => null,
-                'path' => 'path',
-                'query' => 'yo#lo',
-                'fragment' => 'fragment',
-            ]],
-            'invalid path with query' => [[
-                'scheme' => null,
-                'user' => null,
-                'pass' => null,
-                'host' => null,
-                'port' => null,
-                'path' => 'pa?th',
-                'query' => 'query',
-                'fragment' => 'fragment',
-            ]],
-            'invalid path with fragment' => [[
-                'scheme' => null,
-                'user' => null,
-                'pass' => null,
-                'host' => null,
-                'port' => null,
-                'path' => 'pa#th',
-                'query' => 'query',
-                'fragment' => 'fragment',
-            ]],
-            'invalid user component' => [[
-                'scheme' => 'scheme',
-                'user' => 'user:pass',
-                'pass' => null,
-                'host' => null,
-                'port' => null,
-                'path' => 'path',
-                'query' => 'query',
-                'fragment' => 'fragment',
-            ]],
-            'invalid pass' => [[
-                'scheme' => 'scheme',
-                'user' => 'user',
-                'pass' => 'pass?yeah',
-                'host' => null,
-                'port' => null,
-                'path' => 'path',
-                'query' => 'query',
-                'fragment' => 'fragment',
-            ]],
-        ];
-    }
-
-    /**
-     * @dataProvider testBuildFailedProvider
-     * @expectedException RuntimeException
-     */
-    public function testBuildThrowRuntimeException($components)
-    {
-        $this->parser->build($components);
-    }
-
-    public function testBuildFailedProvider()
-    {
-        return [
-            'invalid path' => [[
-                'scheme' => null,
-                'user' => null,
-                'pass' => null,
-                'host' => null,
-                'port' => null,
-                'path' => 'pa:th',
-                'query' => 'query',
-                'fragment' => 'fragment',
-            ]],
+            'invalid user' => ['dsfsd:f', 'dfdsqdsf'],
+            'invalid pass' => ['dqfdsf', 'sdq@fs'],
         ];
     }
 }

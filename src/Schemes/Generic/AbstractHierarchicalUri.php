@@ -91,6 +91,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     {
         $components = (new UriParser())->normalizeUriComponents($components);
 
+
         return new static(
             new Scheme($components['scheme']),
             new UserInfo($components['user'], $components['pass']),
@@ -111,15 +112,27 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
      */
     protected function isValidHierarchicalUri()
     {
-        if ($this->scheme->isEmpty()) {
-            return true;
+        $this->assertSupportedScheme();
+
+        $pos = strpos($this->getSchemeSpecificPart(), '//');
+        if (!$this->scheme->isEmpty() && 0 !== $pos) {
+            return false;
         }
 
-        if (!isset(static::$supportedSchemes[$this->scheme->__toString()])) {
+        return !($this->host->isEmpty() && 0 === $pos);
+    }
+
+    /**
+     * Assert whether the current scheme is supported by the URI object
+     *
+     * @throws \InvalidArgumentException If the Scheme is not supported
+     */
+    protected function assertSupportedScheme()
+    {
+        $scheme = $this->scheme->__toString();
+        if (!empty($scheme) && !isset(static::$supportedSchemes[$scheme])) {
             throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
         }
-
-        return !($this->host->isEmpty() && !empty($this->getSchemeSpecificPart()));
     }
 
     /**

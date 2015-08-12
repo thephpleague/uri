@@ -15,7 +15,6 @@ use League\Uri\Components\HostIpTrait;
 use League\Uri\Components\HostnameTrait;
 use League\Uri\Components\PortValidatorTrait;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
-use RuntimeException;
 
 /**
  * a class to parse a URI string according to RFC3986
@@ -91,69 +90,92 @@ class UriParser
      */
     public function parse($uri)
     {
-        $uriRegexp = ',^((?<scheme>[^:/?\#]+):)?(?<authority>//(?<acontent>[^/?\#]*))?
-            (?<path>[^?\#]*)(?<query>\?(?<qcontent>[^\#]*))?(?<fragment>\#(?<fcontent>.*))?,x';
+        $uriRegexp = ',^((?<scheme>[^:/?\#]+):)?
+            (?<authority>//(?<acontent>[^/?\#]*))?
+            (?<path>[^?\#]*)
+            (?<query>\?(?<qcontent>[^\#]*))?
+            (?<fragment>\#(?<fcontent>.*))?,x';
+
         preg_match($uriRegexp, $uri, $parts);
+        $parts += ['query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => ''];
 
-        $parts = $parts + [
-            'scheme' => '', 'authority' => '', 'acontent' => '',
-            'path' => '', 'query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => '',
-        ];
-
-        $components             = array_replace($this->components, $this->parseAuthority($parts));
-        $components['path']     = $parts['path'];
-        $components['scheme']   = empty($this->filterScheme($parts['scheme'])) ? null : $parts['scheme'];
-        $components['query']    = empty($parts['query']) ? null : $parts['qcontent'];
+        $components = array_replace($this->components, $this->parseAuthority($parts));
+        $components['path'] = $parts['path'];
+        $components['scheme'] = empty($this->filterScheme($parts['scheme'])) ? null : $parts['scheme'];
+        $components['query'] = empty($parts['query']) ? null : $parts['qcontent'];
         $components['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
 
         return $components;
     }
 
     /**
-     * Build a URI according to RFC3986 from a hash similar to PHP's parse_url
-     * No normalization is done on the build uri
+     * Parse a URI authority part into its components
      *
-     * Depending on which components of the URI are present, the resulting
-     * string is either a full URI or relative reference according to RFC 3986,
-     * Section 4.1. The method concatenates the various components of the URI,
-     * using the appropriate delimiters:
+     * @param string[] $parts
      *
-     * - If a scheme is present, it MUST be suffixed by ":".
-     * - If an authority is present, it MUST be prefixed by "//".
-     * - The path can be concatenated without delimiters. But there are two
-     *   cases where the path has to be adjusted to make the URI reference
-     *   valid as PHP does not allow to throw an exception in __toString():
-     *     - If the path is rootless and an authority is present, the path MUST
-     *       be prefixed by "/".
-     *     - If the path is starting with more than one "/" and no authority is
-     *       present, the starting slashes MUST be reduced to one.
-     * - If a query is present, it MUST be prefixed by "?".
-     * - If a fragment is present, it MUST be prefixed by "#".
+     * @throws InvalidArgumentException If the authority is not empty with an empty host
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-4.1
-     *
-     * @param array $components The hash part array
-     *
-     * @throws InvalidArgumentException if some components value are invalid
-     * @throws RuntimeException         if the resulting uri is invalid
-     *
-     * @return string
+     * @return array
      */
-    public function build(array $components)
+    protected function parseAuthority($parts)
     {
-        $components = $this->normalizeUriComponents($components);
-        $scheme = $this->buildScheme($components['scheme']);
-        $userinfo = $this->buildUserInfo($components['user'], $components['pass']);
-        $auth = $this->buildAuthority($components['host'], $userinfo, $components['port']);
-        $path = $this->filterPath($components['path']);
-        $query = $this->buildQuery($components['query']);
-        $fragment = (null === $components['fragment']) ? '' : '#'.$components['fragment'];
-
-        if (!$this->isValidUri($scheme, $auth, $path)) {
-            throw new RuntimeException('The submitted components will produce an invalid URI');
+        $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
+        if (empty($parts['authority'])) {
+            return $res;
         }
 
-        return $scheme.$auth.$this->formatPath($path, !empty($auth)).$query.$fragment;
+        if (empty($parts['acontent'])) {
+            return ['host' => ''] + $res;
+        }
+
+        preg_match(',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,', $parts['acontent'], $auth);
+        $auth += ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
+        if (!empty($auth['userinfo'])) {
+            $userinfo = explode(':', $auth['ucontent'], 2);
+            $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
+        }
+
+        return $this->parseHostname($auth['hostname']) + $res;
+    }
+
+    /**
+     * Parse the hostname into its components Host and Port
+     *
+     * No validation is done on the port or host component found
+     *
+     * @param string $hostname
+     *
+     * @return array
+     */
+    protected function parseHostname($hostname)
+    {
+        $components = ['host' => null, 'port' => null];
+        $hostname = strrev($hostname);
+        if (preg_match(",^((?<port>[^(\[\])]*):)?(?<host>.*)?$,", $hostname, $res)) {
+            $res += $components;
+            $components['host'] = strrev($res['host']);
+            $components['port'] = strrev($res['port']);
+        }
+        $components['host'] = $this->filterHost($components['host']);
+        $components['port'] = $this->validatePort($components['port']);
+
+        return $components;
+    }
+
+    /**
+     * validate the host component
+     *
+     * @param string $host
+     *
+     * @throws InvalidArgumentException If the host is invalid
+     */
+    protected function filterHost($host)
+    {
+        if (empty($this->validateIpHost($host))) {
+            $this->validateStringHost($host);
+        }
+
+        return $host;
     }
 
     /**
@@ -167,10 +189,10 @@ class UriParser
     /**
      * {@inheritdoc}
      */
-    protected function isValidLabelsCount(array $labels)
+    protected function assertLabelsCount(array $labels)
     {
         if (127 <= count($labels)) {
-            throw new InvalidArgumentException('Invalid Hostname, verify labels count');
+            throw new InvalidArgumentException('Invalid Host, verify labels count');
         }
     }
 
@@ -190,6 +212,26 @@ class UriParser
         }
 
         throw new InvalidArgumentException(sprintf('The submitted scheme is invalid: `%s`', $scheme));
+    }
+
+    /**
+     * Format the user info
+     *
+     * @return string
+     */
+    public function buildUserInfo($user, $pass)
+    {
+        $userinfo = $this->filterUser($user);
+        if (null === $userinfo) {
+            return '';
+        }
+
+        $pass = $this->filterPass($pass);
+        if (null !== $pass) {
+            $userinfo .= ':'.$pass;
+        }
+
+        return $userinfo.'@';
     }
 
     /**
@@ -226,197 +268,5 @@ class UriParser
         }
 
         throw new InvalidArgumentException('The user component contains invalid characters');
-    }
-
-    /**
-     * validate the host component
-     *
-     * @param string $host
-     *
-     * @throws InvalidArgumentException If the host is invalid
-     */
-    protected function filterHost($host)
-    {
-        if (empty($this->validateIpHost($host))) {
-            $this->validateStringHost($host);
-        }
-
-        return $host;
-    }
-
-    /**
-     * Filter and format the path for URI string representation
-     *
-     * @param string $path
-     *
-     * @throws InvalidArgumentException If the path is invalid
-     *
-     * @return string
-     */
-    protected function filterPath($path)
-    {
-        if (!preg_match(',[?#],', $path)) {
-            return $path;
-        }
-
-        throw new InvalidArgumentException('the path must not contain a query string or a URI fragment');
-    }
-
-    /**
-     * Filter and format the query for URI string representation
-     *
-     * @param string $query
-     *
-     * @throws InvalidArgumentException If the query is invalid
-     *
-     * @return string
-     */
-    protected function filterQuery($query)
-    {
-        if (strpos($query, '#') === false) {
-            return $query;
-        }
-
-        throw new InvalidArgumentException('the query string must not contain a URI fragment');
-    }
-
-    /**
-     * Filter and format the scheme for URI string representation
-     *
-     * @param string $scheme
-     *
-     * @throws InvalidArgumentException If the scheme is invalid
-     *
-     * @return string
-     */
-    protected function buildScheme($scheme)
-    {
-        $scheme = (string) $this->filterScheme($scheme);
-        if (!empty($scheme)) {
-            $scheme .= ':';
-        }
-
-        return $scheme;
-    }
-
-    /**
-     * Format the user info
-     *
-     * @return string
-     */
-    public function buildUserInfo($user, $pass)
-    {
-        $userinfo = $this->filterUser($user);
-        if (null === $userinfo) {
-            return '';
-        }
-
-        $pass = $this->filterPass($pass);
-        if (null !== $pass) {
-            $userinfo .= ':'.$pass;
-        }
-
-        return $userinfo.'@';
-    }
-
-    /**
-     * Filter and format the query for URI string representation
-     *
-     * @param string $query
-     *
-     * @throws InvalidArgumentException If the query is invalid
-     *
-     * @return string
-     */
-    protected function buildQuery($query)
-    {
-        $query = $this->filterQuery($query);
-
-        return null !== $query ? '?'.$query : $query;
-    }
-
-    /**
-     * Format a URI authority according to the Formatter properties
-     *
-     * @param null|string $host     the URI Host component
-     * @param string      $userinfo the URI userinfo part
-     * @param null|string $port     the URI Port component
-     *
-     * @throws InvalidArgumentException If the host is invalid
-     *
-     * @return string
-     */
-    protected function buildAuthority($host, $userinfo, $port)
-    {
-        if (null === $host) {
-            return '';
-        }
-
-        $authority = '//';
-        if ('' === $host) {
-            return $authority;
-        }
-
-        $port = $this->validatePort($port);
-        if (!empty($port)) {
-            $port = ':'.$port;
-        }
-
-        return $authority.$userinfo.$this->filterHost($host).$port;
-    }
-
-    /**
-     * Parse a URI authority part into its components
-     *
-     * @param string[] $parts
-     *
-     * @throws InvalidArgumentException If the authority is not empty with an empty host
-     *
-     * @return array
-     */
-    protected function parseAuthority($parts)
-    {
-        $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
-        if (empty($parts['authority'])) {
-            return $res;
-        }
-
-        if (empty($parts['acontent'])) {
-            return ['host' => ''] + $res;
-        }
-
-        preg_match(',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,', $parts['acontent'], $parts);
-        $parts = $parts + ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
-
-        if (!empty($parts['userinfo'])) {
-            $userinfo = explode(':', $parts['ucontent'], 2);
-            $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
-        }
-
-        return $this->parseHostname($parts['hostname']) + $res;
-    }
-
-    /**
-     * Parse the hostname into its components Host and Port
-     *
-     * No validation is done on the port or host component found
-     *
-     * @param string $hostname
-     *
-     * @return array
-     */
-    protected function parseHostname($hostname)
-    {
-        $components = ['host' => null, 'port' => null];
-        $hostname = strrev($hostname);
-        if (preg_match(",^((?<port>[^(\[\])]+?):)?(?<host>.*)?$,", $hostname, $res)) {
-            $res = $res + $components;
-            $components['host'] = strrev($res['host']);
-            $components['port'] = strrev($res['port']);
-        }
-        $components['host'] = $this->filterHost($components['host']);
-        $components['port'] = $this->validatePort($components['port']);
-
-        return $components;
     }
 }

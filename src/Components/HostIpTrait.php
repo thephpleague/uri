@@ -36,7 +36,8 @@ trait HostIpTrait
 
     /**
      * Tell whether the IP has a zone Identifier
-     * @var boolean
+     *
+     * @var bool
      */
     protected $hasZoneIdentifier = false;
 

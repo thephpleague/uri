@@ -52,29 +52,9 @@ class UriParser
      *
      * @return array
      */
-    public function normalizeUriComponents(array $components)
+    public function normalizeUriHash(array $components)
     {
-        return array_merge($this->components, $components);
-    }
-
-    /**
-     * Tell whether the build URI is valid
-     *
-     * @param string $scheme URI scheme component
-     * @param string $auth   URI auth part
-     * @param string $path   URI path component
-     *
-     * @return bool
-     */
-    public function isValidUri($scheme, $auth, $path)
-    {
-        if (false === strpos($path, ':')) {
-            return true;
-        }
-        $path = explode(':', $path);
-        $path = array_shift($path);
-
-        return !(empty($scheme.$auth) && strpos($path, '/') === false);
+        return array_replace($this->components, $components);
     }
 
     /**
@@ -100,10 +80,8 @@ class UriParser
 
         preg_match($uriRegexp, $uri, $parts);
         $parts += ['query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => ''];
-
         $components = array_replace($this->components, $this->parseAuthority($parts));
-        $components['path'] = $parts['path'];
-        $components['scheme'] = empty($this->filterScheme($parts['scheme'])) ? null : $parts['scheme'];
+        $components = array_replace($components, $this->parseScheme($parts));
         $components['query'] = empty($parts['query']) ? null : $parts['qcontent'];
         $components['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
 
@@ -119,7 +97,7 @@ class UriParser
      *
      * @return array
      */
-    protected function parseAuthority($parts)
+    protected function parseAuthority(array $parts)
     {
         $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
         if (empty($parts['authority'])) {
@@ -138,6 +116,32 @@ class UriParser
         }
 
         return $this->parseHostname($auth['hostname']) + $res;
+    }
+
+    /**
+     * Parse URI scheme and part
+     *
+     * @param string[] $parts
+     *
+     * @throws InvalidArgumentException If the scheme is invalid
+     *
+     * @return array
+     */
+    protected function parseScheme(array $parts)
+    {
+        try {
+            $res = ['scheme' => null, 'path' => $parts['path']];
+            $scheme = $this->filterScheme($parts['scheme']);
+            $scheme = empty($scheme) ? null : $scheme;
+
+            return ['scheme' => $scheme] + $res;
+        } catch (InvalidArgumentException $e) {
+            if (empty($parts['authority'])) {
+                return ['path' => $parts['scheme'].':'.$parts['path']] + $res;
+            }
+
+            throw new $e();
+        }
     }
 
     /**

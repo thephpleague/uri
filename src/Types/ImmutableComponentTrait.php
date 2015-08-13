@@ -52,7 +52,7 @@ trait ImmutableComponentTrait
     /**
      * validate a string
      *
-     * @param mixed $str
+     * @param mixed $str the value to evaluate as a string
      *
      * @throws \InvalidArgumentException if the submitted data can not be converted to string
      *
@@ -70,13 +70,13 @@ trait ImmutableComponentTrait
     /**
      * Check the string against RFC3986 rules
      *
-     * @param string $data
+     * @param string $str
      *
      * @throws \InvalidArgumentException If the string is invalid
      */
-    protected function assertValidComponent($data)
+    protected function assertValidComponent($str)
     {
-        if (!empty(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $data)) {
+        if (!empty(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $str)) {
             throw new InvalidArgumentException('The component contains invalid characters');
         }
     }

@@ -53,11 +53,31 @@ class Formatter
     protected $queryEncoding = PHP_QUERY_RFC3986;
 
     /**
+     * URI Parser object
+     *
+     * @var UriParser
+     */
+    protected $uriParser;
+
+    /**
+     * Query Parser object
+     *
+     * @var QueryParser
+     */
+    protected $queryParser;
+
+    /**
      * query separator property
      *
      * @var string
      */
     protected $querySeparator = '&';
+
+    public function __construct()
+    {
+        $this->uriParser = new UriParser();
+        $this->queryParser = new QueryParser();
+    }
 
     /**
      * Host encoding setter
@@ -160,7 +180,7 @@ class Formatter
     protected function formatUriPart(UriPart $part)
     {
         if ($part instanceof QueryInterface) {
-            return (new QueryParser())->build($part->toArray(), $this->querySeparator, $this->queryEncoding);
+            return $this->queryParser->build($part->toArray(), $this->querySeparator, $this->queryEncoding);
         }
 
         if ($part instanceof HostInterface) {
@@ -234,7 +254,7 @@ class Formatter
         }
 
         return '//'
-            .(new UriParser())->BuildUserInfo($components['user'], $components['pass'])
+            .$this->uriParser->BuildUserInfo($components['user'], $components['pass'])
             .$this->formatHost(new Host($components['host']))
             .$port;
     }

@@ -175,12 +175,12 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                 ],
             ],
             'URI without path' => [
-                'scheme://host?query#fragment',
+                'scheme://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]?query#fragment',
                 [
                     'scheme' => 'scheme',
                     'user' => null,
                     'pass' => null,
-                    'host' => 'host',
+                    'host' => '[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]',
                     'port' => null,
                     'path' => '',
                     'query' => 'query',
@@ -291,6 +291,71 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => '',
                 ],
             ],
+            'URI without scheme but a path' => [
+                '2620:0:1cfe:face:b00c::3',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '2620:0:1cfe:face:b00c::3',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'relative path' => [
+                '../relative/path',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '../relative/path',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'complex authority' => [
+                'http://a_.!~*\'(-)n0123Di%25%26:pass;:&=+$,word@www.zend.com',
+                [
+                    'scheme' => 'http',
+                    'user' => 'a_.!~*\'(-)n0123Di%25%26',
+                    'pass' => 'pass;:&=+$,word',
+                    'host' => 'www.zend.com',
+                    'port' => null,
+                    'path' => '',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'single word is a path' => [
+                'http',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => 'http',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
+            'single word is a path' => [
+                'http:::/path',
+                [
+                    'scheme' => 'http',
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '::/path',
+                    'query' => null,
+                    'fragment' => null,
+                ],
+            ],
         ];
     }
 
@@ -315,7 +380,26 @@ class UriParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testInvalidBuildUserInfoProvider
+     * @dataProvider validBuildUserInfoProvider
+     */
+    public function testBuildUserInfoSucced($user, $pass, $expected)
+    {
+        $this->assertSame($expected, $this->parser->buildUserInfo($user, $pass));
+    }
+
+    public function validBuildUserInfoProvider()
+    {
+        return [
+            ['user', 'pass', 'user:pass@'],
+            ['', 'pass', ':pass@'],
+            [null, 'pass', ''],
+            ['user', null, 'user@'],
+            ['user', '', 'user:@'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidBuildUserInfoProvider
      * @expectedException InvalidArgumentException
      */
     public function testBuildUserInfoFailed($user, $pass)
@@ -323,7 +407,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
         $this->parser->buildUserInfo($user, $pass);
     }
 
-    public function testInvalidBuildUserInfoProvider()
+    public function invalidBuildUserInfoProvider()
     {
         return [
             'invalid user' => ['dsfsd:f', 'dfdsqdsf'],

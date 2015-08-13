@@ -297,10 +297,15 @@ abstract class AbstractUri
      */
     protected function isValidGenericUri()
     {
-        return (new UriParser())->isValidUri(
-            $this->scheme->getUriComponent(),
-            $this->getAuthority(),
-            $this->path->getUriComponent()
-        );
+        $path = $this->path->getUriComponent();
+        if (false === strpos($path, ':')) {
+            return true;
+        }
+
+        $path = explode(':', $path);
+        $path = array_shift($path);
+        $str = $this->scheme->getUriComponent().$this->getAuthority();
+
+        return (!(empty($str) && strpos($path, '/') === false));
     }
 }

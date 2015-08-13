@@ -6,7 +6,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- A `Parser` class to parse an URI according to RFC3986 rules, the library no longer depend on PHP `parse_url` function
+- A `UriParser` class to parse an URI according to RFC3986 rules, the library no longer depend on PHP `parse_url` function
 - A `Data` class to specifically manipulate `data` schemed URI
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
@@ -27,6 +27,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Fixed
 
+- The `QueryParser` is now a standalone class to parse an query string according to RFC3986 rules.
 - Move namespace from `League\Url` to `League\Uri` to avoid dependency hell
 - Move class name from `League\Url\Url` to `League\Uri\Schemes\AbstractUri` to enable easy extension
 - Renamed methods for consistency with PHP naming conventions
@@ -40,6 +41,12 @@ All Notable changes to `League\Url` will be documented in this file
 - The `::resolve` method is now typehinted to the Uri interface
 - Formatter::format only accept `Uri` and `UriPart` implemented object
 - `Uri::sameValueAs` normalized host encoding, path without dot segments, and query parameters key sorting before comparison
+- To avoid confusion in API usage the following methods are renamed:
+    - `Uri::toAscii` -> `Uri::hostToAscii`
+    - `Uri::toUnicode` -> `Uri::hostToUnicode`
+    - `Data::toAscii` -> `Data::dataToAscii`
+    - `Data::toBinary` -> `Data::dataToBinary`
+- The `resolve` method is restricted to the `Http` class only
 
 ### Remove
 

@@ -68,6 +68,7 @@ class DataPath extends Path implements DataPathInterface
     public function __construct($str = null)
     {
         if (!empty($str)) {
+            $this->assertValidComponent($str);
             $parts = $this->extractPathParts($this->validateString($str));
             $this->validate($parts);
         }

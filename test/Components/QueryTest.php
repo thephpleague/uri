@@ -79,8 +79,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
         return [
             'Non traversable object' => [new \StdClass()],
             'String' => ['toto=23'],
-            'reserved character # used as value' => [['toto' => '#23']],
-            'reserved character # used as key' => [['tot#o' => '23']],
         ];
     }
 

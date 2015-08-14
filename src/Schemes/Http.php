@@ -196,10 +196,9 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerUserInfo(array $server)
     {
-        $user = (array_key_exists('PHP_AUTH_USER', $server)) ? $server['PHP_AUTH_USER'] : null;
-        $pass = (array_key_exists('PHP_AUTH_PW', $server)) ? $server['PHP_AUTH_PW'] : null;
+        $server = array_merge(['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null], $server);
 
-        return (new UriParser())->buildUserInfo($user, $pass);
+        return (new UriParser())->buildUserInfo($server['PHP_AUTH_USER'], $server['PHP_AUTH_PW']);
     }
 
     /**
@@ -211,16 +210,12 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerPort(array $server)
     {
-        $server = array_merge(['HTTP_HOST' => ''], $server);
+        $server = array_merge(['HTTP_HOST' => '', 'SERVER_PORT' => ''], $server);
         if (preg_match(',^(?<port>([^(\[\])]*):),', strrev($server['HTTP_HOST']), $matches)) {
             return strrev($matches['port']);
         }
 
-        if (isset($server['SERVER_PORT'])) {
-            return ':'.$server['SERVER_PORT'];
-        }
-
-        return '';
+        return ':'.$server['SERVER_PORT'];
     }
 
     /**
@@ -236,15 +231,8 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
             return $server['REQUEST_URI'];
         }
 
-        $request = '';
-        if (isset($server['PHP_SELF'])) {
-            $request .= $server['PHP_SELF'];
-        }
+        $server = array_merge(['PHP_SELF' => '', 'QUERY_STRING' => ''], $server);
 
-        if (isset($server['QUERY_STRING'])) {
-            $request .= '?'.$server['QUERY_STRING'];
-        }
-
-        return $request;
+        return $server['PHP_SELF'].'?'.$server['QUERY_STRING'];
     }
 }

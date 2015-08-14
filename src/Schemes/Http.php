@@ -13,6 +13,7 @@ namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Host;
 use League\Uri\Interfaces\Schemes\Http as HttpUriInterface;
 use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
@@ -142,11 +143,10 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerScheme(array $server)
     {
-        $args = filter_var_array($server, [
-            'HTTPS' => ['filter' => FILTER_SANITIZE_STRING, 'options' => ['default' => '']],
-        ]);
+        $server = array_merge(['HTTPS' => ''], $server);
+        $res = filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return  (empty($args['HTTPS']) || 'off' == $args['HTTPS'])  ? 'http:' : 'https:';
+        return ($res !== false) ? 'https:' : 'http:';
     }
 
     /**
@@ -164,15 +164,11 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
             return static::fetchServerHostname($server['HTTP_HOST']);
         }
 
-        if (!isset($server['SERVER_ADDR'])) {
-            throw new InvalidArgumentException('Host could not be detected');
+        if (isset($server['SERVER_ADDR'])) {
+            return (string) new Host($server['SERVER_ADDR']);
         }
 
-        if (filter_var($server['SERVER_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            return '['.$server['SERVER_ADDR'].']';
-        }
-
-        return $server['SERVER_ADDR'];
+        throw new InvalidArgumentException('Host could not be detected');
     }
 
     /**
@@ -186,11 +182,9 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerHostname($host)
     {
-        if (preg_match("/^(.*)(:\d+)$/", $host, $matches)) {
-            return $matches[1];
-        }
+        preg_match(",^(([^(\[\])]*):)?(?<host>.*)?$,", strrev($host), $matches);
 
-        return $host;
+        return strrev($matches['host']);
     }
 
     /**
@@ -217,8 +211,9 @@ class Http extends AbstractHierarchicalUri implements HttpUriInterface, UriInter
      */
     protected static function fetchServerPort(array $server)
     {
-        if (isset($server['HTTP_HOST']) && preg_match("/^(.*)(:\d+)$/", $server['HTTP_HOST'], $matches)) {
-            return $matches[2];
+        $server = array_merge(['HTTP_HOST' => ''], $server);
+        if (preg_match(',^(?<port>([^(\[\])]*):),', strrev($server['HTTP_HOST']), $matches)) {
+            return strrev($matches['port']);
         }
 
         if (isset($server['SERVER_PORT'])) {

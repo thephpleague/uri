@@ -106,7 +106,7 @@ class Query implements QueryInterface
         $query = (new QueryParser())->build(
             static::validateIterator($data),
             static::$separator,
-            false
+            PHP_QUERY_RFC3986
         );
 
         return new static($query);

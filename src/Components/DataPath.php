@@ -87,14 +87,20 @@ class DataPath extends Path implements DataPathInterface
     {
         $this->assertValidComponent($str);
         if (!mb_detect_encoding($str, 'US-ASCII', true)
-            || !preg_match('|(^(?<mediatype>.*)?,(?<data>.*)$)?|i', $str, $matches)
+            || false === strpos($str, ',')
+            || false !== strpos($str, '\n')
         ) {
             throw new InvalidArgumentException(
                 sprintf('The submitted path `%s` is invalid according to RFC2937', $str)
             );
         }
 
-        return $matches + ['mediatype' => '', 'data' => ''];
+        $commaPos = strpos($str, ',');
+
+        $matches['mediatype'] = substr($str, 0, $commaPos);
+        $matches['data'] = ',' !== substr($str, -1) ? substr($str, $commaPos + 1) : '';
+
+        return $matches;
     }
 
     /**

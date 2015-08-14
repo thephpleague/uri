@@ -109,7 +109,6 @@ class UriParser
         }
 
         preg_match(',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,', $parts['acontent'], $auth);
-        $auth += ['userinfo' => null, 'ucontent' => null, 'hostname' => null];
         if (!empty($auth['userinfo'])) {
             $userinfo = explode(':', $auth['ucontent'], 2);
             $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
@@ -158,7 +157,6 @@ class UriParser
         $components = ['host' => null, 'port' => null];
         $hostname = strrev($hostname);
         if (preg_match(",^((?<port>[^(\[\])]*):)?(?<host>.*)?$,", $hostname, $res)) {
-            $res += $components;
             $components['host'] = strrev($res['host']);
             $components['port'] = strrev($res['port']);
         }

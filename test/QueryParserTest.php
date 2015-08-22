@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test;
+namespace League\Uri\Test;
 
 use League\Uri\QueryParser;
 use PHPUnit_Framework_TestCase;

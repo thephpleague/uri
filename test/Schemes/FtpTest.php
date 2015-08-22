@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test\Schemes;
+namespace League\Uri\Test\Schemes;
 
 use InvalidArgumentException;
 use League\Uri\Schemes\Ftp as FtpUri;

@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test\Schemes\Generic;
+namespace League\Uri\Test\Schemes\Generic;
 
 use InvalidArgumentException;
 use League\Uri\Components;

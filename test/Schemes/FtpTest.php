@@ -59,7 +59,7 @@ class FtpTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider runtimeExceptionExceptionProvider
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @param $input
      */
     public function testConstructorThrowRuntimeException($input)

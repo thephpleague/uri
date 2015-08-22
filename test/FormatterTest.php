@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test;
+namespace League\Uri\Test;
 
 use InvalidArgumentException;
 use League\Uri;

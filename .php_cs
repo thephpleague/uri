@@ -28,6 +28,7 @@ return Symfony\CS\Config\Config::create()
         'ternary_spaces',
         'operators_spaces',
         'new_with_braces',
+        '-psr0',
     ])
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()

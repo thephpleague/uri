@@ -129,8 +129,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     /**
      * Test Punycode support
      *
-     * @param $unicode Unicode Hostname
-     * @param $ascii   Ascii Hostname
+     * @param string $unicode Unicode Hostname
+     * @param string $ascii   Ascii Hostname
      * @dataProvider hostnamesProvider
      */
     public function testValidUnicodeHost($unicode, $ascii)

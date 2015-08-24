@@ -40,7 +40,7 @@ class WsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider invalidArgumentExceptionProvider
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @param $input
      */
     public function testConstructorThrowInvalidArgumentException($input)
@@ -58,7 +58,7 @@ class WsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider runtimeExceptionExceptionProvider
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @param $input
      */
     public function testConstructorThrowRuntimeException($input)

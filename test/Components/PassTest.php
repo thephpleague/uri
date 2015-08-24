@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\test\Components;
+namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\Pass;

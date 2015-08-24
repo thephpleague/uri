@@ -12,6 +12,7 @@
 namespace League\Uri\Interfaces\Schemes;
 
 use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Components\HierarchicalComponent;
 use Psr\Http\Message\UriInterface;
 
 /**

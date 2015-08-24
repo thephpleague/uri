@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
 class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var Url
+     * @var HttpUri
      */
     private $uri;
 
@@ -359,7 +359,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider invalidURI
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @param $input
      */
     public function testCreateFromInvalidUrlKO($input)
@@ -376,7 +376,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testModificationFailed()
     {

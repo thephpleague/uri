@@ -104,7 +104,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this->formatIp($this->data[0]);
         }
 
-        return $this->formatHostname(!$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data);
+        return $this->formatComponentString(
+            !$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data,
+            $this->isAbsolute
+        );
     }
 
     /**
@@ -116,7 +119,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->formatHostname(array_map('idn_to_ascii', $this->data)));
+        return $this->modify($this->formatComponentString(
+            array_map('idn_to_ascii', $this->data),
+            $this->isAbsolute
+        ));
     }
 
     /**
@@ -128,21 +134,17 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->formatHostname($this->data));
+        return $this->modify($this->formatComponentString($this->data, $this->isAbsolute));
     }
 
     /**
-     * string representation of a hostname
-     *
-     * @param array $labels Hostname labels
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function formatHostname(array $labels)
+    protected static function formatComponentString($data, $type)
     {
-        $hostname = implode(static::$separator, array_reverse($labels));
-        if ($this->isAbsolute == self::IS_ABSOLUTE) {
-            $hostname .= static::$separator;
+        $hostname = implode(static::$separator, array_reverse(static::validateIterator($data)));
+        if (self::IS_ABSOLUTE == $type) {
+            return $hostname.static::$separator;
         }
 
         return $hostname;
@@ -172,19 +174,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         if (127 <= count(array_merge($this->data, $labels))) {
             throw new InvalidArgumentException('Invalid Hostname, verify labels count');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static function formatComponentString($data, $type)
-    {
-        $str = implode(static::$separator, array_reverse(static::validateIterator($data)));
-        if (self::IS_ABSOLUTE == $type) {
-            return $str.static::$separator;
-        }
-
-        return $str;
     }
 
     /**

@@ -39,6 +39,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
             'Std Class' => [(object) 'foo'],
             'float'     => [1.2],
             'array'      => [['foo']],
+            'contains a fragment' => ['foo#bar'],
         ];
     }
 
@@ -115,14 +116,6 @@ class QueryTest extends PHPUnit_Framework_TestCase
             ],
             'without new data' => [
                 new Query(''),
-                'kingkong=toto',
-            ],
-            'with array' => [
-                ['john' => 'doe the john'],
-                'kingkong=toto&john=doe%20the%20john',
-            ],
-            'with empty array' => [
-                [],
                 'kingkong=toto',
             ],
             'with string' => [

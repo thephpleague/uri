@@ -22,14 +22,14 @@ class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
 
     public function testMergeQueryParameters()
     {
-        $uri = $this->uri->mergeQuery(['john' => 'doe the john', 'foo' => null]);
+        $uri = $this->uri->mergeQuery('john=doe%20the%20john&foo');
         $this->assertSame('kingkong=toto&foo&john=doe%20the%20john', (string) $uri->getQuery());
     }
 
     public function testReturnSameInstance()
     {
         $same = $this->uri
-            ->mergeQuery(['kingkong' => 'toto'])
+            ->mergeQuery('kingkong=toto')
             ->withExtension('php')
             ->withoutQueryValues(['toto'])
             ->withoutSegments([34])

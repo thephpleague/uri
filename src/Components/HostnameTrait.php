@@ -67,9 +67,9 @@ trait HostnameTrait
         $this->assertValidHost($labels);
         $this->isIdn = $raw_labels !== $labels;
 
-        return array_map(function ($label) {
+        return array_reverse(array_map(function ($label) {
             return idn_to_utf8($label);
-        }, $labels);
+        }, $labels));
     }
 
     /**

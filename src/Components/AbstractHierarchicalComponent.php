@@ -96,7 +96,10 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
      */
     public function prepend($component)
     {
-        return static::createFromArray(static::validateComponent($component), $this->isAbsolute)->append($this);
+        return static::createFromArray(
+            $this->validateComponent($component),
+            $this->isAbsolute)
+        ->append($this);
     }
 
     /**
@@ -109,7 +112,10 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
             array_pop($source);
         }
 
-        return $this->newCollectionInstance(array_merge($source, static::validateComponent($component)->toArray()));
+        return $this->newCollectionInstance(array_merge(
+            $source,
+            $this->validateComponent($component)->toArray()
+        ));
     }
 
     /**
@@ -136,7 +142,6 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
      * @param \Traversable|string[] $data The segments list
      * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
-     * @throws InvalidArgumentException If $data is invalid
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
@@ -148,21 +153,23 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
         if (!isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
-        $component = implode(static::$separator, static::validateIterator($data));
 
-        return new static(static::formatComponentString($component, $type));
+        return new static(static::formatComponentString($data, $type));
     }
 
     /**
      * Return a formatted component string according to its type
      *
-     * @param null|string $str
-     * @param int         $type
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type
+     *
+     * @throws InvalidArgumentException If $data is invalid
      *
      * @return string
      */
-    protected static function formatComponentString($str, $type)
+    protected static function formatComponentString($data, $type)
     {
+        $str = implode(static::$separator, static::validateIterator($data));
         if (null !== $str && self::IS_ABSOLUTE == $type) {
             return static::$separator.$str;
         }
@@ -180,7 +187,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
         }
 
         $source = $this->toArray();
-        $dest   = static::validateComponent($component)->toArray();
+        $dest   = $this->validateComponent($component)->toArray();
         if ('' == $dest[count($dest) - 1]) {
             array_pop($dest);
         }

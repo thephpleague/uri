@@ -190,8 +190,8 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         return [
             'ip' => ['127.0.0.1', 1, ['127.0.0.1']],
-            'string' => ['secure.example.com', 3, ['secure', 'example', 'com']],
-            'numeric' => ['92.56.8', 3, ['92', '56', '8']],
+            'string' => ['secure.example.com', 3, ['com', 'example', 'secure']],
+            'numeric' => ['92.56.8', 3, ['8', '56', '92']],
         ];
     }
 
@@ -209,13 +209,13 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function createFromArrayValid()
     {
         return [
-            'array' => [['www', 'example', 'com'], Host::IS_RELATIVE, 'www.example.com'],
-            'iterator' => [new ArrayIterator(['www', 'example', 'com']), Host::IS_RELATIVE, 'www.example.com'],
+            'array' => [['com', 'example', 'www'], Host::IS_RELATIVE, 'www.example.com'],
+            'iterator' => [new ArrayIterator(['com', 'example', 'www']), Host::IS_RELATIVE, 'www.example.com'],
             'host object' => [new Host('::1'), Host::IS_RELATIVE, '[::1]'],
-            'ip 1' => [[127, 0, 0, 1], Host::IS_RELATIVE, '127.0.0.1'],
-            'ip 2' => [['127.0', '0.1'], Host::IS_RELATIVE, '127.0.0.1'],
+            'ip 1' => [[127, 0, 0, 1], Host::IS_RELATIVE, '1.0.0.127'],
+            'ip 2' => [['127.0', '0.1'], Host::IS_RELATIVE, '0.1.127.0'],
             'ip 3' => [['127.0.0.1'], Host::IS_RELATIVE, '127.0.0.1'],
-            'FQDN' => [['www', 'example', 'com'], Host::IS_ABSOLUTE, 'www.example.com.'],
+            'FQDN' => [['com', 'example', 'www'], Host::IS_ABSOLUTE, 'www.example.com.'],
         ];
     }
 
@@ -237,7 +237,6 @@ class HostTest extends PHPUnit_Framework_TestCase
             'bool' => [true, Host::IS_RELATIVE],
             'integer' => [1, Host::IS_RELATIVE],
             'object' => [new \StdClass(), Host::IS_RELATIVE],
-            //'ip FQDN' => [['127.0.0.1'], Host::IS_ABSOLUTE],
             'ipv6 FQDN' => [['::1'], Host::IS_ABSOLUTE],
             'unknown flag' => [['all', 'is', 'good'], 23],
         ];
@@ -246,7 +245,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function testGetLabel()
     {
         $host = new Host('master.example.com');
-        $this->assertSame('master', $host->getLabel(0));
+        $this->assertSame('com', $host->getLabel(0));
         $this->assertNull($host->getLabel(23));
         $this->assertSame('toto', $host->getLabel(23, 'toto'));
     }
@@ -255,13 +254,10 @@ class HostTest extends PHPUnit_Framework_TestCase
     {
         $host = new Host('master.example.com');
         $this->assertSame([0, 1, 2], $host->keys());
-        $this->assertSame([1], $host->keys('example'));
+        $this->assertSame([2], $host->keys('master'));
     }
 
     /**
-     * @param $host1
-     * @param $host2
-     * @param $bool
      * @dataProvider sameValueAsProvider
      */
     public function testSameValueAs($host1, $host2, $bool)
@@ -292,7 +288,7 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function withoutProvider()
     {
         return [
-            'remove one string label' => ['secure.example.com', [0], 'example.com'],
+            'remove one string label' => ['secure.example.com', [0], 'secure.example'],
             'remove IP based label' => ['127.0.0.1', [0], ''],
             'remove silent excessive label index' => ['127.0.0.1', [0, 1] , ''],
         ];
@@ -422,14 +418,14 @@ class HostTest extends PHPUnit_Framework_TestCase
     public function replaceValid()
     {
         return [
-            ['master.example.com', new Host('shop'), 0, 'shop.example.com'],
+            ['master.example.com', new Host('shop'), 2, 'shop.example.com'],
+            ['master.example.com', 'shop', 2, 'shop.example.com'],
             ['', new Host('::1'), 0, '[::1]'],
-            ['toto', new Host('::1'), 23, 'toto'],
-            ['master.example.com', 'shop', 0, 'shop.example.com'],
             ['', '::1', 0, '[::1]'],
+            ['toto', new Host('::1'), 23, 'toto'],
             ['toto', '::1', 23, 'toto'],
             ['127.0.0.1', 'secure.example.com', 2, '127.0.0.1'],
-            ['secure.example.com', '127.0.0.1', 2, 'secure.example.127.0.0.1'],
+            ['secure.example.com', '127.0.0.1', 0, 'secure.example.127.0.0.1'],
         ];
     }
 

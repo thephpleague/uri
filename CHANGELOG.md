@@ -47,6 +47,8 @@ All Notable changes to `League\Url` will be documented in this file
     - `Data::toAscii` -> `Data::dataToAscii`
     - `Data::toBinary` -> `Data::dataToBinary`
 - The `resolve` method is restricted to the `Http` class only
+- `Host` now iterate from the top-level label to the last subdomain (from right to left)
+- The `Query::merge` method only accept QueryInterface object or query string
 
 ### Remove
 

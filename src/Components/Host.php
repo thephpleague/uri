@@ -140,7 +140,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     protected function formatHostname(array $labels)
     {
-        $hostname = implode(static::$separator, $labels);
+        $hostname = implode(static::$separator, array_reverse($labels));
         if ($this->isAbsolute == self::IS_ABSOLUTE) {
             $hostname .= static::$separator;
         }
@@ -177,8 +177,9 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     /**
      * {@inheritdoc}
      */
-    protected static function formatComponentString($str, $type)
+    protected static function formatComponentString($data, $type)
     {
+        $str = implode(static::$separator, array_reverse(static::validateIterator($data)));
         if (self::IS_ABSOLUTE == $type) {
             return $str.static::$separator;
         }
@@ -202,5 +203,16 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $str;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function append($component)
+    {
+        return $this->newCollectionInstance(array_merge(
+            $this->validateComponent($component)->toArray(),
+            $this->toArray()
+        ));
     }
 }

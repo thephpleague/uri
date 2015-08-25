@@ -46,8 +46,8 @@ interface Query extends Collection, Component
      * an instance that contains the modified query
      *
      * @param Query|string $query the data to be merged query can be
-     *                     - another Interfaces\Query object
-     *                     - a string or a Stringable object
+     *                            - another Interfaces\Query object
+     *                            - a string or a Stringable object
      *
      * @return static
      */

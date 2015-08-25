@@ -76,7 +76,7 @@ class HierarchicalUriModifierTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutLabels()
     {
-        $uri = $this->uri->withoutLabels([0]);
+        $uri = $this->uri->withoutLabels([2]);
         $this->assertSame('example.com', $uri->getHost());
     }
 

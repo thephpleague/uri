@@ -156,10 +156,6 @@ class Query implements QueryInterface
             return $this->mergeQuery($query);
         }
 
-        if ($query instanceof Traversable || is_array($query)) {
-            return $this->mergeQuery(static::createFromArray($query));
-        }
-
         return $this->mergeQuery(static::createFromArray($this->validate($query)));
     }
 

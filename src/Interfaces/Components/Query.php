@@ -45,10 +45,8 @@ interface Query extends Collection, Component
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
      *
-     * @param mixed $query the data to be merged query can be
+     * @param Query|string $query the data to be merged query can be
      *                     - another Interfaces\Query object
-     *                     - a Traversable object
-     *                     - an array
      *                     - a string or a Stringable object
      *
      * @return static

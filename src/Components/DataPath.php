@@ -95,12 +95,12 @@ class DataPath extends Path implements DataPathInterface
             );
         }
 
-        $commaPos = strpos($str, ',');
+        $res = explode(',', $str, 2);
 
-        $matches['mediatype'] = substr($str, 0, $commaPos);
-        $matches['data'] = ',' !== substr($str, -1) ? substr($str, $commaPos + 1) : '';
-
-        return $matches;
+        return [
+            'mediatype' => array_shift($res),
+            'data' => array_shift($res),
+        ];
     }
 
     /**

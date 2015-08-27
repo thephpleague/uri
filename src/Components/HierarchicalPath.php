@@ -249,7 +249,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * Set a new extension to a basename
      *
-     * @param string $segment     the path segment to update
+     * @param string $segment      the path segment to update
      * @param string $newExtension the new extension to use
      *
      * @return string
@@ -262,7 +262,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             return $segment;
         }
         $length = mb_strrpos($basename, '.'.pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
-        if (false !== $length)  {
+        if (false !== $length) {
             $basename = mb_substr($basename, 0, $length, 'UTF-8');
         }
         $parameterPart = array_shift($segmentParts);

@@ -88,12 +88,12 @@ class FtpTest extends PHPUnit_Framework_TestCase
     public function typecodeProvider()
     {
         return [
-            'empty typecode' => ['ftp://example.com/foo/bar', ''],
-            'empty typecode with directory' => ['ftp://example.com/foo/', ''],
-            'typecode a' => ['ftp://example.com/foo/bar;type=a', 'a'],
-            'typecode i' => ['ftp://example.com/foo/bar;type=i', 'i'],
-            'typecode d' => ['ftp://example.com/foo/bar;type=d', 'd'],
-            'typecode is case sensitive' => ['ftp://example.com/foo/bar;type=A', ''],
+            'empty typecode' => ['ftp://example.com/foo/bar', FtpUri::TYPE_NONE],
+            'empty typecode with directory' => ['ftp://example.com/foo/', FtpUri::TYPE_NONE],
+            'typecode a' => ['ftp://example.com/foo/bar;type=a', FtpUri::TYPE_ASCII],
+            'typecode i' => ['ftp://example.com/foo/bar;type=i', FtpUri::TYPE_BINARY],
+            'typecode d' => ['ftp://example.com/foo/bar;type=d', FtpUri::TYPE_DIRECTORY],
+            'typecode is case sensitive' => ['ftp://example.com/foo/bar;type=A', FtpUri::TYPE_NONE],
         ];
     }
 
@@ -111,13 +111,13 @@ class FtpTest extends PHPUnit_Framework_TestCase
     public function typecodeModifierProvider()
     {
         return [
-            'no modification (1)' => ['ftp://example.com/foo/bar', '', 'ftp://example.com/foo/bar'],
-            'no modification (2)' => ['ftp://example.com/foo;type=a/bar', 'd', 'ftp://example.com/foo;type=a/bar;type=d'],
-            'adding' => ['ftp://example.com/foo/bar', 'a', 'ftp://example.com/foo/bar;type=a'],
-            'adding to empty path' => ['ftp://example.com', 'd', 'ftp://example.com/;type=d'],
-            'replacing' => ['ftp://example.com/foo/bar;type=i', 'a', 'ftp://example.com/foo/bar;type=a'],
-            'removing' => ['ftp://example.com/foo/bar;type=d', '', 'ftp://example.com/foo/bar'],
-            'unable to typecode' => ['ftp://example.com/foo/bar;type=A', '', 'ftp://example.com/foo/bar;type=A'],
+            'no modification (1)' => ['ftp://example.com/foo/bar', FtpUri::TYPE_NONE, 'ftp://example.com/foo/bar'],
+            'no modification (2)' => ['ftp://example.com/foo;type=a/bar', FtpUri::TYPE_DIRECTORY, 'ftp://example.com/foo;type=a/bar;type=d'],
+            'adding' => ['ftp://example.com/foo/bar', FtpUri::TYPE_ASCII, 'ftp://example.com/foo/bar;type=a'],
+            'adding to empty path' => ['ftp://example.com', FtpUri::TYPE_DIRECTORY, 'ftp://example.com/;type=d'],
+            'replacing' => ['ftp://example.com/foo/bar;type=i', FtpUri::TYPE_ASCII, 'ftp://example.com/foo/bar;type=a'],
+            'removing' => ['ftp://example.com/foo/bar;type=d', FtpUri::TYPE_NONE, 'ftp://example.com/foo/bar'],
+            'unable to typecode' => ['ftp://example.com/foo/bar;type=A', FtpUri::TYPE_NONE, 'ftp://example.com/foo/bar;type=A'],
         ];
     }
 
@@ -156,18 +156,17 @@ class FtpTest extends PHPUnit_Framework_TestCase
      * @param $uri
      * @param $extension
      */
-    public function testGetExtensionPreserveTypeCode($uri, $uri_extension, $path_extension)
+    public function testGetExtensionPreserveTypeCode($uri, $extension)
     {
         $ftp = FtpUri::createFromString($uri);
-        $this->assertSame($uri_extension, $ftp->getExtension());
-        $this->assertSame($path_extension, $ftp->path->getExtension());
+        $this->assertSame($extension, $ftp->path->getExtension());
     }
 
     public function getExtensionProvider()
     {
         return [
-            'no typecode' => ['ftp://example.com/foo/bar.csv', 'csv', 'csv'],
-            'with typecode' => ['ftp://example.com/foo/bar.csv;type=a', 'csv', 'csv;type=a'],
+            'no typecode' => ['ftp://example.com/foo/bar.csv', 'csv'],
+            'with typecode' => ['ftp://example.com/foo/bar.csv;type=a', 'csv'],
         ];
     }
 }

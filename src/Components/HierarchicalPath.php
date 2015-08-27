@@ -123,6 +123,22 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
+    public function append($component)
+    {
+        $source = $this->toArray();
+        if (!empty($source) && '' === end($source)) {
+            array_pop($source);
+        }
+
+        return $this->newCollectionInstance(array_merge(
+            $source,
+            $this->validateComponent($component)->toArray()
+        ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function relativize(HierarchicalPathInterface $path)
     {
         $bSegments = explode(static::$separator, $this->withoutDotSegments()->__toString());
@@ -202,7 +218,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public function getExtension()
     {
-        return pathinfo($this->getBasename(), PATHINFO_EXTENSION);
+        list($basename, ) = explode(';', $this->getBasename(), 2);
+
+        return pathinfo($basename, PATHINFO_EXTENSION);
     }
 
     /**
@@ -210,17 +228,19 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public function withExtension($ext)
     {
-        $ext = ltrim($ext, '.');
-        if (strpos($ext, static::$separator)) {
-            throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
-        }
-        $ext         = implode(static::$separator, $this->validate($ext));
-        $data        = $this->data;
-        $basename    = (string) array_pop($data);
-        $newBasename = $this->setBasename($basename, $ext);
-        if ($newBasename == $basename) {
+        $ext = $this->formatExtension($ext);
+        $basename = $this->getBasename();
+        if (empty($basename)) {
             return $this;
         }
+
+        $newBasename = $this->setExtension($basename, $ext);
+        if ($newBasename === $basename) {
+            return $this;
+        }
+
+        $data = $this->toArray();
+        array_pop($data);
         $data[] = $newBasename;
 
         return $this->newCollectionInstance($data);
@@ -229,22 +249,49 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * Set a new extension to a basename
      *
-     * @param string $basename the current basename
-     * @param string $ext      the new extension to use
+     * @param string $segment     the path segment to update
+     * @param string $newExtension the new extension to use
      *
      * @return string
      */
-    protected function setBasename($basename, $ext)
+    protected function setExtension($segment, $newExtension)
     {
-        $length = mb_strlen(pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
-        if ($length > 0) {
-            $basename = mb_substr($basename, 0, -($length + 1), 'UTF-8');
+        $segmentParts = explode(';', $segment, 2);
+        $basename = array_shift($segmentParts);
+        if (empty($basename)) {
+            return $segment;
+        }
+        $length = mb_strrpos($basename, '.'.pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
+        if (false !== $length)  {
+            $basename = mb_substr($basename, 0, $length, 'UTF-8');
+        }
+        $parameterPart = array_shift($segmentParts);
+        if (!empty($parameterPart)) {
+            $parameterPart = ";$parameterPart";
+        }
+        if (!empty($newExtension)) {
+            $newExtension = ".$newExtension";
         }
 
-        if (empty($basename) || empty($ext)) {
-            return $basename;
+        return $basename.$newExtension.$parameterPart;
+    }
+
+    /**
+     * validate and format the given extension
+     *
+     * @param string $extension the new extension to use
+     *
+     * @throws InvalidArgumentException If the extension is not valid
+     *
+     * @return string
+     */
+    protected function formatExtension($extension)
+    {
+        $extension = ltrim($extension, '.');
+        if (strpos($extension, static::$separator)) {
+            throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }
 
-        return "$basename.$ext";
+        return implode(static::$separator, $this->validate($extension));
     }
 }

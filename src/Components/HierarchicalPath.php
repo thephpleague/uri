@@ -168,16 +168,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
-    public function getBasename()
-    {
-        $data = $this->data;
-
-        return (string) array_pop($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function hasTrailingSlash()
     {
         return !$this->isEmpty() && empty($this->getBasename());
@@ -202,15 +192,23 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
+    public function getBasename()
+    {
+        $data = $this->data;
+
+        return (string) array_pop($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDirname()
     {
-        $parentDirectory = str_replace('\\', "\0", $this);
-        $parentDirectory = dirname($parentDirectory);
-        // The `dirname` call exchanges a single slash with a backslash on Windows platform.
-        $parentDirectory = str_replace('\\', static::$separator, $parentDirectory);
-        $parentDirectory = str_replace("\0", '\\', $parentDirectory);
-
-        return $parentDirectory;
+        return str_replace(
+            ['\\', "\0"],
+            [static::$separator, '\\'],
+            dirname(str_replace('\\', "\0", $this->__toString()))
+        );
     }
 
     /**
@@ -226,54 +224,51 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
-    public function withExtension($ext)
+    public function withExtension($extension)
     {
-        $ext = $this->formatExtension($ext);
-        $basename = $this->getBasename();
-        if (empty($basename)) {
+        $extension = $this->formatExtension($extension);
+        $segments = $this->toArray();
+        $basename = array_pop($segments);
+        $parts = explode(';', $basename, 2);
+        $basenamePart = array_shift($parts);
+        if (empty($basenamePart)) {
             return $this;
         }
 
-        $newBasename = $this->setExtension($basename, $ext);
-        if ($newBasename === $basename) {
+        $newBasename = $this->buildBasename($basenamePart, $extension, array_shift($parts));
+        if ($basename === $newBasename) {
             return $this;
         }
+        $segments[] = $newBasename;
 
-        $data = $this->toArray();
-        array_pop($data);
-        $data[] = $newBasename;
-
-        return $this->newCollectionInstance($data);
+        return $this->newCollectionInstance($segments);
     }
 
     /**
-     * Set a new extension to a basename
+     * create a new basename with a new extension
      *
-     * @param string $segment      the path segment to update
-     * @param string $newExtension the new extension to use
+     * @param string $basenamePart  the basename file part
+     * @param string $extension     the new extension to add
+     * @param string $parameterPart the basename parameter part
      *
      * @return string
      */
-    protected function setExtension($segment, $newExtension)
+    protected function buildBasename($basenamePart, $extension, $parameterPart)
     {
-        $segmentParts = explode(';', $segment, 2);
-        $basename = array_shift($segmentParts);
-        if (empty($basename)) {
-            return $segment;
-        }
-        $length = mb_strrpos($basename, '.'.pathinfo($basename, PATHINFO_EXTENSION), 'UTF-8');
+        $length = mb_strrpos($basenamePart, '.'.pathinfo($basenamePart, PATHINFO_EXTENSION), 'UTF-8');
         if (false !== $length) {
-            $basename = mb_substr($basename, 0, $length, 'UTF-8');
+            $basenamePart = mb_substr($basenamePart, 0, $length, 'UTF-8');
         }
-        $parameterPart = array_shift($segmentParts);
+
         if (!empty($parameterPart)) {
             $parameterPart = ";$parameterPart";
         }
-        if (!empty($newExtension)) {
-            $newExtension = ".$newExtension";
+
+        if (!empty($extension)) {
+            $extension = ".$extension";
         }
 
-        return $basename.$newExtension.$parameterPart;
+        return $basenamePart.$extension.$parameterPart;
     }
 
     /**
@@ -293,5 +288,18 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         return implode(static::$separator, $this->validate($extension));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function formatComponentString($data, $type)
+    {
+        $path = implode(static::$separator, static::validateIterator($data));
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$separator.$path;
+        }
+
+        return $path;
     }
 }

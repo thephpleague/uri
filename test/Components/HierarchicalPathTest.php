@@ -516,13 +516,24 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     public function withExtensionProvider()
     {
         return [
-            ['/path/to/my/file.txt', '.csv', '/path/to/my/file.csv', 'csv'],
             ['/path/to/my/file.txt', 'csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file.txt', '.csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file.txt;foo=bar', 'csv', '/path/to/my/file.csv;foo=bar', 'csv'],
+            ['/path/to/my/file.txt;foo=bar', '.csv', '/path/to/my/file.csv;foo=bar', 'csv'],
+            ['/path/to/my/file', 'csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file;foo', 'csv', '/path/to/my/file.csv;foo', 'csv'],
             ['/path/to/my/file', '.csv', '/path/to/my/file.csv', 'csv'],
-            ['/path/to/my/file.csv', '.csv', '/path/to/my/file.csv', 'csv'],
+            ['/path/to/my/file;foo', '.csv', '/path/to/my/file.csv;foo', 'csv'],
             ['/path/to/my/file.csv', '', '/path/to/my/file', ''],
+            ['/path/to/my/file.csv;foo=bar,baz', '', '/path/to/my/file;foo=bar,baz', ''],
             ['/path/to/my/file.tar.gz', 'bz2', '/path/to/my/file.tar.bz2', 'bz2'],
+            ['/path/to/my/file.tar.gz;foo', 'bz2', '/path/to/my/file.tar.bz2;foo', 'bz2'],
             ['', 'csv', '', ''],
+            [';foo=bar', 'csv', ';foo=bar', ''],
+            ['', '.csv', '', ''],
+            [';foo=bar', '.csv', ';foo=bar', ''],
+            ['toto.', '.csv', 'toto.csv', 'csv'],
+            ['toto.;foo', '.csv', 'toto.csv;foo', 'csv'],
         ];
     }
 

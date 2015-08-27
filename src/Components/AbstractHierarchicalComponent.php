@@ -105,18 +105,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
     /**
      * {@inheritdoc}
      */
-    public function append($component)
-    {
-        $source = $this->toArray();
-        if (count($source) && '' == $source[count($source) - 1]) {
-            array_pop($source);
-        }
-
-        return $this->newCollectionInstance(array_merge(
-            $source,
-            $this->validateComponent($component)->toArray()
-        ));
-    }
+    abstract public function append($component);
 
     /**
      * Validate a component as a HierarchicalComponentInterface object

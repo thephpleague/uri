@@ -156,15 +156,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
      *
      * @return string
      */
-    protected static function formatComponentString($data, $type)
-    {
-        $str = implode(static::$separator, static::validateIterator($data));
-        if (null !== $str && self::IS_ABSOLUTE == $type) {
-            return static::$separator.$str;
-        }
-
-        return $str;
-    }
+    abstract protected static function formatComponentString($data, $type);
 
     /**
      * {@inheritdoc}

@@ -28,20 +28,23 @@ use InvalidArgumentException;
  */
 interface Ftp extends HierarchicalUri
 {
+    const TYPE_ASCII = 1;
+
+    const TYPE_BINARY = 2;
+
+    const TYPE_DIRECTORY = 3;
+
+    const TYPE_NONE = 4;
+
     /**
-     * Retrieve the optional typecode associated to the path component of the URI.
+     * Retrieve the optional type associated to the path component of the URI.
      *
-     * If no typecode is present, this method MUST return an empty string.
-     *
-     * The value returned MUST be one of the characters "a", "i", or "d", per RFC 1738
-     * Section 3.2.2
-     *
-     * The leading ";type=" sequence is not part of the typecode and MUST NOT be
-     * added.
+     * The value returned MUST be one of the interface constant type
+     * If no type is associated the return constant must be self::TYPE_NONE
      *
      * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
      *
-     * @return string The URI scheme.
+     * @return int a typecode constant.
      */
     public function getTypecode();
 
@@ -49,11 +52,12 @@ interface Ftp extends HierarchicalUri
      * Return an instance with the specified typecode.
      *
      * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified typecode appended to the path.
+     * an instance that contains the specified type appended to the path.
+     * if not
      *
-     * An empty typecode is equivalent to removing the typecode.
+     * Using self::TYPE_NONE is equivalent to removing the typecode.
      *
-     * @param string $type The typecode to use with the new instance.
+     * @param int $type one typecode constant.
      *
      * @throws InvalidArgumentException for invalid typecode.
      *
@@ -61,11 +65,4 @@ interface Ftp extends HierarchicalUri
      *
      */
     public function withTypecode($type);
-
-    /**
-     * Returns the basename extension
-     *
-     * @return string
-     */
-    public function getExtension();
 }

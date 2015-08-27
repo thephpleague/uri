@@ -27,13 +27,20 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
     /**
      * Typecode Regular expression
      */
-    const TYPECODE_REGEXP = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
+    protected static $typeRegex = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
 
     /**
      * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'ftp' => 21,
+    ];
+
+    protected static $typecodeList = [
+        'a' => self::TYPE_ASCII,
+        'i' => self::TYPE_BINARY,
+        'd' => self::TYPE_DIRECTORY,
+        ''  => self::TYPE_NONE,
     ];
 
     /**
@@ -51,11 +58,11 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
      */
     public function getTypecode()
     {
-        if (preg_match(self::TYPECODE_REGEXP, $this->path->getBasename(), $matches)) {
-            return $matches['typecode'];
+        if (preg_match(self::$typeRegex, $this->path->getBasename(), $matches)) {
+            return self::$typecodeList[$matches['typecode']];
         }
 
-        return '';
+        return self::TYPE_NONE;
     }
 
     /**
@@ -63,52 +70,20 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
      */
     public function withTypecode($type)
     {
-        $extension = trim($type);
-        if (!in_array($extension, ['a', 'i', 'd', ''])) {
+        if (!in_array($type, self::$typecodeList)) {
             throw new InvalidArgumentException('invalid typecode');
         }
 
         $basename = $this->path->getBasename();
-        if (preg_match(self::TYPECODE_REGEXP, $basename, $matches)) {
+        if (preg_match(self::$typeRegex, $basename, $matches)) {
             $basename = $matches['basename'];
         }
 
+        $extension = array_search($type, self::$typecodeList);
         if (!empty($extension)) {
             $extension = ';type='.$extension;
         }
 
         return $this->withProperty('path', $this->path->replace(count($this->path) - 1, $basename.$extension));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withExtension($extension)
-    {
-        $typecode = $this->getTypecode();
-        if (empty($typecode)) {
-            return parent::withExtension($extension);
-        }
-        preg_match(self::TYPECODE_REGEXP, $this->path->getBasename(), $matches);
-
-        return $this->withProperty(
-            'path',
-            $this->path
-                ->replace(count($this->path) - 1, $matches['basename'])->withExtension($extension)
-        )->withTypecode($typecode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtension()
-    {
-        $typecode = $this->getTypecode();
-        $extension = $this->path->getExtension();
-        if (empty($typecode)) {
-            return $extension;
-        }
-
-        return substr($extension, 0, -strlen(';type='.$typecode));
     }
 }

@@ -196,48 +196,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider sameValueAsPsr7InterfaceProvider
-     * @param $league
-     * @param $psr7
-     * @param $expected
-     */
-    public function testSameValueAs($league, $psr7, $expected)
-    {
-        $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn($psr7);
-
-        $uri = HttpUri::createFromString($league);
-
-        $this->assertSame($expected, $uri->sameValueAs($mock));
-    }
-
-    public function sameValueAsPsr7InterfaceProvider()
-    {
-        return [
-            ['http://example.com', 'yolo://example.com', false],
-            ['http://example.com', 'http://example.com', true],
-            ['//example.com', '//ExamPle.Com', true],
-            ['http://مثال.إختبار', 'http://xn--mgbh0fb.xn--kgbechtv', true],
-            ['http://example.com', 'http:///example.com', false],
-            ['http://example.com', 'http:example.com', false],
-            ['http://example.com', 'http:/example.com', false],
-            ['http://example.org/~foo/', 'HTTP://example.ORG/~foo/', true],
-            ['http://example.org/~foo/', 'http://example.org:80/~foo/', true],
-            ['http://example.org/~foo/', 'http://example.org/%7Efoo/', true],
-            ['http://example.org/~foo/', 'http://example.org/%7efoo/', true],
-            ['http://example.org/~foo/', 'http://example.ORG/bar/./../~foo/', true],
-        ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testSameValueAsFailedWithUnknownType()
-    {
-        HttpUri::createFromString('http://example.com')->sameValueAs('http://example.com');
-    }
-
-    /**
      * @expectedException InvalidArgumentException
      */
     public function testWithSchemeFailedWithUnsupportedScheme()

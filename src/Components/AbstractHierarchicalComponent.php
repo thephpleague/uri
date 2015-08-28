@@ -15,6 +15,7 @@ use InvalidArgumentException;
 use League\Uri\Interfaces\Components\HierarchicalComponent as HierarchicalComponentInterface;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
+use Traversable;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -80,7 +81,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
             return $this;
         }
 
-        return static::createFromArray($data, $this->isAbsolute);
+        return $this->createFromArray($data, $this->isAbsolute);
     }
 
     /**
@@ -96,7 +97,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
      */
     public function prepend($component)
     {
-        return static::createFromArray(
+        return $this->createFromArray(
             $this->validateComponent($component),
             $this->isAbsolute)
         ->append($this);
@@ -128,8 +129,8 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
     /**
      * return a new instance from an array or a traversable object
      *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     * @param Traversable|string[] $data The segments list
+     * @param int                  $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
@@ -149,14 +150,22 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
     /**
      * Return a formatted component string according to its type
      *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type
+     * @param Traversable|string[] $data The segments list
+     * @param int                  $type
      *
      * @throws InvalidArgumentException If $data is invalid
      *
      * @return string
      */
-    abstract protected static function formatComponentString($data, $type);
+    protected static function formatComponentString($data, $type)
+    {
+        $path = implode(static::$separator, static::validateIterator($data));
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$separator.$path;
+        }
+
+        return $path;
+    }
 
     /**
      * {@inheritdoc}

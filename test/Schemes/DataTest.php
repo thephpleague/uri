@@ -15,15 +15,6 @@ use RuntimeException;
 class DataTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSameValueAsFailed()
-    {
-        $uri = 'data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21';
-        DataUri::createFromString($uri)->sameValueAs($uri);
-    }
-
-    /**
      * @dataProvider validStringUri
      */
     public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $asArray, $isBinaryData)
@@ -226,7 +217,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
 
         $newUri = $uri->withParameters('charset=us-ascii');
-        $this->assertTrue($newUri->sameValueAS($uri));
+        $this->assertSame($newUri, $uri);
     }
 
     public function testWithParametersOnBinaryData()
@@ -288,7 +279,8 @@ class DataTest extends PHPUnit_Framework_TestCase
         $uri = DataUri::createFromPath(__DIR__.'/red-nose.gif');
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
-        $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
+        $res = null;
+        $this->assertSame((string) $uri, (string) DataUri::createFromPath($newFilePath));
 
         // Ensure file handle of \SplFileObject gets closed.
         $res = null;
@@ -301,7 +293,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
         $res = $uri->save($newFilePath);
         $this->assertInstanceOf('\SplFileObject', $res);
-        $this->assertTrue($uri->sameValueAs(DataUri::createFromPath($newFilePath)));
+        $this->assertTrue($uri == DataUri::createFromPath($newFilePath));
         $data = file_get_contents($newFilePath);
         $this->assertSame(base64_encode($data), $uri->getData());
 
@@ -311,26 +303,19 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidUri()
+    {
+        DataUri::createFromString('http:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
+    }
+
+    /**
      * @expectedException \RuntimeException
      */
     public function testSaveFailedWithUnReachableFilePath()
     {
         DataUri::createFromPath(__DIR__.'/hello-world.txt')->save('/usr/bin/yolo', 'w');
-    }
-
-    public function testSameValueAs()
-    {
-        $mock = $this->getMock('Psr\Http\Message\UriInterface');
-        $mock->method('__toString')->willReturn('http://www.example.com');
-
-        $this->assertFalse(DataUri::createFromPath(__DIR__.'/hello-world.txt')->sameValueAs($mock));
-    }
-
-    public function testSameValueAsSimple()
-    {
-        $uri1 = DataUri::createFromPath(__DIR__.'/hello-world.txt');
-        $uri2 = DataUri::createFromPath(__DIR__.'/red-nose.gif');
-        $this->assertFalse($uri1->sameValueAs($uri2));
     }
 
     public function testDataPathConstructor()

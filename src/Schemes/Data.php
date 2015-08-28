@@ -81,25 +81,17 @@ class Data extends AbstractUri implements DataUriInterface
     }
 
     /**
-     * Create a new instance from a file path
+     * Create a new instance from a string
      *
-     * @param string $path
+     * @param string $uri
      *
-     * @throws \InvalidArgumentException If the URI can not be parsed
+     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
-    public static function createFromPath($path)
+    public static function createFromString($uri = '')
     {
-        return new static(
-            new Scheme('data'),
-            new UserInfo(),
-            new Host(),
-            new Port(),
-            DataPath::createFromPath($path),
-            new Query(),
-            new Fragment()
-        );
+        return static::createFromComponents((new UriParser())->parse($uri));
     }
 
     /**
@@ -107,7 +99,7 @@ class Data extends AbstractUri implements DataUriInterface
      *
      * @param array $components
      *
-     * @throws \InvalidArgumentException If the URI can not be parsed
+     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
@@ -123,6 +115,28 @@ class Data extends AbstractUri implements DataUriInterface
             new DataPath($components['path']),
             new Query($components['query']),
             new Fragment($components['fragment'])
+        );
+    }
+
+    /**
+     * Create a new instance from a file path
+     *
+     * @param string $path
+     *
+     * @throws InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromPath($path)
+    {
+        return new static(
+            new Scheme('data'),
+            new UserInfo(),
+            new Host(),
+            new Port(),
+            DataPath::createFromPath($path),
+            new Query(),
+            new Fragment()
         );
     }
 

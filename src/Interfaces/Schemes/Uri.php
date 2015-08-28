@@ -13,7 +13,6 @@ namespace League\Uri\Interfaces\Schemes;
 
 use League\Uri\Interfaces\Components\Collection;
 use League\Uri\Interfaces\Components\HierarchicalComponent;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Value object representing a URI.
@@ -541,19 +540,4 @@ interface Uri
      * @return bool
      */
     public function isEmpty();
-
-    /**
-     * Returns whether two objects represents the same value
-     * The comparison is based on the __toString method.
-     * The following normalization is done prior to comparaison
-     *
-     *  - hosts if present are converted using the punycode algorithm
-     *  - paths if present are normalized by removing dot segments
-     *  - query strings if present are sorted using their offsets
-     *
-     * @param Uri|UriInterface $uri
-     *
-     * @return bool
-     */
-    public function sameValueAs($uri);
 }

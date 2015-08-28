@@ -27,6 +27,8 @@ trait RemoveDotSegmentsTrait
      */
     protected static $dot_segments = ['.' => 1, '..' => 1];
 
+    protected static $separator = '/';
+
     /**
      * {@inheritdoc}
      */

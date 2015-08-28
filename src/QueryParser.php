@@ -29,7 +29,7 @@ class QueryParser
      *    - it does not create nested array
      *
      * @param string    $str          The query string to parse
-     * @param array     $separator    The query string separator
+     * @param string    $separator    The query string separator
      * @param int|false $encodingType The query string encoding mechanism
      *
      * @return array
@@ -53,6 +53,8 @@ class QueryParser
      * validate the encoding type for the query related methods
      *
      * @param int|false $encodingType
+     *
+     * @return int|false
      */
     protected function validateEncodingType($encodingType)
     {
@@ -102,7 +104,7 @@ class QueryParser
      *    - it does not modify parameters keys
      *
      * @param array     $arr          Query string parameters
-     * @param array     $separator    Query string separator
+     * @param string    $separator    Query string separator
      * @param int|false $encodingType Query string encoding
      *
      * @return string

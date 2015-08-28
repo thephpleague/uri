@@ -17,7 +17,6 @@ use League\Uri\Components\Query;
 use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\UriPart;
-use League\Uri\Interfaces\Schemes\HierarchicalUri;
 use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
 
@@ -237,7 +236,7 @@ class Formatter
     /**
      * Format a URI authority according to the Formatter properties
      *
-     * @param HierarchicalUri $uri
+     * @param Uri $uri
      *
      * @return string
      */

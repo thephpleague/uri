@@ -47,13 +47,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
-     * HierarchicalComponent delimiter
-     *
-     * @var string
-     */
-    protected static $separator = '/';
-
-    /**
      * {@inheritdoc}
      */
     protected function init($str)
@@ -288,18 +281,5 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         return implode(static::$separator, $this->validate($extension));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected static function formatComponentString($data, $type)
-    {
-        $path = implode(static::$separator, static::validateIterator($data));
-        if (self::IS_ABSOLUTE == $type) {
-            return static::$separator.$path;
-        }
-
-        return $path;
     }
 }

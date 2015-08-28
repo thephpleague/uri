@@ -128,18 +128,18 @@ class UriParser
      */
     protected function parseScheme(array $parts)
     {
+        $res = ['scheme' => null, 'path' => $parts['path']];
         try {
-            $res = ['scheme' => null, 'path' => $parts['path']];
             $scheme = $this->filterScheme($parts['scheme']);
             $scheme = empty($scheme) ? null : $scheme;
 
             return ['scheme' => $scheme] + $res;
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $exception) {
             if (empty($parts['authority'])) {
                 return ['path' => $parts['scheme'].':'.$parts['path']] + $res;
             }
 
-            throw new $e();
+            throw $exception;
         }
     }
 
@@ -172,6 +172,8 @@ class UriParser
      * @param string $host
      *
      * @throws InvalidArgumentException If the host is invalid
+     *
+     * @return int|null
      */
     protected function filterHost($host)
     {
@@ -220,6 +222,9 @@ class UriParser
 
     /**
      * Format the user info
+     *
+     * @param string $user
+     * @param string $pass
      *
      * @return string
      */

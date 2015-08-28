@@ -81,6 +81,20 @@ abstract class AbstractHierarchicalUri extends AbstractUri implements Hierarchic
     }
 
     /**
+     * Create a new instance from a string
+     *
+     * @param string $uri
+     *
+     * @throws InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromString($uri = '')
+    {
+        return static::createFromComponents((new UriParser())->parse($uri));
+    }
+
+    /**
      * Create a new instance from a hash of parse_url parts
      *
      * @param array $components a hash representation of the URI similar to PHP parse_url function result

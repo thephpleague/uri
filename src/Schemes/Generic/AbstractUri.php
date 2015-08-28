@@ -11,12 +11,9 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use Exception;
 use InvalidArgumentException;
-use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Types\ImmutablePropertyTrait;
 use League\Uri\UriParser;
-use Psr\Http\Message\UriInterface;
 use RuntimeException;
 
 /**
@@ -87,20 +84,6 @@ abstract class AbstractUri
      * @return bool
      */
     abstract protected function isValid();
-
-    /**
-     * Create a new instance from a string
-     *
-     * @param string $uri
-     *
-     * @throws InvalidArgumentException If the URI can not be parsed
-     *
-     * @return static
-     */
-    public static function createFromString($uri = '')
-    {
-        return static::createFromComponents((new UriParser())->parse($uri));
-    }
 
     /**
      * Assert the object is valid
@@ -267,27 +250,6 @@ abstract class AbstractUri
     public function toArray()
     {
         return (new UriParser())->parse($this->__toString());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sameValueAs($uri)
-    {
-        if (!$uri instanceof UriInterface && !$uri instanceof Uri) {
-            throw new InvalidArgumentException(
-                'You must provide an object implementing the `Psr\Http\Message\UriInterface` or
-                the `League\Uri\Interfaces\Schemes\Uri` interface'
-            );
-        }
-
-        try {
-            return static::createFromComponents((new UriParser())->parse($uri->__toString()))
-                ->hostToAscii()->ksortQuery()->withoutDotSegments()->__toString() === $this
-                ->hostToAscii()->ksortQuery()->withoutDotSegments()->__toString();
-        } catch (Exception $e) {
-            return false;
-        }
     }
 
     /**

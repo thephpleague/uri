@@ -79,16 +79,8 @@ trait ImmutableCollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function without($offsets)
+    public function without(array $offsets)
     {
-        if (is_callable($offsets)) {
-            $offsets = array_filter(array_keys($this->data), $offsets);
-        }
-
-        if (!is_array($offsets)) {
-            throw new InvalidArgumentException('You must give a callable or an array as only argument');
-        }
-
         $data = $this->data;
         foreach ($offsets as $offset) {
             unset($data[$this->validateOffset($offset)]);

@@ -239,6 +239,14 @@ class DataPath extends Path implements DataPathInterface
     /**
      * {@inheritdoc}
      */
+    public function getMediatype()
+    {
+        return $this->getMimeType().';'.$this->getParameters();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getMimeType()
     {
         return $this->mimeType;

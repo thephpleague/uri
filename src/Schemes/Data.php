@@ -26,9 +26,8 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
-use League\Uri\Interfaces\Schemes\Data as DataUriInterface;
+use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Schemes\Generic\AbstractUri;
-use League\Uri\Schemes\Generic\PathModifierTrait;
 use League\Uri\UriParser;
 
 /**
@@ -46,10 +45,8 @@ use League\Uri\UriParser;
  * @property-read QueryInterface    $query
  * @property-read FragmentInterface $fragment
  */
-class Data extends AbstractUri implements DataUriInterface
+class Data extends AbstractUri
 {
-    use PathModifierTrait;
-
     /**
      * Create a new instance of URI
      *
@@ -150,93 +147,5 @@ class Data extends AbstractUri implements DataUriInterface
         }
 
         return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPath($path)
-    {
-        return $this->withProperty('path', $path);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMimeType()
-    {
-        return $this->path->getMimeType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
-    {
-        return $this->path->getParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMediatype()
-    {
-        return $this->path->getMimeType().';'.$this->path->getParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        return $this->path->getData();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isBinaryData()
-    {
-        return $this->path->isBinaryData();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function dataToBinary()
-    {
-        return $this->withProperty('path', $this->path->toBinary());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function dataToAscii()
-    {
-        return $this->withProperty('path', $this->path->toAscii());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save($path, $mode = 'w')
-    {
-        return $this->path->save($path, $mode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withParameters($parameters)
-    {
-        return $this->withProperty('path', $this->path->withParameters($parameters));
     }
 }

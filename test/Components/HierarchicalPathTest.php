@@ -230,18 +230,7 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             ['/toto/le/heros/masson', [0], '/le/heros/masson'],
             ['/toto/le/heros/masson', [2, 3], '/toto/le'],
             ['/toto/le/heros/masson', [1, 2], '/toto/masson'],
-            ['/toto/le/heros/masson', function ($value) {
-                return $value < 3;
-            }, '/masson'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithoutFaild()
-    {
-        (new Path('/toofan/orobo'))->without('toofan');
     }
 
     /**
@@ -534,6 +523,7 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             [';foo=bar', '.csv', ';foo=bar', ''],
             ['toto.', '.csv', 'toto.csv', 'csv'],
             ['toto.;foo', '.csv', 'toto.csv;foo', 'csv'],
+            ['toto.csv;foo', '.csv', 'toto.csv;foo', 'csv'],
         ];
     }
 

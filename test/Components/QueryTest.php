@@ -203,18 +203,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         return [
             ['foo&bar&baz&to.go=toofan', ['foo', 'to.go'], 'bar&baz'],
             ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to.go=toofan'],
-            ['foo&bar&baz&to.go=toofan', function ($value) {
-                return strpos($value, 'b') !== false;
-            }, 'foo&to.go=toofan'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithoutFaild()
-    {
-        (new Query('toofan=orobo'))->without('toofan');
     }
 
     /**

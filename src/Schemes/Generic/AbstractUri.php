@@ -12,6 +12,14 @@
 namespace League\Uri\Schemes\Generic;
 
 use InvalidArgumentException;
+use League\Uri\Interfaces\Components\Fragment;
+use League\Uri\Interfaces\Components\Host;
+use League\Uri\Interfaces\Components\Path;
+use League\Uri\Interfaces\Components\Port;
+use League\Uri\Interfaces\Components\Query;
+use League\Uri\Interfaces\Components\Scheme;
+use League\Uri\Interfaces\Components\UserInfo;
+use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Types\ImmutablePropertyTrait;
 use League\Uri\UriParser;
 use RuntimeException;
@@ -23,49 +31,68 @@ use RuntimeException;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  *
- * @property-read \League\Uri\Interfaces\Components\Scheme   $scheme
- * @property-read \League\Uri\Interfaces\Components\UserInfo $userInfo
- * @property-read \League\Uri\Interfaces\Components\Host     $host
- * @property-read \League\Uri\Interfaces\Components\Port     $port
- * @property-read \League\Uri\Interfaces\Components\Path     $path
- * @property-read \League\Uri\Interfaces\Components\Query    $query
- * @property-read \League\Uri\Interfaces\Components\Fragment $fragment
+ * @property-read Scheme   $scheme
+ * @property-read UserInfo $userInfo
+ * @property-read Host     $host
+ * @property-read Port     $port
+ * @property-read Path     $path
+ * @property-read Query    $query
+ * @property-read Fragment $fragment
  */
-abstract class AbstractUri
+abstract class AbstractUri implements Uri
 {
     use ImmutablePropertyTrait;
 
     use PathFormatterTrait;
 
-    use HostModifierTrait;
+    use AuthorityValidatorTrait;
 
-    use QueryModifierTrait;
+    /**
+     * Host Component
+     *
+     * @var Host
+     */
+    protected $host;
 
     /**
      * Scheme Component
      *
-     * @var \League\Uri\Interfaces\Components\Scheme
+     * @var Scheme
      */
     protected $scheme;
 
     /**
      * User Information Part
      *
-     * @var \League\Uri\Interfaces\Components\UserInfo
+     * @var UserInfo
      */
     protected $userInfo;
 
     /**
      * Port Component
      *
-     * @var \League\Uri\Interfaces\Components\Port
+     * @var Port
      */
     protected $port;
 
     /**
+     * Path Component
+     *
+     * @var Path
+     */
+    protected $path;
+
+    /**
+     * Query Component
+     *
+     * @var Query
+     */
+    protected $query;
+
+    /**
      * Fragment Component
      *
-     * @var \League\Uri\Interfaces\Components\Fragment
+     * @var Fragment
      */
     protected $fragment;
 
@@ -145,6 +172,22 @@ abstract class AbstractUri
     /**
      * {@inheritdoc}
      */
+    public function getHost()
+    {
+        return $this->host->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
+    {
+        return $this->withProperty('host', $host);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPort()
     {
         return $this->hasStandardPort() ? null : $this->port->toInt();
@@ -161,9 +204,33 @@ abstract class AbstractUri
     /**
      * {@inheritdoc}
      */
-    public function withoutDotSegments()
+    public function getPath()
     {
-        return $this->withProperty('path', $this->path->withoutDotSegments());
+        return $this->path->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
+    {
+        return $this->withProperty('path', $path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery()
+    {
+        return $this->query->__toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function withQuery($query)
+    {
+        return $this->withProperty('query', $query);
     }
 
     /**
@@ -203,7 +270,8 @@ abstract class AbstractUri
             return false;
         }
 
-        return static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
+        return isset(static::$supportedSchemes[$this->scheme->__toString()])
+            && static::$supportedSchemes[$this->scheme->__toString()] === $this->port->toInt();
     }
 
     /**
@@ -239,14 +307,6 @@ abstract class AbstractUri
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
-    {
-        return empty($this->__toString());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function toArray()
     {
         return (new UriParser())->parse($this->__toString());
@@ -269,5 +329,32 @@ abstract class AbstractUri
         $str = $this->scheme->getUriComponent().$this->getAuthority();
 
         return (!(empty($str) && strpos($path, '/') === false));
+    }
+
+    /**
+     * Tell whether the Hierarchical URI is valid
+     *
+     * @throws InvalidArgumentException If the Scheme is not supported
+     *
+     * @return bool
+     */
+    protected function isValidHierarchicalUri()
+    {
+        $this->assertSupportedScheme();
+
+        return $this->isAuthorityValid();
+    }
+
+    /**
+     * Assert whether the current scheme is supported by the URI object
+     *
+     * @throws InvalidArgumentException If the Scheme is not supported
+     */
+    protected function assertSupportedScheme()
+    {
+        $scheme = $this->getScheme();
+        if (!empty($scheme) && !isset(static::$supportedSchemes[$scheme])) {
+            throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
+        }
     }
 }

@@ -12,8 +12,22 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Schemes\Ftp as FtpInterface;
+use League\Uri\Components\Fragment;
+use League\Uri\Components\FtpPath;
+use League\Uri\Components\Host;
+use League\Uri\Components\Port;
+use League\Uri\Components\Query;
+use League\Uri\Components\Scheme;
+use League\Uri\Components\UserInfo;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\FtpPath as FtpPathInterface;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
+use League\Uri\UriParser;
 
 /**
  * Value object representing FTP Uri.
@@ -22,26 +36,81 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Ftp extends AbstractHierarchicalUri implements FtpInterface
+class Ftp extends AbstractHierarchicalUri
 {
-    /**
-     * Typecode Regular expression
-     */
-    protected static $typeRegex = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
-
     /**
      * {@inheritdoc}
      */
     protected static $supportedSchemes = [
         'ftp' => 21,
     ];
+    /**
+     * Create a new instance of URI
+     *
+     * @param SchemeInterface   $scheme
+     * @param UserInfoInterface $userInfo
+     * @param HostInterface     $host
+     * @param PortInterface     $port
+     * @param FtpPathInterface  $path
+     * @param QueryInterface    $query
+     * @param FragmentInterface $fragment
+     */
+    public function __construct(
+        SchemeInterface $scheme,
+        UserInfoInterface $userInfo,
+        HostInterface $host,
+        PortInterface $port,
+        FtpPathInterface $path,
+        QueryInterface $query,
+        FragmentInterface $fragment
+    ) {
+        $this->scheme = $scheme;
+        $this->userInfo = $userInfo;
+        $this->host = $host;
+        $this->port = $port;
+        $this->path = $path;
+        $this->query = $query;
+        $this->fragment = $fragment;
+        $this->assertValidObject();
+    }
 
-    protected static $typecodeList = [
-        'a' => self::TYPE_ASCII,
-        'i' => self::TYPE_BINARY,
-        'd' => self::TYPE_DIRECTORY,
-        ''  => self::TYPE_NONE,
-    ];
+    /**
+     * Create a new instance from a string
+     *
+     * @param string $uri
+     *
+     * @throws InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromString($uri = '')
+    {
+        return static::createFromComponents((new UriParser())->parse($uri));
+    }
+
+    /**
+     * Create a new instance from a hash of parse_url parts
+     *
+     * @param array $components
+     *
+     * @throws InvalidArgumentException If the URI can not be parsed
+     *
+     * @return static
+     */
+    public static function createFromComponents(array $components)
+    {
+        $components = (new UriParser())->normalizeUriHash($components);
+
+        return new static(
+            new Scheme($components['scheme']),
+            new UserInfo($components['user'], $components['pass']),
+            new Host($components['host']),
+            new Port($components['port']),
+            new FtpPath($components['path']),
+            new Query($components['query']),
+            new Fragment($components['fragment'])
+        );
+    }
 
     /**
      * {@inheritdoc}
@@ -51,39 +120,5 @@ class Ftp extends AbstractHierarchicalUri implements FtpInterface
         return empty($this->fragment->__toString().$this->query->__toString())
             && $this->isValidGenericUri()
             && $this->isValidHierarchicalUri();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTypecode()
-    {
-        if (preg_match(self::$typeRegex, $this->path->getBasename(), $matches)) {
-            return self::$typecodeList[$matches['typecode']];
-        }
-
-        return self::TYPE_NONE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withTypecode($type)
-    {
-        if (!in_array($type, self::$typecodeList)) {
-            throw new InvalidArgumentException('invalid typecode');
-        }
-
-        $basename = $this->path->getBasename();
-        if (preg_match(self::$typeRegex, $basename, $matches)) {
-            $basename = $matches['basename'];
-        }
-
-        $extension = array_search($type, self::$typecodeList);
-        if (!empty($extension)) {
-            $extension = ';type='.$extension;
-        }
-
-        return $this->withProperty('path', $this->path->replace(count($this->path) - 1, $basename.$extension));
     }
 }

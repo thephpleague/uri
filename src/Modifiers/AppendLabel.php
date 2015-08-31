@@ -9,44 +9,38 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Schemes\Generic;
+namespace League\Uri\Modifiers;
 
-use League\Uri\Interfaces\Components\Path;
+use League\Uri\Interfaces\Components\Host;
+use League\Uri\Modifiers\Filters\Label;
 
 /**
- * common URI Object path properties modifiers
+ * Append a label to the URI host
  *
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-trait PathModifierTrait
+class AppendLabel extends AbstractHostModifier
 {
+    use Label;
+
     /**
-     * Path Component
+     * New instance
      *
-     * @var Path
+     * @param Host|string $label the data to be used
+     *
      */
-    protected $path;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
+    public function __construct($label)
     {
-        return $this->path->__toString();
+        $this->label = $this->filterLabel($label);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function withPath($path)
+    protected function modify($str)
     {
-        return $this->withProperty('path', $path);
+        return $this->label->modify($str)->append($this->label)->__toString();
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract protected function withProperty($name, $value);
 }

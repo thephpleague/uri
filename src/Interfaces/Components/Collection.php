@@ -76,9 +76,9 @@ interface Collection extends Countable, IteratorAggregate
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param callable|array $keys the list of keys to remove from the collection
+     * @param array $keys the list of keys to remove from the collection
      *
      * @return static
      */
-    public function without($keys);
+    public function without(array $keys);
 }

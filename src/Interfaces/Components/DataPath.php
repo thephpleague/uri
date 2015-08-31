@@ -37,6 +37,17 @@ interface DataPath extends Path
     public function getData();
 
     /**
+     * Retrieve the mediatype associated with the URI.
+     *
+     * If no mediatype is present, this method MUST return the default parameter 'text/plain;charset=US-ASCII'.
+     *
+     * @see http://tools.ietf.org/html/rfc2397#section-3
+     *
+     * @return string The URI scheme.
+     */
+    public function getMediatype();
+
+    /**
      * Retrieve the data mime type associated to the URI.
      *
      * If no mimetype is present, this method MUST return the default mimetype 'text/plain'.

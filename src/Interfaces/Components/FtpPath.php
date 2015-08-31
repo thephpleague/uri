@@ -9,12 +9,12 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Interfaces\Schemes;
+namespace League\Uri\Interfaces\Components;
 
 use InvalidArgumentException;
 
 /**
- * Value object representing a FTP URI.
+ * Value object representing a FTP URI Path component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -26,7 +26,7 @@ use InvalidArgumentException;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986
  */
-interface Ftp extends HierarchicalUri
+interface FtpPath extends HierarchicalPath
 {
     const TYPE_ASCII = 1;
 
@@ -34,13 +34,13 @@ interface Ftp extends HierarchicalUri
 
     const TYPE_DIRECTORY = 3;
 
-    const TYPE_NONE = 4;
+    const TYPE_EMPTY = 4;
 
     /**
-     * Retrieve the optional type associated to the path component of the URI.
+     * Retrieve the optional type associated to the path.
      *
      * The value returned MUST be one of the interface constant type
-     * If no type is associated the return constant must be self::TYPE_NONE
+     * If no type is associated the return constant must be self::TYPE_EMPTY
      *
      * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
      *
@@ -55,7 +55,7 @@ interface Ftp extends HierarchicalUri
      * an instance that contains the specified type appended to the path.
      * if not
      *
-     * Using self::TYPE_NONE is equivalent to removing the typecode.
+     * Using self::TYPE_EMPTY is equivalent to removing the typecode.
      *
      * @param int $type one typecode constant.
      *

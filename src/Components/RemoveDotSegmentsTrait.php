@@ -27,8 +27,6 @@ trait RemoveDotSegmentsTrait
      */
     protected static $dot_segments = ['.' => 1, '..' => 1];
 
-    protected static $separator = '/';
-
     /**
      * {@inheritdoc}
      */
@@ -52,7 +50,7 @@ trait RemoveDotSegmentsTrait
         $input = explode('/', $current);
         $new   = implode('/', array_reduce($input, [$this, 'filterDotSegments'], []));
         if (isset(static::$dot_segments[end($input)])) {
-            $new .= static::$separator;
+            $new .= '/';
         }
 
         return $this->modify($new);

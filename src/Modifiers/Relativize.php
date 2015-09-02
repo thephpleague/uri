@@ -42,7 +42,7 @@ class Relativize extends AbstractUriModifier
     /**
      * New instance
      *
-     * @param UriInterface|Psr7UriInterface $extension
+     * @param UriInterface|Psr7UriInterface $uri
      */
     public function __construct($uri)
     {

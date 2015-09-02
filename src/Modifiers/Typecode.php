@@ -71,7 +71,7 @@ class Typecode extends AbstractPathModifier
     /**
      * Return a new instance with a different extension to use
      *
-     * @param string $extension
+     * @param int $type
      *
      * @return static
      */

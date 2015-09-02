@@ -149,7 +149,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Schemes\Uri|Interfaces\Components\UriPart $input
+     * @param Interfaces\Uri|Interfaces\Components\UriPart $input
      *
      * @return string
      */

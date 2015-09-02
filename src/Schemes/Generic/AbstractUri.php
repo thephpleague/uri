@@ -154,17 +154,23 @@ abstract class AbstractUri
         if (null === $pass) {
             $pass = '';
         }
-        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
 
+        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
         if ($this->userInfo->getUser() == $userInfo->getUser()
-            && $this->userInfo->getPass() == ($userInfo->getPass())
+            && $this->userInfo->getPass() == $userInfo->getPass()
         ) {
             return $this;
         }
-        $clone = clone $this;
-        $clone->userInfo = $userInfo;
 
-        return $clone;
+        return new static(
+            $this->scheme,
+            $userInfo,
+            $this->host,
+            $this->port,
+            $this->path,
+            $this->query,
+            $this->fragment
+        );
     }
 
     /**

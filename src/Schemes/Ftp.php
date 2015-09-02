@@ -27,7 +27,7 @@ use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Uri;
-use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
+use League\Uri\Schemes\Generic\AbstractUri;
 use League\Uri\UriParser;
 
 /**
@@ -36,8 +36,16 @@ use League\Uri\UriParser;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ *
+ * @property-read SchemeInterface    $scheme
+ * @property-read UserInfoInterface  $userInfo
+ * @property-read HostInterface      $host
+ * @property-read PortInterface      $port
+ * @property-read FtpPathInterface   $path
+ * @property-read QueryInterface     $query
+ * @property-read FragmentInterface  $fragment
  */
-class Ftp extends AbstractHierarchicalUri implements Uri
+class Ftp extends AbstractUri implements Uri
 {
     /**
      * {@inheritdoc}
@@ -45,6 +53,7 @@ class Ftp extends AbstractHierarchicalUri implements Uri
     protected static $supportedSchemes = [
         'ftp' => 21,
     ];
+
     /**
      * Create a new instance of URI
      *

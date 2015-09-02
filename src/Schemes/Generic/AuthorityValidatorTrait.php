@@ -12,8 +12,6 @@
 namespace League\Uri\Schemes\Generic;
 
 use InvalidArgumentException;
-use League\Uri\Components\Host;
-use League\Uri\Components\Scheme;
 
 /**
  * A trait to validate the host in a URI context

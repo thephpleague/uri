@@ -30,6 +30,13 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     use HostnameTrait;
 
     /**
+     * HierarchicalComponent delimiter
+     *
+     * @var string
+     */
+    protected static $separator = '.';
+
+    /**
      * Host literal representation
      *
      * @var string

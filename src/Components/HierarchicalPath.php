@@ -28,6 +28,11 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * {@inheritdoc}
      */
+    protected static $separator = '/';
+
+    /**
+     * {@inheritdoc}
+     */
     protected static $characters_set = [
         '/', ':', '@', '!', '$', '&', "'",
         '(', ')', '*', '+', ',', ';', '=', '?',

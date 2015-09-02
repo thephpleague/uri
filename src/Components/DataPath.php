@@ -61,17 +61,13 @@ class DataPath extends Path implements DataPathInterface
     protected $isBinaryData = false;
 
     /**
-     * a new Media Instance
-     *
-     * @param string $str
+     * {@inheritdoc}
      */
-    public function __construct($str = null)
+    protected function init($str)
     {
-        if (!empty($str)) {
-            $this->assertValidComponent($str);
-            $parts = $this->extractPathParts($this->validateString($str));
-            $this->validate($parts);
-        }
+        $this->assertValidComponent($str);
+        $parts = $this->extractPathParts($this->validateString($str));
+        $this->validate($parts);
     }
 
     /**

@@ -26,7 +26,7 @@ trait Flag
     /**
      * A HostInterface object
      *
-     * @var HostInterface
+     * @var int
      */
     protected $flag;
 
@@ -43,9 +43,9 @@ trait Flag
     /**
      * Return a instance with the specified host
      *
-     * @param HostInterface|string $label the data to be used
+     * @param int $flag the data to be used
      *
-     * @throws InvalidArgumentException for invalid host
+     * @throws InvalidArgumentException for invalid flag
      *
      * @return $this
      */
@@ -60,11 +60,11 @@ trait Flag
     /**
      * Filter and validate the host string
      *
-     * @param HostInterface|string $host the data to validate
+     * @param int $flag the data to validate
      *
-     * @throws \InvalidArgumentException for invalid query strings.
+     * @throws InvalidArgumentException for invalid flag
      *
-     * @return HostInterface
+     * @return int
      */
     protected function filterFlag($flag)
     {

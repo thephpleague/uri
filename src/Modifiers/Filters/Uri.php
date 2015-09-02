@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
-use League\Uri\Interfaces\Schemes\Uri as UriInterface;
+use League\Uri\Interfaces\Uri as UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
 /**

@@ -12,7 +12,9 @@
 namespace League\Uri;
 
 use InvalidArgumentException;
+use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\UriValidator;
+use Psr\Http\Message\UriInterface;
 
 /**
  * A class to ease URI modification based on league.pipeline

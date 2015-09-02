@@ -122,14 +122,6 @@ trait ImmutableComponentTrait
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
-    {
-        return '' === $this->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function modify($value)
     {
         if ($value == $this->__toString()) {

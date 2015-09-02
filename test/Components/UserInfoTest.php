@@ -10,28 +10,6 @@ use PHPUnit_Framework_TestCase;
  */
 class UserInfoTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @param $login
-     * @param $pass
-     * @param $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($login, $pass, $expected)
-    {
-        $this->assertSame($expected, (new UserInfo($login, $pass))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['login', 'pass', false],
-            ['login', '', false],
-            ['', '', true],
-            ['', 'pass', true],
-            ['', 'pass', true],
-        ];
-    }
-
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();

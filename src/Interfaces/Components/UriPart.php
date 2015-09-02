@@ -41,13 +41,6 @@ interface UriPart
     public function getUriComponent();
 
     /**
-     * Returns true if the instance is considered empty
-     *
-     * @return bool
-     */
-    public function isEmpty();
-
-    /**
      * Returns true if the instance is considered null
      *
      * @return null|string

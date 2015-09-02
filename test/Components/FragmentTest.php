@@ -62,22 +62,4 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'array'      => [['foo']],
         ];
     }
-
-    /**
-     * @param  $input
-     * @param  $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($input, $expected)
-    {
-        $this->assertSame($expected, (new Fragment($input))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['yes', false],
-            ['', true],
-        ];
-    }
 }

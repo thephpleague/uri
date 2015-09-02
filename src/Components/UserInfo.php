@@ -59,14 +59,6 @@ class UserInfo implements UserInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
-    {
-        return $this->user->isEmpty();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getUser()
     {
         return $this->user->__toString();

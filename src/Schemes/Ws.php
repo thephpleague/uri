@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Schemes;
 
+use League\Uri\Interfaces\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 
 /**
@@ -20,7 +21,7 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Ws extends AbstractHierarchicalUri
+class Ws extends AbstractHierarchicalUri implements Uri
 {
     /**
      * {@inheritdoc}

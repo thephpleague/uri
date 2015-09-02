@@ -17,7 +17,7 @@ class DataTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider validStringUri
      */
-    public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $asArray, $isBinaryData)
+    public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $isBinaryData)
     {
         $uri = DataUri::createFromString($str);
         $this->assertSame('data', $uri->getScheme());
@@ -25,7 +25,6 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($parameters, $uri->path->getParameters());
         $this->assertSame($mediatype, $uri->path->getMediatype());
         $this->assertSame($data, $uri->path->getData());
-        $this->assertSame($asArray, $uri->toArray());
         $this->assertSame($isBinaryData, $uri->path->isBinaryData());
         $this->assertSame($uri->getPath(), $uri->getSchemeSpecificPart());
         $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
@@ -41,16 +40,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'string without mimetype' => [
@@ -59,16 +48,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'string without parameters' => [
@@ -77,16 +56,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'empty string' => [
@@ -95,16 +64,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => '',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'binary data' => [
@@ -113,16 +72,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=binary',
                 'mediatype' => 'image/gif;charset=binary',
                 'data' => 'R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => true,
             ],
         ];

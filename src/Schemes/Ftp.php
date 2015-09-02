@@ -26,6 +26,7 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Interfaces\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 use League\Uri\UriParser;
 
@@ -36,7 +37,7 @@ use League\Uri\UriParser;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Ftp extends AbstractHierarchicalUri
+class Ftp extends AbstractHierarchicalUri implements Uri
 {
     /**
      * {@inheritdoc}

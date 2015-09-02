@@ -100,74 +100,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $uri
-     * @param $expected
-     * @dataProvider toArrayProvider
-     */
-    public function testToArray($uri, $expected)
-    {
-        $this->assertSame($expected, HttpUri::createFromString($uri)->toArray());
-    }
-
-    public function toArrayProvider()
-    {
-        return [
-            'simple' => [
-                'http://toto.com:443/toto.php',
-                [
-                    'scheme' => 'http',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => 'toto.com',
-                    'port' => 443,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'ipv6 host' => [
-                'https://[::1]:443/toto.php',
-                [
-                    'scheme' => 'https',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => '[::1]',
-                    'port' => null,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'missing host' => [
-                '/toto.php',
-                [
-                    'scheme' => null,
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'relative path' => [
-                'toto.php#fragment',
-                [
-                    'scheme' => null,
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'toto.php',
-                    'query' => null,
-                    'fragment' => 'fragment',
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @expectedException InvalidArgumentException
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
@@ -206,25 +138,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\Query(),
                 new Components\Fragment()
             ), '/path/to/the/sky'],
-        ];
-    }
-
-    /**
-     * @dataProvider hasStandardPortProvider
-     * @param $uri
-     * @param $expected
-     */
-    public function testHasStandardPort($uri, $expected)
-    {
-        $this->assertSame($expected, HttpUri::createFromString($uri)->hasStandardPort());
-    }
-
-    public function hasStandardPortProvider()
-    {
-        return [
-            ['http://example.com:81/', false],
-            ['http://example.com:80/', true],
-            ['http://example.com/', true],
         ];
     }
 

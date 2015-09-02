@@ -11,6 +11,8 @@
  */
 namespace League\Uri\Interfaces\Components;
 
+use InvalidArgumentException;
+
 /**
  * Value object representing the UserInfo part of an URI.
  *
@@ -21,13 +23,6 @@ namespace League\Uri\Interfaces\Components;
  */
 interface UserInfo extends UriPart
 {
-    /**
-     * Return an array representation of the UserInfo part
-     *
-     * @return array
-     */
-    public function toArray();
-
     /**
      * Retrieve the user component of the URI User Info part
      *
@@ -52,7 +47,7 @@ interface UserInfo extends UriPart
      *
      * @param string $user The user to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid user.
+     * @throws InvalidArgumentException for invalid user.
      *
      * @return static
      */
@@ -68,7 +63,7 @@ interface UserInfo extends UriPart
      *
      * @param string $pass The password to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid password.
+     * @throws InvalidArgumentException for invalid password.
      *
      * @return static
      */

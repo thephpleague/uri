@@ -57,6 +57,7 @@ All Notable changes to `League\Url` will be documented in this file
 - `Uri::isAbsolute`
 - `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
+- `isEmpty` no longer needed as we drop supports for  `PHP 5.4` 
 
 ## 4.0.0-beta-3 - 2015-06-09
 

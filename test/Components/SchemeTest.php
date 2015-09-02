@@ -86,22 +86,4 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($scheme->sameValueAs($newscheme));
         $this->assertSame('', $newscheme->getUriComponent());
     }
-
-    /**
-     * @param  $input
-     * @param  $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($input, $expected)
-    {
-        $this->assertSame($expected, (new Scheme($input))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['ftp', false],
-            ['', true],
-        ];
-    }
 }

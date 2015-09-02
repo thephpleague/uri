@@ -263,11 +263,11 @@ abstract class AbstractUri
      */
     protected function hasStandardPort()
     {
-        if ($this->port->isEmpty()) {
+        if (empty($this->port->getContent())) {
             return true;
         }
 
-        if ($this->scheme->isEmpty()) {
+        if (empty($this->scheme->getContent())) {
             return false;
         }
 

@@ -163,7 +163,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public function hasTrailingSlash()
     {
-        return !$this->isEmpty() && empty($this->getBasename());
+        return !empty($this->__toString()) && empty($this->getBasename());
     }
 
     /**

@@ -19,9 +19,7 @@ use League\Uri\Interfaces\Components\Port;
 use League\Uri\Interfaces\Components\Query;
 use League\Uri\Interfaces\Components\Scheme;
 use League\Uri\Interfaces\Components\UserInfo;
-use League\Uri\Interfaces\Schemes\Uri;
 use League\Uri\Types\ImmutablePropertyTrait;
-use League\Uri\UriParser;
 use RuntimeException;
 
 /**
@@ -39,7 +37,7 @@ use RuntimeException;
  * @property-read Query    $query
  * @property-read Fragment $fragment
  */
-abstract class AbstractUri implements Uri
+abstract class AbstractUri
 {
     use ImmutablePropertyTrait;
 
@@ -258,9 +256,12 @@ abstract class AbstractUri implements Uri
     }
 
     /**
-     * {@inheritdoc}
+     * Returns whether the standard port for the given scheme is used, when
+     * the scheme is unknown or unsupported will the method return false
+     *
+     * @return bool
      */
-    public function hasStandardPort()
+    protected function hasStandardPort()
     {
         if ($this->port->isEmpty()) {
             return true;
@@ -302,14 +303,6 @@ abstract class AbstractUri implements Uri
             .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return (new UriParser())->parse($this->__toString());
     }
 
     /**

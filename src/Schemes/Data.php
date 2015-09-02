@@ -26,7 +26,7 @@ use League\Uri\Interfaces\Components\Port as PortInterface;
 use League\Uri\Interfaces\Components\Query as QueryInterface;
 use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
 use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
-use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Interfaces\Uri;
 use League\Uri\Schemes\Generic\AbstractUri;
 use League\Uri\UriParser;
 
@@ -45,7 +45,7 @@ use League\Uri\UriParser;
  * @property-read QueryInterface    $query
  * @property-read FragmentInterface $fragment
  */
-class Data extends AbstractUri
+class Data extends AbstractUri implements Uri
 {
     /**
      * Create a new instance of URI

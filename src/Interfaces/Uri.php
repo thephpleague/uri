@@ -9,7 +9,7 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Interfaces\Schemes;
+namespace League\Uri\Interfaces;
 
 /**
  * Value object representing a URI.
@@ -42,24 +42,6 @@ interface Uri
      * @return string The URI scheme.
      */
     public function getScheme();
-
-    /**
-     * Return an instance with the specified scheme.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified scheme.
-     *
-     * An empty scheme is equivalent to removing the scheme.
-     *
-     * @param string $scheme The scheme to use with the new instance.
-     *
-     * @throws \InvalidArgumentException for invalid schemes.
-     * @throws \InvalidArgumentException for unsupported schemes.
-     *
-     * @return self A new instance with the specified scheme.
-     *
-     */
-    public function withScheme($scheme);
 
     /**
      * Retrieve the scheme specific part of the URI.
@@ -211,6 +193,24 @@ interface Uri
     public function getFragment();
 
     /**
+     * Return an instance with the specified scheme.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified scheme.
+     *
+     * An empty scheme is equivalent to removing the scheme.
+     *
+     * @param null|string $scheme The scheme to use with the new instance.
+     *
+     * @throws \InvalidArgumentException for invalid schemes.
+     * @throws \InvalidArgumentException for unsupported schemes.
+     *
+     * @return self A new instance with the specified scheme.
+     *
+     */
+    public function withScheme($scheme);
+
+    /**
      * Return an instance with the specified user information.
      *
      * This method MUST retain the state of the current instance, and return
@@ -235,7 +235,7 @@ interface Uri
      *
      * An empty host value is equivalent to removing the host.
      *
-     * @param string $host The hostname to use with the new instance.
+     * @param null|string $host The hostname to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid hostnames.
      * @return self                      A new instance with the specified host.
@@ -301,7 +301,7 @@ interface Uri
      *
      * An empty query string value is equivalent to removing the query string.
      *
-     * @param string $query The query string to use with the new instance.
+     * @param null|string $query The query string to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid query strings.
      * @return self                      A new instance with the specified query string.
@@ -320,7 +320,7 @@ interface Uri
      *
      * An empty fragment value is equivalent to removing the fragment.
      *
-     * @param string $fragment The fragment to use with the new instance.
+     * @param null|string $fragment The fragment to use with the new instance.
      *
      * @return self A new instance with the specified fragment.
      */
@@ -351,19 +351,4 @@ interface Uri
      * @return string
      */
     public function __toString();
-
-    /**
-     * Return an array representation of the URI
-     *
-     * @return array
-     */
-    public function toArray();
-
-    /**
-     * Returns whether the standard port for the given scheme is used, when
-     * the scheme is unknown or unsupported will the method return false
-     *
-     * @return bool
-     */
-    public function hasStandardPort();
 }

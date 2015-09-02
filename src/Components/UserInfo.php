@@ -83,21 +83,6 @@ class UserInfo implements UserInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function toArray()
-    {
-        if ($this->user->isEmpty()) {
-            return ['user' => null, 'pass' => null];
-        }
-
-        return [
-            'user' => $this->user->__toString(),
-            'pass' => ($this->pass->isEmpty()) ? null : $this->pass->__toString(),
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getContent()
     {
         if (null === $this->user->getContent()) {

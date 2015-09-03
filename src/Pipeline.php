@@ -80,17 +80,17 @@ class Pipeline
     public function __invoke($uri)
     {
         $this->assertUriObject($uri);
-
         $reducer = function ($uri, callable $stage) {
             return call_user_func($stage, $uri);
         };
-
+        $newUri = array_reduce($this->collection, $reducer, $uri);
+    
         if (!is_object($newUri) || get_class($newUri) !== get_class($uri)) {
             throw new RuntimeException(
                 'The returned value is not of the same class as the submitted URI object'
             );
         }
-
-        return array_reduce($this->collection, $reducer, $uri);
+        
+        return $newUri;
     }
 }

@@ -101,6 +101,34 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testArrayAcces()
+    {
+        $path = new Path('/master/example/com');
+        $this->assertSame('master', $path[0]);
+        $this->assertNull($path[23]);
+        $this->assertFalse(isset($path[23]));
+        $this->assertTrue(isset($path[1]));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessSetterThrowLogicException()
+    {
+        $path = new Path('/master/example/com');
+        $path[0] = 'be';
+    }
+
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessUnsetterThrowLogicException()
+    {
+        $path = new Path('/master/example/com');
+        unset($path[0]);
+    }
+
     /**
      * @param $input
      * @param $has_front_delimiter

@@ -146,6 +146,30 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->query->hasKey('togo'));
     }
 
+    public function testArrayAcces()
+    {
+        $this->assertSame('toto', $this->query['kingkong']);
+        $this->assertNull($this->query[23]);
+        $this->assertFalse(isset($this->query[23]));
+        $this->assertTrue(isset($this->query['kingkong']));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessSetterThrowLogicException()
+    {
+        $this->query['count'] = 'dracula';
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessUnsetterThrowLogicException()
+    {
+        unset($this->query['kingkong']);
+    }
+
     public function testCountable()
     {
         $this->assertSame(1, count($this->query));

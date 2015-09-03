@@ -101,6 +101,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     /**
      * {@inheritdoc}
      */
+    public function offsetGet($key)
+    {
+        return $this->getLabel($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getContent()
     {
         if (empty($this->data)) {

@@ -25,7 +25,7 @@ class DataUriParameters extends AbstractPathModifier
     /**
      * A DataPath object
      *
-     * @var DataPathInterface
+     * @var string
      */
     protected $parameters;
 
@@ -49,10 +49,7 @@ class DataUriParameters extends AbstractPathModifier
      */
     public function withParameters($parameters)
     {
-        $clone = clone $this;
-        $clone->parameters = $this->filterParamaters($parameters);
-
-        return $clone;
+        return new static($parameters);
     }
 
     /**

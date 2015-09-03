@@ -13,6 +13,7 @@ namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\Components\Path;
 
 /**
  * Path Segment validation trait
@@ -33,7 +34,7 @@ trait Segment
     /**
      * Return a instance with the specified path
      *
-     * @param HierarchicalPathInterface|string $segment the data to be merged query can be
+     * @param string $segment the data to be merged query can be
      *
      * @return self
      */
@@ -48,16 +49,12 @@ trait Segment
     /**
      * Filter and validate the path data
      *
-     * @param HierarchicalPathInterface|string $path the data to be merged query can be
+     * @param string $path the data to be merged query can be
      *
      * @return HierarchicalPathInterface
      */
     protected function filterSegment($path)
     {
-        if ($path instanceof HierarchicalPathInterface) {
-            return $path;
-        }
-
         return new HierarchicalPath($path);
     }
 }

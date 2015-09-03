@@ -11,8 +11,8 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
-use League\Uri\Interfaces\Uri as UriInterface;
-use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use League\Uri\Interfaces\Uri as LeagueUriInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Uri Parameter validation
@@ -28,14 +28,14 @@ trait Uri
     /**
      * The list of keys to remove
      *
-     * @var UriInterface|Psr7UriInterface
+     * @var LeagueUriInterface|UriInterface
      */
     protected $uri;
 
     /**
      * Return a new instance with a new set of keys
      *
-     * @param UriInterface|Psr7UriInterface $uri The Uri Object
+     * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *
      * @return $this
      */
@@ -50,7 +50,7 @@ trait Uri
     /**
      * Validate the submitted keys
      *
-     * @param UriInterface|Psr7UriInterface $uri The Uri Object
+     * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *
      * @return callable|array
      */

@@ -33,7 +33,7 @@ trait Label
     /**
      * Return a instance with the specified host
      *
-     * @param HostInterface|string $label the data to be used
+     * @param string $label the data to be used
      *
      * @return $this
      */
@@ -48,16 +48,12 @@ trait Label
     /**
      * Filter and validate the host string
      *
-     * @param HostInterface|string $host the data to validate
+     * @param string $host the data to validate
      *
      * @return HostInterface
      */
     protected function filterLabel($host)
     {
-        if ($host instanceof HostInterface) {
-            return $host;
-        }
-
         return new Host($host);
     }
 }

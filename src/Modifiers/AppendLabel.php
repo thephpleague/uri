@@ -28,7 +28,7 @@ class AppendLabel extends AbstractHostModifier
     /**
      * New instance
      *
-     * @param Host|string $label the data to be used
+     * @param string $label the data to be used
      *
      */
     public function __construct($label)

@@ -31,8 +31,8 @@ class ReplaceLabel extends AbstractHostModifier
     /**
      * New instance
      *
-     * @param int         $offset
-     * @param Host|string $label
+     * @param int    $offset
+     * @param string $label
      */
     public function __construct($offset, $label)
     {

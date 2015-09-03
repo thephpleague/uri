@@ -12,9 +12,9 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Components\HierarchicalPath;
-use League\Uri\Interfaces\Schemes\Uri as UriInterface;
+use League\Uri\Interfaces\Uri as LeagueUriInterface;
 use League\Uri\Modifiers\Filters\Uri;
-use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Resolve an URI according to a base URI using
@@ -31,9 +31,9 @@ class Resolve extends AbstractUriModifier
     /**
      * Generate the base URI to be used
      *
-     * @param UriInterface|Psr7UriInterface $relative
+     * @param LeagueUriInterface|UriInterface $relative
      *
-     * @return UriInterface|Psr7UriInterface
+     * @return LeagueUriInterface|UriInterface
      */
     protected function getBaseUri($relative)
     {
@@ -51,7 +51,7 @@ class Resolve extends AbstractUriModifier
     /**
      * New instance
      *
-     * @param UriInterface|Psr7UriInterface $uri
+     * @param LeagueUriInterface|UriInterface $uri
      */
     public function __construct($uri)
     {
@@ -69,6 +69,11 @@ class Resolve extends AbstractUriModifier
         return (new RemoveDotSegments())->__invoke($uri);
     }
 
+    /**
+     * @param LeagueUriInterface|UriInterface $relative
+     *
+     * @return LeagueUriInterface|UriInterface
+     */
     protected function generate($relative)
     {
         $scheme = $relative->getScheme();
@@ -86,9 +91,9 @@ class Resolve extends AbstractUriModifier
     /**
      * returns the resolve URI
      *
-     * @param UriInterface|Psr7UriInterface $relative the relative URI
+     * @param LeagueUriInterface|UriInterface $relative the relative URI
      *
-     * @return UriInterface|Psr7UriInterface
+     * @return LeagueUriInterface|UriInterface
      */
     protected function resolveRelative($relative)
     {
@@ -112,11 +117,11 @@ class Resolve extends AbstractUriModifier
     /**
      * Return the resolve URI with a updated path and query
      *
-     * @param UriInterface|Psr7UriInterface $relative the relative URI
-     * @param string                        $path     The relative path string
-     * @param string                        $query    The relative query string
+     * @param LeagueUriInterface|UriInterface $relative the relative URI
+     * @param string                          $path     The relative path string
+     * @param string                          $query    The relative query string
      *
-     * @return UriInterface|Psr7UriInterface
+     * @return LeagueUriInterface|UriInterface
      */
     protected function resolveRelativePath($relative, $path, $query)
     {

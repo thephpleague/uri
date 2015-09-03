@@ -28,7 +28,7 @@ class RemoveSegments extends AbstractPathModifier
     /**
      * New instance
      *
-     * @param callable|int[] $keys
+     * @param int[] $keys
      */
     public function __construct(array $keys)
     {

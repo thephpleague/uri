@@ -33,10 +33,7 @@ trait QueryString
     /**
      * Return a instance with the specified query string
      *
-     *
-     * @param QueryInterface|string $query the data to be merged query can be
-     *                                     - another Interfaces\Query object
-     *                                     - a string or a Stringable object
+     * @param string $query the data to be merged
      *
      * @return $this
      */
@@ -51,18 +48,12 @@ trait QueryString
     /**
      * Filter and validate the query data
      *
-     * @param QueryInterface|string $query the data to be merged query can be
-     *                                     - another Interfaces\Query object
-     *                                     - a string or a Stringable object
+     * @param string $query the data to be merged
      *
      * @return QueryInterface
      */
     protected function filterQuery($query)
     {
-        if ($query instanceof QueryInterface) {
-            return $query;
-        }
-
         return new Query($query);
     }
 }

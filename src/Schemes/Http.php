@@ -13,6 +13,13 @@ namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
 use League\Uri\Components\Host;
+use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 use League\Uri\UriParser;
@@ -24,6 +31,14 @@ use Psr\Http\Message\UriInterface;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ *
+ * @property-read SchemeInterface           $scheme
+ * @property-read UserInfoInterface         $userInfo
+ * @property-read HostInterface             $host
+ * @property-read PortInterface             $port
+ * @property-read HierarchicalPathInterface $path
+ * @property-read QueryInterface            $query
+ * @property-read FragmentInterface         $fragment
  */
 class Http extends AbstractHierarchicalUri implements Uri, UriInterface
 {

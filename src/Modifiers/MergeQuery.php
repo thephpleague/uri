@@ -28,7 +28,7 @@ class MergeQuery extends AbstractQueryModifier
     /**
      * New Instance
      *
-     * @param Query|string $query
+     * @param string $query
      */
     public function __construct($query)
     {

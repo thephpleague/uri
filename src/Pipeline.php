@@ -15,15 +15,18 @@ use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\UriValidator;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
 /**
- * A class to ease URI modification based on league.pipeline
+ * A class to ease applying multiple modification 
+ * on a URI object based on the pipeline pattern
+ * This class is based on league.pipeline
  *
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Modifier
+class Pipeline
 {
     use UriValidator;
 
@@ -39,14 +42,13 @@ class Modifier
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(array $collection = [])
+    public function __construct($collection = [])
     {
         foreach ($collection as $stage) {
             if (!is_callable($stage)) {
                 throw new InvalidArgumentException('All collection should be callable');
             }
         }
-
         $this->collection = $collection;
     }
 
@@ -70,6 +72,9 @@ class Modifier
      *
      * @param Uri|UriInterface $uri
      *
+     * @throws RuntimeException if the returned value is not of the 
+     *                          same class as the submitted URI object
+     *
      * @return Uri|UriInterface
      */
     public function __invoke($uri)
@@ -79,10 +84,13 @@ class Modifier
         $reducer = function ($uri, callable $stage) {
             return call_user_func($stage, $uri);
         };
-        $newUri = array_reduce($this->collection, $reducer, $uri);
 
-        $this->assertUriObject($newUri);
+        if (!is_object($newUri) || get_class($newUri) !== get_class($uri)) {
+            throw new RuntimeException(
+                'The returned value is not of the same class as the submitted URI object'
+            );
+        }
 
-        return $newUri;
+        return array_reduce($this->collection, $reducer, $uri);
     }
 }

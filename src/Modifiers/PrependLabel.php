@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Components\Host;
-use League\Uri\Interfaces\Components\Host as HostInterface;
 use League\Uri\Modifiers\Filters\Label;
 
 /**
@@ -29,7 +28,7 @@ class PrependLabel extends AbstractHostModifier
     /**
      * New instance
      *
-     * @param HostInterface|string $label
+     * @param string $label
      */
     public function __construct($label)
     {

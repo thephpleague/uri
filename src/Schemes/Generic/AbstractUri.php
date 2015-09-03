@@ -28,14 +28,6 @@ use RuntimeException;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
- *
- * @property-read Scheme   $scheme
- * @property-read UserInfo $userInfo
- * @property-read Host     $host
- * @property-read Port     $port
- * @property-read Path     $path
- * @property-read Query    $query
- * @property-read Fragment $fragment
  */
 abstract class AbstractUri
 {
@@ -162,15 +154,10 @@ abstract class AbstractUri
             return $this;
         }
 
-        return new static(
-            $this->scheme,
-            $userInfo,
-            $this->host,
-            $this->port,
-            $this->path,
-            $this->query,
-            $this->fragment
-        );
+        $clone = clone $this;
+        $clone->userInfo = $userInfo;
+
+        return $clone;
     }
 
     /**

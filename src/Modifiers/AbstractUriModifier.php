@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\UriValidator;
 use Psr\Http\Message\UriInterface;
 

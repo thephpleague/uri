@@ -31,8 +31,8 @@ class ReplaceSegment extends AbstractPathModifier
     /**
      * New instance
      *
-     * @param int         $offset
-     * @param Path|string $segment
+     * @param int    $offset
+     * @param string $segment
      */
     public function __construct($offset, $segment)
     {

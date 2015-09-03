@@ -34,14 +34,6 @@ use League\Uri\UriParser;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
- *
- * @property-read SchemeInterface           $scheme
- * @property-read UserInfoInterface         $userInfo
- * @property-read HostInterface             $host
- * @property-read PortInterface             $port
- * @property-read HierarchicalPathInterface $path
- * @property-read QueryInterface            $query
- * @property-read FragmentInterface         $fragment
  */
 abstract class AbstractHierarchicalUri extends AbstractUri
 {

@@ -28,7 +28,7 @@ class AppendSegment extends AbstractPathModifier
     /**
      * New instance
      *
-     * @param Path|string $segment
+     * @param string $segment
      */
     public function __construct($segment)
     {

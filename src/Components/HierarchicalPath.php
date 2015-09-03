@@ -108,6 +108,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return $default;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($key)
+    {
+        return $this->getSegment($key);
+    }
+
     public function getContent()
     {
         $front_delimiter = '';

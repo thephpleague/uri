@@ -14,6 +14,7 @@ namespace League\Uri\Types;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri\Interfaces\Components\Collection;
+use LogicException;
 use Traversable;
 
 /**
@@ -46,6 +47,30 @@ trait ImmutableCollectionTrait
     public function getIterator()
     {
         return new ArrayIterator($this->data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($key, $value)
+    {
+        throw new LogicException('The object is a immutable ArrayAccess object');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($key)
+    {
+        throw new LogicException('The object is a immutable ArrayAccess object');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($key)
+    {
+        return $this->hasKey($key);
     }
 
     /**

@@ -81,17 +81,28 @@ class Pipeline
     {
         $this->assertUriObject($uri);
 
-        $reducer = function ($uri, callable $stage) {
-            return call_user_func($stage, $uri);
-        };
-
-        $newUri = array_reduce($this->collection, $reducer, $uri);
-        if (!is_object($newUri) || get_class($newUri) !== get_class($uri)) {
-            throw new RuntimeException(
-                'The returned value is not of the same class as the submitted URI object'
-            );
+        $newUri = $uri;
+        foreach ($this->collection as $stage) {
+            $newUri = call_user_func($stage, $newUri);
+            if (!is_object($newUri) || get_class($newUri) !== get_class($uri)) {
+                throw new RuntimeException(
+                    'The returned value is not of the same class as the submitted URI object'
+                );
+            }
         }
-        
+
         return $newUri;
+    }
+
+    /**
+     * Return a Uri object modified according to the modifier
+     *
+     * @param Uri|UriInterface $uri
+     *
+     * @return Uri|UriInterface
+     */
+    public function process($uri)
+    {
+        return $this->__invoke($uri);
     }
 }

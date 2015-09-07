@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Interfaces\Uri;
-use League\Uri\Modifiers\Filters\UriValidator;
+use League\Uri\Types\UriValidator;
 use Psr\Http\Message\UriInterface;
 
 /**

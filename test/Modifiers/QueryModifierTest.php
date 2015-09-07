@@ -70,7 +70,6 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
         return [
             ['toto', 'kingkong=toto&foo=bar%20baz&toto'],
             ['toto=&toto=1', 'kingkong=toto&foo=bar%20baz&toto=&toto=1'],
-            [new Query('kingkong=nintendo'), 'kingkong=nintendo&foo=bar%20baz'],
         ];
     }
 
@@ -102,6 +101,14 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
     public function testKsortQueryFailed()
     {
         new KsortQuery(['data']);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testMergeQueryContructorFailed()
+    {
+        new MergeQuery(new Query('toto=king'));
     }
 
     /**

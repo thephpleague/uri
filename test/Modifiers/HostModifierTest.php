@@ -61,7 +61,6 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
         return [
             ['toto', 2, 'toto.www.example.com', 'www.example.com.toto', 'toto.example.com'],
             ['123', 1, '123.www.example.com', 'www.example.com.123', 'www.123.com'],
-            [new Host('toto'), 0, 'toto.www.example.com', 'www.example.com.toto', 'www.example.toto'],
         ];
     }
 
@@ -161,6 +160,22 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
+    public function testAppendLabelConstructorFailed()
+    {
+        new AppendLabel(new Host('example.com'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testPrependLabelConstructorFailed()
+    {
+        new PrependLabel(new Host('example.com'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testPrependLabelProcessFailed()
     {
         (new PrependLabel(''))->__invoke('http://www.example.com');
@@ -172,5 +187,13 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
     public function testReplaceLabelProcessFailed()
     {
         new ReplaceLabel(-3, 'toto');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testReplaceLabelConstructorFailed()
+    {
+        new ReplaceLabel(-3, new Host('toto'));
     }
 }

@@ -11,8 +11,10 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
+use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Interfaces\Host as HostInterface;
+use League\Uri\Types\StringValidator;
 
 /**
  * Host label trait
@@ -23,6 +25,8 @@ use League\Uri\Interfaces\Host as HostInterface;
  */
 trait Label
 {
+    use StringValidator;
+
     /**
      * A HostInterface object
      *
@@ -39,8 +43,9 @@ trait Label
      */
     public function withLabel($label)
     {
+        $label = $this->filterLabel($label);
         $clone = clone $this;
-        $clone->label = $clone->filterLabel($label);
+        $clone->label = $label;
 
         return $clone;
     }
@@ -48,12 +53,12 @@ trait Label
     /**
      * Filter and validate the host string
      *
-     * @param string $host the data to validate
+     * @param string $label the data to validate
      *
      * @return HostInterface
      */
-    protected function filterLabel($host)
+    protected function filterLabel($label)
     {
-        return new Host($host);
+        return new Host($this->validateString($label));
     }
 }

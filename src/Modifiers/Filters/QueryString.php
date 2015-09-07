@@ -11,8 +11,10 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
+use InvalidArgumentException;
 use League\Uri\Components\Query;
 use League\Uri\Interfaces\Query as QueryInterface;
+use League\Uri\Types\StringValidator;
 
 /**
  * Query string modifier
@@ -23,6 +25,8 @@ use League\Uri\Interfaces\Query as QueryInterface;
  */
 trait QueryString
 {
+    use StringValidator;
+
     /**
      * A Query object
      *
@@ -39,8 +43,9 @@ trait QueryString
      */
     public function withQuery($query)
     {
+        $query = $this->filterQuery($query);
         $clone = clone $this;
-        $clone->query = $clone->filterQuery($query);
+        $clone->query = $query;
 
         return $clone;
     }
@@ -54,6 +59,6 @@ trait QueryString
      */
     protected function filterQuery($query)
     {
-        return new Query($query);
+        return new Query($this->validateString($query));
     }
 }

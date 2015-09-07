@@ -4,6 +4,7 @@ namespace League\Uri\Test\Modifiers;
 
 use League\Uri\Components\FtpPath;
 use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 use League\Uri\Modifiers\AddLeadingSlash;
 use League\Uri\Modifiers\AddTrailingSlash;
 use League\Uri\Modifiers\AppendSegment;
@@ -122,7 +123,6 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
         return [
             ['toto', 2, '/path/to/the/sky.php/toto', '/toto/path/to/the/sky.php', '/path/to/toto/sky.php'],
             ['le blanc', 2, '/path/to/the/sky.php/le%20blanc', '/le%20blanc/path/to/the/sky.php', '/path/to/le%20blanc/sky.php'],
-            [new HierarchicalPath('toto'), 2, '/path/to/the/sky.php/toto', '/toto/path/to/the/sky.php', '/path/to/toto/sky.php'],
         ];
     }
 
@@ -269,6 +269,14 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
+    public function testAppendConstructorFailed()
+    {
+        new AppendSegment(new Path('whynot'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testPrependProcessFailed()
     {
         (new PrependSegment(''))->__invoke('http://www.example.com');
@@ -277,9 +285,25 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
+    public function testPrependConstructorFailed()
+    {
+        new PrependSegment(new Path('whynot'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testWithoutDotSegmentsProcessFailed()
     {
         (new RemoveDotSegments())->__invoke('http://www.example.com');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testReplaceSegmentConstructorFailed()
+    {
+        new ReplaceSegment(2, new Path('whynot'));
     }
 
     /**

@@ -86,14 +86,6 @@ abstract class AbstractComponent
     /**
      * {@inheritdoc}
      */
-    public function getLiteral()
-    {
-        return (string) $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getUriComponent()
     {
         return $this->__toString();

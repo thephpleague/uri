@@ -24,6 +24,6 @@ namespace League\Uri\Interfaces\Components;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
  */
-interface User extends Component, LiteralAccess
+interface User extends Component
 {
 }

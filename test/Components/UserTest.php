@@ -22,16 +22,6 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertSame($parsed, $user->getUriComponent());
     }
 
-    /**
-     * @dataProvider validUserProvider
-     * @param $raw
-     */
-    public function testGetLiteral($raw)
-    {
-        $user = new User(new User($raw));
-        $this->assertSame($raw, $user->getLiteral());
-    }
-
     public function validUserProvider()
     {
         return [

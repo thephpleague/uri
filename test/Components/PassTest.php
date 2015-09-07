@@ -21,15 +21,6 @@ class PassTest extends PHPUnit_Framework_TestCase
         $this->assertSame($parsed, (new Pass($raw))->getUriComponent());
     }
 
-    /**
-     * @dataProvider validUserProvider
-     * @param $raw
-     */
-    public function testGetLiteral($raw)
-    {
-        $this->assertSame($raw, (new Pass($raw))->getLiteral());
-    }
-
     public function validUserProvider()
     {
         return [

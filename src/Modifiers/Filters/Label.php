@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
-use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Types\StringValidator;

@@ -9,7 +9,7 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Modifiers\Filters;
+namespace League\Uri\Types;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Uri as LeagueUriInterface;

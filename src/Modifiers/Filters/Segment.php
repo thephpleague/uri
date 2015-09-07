@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
-use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Path;

@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
-use InvalidArgumentException;
 use League\Uri\Components\Query;
 use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\Types\StringValidator;

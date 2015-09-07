@@ -281,11 +281,15 @@ abstract class AbstractUri
         return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
-
     /**
-     * {@inheritdoc}
+     * Retrieve the scheme specific part of the URI.
+     *
+     * If no specific part information is present, this method MUST return an empty
+     * string.
+     *
+     * @return string The URI authority, in "[user-info@]host[:port]" format.
      */
-    public function getSchemeSpecificPart()
+    protected function getSchemeSpecificPart()
     {
         $auth = $this->getAuthority();
         if (!empty($auth)) {

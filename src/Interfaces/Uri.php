@@ -44,16 +44,6 @@ interface Uri
     public function getScheme();
 
     /**
-     * Retrieve the scheme specific part of the URI.
-     *
-     * If no specific part information is present, this method MUST return an empty
-     * string.
-     *
-     * @return string The URI authority, in "[user-info@]host[:port]" format.
-     */
-    public function getSchemeSpecificPart();
-
-    /**
      * Retrieve the authority component of the URI.
      *
      * If no authority information is present, this method MUST return an empty

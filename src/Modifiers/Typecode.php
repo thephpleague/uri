@@ -36,10 +36,10 @@ class Typecode extends AbstractPathModifier
      * @var array
      */
     protected static $typecodeList = [
-        FtpPath::TYPE_ASCII => 1,
-        FtpPath::TYPE_BINARY => 1,
-        FtpPath::TYPE_DIRECTORY => 1,
-        FtpPath::TYPE_EMPTY => 1,
+        FtpPath::FTP_TYPE_ASCII => 1,
+        FtpPath::FTP_TYPE_BINARY => 1,
+        FtpPath::FTP_TYPE_DIRECTORY => 1,
+        FtpPath::FTP_TYPE_EMPTY => 1,
     ];
 
     /**

@@ -34,10 +34,10 @@ class FtpPath extends HierarchicalPath implements FtpPathInterface
      * @array
      */
     protected static $typecodeList = [
-        'a' => self::TYPE_ASCII,
-        'i' => self::TYPE_BINARY,
-        'd' => self::TYPE_DIRECTORY,
-        ''  => self::TYPE_EMPTY,
+        'a' => self::FTP_TYPE_ASCII,
+        'i' => self::FTP_TYPE_BINARY,
+        'd' => self::FTP_TYPE_DIRECTORY,
+        ''  => self::FTP_TYPE_EMPTY,
     ];
 
     /**
@@ -49,7 +49,7 @@ class FtpPath extends HierarchicalPath implements FtpPathInterface
             return self::$typecodeList[$matches['typecode']];
         }
 
-        return self::TYPE_EMPTY;
+        return self::FTP_TYPE_EMPTY;
     }
 
     /**

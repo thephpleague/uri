@@ -24,12 +24,12 @@ class FtpPathTest extends PHPUnit_Framework_TestCase
     public function typecodeProvider()
     {
         return [
-            'empty typecode' => ['/foo/bar', Path::TYPE_EMPTY],
-            'empty typecode with directory' => ['/foo/', Path::TYPE_EMPTY],
-            'typecode a' => ['foo/bar;type=a', Path::TYPE_ASCII],
-            'typecode i' => ['/foo/bar;type=i', Path::TYPE_BINARY],
-            'typecode d' => ['/foo/bar;type=d', Path::TYPE_DIRECTORY],
-            'typecode is case sensitive' => ['/foo/bar;type=A', Path::TYPE_EMPTY],
+            'empty typecode' => ['/foo/bar', Path::FTP_TYPE_EMPTY],
+            'empty typecode with directory' => ['/foo/', Path::FTP_TYPE_EMPTY],
+            'typecode a' => ['foo/bar;type=a', Path::FTP_TYPE_ASCII],
+            'typecode i' => ['/foo/bar;type=i', Path::FTP_TYPE_BINARY],
+            'typecode d' => ['/foo/bar;type=d', Path::FTP_TYPE_DIRECTORY],
+            'typecode is case sensitive' => ['/foo/bar;type=A', Path::FTP_TYPE_EMPTY],
         ];
     }
 
@@ -48,13 +48,13 @@ class FtpPathTest extends PHPUnit_Framework_TestCase
     public function typecodeModifierProvider()
     {
         return [
-            'no modification (1)' => ['/foo/bar', Path::TYPE_EMPTY, '/foo/bar'],
-            'no modification (2)' => ['/foo;type=a/bar', Path::TYPE_DIRECTORY, '/foo;type=a/bar;type=d'],
-            'adding' => ['/foo/bar', Path::TYPE_ASCII, '/foo/bar;type=a'],
-            'adding to empty path' => ['/', Path::TYPE_DIRECTORY, '/;type=d'],
-            'replacing' => ['/foo/bar;type=i', Path::TYPE_ASCII, '/foo/bar;type=a'],
-            'removing' => ['/foo/bar;type=d', Path::TYPE_EMPTY, '/foo/bar'],
-            'unable to typecode' => ['/foo/bar;type=A', Path::TYPE_EMPTY, '/foo/bar;type=A'],
+            'no modification (1)' => ['/foo/bar', Path::FTP_TYPE_EMPTY, '/foo/bar'],
+            'no modification (2)' => ['/foo;type=a/bar', Path::FTP_TYPE_DIRECTORY, '/foo;type=a/bar;type=d'],
+            'adding' => ['/foo/bar', Path::FTP_TYPE_ASCII, '/foo/bar;type=a'],
+            'adding to empty path' => ['/', Path::FTP_TYPE_DIRECTORY, '/;type=d'],
+            'replacing' => ['/foo/bar;type=i', Path::FTP_TYPE_ASCII, '/foo/bar;type=a'],
+            'removing' => ['/foo/bar;type=d', Path::FTP_TYPE_EMPTY, '/foo/bar'],
+            'unable to typecode' => ['/foo/bar;type=A', Path::FTP_TYPE_EMPTY, '/foo/bar;type=A'],
         ];
     }
 

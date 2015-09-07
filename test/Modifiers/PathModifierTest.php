@@ -2,7 +2,6 @@
 
 namespace League\Uri\Test\Modifiers;
 
-use League\Uri\Components\FtpPath;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Path;
 use League\Uri\Modifiers\AddLeadingSlash;
@@ -201,7 +200,7 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
      */
     public function testTypecodeProcess($type, $expected)
     {
-        $modifier = (new Typecode(FtpPath::TYPE_ASCII))->WithType($type);
+        $modifier = (new Typecode(Path::FTP_TYPE_ASCII))->WithType($type);
 
         $this->assertSame($expected, $modifier($this->uri)->getPath());
     }
@@ -209,8 +208,8 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
     public function validTypeProvider()
     {
         return [
-            [FtpPath::TYPE_BINARY, '/path/to/the/sky.php;type=i'],
-            [FtpPath::TYPE_EMPTY, '/path/to/the/sky.php'],
+            [Path::FTP_TYPE_BINARY, '/path/to/the/sky.php;type=i'],
+            [Path::FTP_TYPE_EMPTY, '/path/to/the/sky.php'],
         ];
     }
 

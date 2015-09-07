@@ -26,6 +26,14 @@ namespace League\Uri\Interfaces;
  */
 interface Path extends Component
 {
+    const FTP_TYPE_ASCII = 1;
+
+    const FTP_TYPE_BINARY = 2;
+
+    const FTP_TYPE_DIRECTORY = 3;
+
+    const FTP_TYPE_EMPTY = 4;
+
     /**
      * Returns an instance without dot segments
      *

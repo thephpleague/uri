@@ -25,7 +25,7 @@ trait AuthorityValidatorTrait
     /**
      * {@inheritdoc}
      */
-    abstract public function getSchemeSpecificPart();
+    abstract protected function getSchemeSpecificPart();
 
     /**
      * {@inheritdoc}

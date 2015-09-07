@@ -190,7 +190,7 @@ interface Uri
      *
      * An empty scheme is equivalent to removing the scheme.
      *
-     * @param null|string $scheme The scheme to use with the new instance.
+     * @param string $scheme The scheme to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid schemes.
      * @throws \InvalidArgumentException for unsupported schemes.
@@ -225,7 +225,7 @@ interface Uri
      *
      * An empty host value is equivalent to removing the host.
      *
-     * @param null|string $host The hostname to use with the new instance.
+     * @param string $host The hostname to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid hostnames.
      * @return self                      A new instance with the specified host.
@@ -291,7 +291,7 @@ interface Uri
      *
      * An empty query string value is equivalent to removing the query string.
      *
-     * @param null|string $query The query string to use with the new instance.
+     * @param string $query The query string to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid query strings.
      * @return self                      A new instance with the specified query string.
@@ -310,7 +310,7 @@ interface Uri
      *
      * An empty fragment value is equivalent to removing the fragment.
      *
-     * @param null|string $fragment The fragment to use with the new instance.
+     * @param string $fragment The fragment to use with the new instance.
      *
      * @return self A new instance with the specified fragment.
      */

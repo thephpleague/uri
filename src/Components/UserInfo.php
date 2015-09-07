@@ -11,10 +11,10 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces\Components\Pass as PassInterface;
-use League\Uri\Interfaces\Components\UriPart;
-use League\Uri\Interfaces\Components\User as UserInterface;
-use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Interfaces\Pass as PassInterface;
+use League\Uri\Interfaces\UriPart;
+use League\Uri\Interfaces\User as UserInterface;
+use League\Uri\Interfaces\UserInfo as UserInfoInterface;
 use League\Uri\Types\ImmutablePropertyTrait;
 
 /**

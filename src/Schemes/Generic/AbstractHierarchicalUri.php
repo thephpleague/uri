@@ -19,13 +19,13 @@ use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
-use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
-use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
-use League\Uri\Interfaces\Components\Host as HostInterface;
-use League\Uri\Interfaces\Components\Port as PortInterface;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
-use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
+use League\Uri\Interfaces\Fragment as FragmentInterface;
+use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\Host as HostInterface;
+use League\Uri\Interfaces\Port as PortInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
+use League\Uri\Interfaces\Scheme as SchemeInterface;
+use League\Uri\Interfaces\UserInfo as UserInfoInterface;
 use League\Uri\UriParser;
 
 /**

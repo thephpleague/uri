@@ -12,8 +12,8 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\HierarchicalPath;
-use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
-use League\Uri\Interfaces\Components\Path;
+use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\Path;
 
 /**
  * Path Segment validation trait

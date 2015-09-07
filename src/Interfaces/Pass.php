@@ -9,10 +9,10 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Interfaces\Components;
+namespace League\Uri\Interfaces;
 
 /**
- * Value object representing a URI Scheme component.
+ * Value object representing a URI Pass component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -22,8 +22,8 @@ namespace League\Uri\Interfaces\Components;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
- * @see     https://tools.ietf.org/html/rfc3986#section-3.1
+ * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
  */
-interface Scheme extends Component
+interface Pass extends Component
 {
 }

@@ -12,13 +12,13 @@
 namespace League\Uri\Schemes\Generic;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Fragment;
-use League\Uri\Interfaces\Components\Host;
-use League\Uri\Interfaces\Components\Path;
-use League\Uri\Interfaces\Components\Port;
-use League\Uri\Interfaces\Components\Query;
-use League\Uri\Interfaces\Components\Scheme;
-use League\Uri\Interfaces\Components\UserInfo;
+use League\Uri\Interfaces\Fragment;
+use League\Uri\Interfaces\Host;
+use League\Uri\Interfaces\Path;
+use League\Uri\Interfaces\Port;
+use League\Uri\Interfaces\Query;
+use League\Uri\Interfaces\Scheme;
+use League\Uri\Interfaces\UserInfo;
 use League\Uri\Types\ImmutablePropertyTrait;
 use RuntimeException;
 

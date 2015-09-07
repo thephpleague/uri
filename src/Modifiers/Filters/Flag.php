@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Collection;
 
 /**
  * Flag trait to Filter League\Uri Collections

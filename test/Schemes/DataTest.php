@@ -27,8 +27,8 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($data, $uri->path->getData());
         $this->assertSame($isBinaryData, $uri->path->isBinaryData());
         $this->assertSame($uri->getPath(), $uri->getSchemeSpecificPart());
-        $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
-        $this->assertInstanceOf('League\Uri\Interfaces\Components\DataPath', $uri->path);
+        $this->assertInstanceOf('League\Uri\Interfaces\Scheme', $uri->scheme);
+        $this->assertInstanceOf('League\Uri\Interfaces\DataPath', $uri->path);
     }
 
     public function validStringUri()

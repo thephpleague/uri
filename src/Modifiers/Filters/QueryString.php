@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Query;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
 
 /**
  * Query string modifier

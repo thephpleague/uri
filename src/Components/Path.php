@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces\Components\Path as PathInterface;
+use League\Uri\Interfaces\Path as PathInterface;
 
 /**
  * Value object representing a URI path component.

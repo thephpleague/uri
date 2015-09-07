@@ -13,7 +13,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\DataPath as DataPathInterface;
+use League\Uri\Interfaces\DataPath as DataPathInterface;
 use RuntimeException;
 use SplFileObject;
 

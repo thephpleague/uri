@@ -28,19 +28,11 @@ use InvalidArgumentException;
  */
 interface FtpPath extends HierarchicalPath
 {
-    const TYPE_ASCII = 1;
-
-    const TYPE_BINARY = 2;
-
-    const TYPE_DIRECTORY = 3;
-
-    const TYPE_EMPTY = 4;
-
     /**
      * Retrieve the optional type associated to the path.
      *
      * The value returned MUST be one of the interface constant type
-     * If no type is associated the return constant must be self::TYPE_EMPTY
+     * If no type is associated the return constant must be self::FTP_TYPE_EMPTY
      *
      * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
      *
@@ -55,7 +47,7 @@ interface FtpPath extends HierarchicalPath
      * an instance that contains the specified type appended to the path.
      * if not
      *
-     * Using self::TYPE_EMPTY is equivalent to removing the typecode.
+     * Using self::FTP_TYPE_EMPTY is equivalent to removing the typecode.
      *
      * @param int $type one typecode constant.
      *

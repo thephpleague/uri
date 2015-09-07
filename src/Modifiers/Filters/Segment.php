@@ -11,9 +11,11 @@
  */
 namespace League\Uri\Modifiers\Filters;
 
+use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Path;
+use League\Uri\Types\StringValidator;
 
 /**
  * Path Segment validation trait
@@ -24,6 +26,8 @@ use League\Uri\Interfaces\Path;
  */
 trait Segment
 {
+    use StringValidator;
+
     /**
      * A HierarchicalPath object
      *
@@ -40,8 +44,9 @@ trait Segment
      */
     public function withSegment($segment)
     {
+        $segment = $this->filterSegment($segment);
         $clone = clone $this;
-        $clone->segment = $this->filterSegment($segment);
+        $clone->segment = $segment;
 
         return $clone;
     }
@@ -55,6 +60,6 @@ trait Segment
      */
     protected function filterSegment($path)
     {
-        return new HierarchicalPath($path);
+        return new HierarchicalPath($this->validateString($path));
     }
 }

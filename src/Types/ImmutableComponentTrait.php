@@ -24,6 +24,8 @@ use ReflectionClass;
  */
 trait ImmutableComponentTrait
 {
+    use StringValidator;
+
     /**
      * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
      *
@@ -48,24 +50,6 @@ trait ImmutableComponentTrait
      * @var string
      */
     protected static $invalidCharactersRegex;
-
-    /**
-     * validate a string
-     *
-     * @param mixed $str the value to evaluate as a string
-     *
-     * @throws \InvalidArgumentException if the submitted data can not be converted to string
-     *
-     * @return string
-     */
-    protected function validateString($str)
-    {
-        if (is_object($str) && method_exists($str, '__toString') || is_string($str)) {
-            return trim($str);
-        }
-
-        throw new InvalidArgumentException('The data received is not OR can not be converted into a string');
-    }
 
     /**
      * Check the string against RFC3986 rules

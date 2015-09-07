@@ -146,7 +146,7 @@ class Resolve extends AbstractUriModifier
         );
 
         return $this->getBaseUri($relative)
-            ->withPath($relativePath)
+            ->withPath($relativePath->__toString())
             ->withQuery($query);
     }
 }

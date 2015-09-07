@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Host as HostInterface;
 
 /**
  * Value object representing a URI host component.
@@ -28,6 +28,13 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     use HostnameInfoTrait;
 
     use HostnameTrait;
+
+    /**
+     * HierarchicalComponent delimiter
+     *
+     * @var string
+     */
+    protected static $separator = '.';
 
     /**
      * Host literal representation
@@ -89,6 +96,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($key)
+    {
+        return $this->getLabel($key);
     }
 
     /**

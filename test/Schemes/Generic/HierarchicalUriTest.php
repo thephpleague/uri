@@ -4,8 +4,6 @@ namespace League\Uri\Test\Schemes\Generic;
 
 use InvalidArgumentException;
 use League\Uri\Components;
-use League\Uri\Schemes\Data as DataUri;
-use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
 
@@ -102,100 +100,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $uri
-     * @param $expected
-     * @dataProvider toArrayProvider
-     */
-    public function testToArray($uri, $expected)
-    {
-        $this->assertSame($expected, HttpUri::createFromString($uri)->toArray());
-    }
-
-    public function toArrayProvider()
-    {
-        return [
-            'simple' => [
-                'http://toto.com:443/toto.php',
-                [
-                    'scheme' => 'http',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => 'toto.com',
-                    'port' => 443,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'ipv6 host' => [
-                'https://[::1]:443/toto.php',
-                [
-                    'scheme' => 'https',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => '[::1]',
-                    'port' => null,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'missing host' => [
-                '/toto.php',
-                [
-                    'scheme' => null,
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => '/toto.php',
-                    'query' => null,
-                    'fragment' => null,
-                ],
-            ],
-            'relative path' => [
-                'toto.php#fragment',
-                [
-                    'scheme' => null,
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'toto.php',
-                    'query' => null,
-                    'fragment' => 'fragment',
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @param $uri
-     * @param $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($uri, $expected)
-    {
-        $this->assertSame($expected, $uri->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            'normal URI' => [HttpUri::createFromString('http://a/b/c'), false],
-            'empty URI components' => [new HttpUri(
-                new Components\Scheme(),
-                new Components\UserInfo(),
-                new Components\Host(),
-                new Components\Port(),
-                new Components\HierarchicalPath(),
-                new Components\Query(),
-                new Components\Fragment()
-            ), true],
-        ];
-    }
-
-    /**
      * @expectedException InvalidArgumentException
      */
     public function testWithSchemeFailedWithUnsupportedScheme()
@@ -234,84 +138,6 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\Query(),
                 new Components\Fragment()
             ), '/path/to/the/sky'],
-        ];
-    }
-
-    /**
-     * @dataProvider hasStandardPortProvider
-     * @param $uri
-     * @param $expected
-     */
-    public function testHasStandardPort($uri, $expected)
-    {
-        $this->assertSame($expected, HttpUri::createFromString($uri)->hasStandardPort());
-    }
-
-    public function hasStandardPortProvider()
-    {
-        return [
-            ['http://example.com:81/', false],
-            ['http://example.com:80/', true],
-            ['http://example.com/', true],
-        ];
-    }
-
-    /**
-     * @dataProvider relativizeProvider
-     * @param $base
-     * @param $child
-     * @param $expected
-     */
-    public function testRelativize($base, $child, $expected)
-    {
-        $baseUri  = HttpUri::createFromString($base);
-        $childUri = HttpUri::createFromString($child);
-
-        $this->assertSame($expected, (string) $baseUri->relativize($childUri));
-    }
-
-    public function testRelativizeWithNonHierarchicalUri()
-    {
-        $httpUri = HttpUri::createFromString('http://www.example.com/path');
-        $dataUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-
-        $this->assertSame($dataUri, $httpUri->relativize($dataUri));
-    }
-
-
-    /**
-     * @dataProvider mixUriProvider
-     * @param $input
-     * @param $relative
-     */
-    public function testRelativizeUriObject($input, $relative)
-    {
-        $this->assertSame($relative, $input->relativize($relative));
-    }
-
-    public function mixUriProvider()
-    {
-        return [
-            [
-                FtpUri::createFromString('ftp://example.com/path/to/file'),
-                HttpUri::createFromString('//a/b/c/d;p?q'),
-            ],
-            [
-                FtpUri::createFromString('//example.com/path/to/file'),
-                HttpUri::createFromString('./g'),
-            ],
-        ];
-    }
-
-    public function relativizeProvider()
-    {
-        return [
-            ['http://www.example.com/foo/bar', 'http://toto.com', 'http://toto.com'],
-            ['http://www.example.com/foo/bar', 'http://www.example.com:81/foo', 'http://www.example.com:81/foo'],
-            ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../bar'],
-            ['http://www.example.com/toto/le/../heros/', 'http://www.example.com/../bar', 'bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar?query=value', '../bar?query=value'],
         ];
     }
 

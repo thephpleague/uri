@@ -13,7 +13,8 @@ namespace League\Uri\Types;
 
 use ArrayIterator;
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Collection;
+use League\Uri\Interfaces\Collection;
+use LogicException;
 use Traversable;
 
 /**
@@ -51,6 +52,30 @@ trait ImmutableCollectionTrait
     /**
      * {@inheritdoc}
      */
+    public function offsetSet($key, $value)
+    {
+        throw new LogicException('The object is a immutable ArrayAccess object');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($key)
+    {
+        throw new LogicException('The object is a immutable ArrayAccess object');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($key)
+    {
+        return $this->hasKey($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->data;
@@ -79,16 +104,8 @@ trait ImmutableCollectionTrait
     /**
      * {@inheritdoc}
      */
-    public function without($offsets)
+    public function without(array $offsets)
     {
-        if (is_callable($offsets)) {
-            $offsets = array_filter(array_keys($this->data), $offsets);
-        }
-
-        if (!is_array($offsets)) {
-            throw new InvalidArgumentException('You must give a callable or an array as only argument');
-        }
-
         $data = $this->data;
         foreach ($offsets as $offset) {
             unset($data[$this->validateOffset($offset)]);

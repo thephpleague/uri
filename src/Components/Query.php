@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\QueryParser;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
@@ -145,6 +145,14 @@ class Query implements QueryInterface
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($key)
+    {
+        return $this->getValue($key);
     }
 
     /**

@@ -13,7 +13,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\DataPath as DataPathInterface;
+use League\Uri\Interfaces\DataPath as DataPathInterface;
 use RuntimeException;
 use SplFileObject;
 
@@ -61,17 +61,13 @@ class DataPath extends Path implements DataPathInterface
     protected $isBinaryData = false;
 
     /**
-     * a new Media Instance
-     *
-     * @param string $str
+     * {@inheritdoc}
      */
-    public function __construct($str = null)
+    protected function init($str)
     {
-        if (!empty($str)) {
-            $this->assertValidComponent($str);
-            $parts = $this->extractPathParts($this->validateString($str));
-            $this->validate($parts);
-        }
+        $this->assertValidComponent($str);
+        $parts = $this->extractPathParts($this->validateString($str));
+        $this->validate($parts);
     }
 
     /**
@@ -234,6 +230,14 @@ class DataPath extends Path implements DataPathInterface
         $data = file_get_contents($path);
         $res = (new \finfo(FILEINFO_MIME))->file($path);
         return new static($res.';'.static::BINARY_PARAMETER.','.base64_encode($data));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMediatype()
+    {
+        return $this->getMimeType().';'.$this->getParameters();
     }
 
     /**

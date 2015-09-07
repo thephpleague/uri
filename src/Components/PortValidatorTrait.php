@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Port as PortInterface;
+use League\Uri\Interfaces\Port as PortInterface;
 
 /**
  * Value object representing a URI port component.

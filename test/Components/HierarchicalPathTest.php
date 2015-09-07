@@ -101,6 +101,34 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testArrayAcces()
+    {
+        $path = new Path('/master/example/com');
+        $this->assertSame('master', $path[0]);
+        $this->assertNull($path[23]);
+        $this->assertFalse(isset($path[23]));
+        $this->assertTrue(isset($path[1]));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessSetterThrowLogicException()
+    {
+        $path = new Path('/master/example/com');
+        $path[0] = 'be';
+    }
+
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessUnsetterThrowLogicException()
+    {
+        $path = new Path('/master/example/com');
+        unset($path[0]);
+    }
+
     /**
      * @param $input
      * @param $has_front_delimiter
@@ -230,18 +258,7 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             ['/toto/le/heros/masson', [0], '/le/heros/masson'],
             ['/toto/le/heros/masson', [2, 3], '/toto/le'],
             ['/toto/le/heros/masson', [1, 2], '/toto/masson'],
-            ['/toto/le/heros/masson', function ($value) {
-                return $value < 3;
-            }, '/masson'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithoutFaild()
-    {
-        (new Path('/toofan/orobo'))->without('toofan');
     }
 
     /**
@@ -534,6 +551,7 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
             [';foo=bar', '.csv', ';foo=bar', ''],
             ['toto.', '.csv', 'toto.csv', 'csv'],
             ['toto.;foo', '.csv', 'toto.csv;foo', 'csv'],
+            ['toto.csv;foo', '.csv', 'toto.csv;foo', 'csv'],
         ];
     }
 

@@ -33,16 +33,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $this->assertSame($toString, (new Scheme($scheme))->__toString());
     }
 
-    /**
-     * @dataProvider validSchemeProvider
-     * @param $scheme
-     * @param $toString
-     */
-    public function testGetLiteral($scheme, $toString)
-    {
-        $this->assertSame($toString, (new Scheme($scheme))->getLiteral());
-    }
-
     public function validSchemeProvider()
     {
         return [
@@ -85,23 +75,5 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $newscheme = $scheme1->modify('');
         $this->assertTrue($scheme->sameValueAs($newscheme));
         $this->assertSame('', $newscheme->getUriComponent());
-    }
-
-    /**
-     * @param  $input
-     * @param  $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($input, $expected)
-    {
-        $this->assertSame($expected, (new Scheme($input))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['ftp', false],
-            ['', true],
-        ];
     }
 }

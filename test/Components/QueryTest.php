@@ -88,7 +88,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $empty_query = new Query();
         $this->assertFalse($empty_query->sameValueAs($this->query));
         $query = $empty_query->merge($this->query);
-        $this->assertInstanceof('League\Uri\Interfaces\Components\Query', $query);
+        $this->assertInstanceof('League\Uri\Interfaces\Query', $query);
         $this->assertTrue($query->sameValueAs($this->query));
     }
 
@@ -144,6 +144,30 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $this->assertTrue($this->query->hasKey('kingkong'));
         $this->assertFalse($this->query->hasKey('togo'));
+    }
+
+    public function testArrayAcces()
+    {
+        $this->assertSame('toto', $this->query['kingkong']);
+        $this->assertNull($this->query[23]);
+        $this->assertFalse(isset($this->query[23]));
+        $this->assertTrue(isset($this->query['kingkong']));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessSetterThrowLogicException()
+    {
+        $this->query['count'] = 'dracula';
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testArrayAccessUnsetterThrowLogicException()
+    {
+        unset($this->query['kingkong']);
     }
 
     public function testCountable()
@@ -203,18 +227,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
         return [
             ['foo&bar&baz&to.go=toofan', ['foo', 'to.go'], 'bar&baz'],
             ['foo&bar&baz&to.go=toofan', ['foo', 'unknown'], 'bar&baz&to.go=toofan'],
-            ['foo&bar&baz&to.go=toofan', function ($value) {
-                return strpos($value, 'b') !== false;
-            }, 'foo&to.go=toofan'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithoutFaild()
-    {
-        (new Query('toofan=orobo'))->without('toofan');
     }
 
     /**

@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces\Components\Pass as PassInterface;
+use League\Uri\Interfaces\Pass as PassInterface;
 
 /**
  * Value object representing a URI pass component.

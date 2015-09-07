@@ -23,13 +23,6 @@ use InvalidArgumentException;
 trait HostnameTrait
 {
     /**
-     * HierarchicalComponent delimiter
-     *
-     * @var string
-     */
-    protected static $separator = '.';
-
-    /**
      * Tells whether we have a IDN or not
      *
      * @var bool
@@ -59,7 +52,7 @@ trait HostnameTrait
             return [];
         }
         $host = $this->lower($this->setIsAbsolute($str));
-        $raw_labels = explode(static::$separator, $host);
+        $raw_labels = explode('.', $host);
         $labels = array_map(function ($value) {
             return idn_to_ascii($value);
         }, $raw_labels);

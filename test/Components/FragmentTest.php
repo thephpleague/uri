@@ -22,16 +22,6 @@ class FragmentTest extends PHPUnit_Framework_TestCase
         $this->assertSame($encoded, $fragment->getUriComponent());
     }
 
-    /**
-     * @dataProvider validFragment
-     * @param $str
-     */
-    public function testGetLiteral($str)
-    {
-        $fragment = new Fragment($str);
-        $this->assertSame($str, $fragment->getLiteral());
-    }
-
     public function validFragment()
     {
         return [
@@ -60,24 +50,6 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'Std Class' => [(object) 'foo'],
             'float'     => [1.2],
             'array'      => [['foo']],
-        ];
-    }
-
-    /**
-     * @param  $input
-     * @param  $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($input, $expected)
-    {
-        $this->assertSame($expected, (new Fragment($input))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['yes', false],
-            ['', true],
         ];
     }
 }

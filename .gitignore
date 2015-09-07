@@ -2,3 +2,4 @@ vendor
 build
 docs
 composer.lock
+.idea

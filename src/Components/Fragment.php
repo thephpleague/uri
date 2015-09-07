@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Fragment as FragmentInterface;
 
 /**
  * Value object representing a URI fragment component.

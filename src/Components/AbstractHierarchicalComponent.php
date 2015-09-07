@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\HierarchicalComponent as HierarchicalComponentInterface;
+use League\Uri\Interfaces\HierarchicalComponent;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
 use Traversable;
@@ -24,7 +24,7 @@ use Traversable;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements HierarchicalComponentInterface
+abstract class AbstractHierarchicalComponent implements HierarchicalComponent
 {
     use ImmutableCollectionTrait;
 
@@ -33,6 +33,13 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
     const IS_ABSOLUTE = 1;
 
     const IS_RELATIVE = 0;
+
+    /**
+     * Hierarchical component separator
+     *
+     * @var string
+     */
+    protected static $separator;
 
     /**
      * Is the object considered absolute
@@ -111,15 +118,13 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponentInt
     /**
      * Validate a component as a HierarchicalComponentInterface object
      *
-     * @param mixed $component
-     *
-     * @throws InvalidArgumentException if the value can not be converted
+     * @param HierarchicalComponent|string $component
      *
      * @return static
      */
     protected function validateComponent($component)
     {
-        if (!$component instanceof HierarchicalComponentInterface) {
+        if (!$component instanceof HierarchicalComponent) {
             return $this->modify($component);
         }
 

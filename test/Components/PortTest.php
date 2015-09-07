@@ -79,23 +79,4 @@ class PortTest extends PHPUnit_Framework_TestCase
             [23, ':23'],
         ];
     }
-
-    /**
-     * @param  $input
-     * @param  $expected
-     * @dataProvider isEmptyProvider
-     */
-    public function testIsEmpty($input, $expected)
-    {
-        $this->assertSame($expected, (new Port($input))->isEmpty());
-    }
-
-    public function isEmptyProvider()
-    {
-        return [
-            ['443', false],
-            [null, true],
-            [23, false],
-        ];
-    }
 }

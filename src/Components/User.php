@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Components;
 
-use League\Uri\Interfaces\Components\User as UserInterface;
+use League\Uri\Interfaces\User as UserInterface;
 
 /**
  * Value object representing a URI user component.

@@ -19,16 +19,15 @@ use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
-use League\Uri\Interfaces\Components\DataPath as DataPathInterface;
-use League\Uri\Interfaces\Components\Fragment as FragmentInterface;
-use League\Uri\Interfaces\Components\Host as HostInterface;
-use League\Uri\Interfaces\Components\Port as PortInterface;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Interfaces\Components\Scheme as SchemeInterface;
-use League\Uri\Interfaces\Components\UserInfo as UserInfoInterface;
-use League\Uri\Interfaces\Schemes\Data as DataUriInterface;
+use League\Uri\Interfaces\DataPath as DataPathInterface;
+use League\Uri\Interfaces\Fragment as FragmentInterface;
+use League\Uri\Interfaces\Host as HostInterface;
+use League\Uri\Interfaces\Port as PortInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
+use League\Uri\Interfaces\Scheme as SchemeInterface;
+use League\Uri\Interfaces\Uri;
+use League\Uri\Interfaces\UserInfo as UserInfoInterface;
 use League\Uri\Schemes\Generic\AbstractUri;
-use League\Uri\Schemes\Generic\PathModifierTrait;
 use League\Uri\UriParser;
 
 /**
@@ -46,10 +45,8 @@ use League\Uri\UriParser;
  * @property-read QueryInterface    $query
  * @property-read FragmentInterface $fragment
  */
-class Data extends AbstractUri implements DataUriInterface
+class Data extends AbstractUri implements Uri
 {
-    use PathModifierTrait;
-
     /**
      * Create a new instance of URI
      *
@@ -150,93 +147,5 @@ class Data extends AbstractUri implements DataUriInterface
         }
 
         return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path->__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withPath($path)
-    {
-        return $this->withProperty('path', $path);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMimeType()
-    {
-        return $this->path->getMimeType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
-    {
-        return $this->path->getParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMediatype()
-    {
-        return $this->path->getMimeType().';'.$this->path->getParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
-    {
-        return $this->path->getData();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isBinaryData()
-    {
-        return $this->path->isBinaryData();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function dataToBinary()
-    {
-        return $this->withProperty('path', $this->path->toBinary());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function dataToAscii()
-    {
-        return $this->withProperty('path', $this->path->toAscii());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save($path, $mode = 'w')
-    {
-        return $this->path->save($path, $mode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withParameters($parameters)
-    {
-        return $this->withProperty('path', $this->path->withParameters($parameters));
     }
 }

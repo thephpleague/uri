@@ -17,19 +17,17 @@ class DataTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider validStringUri
      */
-    public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $asArray, $isBinaryData)
+    public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $isBinaryData)
     {
         $uri = DataUri::createFromString($str);
         $this->assertSame('data', $uri->getScheme());
-        $this->assertSame($mimetype, $uri->getMimeType());
-        $this->assertSame($parameters, $uri->getParameters());
-        $this->assertSame($mediatype, $uri->getMediatype());
-        $this->assertSame($data, $uri->getData());
-        $this->assertSame($asArray, $uri->toArray());
-        $this->assertSame($isBinaryData, $uri->isBinaryData());
-        $this->assertSame($uri->getPath(), $uri->getSchemeSpecificPart());
-        $this->assertInstanceOf('League\Uri\Interfaces\Components\Scheme', $uri->scheme);
-        $this->assertInstanceOf('League\Uri\Interfaces\Components\DataPath', $uri->path);
+        $this->assertSame($mimetype, $uri->path->getMimeType());
+        $this->assertSame($parameters, $uri->path->getParameters());
+        $this->assertSame($mediatype, $uri->path->getMediatype());
+        $this->assertSame($data, $uri->path->getData());
+        $this->assertSame($isBinaryData, $uri->path->isBinaryData());
+        $this->assertInstanceOf('League\Uri\Interfaces\Scheme', $uri->scheme);
+        $this->assertInstanceOf('League\Uri\Interfaces\DataPath', $uri->path);
     }
 
     public function validStringUri()
@@ -41,16 +39,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'string without mimetype' => [
@@ -59,16 +47,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'string without parameters' => [
@@ -77,16 +55,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => 'Bonjour%20le%20monde%21',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'empty string' => [
@@ -95,16 +63,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=us-ascii',
                 'mediatype' => 'text/plain;charset=us-ascii',
                 'data' => '',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'text/plain;charset=us-ascii,',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => false,
             ],
             'binary data' => [
@@ -113,16 +71,6 @@ class DataTest extends PHPUnit_Framework_TestCase
                 'parameters' => 'charset=binary',
                 'mediatype' => 'image/gif;charset=binary',
                 'data' => 'R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
-                'asArray' => [
-                    'scheme' => 'data',
-                    'user' => null,
-                    'pass' => null,
-                    'host' => null,
-                    'port' => null,
-                    'path' => 'image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
-                    'query' => null,
-                    'fragment' => null,
-                ],
                 'isBinaryData' => true,
             ],
         ];
@@ -200,8 +148,8 @@ class DataTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromPath($path, $expected)
     {
-        $uri = DataUri::createFromPath(__DIR__.'/'.$path);
-        $this->assertSame($expected, $uri->getMimeType());
+        $uri = DataUri::createFromPath(dirname(__DIR__).'/data/'.$path);
+        $this->assertSame($expected, $uri->path->getMimeType());
     }
 
     public function validFilePath()
@@ -212,115 +160,11 @@ class DataTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testWithParameters()
-    {
-        $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-
-        $newUri = $uri->withParameters('charset=us-ascii');
-        $this->assertSame($newUri, $uri);
-    }
-
-    public function testWithParametersOnBinaryData()
-    {
-        $expected = 'charset=binary;foo=bar';
-        $uri = DataUri::createFromPath(__DIR__.'/red-nose.gif');
-        $newUri = $uri->withParameters($expected);
-        $this->assertSame($expected, $newUri->getParameters());
-    }
-
-    /**
-     * @dataProvider fileProvider
-     * @param $uri
-     */
-    public function testToBinary($uri)
-    {
-        $this->assertTrue($uri->dataToBinary()->isBinaryData());
-    }
-
-    /**
-     * @dataProvider fileProvider
-     * @param $uri
-     */
-    public function testToAscii($uri)
-    {
-        $this->assertFalse($uri->dataToAscii()->isBinaryData());
-    }
-
-    public function fileProvider()
-    {
-        return [
-            [DataUri::createFromPath(__DIR__.'/red-nose.gif')],
-            [DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21')],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidParameters
-     * @expectedException InvalidArgumentException
-     * @param $parameters
-     */
-    public function testUpdateParametersFailed($parameters)
-    {
-        $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-        $uri->withParameters($parameters);
-    }
-
-    public function invalidParameters()
-    {
-        return [
-            'can not modify binary flag' => ['base64=3'],
-            'can not add non empty flag' => ['image/jpg'],
-        ];
-    }
-
-    public function testBinarySave()
-    {
-        $newFilePath = __DIR__.'/temp.gif';
-        $uri = DataUri::createFromPath(__DIR__.'/red-nose.gif');
-        $res = $uri->save($newFilePath);
-        $this->assertInstanceOf('\SplFileObject', $res);
-        $res = null;
-        $this->assertSame((string) $uri, (string) DataUri::createFromPath($newFilePath));
-
-        // Ensure file handle of \SplFileObject gets closed.
-        $res = null;
-        unlink($newFilePath);
-    }
-
-    public function testRawSave()
-    {
-        $newFilePath = __DIR__.'/temp.txt';
-        $uri = DataUri::createFromPath(__DIR__.'/hello-world.txt');
-        $res = $uri->save($newFilePath);
-        $this->assertInstanceOf('\SplFileObject', $res);
-        $this->assertTrue($uri == DataUri::createFromPath($newFilePath));
-        $data = file_get_contents($newFilePath);
-        $this->assertSame(base64_encode($data), $uri->getData());
-
-        // Ensure file handle of \SplFileObject gets closed.
-        $res = null;
-        unlink($newFilePath);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidUri()
     {
         DataUri::createFromString('http:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testSaveFailedWithUnReachableFilePath()
-    {
-        DataUri::createFromPath(__DIR__.'/hello-world.txt')->save('/usr/bin/yolo', 'w');
-    }
-
-    public function testDataPathConstructor()
-    {
-        $data = new Path();
-        $this->assertSame('text/plain;charset=us-ascii,', (string) $data);
     }
 }

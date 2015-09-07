@@ -14,10 +14,10 @@ namespace League\Uri;
 use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Components\Query;
-use League\Uri\Interfaces\Components\Host as HostInterface;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Interfaces\Components\UriPart;
-use League\Uri\Interfaces\Schemes\Uri;
+use League\Uri\Interfaces\Host as HostInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
+use League\Uri\Interfaces\Uri;
+use League\Uri\Interfaces\UriPart;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
 
 /**
@@ -149,7 +149,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Schemes\Uri|Interfaces\Components\UriPart $input
+     * @param Interfaces\Uri|Interfaces\Components\UriPart $input
      *
      * @return string
      */
@@ -246,7 +246,7 @@ class Formatter
             return '';
         }
 
-        $components = $uri->toArray();
+        $components = $this->uriParser->parse((string) $uri);
         $port = $components['port'];
         if (!empty($port)) {
             $port = ':'.$port;

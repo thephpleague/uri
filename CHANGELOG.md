@@ -6,12 +6,14 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
+- Modifiers classes to modify URI objects in an uniform way for interoperability
 - A `UriParser` class to parse an URI according to RFC3986 rules, the library no longer depend on PHP `parse_url` function
 - A `Data` class to specifically manipulate `data` schemed URI
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - A `DataPath` component class to manipulate Data-uri path component
+- A `FtpPath` component class to manipulate Ftp-uri path component
 - Uri part object now expose a `getContent` method which returns null if the content is not specified
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
@@ -55,6 +57,7 @@ All Notable changes to `League\Url` will be documented in this file
 - `Uri::isAbsolute`
 - `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
+- `isEmpty` no longer needed as we drop supports for  `PHP 5.4` 
 
 ## 4.0.0-beta-3 - 2015-06-09
 

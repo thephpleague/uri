@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
 
 /**
  * Value object representing a URI path component.
@@ -24,6 +24,11 @@ use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterfa
 class HierarchicalPath extends AbstractHierarchicalComponent implements HierarchicalPathInterface
 {
     use RemoveDotSegmentsTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static $separator = '/';
 
     /**
      * {@inheritdoc}
@@ -103,6 +108,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return $default;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($key)
+    {
+        return $this->getSegment($key);
+    }
+
     public function getContent()
     {
         $front_delimiter = '';
@@ -163,7 +176,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public function hasTrailingSlash()
     {
-        return !$this->isEmpty() && empty($this->getBasename());
+        return !empty($this->__toString()) && empty($this->getBasename());
     }
 
     /**

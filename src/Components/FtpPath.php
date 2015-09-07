@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\FtpPath as FtpPathInterface;
+use League\Uri\Interfaces\FtpPath as FtpPathInterface;
 
 /**
  * Value object representing FTP Uri.

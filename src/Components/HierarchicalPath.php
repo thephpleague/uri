@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
 
 /**
  * Value object representing a URI path component.

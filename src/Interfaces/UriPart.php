@@ -9,7 +9,7 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Interfaces\Components;
+namespace League\Uri\Interfaces;
 
 /**
  * Value object representing simple URI part.

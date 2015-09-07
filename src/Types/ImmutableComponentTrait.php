@@ -12,7 +12,7 @@
 namespace League\Uri\Types;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\UriPart;
+use League\Uri\Interfaces\UriPart;
 use ReflectionClass;
 
 /**

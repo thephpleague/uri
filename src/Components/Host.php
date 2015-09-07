@@ -12,7 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Host as HostInterface;
 
 /**
  * Value object representing a URI host component.

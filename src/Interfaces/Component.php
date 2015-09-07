@@ -9,10 +9,10 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Interfaces\Components;
+namespace League\Uri\Interfaces;
 
 /**
- * Value object representing a URI Pass component.
+ * Value object representing a URI component.
  *
  * Instances of this interface are considered immutable; all methods that
  * might change state MUST be implemented such that they retain the internal
@@ -22,8 +22,18 @@ namespace League\Uri\Interfaces\Components;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
- * @see     https://tools.ietf.org/html/rfc3986#section-3.2.1
  */
-interface Pass extends Component
+interface Component extends UriPart
 {
+    /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value);
 }

@@ -14,10 +14,10 @@ namespace League\Uri;
 use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Components\Query;
-use League\Uri\Interfaces\Components\Host as HostInterface;
-use League\Uri\Interfaces\Components\Query as QueryInterface;
-use League\Uri\Interfaces\Components\UriPart;
+use League\Uri\Interfaces\Host as HostInterface;
+use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\Interfaces\Uri;
+use League\Uri\Interfaces\UriPart;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
 
 /**

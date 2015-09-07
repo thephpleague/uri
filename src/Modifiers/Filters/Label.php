@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Host;
-use League\Uri\Interfaces\Components\Host as HostInterface;
+use League\Uri\Interfaces\Host as HostInterface;
 
 /**
  * Host label trait

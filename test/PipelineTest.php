@@ -32,7 +32,7 @@ class PipelineTest extends TestCase
     {
         $uri = HttpUri::createFromString('http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3');
         $pipeline = new Pipeline([new RemoveDotSegments()]);
-        $newUri = $pipeline->__invoke($uri);
+        $newUri = $pipeline->process($uri);
         $this->assertInstanceOf('League\Uri\Schemes\Http', $newUri);
         $this->assertSame('/to/the/sky.php', $newUri->getPath());
     }
@@ -44,7 +44,7 @@ class PipelineTest extends TestCase
     {
         $uri = 'http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3';
         $pipeline = new Pipeline([new RemoveDotSegments()]);
-        $newUri = $pipeline->__invoke($uri);
+        $newUri = $pipeline->process($uri);
     }
 
     /**
@@ -57,6 +57,6 @@ class PipelineTest extends TestCase
         };
 
         $uri = HttpUri::createFromString('http://www.example.com');
-        (new Pipeline([$modifier]))->__invoke($uri);
+        (new Pipeline([$modifier]))->process($uri);
     }
 }

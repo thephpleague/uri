@@ -24,7 +24,7 @@ namespace League\Uri\Interfaces\Components;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.3
  */
-interface Port extends Component, LiteralAccess
+interface Port extends Component
 {
     /**
      * Maximum port number.

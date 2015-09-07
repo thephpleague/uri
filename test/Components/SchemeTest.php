@@ -33,16 +33,6 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $this->assertSame($toString, (new Scheme($scheme))->__toString());
     }
 
-    /**
-     * @dataProvider validSchemeProvider
-     * @param $scheme
-     * @param $toString
-     */
-    public function testGetLiteral($scheme, $toString)
-    {
-        $this->assertSame($toString, (new Scheme($scheme))->getLiteral());
-    }
-
     public function validSchemeProvider()
     {
         return [

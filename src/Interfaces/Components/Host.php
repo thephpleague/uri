@@ -24,7 +24,7 @@ namespace League\Uri\Interfaces\Components;
  * @since   4.0.0
  * @see     https://tools.ietf.org/html/rfc3986#section-3.2.2
  */
-interface Host extends HierarchicalComponent, LiteralAccess
+interface Host extends HierarchicalComponent
 {
     /**
      * Returns whether or not the host is an IP address
@@ -146,4 +146,12 @@ interface Host extends HierarchicalComponent, LiteralAccess
      * @return static
      */
     public function withoutZoneIdentifier();
+
+    /**
+     * Returns the instance literal representation
+     * without encoding
+     *
+     * @return string
+     */
+    public function getLiteral();
 }

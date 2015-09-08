@@ -150,14 +150,6 @@ class Query implements QueryInterface
     /**
      * {@inheritdoc}
      */
-    public function offsetGet($key)
-    {
-        return $this->getValue($key);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function merge($query)
     {
         if ($query instanceof QueryInterface) {

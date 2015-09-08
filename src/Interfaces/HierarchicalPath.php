@@ -132,4 +132,34 @@ interface HierarchicalPath extends Path, HierarchicalComponent
      * @return static
      */
     public function withoutEmptySegments();
+
+    /**
+     * Retrieve the optional type associated to the path.
+     *
+     * The value returned MUST be one of the interface constant type
+     * If no type is associated the return constant must be self::FTP_TYPE_EMPTY
+     *
+     * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
+     *
+     * @return int a typecode constant.
+     */
+    public function getTypecode();
+
+    /**
+     * Return an instance with the specified typecode.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified type appended to the path.
+     * if not
+     *
+     * Using self::FTP_TYPE_EMPTY is equivalent to removing the typecode.
+     *
+     * @param int $type one typecode constant.
+     *
+     * @throws InvalidArgumentException for invalid typecode.
+     *
+     * @return static
+     *
+     */
+    public function withTypecode($type);
 }

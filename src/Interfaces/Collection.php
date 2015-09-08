@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Interfaces;
 
-use ArrayAccess;
 use Countable;
 use IteratorAggregate;
 
@@ -27,7 +26,7 @@ use IteratorAggregate;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-interface Collection extends ArrayAccess, Countable, IteratorAggregate
+interface Collection extends Countable, IteratorAggregate
 {
     const FILTER_USE_KEY   = 2;
     const FILTER_USE_VALUE = 0;

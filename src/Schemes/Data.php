@@ -78,11 +78,22 @@ class Data extends AbstractUri implements Uri
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function isValid()
+    {
+        if ('data:' !== $this->scheme->getUriComponent()) {
+            throw new InvalidArgumentException('The submitted scheme is invalid for the class '.get_class($this));
+        }
+
+        return $this->isValidGenericUri()
+            && $this->__toString() === 'data:'.$this->path->getUriComponent();
+    }
+
+    /**
      * Create a new instance from a string
      *
      * @param string $uri
-     *
-     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
@@ -95,8 +106,6 @@ class Data extends AbstractUri implements Uri
      * Create a new instance from a hash of parse_url parts
      *
      * @param array $components
-     *
-     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */
@@ -120,8 +129,6 @@ class Data extends AbstractUri implements Uri
      *
      * @param string $path
      *
-     * @throws InvalidArgumentException If the URI can not be parsed
-     *
      * @return static
      */
     public static function createFromPath($path)
@@ -135,17 +142,5 @@ class Data extends AbstractUri implements Uri
             new Query(),
             new Fragment()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isValid()
-    {
-        if ($this->scheme->getContent() !== 'data') {
-            throw new InvalidArgumentException('The submitted scheme is invalid for the class '.get_class($this));
-        }
-
-        return $this->isValidGenericUri() && $this->__toString() === 'data:'.$this->path->getUriComponent();
     }
 }

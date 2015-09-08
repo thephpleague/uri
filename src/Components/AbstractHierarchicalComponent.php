@@ -24,7 +24,7 @@ use Traversable;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements HierarchicalComponent
+abstract class AbstractHierarchicalComponent
 {
     use ImmutableCollectionTrait;
 

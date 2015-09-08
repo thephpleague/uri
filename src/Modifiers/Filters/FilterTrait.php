@@ -9,29 +9,31 @@
  * @version   4.0.0
  * @link      https://github.com/thephpleague/uri/
  */
-namespace League\Uri\Modifiers;
+namespace League\Uri\Modifiers\Filters;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Interfaces\Collection;
 
 /**
- * Remove the leading slash to the URI path
+ * Flag trait to Filter League\Uri Collections
  *
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class RemoveLeadingSlash extends AbstractPathModifier
+trait FilterTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function modify($str)
-    {
-        $path = new HierarchicalPath($str);
-        if (!$path->isAbsolute()) {
-            return (string) $path;
-        }
+    use ForCallable;
+    use Flag;
 
-        return (string) $path->createFromArray($path->toArray(), $path::IS_RELATIVE);
+    /**
+     * New instance
+     *
+     * @param callable $callable
+     * @param int      $flag
+     */
+    public function __construct(callable $callable, $flag = Collection::FILTER_USE_VALUE)
+    {
+        $this->callable = $callable;
+        $this->flag = $this->filterFlag($flag);
     }
 }

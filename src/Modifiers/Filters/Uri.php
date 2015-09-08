@@ -36,7 +36,7 @@ trait Uri
     /**
      * Return a new instance with a new set of keys
      *
-     * @param LeagueUriInterface|UriInterface $uri The Uri Object
+     * @param mixed $uri The Uri Object
      *
      * @return $this
      */
@@ -51,9 +51,9 @@ trait Uri
     /**
      * Validate the submitted keys
      *
-     * @param LeagueUriInterface|UriInterface $uri The Uri Object
+     * @param mixed $uri The Uri Object
      *
-     * @return callable|array
+     * @return LeagueUriInterface|UriInterface
      */
     protected function filterUri($uri)
     {

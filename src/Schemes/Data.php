@@ -12,14 +12,14 @@
 namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
-use League\Uri\Components\DataPath;
+use League\Uri\Components\DataPath as Path;
 use League\Uri\Components\Fragment;
 use League\Uri\Components\Host;
 use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
-use League\Uri\Interfaces\DataPath as DataPathInterface;
+use League\Uri\Interfaces\DataPath as PathInterface;
 use League\Uri\Interfaces\Fragment as FragmentInterface;
 use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Interfaces\Port as PortInterface;
@@ -41,7 +41,7 @@ use League\Uri\UriParser;
  * @property-read UserInfoInterface $userInfo
  * @property-read HostInterface     $host
  * @property-read PortInterface     $port
- * @property-read DataPathInterface $path
+ * @property-read PathInterface     $path
  * @property-read QueryInterface    $query
  * @property-read FragmentInterface $fragment
  */
@@ -54,7 +54,7 @@ class Data extends AbstractUri implements Uri
      * @param UserInfoInterface $userInfo
      * @param HostInterface     $host
      * @param PortInterface     $port
-     * @param DataPathInterface $path
+     * @param PathInterface     $path
      * @param QueryInterface    $query
      * @param FragmentInterface $fragment
      */
@@ -63,7 +63,7 @@ class Data extends AbstractUri implements Uri
         UserInfoInterface $userInfo,
         HostInterface $host,
         PortInterface $port,
-        DataPathInterface $path,
+        PathInterface $path,
         QueryInterface $query,
         FragmentInterface $fragment
     ) {
@@ -118,7 +118,7 @@ class Data extends AbstractUri implements Uri
             new UserInfo($components['user'], $components['pass']),
             new Host($components['host']),
             new Port($components['port']),
-            new DataPath($components['path']),
+            new Path($components['path']),
             new Query($components['query']),
             new Fragment($components['fragment'])
         );
@@ -138,7 +138,7 @@ class Data extends AbstractUri implements Uri
             new UserInfo(),
             new Host(),
             new Port(),
-            DataPath::createFromPath($path),
+            Path::createFromPath($path),
             new Query(),
             new Fragment()
         );

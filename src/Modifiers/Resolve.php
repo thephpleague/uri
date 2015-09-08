@@ -51,7 +51,7 @@ class Resolve extends AbstractUriModifier
     /**
      * New instance
      *
-     * @param LeagueUriInterface|UriInterface $uri
+     * @param mixed $uri
      */
     public function __construct($uri)
     {

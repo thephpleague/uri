@@ -12,14 +12,14 @@
 namespace League\Uri\Schemes\Generic;
 
 use League\Uri\Components\Fragment;
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\HierarchicalPath as Path;
 use League\Uri\Components\Host;
 use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
 use League\Uri\Components\UserInfo;
 use League\Uri\Interfaces\Fragment as FragmentInterface;
-use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
+use League\Uri\Interfaces\HierarchicalPath as PathInterface;
 use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Interfaces\Port as PortInterface;
 use League\Uri\Interfaces\Query as QueryInterface;
@@ -34,33 +34,33 @@ use League\Uri\UriParser;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  *
- * @property-read SchemeInterface           $scheme
- * @property-read UserInfoInterface         $userInfo
- * @property-read HostInterface             $host
- * @property-read PortInterface             $port
- * @property-read HierarchicalPathInterface $path
- * @property-read QueryInterface            $query
- * @property-read FragmentInterface         $fragment
+ * @property-read SchemeInterface   $scheme
+ * @property-read UserInfoInterface $userInfo
+ * @property-read HostInterface     $host
+ * @property-read PortInterface     $port
+ * @property-read PathInterface     $path
+ * @property-read QueryInterface    $query
+ * @property-read FragmentInterface $fragment
  */
 abstract class AbstractHierarchicalUri extends AbstractUri
 {
     /**
      * Create a new instance of URI
      *
-     * @param SchemeInterface           $scheme
-     * @param UserInfoInterface         $userInfo
-     * @param HostInterface             $host
-     * @param PortInterface             $port
-     * @param HierarchicalPathInterface $path
-     * @param QueryInterface            $query
-     * @param FragmentInterface         $fragment
+     * @param SchemeInterface   $scheme
+     * @param UserInfoInterface $userInfo
+     * @param HostInterface     $host
+     * @param PortInterface     $port
+     * @param PathInterface     $path
+     * @param QueryInterface    $query
+     * @param FragmentInterface $fragment
      */
     public function __construct(
         SchemeInterface $scheme,
         UserInfoInterface $userInfo,
         HostInterface $host,
         PortInterface $port,
-        HierarchicalPathInterface $path,
+        PathInterface $path,
         QueryInterface $query,
         FragmentInterface $fragment
     ) {
@@ -102,7 +102,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri
             new UserInfo($components['user'], $components['pass']),
             new Host($components['host']),
             new Port($components['port']),
-            new HierarchicalPath($components['path']),
+            new Path($components['path']),
             new Query($components['query']),
             new Fragment($components['fragment'])
         );

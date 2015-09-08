@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use InvalidArgumentException;
 use League\Uri\Components\Fragment;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Host;
@@ -34,6 +33,14 @@ use League\Uri\UriParser;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ *
+ * @property-read SchemeInterface           $scheme
+ * @property-read UserInfoInterface         $userInfo
+ * @property-read HostInterface             $host
+ * @property-read PortInterface             $port
+ * @property-read HierarchicalPathInterface $path
+ * @property-read QueryInterface            $query
+ * @property-read FragmentInterface         $fragment
  */
 abstract class AbstractHierarchicalUri extends AbstractUri
 {
@@ -72,8 +79,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri
      *
      * @param string $uri
      *
-     * @throws InvalidArgumentException If the URI can not be parsed
-     *
      * @return static
      */
     public static function createFromString($uri = '')
@@ -85,8 +90,6 @@ abstract class AbstractHierarchicalUri extends AbstractUri
      * Create a new instance from a hash of parse_url parts
      *
      * @param array $components a hash representation of the URI similar to PHP parse_url function result
-     *
-     * @throws InvalidArgumentException If the URI can not be parsed
      *
      * @return static
      */

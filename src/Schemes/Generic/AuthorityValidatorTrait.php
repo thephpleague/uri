@@ -11,8 +11,6 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use InvalidArgumentException;
-
 /**
  * A trait to validate the host in a URI context
  *
@@ -40,19 +38,15 @@ trait AuthorityValidatorTrait
     /**
      * Tell whether the Auth URI is valid
      *
-     * @throws InvalidArgumentException If the Scheme is not supported
-     *
      * @return bool
      */
     protected function isAuthorityValid()
     {
         $pos = strpos($this->getSchemeSpecificPart(), '//');
-        $scheme = $this->getScheme();
-        if (!empty($scheme) && 0 !== $pos) {
+        if (!empty($this->getScheme()) && 0 !== $pos) {
             return false;
         }
 
-        $host = $this->getHost();
-        return !(empty($host) && 0 === $pos);
+        return !(empty($this->getHost()) && 0 === $pos);
     }
 }

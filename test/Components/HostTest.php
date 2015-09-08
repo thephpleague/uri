@@ -257,34 +257,6 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame([2], $host->keys('master'));
     }
 
-    public function testArrayAcces()
-    {
-        $host = new Host('master.example.com');
-        $this->assertSame('com', $host[0]);
-        $this->assertNull($host[23]);
-        $this->assertFalse(isset($host[23]));
-        $this->assertTrue(isset($host[1]));
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testArrayAccessSetterThrowLogicException()
-    {
-        $host = new Host('master.example.com');
-        $host[0] = 'be';
-    }
-
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testArrayAccessUnsetterThrowLogicException()
-    {
-        $host = new Host('master.example.com');
-        unset($host[0]);
-    }
-
     /**
      * @dataProvider sameValueAsProvider
      */

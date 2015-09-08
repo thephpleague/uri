@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers;
 
 use InvalidArgumentException;
-use League\Uri\Components\FtpPath;
+use League\Uri\Components\HierarchicalPath as Path;
 
 /**
  * Path component typecode modifier
@@ -36,10 +36,10 @@ class Typecode extends AbstractPathModifier
      * @var array
      */
     protected static $typecodeList = [
-        FtpPath::FTP_TYPE_ASCII => 1,
-        FtpPath::FTP_TYPE_BINARY => 1,
-        FtpPath::FTP_TYPE_DIRECTORY => 1,
-        FtpPath::FTP_TYPE_EMPTY => 1,
+        Path::FTP_TYPE_ASCII => 1,
+        Path::FTP_TYPE_BINARY => 1,
+        Path::FTP_TYPE_DIRECTORY => 1,
+        Path::FTP_TYPE_EMPTY => 1,
     ];
 
     /**
@@ -88,6 +88,6 @@ class Typecode extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) (new FtpPath($str))->withTypecode($this->type);
+        return (string) (new Path($str))->withTypecode($this->type);
     }
 }

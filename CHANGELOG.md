@@ -13,7 +13,6 @@ All Notable changes to `League\Url` will be documented in this file
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - A `DataPath` component class to manipulate Data-uri path component
-- A `FtpPath` component class to manipulate Ftp-uri path component
 - Uri part object now expose a `getContent` method which returns null if the content is not specified
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
@@ -39,8 +38,6 @@ All Notable changes to `League\Url` will be documented in this file
 - Host::toUnicode now returns a new Host instance
 - Host now support append/prepend/replacing to or with IPv4 Host type
 - `HierarchicalPath` now supports multiple leading slash
-- Except for the `Port` constructor no other constructor accept the `null` value as per PSR-7
-- The `::resolve` method is now typehinted to the Uri interface
 - Formatter::format only accept `Uri` and `UriPart` implemented object
 - `Uri::sameValueAs` normalized host encoding, path without dot segments, and query parameters key sorting before comparison
 - To avoid confusion in API usage the following methods are renamed:
@@ -58,6 +55,12 @@ All Notable changes to `League\Url` will be documented in this file
 - `Scheme::isSupported`, `Scheme::getStandardPort`, `Port::getStandardSchemes` use the `SchemeRegistry` class to get this information.
 - support for `PHP 5.4`
 - `isEmpty` no longer needed as we drop supports for  `PHP 5.4` 
+- `Uri::resolve` is now a Uri independant modifier
+- `Uri::toAscii` is now a Uri independant modifier
+- `Uri::toUnicode` is now a Uri independant modifier
+- `Data::toAscii` is now a Uri independant modifier
+- `Data::toBinary` is now a Uri independant modifier
+- All partial modifier methods attach to an URI object is converted into a Modifier class
 
 ## 4.0.0-beta-3 - 2015-06-09
 

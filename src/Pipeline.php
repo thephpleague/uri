@@ -13,6 +13,7 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
+use League\Uri\Modifiers\ModifierCollection;
 use League\Uri\Types\UriValidator;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
@@ -31,14 +32,14 @@ class Pipeline
     use UriValidator;
 
     /**
-     * @var callable[]
+     * @var ModifierCollection
      */
-    protected $collection = [];
+    protected $collection;
 
     /**
      * New instance
      *
-     * @param callable[] $collection
+     * @param callable[] $modifiers
      *
      * @throws InvalidArgumentException
      */
@@ -48,8 +49,9 @@ class Pipeline
             if (!is_callable($stage)) {
                 throw new InvalidArgumentException('All collection should be callable');
             }
+
+            $this->collection[] = $stage;
         }
-        $this->collection = $collection;
     }
 
     /**
@@ -72,37 +74,35 @@ class Pipeline
      *
      * @param Uri|UriInterface $uri
      *
-     * @throws RuntimeException if the returned value is not of the 
-     *                          same class as the submitted URI object
+     * @return Uri|UriInterface
+     */
+    public function process($uri)
+    {
+        return $this->__invoke($uri);
+    }
+
+    /**
+     * Iteratively apply the modifier to a URI object
+     *
+     * @param Uri|UriInterface $uri
+     *
+     * @throws RuntimeException If the resulting URI is not an URI Object
      *
      * @return Uri|UriInterface
      */
     public function __invoke($uri)
     {
         $this->assertUriObject($uri);
-
-        $newUri = $uri;
-        foreach ($this->collection as $stage) {
-            $newUri = call_user_func($stage, $newUri);
-            if (!is_object($newUri) || get_class($newUri) !== get_class($uri)) {
+        $submittedUriClass = get_class($uri);
+        foreach ($this->collection as $modifier) {
+            $uri = call_user_func($modifier, $uri);
+            if (!is_object($uri) || $submittedUriClass !== get_class($uri)) {
                 throw new RuntimeException(
                     'The returned value is not of the same class as the submitted URI object'
                 );
             }
         }
 
-        return $newUri;
-    }
-
-    /**
-     * Return a Uri object modified according to the modifier
-     *
-     * @param Uri|UriInterface $uri
-     *
-     * @return Uri|UriInterface
-     */
-    public function process($uri)
-    {
-        return $this->__invoke($uri);
+        return $uri;
     }
 }

@@ -13,7 +13,6 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
-use League\Uri\Modifiers\ModifierCollection;
 use League\Uri\Types\UriValidator;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;

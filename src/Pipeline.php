@@ -32,14 +32,14 @@ class Pipeline
     use UriValidator;
 
     /**
-     * @var ModifierCollection
+     * @var callable[]
      */
     protected $collection;
 
     /**
      * New instance
      *
-     * @param callable[] $modifiers
+     * @param callable[] $collection
      *
      * @throws InvalidArgumentException
      */
@@ -57,14 +57,14 @@ class Pipeline
     /**
      * Create a new modifier with an appended stage.
      *
-     * @param callable $stage
+     * @param callable $modifier
      *
      * @return static
      */
-    public function pipe(callable $stage)
+    public function pipe(callable $modifier)
     {
         $collection = $this->collection;
-        $collection[] = $stage;
+        $collection[] = $modifier;
 
         return new static($collection);
     }

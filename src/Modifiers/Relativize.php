@@ -12,9 +12,7 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Components\HierarchicalPath;
-use League\Uri\Interfaces\Uri as LeagueUriInterface;
 use League\Uri\Modifiers\Filters\Uri;
-use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
 /**
  * Relativize an URI according to a base URI using
@@ -42,7 +40,7 @@ class Relativize extends AbstractUriModifier
     /**
      * New instance
      *
-     * @param LeagueUriInterface|Psr7UriInterface $uri
+     * @param mixed $uri
      */
     public function __construct($uri)
     {

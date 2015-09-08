@@ -12,8 +12,8 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Components\Query;
+use League\Uri\Modifiers\Filters\FilterTrait;
 use League\Uri\Modifiers\Filters\Flag;
-use League\Uri\Modifiers\Filters\ForCallable;
 
 /**
  * Filter the query component key/pair
@@ -24,20 +24,7 @@ use League\Uri\Modifiers\Filters\ForCallable;
  */
 class FilterQuery extends AbstractQueryModifier
 {
-    use ForCallable;
-    use Flag;
-
-    /**
-     * New instance
-     *
-     * @param callable $callable
-     * @param int      $flag
-     */
-    public function __construct(callable $callable, $flag = self::FILTER_USE_VALUE)
-    {
-        $this->callable = $callable;
-        $this->flag = $this->filterFlag($flag);
-    }
+    use FilterTrait;
 
     /**
      * {@inheritdoc}

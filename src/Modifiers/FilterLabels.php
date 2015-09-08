@@ -12,8 +12,8 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Components\Host;
+use League\Uri\Modifiers\Filters\FilterTrait;
 use League\Uri\Modifiers\Filters\Flag;
-use League\Uri\Modifiers\Filters\ForCallable;
 
 /**
  * Filter the host component labels
@@ -24,20 +24,7 @@ use League\Uri\Modifiers\Filters\ForCallable;
  */
 class FilterLabels extends AbstractHostModifier
 {
-    use ForCallable;
-    use Flag;
-
-    /**
-     * New instance
-     *
-     * @param callable $callable
-     * @param int      $flag
-     */
-    public function __construct(callable $callable, $flag = Host::FILTER_USE_VALUE)
-    {
-        $this->callable = $callable;
-        $this->flag = $this->filterFlag($flag);
-    }
+    use FilterTrait;
 
     /**
      * {@inheritdoc}

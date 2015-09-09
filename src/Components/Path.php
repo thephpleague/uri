@@ -50,8 +50,6 @@ class Path extends AbstractComponent implements PathInterface
      *
      * @param string $path
      *
-     * @throws InvalidArgumentException If reserved characters are used
-     *
      * @return array
      */
     protected function validate($path)

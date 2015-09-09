@@ -34,7 +34,7 @@ class Relativize extends AbstractUriModifier
     {
         $orig = new Path($this->uri->getPath());
 
-        return $orig->relativize($orig->modify($str))->__toString();
+        return (string) $orig->relativize($orig->modify($str));
     }
 
     /**

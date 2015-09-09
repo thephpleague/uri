@@ -9,6 +9,7 @@ use PHPUnit_Framework_TestCase;
 
 /**
  * @group path
+ * @group hierarchicalpath
  */
 class HierarchicalPathTest extends PHPUnit_Framework_TestCase
 {
@@ -26,16 +27,16 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     public function validPathProvider()
     {
         return [
-            ['', ''],
-            ['/path/to/my/file.csv', '/path/to/my/file.csv'],
-            ['you', 'you'],
-            ['foo/bar/', 'foo/bar/'],
-            ['', ''],
-            ['/', '/'],
-            ['/shop/rev iew/', '/shop/rev%20iew/'],
-            ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
-            ['/master/toto/%7Eetc', '/master/toto/~etc'],
-            ['////master/toto/%7Eetc', '////master/toto/~etc'],
+            'empty'                                  => ['', ''],
+            'root path'                              => ['/', '/'],
+            'absolute path'                          => ['/path/to/my/file.csv', '/path/to/my/file.csv'],
+            'relative path'                          => ['you', 'you'],
+            'relative path with ending slash'        => ['foo/bar/', 'foo/bar/'],
+            'path with a space'                      => ['/shop/rev iew/', '/shop/rev%20iew/'],
+            'path with an encoded char in lowercase' => ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
+            'path with an encoded char in uppercase' => ['/master/toto/%7Eetc', '/master/toto/%7Eetc'],
+            'path with character to encode'          => ['/foo^bar', '/foo%5Ebar'],
+            'path with a reserved characted encoded' => ['%2Ffoo^bar', '%2Ffoo%5Ebar'],
         ];
     }
 
@@ -96,7 +97,7 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['/shop/rev iew/', 1, 'rev iew', null],
-            ['/shop/rev%20iew/', 1, 'rev iew', null],
+            ['/shop/rev%20iew/', 1, 'rev%20iew', null],
             ['/shop/rev%20iew/', 28, 'foo', 'foo'],
         ];
     }
@@ -295,77 +296,6 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * Test Removing Dot Segment
-     *
-     * @param $expected
-     * @param $path
-     * @dataProvider normalizeProvider
-     */
-    public function testWithoutDotSegments($path, $expected)
-    {
-        $this->assertSame($expected, (new Path($path))->withoutDotSegments()->__toString());
-    }
-
-    /**
-     * Provides different segment to be normalized
-     *
-     * @return array
-     */
-    public function normalizeProvider()
-    {
-        return [
-            ['/a/b/c/./../../g', '/a/g'],
-            ['mid/content=5/../6', 'mid/6'],
-            ['a/b/c', 'a/b/c'],
-            ['a/b/c/.', 'a/b/c/'],
-            ['/a/b/c', '/a/b/c'],
-        ];
-    }
-
-    /**
-     * @dataProvider relativizeProvider
-     * @param $base
-     * @param $child
-     * @param $expected
-     */
-    public function testRelativize($base, $child, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($base))->relativize(new Path($child)));
-    }
-
-    public function relativizeProvider()
-    {
-        return [
-            ['/toto/le/heros', '/bar', '../bar'],
-            ['/toto/le/heros/', '/bar', '../bar'],
-            ['toto/le/heros/', '/bar', '/bar'],
-            ['toto/le/heros', '/bar', '/bar'],
-            ['toto/le/heros/', 'bar', 'bar'],
-            ['toto/le/heros', 'bar', 'bar'],
-        ];
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider withoutEmptySegmentsProvider
-     */
-    public function testWithoutEmptySegments($path, $expected)
-    {
-        $this->assertSame($expected, (new Path($path))->withoutEmptySegments()->__toString());
-    }
-
-    public function withoutEmptySegmentsProvider()
-    {
-        return [
-            ['/a/b/c', '/a/b/c'],
-            ['//a//b//c', '/a/b/c'],
-            ['a//b/c//', 'a/b/c/'],
-            ['/a/b/c//', '/a/b/c/'],
-        ];
-    }
-
     public function testGetBasemane()
     {
         $path = new Path('/path/to/my/file.txt');
@@ -400,72 +330,6 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     {
         $path = new Path('/path/to/my/');
         $this->assertEmpty($path->getBasename());
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider trailingSlashProvider
-     */
-    public function testHasTrailingSlash($path, $expected)
-    {
-        $this->assertSame($expected, (new Path($path))->hasTrailingSlash());
-    }
-
-    public function trailingSlashProvider()
-    {
-        return [
-            ['/path/to/my/', true],
-            ['/path/to/my', false],
-            ['path/to/my', false],
-            ['path/to/my/', true],
-            ['/', true],
-            ['', false],
-        ];
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider withTrailingSlashProvider
-     */
-    public function testWithTrailingSlash($path, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($path))->withTrailingSlash());
-    }
-
-    public function withTrailingSlashProvider()
-    {
-        return [
-            'relative path without ending slash' => ['toto', 'toto/'],
-            'absolute path without ending slash' => ['/toto', '/toto/'],
-            'root path'                          => ['/', '/'],
-            'empty path'                         => ['', '/'],
-            'relative path with ending slash'    => ['toto/', 'toto/'],
-            'absolute path with ending slash'    => ['/toto/', '/toto/'],
-        ];
-    }
-
-    /**
-     * @param $path
-     * @param $expected
-     * @dataProvider withoutTrailingSlashProvider
-     */
-    public function testWithoutTrailingSlash($path, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($path))->withoutTrailingSlash());
-    }
-
-    public function withoutTrailingSlashProvider()
-    {
-        return [
-            'relative path without ending slash' => ['toto', 'toto'],
-            'absolute path without ending slash' => ['/toto', '/toto'],
-            'root path'                          => ['/', ''],
-            'empty path'                         => ['', ''],
-            'relative path with ending slash'    => ['toto/', 'toto'],
-            'absolute path with ending slash'    => ['/toto/', '/toto'],
-        ];
     }
 
     /**
@@ -588,61 +452,6 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     public function testUriEncodesPathProperly($input, $output)
     {
         $this->assertSame($output, (new Path($input))->__toString());
-    }
-
-    /**
-     * @dataProvider typecodeProvider
-     * @param $input
-     * @param $expected
-     */
-    public function testGetTypecode($input, $expected)
-    {
-        $this->assertSame($expected, (new Path($input))->getTypecode());
-    }
-
-    public function typecodeProvider()
-    {
-        return [
-            'empty typecode' => ['/foo/bar', Path::FTP_TYPE_EMPTY],
-            'empty typecode with directory' => ['/foo/', Path::FTP_TYPE_EMPTY],
-            'typecode a' => ['foo/bar;type=a', Path::FTP_TYPE_ASCII],
-            'typecode i' => ['/foo/bar;type=i', Path::FTP_TYPE_BINARY],
-            'typecode d' => ['/foo/bar;type=d', Path::FTP_TYPE_DIRECTORY],
-            'typecode is case sensitive' => ['/foo/bar;type=A', Path::FTP_TYPE_EMPTY],
-        ];
-    }
-
-    /**
-     * @dataProvider typecodeModifierProvider
-     *
-     * @param $input
-     * @param $typecode
-     * @param $expected
-     */
-    public function testWithTypecode($input, $typecode, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($input))->withTypecode($typecode));
-    }
-
-    public function typecodeModifierProvider()
-    {
-        return [
-            'no modification (1)' => ['/foo/bar', Path::FTP_TYPE_EMPTY, '/foo/bar'],
-            'no modification (2)' => ['/foo;type=a/bar', Path::FTP_TYPE_DIRECTORY, '/foo;type=a/bar;type=d'],
-            'adding' => ['/foo/bar', Path::FTP_TYPE_ASCII, '/foo/bar;type=a'],
-            'adding to empty path' => ['/', Path::FTP_TYPE_DIRECTORY, '/;type=d'],
-            'replacing' => ['/foo/bar;type=i', Path::FTP_TYPE_ASCII, '/foo/bar;type=a'],
-            'removing' => ['/foo/bar;type=d', Path::FTP_TYPE_EMPTY, '/foo/bar'],
-            'unable to typecode' => ['/foo/bar;type=A', Path::FTP_TYPE_EMPTY, '/foo/bar;type=A'],
-        ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testWithTypecodeFailsWithInvalidTypecode()
-    {
-        (new Path('ftp://example.com/foo/bar'))->withTypecode('Z');
     }
 
     /**

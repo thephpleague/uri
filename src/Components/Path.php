@@ -22,10 +22,46 @@ use League\Uri\Interfaces\Path as PathInterface;
  */
 class Path extends AbstractComponent implements PathInterface
 {
-    use RemoveDotSegmentsTrait;
+    use PathModifierTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static $characters_set = [
+        '/', ':', '@', '!', '$', '&', "'", '%',
+        '(', ')', '*', '+', ',', ';', '=', '?',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static $characters_set_encoded = [
+        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
+        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
+    ];
 
     /**
      * {@inheritdoc}
      */
     protected static $invalidCharactersRegex = ',[?#],';
+
+    /**
+     * validate the submitted data
+     *
+     * @param string $path
+     *
+     * @throws InvalidArgumentException If reserved characters are used
+     *
+     * @return array
+     */
+    protected function validate($path)
+    {
+        $this->assertValidComponent($path);
+
+        $reserved = implode('', array_map(function ($char) {
+            return preg_quote($char, '/');
+        }, static::$characters_set));
+
+        return preg_replace_callback('/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/', [$this, 'decodeSegmentPart'], $path);
+    }
 }

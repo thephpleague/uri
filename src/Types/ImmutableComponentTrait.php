@@ -100,7 +100,17 @@ trait ImmutableComponentTrait
      */
     protected static function encode($value)
     {
-        return str_replace(static::$characters_set_encoded, static::$characters_set, rawurlencode($value));
+        $reservedChars = implode('', array_map(function ($value) {
+            return preg_quote($value, '/');
+        }, static::$characters_set));
+
+        return preg_replace_callback(
+            '/(?:[^'.$reservedChars.']+|%(?![A-Fa-f0-9]{2}))/',
+            function (array $matches) {
+                return rawurlencode($matches[0]);
+            },
+            $value
+        );
     }
 
     /**

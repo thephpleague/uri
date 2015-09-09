@@ -23,7 +23,7 @@ use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
  */
 class HierarchicalPath extends AbstractHierarchicalComponent implements HierarchicalPathInterface
 {
-    use RemoveDotSegmentsTrait;
+    use PathModifierTrait;
 
     /**
      * {@inheritdoc}
@@ -34,7 +34,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * {@inheritdoc}
      */
     protected static $characters_set = [
-        '/', ':', '@', '!', '$', '&', "'",
+        '/', ':', '@', '!', '$', '&', "'", '%',
         '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
@@ -42,7 +42,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * {@inheritdoc}
      */
     protected static $characters_set_encoded = [
-        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27',
+        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
         '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
     ];
 
@@ -50,23 +50,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * {@inheritdoc}
      */
     protected static $invalidCharactersRegex = ',[?#],';
-
-    /**
-     * Typecode Regular expression
-     */
-    protected static $typeRegex = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
-
-    /**
-     * Typecode value
-     *
-     * @array
-     */
-    protected static $typecodeList = [
-        'a' => self::FTP_TYPE_ASCII,
-        'i' => self::FTP_TYPE_BINARY,
-        'd' => self::FTP_TYPE_DIRECTORY,
-        ''  => self::FTP_TYPE_EMPTY,
-    ];
 
     /**
      * {@inheritdoc}
@@ -104,12 +87,17 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function validate($data)
     {
-        $data = array_values(array_filter(explode(static::$separator, $data), function ($value) {
-            return !is_null($value);
+        $data = array_values(array_filter(explode(static::$separator, $data), function ($segment) {
+            return !is_null($segment);
         }));
 
-        return array_map(function ($value) {
-            return rawurldecode(filter_var($value, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]));
+        $reserved = implode('', array_map(function ($char) {
+            return preg_quote($char, '/');
+        }, static::$characters_set));
+        $regex = '/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/';
+
+        return array_map(function ($segment) use ($regex) {
+            return preg_replace_callback($regex, [$this, 'decodeSegmentPart'], $segment);
         }, $data);
     }
 
@@ -132,7 +120,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             $front_delimiter = static::$separator;
         }
 
-        return $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data));
+        return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
+            return strtoupper($matches['encode']);
+        }, $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data)));
     }
 
     /**
@@ -149,59 +139,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             $source,
             $this->validateComponent($component)->toArray()
         ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function relativize(HierarchicalPathInterface $path)
-    {
-        $bSegments = explode(static::$separator, $this->withoutDotSegments()->__toString());
-        $cSegments = explode(static::$separator, $path->withoutDotSegments()->__toString());
-        if ('' == end($bSegments)) {
-            array_pop($bSegments);
-        }
-
-        $key = 0;
-        $res = [];
-        while (isset($cSegments[$key], $bSegments[$key]) && $cSegments[$key] === $bSegments[$key]) {
-            ++$key;
-            $res[] = '..';
-        }
-
-        return static::createFromArray(array_merge($res, array_slice($cSegments, $key)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutEmptySegments()
-    {
-        return $this->modify(preg_replace(',/+,', '/', $this->__toString()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasTrailingSlash()
-    {
-        return !empty($this->__toString()) && empty($this->getBasename());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withTrailingSlash()
-    {
-        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().static::$separator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withoutTrailingSlash()
-    {
-        return !$this->hasTrailingSlash() ? $this : $this->modify(substr($this->__toString(), 0, -1));
     }
 
     /**
@@ -303,39 +240,5 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         return implode(static::$separator, $this->validate($extension));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTypecode()
-    {
-        if (preg_match(self::$typeRegex, $this->getBasename(), $matches)) {
-            return self::$typecodeList[$matches['typecode']];
-        }
-
-        return self::FTP_TYPE_EMPTY;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withTypecode($type)
-    {
-        if (!in_array($type, self::$typecodeList)) {
-            throw new InvalidArgumentException('invalid typecode');
-        }
-
-        $basename = $this->getBasename();
-        if (preg_match(self::$typeRegex, $basename, $matches)) {
-            $basename = $matches['basename'];
-        }
-
-        $extension = array_search($type, self::$typecodeList);
-        if (!empty($extension)) {
-            $extension = ';type='.$extension;
-        }
-
-        return $this->replace(count($this) - 1, $basename.$extension);
     }
 }

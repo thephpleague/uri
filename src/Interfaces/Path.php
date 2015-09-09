@@ -44,4 +44,106 @@ interface Path extends Component
      * @return static
      */
     public function withoutDotSegments();
+
+    /**
+     * Returns an instance relativized according to a given Path
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance resolved according to supplied URI
+     *
+     * @param Path $rel the path to relativize
+     *
+     * @return static
+     */
+    public function relativize(Path $rel);
+
+    /**
+     * Returns an instance without duplicate delimiters
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * multiple consecutive empty segment
+     *
+     * @return static
+     */
+    public function withoutEmptySegments();
+
+    /**
+     * Returns whether or not the path has a trailing delimiter
+     *
+     * @return bool
+     */
+    public function hasTrailingSlash();
+
+    /**
+     * Returns an instance with a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a trailing slash
+     *
+     *
+     * @return static
+     */
+    public function withTrailingSlash();
+
+    /**
+     * Returns an instance without a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a trailing slash
+     *
+     * @return static
+     */
+    public function withoutTrailingSlash();
+
+    /**
+     * Returns an instance with a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a leading slash
+     *
+     *
+     * @return static
+     */
+    public function withLeadingSlash();
+
+    /**
+     * Returns an instance without a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a leading slash
+     *
+     * @return static
+     */
+    public function withoutLeadingSlash();
+
+    /**
+     * Retrieve the optional type associated to the path.
+     *
+     * The value returned MUST be one of the interface constant type
+     * If no type is associated the return constant must be self::FTP_TYPE_EMPTY
+     *
+     * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
+     *
+     * @return int a typecode constant.
+     */
+    public function getTypecode();
+
+    /**
+     * Return an instance with the specified typecode.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified type appended to the path.
+     * if not
+     *
+     * Using self::FTP_TYPE_EMPTY is equivalent to removing the typecode.
+     *
+     * @param int $type one typecode constant.
+     *
+     * @throws InvalidArgumentException for invalid typecode.
+     *
+     * @return static
+     *
+     */
+    public function withTypecode($type);
 }

@@ -330,4 +330,23 @@ class QueryTest extends PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider queryStringsForEncoding
+     */
+    public function testQueryIsProperlyEncoded($query, $expected)
+    {
+        $this->assertSame($expected, (string) (new Query($query))->__toString());
+    }
+
+    public function queryStringsForEncoding()
+    {
+        return [
+            'key-only' => ['k^ey', 'k%5Eey'],
+            'key-value' => ['k^ey=valu`', 'k%5Eey=valu%60'],
+            'array-key-only' => ['key[]', 'key%5B%5D'],
+            'array-key-value' => ['key[]=valu`', 'key%5B%5D=valu%60'],
+            'complex' => ['k^ey&key[]=valu`&f<>=`bar', 'k%5Eey&key%5B%5D=valu%60&f%3C%3E=%60bar'],
+        ];
+    }
 }

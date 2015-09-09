@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 
 /**
  * Add a leading slash to the URI path
@@ -27,11 +27,6 @@ class AddLeadingSlash extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        $path = new HierarchicalPath($str);
-        if ($path->isAbsolute()) {
-            return (string) $path;
-        }
-
-        return (string) $path->createFromArray($path->toArray(), $path::IS_ABSOLUTE);
+        return (string) (new Path($str))->withLeadingSlash();
     }
 }

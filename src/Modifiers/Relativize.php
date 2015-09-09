@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 use League\Uri\Modifiers\Filters\Uri;
 
 /**
@@ -32,7 +32,7 @@ class Relativize extends AbstractUriModifier
      */
     protected function modify($str)
     {
-        $orig = new HierarchicalPath($this->uri->getPath());
+        $orig = new Path($this->uri->getPath());
 
         return $orig->relativize($orig->modify($str))->__toString();
     }

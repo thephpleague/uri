@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 
 /**
  * Remove the trailing slash to the URI path
@@ -27,6 +27,6 @@ class RemoveTrailingSlash extends AbstractPathModifier
      */
     protected function modify($path)
     {
-        return (string) (new HierarchicalPath($path))->withoutTrailingSlash();
+        return (string) (new Path($path))->withoutTrailingSlash();
     }
 }

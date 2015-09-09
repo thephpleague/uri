@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Interfaces\Path;
 use League\Uri\Modifiers\Filters\Offset;
 use League\Uri\Modifiers\Filters\Segment;
 

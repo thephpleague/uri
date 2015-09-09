@@ -34,10 +34,10 @@ trait PathModifierTrait
      * @array
      */
     protected static $typecodeList = [
-        'a' => self::FTP_TYPE_ASCII,
-        'i' => self::FTP_TYPE_BINARY,
-        'd' => self::FTP_TYPE_DIRECTORY,
-        ''  => self::FTP_TYPE_EMPTY,
+        'a' => PathInterface::FTP_TYPE_ASCII,
+        'i' => PathInterface::FTP_TYPE_BINARY,
+        'd' => PathInterface::FTP_TYPE_DIRECTORY,
+        ''  => PathInterface::FTP_TYPE_EMPTY,
     ];
 
     /**
@@ -195,7 +195,7 @@ trait PathModifierTrait
             return self::$typecodeList[$matches['typecode']];
         }
 
-        return self::FTP_TYPE_EMPTY;
+        return PathInterface::FTP_TYPE_EMPTY;
     }
 
     /**
@@ -220,6 +220,12 @@ trait PathModifierTrait
         return $this->modify($path.$extension);
     }
 
+    /**
+     * Encode a segment or the entire path string
+     *
+     * @param  array  $matches
+     * @return string
+     */
     protected function decodeSegmentPart(array $matches)
     {
         return rawurldecode(array_shift($matches));

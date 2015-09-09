@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 
 /**
  * Remove empty segments from the URI path
@@ -27,6 +27,6 @@ class RemoveEmptySegments extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) (new HierarchicalPath($str))->withoutEmptySegments();
+        return (string) (new Path($str))->withoutEmptySegments();
     }
 }

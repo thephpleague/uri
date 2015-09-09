@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 
 /**
  * Add a trailing slash to the URI path
@@ -27,6 +27,6 @@ class AddTrailingSlash extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) (new HierarchicalPath($str))->withTrailingSlash();
+        return (string) (new Path($str))->withTrailingSlash();
     }
 }

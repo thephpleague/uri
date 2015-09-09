@@ -13,7 +13,6 @@ namespace League\Uri\Modifiers;
 
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Modifiers\Filters\FilterTrait;
-use League\Uri\Modifiers\Filters\Flag;
 
 /**
  * Filter the path component segments

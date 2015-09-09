@@ -36,7 +36,7 @@ trait Uri
     /**
      * Return a new instance with a new set of keys
      *
-     * @param mixed $uri The Uri Object
+     * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *
      * @return $this
      */
@@ -51,7 +51,7 @@ trait Uri
     /**
      * Validate the submitted keys
      *
-     * @param mixed $uri The Uri Object
+     * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *
      * @return LeagueUriInterface|UriInterface
      */

@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers;
 
 use InvalidArgumentException;
-use League\Uri\Components\HierarchicalPath as Path;
+use League\Uri\Components\Path;
 
 /**
  * Path component typecode modifier

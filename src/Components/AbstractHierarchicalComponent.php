@@ -12,6 +12,7 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
+use IteratorAggregate;
 use League\Uri\Interfaces\HierarchicalComponent;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
@@ -24,7 +25,7 @@ use Traversable;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent
+abstract class AbstractHierarchicalComponent implements IteratorAggregate
 {
     use ImmutableCollectionTrait;
 
@@ -47,25 +48,6 @@ abstract class AbstractHierarchicalComponent
      * @var int
      */
     protected $isAbsolute = self::IS_RELATIVE;
-
-    /**
-     * New Instance
-     *
-     * @param string|null $str the component string representation
-     */
-    public function __construct($str = null)
-    {
-        if (null !== $str) {
-            $this->init($str);
-        }
-    }
-
-    /**
-     * Initialize the object data
-     *
-     * @param string $str the raw component string
-     */
-    abstract protected function init($str);
 
     /**
      * {@inheritdoc}

@@ -38,6 +38,7 @@ class PortTest extends PHPUnit_Framework_TestCase
     public function invalidPortProvider()
     {
         return [
+            'empty string'                 => [''],
             'string'                       => ['toto'],
             'invalid port number too low'  => ['-23'],
             'invalid port number too high' => ['10000000'],

@@ -44,13 +44,25 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected $host;
 
     /**
-     * {@inheritdoc}
+     * Tell whether the Host component is undefined or not
+     *
+     * @var bool
      */
-    protected function init($str)
+    protected $isDefined = false;
+
+    /**
+     * New instance 
+     *
+     * @param null|string $host
+     */
+    public function __construct($host = null)
     {
-        $str = $this->validateString($str);
-        $this->data = $this->validate($str);
-        $this->setLiteral();
+        if (null !== $host) {
+            $this->isDefined = true;
+            $host = $this->validateString($host);
+            $this->data = $this->validate($host);
+            $this->setLiteral();
+        }
     }
 
     /**
@@ -103,8 +115,12 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     public function getContent()
     {
-        if (empty($this->data)) {
+        if (!$this->isDefined) {
             return null;
+        }
+
+        if (empty($this->data)) {
+            return '';
         }
 
         if ($this->isIp()) {

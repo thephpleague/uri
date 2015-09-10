@@ -47,6 +47,22 @@ trait ImmutablePropertyTrait
         return $newInstance;
     }
 
+    protected function filterPropertyValue($value)
+    {
+        if (null === $value) {
+            throw new InvalidArgumentException(sprintf(
+                'Expected data to be a string; received "%s"',
+                (is_object($value) ? get_class($value) : gettype($value))
+            ));
+        }
+        
+        if ('' === $value) {
+            return null;
+        }
+
+        return $value;
+    }
+
     /**
      * Assert the object is valid
      *

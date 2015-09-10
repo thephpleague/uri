@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group uri
  */
-class HierarchicalUriTest extends PHPUnit_Framework_TestCase
+class UriTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var HttpUri
@@ -130,7 +130,7 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
                 new Components\Fragment()
             ), 'http://example.com/path/to/the/sky'],
             [new HttpUri(
-                new Components\Scheme(''),
+                new Components\Scheme(),
                 new Components\UserInfo(),
                 new Components\Host(),
                 new Components\Port(),
@@ -157,6 +157,14 @@ class HierarchicalUriTest extends PHPUnit_Framework_TestCase
             ['http://user@:80'],
             ['//user@:80'],
         ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testModificationFailedWithUnsupportedType()
+    {
+        HttpUri::createFromString('http://example.com/path')->withQuery(null);
     }
 
     /**

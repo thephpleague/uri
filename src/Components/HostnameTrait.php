@@ -38,6 +38,19 @@ trait HostnameTrait
     }
 
     /**
+     * Format an label collection for string representation of the Host
+     *
+     * @param array $labels  host labels
+     * @param bool  $convert should we transcode the labels into their ascii equivalent
+     *
+     * @return array
+     */
+    protected function convertToAscii(array $labels, $convert)
+    {
+        return $convert ? array_map('idn_to_ascii', $labels) : $labels;
+    }
+
+    /**
      * Validate a string only host
      *
      * @param string $str

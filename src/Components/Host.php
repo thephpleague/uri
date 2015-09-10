@@ -128,7 +128,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $this->formatComponentString(
-            !$this->isIdn ? array_map('idn_to_ascii', $this->data) : $this->data,
+            $this->convertToAscii($this->data, !$this->isIdn),
             $this->isAbsolute
         );
     }
@@ -143,7 +143,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $this->modify($this->formatComponentString(
-            array_map('idn_to_ascii', $this->data),
+            $this->convertToAscii($this->data, $this->isIdn),
             $this->isAbsolute
         ));
     }

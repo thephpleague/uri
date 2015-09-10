@@ -19,14 +19,14 @@ class PortTest extends PHPUnit_Framework_TestCase
     /**
      * @param  $input
      * @param  $expected
-     * @dataProvider toIntProvider
+     * @dataProvider getContentProvider
      */
-    public function testToInt($input, $expected)
+    public function testgetContent($input, $expected)
     {
-        $this->assertSame($expected, (new Port($input))->toInt());
+        $this->assertSame($expected, (new Port($input))->getContent());
     }
 
-    public function toIntProvider()
+    public function getContentProvider()
     {
         return [
             ['443', 443],

@@ -127,7 +127,7 @@ abstract class AbstractUri
      */
     public function withScheme($scheme)
     {
-        return $this->withProperty('scheme', $scheme);
+        return $this->withProperty('scheme', $this->filterPropertyValue($scheme));
     }
 
     /**
@@ -147,7 +147,7 @@ abstract class AbstractUri
             $pass = '';
         }
 
-        $userInfo = $this->userInfo->withUser($user)->withPass($pass);
+        $userInfo = $this->userInfo->withUser($this->filterPropertyValue($user))->withPass($pass);
         if ($this->userInfo->getUser() == $userInfo->getUser()
             && $this->userInfo->getPass() == $userInfo->getPass()
         ) {
@@ -173,7 +173,7 @@ abstract class AbstractUri
      */
     public function withHost($host)
     {
-        return $this->withProperty('host', $host);
+        return $this->withProperty('host', $this->filterPropertyValue($host));
     }
 
     /**
@@ -221,7 +221,7 @@ abstract class AbstractUri
      */
     public function withQuery($query)
     {
-        return $this->withProperty('query', $query);
+        return $this->withProperty('query', $this->filterPropertyValue($query));
     }
 
     /**
@@ -237,7 +237,7 @@ abstract class AbstractUri
      */
     public function withFragment($fragment)
     {
-        return $this->withProperty('fragment', $fragment);
+        return $this->withProperty('fragment', $this->filterPropertyValue($fragment));
     }
 
     /**

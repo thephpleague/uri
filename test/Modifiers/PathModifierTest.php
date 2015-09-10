@@ -190,7 +190,6 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['csv', '/path/to/the/sky.csv'],
-            ['.csv', '/path/to/the/sky.csv'],
             ['', '/path/to/the/sky'],
         ];
     }

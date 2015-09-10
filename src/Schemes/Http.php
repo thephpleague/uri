@@ -162,7 +162,10 @@ class Http extends AbstractHierarchicalUri implements Uri, UriInterface
         }
 
         $server = array_merge(['PHP_SELF' => '', 'QUERY_STRING' => ''], $server);
+        if (!empty($server['QUERY_STRING'])) {
+            $server['QUERY_STRING'] = '?'.$server['QUERY_STRING'];
+        }
 
-        return $server['PHP_SELF'].'?'.$server['QUERY_STRING'];
+        return $server['PHP_SELF'].$server['QUERY_STRING'];
     }
 }

@@ -52,25 +52,27 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
-     * {@inheritdoc}
+     * New Instance
+     *
+     * @param string $path
      */
-    protected function init($str)
+    public function __construct($path = '')
     {
-        $str = $this->validateString($str);
-        $this->assertValidComponent($str);
+        $path = $this->validateString($path);
+        $this->assertValidComponent($path);
         $this->isAbsolute = self::IS_RELATIVE;
-        if (static::$separator == mb_substr($str, 0, 1, 'UTF-8')) {
+        if (static::$separator == mb_substr($path, 0, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;
-            $str = mb_substr($str, 1, mb_strlen($str), 'UTF-8');
+            $path = mb_substr($path, 1, mb_strlen($path), 'UTF-8');
         }
 
         $append_delimiter = false;
-        if (static::$separator === mb_substr($str, -1, 1, 'UTF-8')) {
-            $str = mb_substr($str, 0, -1, 'UTF-8');
+        if (static::$separator === mb_substr($path, -1, 1, 'UTF-8')) {
+            $path = mb_substr($path, 0, -1, 'UTF-8');
             $append_delimiter = true;
         }
 
-        $this->data = $this->validate($str);
+        $this->data = $this->validate($path);
         if ($append_delimiter) {
             $this->data[] = '';
         }
@@ -234,7 +236,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function formatExtension($extension)
     {
-        $extension = ltrim($extension, '.');
+        if (0 === strpos($extension, '.')) {
+            throw new InvalidArgumentException('an extension sequence can not contain a leading `.` character');
+        }
+
         if (strpos($extension, static::$separator)) {
             throw new InvalidArgumentException('an extension sequence can not contain a path delimiter');
         }

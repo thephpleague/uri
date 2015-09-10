@@ -54,10 +54,7 @@ abstract class AbstractComponent
     protected function init($data)
     {
         $data = $this->validateString($data);
-
-        if ($data !== '') {
-            $this->data = $this->validate($data);
-        }
+        $this->data = $this->validate($data);
     }
 
     /**

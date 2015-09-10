@@ -61,7 +61,7 @@ class Relativize extends AbstractUriModifier
         }
 
         return $relative
-            ->withScheme('')->withUserInfo('')->withPort('')->withHost('')
+            ->withScheme('')->withUserInfo('')->withPort(null)->withHost('')
             ->withPath($this->modify($relative->getPath()));
     }
 }

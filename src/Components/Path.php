@@ -46,6 +46,16 @@ class Path extends AbstractComponent implements PathInterface
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
+     * new instance
+     *
+     * @param string $path the component value
+     */
+    public function __construct($path = '')
+    {
+        parent::__construct($this->validateString($path));
+    }
+
+    /**
      * validate the submitted data
      *
      * @param string $path

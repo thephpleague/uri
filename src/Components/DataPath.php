@@ -65,6 +65,9 @@ class DataPath extends Path implements DataPathInterface
      */
     protected function init($str)
     {
+        if ('' === $str) {
+            $str = self::DEFAULT_MIMETYPE.';'.self::DEFAULT_PARAMETER.',';
+        }
         $this->assertValidComponent($str);
         $parts = $this->extractPathParts($this->validateString($str));
         $this->validate($parts);
@@ -81,7 +84,6 @@ class DataPath extends Path implements DataPathInterface
      */
     protected function extractPathParts($str)
     {
-        $this->assertValidComponent($str);
         if (!mb_detect_encoding($str, 'US-ASCII', true)
             || false === strpos($str, ',')
             || false !== strpos($str, '\n')
@@ -105,6 +107,7 @@ class DataPath extends Path implements DataPathInterface
      * @param string[] $matches
      *
      * @throws InvalidArgumentException if the object can not be instantiated
+     *
      */
     protected function validate($matches)
     {

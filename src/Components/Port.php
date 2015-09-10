@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\Port as PortInterface;
 
 /**
@@ -35,6 +36,12 @@ class Port extends AbstractComponent implements PortInterface
      */
     protected function validate($port)
     {
+        if ('' === $port) {
+            throw new InvalidArgumentException(
+                'Expected port to be a int or null; received an empty string'
+            );
+        }
+
         return $this->validatePort($port);
     }
 

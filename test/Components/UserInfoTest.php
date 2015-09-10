@@ -33,7 +33,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
         return [
             [new UserInfo(), new UserInfo('foo', 'bar'), false],
             [new UserInfo('foo', 'bar'), new UserInfo('foo', 'bar'), true],
-            [new UserInfo('', 'bar'), new UserInfo('', 'coucou'), true],
+            [new UserInfo('', 'bar'), new UserInfo('', 'coucou'), false],
+            [new UserInfo(null, 'bar'), new UserInfo(null, 'coucou'), true],
         ];
     }
 
@@ -45,16 +46,18 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
         $userinfo = new UserInfo($login, $pass);
         $this->assertSame($expected_user, $userinfo->getUser());
         $this->assertSame($expected_pass, $userinfo->getPass());
-        $this->assertSame($expected_str, $userinfo->__toString());
+        $this->assertSame($expected_str, (string) $userinfo->__toString());
     }
 
     public function toArrayProvider()
     {
         return [
             ['login', 'pass', 'login', 'pass', 'login:pass'],
-            ['login', '', 'login', '', 'login'],
-            ['', '', '', '', ''],
-            ['', 'pass', '', 'pass', ''],
+            ['login', null, 'login', '', 'login'],
+            [null, null, '', '', ''],
+            ['', null, '', '', ''],
+            ['', '', '', '', ':'],
+            [null, 'pass', '', 'pass', ''],
         ];
     }
 }

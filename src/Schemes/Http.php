@@ -47,7 +47,7 @@ class Http extends AbstractHierarchicalUri implements Uri, UriInterface
     /**
      * Create a new instance from the environment
      *
-     * @param array $server the server and execution environment information array tipycally ($_SERVER)
+     * @param array $server the server and execution environment information array typically ($_SERVER)
      *
      * @throws InvalidArgumentException If the URI can not be parsed
      *

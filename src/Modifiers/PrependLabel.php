@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\Host;
 use League\Uri\Modifiers\Filters\Label;
 
 /**
@@ -40,6 +39,6 @@ class PrependLabel extends AbstractHostModifier
      */
     protected function modify($str)
     {
-        return (string) (new Host($str))->prepend($this->label);
+        return (string) $this->label->modify($str)->prepend($this->label);
     }
 }

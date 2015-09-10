@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\HierarchicalPath;
-use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
 use League\Uri\Interfaces\Path;
 use League\Uri\Types\StringValidator;
 
@@ -30,7 +29,7 @@ trait Segment
     /**
      * A HierarchicalPath object
      *
-     * @var HierarchicalPathInterface
+     * @var HierarchicalPath
      */
     protected $segment;
 
@@ -55,7 +54,7 @@ trait Segment
      *
      * @param string $path the data to be merged query can be
      *
-     * @return HierarchicalPathInterface
+     * @return HierarchicalPath
      */
     protected function filterSegment($path)
     {

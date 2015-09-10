@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Query;
-use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\Types\StringValidator;
 
 /**
@@ -29,7 +28,7 @@ trait QueryString
     /**
      * A Query object
      *
-     * @var QueryInterface
+     * @var Query
      */
     protected $query;
 
@@ -54,7 +53,7 @@ trait QueryString
      *
      * @param string $query the data to be merged
      *
-     * @return QueryInterface
+     * @return Query
      */
     protected function filterQuery($query)
     {

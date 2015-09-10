@@ -50,6 +50,13 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     protected $isAbsolute = self::IS_RELATIVE;
 
     /**
+     * new instance
+     *
+     * @param null|string $str the component value
+     */
+    abstract public function __construct($str);
+
+    /**
      * {@inheritdoc}
      */
     public function isAbsolute()

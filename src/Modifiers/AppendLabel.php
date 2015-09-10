@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Interfaces\Host;
 use League\Uri\Modifiers\Filters\Label;
 
 /**

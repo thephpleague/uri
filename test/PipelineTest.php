@@ -8,7 +8,7 @@ use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase as TestCase;
 
 /**
- * @group Pipeline
+ * @group pipeline
  */
 class PipelineTest extends TestCase
 {

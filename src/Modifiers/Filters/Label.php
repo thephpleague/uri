@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Host;
-use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Types\StringValidator;
 
 /**
@@ -27,9 +26,9 @@ trait Label
     use StringValidator;
 
     /**
-     * A HostInterface object
+     * A Host object
      *
-     * @var HostInterface
+     * @var Host
      */
     protected $label;
 
@@ -54,7 +53,7 @@ trait Label
      *
      * @param string $label the data to validate
      *
-     * @return HostInterface
+     * @return Host
      */
     protected function filterLabel($label)
     {

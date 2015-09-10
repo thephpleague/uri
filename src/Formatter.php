@@ -164,10 +164,9 @@ class Formatter
             return $this->formatUri($input);
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'input must be an Uri or an UriPart implemented object; received "%s"',
-            is_object($input) ? get_class($input) : gettype($input)
-        ));
+        throw new InvalidArgumentException(
+            'input must be an URI object or a League UriPart implemented object'
+        );
     }
 
     /**

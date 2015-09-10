@@ -34,7 +34,7 @@ class UriTest extends PHPUnit_Framework_TestCase
         $this->assertSame($this->uri->getScheme(), $this->uri->scheme->__toString());
         $this->assertSame($this->uri->getUserInfo(), $this->uri->userInfo->__toString());
         $this->assertSame($this->uri->getHost(), $this->uri->host->__toString());
-        $this->assertSame($this->uri->getPort(), $this->uri->port->toInt());
+        $this->assertSame($this->uri->getPort(), $this->uri->port->getContent());
         $this->assertSame($this->uri->getPath(), $this->uri->path->__toString());
         $this->assertSame($this->uri->getQuery(), $this->uri->query->__toString());
         $this->assertSame($this->uri->getFragment(), $this->uri->fragment->__toString());

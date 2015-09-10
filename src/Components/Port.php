@@ -58,7 +58,7 @@ class Port extends AbstractComponent implements PortInterface
     /**
      * {@inheritdoc}
      */
-    public function toInt()
+    public function getContent()
     {
         return $this->data;
     }

@@ -19,6 +19,7 @@ use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Interfaces\UriPart;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
+use Psr\Http\Message\UriInterface;
 
 /**
  * A class to manipulate URI and URI components output
@@ -149,7 +150,7 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param Interfaces\Uri|Interfaces\Components\UriPart $input
+     * @param UriInterface|Interfaces\Uri|Interfaces\Components\UriPart $input
      *
      * @return string
      */
@@ -159,7 +160,7 @@ class Formatter
             return $this->formatUriPart($input);
         }
 
-        if ($input instanceof Uri) {
+        if ($input instanceof Uri || $input instanceof UriInterface) {
             return $this->formatUri($input);
         }
 
@@ -208,11 +209,11 @@ class Formatter
     /**
      * Format a Interfaces\Schemes\Uri according to the Formatter properties
      *
-     * @param Uri $uri
+     * @param Uri|UriInterface $uri
      *
      * @return string
      */
-    protected function formatUri(Uri $uri)
+    protected function formatUri($uri)
     {
         $scheme = $uri->getScheme();
         if (!empty($scheme)) {
@@ -236,11 +237,11 @@ class Formatter
     /**
      * Format a URI authority according to the Formatter properties
      *
-     * @param Uri $uri
+     * @param UriInterface|Uri $uri
      *
      * @return string
      */
-    protected function formatAuthority(Uri $uri)
+    protected function formatAuthority($uri)
     {
         if ('' == $uri->getHost()) {
             return '';

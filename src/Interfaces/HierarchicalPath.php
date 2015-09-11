@@ -27,13 +27,6 @@ namespace League\Uri\Interfaces;
 interface HierarchicalPath extends Path, HierarchicalComponent
 {
     /**
-     * Returns whether or not the path is absolute or relative
-     *
-     * @return bool
-     */
-    public function isAbsolute();
-
-    /**
      * Returns the basename extension
      *
      * @return string

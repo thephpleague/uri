@@ -21,7 +21,7 @@ use League\Uri\Interfaces\Path as PathInterface;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-trait PathModifierTrait
+trait PathTrait
 {
     /**
      * Typecode Regular expression
@@ -161,15 +161,19 @@ trait PathModifierTrait
     /**
      * {@inheritdoc}
      */
+    public function isAbsolute()
+    {
+        $path = $this->__toString();
+
+        return !empty($path) && '/' === mb_substr($path, 0, 1, 'UTF-8');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function withLeadingSlash()
     {
-        $str = $this->__toString();
-
-        if ('/' === mb_substr($str, 0, 1, 'UTF-8')) {
-            return $this;
-        }
-
-        return $this->modify('/'.$str);
+        return $this->isAbsolute() ? $this : $this->modify('/'.$this->__toString());
     }
 
     /**
@@ -177,13 +181,7 @@ trait PathModifierTrait
      */
     public function withoutLeadingSlash()
     {
-        $str = $this->__toString();
-
-        if ('/' !== mb_substr($str, 0, 1, 'UTF-8')) {
-            return $this;
-        }
-
-        return $this->modify(mb_substr($this->__toString(), 1, null, 'UTF-8'));
+        return !$this->isAbsolute() ? $this : $this->modify(mb_substr($this->__toString(), 1, null, 'UTF-8'));
     }
 
     /**

@@ -23,7 +23,7 @@ use League\Uri\Interfaces\HierarchicalPath as HierarchicalPathInterface;
  */
 class HierarchicalPath extends AbstractHierarchicalComponent implements HierarchicalPathInterface
 {
-    use PathModifierTrait;
+    use PathTrait;
 
     /**
      * {@inheritdoc}

@@ -97,6 +97,13 @@ interface Path extends Component
     public function withoutTrailingSlash();
 
     /**
+     * Returns whether or not the path is absolute or relative
+     *
+     * @return bool
+     */
+    public function isAbsolute();
+
+    /**
      * Returns an instance with a leading slash
      *
      * This method MUST retain the state of the current instance, and return

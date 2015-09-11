@@ -22,7 +22,7 @@ use League\Uri\Interfaces\Path as PathInterface;
  */
 class Path extends AbstractComponent implements PathInterface
 {
-    use PathModifierTrait;
+    use PathTrait;
 
     /**
      * {@inheritdoc}

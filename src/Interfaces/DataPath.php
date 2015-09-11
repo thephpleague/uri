@@ -45,7 +45,7 @@ interface DataPath extends Path
      *
      * @return string The URI scheme.
      */
-    public function getMediatype();
+    public function getMediaType();
 
     /**
      * Retrieve the data mime type associated to the URI.

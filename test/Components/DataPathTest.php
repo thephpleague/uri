@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test\Schemes;
+namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\DataPath as Path;
@@ -92,8 +92,8 @@ class DataPathTest extends PHPUnit_Framework_TestCase
     public function fileProvider()
     {
         return [
-            [Path::createFromPath(dirname(__DIR__).'/data/red-nose.gif')],
-            [new Path('text/plain;charset=us-ascii,Bonjour%20le%20monde%21')],
+            'with a file' => [Path::createFromPath(dirname(__DIR__).'/data/red-nose.gif')],
+            'with a text' => [new Path('text/plain;charset=us-ascii,Bonjour%20le%20monde%21')],
         ];
     }
 

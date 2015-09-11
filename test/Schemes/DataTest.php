@@ -23,7 +23,7 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame('data', $uri->getScheme());
         $this->assertSame($mimetype, $uri->path->getMimeType());
         $this->assertSame($parameters, $uri->path->getParameters());
-        $this->assertSame($mediatype, $uri->path->getMediatype());
+        $this->assertSame($mediatype, $uri->path->getMediaType());
         $this->assertSame($data, $uri->path->getData());
         $this->assertSame($isBinaryData, $uri->path->isBinaryData());
         $this->assertInstanceOf('League\Uri\Interfaces\Scheme', $uri->scheme);
@@ -129,9 +129,17 @@ class DataTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException RuntimeException
      */
-    public function testCreateFromComponentsFailedWithRuntimeException()
+    public function testCreateFromComponentsFailedInvalidMediatype()
     {
         DataUri::createFromString('data:image/png;base64,dsqdfqfd#fragment');
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testCreateFromComponentsFailedWithRuntimeException()
+    {
+        DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21#fragment');
     }
 
     public function testWithPath()

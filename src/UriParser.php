@@ -34,7 +34,7 @@ class UriParser
 
     use PathFormatterTrait;
 
-    const REGEXP_URI_RFC3986 = ',^((?<scheme>[^:/?\#]+):)?
+    const REGEXP_URI = ',^((?<scheme>[^:/?\#]+):)?
         (?<authority>//(?<acontent>[^/?\#]*))?
         (?<path>[^?\#]*)
         (?<query>\?(?<qcontent>[^\#]*))?
@@ -86,17 +86,16 @@ class UriParser
      */
     public function parse($uri)
     {
-        preg_match(self::REGEXP_URI_RFC3986, $uri, $parts);
+        preg_match(self::REGEXP_URI, $uri, $parts);
         $parts += ['query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => ''];
-        $components = array_replace(
+
+        return array_replace(
             $this->components,
             $this->parseAuthority($parts),
-            $this->parseScheme($parts)
+            $this->parseSchemeAndPath($parts),
+            ['query' => empty($parts['query']) ? null : $parts['qcontent']],
+            ['fragment' => empty($parts['fragment']) ? null : $parts['fcontent']]
         );
-        $components['query'] = empty($parts['query']) ? null : $parts['qcontent'];
-        $components['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
-
-        return $components;
     }
 
     /**
@@ -135,7 +134,7 @@ class UriParser
      *
      * @return array
      */
-    protected function parseScheme(array $parts)
+    protected function parseSchemeAndPath(array $parts)
     {
         $res = ['scheme' => null, 'path' => $parts['path']];
         try {
@@ -143,12 +142,12 @@ class UriParser
             $scheme = empty($scheme) ? null : $scheme;
 
             return ['scheme' => $scheme] + $res;
-        } catch (InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException $e) {
             if (empty($parts['authority'])) {
                 return ['path' => $parts['scheme'].':'.$parts['path']] + $res;
             }
 
-            throw $exception;
+            throw $e;
         }
     }
 

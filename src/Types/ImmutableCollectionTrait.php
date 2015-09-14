@@ -94,7 +94,11 @@ trait ImmutableCollectionTrait
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {
-        static $flags_list = [Collection::FILTER_USE_VALUE => 1, Collection::FILTER_USE_KEY => 1];
+        static $flags_list = [
+            Collection::FILTER_USE_VALUE => 1,
+            Collection::FILTER_USE_BOTH => 1,
+            Collection::FILTER_USE_KEY => 1,
+        ];
 
         if (!isset($flags_list[$flag])) {
             throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
@@ -102,6 +106,10 @@ trait ImmutableCollectionTrait
 
         if ($flag == Collection::FILTER_USE_KEY) {
             return $this->filterByOffset($callable);
+        }
+
+        if ($flag == Collection::FILTER_USE_BOTH) {
+            return $this->filterBoth($callable);
         }
 
         return $this->newCollectionInstance(array_filter($this->data, $callable));
@@ -128,6 +136,25 @@ trait ImmutableCollectionTrait
         $data = [];
         foreach (array_filter(array_keys($this->data), $callable) as $offset) {
             $data[$offset] = $this->data[$offset];
+        }
+
+        return $this->newCollectionInstance($data);
+    }
+
+    /**
+     * Filter The Collection according to its offsets AND its values
+     *
+     * @param callable $callable
+     *
+     * @return static
+     */
+    protected function filterBoth(callable $callable)
+    {
+        $data = [];
+        foreach ($this->data as $key => $value) {
+            if (true === call_user_func($callable, $value, $key)) {
+                $data[$key] = $value;
+            }
         }
 
         return $this->newCollectionInstance($data);

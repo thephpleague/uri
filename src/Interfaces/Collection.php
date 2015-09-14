@@ -28,8 +28,11 @@ use IteratorAggregate;
  */
 interface Collection extends Countable, IteratorAggregate
 {
-    const FILTER_USE_KEY   = 2;
     const FILTER_USE_VALUE = 0;
+
+    const FILTER_USE_BOTH  = 1;
+
+    const FILTER_USE_KEY   = 2;
 
     /**
      * Return an array representation of the collection

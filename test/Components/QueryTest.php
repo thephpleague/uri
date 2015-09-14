@@ -212,9 +212,9 @@ class QueryTest extends PHPUnit_Framework_TestCase
      * @param $expected
      * @dataProvider filterProvider
      */
-    public function testFilter($params, $callable, $expected)
+    public function testFilter($params, $callable, $flag, $expected)
     {
-        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, Query::FILTER_USE_VALUE));
+        $this->assertSame($expected, (string) Query::createFromArray($params)->filter($callable, $flag));
     }
 
     public function filterProvider()
@@ -223,11 +223,16 @@ class QueryTest extends PHPUnit_Framework_TestCase
             return stripos($value, '.') !== false;
         };
 
+        $funcBoth = function ($value, $key) {
+            return strpos($value, 'o') !== false && strpos($key, 'o') !== false;
+        };
+
         return [
-            'empty query'  => [[], $func, ''],
-            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, 'toto=foo.bar'],
-            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, ''],
-            'remove None'  => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, 'toto=foo.bar&zozo=st.ay'],
+            'empty query'  => [[], $func, Query::FILTER_USE_VALUE, ''],
+            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar'],
+            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, ''],
+            'remove None'  => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar&zozo=st.ay'],
+            'remove with filter both' => [['toto' => 'foo', 'foo' => 'bar'], $funcBoth, Query::FILTER_USE_BOTH, 'toto=foo'],
         ];
     }
 

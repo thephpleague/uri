@@ -37,7 +37,8 @@ trait Flag
      */
     protected static $flagList = [
         Collection::FILTER_USE_VALUE => 1,
-        Collection::FILTER_USE_KEY => 2,
+        Collection::FILTER_USE_BOTH => 1,
+        Collection::FILTER_USE_KEY => 1,
     ];
 
     /**

@@ -32,10 +32,6 @@ class FtpTest extends PHPUnit_Framework_TestCase
                 'ftp://login:pass@example.com/',
                 'ftp://login:pass@example.com/',
             ],
-            'empty URI' => [
-                '',
-                '',
-            ],
         ];
     }
 
@@ -54,6 +50,8 @@ class FtpTest extends PHPUnit_Framework_TestCase
         return [
             ['wss:/example.com'],
             ['http://example.com'],
+            [''],
+            ['//example.com'],
         ];
     }
 

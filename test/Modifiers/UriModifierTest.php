@@ -69,9 +69,10 @@ class UriModifierTest extends TestCase
                 HttpUri::createFromString('//a/b/c/d;p?q'),
             ],
             [
-                FtpUri::createFromString('//example.com/path/to/file'),
-                HttpUri::createFromString('./g'),
+                HttpUri::createFromString('//a/b/c/d;p?q'),
+                FtpUri::createFromString('ftp://example.com/path/to/file'),
             ],
+
         ];
     }
 
@@ -149,7 +150,7 @@ class UriModifierTest extends TestCase
     public function resolveLetThrowResolvedUriException()
     {
         $http = HttpUri::createFromString('http://example.com/path/to/file');
-        $ftp = FtpUri::createFromString('//a/b/c/d;p');
+        $ftp = FtpUri::createFromString('ftp//a/b/c/d;p');
         $modifier = new Resolve($http);
         $modifier->__invoke($ftp);
     }

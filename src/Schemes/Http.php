@@ -49,8 +49,8 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     protected function assertSupportedScheme()
     {
         $scheme = $this->getScheme();
-        if (!empty($scheme) && !isset(static::$supportedSchemes[$scheme])) {
-            throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
+        if (!empty($scheme)) {
+            parent::assertSupportedScheme();
         }
     }
 

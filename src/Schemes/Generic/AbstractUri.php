@@ -31,11 +31,11 @@ use RuntimeException;
  */
 abstract class AbstractUri
 {
+    use AuthorityValidatorTrait;
+
     use ImmutablePropertyTrait;
 
     use PathFormatterTrait;
-
-    use AuthorityValidatorTrait;
 
     /**
      * Host Component
@@ -92,27 +92,6 @@ abstract class AbstractUri
      * @var array
      */
     protected static $supportedSchemes = [];
-
-    /**
-     * Check if a URI is valid
-     *
-     * @throws InvalidArgumentException If the scheme is not supported
-     *
-     * @return bool
-     */
-    abstract protected function isValid();
-
-    /**
-     * Assert the object is valid
-     *
-     * @throws RuntimeException if the resulting URI is not valid
-     */
-    protected function assertValidObject()
-    {
-        if (!$this->isValid()) {
-            throw new RuntimeException('The submitted properties will produce an invalid object');
-        }
-    }
 
     /**
      * {@inheritdoc}
@@ -249,6 +228,40 @@ abstract class AbstractUri
     }
 
     /**
+     * Retrieve the scheme specific part of the URI.
+     *
+     * If no specific part information is present, this method MUST return an empty
+     * string.
+     *
+     * @return string The URI authority, in "[user-info@]host[:port]" format.
+     */
+    protected function getSchemeSpecificPart()
+    {
+        $auth = $this->getAuthority();
+        if (!empty($auth)) {
+            $auth = '//'.$auth;
+        }
+
+        return $auth
+            .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
+            .$this->query->getUriComponent()
+            .$this->fragment->getUriComponent();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthority()
+    {
+        $port = '';
+        if (!$this->hasStandardPort()) {
+            $port = $this->port->getUriComponent();
+        }
+
+        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+    }
+
+    /**
      * Returns whether the standard port for the given scheme is used, when
      * the scheme is unknown or unsupported will the method return false
      *
@@ -271,41 +284,29 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * Assert if the current URI object is valid
+     *
+     * @throws RuntimeException if the resulting URI is not valid
      */
-    public function getAuthority()
+    protected function assertValidObject()
     {
-        $port = '';
-        if (!$this->hasStandardPort()) {
-            $port = $this->port->getUriComponent();
+        if (!$this->isValid()) {
+            throw new RuntimeException('The URI properties will produce an invalid `'.get_class($this).'`');
         }
-
-        return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
     }
 
     /**
-     * Retrieve the scheme specific part of the URI.
+     * Tell whether the current URI is valid.
+     * 
+     * The URI object validity depends on the scheme. This method 
+     * MUST be implemented on every URI object
      *
-     * If no specific part information is present, this method MUST return an empty
-     * string.
-     *
-     * @return string The URI authority, in "[user-info@]host[:port]" format.
+     * @return bool
      */
-    protected function getSchemeSpecificPart()
-    {
-        $auth = $this->getAuthority();
-        if (!empty($auth)) {
-            $auth = '//'.$auth;
-        }
-
-        return $auth
-            .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
-            .$this->query->getUriComponent()
-            .$this->fragment->getUriComponent();
-    }
+    abstract protected function isValid();
 
     /**
-     * Check if any generic URI is valid
+     *  Tell whether any generic URI is valid
      *
      * @return bool
      */
@@ -320,13 +321,11 @@ abstract class AbstractUri
         $path = array_shift($path);
         $str = $this->scheme->getUriComponent().$this->getAuthority();
 
-        return (!(empty($str) && strpos($path, '/') === false));
+        return !(empty($str) && strpos($path, '/') === false);
     }
 
     /**
-     * Tell whether the Hierarchical URI is valid
-     *
-     * @throws InvalidArgumentException If the Scheme is not supported
+     * Tell whether Http URI like scheme URI are valid
      *
      * @return bool
      */
@@ -345,8 +344,8 @@ abstract class AbstractUri
     protected function assertSupportedScheme()
     {
         $scheme = $this->getScheme();
-        if (!empty($scheme) && !isset(static::$supportedSchemes[$scheme])) {
-            throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
+        if (!isset(static::$supportedSchemes[$scheme])) {
+            throw new InvalidArgumentException('The submitted scheme is unsupported by `'.get_class($this).'`');
         }
     }
 }

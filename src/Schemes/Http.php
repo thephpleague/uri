@@ -13,7 +13,6 @@ namespace League\Uri\Schemes;
 
 use InvalidArgumentException;
 use League\Uri\Components\Host;
-use League\Uri\Interfaces\Uri;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 use League\Uri\UriParser;
 use Psr\Http\Message\UriInterface;
@@ -25,7 +24,7 @@ use Psr\Http\Message\UriInterface;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Http extends AbstractHierarchicalUri implements Uri, UriInterface
+class Http extends AbstractHierarchicalUri implements UriInterface
 {
     /**
      * {@inheritdoc}
@@ -42,6 +41,17 @@ class Http extends AbstractHierarchicalUri implements Uri, UriInterface
     {
         return $this->isValidGenericUri()
             && $this->isValidHierarchicalUri();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function assertSupportedScheme()
+    {
+        $scheme = $this->getScheme();
+        if (!empty($scheme) && !isset(static::$supportedSchemes[$scheme])) {
+            throw new InvalidArgumentException('The submitted scheme is unsupported by '.get_class($this));
+        }
     }
 
     /**

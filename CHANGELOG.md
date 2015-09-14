@@ -40,6 +40,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Formatter::format accept `Uri`, PSR-7 `UriInterface` and `UriPart` implemented objects
 - `Host` now iterate from the top-level label to the last subdomain (from right to left)
 - The `Query::merge` method only accept `League\Uri\Interfaces\Query` objects or query string
+- `Collection::FILTER_USE_BOTH` implemented to make Collection::filter behave like `array_filter` in PHP 5.6+
 
 ### Remove
 

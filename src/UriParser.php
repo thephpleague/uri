@@ -34,6 +34,22 @@ class UriParser
 
     use PathFormatterTrait;
 
+    const REGEXP_URI_RFC3986 = ',^((?<scheme>[^:/?\#]+):)?
+        (?<authority>//(?<acontent>[^/?\#]*))?
+        (?<path>[^?\#]*)
+        (?<query>\?(?<qcontent>[^\#]*))?
+        (?<fragment>\#(?<fcontent>.*))?,x';
+
+    const REGEXP_AUTHORITY = ',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,';
+
+    const REGEXP_REVERSE_HOSTNAME = ',^((?<port>[^(\[\])]*):)?(?<host>.*)?$,';
+
+    const REGEXP_SCHEME = ',^([a-z]([-a-z0-9+.]+)?)?$,i';
+
+    const REGEXP_INVALID_USER = ',[/?#@:],';
+
+    const REGEXP_INVALID_PASS = ',[/?#@],';
+
     /**
      * default components hash table
      *
@@ -66,22 +82,17 @@ class UriParser
      *
      * @param string $uri The URI to parse
      *
-     * @throws InvalidArgumentException if the URI can not be parsed
-     *
      * @return array the array is similar to PHP's parse_url hash response
      */
     public function parse($uri)
     {
-        $uriRegexp = ',^((?<scheme>[^:/?\#]+):)?
-            (?<authority>//(?<acontent>[^/?\#]*))?
-            (?<path>[^?\#]*)
-            (?<query>\?(?<qcontent>[^\#]*))?
-            (?<fragment>\#(?<fcontent>.*))?,x';
-
-        preg_match($uriRegexp, $uri, $parts);
+        preg_match(self::REGEXP_URI_RFC3986, $uri, $parts);
         $parts += ['query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => ''];
-        $components = array_replace($this->components, $this->parseAuthority($parts));
-        $components = array_replace($components, $this->parseScheme($parts));
+        $components = array_replace(
+            $this->components,
+            $this->parseAuthority($parts),
+            $this->parseScheme($parts)
+        );
         $components['query'] = empty($parts['query']) ? null : $parts['qcontent'];
         $components['fragment'] = empty($parts['fragment']) ? null : $parts['fcontent'];
 
@@ -92,8 +103,6 @@ class UriParser
      * Parse a URI authority part into its components
      *
      * @param string[] $parts
-     *
-     * @throws InvalidArgumentException If the authority is not empty with an empty host
      *
      * @return array
      */
@@ -108,7 +117,7 @@ class UriParser
             return ['host' => ''] + $res;
         }
 
-        preg_match(',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,', $parts['acontent'], $auth);
+        preg_match(self::REGEXP_AUTHORITY, $parts['acontent'], $auth);
         if (!empty($auth['userinfo'])) {
             $userinfo = explode(':', $auth['ucontent'], 2);
             $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
@@ -156,7 +165,7 @@ class UriParser
     {
         $components = ['host' => null, 'port' => null];
         $hostname = strrev($hostname);
-        if (preg_match(",^((?<port>[^(\[\])]*):)?(?<host>.*)?$,", $hostname, $res)) {
+        if (preg_match(self::REGEXP_REVERSE_HOSTNAME, $hostname, $res)) {
             $components['host'] = strrev($res['host']);
             $components['port'] = strrev($res['port']);
         }
@@ -213,7 +222,7 @@ class UriParser
      */
     protected function filterScheme($scheme)
     {
-        if (preg_match(',^([a-z]([-a-z0-9+.]+)?)?$,i', $scheme)) {
+        if (preg_match(self::REGEXP_SCHEME, $scheme)) {
             return $scheme;
         }
 
@@ -254,7 +263,7 @@ class UriParser
      */
     protected function filterUser($user)
     {
-        if (!preg_match(',[/:@?#],', $user)) {
+        if (!preg_match(self::REGEXP_INVALID_USER, $user)) {
             return $user;
         }
 
@@ -272,7 +281,7 @@ class UriParser
      */
     protected function filterPass($pass)
     {
-        if (!preg_match(',[/?#@],', $pass)) {
+        if (!preg_match(self::REGEXP_INVALID_PASS, $pass)) {
             return $pass;
         }
 

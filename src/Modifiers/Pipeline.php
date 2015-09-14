@@ -13,7 +13,6 @@ namespace League\Uri\Modifiers;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
-use League\Uri\Types\UriValidator;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
 
@@ -26,10 +25,8 @@ use RuntimeException;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class Pipeline
+class Pipeline extends AbstractUriModifier
 {
-    use UriValidator;
-
     /**
      * @var callable[]
      */
@@ -44,17 +41,17 @@ class Pipeline
      */
     public function __construct($collection = [])
     {
-        foreach ($collection as $stage) {
-            if (!is_callable($stage)) {
-                throw new InvalidArgumentException('All collection should be callable');
+        foreach ($collection as $modifier) {
+            if (!is_callable($modifier)) {
+                throw new InvalidArgumentException('All submitted modifiers should be callable');
             }
 
-            $this->collection[] = $stage;
+            $this->collection[] = $modifier;
         }
     }
 
     /**
-     * Create a new modifier with an appended stage.
+     * Create a new pipeline with an appended modifier.
      *
      * @param callable $modifier
      *

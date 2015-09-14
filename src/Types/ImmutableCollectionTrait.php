@@ -101,11 +101,11 @@ trait ImmutableCollectionTrait
         ];
 
         if (!isset($flags_list[$flag])) {
-            throw new InvalidArgumentException('Unknown flag parameter please use one of the defined constant');
+            throw new InvalidArgumentException('Invalid or Unknown flag parameter');
         }
 
         if ($flag == Collection::FILTER_USE_KEY) {
-            return $this->filterByOffset($callable);
+            return $this->filterByKeys($callable);
         }
 
         if ($flag == Collection::FILTER_USE_BOTH) {
@@ -131,7 +131,7 @@ trait ImmutableCollectionTrait
      *
      * @return static
      */
-    protected function filterByOffset(callable $callable)
+    protected function filterByKeys(callable $callable)
     {
         $data = [];
         foreach (array_filter(array_keys($this->data), $callable) as $offset) {

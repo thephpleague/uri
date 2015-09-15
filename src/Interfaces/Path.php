@@ -46,18 +46,6 @@ interface Path extends Component
     public function withoutDotSegments();
 
     /**
-     * Returns an instance relativized according to a given Path
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance resolved according to supplied URI
-     *
-     * @param Path $rel the path to relativize
-     *
-     * @return static
-     */
-    public function relativize(Path $rel);
-
-    /**
      * Returns an instance without duplicate delimiters
      *
      * This method MUST retain the state of the current instance, and return

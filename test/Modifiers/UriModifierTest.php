@@ -2,7 +2,6 @@
 
 namespace League\Uri\Test\Modifiers;
 
-use League\Uri\Modifiers\Relativize;
 use League\Uri\Modifiers\Resolve;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Ftp as FtpUri;
@@ -15,67 +14,6 @@ use PHPUnit_Framework_TestCase as TestCase;
  */
 class UriModifierTest extends TestCase
 {
-    /**
-     * @dataProvider relativizeProvider
-     * @param $base
-     * @param $child
-     * @param $expected
-     */
-    public function testRelativize($base, $child, $expected)
-    {
-        $baseUri  = HttpUri::createFromString($base);
-        $childUri = HttpUri::createFromString($child);
-        $modifier = (new Relativize(HttpUri::createFromString()))->withUri($baseUri);
-
-        $this->assertSame($expected, (string) $modifier->__invoke($childUri));
-    }
-
-    public function relativizeProvider()
-    {
-        return [
-            ['http://www.example.com/foo/bar', 'http://toto.com', 'http://toto.com'],
-            ['http://www.example.com/foo/bar', 'http://www.example.com:81/foo', 'http://www.example.com:81/foo'],
-            ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../../bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../../bar'],
-            ['http://www.example.com/toto/le/../heros/', 'http://www.example.com/../bar', '../bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar?query=value', '../../bar?query=value'],
-        ];
-    }
-
-    public function testRelativizeWithNonHierarchicalUri()
-    {
-        $httpUri = HttpUri::createFromString();
-        $dataUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-        $modifier = new Relativize($httpUri);
-
-        $this->assertSame($dataUri, $modifier->__invoke($dataUri));
-    }
-
-    /**
-     * @dataProvider mixUriProvider
-     * @param $input
-     * @param $relative
-     */
-    public function testRelativizeUriObject($input, $relative)
-    {
-        $this->assertSame($relative, (new Relativize($input))->__invoke($relative));
-    }
-
-    public function mixUriProvider()
-    {
-        return [
-            [
-                FtpUri::createFromString('ftp://example.com/path/to/file'),
-                HttpUri::createFromString('//a/b/c/d;p?q'),
-            ],
-            [
-                HttpUri::createFromString('//a/b/c/d;p?q'),
-                FtpUri::createFromString('ftp://example.com/path/to/file'),
-            ],
-
-        ];
-    }
-
     /**
      * @dataProvider resolveProvider
      * @param $uri

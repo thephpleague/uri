@@ -87,29 +87,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider relativizeProvider
-     * @param $base
-     * @param $child
-     * @param $expected
-     */
-    public function testRelativize($base, $child, $expected)
-    {
-        $this->assertSame($expected, (string) (new Path($base))->relativize(new Path($child)));
-    }
-
-    public function relativizeProvider()
-    {
-        return [
-            ['/toto/le/heros', '/bar', '../../bar'],
-            ['/toto/le/heros/', '/bar', '../../bar'],
-            ['toto/le/heros/', '/bar', '../bar'],
-            ['toto/le/heros', '/bar', '../bar'],
-            ['toto/le/heros/', 'bar', '../bar'],
-            ['toto/le/heros', 'bar', '../bar'],
-        ];
-    }
-
-    /**
      * @param $path
      * @param $expected
      * @dataProvider withoutEmptySegmentsProvider

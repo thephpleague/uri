@@ -341,7 +341,7 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
      */
     public function testExtensionProcessFailed()
     {
-        new Extension(['toto']);
+        new Extension('to/to');
     }
 
     /**

@@ -35,10 +35,10 @@ class UriModifierTest extends TestCase
         return [
             ['http://www.example.com/foo/bar', 'http://toto.com', 'http://toto.com'],
             ['http://www.example.com/foo/bar', 'http://www.example.com:81/foo', 'http://www.example.com:81/foo'],
-            ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../bar'],
-            ['http://www.example.com/toto/le/../heros/', 'http://www.example.com/../bar', 'bar'],
-            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar?query=value', '../bar?query=value'],
+            ['http://www.example.com/toto/le/heros', 'http://www.example.com/bar', '../../bar'],
+            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar', '../../bar'],
+            ['http://www.example.com/toto/le/../heros/', 'http://www.example.com/../bar', '../bar'],
+            ['http://www.example.com/toto/le/heros/', 'http://www.example.com/bar?query=value', '../../bar?query=value'],
         ];
     }
 

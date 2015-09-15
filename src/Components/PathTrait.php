@@ -113,15 +113,18 @@ trait PathTrait
         }
 
         $key = 0;
-        $res = [];
+        $res = ['..'];
         while (isset($cSegments[$key], $bSegments[$key]) && $cSegments[$key] === $bSegments[$key]) {
             ++$key;
             $res[] = '..';
         }
 
-        $str = implode('/', array_merge($res, array_slice($cSegments, $key)));
+        $segments = array_slice($cSegments, $key);
+        if (count($bSegments) > count($cSegments)) {
+            $segments = array_merge($res, $segments);
+        }
 
-        return $this->modify($str);
+        return $this->modify(implode('/', $segments))->withoutEmptySegments();
     }
 
     /**

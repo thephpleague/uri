@@ -59,8 +59,6 @@ class Http extends AbstractHierarchicalUri implements UriInterface
      *
      * @param array $server the server and execution environment information array typically ($_SERVER)
      *
-     * @throws InvalidArgumentException If the URI can not be parsed
-     *
      * @return static
      */
     public static function createFromServer(array $server)

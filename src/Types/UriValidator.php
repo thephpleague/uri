@@ -12,7 +12,7 @@
 namespace League\Uri\Types;
 
 use InvalidArgumentException;
-use League\Uri\Interfaces\Uri as LeagueUriInterface;
+use League\Uri\Interfaces\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -27,13 +27,13 @@ trait UriValidator
     /**
      * Assert the submitted object is a UriInterface object
      *
-     * @param LeagueUriInterface|UriInterface $uri
+     * @param Uri|UriInterface $uri
      *
      * @throws InvalidArgumentException if the object does not implemet PSR-7 UriInterface
      */
     protected function assertUriObject($uri)
     {
-        if (!$uri instanceof LeagueUriInterface && !$uri instanceof UriInterface) {
+        if (!$uri instanceof Uri && !$uri instanceof UriInterface) {
             throw new InvalidArgumentException(sprintf(
                 'URI passed must implement PSR-7 or League\Uri Uri interface; received "%s"',
                 (is_object($uri) ? get_class($uri) : gettype($uri))

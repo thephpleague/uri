@@ -187,8 +187,6 @@ trait ImmutableCollectionTrait
      *
      * @param int|string $offset
      *
-     * @throws InvalidArgumentException if the offset is invalid
-     *
      * @return int|string
      */
     protected function validateOffset($offset)

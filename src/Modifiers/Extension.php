@@ -45,15 +45,19 @@ class Extension extends AbstractPathModifier
      *
      * @param string $extension
      *
+     * @throws InvalidArgumentException if the extension is not valid
+     *
      * @return string
      */
     protected function filterExtension($extension)
     {
-        if (!is_scalar($extension) || (is_object($extension) && !method_exists($extension, '__toString'))) {
-            throw new InvalidArgumentException('extension must be stringable');
+        if (0 === strpos($extension, '.') || false !== strpos($extension, '/')) {
+            throw new InvalidArgumentException(
+                'extension must be string sequence without a leading `.` and the path separator `/` characters'
+            );
         }
 
-        $extension = filter_var((string) $extension, FILTER_SANITIZE_STRING, ['options' => FILTER_FLAG_STRIP_LOW]);
+        $extension = filter_var($extension, FILTER_SANITIZE_STRING, ['options' => FILTER_FLAG_STRIP_LOW]);
 
         return trim($extension);
     }

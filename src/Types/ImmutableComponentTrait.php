@@ -56,7 +56,7 @@ trait ImmutableComponentTrait
      *
      * @param string $str
      *
-     * @throws \InvalidArgumentException If the string is invalid
+     * @throws InvalidArgumentException If the string is invalid
      */
     protected function assertValidComponent($str)
     {

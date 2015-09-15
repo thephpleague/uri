@@ -83,8 +83,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      *
      * @param string $data
      *
-     * @throws InvalidArgumentException If reserved characters are used
-     *
      * @return array
      */
     protected function validate($data)

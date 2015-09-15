@@ -104,32 +104,6 @@ trait PathTrait
     /**
      * {@inheritdoc}
      */
-    public function relativize(PathInterface $path)
-    {
-        $bSegments = explode('/', $this->withoutDotSegments()->__toString());
-        $cSegments = explode('/', $path->withoutDotSegments()->__toString());
-        if ('' == end($bSegments)) {
-            array_pop($bSegments);
-        }
-
-        $key = 0;
-        $res = ['..'];
-        while (isset($cSegments[$key], $bSegments[$key]) && $cSegments[$key] === $bSegments[$key]) {
-            ++$key;
-            $res[] = '..';
-        }
-
-        $segments = array_slice($cSegments, $key);
-        if (count($bSegments) > count($cSegments)) {
-            $segments = array_merge($res, $segments);
-        }
-
-        return $this->modify(implode('/', $segments))->withoutEmptySegments();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function withoutEmptySegments()
     {
         return $this->modify(preg_replace(',/+,', '/', $this->__toString()));

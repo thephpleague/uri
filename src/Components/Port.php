@@ -30,7 +30,7 @@ class Port extends AbstractComponent implements PortInterface
      *
      * @param null|int $port
      *
-     * @throws \InvalidArgumentException if the submitted port is invalid
+     * @throws InvalidArgumentException if the submitted port is invalid
      *
      * @return null|int
      */

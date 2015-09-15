@@ -197,7 +197,7 @@ class DataPath extends Path implements DataPathInterface
      *
      * @param string $path
      *
-     * @throws \RuntimeException If the File is not readable
+     * @throws RuntimeException If the File is not readable
      *
      * @return static
      */
@@ -244,10 +244,9 @@ class DataPath extends Path implements DataPathInterface
      * Validate the string
      *
      * @param string $path
-     *
-     *
      * @param string[]
-     * @throws InvalidArgumentException if the object can not be instantiated
+     *
+     * @return array
      */
     protected function validate($path)
     {

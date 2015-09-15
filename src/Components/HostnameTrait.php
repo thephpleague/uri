@@ -55,8 +55,6 @@ trait HostnameTrait
      *
      * @param string $str
      *
-     * @throws InvalidArgumentException If the string failed to be a valid hostname
-     *
      * @return array
      */
     protected function validateStringHost($str)

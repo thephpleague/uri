@@ -27,7 +27,7 @@ trait StringValidator
      *
      * @param mixed $str the value to evaluate as a string
      *
-     * @throws \InvalidArgumentException if the submitted data can not be converted to string
+     * @throws InvalidArgumentException if the submitted data can not be converted to string
      *
      * @return string
      */

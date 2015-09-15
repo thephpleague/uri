@@ -11,8 +11,6 @@
  */
 namespace League\Uri\Components;
 
-use InvalidArgumentException;
-
 /**
  * A Trait to validate a IP type Host
  *
@@ -86,8 +84,6 @@ trait HostIpTrait
      * Validate a Host as an IP
      *
      * @param string $str
-     *
-     * @throws InvalidArgumentException if the IP based host is malformed
      *
      * @return array
      */

@@ -179,8 +179,6 @@ class UriParser
      *
      * @param string $host
      *
-     * @throws InvalidArgumentException If the host is invalid
-     *
      * @return int|null
      */
     protected function filterHost($host)

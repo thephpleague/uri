@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Components;
 
-use InvalidArgumentException;
 use League\Uri\Types\ImmutableComponentTrait;
 
 /**
@@ -48,8 +47,6 @@ abstract class AbstractComponent
      * Set data.
      *
      * @param mixed $data The data to set.
-     *
-     * @throws InvalidArgumentException If data is invalid.
      */
     protected function init($data)
     {

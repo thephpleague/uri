@@ -105,8 +105,6 @@ class Query implements QueryInterface
      *
      * @param Traversable|array $data
      *
-     * @throws InvalidArgumentException If $data is invalid
-     *
      * @return static
      */
     public static function createFromArray($data)

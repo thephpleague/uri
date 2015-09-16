@@ -2,6 +2,7 @@
 
 namespace League\Uri\Test\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Path;
 use League\Uri\Modifiers\AddLeadingSlash;

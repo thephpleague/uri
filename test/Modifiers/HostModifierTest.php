@@ -2,6 +2,7 @@
 
 namespace League\Uri\Test\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Modifiers\AppendLabel;
 use League\Uri\Modifiers\FilterLabels;

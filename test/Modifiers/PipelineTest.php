@@ -2,6 +2,7 @@
 
 namespace League\Uri\Test;
 
+use InvalidArgumentException;
 use League\Uri\Modifiers\Pipeline;
 use League\Uri\Modifiers\RemoveDotSegments;
 use League\Uri\Schemes\Http as HttpUri;

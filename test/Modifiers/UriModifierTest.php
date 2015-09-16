@@ -2,6 +2,7 @@
 
 namespace League\Uri\Test\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Modifiers\Resolve;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Ftp as FtpUri;
@@ -78,7 +79,7 @@ class UriModifierTest extends TestCase
     {
         $http = HttpUri::createFromString('http://example.com/path/to/file');
         $dataUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde!');
-        $modifier = new Resolve($http);
+        $modifier = (new Resolve($http))->withUri($http);
         $this->assertSame($dataUri, $modifier->__invoke($dataUri));
     }
 

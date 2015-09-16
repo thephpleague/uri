@@ -2,6 +2,7 @@
 
 namespace League\Uri\Test\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Components\Query;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Modifiers\KsortQuery;

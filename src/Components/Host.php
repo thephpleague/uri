@@ -74,7 +74,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLiteral()
     {
@@ -99,7 +99,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getLabel($key, $default = null)
     {
@@ -111,7 +111,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toArray()
     {
@@ -119,7 +119,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -139,7 +139,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toAscii()
     {
@@ -154,7 +154,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toUnicode()
     {
@@ -166,7 +166,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static function formatComponentString($data, $type)
     {
@@ -179,7 +179,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withoutZoneIdentifier()
     {
@@ -223,7 +223,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function append($component)
     {

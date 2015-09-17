@@ -49,7 +49,7 @@ trait HostIpTrait
     protected static $local_link_prefix = '1111111010';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isIp()
     {
@@ -57,7 +57,7 @@ trait HostIpTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isIpv4()
     {
@@ -65,7 +65,7 @@ trait HostIpTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isIpv6()
     {
@@ -73,7 +73,7 @@ trait HostIpTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasZoneIdentifier()
     {

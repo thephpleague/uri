@@ -35,7 +35,7 @@ class PrependLabel extends AbstractHostModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

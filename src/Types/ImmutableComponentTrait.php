@@ -66,7 +66,7 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function sameValueAs(UriPart $component)
     {
@@ -74,17 +74,17 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function getContent();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function getUriComponent();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -114,7 +114,7 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function modify($value)
     {

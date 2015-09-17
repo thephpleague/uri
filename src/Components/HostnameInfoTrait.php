@@ -50,7 +50,7 @@ trait HostnameInfoTrait
     protected $hostnameInfoLoaded = false;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPublicSuffix()
     {
@@ -58,7 +58,7 @@ trait HostnameInfoTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRegisterableDomain()
     {
@@ -66,7 +66,7 @@ trait HostnameInfoTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSubdomain()
     {
@@ -74,7 +74,7 @@ trait HostnameInfoTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isPublicSuffixValid()
     {
@@ -114,17 +114,17 @@ trait HostnameInfoTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function __toString();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function isIp();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function isAbsolute();
 

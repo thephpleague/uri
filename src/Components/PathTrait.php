@@ -48,17 +48,17 @@ trait PathTrait
     protected static $dotSegments = ['.' => 1, '..' => 1];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function __toString();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function modify($value);
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withoutDotSegments()
     {
@@ -102,7 +102,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withoutEmptySegments()
     {
@@ -110,7 +110,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasTrailingSlash()
     {
@@ -120,7 +120,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withTrailingSlash()
     {
@@ -128,7 +128,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withoutTrailingSlash()
     {
@@ -136,7 +136,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isAbsolute()
     {
@@ -146,7 +146,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withLeadingSlash()
     {
@@ -154,7 +154,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withoutLeadingSlash()
     {
@@ -162,7 +162,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getTypecode()
     {
@@ -174,7 +174,7 @@ trait PathTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withTypecode($type)
     {

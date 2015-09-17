@@ -23,7 +23,7 @@ use League\Uri\Components\Host;
 class RemoveZoneIdentifier extends AbstractHostModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

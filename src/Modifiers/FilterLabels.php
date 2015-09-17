@@ -26,7 +26,7 @@ class FilterLabels extends AbstractHostModifier
     use FilterTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

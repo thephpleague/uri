@@ -21,17 +21,17 @@ namespace League\Uri\Schemes\Generic;
 trait AuthorityValidatorTrait
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract protected function getSchemeSpecificPart();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function getScheme();
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function getHost();
 

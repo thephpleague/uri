@@ -59,7 +59,7 @@ class Resolve extends AbstractUriModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __invoke($relative)
     {

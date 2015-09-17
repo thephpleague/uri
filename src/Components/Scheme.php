@@ -41,7 +41,7 @@ class Scheme extends AbstractComponent implements SchemeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {

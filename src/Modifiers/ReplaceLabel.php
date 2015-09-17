@@ -40,7 +40,7 @@ class ReplaceLabel extends AbstractHostModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

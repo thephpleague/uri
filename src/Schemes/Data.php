@@ -78,7 +78,7 @@ class Data extends AbstractUri implements Uri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isValid()
     {

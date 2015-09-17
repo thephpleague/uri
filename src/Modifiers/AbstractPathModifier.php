@@ -21,7 +21,7 @@ namespace League\Uri\Modifiers;
 abstract class AbstractPathModifier extends AbstractPartialUriModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __invoke($uri)
     {

@@ -33,7 +33,7 @@ trait ImmutableCollectionTrait
     protected $data = [];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function count()
     {
@@ -41,7 +41,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getIterator()
     {
@@ -49,7 +49,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toArray()
     {
@@ -57,7 +57,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasKey($offset)
     {
@@ -65,7 +65,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function keys()
     {
@@ -77,7 +77,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function without(array $offsets)
     {
@@ -90,7 +90,7 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {

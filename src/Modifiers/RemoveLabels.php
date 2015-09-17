@@ -36,7 +36,7 @@ class RemoveLabels extends AbstractHostModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

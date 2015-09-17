@@ -23,7 +23,7 @@ use League\Uri\Interfaces\User as UserInterface;
 class User extends AbstractComponent implements UserInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $invalidCharactersRegex = ',[/:@?#],';
 }

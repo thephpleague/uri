@@ -23,7 +23,7 @@ use League\Uri\Interfaces\Fragment as FragmentInterface;
 class Fragment extends AbstractComponent implements FragmentInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set = [
         '!', '$', '&', "'", '(', ')', '*', '+',
@@ -31,7 +31,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set_encoded = [
         '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B',
@@ -39,7 +39,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {

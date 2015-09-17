@@ -24,7 +24,7 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 class Ws extends AbstractHierarchicalUri implements Uri
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $supportedSchemes = [
         'ws' => 80,
@@ -32,7 +32,7 @@ class Ws extends AbstractHierarchicalUri implements Uri
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isValid()
     {

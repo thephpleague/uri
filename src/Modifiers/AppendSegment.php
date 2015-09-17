@@ -35,7 +35,7 @@ class AppendSegment extends AbstractPathModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

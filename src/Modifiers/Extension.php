@@ -78,7 +78,7 @@ class Extension extends AbstractPathModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

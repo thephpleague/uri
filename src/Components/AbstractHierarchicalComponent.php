@@ -57,7 +57,7 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     abstract public function __construct($str);
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isAbsolute()
     {
@@ -81,7 +81,7 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {
@@ -89,7 +89,7 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function prepend($component)
     {
@@ -100,7 +100,7 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     abstract public function append($component);
 
@@ -162,7 +162,7 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function replace($key, $component)
     {

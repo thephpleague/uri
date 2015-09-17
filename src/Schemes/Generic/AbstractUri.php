@@ -94,7 +94,7 @@ abstract class AbstractUri
     protected static $supportedSchemes = [];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getScheme()
     {
@@ -102,7 +102,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withScheme($scheme)
     {
@@ -110,7 +110,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUserInfo()
     {
@@ -118,7 +118,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withUserInfo($user, $pass = null)
     {
@@ -140,7 +140,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getHost()
     {
@@ -148,7 +148,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withHost($host)
     {
@@ -156,7 +156,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPort()
     {
@@ -164,7 +164,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withPort($port)
     {
@@ -172,7 +172,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPath()
     {
@@ -180,7 +180,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withPath($path)
     {
@@ -188,7 +188,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getQuery()
     {
@@ -196,7 +196,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withQuery($query)
     {
@@ -204,7 +204,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFragment()
     {
@@ -212,7 +212,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withFragment($fragment)
     {
@@ -220,7 +220,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -249,7 +249,7 @@ abstract class AbstractUri
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAuthority()
     {

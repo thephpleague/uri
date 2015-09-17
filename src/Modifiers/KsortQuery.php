@@ -86,7 +86,7 @@ class KsortQuery extends AbstractQueryModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

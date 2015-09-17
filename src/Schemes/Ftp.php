@@ -24,14 +24,14 @@ use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
 class Ftp extends AbstractHierarchicalUri implements Uri
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $supportedSchemes = [
         'ftp' => 21,
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isValid()
     {

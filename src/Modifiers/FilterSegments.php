@@ -26,7 +26,7 @@ class FilterSegments extends AbstractPathModifier
     use FilterTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

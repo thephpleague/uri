@@ -3,6 +3,7 @@
 namespace League\Uri\Test\Modifiers;
 
 use InvalidArgumentException;
+use League\Uri\Modifiers\Normalize;
 use League\Uri\Modifiers\Resolve;
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Schemes\Ftp as FtpUri;
@@ -92,5 +93,32 @@ class UriModifierTest extends TestCase
         $ftp = FtpUri::createFromString('ftp//a/b/c/d;p');
         $modifier = new Resolve($http);
         $modifier->__invoke($ftp);
+    }
+
+    /**
+     * @dataProvider sameValueAsProvider
+     */
+    public function testSameValueAs($league, $psr7, $expected)
+    {
+        $modifier = new Normalize();
+        $this->assertSame(
+            $expected,
+            $modifier($league)->__toString() === $modifier($psr7)->__toString()
+        );
+    }
+
+    public function sameValueAsProvider()
+    {
+        return [
+            [HttpUri::createFromString('http://example.com'), FtpUri::createFromString('ftp://example.com'), false],
+            [HttpUri::createFromString('http://example.com'), HttpUri::createFromString('http://example.com'), true],
+            [HttpUri::createFromString('//example.com'), HttpUri::createFromString('//ExamPle.Com'), true],
+            [HttpUri::createFromString('http://مثال.إختبار'), HttpUri::createFromString('http://xn--mgbh0fb.xn--kgbechtv'), true],
+            [HttpUri::createFromString('http://example.com'), DataUri::createFromPath(dirname(__DIR__).'/data/red-nose.gif'), false],
+            [HttpUri::createFromString('http://example.org/~foo/'), HttpUri::createFromString('HTTP://example.ORG/~foo/'), true],
+            [HttpUri::createFromString('http://example.org/~foo/'), HttpUri::createFromString('http://example.org:80/~foo/'), true],
+            [HttpUri::createFromString('http://example.org/%7efoo/'), HttpUri::createFromString('http://example.org/%7Efoo/'), true],
+            [HttpUri::createFromString('http://example.org/~foo/'), HttpUri::createFromString('http://example.ORG/bar/./../~foo/'), true],
+        ];
     }
 }

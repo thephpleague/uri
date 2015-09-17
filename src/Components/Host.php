@@ -104,10 +104,18 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function getLabel($key, $default = null)
     {
         if (isset($this->data[$key])) {
-            return $this->data[$key];
+            return $this->isIdn ? $this->data[$key] : idn_to_ascii($this->data[$key]);
         }
 
         return $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return $this->convertToAscii($this->data, !$this->isIdn);
     }
 
     /**
@@ -127,10 +135,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this->formatIp($this->data[0]);
         }
 
-        return $this->formatComponentString(
-            $this->convertToAscii($this->data, !$this->isIdn),
-            $this->isAbsolute
-        );
+        return $this->formatComponentString($this->toArray(), $this->isAbsolute);
     }
 
     /**

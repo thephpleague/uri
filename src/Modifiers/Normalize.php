@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\Scheme;
 use League\Uri\Interfaces\Uri;
 
 /**
@@ -34,7 +33,7 @@ class Normalize extends AbstractUriModifier
      *
      * @return Pipeline
      */
-    private function getModifier()
+    private static function getModifier()
     {
         if (!static::$modifier instanceof Pipeline) {
             static::$modifier = new Pipeline([
@@ -53,12 +52,9 @@ class Normalize extends AbstractUriModifier
     public function __invoke($uri)
     {
         $this->assertUriObject($uri);
-        $newUri = $this->getModifier()->process($uri);
-        $scheme = $uri->getScheme();
-        if (empty($scheme)) {
-            return $newUri;
-        }
 
-        return $newUri->withScheme((string) new Scheme($scheme));
+        return self::getModifier()
+            ->process($uri)
+            ->withScheme(mb_strtolower($uri->getScheme()));
     }
 }

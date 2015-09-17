@@ -23,7 +23,7 @@ use League\Uri\Components\Path;
 class AddLeadingSlash extends AbstractPathModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

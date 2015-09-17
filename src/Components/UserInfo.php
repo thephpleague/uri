@@ -57,7 +57,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUser()
     {
@@ -65,7 +65,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPass()
     {
@@ -73,7 +73,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -90,7 +90,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __toString()
     {
@@ -98,7 +98,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {
@@ -108,7 +108,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function sameValueAs(UriPart $component)
     {
@@ -116,7 +116,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withUser($user)
     {
@@ -124,7 +124,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withPass($pass)
     {
@@ -132,7 +132,7 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function assertValidObject()
     {

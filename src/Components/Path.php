@@ -25,7 +25,7 @@ class Path extends AbstractComponent implements PathInterface
     use PathTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set = [
         '/', ':', '@', '!', '$', '&', "'", '%',
@@ -33,7 +33,7 @@ class Path extends AbstractComponent implements PathInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set_encoded = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
@@ -41,7 +41,7 @@ class Path extends AbstractComponent implements PathInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $invalidCharactersRegex = ',[?#],';
 

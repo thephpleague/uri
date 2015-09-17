@@ -23,7 +23,7 @@ use League\Uri\Components\DataPath;
 class DataUriToBinary extends AbstractPathModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

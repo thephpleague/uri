@@ -23,7 +23,7 @@ use League\Uri\Components\Path;
 class RemoveTrailingSlash extends AbstractPathModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($path)
     {

@@ -40,7 +40,7 @@ class ReplaceSegment extends AbstractPathModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

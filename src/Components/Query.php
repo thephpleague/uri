@@ -119,7 +119,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -135,7 +135,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {
@@ -145,7 +145,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getValue($key, $default = null)
     {
@@ -158,7 +158,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function merge($query)
     {
@@ -186,7 +186,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function ksort($sort = SORT_REGULAR)
     {

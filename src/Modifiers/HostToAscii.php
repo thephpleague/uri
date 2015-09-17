@@ -23,7 +23,7 @@ use League\Uri\Components\Host;
 class HostToAscii extends AbstractHostModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

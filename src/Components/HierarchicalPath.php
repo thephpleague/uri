@@ -26,12 +26,12 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     use PathTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $separator = '/';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set = [
         '/', ':', '@', '!', '$', '&', "'", '%',
@@ -39,7 +39,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $characters_set_encoded = [
         '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
@@ -47,7 +47,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $invalidCharactersRegex = ',[?#],';
 
@@ -102,7 +102,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getSegment($key, $default = null)
     {
@@ -126,7 +126,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function append($component)
     {
@@ -142,7 +142,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getBasename()
     {
@@ -152,7 +152,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDirname()
     {
@@ -164,7 +164,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getExtension()
     {
@@ -174,7 +174,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withExtension($extension)
     {

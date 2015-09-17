@@ -67,7 +67,7 @@ class DataUriParameters extends AbstractPathModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

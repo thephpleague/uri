@@ -27,7 +27,7 @@ use Psr\Http\Message\UriInterface;
 class Http extends AbstractHierarchicalUri implements UriInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected static $supportedSchemes = [
         'http' => 80,
@@ -35,7 +35,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     ];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function isValid()
     {
@@ -44,7 +44,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function assertSupportedScheme()
     {

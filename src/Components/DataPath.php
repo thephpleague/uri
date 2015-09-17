@@ -46,7 +46,7 @@ class DataPath extends Path implements DataPathInterface
 
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getData()
     {
@@ -54,7 +54,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isBinaryData()
     {
@@ -62,7 +62,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMimeType()
     {
@@ -70,7 +70,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParameters()
     {
@@ -78,7 +78,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getMediaType()
     {
@@ -86,7 +86,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function save($path, $mode = 'w')
     {
@@ -98,7 +98,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {
@@ -106,7 +106,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -142,7 +142,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toBinary()
     {
@@ -159,7 +159,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function toAscii()
     {
@@ -176,7 +176,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function withParameters($parameters)
     {
@@ -213,7 +213,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function init($path)
     {
@@ -225,7 +225,7 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function assertValidComponent($path)
     {

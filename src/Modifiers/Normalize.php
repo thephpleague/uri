@@ -47,7 +47,7 @@ class Normalize extends AbstractUriModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function __invoke($uri)
     {

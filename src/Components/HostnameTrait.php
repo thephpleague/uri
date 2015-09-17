@@ -30,7 +30,7 @@ trait HostnameTrait
     protected $isIdn = false;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function isIdn()
     {

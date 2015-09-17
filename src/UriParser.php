@@ -191,7 +191,7 @@ class UriParser
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function setIsAbsolute($host)
     {
@@ -199,7 +199,7 @@ class UriParser
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function assertLabelsCount(array $labels)
     {

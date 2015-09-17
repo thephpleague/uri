@@ -26,7 +26,7 @@ class FilterQuery extends AbstractQueryModifier
     use FilterTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

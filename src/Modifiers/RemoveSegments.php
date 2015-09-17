@@ -36,7 +36,7 @@ class RemoveSegments extends AbstractPathModifier
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

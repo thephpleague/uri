@@ -23,7 +23,7 @@ use League\Uri\Components\Path;
 class RemoveDotSegments extends AbstractPathModifier
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function modify($str)
     {

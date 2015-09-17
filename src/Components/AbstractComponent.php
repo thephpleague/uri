@@ -70,7 +70,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {
@@ -78,7 +78,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {

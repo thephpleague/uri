@@ -46,7 +46,7 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getUriComponent()
     {
@@ -56,7 +56,7 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getContent()
     {

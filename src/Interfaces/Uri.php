@@ -194,6 +194,7 @@ interface Uri
      *
      * @throws \InvalidArgumentException for invalid schemes.
      * @throws \InvalidArgumentException for unsupported schemes.
+     * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified scheme.
      *
@@ -213,6 +214,8 @@ interface Uri
      * @param string      $user     The user name to use for authority.
      * @param null|string $password The password associated with $user.
      *
+     * @throws \RuntimeException if the returned URI object is invalid.
+     *
      * @return self A new instance with the specified user information.
      */
     public function withUserInfo($user, $password = null);
@@ -228,7 +231,9 @@ interface Uri
      * @param string $host The hostname to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid hostnames.
-     * @return self                      A new instance with the specified host.
+     * @throws \RuntimeException         if the returned URI object is invalid.
+     *
+     * @return self A new instance with the specified host.
      *
      */
     public function withHost($host);
@@ -249,7 +254,9 @@ interface Uri
      *                       removes the port information.
      *
      * @throws \InvalidArgumentException for invalid ports.
-     * @return self                      A new instance with the specified port.
+     * @throws \RuntimeException         if the returned URI object is invalid.
+     *
+     * @return self A new instance with the specified port.
      *
      */
     public function withPort($port);
@@ -275,7 +282,9 @@ interface Uri
      * @param string $path The path to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid paths.
-     * @return self                      A new instance with the specified path.
+     * @throws \RuntimeException         if the returned URI object is invalid.
+     *
+     * @return self A new instance with the specified path.
      *
      */
     public function withPath($path);
@@ -294,7 +303,9 @@ interface Uri
      * @param string $query The query string to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid query strings.
-     * @return self                      A new instance with the specified query string.
+     * @throws \RuntimeException         if the returned URI object is invalid.
+     *
+     * @return self A new instance with the specified query string.
      *
      */
     public function withQuery($query);
@@ -311,6 +322,8 @@ interface Uri
      * An empty fragment value is equivalent to removing the fragment.
      *
      * @param string $fragment The fragment to use with the new instance.
+     *
+     * @throws \RuntimeException if the returned URI object is invalid.
      *
      * @return self A new instance with the specified fragment.
      */

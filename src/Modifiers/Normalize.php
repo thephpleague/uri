@@ -22,30 +22,6 @@ use League\Uri\Interfaces\Uri;
  */
 class Normalize extends AbstractUriModifier
 {
-    private static $modifier;
-
-    /**
-     * Initialize and access a Pipeline object which will
-     *
-     *  - convert host to their ascii representation
-     *  - removing path dot segments according to RFC3986
-     *  - sorted query string according to their key values
-     *
-     * @return Pipeline
-     */
-    private static function getModifier()
-    {
-        if (!static::$modifier instanceof Pipeline) {
-            static::$modifier = new Pipeline([
-                new HostToAscii(),
-                new RemoveDotSegments(),
-                new KsortQuery(),
-            ]);
-        }
-
-        return static::$modifier;
-    }
-
     /**
      * @inheritdoc
      */
@@ -53,8 +29,17 @@ class Normalize extends AbstractUriModifier
     {
         $this->assertUriObject($uri);
 
-        return self::getModifier()
+        static $modifier;
+        if (!$modifier instanceof Pipeline) {
+            $modifier = new Pipeline([
+                new HostToAscii(),
+                new RemoveDotSegments(),
+                new KsortQuery(),
+            ]);
+        }
+
+        return $modifier
             ->process($uri)
-            ->withScheme(mb_strtolower($uri->getScheme()));
+            ->withScheme(mb_strtolower($uri->getScheme(), 'UTF-8'));
     }
 }

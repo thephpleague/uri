@@ -45,6 +45,6 @@ class Fragment extends AbstractComponent implements FragmentInterface
     {
         $component = $this->getContent();
 
-        return null === $component ? '' : '#'.$component;
+        return empty($component) ? '' : '#'.$component;
     }
 }

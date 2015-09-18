@@ -70,6 +70,8 @@ class Path extends AbstractComponent implements PathInterface
             return preg_quote($char, '/');
         }, static::$characters_set));
 
-        return preg_replace_callback('/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/', [$this, 'decodeSegmentPart'], $path);
+        $path = preg_replace_callback('/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/', [$this, 'decodeSegmentPart'], $path);
+
+        return $path;
     }
 }

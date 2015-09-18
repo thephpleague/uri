@@ -46,13 +46,6 @@ class Query implements QueryInterface
     protected static $delimiter = '?';
 
     /**
-     * Tell whether the Query component is undefined or not
-     *
-     * @var bool
-     */
-    protected $isDefined = false;
-
-    /**
      * a new instance
      *
      * @param string $data
@@ -60,7 +53,6 @@ class Query implements QueryInterface
     public function __construct($data = null)
     {
         if (null !== $data) {
-            $this->isDefined = true;
             $this->data = $this->validate($data);
         }
     }
@@ -123,12 +115,8 @@ class Query implements QueryInterface
      */
     public function getContent()
     {
-        if (!$this->isDefined) {
-            return null;
-        }
-
         if (empty($this->data)) {
-            return '';
+            return null;
         }
 
         return (new QueryParser())->build($this->data, static::$separator, PHP_QUERY_RFC3986);

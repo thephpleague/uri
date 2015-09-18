@@ -64,7 +64,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     public static function createFromServer(array $server)
     {
         return static::createFromString(
-            static::fetchServerScheme($server).'//'
+            static::fetchServerScheme($server).'://'
             .static::fetchServerUserInfo($server)
             .static::fetchServerHost($server)
             .static::fetchServerPort($server)
@@ -81,10 +81,24 @@ class Http extends AbstractHierarchicalUri implements UriInterface
      */
     protected static function fetchServerScheme(array $server)
     {
-        $server = array_merge(['HTTPS' => ''], $server);
+        $server += ['HTTPS' => ''];
         $res = filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return ($res !== false) ? 'https:' : 'http:';
+        return ($res !== false) ? 'https' : 'http';
+    }
+
+    /**
+     * Returns the environment user info
+     *
+     * @param array $server the environment server typically $_SERVER
+     *
+     * @return string
+     */
+    protected static function fetchServerUserInfo(array $server)
+    {
+        $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null];
+
+        return (new UriParser())->buildUserInfo($server['PHP_AUTH_USER'], $server['PHP_AUTH_PW']);
     }
 
     /**
@@ -126,20 +140,6 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     }
 
     /**
-     * Returns the environment user info
-     *
-     * @param array $server the environment server typically $_SERVER
-     *
-     * @return string
-     */
-    protected static function fetchServerUserInfo(array $server)
-    {
-        $server = array_merge(['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null], $server);
-
-        return (new UriParser())->buildUserInfo($server['PHP_AUTH_USER'], $server['PHP_AUTH_PW']);
-    }
-
-    /**
      * Returns the environment port
      *
      * @param array $server the environment server typically $_SERVER
@@ -148,7 +148,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
      */
     protected static function fetchServerPort(array $server)
     {
-        $server = array_merge(['HTTP_HOST' => '', 'SERVER_PORT' => ''], $server);
+        $server += ['HTTP_HOST' => '', 'SERVER_PORT' => ''];
         if (preg_match(',^(?<port>([^(\[\])]*):),', strrev($server['HTTP_HOST']), $matches)) {
             return strrev($matches['port']);
         }
@@ -169,7 +169,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
             return $server['REQUEST_URI'];
         }
 
-        $server = array_merge(['PHP_SELF' => '', 'QUERY_STRING' => ''], $server);
+        $server += ['PHP_SELF' => '', 'QUERY_STRING' => ''];
         if (!empty($server['QUERY_STRING'])) {
             $server['QUERY_STRING'] = '?'.$server['QUERY_STRING'];
         }

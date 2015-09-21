@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Host;
-use League\Uri\Types\StringValidator;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * Host label trait
@@ -23,7 +23,7 @@ use League\Uri\Types\StringValidator;
  */
 trait Label
 {
-    use StringValidator;
+    use ValidatorTrait;
 
     /**
      * A Host object

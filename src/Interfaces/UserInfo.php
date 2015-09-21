@@ -11,8 +11,6 @@
  */
 namespace League\Uri\Interfaces;
 
-use InvalidArgumentException;
-
 /**
  * Value object representing the UserInfo part of an URI.
  *
@@ -47,7 +45,7 @@ interface UserInfo extends UriPart
      *
      * @param string $user The user to use with the new instance.
      *
-     * @throws InvalidArgumentException for invalid user.
+     * @throws \InvalidArgumentException for invalid user.
      *
      * @return static
      */
@@ -63,7 +61,7 @@ interface UserInfo extends UriPart
      *
      * @param string $pass The password to use with the new instance.
      *
-     * @throws InvalidArgumentException for invalid password.
+     * @throws \InvalidArgumentException for invalid password.
      *
      * @return static
      */

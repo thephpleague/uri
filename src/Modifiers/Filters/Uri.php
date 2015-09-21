@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Interfaces\Uri as LeagueUriInterface;
-use League\Uri\Types\UriValidator;
+use League\Uri\Types\ValidatorTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -24,7 +24,7 @@ use Psr\Http\Message\UriInterface;
  */
 trait Uri
 {
-    use UriValidator;
+    use ValidatorTrait;
 
     /**
      * The list of keys to remove

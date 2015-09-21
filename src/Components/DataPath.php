@@ -102,13 +102,13 @@ class DataPath extends Path implements DataPathInterface
      */
     public function getUriComponent()
     {
-        return $this->getContent();
+        return $this->__toString();
     }
 
     /**
      * @inheritdoc
      */
-    public function getContent()
+    public function __toString()
     {
         return $this->format(
             $this->getMimeType(),
@@ -138,7 +138,7 @@ class DataPath extends Path implements DataPathInterface
             $str .= ';'.static::BINARY_PARAMETER;
         }
 
-        return $str.','.$data;
+        return $this->encodePath($str.','.$data);
     }
 
     /**

@@ -43,8 +43,11 @@ class Fragment extends AbstractComponent implements FragmentInterface
      */
     public function getUriComponent()
     {
-        $component = $this->getContent();
+        $component = $this->__toString();
+        if (!empty($component)) {
+            $component = '#'.$component;
+        }
 
-        return empty($component) ? '' : '#'.$component;
+        return $component;
     }
 }

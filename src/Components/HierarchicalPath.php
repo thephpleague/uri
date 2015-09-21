@@ -113,16 +113,15 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return $default;
     }
 
-    public function getContent()
+    public function __toString()
     {
         $front_delimiter = '';
         if ($this->isAbsolute == self::IS_ABSOLUTE) {
             $front_delimiter = static::$separator;
         }
+        $path = $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data));
 
-        return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
-            return strtoupper($matches['encode']);
-        }, $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data)));
+        return $this->encodePath($path);
     }
 
     /**

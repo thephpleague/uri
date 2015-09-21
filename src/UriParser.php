@@ -14,8 +14,8 @@ namespace League\Uri;
 use InvalidArgumentException;
 use League\Uri\Components\HostIpTrait;
 use League\Uri\Components\HostnameTrait;
-use League\Uri\Components\PortValidatorTrait;
 use League\Uri\Schemes\Generic\PathFormatterTrait;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * a class to parse a URI string according to RFC3986
@@ -30,9 +30,9 @@ class UriParser
 
     use HostnameTrait;
 
-    use PortValidatorTrait;
-
     use PathFormatterTrait;
+
+    use ValidatorTrait;
 
     const REGEXP_URI = ',^((?<scheme>[^:/?\#]+):)?
         (?<authority>//(?<acontent>[^/?\#]*))?
@@ -209,6 +209,27 @@ class UriParser
     }
 
     /**
+     * Format the user info
+     *
+     * @param string $user
+     * @param string $pass
+     *
+     * @return string
+     */
+    public function buildUserInfo($user, $pass)
+    {
+        $userinfo = $this->filterUser($user);
+        if (null === $userinfo) {
+            return '';
+        }
+        $pass = $this->filterPass($pass);
+        if (null !== $pass) {
+            $userinfo .= ':'.$pass;
+        }
+        return $userinfo.'@';
+    }
+
+    /**
      * validate the scheme component
      *
      * @param null|string $scheme
@@ -224,29 +245,6 @@ class UriParser
         }
 
         throw new InvalidArgumentException(sprintf('The submitted scheme is invalid: `%s`', $scheme));
-    }
-
-    /**
-     * Format the user info
-     *
-     * @param string $user
-     * @param string $pass
-     *
-     * @return string
-     */
-    public function buildUserInfo($user, $pass)
-    {
-        $userinfo = $this->filterUser($user);
-        if (null === $userinfo) {
-            return '';
-        }
-
-        $pass = $this->filterPass($pass);
-        if (null !== $pass) {
-            $userinfo .= ':'.$pass;
-        }
-
-        return $userinfo.'@';
     }
 
     /**

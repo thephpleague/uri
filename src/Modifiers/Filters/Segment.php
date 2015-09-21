@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\HierarchicalPath;
-use League\Uri\Interfaces\Path;
 use League\Uri\Types\ValidatorTrait;
 
 /**

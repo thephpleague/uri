@@ -24,7 +24,7 @@ We accept bug reports via issues created on [Github](https://github.com/thephple
 
 We accept contributions via Pull Requests on [Github](https://github.com/thephpleague/uri/pull).
 
-- **[PSR-2 Coding Standard](http://www.php-fig.org/psr/psr-2/)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://packagist.org/packages/squizlabs/php_codesniffer).
+- **[PSR-2 Coding Standard](http://www.php-fig.org/psr/psr-2/)** 
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
@@ -41,9 +41,18 @@ We accept contributions via Pull Requests on [Github](https://github.com/thephpl
 
 ## Running Tests
 
+Run 
+
 ``` bash
-$ phpunit
+$ make test
 ```
 
+## Fixing Code Style violations
+
+Run
+
+```bash
+$ make cs
+```
 
 **Happy coding**!

@@ -21,6 +21,10 @@ cache:
   directories:
     - $HOME/.composer/cache
 
+before_install:
+  - composer self-update
+  - composer validate
+
 install:
   - travis_retry composer install --prefer-dist
 

@@ -11,8 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Interfaces\Uri;
-
 /**
  * A class to normalize URI objects
  *

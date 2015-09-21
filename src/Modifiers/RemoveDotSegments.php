@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 
 /**
  * Remove dot segments from the URI path according to RFC3986 rules
@@ -27,6 +27,6 @@ class RemoveDotSegments extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) (new HierarchicalPath($str))->withoutDotSegments();
+        return (string) (new Path($str))->withoutDotSegments();
     }
 }

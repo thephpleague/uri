@@ -24,7 +24,7 @@ use ReflectionClass;
  */
 trait ImmutableComponentTrait
 {
-    use StringValidator;
+    use ValidatorTrait;
 
     /**
      * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
@@ -76,20 +76,12 @@ trait ImmutableComponentTrait
     /**
      * @inheritdoc
      */
-    abstract public function getContent();
-
-    /**
-     * @inheritdoc
-     */
     abstract public function getUriComponent();
 
     /**
      * @inheritdoc
      */
-    public function __toString()
-    {
-        return (string) $this->getContent();
-    }
+    abstract public function __toString();
 
     /**
      * Encoding string according to RFC3986

@@ -26,15 +26,6 @@ namespace League\Uri\Interfaces;
 interface UriPart
 {
     /**
-     * Returns the instance value
-     *
-     * returns null if the instance is not defined; returns a int or string otherwise
-     *
-     * @return null|int|string
-     */
-    public function getContent();
-
-    /**
      * Returns the instance string representation; If the
      * instance is not defined an empty string is returned
      *

@@ -39,4 +39,11 @@ interface Port extends Component
      * @var int
      */
     const MINIMUM = 1;
+
+    /**
+     * Return an integer representation of the Port component
+     *
+     * @return null|int
+     */
+    public function toInt();
 }

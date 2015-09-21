@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Interfaces\Uri;
-use League\Uri\Types\UriValidator;
+use League\Uri\Types\ValidatorTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -24,7 +24,7 @@ use Psr\Http\Message\UriInterface;
  */
 abstract class AbstractUriModifier
 {
-    use UriValidator;
+    use ValidatorTrait;
 
     /**
      * Return a Uri object modified according to the modifier

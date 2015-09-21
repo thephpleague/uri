@@ -72,9 +72,9 @@ abstract class AbstractComponent
     /**
      * @inheritdoc
      */
-    public function getContent()
+    public function __toString()
     {
-        return (null === $this->data) ? null : static::encode($this->data);
+        return static::encode((string) $this->data);
     }
 
     /**

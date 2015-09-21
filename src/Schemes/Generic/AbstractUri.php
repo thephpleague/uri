@@ -160,7 +160,7 @@ abstract class AbstractUri
      */
     public function getPort()
     {
-        return $this->hasStandardPort() ? null : $this->port->getContent();
+        return $this->hasStandardPort() ? null : $this->port->toInt();
     }
 
     /**
@@ -269,18 +269,18 @@ abstract class AbstractUri
      */
     protected function hasStandardPort()
     {
-        if (empty($this->port->getContent())) {
+        $port = $this->port->toInt();
+        if (empty($port)) {
             return true;
         }
 
-        if (empty($this->scheme->getContent())) {
+        $scheme = $this->scheme->__toString();
+        if (empty($scheme)) {
             return false;
         }
 
-        $scheme = $this->scheme->__toString();
-
         return isset(static::$supportedSchemes[$scheme])
-            && static::$supportedSchemes[$scheme] === $this->port->getContent();
+            && static::$supportedSchemes[$scheme] === $port;
     }
 
     /**

@@ -12,7 +12,7 @@
 namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\Query;
-use League\Uri\Types\StringValidator;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * Query string modifier
@@ -23,7 +23,7 @@ use League\Uri\Types\StringValidator;
  */
 trait QueryString
 {
-    use StringValidator;
+    use ValidatorTrait;
 
     /**
      * A Query object

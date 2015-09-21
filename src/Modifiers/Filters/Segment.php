@@ -13,7 +13,7 @@ namespace League\Uri\Modifiers\Filters;
 
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Interfaces\Path;
-use League\Uri\Types\StringValidator;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * Path Segment validation trait
@@ -24,7 +24,7 @@ use League\Uri\Types\StringValidator;
  */
 trait Segment
 {
-    use StringValidator;
+    use ValidatorTrait;
 
     /**
      * A HierarchicalPath object

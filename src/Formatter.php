@@ -253,7 +253,7 @@ class Formatter
         }
 
         return '//'
-            .$this->uriParser->BuildUserInfo($components['user'], $components['pass'])
+            .$this->uriParser->buildUserInfo($components['user'], $components['pass'])
             .$this->formatHost(new Host($components['host']))
             .$port;
     }

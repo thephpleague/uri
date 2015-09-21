@@ -113,12 +113,8 @@ class Query implements QueryInterface
     /**
      * @inheritdoc
      */
-    public function getContent()
+    public function __toString()
     {
-        if (empty($this->data)) {
-            return null;
-        }
-
         return (new QueryParser())->build($this->data, static::$separator, PHP_QUERY_RFC3986);
     }
 
@@ -127,9 +123,12 @@ class Query implements QueryInterface
      */
     public function getUriComponent()
     {
-        $component = $this->getContent();
+        $query = $this->__toString();
+        if (!empty($query)) {
+            $query = static::$delimiter.$query;
+        }
 
-        return null === $component ? '' : static::$delimiter.$component;
+        return $query;
     }
 
     /**

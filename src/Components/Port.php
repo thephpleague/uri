@@ -13,6 +13,7 @@ namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Port as PortInterface;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * Value object representing a URI port component.
@@ -23,7 +24,7 @@ use League\Uri\Interfaces\Port as PortInterface;
  */
 class Port extends AbstractComponent implements PortInterface
 {
-    use PortValidatorTrait;
+    use ValidatorTrait;
 
     /**
      * Validate Port data
@@ -50,15 +51,13 @@ class Port extends AbstractComponent implements PortInterface
      */
     public function getUriComponent()
     {
-        $component = $this->getContent();
-
-        return null === $component ? '' : ':'.$component;
+        return null === $this->data ? '' : ':'.$this->data;
     }
 
     /**
      * @inheritdoc
      */
-    public function getContent()
+    public function toInt()
     {
         return $this->data;
     }

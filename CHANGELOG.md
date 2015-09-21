@@ -6,20 +6,21 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Added
 
-- Modifiers classes to modify URI objects in an uniform way for interoperability
+- `Intl` extension is now required to use the library
+- `FileInfo` extension is now required to use the library
+- Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - A `UriParser` class to parse an URI according to RFC3986 rules, the library no longer depend on PHP `parse_url` function
+- The `QueryParser` is now a standalone class to parse and build a query string according to RFC3986 rules.
+- `League\Uri\Schemes\Generic\AbstractUri` to enable better URI extension
+- Modifiers classes to modify URI objects in an uniform way for interoperability
 - A `Data` class to specifically manipulate `data` schemed URI
 - A `Http` class to specifically manipulate `http`,`https` schemed URI
 - A `Ftp` class to specifically manipulate `ftp` schemed URI
 - A `Ws` class to specifically manipulate `ws`, `wss` schemed URI
 - A `DataPath` component class to manipulate Data-uri path component
 - A `HierarchicalPath` to manipulate Hierarchical-like path component
-- Uri part object now expose a `getContent` method which returns null if the content is not specified
 - Support for IPv6 zone identifier
 - Re-introduced `Host::toAscii` and adding `Host::isIdn` method
-- `Intl` extension is now required to use the library
-- `FileInfo` extension is now required to use the library
-- Domain parsing capabilities to `Host` using `jeremykendall/php-domain-parser` package
 - API to add/remove the `Path` leading and trailing slash.
 - `Query::ksort` method
 - Missing `User` and `Pass` Interfaces
@@ -28,9 +29,7 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Fixed
 
-- The `QueryParser` is now a standalone class to parse an query string according to RFC3986 rules.
 - Move namespace from `League\Url` to `League\Uri` to avoid dependency hell
-- Move class name from `League\Url\Url` to `League\Uri\Schemes\Generic\AbstractUri` to enable better URI extension
 - Renamed methods for consistency with PHP naming conventions
 - userinfo string representation `:` delimiter was added unnecessarily
 - Host::__toString return the hostname in Unicode or ASCII depending on the user submission
@@ -40,7 +39,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Formatter::format accept `Uri`, PSR-7 `UriInterface` and `UriPart` implemented objects
 - `Host` now iterate from the top-level label to the last subdomain (from right to left)
 - The `Query::merge` method only accept `League\Uri\Interfaces\Query` objects or query string
-- `Collection::FILTER_USE_BOTH` implemented to make Collection::filter behave like `array_filter` in PHP 5.6+
+- `Collection::filter` method can now use PHP's `array_filter` constants in PHP 5.6+
 
 ### Remove
 

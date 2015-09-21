@@ -51,7 +51,7 @@ Testing
 `League\Uri` has a [PHPUnit](https://phpunit.de) test suite. To run the tests, run the following command from the project folder.
 
 ``` bash
-$ phpunit
+$ make test
 ```
 
 Contributing

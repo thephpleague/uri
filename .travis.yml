@@ -25,8 +25,8 @@ install:
   - travis_retry composer install --prefer-dist
 
 script:
-  - if [ "$COLLECT_COVERAGE" != "true" ]; then phpunit; fi
-  - if [ "$COLLECT_COVERAGE" == "true" ]; then phpunit --coverage-text --coverage-clover=coverage.clover; fi
+  - if [ "$COLLECT_COVERAGE" != "true" ]; then vendor/bin/phpunit; fi
+  - if [ "$COLLECT_COVERAGE" == "true" ]; then vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover; fi
   - if [ "$EXECUTE_CS_CHECK" == "true" ]; then vendor/bin/php-cs-fixer fix -v --diff --dry-run; fi
 
 after_script:

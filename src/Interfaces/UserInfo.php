@@ -22,6 +22,20 @@ namespace League\Uri\Interfaces;
 interface UserInfo extends UriPart
 {
     /**
+     * URI component delimiter.
+     *
+     * @var string
+     */
+    const DELIMITER = '@';
+
+    /**
+     * URI component separator.
+     *
+     * @var string
+     */
+    const SEPARATOR = ':';
+
+    /**
      * Retrieve the user component of the URI User Info part
      *
      * @return string

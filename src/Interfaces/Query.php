@@ -27,6 +27,13 @@ namespace League\Uri\Interfaces;
 interface Query extends Collection, Component
 {
     /**
+     * URI component delimiter.
+     *
+     * @var string
+     */
+    const DELIMITER = '?';
+
+    /**
      * Retrieves a single query parameter.
      *
      * Retrieves a single query parameter. If the parameter has not been set,

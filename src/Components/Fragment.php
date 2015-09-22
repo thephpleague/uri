@@ -45,7 +45,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     {
         $component = $this->__toString();
         if (!empty($component)) {
-            $component = '#'.$component;
+            $component = FragmentInterface::DELIMITER.$component;
         }
 
         return $component;

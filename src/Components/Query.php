@@ -39,13 +39,6 @@ class Query implements QueryInterface
     protected static $separator = '&';
 
     /**
-     * string delimiter
-     *
-     * @var string
-     */
-    protected static $delimiter = '?';
-
-    /**
      * a new instance
      *
      * @param string $data
@@ -125,7 +118,7 @@ class Query implements QueryInterface
     {
         $query = $this->__toString();
         if (!empty($query)) {
-            $query = static::$delimiter.$query;
+            $query = QueryInterface::DELIMITER.$query;
         }
 
         return $query;

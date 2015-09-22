@@ -47,7 +47,7 @@ class Scheme extends AbstractComponent implements SchemeInterface
     {
         $component = $this->__toString();
         if (!empty($component)) {
-            $component .= ':';
+            $component .= SchemeInterface::DELIMITER;
         }
 
         return $component;

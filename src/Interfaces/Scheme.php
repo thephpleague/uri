@@ -26,4 +26,10 @@ namespace League\Uri\Interfaces;
  */
 interface Scheme extends Component
 {
+    /**
+     * URI component delimiter.
+     *
+     * @var string
+     */
+    const DELIMITER = ':';
 }

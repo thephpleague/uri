@@ -84,7 +84,7 @@ class UserInfo implements UserInfoInterface
 
         $pass = $this->pass->__toString();
         if (!empty($pass)) {
-            $userInfo .= ':'.$pass;
+            $userInfo .= UserInfoInterface::SEPARATOR.$pass;
         }
 
         return $userInfo;
@@ -97,7 +97,7 @@ class UserInfo implements UserInfoInterface
     {
         $component = $this->__toString();
         if (!empty($component)) {
-            $component .= '@';
+            $component .= UserInfoInterface::DELIMITER;
         }
 
         return $component;

@@ -51,7 +51,7 @@ class Port extends AbstractComponent implements PortInterface
      */
     public function getUriComponent()
     {
-        return null === $this->data ? '' : ':'.$this->data;
+        return null === $this->data ? '' : PortInterface::DELIMITER.$this->data;
     }
 
     /**

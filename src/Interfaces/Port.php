@@ -27,6 +27,13 @@ namespace League\Uri\Interfaces;
 interface Port extends Component
 {
     /**
+     * URI component delimiter.
+     *
+     * @var string
+     */
+    const DELIMITER = ':';
+
+    /**
      * Maximum port number.
      *
      * @var int

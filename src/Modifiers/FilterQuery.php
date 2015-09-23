@@ -2,7 +2,7 @@
 /**
  * League.Url (http://url.thephpleague.com)
  *
- * @package   League.uri
+ * @package   League.url
  * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @copyright 2013-2015 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)

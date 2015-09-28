@@ -32,6 +32,8 @@ class DataPath extends Path implements DataPathInterface
 
     const BINARY_PARAMETER = 'base64';
 
+    const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
+
     /**
      * Data Path properties
      *
@@ -43,7 +45,6 @@ class DataPath extends Path implements DataPathInterface
         'isBinaryData' => false,
         'data' => '',
     ];
-
 
     /**
      * @inheritdoc
@@ -207,9 +208,10 @@ class DataPath extends Path implements DataPathInterface
             throw new RuntimeException(sprintf('The specified file `%s` is not readable', $path));
         }
 
-        $data = file_get_contents($path);
-        $res = (new \finfo(FILEINFO_MIME))->file($path);
-        return new static($res.';'.static::BINARY_PARAMETER.','.base64_encode($data));
+        $res = str_replace(' ', '', (new \finfo(FILEINFO_MIME))->file($path));
+        $path = $res.';'.static::BINARY_PARAMETER.','.base64_encode(file_get_contents($path));
+
+        return new static($path);
     }
 
     /**
@@ -220,8 +222,7 @@ class DataPath extends Path implements DataPathInterface
         if ('' === $path) {
             $path = self::DEFAULT_MIMETYPE.';'.self::DEFAULT_PARAMETER.',';
         }
-        $this->assertValidComponent($path);
-        $this->data = $this->validate($path);
+        $this->data = $this->validateDataPath($path);
     }
 
     /**
@@ -241,15 +242,16 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * Validate the string
+     * Validate the string as being a Data Path
      *
      * @param string $path
      * @param string[]
      *
      * @return array
      */
-    protected function validate($path)
+    protected function validateDataPath($path)
     {
+        $this->assertValidComponent($path);
         $res = explode(',', $path, 2);
         $matches = ['mediatype' => array_shift($res), 'data' => array_shift($res)];
         $mimeType = self::DEFAULT_MIMETYPE;
@@ -281,7 +283,7 @@ class DataPath extends Path implements DataPathInterface
      */
     protected function filterMimeType($mimeType)
     {
-        if (!preg_match(',^[a-z-\/+]+$,i', $mimeType)) {
+        if (!preg_match(self::REGEXP_MIMETYPE, $mimeType)) {
             throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimeType));
         }
     }

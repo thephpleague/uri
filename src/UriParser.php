@@ -35,10 +35,10 @@ class UriParser
     use ValidatorTrait;
 
     const REGEXP_URI = ',^((?<scheme>[^:/?\#]+):)?
-        (?<authority>//(?<acontent>[^/?\#]*))?
+        (?<authority>//([^/?\#]*))?
         (?<path>[^?\#]*)
-        (?<query>\?(?<qcontent>[^\#]*))?
-        (?<fragment>\#(?<fcontent>.*))?,x';
+        (?<query>\?([^\#]*))?
+        (?<fragment>\#(.*))?,x';
 
     const REGEXP_AUTHORITY = ',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,';
 
@@ -61,6 +61,53 @@ class UriParser
     ];
 
     /**
+     * Parse a string as an URI according to the regexp form rfc3986
+     *
+     * @param string $uri The URI to parse
+     *
+     * @return array the array is similar to PHP's parse_url hash response
+     */
+    public function parse($uri)
+    {
+        $parts = $this->extractUriParts($uri);
+
+        return $this->normalizeUriHash(array_merge(
+            $this->parseAuthority($parts['authority']),
+            [
+                'scheme' => empty($parts['scheme']) ? null : $parts['scheme'],
+                'path' => $parts['path'],
+                'query' => empty($parts['query']) ? null : mb_substr($parts['query'], 1, null, 'UTF-8'),
+                'fragment' => empty($parts['fragment']) ? null : mb_substr($parts['fragment'], 1, null, 'UTF-8'),
+            ]
+        ));
+    }
+
+    /**
+     * Extract URI parts
+     *
+     * @see http://tools.ietf.org/html/rfc3986#appendix-B
+     *
+     * @param string $uri The URI to split
+     *
+     * @return string[]
+     */
+    protected function extractUriParts($uri)
+    {
+        preg_match(self::REGEXP_URI, $uri, $parts);
+        $parts += ['query' => '', 'fragment' => ''];
+
+        if (preg_match(self::REGEXP_SCHEME, $parts['scheme'])) {
+            return $parts;
+        }
+
+        $parts['path'] = $parts['scheme'].':'.$parts['authority'].$parts['path'];
+        $parts['scheme'] = '';
+        $parts['authority'] = '';
+
+        return $parts;
+    }
+
+    /**
      * Normalize URI components hash
      *
      * @param array $components a hash representation of the URI components
@@ -74,81 +121,31 @@ class UriParser
     }
 
     /**
-     * Parse a string as an URI according to the regexp form rfc3986
-     *
-     * Parse an URI string and return a hash similar to PHP's parse_url
-     *
-     * @see http://tools.ietf.org/html/rfc3986#appendix-B
-     *
-     * @param string $uri The URI to parse
-     *
-     * @return array the array is similar to PHP's parse_url hash response
-     */
-    public function parse($uri)
-    {
-        preg_match(self::REGEXP_URI, $uri, $parts);
-        $parts += ['query' => '', 'qcontent' => '', 'fragment' => '', 'fcontent' => ''];
-
-        return array_replace(
-            $this->components,
-            $this->parseAuthority($parts),
-            $this->parseSchemeAndPath($parts),
-            ['query' => empty($parts['query']) ? null : $parts['qcontent']],
-            ['fragment' => empty($parts['fragment']) ? null : $parts['fcontent']]
-        );
-    }
-
-    /**
      * Parse a URI authority part into its components
      *
-     * @param string[] $parts
+     * @param string $authority
      *
      * @return array
      */
-    protected function parseAuthority(array $parts)
+    protected function parseAuthority($authority)
     {
         $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
-        if (empty($parts['authority'])) {
+        if (empty($authority)) {
             return $res;
         }
 
-        if (empty($parts['acontent'])) {
+        $content = mb_substr($authority, 2, null, 'UTF-8');
+        if (empty($content)) {
             return ['host' => ''] + $res;
         }
 
-        preg_match(self::REGEXP_AUTHORITY, $parts['acontent'], $auth);
+        preg_match(self::REGEXP_AUTHORITY, $content, $auth);
         if (!empty($auth['userinfo'])) {
             $userinfo = explode(':', $auth['ucontent'], 2);
             $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
         }
 
         return $this->parseHostname($auth['hostname']) + $res;
-    }
-
-    /**
-     * Parse URI scheme and part
-     *
-     * @param string[] $parts
-     *
-     * @throws InvalidArgumentException If the scheme is invalid
-     *
-     * @return array
-     */
-    protected function parseSchemeAndPath(array $parts)
-    {
-        $res = ['scheme' => null, 'path' => $parts['path']];
-        try {
-            $scheme = $this->filterScheme($parts['scheme']);
-            $scheme = empty($scheme) ? null : $scheme;
-
-            return ['scheme' => $scheme] + $res;
-        } catch (InvalidArgumentException $e) {
-            if (empty($parts['authority'])) {
-                return ['path' => $parts['scheme'].':'.$parts['path']] + $res;
-            }
-
-            throw $e;
-        }
     }
 
     /**
@@ -227,24 +224,6 @@ class UriParser
             $userinfo .= ':'.$pass;
         }
         return $userinfo.'@';
-    }
-
-    /**
-     * validate the scheme component
-     *
-     * @param null|string $scheme
-     *
-     * @throws InvalidArgumentException If the scheme is invalid
-     *
-     * @return null|string
-     */
-    protected function filterScheme($scheme)
-    {
-        if (preg_match(self::REGEXP_SCHEME, $scheme)) {
-            return $scheme;
-        }
-
-        throw new InvalidArgumentException(sprintf('The submitted scheme is invalid: `%s`', $scheme));
     }
 
     /**

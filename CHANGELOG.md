@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## Next - 2015-XX-XX
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- Improve parsing URI strings with invalid scheme when using `UriParser`
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.0.0 - 2015-09-23
 
 ### Added
@@ -27,7 +45,7 @@ All Notable changes to `League\Url` will be documented in this file
 - Uri components classes are fixed to comply to `RFC3986`
 - Uri components classes are now all immutable value objects
 
-### Deprecated 
+### Deprecated
 
 - Nothing
 

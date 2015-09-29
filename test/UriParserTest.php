@@ -356,6 +356,19 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => null,
                 ],
             ],
+            'invalid scheme' => [
+                '0scheme://host/path?query#fragment',
+                [
+                    'scheme' => null,
+                    'user' => null,
+                    'pass' => null,
+                    'host' => null,
+                    'port' => null,
+                    'path' => '0scheme://host/path',
+                    'query' => 'query',
+                    'fragment' => 'fragment',
+                ],
+            ],
         ];
     }
 
@@ -375,7 +388,6 @@ class UriParserTest extends PHPUnit_Framework_TestCase
             'invalid host' => ['scheme://[127.0.0.1]/path?query#fragment'],
             'invalid ipv6 host' => ['scheme://[::1]./path?query#fragment'],
             'invalid host too long' => ['scheme://'.implode('.', array_fill(0, 128, 'a'))],
-            'invalid scheme' => ['0scheme://host/path?query#fragment'],
         ];
     }
 

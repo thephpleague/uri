@@ -31,7 +31,7 @@ trait PathTrait
     /**
      * Typecode value
      *
-     * @array
+     * @var array
      */
     protected static $typecodeList = [
         'a' => PathInterface::FTP_TYPE_ASCII,

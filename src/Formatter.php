@@ -221,12 +221,12 @@ class Formatter
         $auth = $this->formatAuthority($uri);
 
         $query = $this->formatUriPart(new Query($uri->getQuery()));
-        if (!empty($query)) {
+        if ($query !== '') {
             $query = '?'.$query;
         }
 
         $fragment = $uri->getFragment();
-        if (!empty($fragment)) {
+        if ($fragment !== '') {
             $fragment = '#'.$fragment;
         }
 

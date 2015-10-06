@@ -337,7 +337,7 @@ class DataPath extends Path implements DataPathInterface
     /**
      * Validate the media body
      *
-     * @param string $data the Data part of the path
+     * @param string $data         the Data part of the path
      * @param bool   $isBinaryData tell wether the data part is encoded or not
      *
      * @throws InvalidArgumentException If the data is invalid

@@ -222,6 +222,7 @@ class DataPath extends Path implements DataPathInterface
         if ('' === $path) {
             $path = self::DEFAULT_MIMETYPE.';'.self::DEFAULT_PARAMETER.',';
         }
+        $this->assertValidComponent($path);
         $this->data = $this->validateDataPath($path);
     }
 
@@ -245,13 +246,11 @@ class DataPath extends Path implements DataPathInterface
      * Validate the string as being a Data Path
      *
      * @param string $path
-     * @param string[]
      *
      * @return array
      */
     protected function validateDataPath($path)
     {
-        $this->assertValidComponent($path);
         $res = explode(',', $path, 2);
         $matches = ['mediatype' => array_shift($res), 'data' => array_shift($res)];
         $mimeType = self::DEFAULT_MIMETYPE;
@@ -262,8 +261,7 @@ class DataPath extends Path implements DataPathInterface
             $parameters = (string) array_shift($mediatype);
         }
         $this->filterMimeType($mimeType);
-        $extracts = $this->extractBinaryFlag($parameters);
-        $this->filterParameters($extracts['parameters']);
+        $extracts = $this->extractParameters($parameters);
         $this->filterData($matches['data'], $extracts['isBinaryData']);
 
         return [
@@ -293,11 +291,9 @@ class DataPath extends Path implements DataPathInterface
      *
      * @param string $parameters
      *
-     * @throws InvalidArgumentException If the parameter string is invalid
-     *
      * @return array
      */
-    protected function extractBinaryFlag($parameters)
+    protected function extractParameters($parameters)
     {
         $res = ['parameters' => static::DEFAULT_PARAMETER, 'isBinaryData' => false];
         if ('' === $parameters) {
@@ -305,6 +301,7 @@ class DataPath extends Path implements DataPathInterface
         }
 
         if (!preg_match(',(;|^)'.static::BINARY_PARAMETER.'$,', $parameters, $matches)) {
+            $this->filterParameters($parameters);
             $res['parameters'] = $parameters;
 
             return $res;
@@ -313,6 +310,7 @@ class DataPath extends Path implements DataPathInterface
         $res['isBinaryData'] = true;
         $parameters = mb_substr($parameters, 0, - strlen($matches[0]));
         if (!empty($parameters)) {
+            $this->filterParameters($parameters);
             $res['parameters'] = $parameters;
         }
 
@@ -338,6 +336,9 @@ class DataPath extends Path implements DataPathInterface
 
     /**
      * Validate the media body
+     *
+     * @param string $data the Data part of the path
+     * @param bool   $isBinaryData tell wether the data part is encoded or not
      *
      * @throws InvalidArgumentException If the data is invalid
      */

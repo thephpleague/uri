@@ -10,9 +10,9 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Fixed
 
-- Improve parsing URI strings with invalid scheme when using `UriParser`
-- Improve parsing query string with numeric index [issue #25]
-- Improve mimetype syntax validation for `DataUri` [issue #21]
+- [BUG FIX] Improve parsing URI strings with invalid scheme when using `UriParser`
+- [BUG FIX] `QueryParser` handling numeric index [issue #25](https://github.com/thephpleague/uri/issues/25)
+- [BUG FIX] `DataPath` mimetype syntax validation [issue #21](https://github.com/thephpleague/uri/issues/21)
 
 ### Deprecated
 

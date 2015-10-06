@@ -53,6 +53,7 @@ class DataPathTest extends PHPUnit_Framework_TestCase
         return [
             'text file' => ['hello-world.txt', 'text/plain'],
             'img file'  => ['red-nose.gif', 'image/gif'],
+            'vcard file'  => ['john-doe.vcf', 'text/x-vcard'],
         ];
     }
 

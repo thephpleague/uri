@@ -11,6 +11,8 @@ All Notable changes to `League\Url` will be documented in this file
 ### Fixed
 
 - Improve parsing URI strings with invalid scheme when using `UriParser`
+- Improve parsing query string with numeric index [issue #25]
+- Improve mimetype syntax validation for `DataUri` [issue #21]
 
 ### Deprecated
 

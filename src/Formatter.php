@@ -215,22 +215,23 @@ class Formatter
     protected function formatUri($uri)
     {
         $scheme = $uri->getScheme();
-        if (!empty($scheme)) {
+        if ('' !== $scheme) {
             $scheme .= ':';
         }
-        $auth = $this->formatAuthority($uri);
 
         $query = $this->formatUriPart(new Query($uri->getQuery()));
-        if ($query !== '') {
+        if ('' !== $query) {
             $query = '?'.$query;
         }
 
         $fragment = $uri->getFragment();
-        if ($fragment !== '') {
+        if ('' !== $fragment) {
             $fragment = '#'.$fragment;
         }
 
-        return $scheme.$auth.$this->formatPath($uri->getPath(), !empty($auth)).$query.$fragment;
+        $auth = $this->formatAuthority($uri);
+
+        return $scheme.$auth.$this->formatPath($uri->getPath(), $auth).$query.$fragment;
     }
 
     /**

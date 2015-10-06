@@ -300,15 +300,11 @@ class DataPath extends Path implements DataPathInterface
             return $res;
         }
 
-        if (!preg_match(',(;|^)'.static::BINARY_PARAMETER.'$,', $parameters, $matches)) {
-            $this->filterParameters($parameters);
-            $res['parameters'] = $parameters;
-
-            return $res;
+        if (preg_match(',(;|^)'.static::BINARY_PARAMETER.'$,', $parameters, $matches)) {
+            $parameters = mb_substr($parameters, 0, - strlen($matches[0]));
+            $res['isBinaryData'] = true;
         }
 
-        $res['isBinaryData'] = true;
-        $parameters = mb_substr($parameters, 0, - strlen($matches[0]));
         if (!empty($parameters)) {
             $this->filterParameters($parameters);
             $res['parameters'] = $parameters;

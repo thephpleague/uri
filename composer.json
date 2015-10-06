@@ -2,7 +2,7 @@
     "name": "league/uri",
     "type": "library",
     "description" : "URI manipulation library",
-    "keywords": ["url", "uri", "rfc3986", "psr-7", "parse_url", "http", "ws", "ftp"],
+    "keywords": ["url", "uri", "rfc3986", "psr-7", "parse_url", "http", "ws", "ftp", "data", "data-uri"],
     "license": "MIT",
     "homepage": "http://url.thephpleague.com",
     "authors": [

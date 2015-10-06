@@ -243,7 +243,7 @@ abstract class AbstractUri
         }
 
         return $auth
-            .$this->formatPath($this->path->getUriComponent(), (bool) $auth)
+            .$this->formatPath($this->path->getUriComponent(), $auth)
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }

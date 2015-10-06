@@ -84,7 +84,8 @@ class QueryParser
         }
 
         if (!array_key_exists($key, $res)) {
-            return array_merge($res, [$key => $value]);
+            $res[$key] = $value;
+            return $res;
         }
 
         if (!is_array($res[$key])) {

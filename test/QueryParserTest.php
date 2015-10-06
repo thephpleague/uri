@@ -46,6 +46,8 @@ class QueryParserTest extends PHPUnit_Framework_TestCase
             'no encoding' => ['a=0&toto=le+heros', '&', false, ['a' => '0', 'toto' => 'le heros']],
             'legacy encoding' => ['john+doe=bar&a=0', '&', PHP_QUERY_RFC1738, ['john doe' => 'bar', 'a' => '0']],
             'different separator' => ['a=0;b=0&c=4', ';', false, ['a' => '0', 'b' => '0&c=4']],
+            'numeric key only' => ['42', '&', PHP_QUERY_RFC3986, ['42' => null]],
+            'numeric key' => ['42=l33t', '&', PHP_QUERY_RFC3986, ['42' => 'l33t']],
         ];
     }
 

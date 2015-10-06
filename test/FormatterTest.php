@@ -59,6 +59,17 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $formatter->format($uri));
     }
 
+    public function testFormatWithZeroes()
+    {
+        $uri       = 'https://example.com/image.jpeg?0#0';
+        $expected  = 'https://example.com/image.jpeg?0#0';
+
+        $uri = HttpUri::createFromString($uri);
+
+        $formatter = new Uri\Formatter();
+        $this->assertSame($expected, $formatter->format($uri));
+    }
+
     public function testFormatComponent()
     {
         $scheme = new Uri\Components\Scheme('ftp');

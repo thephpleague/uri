@@ -12,11 +12,9 @@
 namespace League\Uri\Components;
 
 use InvalidArgumentException;
-use IteratorAggregate;
 use League\Uri\Interfaces\HierarchicalComponent;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
-use Traversable;
 
 /**
  * An abstract class to ease collection like Component object manipulation
@@ -25,7 +23,7 @@ use Traversable;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements IteratorAggregate
+abstract class AbstractHierarchicalComponent implements HierarchicalComponent
 {
     use ImmutableCollectionTrait;
 
@@ -123,8 +121,8 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     /**
      * return a new instance from an array or a traversable object
      *
-     * @param Traversable|string[] $data The segments list
-     * @param int                  $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
@@ -144,8 +142,8 @@ abstract class AbstractHierarchicalComponent implements IteratorAggregate
     /**
      * Return a formatted component string according to its type
      *
-     * @param Traversable|string[] $data The segments list
-     * @param int                  $type
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type
      *
      * @throws InvalidArgumentException If $data is invalid
      *

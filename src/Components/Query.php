@@ -16,7 +16,6 @@ use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\QueryParser;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
-use Traversable;
 
 /**
  * Value object representing a URI query component.
@@ -88,7 +87,7 @@ class Query implements QueryInterface
     /**
      * return a new Query instance from an Array or a traversable object
      *
-     * @param Traversable|array $data
+     * @param \Traversable|array $data
      *
      * @return static
      */

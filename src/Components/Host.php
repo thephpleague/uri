@@ -44,7 +44,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected $host;
 
     /**
-     * New instance 
+     * New instance
      *
      * @param null|string $host
      */

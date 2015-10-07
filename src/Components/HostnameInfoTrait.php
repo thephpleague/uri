@@ -107,7 +107,7 @@ trait HostnameInfoTrait
         if ($this->isAbsolute()) {
             $host = mb_substr($host, 0, -1, 'UTF-8');
         }
-        
+
         $this->hostnameInfo = $this->getPdpParser()->parseHost($host)->toArray();
         $this->hostnameInfo['isPublicSuffixValid'] = $this->getPdpParser()->isSuffixValid($host);
         $this->hostnameInfoLoaded = true;

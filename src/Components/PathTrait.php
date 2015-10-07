@@ -203,7 +203,7 @@ trait PathTrait
      * @param string
      *
      */
-    protected function encodePath($path)
+    protected static function encodePath($path)
     {
         return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
             return strtoupper($matches['encode']);

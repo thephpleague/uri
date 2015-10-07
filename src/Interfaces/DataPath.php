@@ -109,7 +109,8 @@ interface DataPath extends Path
      * @param string $parameters The mediatype parameters to use with the new instance.
      *
      * @throws \InvalidArgumentException for invalid query strings.
-     * @return static                    A new instance with the specified mediatype parameters.
+     *
+     * @return static A new instance with the specified mediatype parameters.
      */
     public function withParameters($parameters);
 

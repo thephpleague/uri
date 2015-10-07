@@ -50,22 +50,6 @@ class Query implements QueryInterface
     }
 
     /**
-     * Return a new instance when needed
-     *
-     * @param array $data
-     *
-     * @return static
-     */
-    protected function newCollectionInstance(array $data)
-    {
-        if ($data == $this->data) {
-            return $this;
-        }
-
-        return static::createFromArray($data);
-    }
-
-    /**
      * sanitize the submitted data
      *
      * @param string $str
@@ -116,7 +100,7 @@ class Query implements QueryInterface
     public function getUriComponent()
     {
         $query = $this->__toString();
-        if (!empty($query)) {
+        if ('' !== $query) {
             $query = QueryInterface::DELIMITER.$query;
         }
 
@@ -141,27 +125,15 @@ class Query implements QueryInterface
      */
     public function merge($query)
     {
-        if ($query instanceof QueryInterface) {
-            return $this->mergeQuery($query);
+        if (!$query instanceof QueryInterface) {
+            $query = static::createFromArray($this->validate($query));
         }
 
-        return $this->mergeQuery(static::createFromArray($this->validate($query)));
-    }
-
-    /**
-     * Merge two QueryInterface objects
-     *
-     * @param QueryInterface $query
-     *
-     * @return static
-     */
-    protected function mergeQuery(QueryInterface $query)
-    {
         if ($this->sameValueAs($query)) {
             return $this;
         }
 
-        return static::createFromArray(array_merge($this->data, $query->toArray()));
+        return static::createFromArray(array_merge($this->toArray(), $query->toArray()));
     }
 
     /**
@@ -169,13 +141,26 @@ class Query implements QueryInterface
      */
     public function ksort($sort = SORT_REGULAR)
     {
-        $func = 'ksort';
-        if (is_callable($sort)) {
-            $func = 'uksort';
-        }
+        $func = is_callable($sort) ? 'uksort' : 'ksort';
         $data = $this->data;
         $func($data, $sort);
         if ($data === $this->data) {
+            return $this;
+        }
+
+        return static::createFromArray($data);
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
             return $this;
         }
 

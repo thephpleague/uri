@@ -117,26 +117,26 @@ class Resolve extends AbstractUriModifier
     /**
      * Return the resolve URI with a updated path and query
      *
-     * @param LeagueUriInterface|UriInterface $relative the relative URI
-     * @param string                          $path     The relative path string
-     * @param string                          $query    The relative query string
+     * @param LeagueUriInterface|UriInterface $relative    the relative URI
+     * @param string                          $pathString  the relative path string
+     * @param string                          $queryString the relative query string
      *
      * @return LeagueUriInterface|UriInterface
      */
-    protected function resolveRelativePath($relative, $path, $query)
+    protected function resolveRelativePath($relative, $pathString, $queryString)
     {
-        $relativePath = new HierarchicalPath($path);
+        $relativePath = new HierarchicalPath($pathString);
         if ($relativePath->isAbsolute()) {
             return $this->getBaseUri($relative)
-                ->withPath($relativePath)
-                ->withQuery($query);
+                ->withPath($relativePath->__toString())
+                ->withQuery($queryString);
         }
 
         $originalUri = $relativePath->modify($this->uri->getPath());
         $segments = $originalUri->toArray();
         array_pop($segments);
         $isAbsolute = HierarchicalPath::IS_RELATIVE;
-        if (empty($originalUri) || $originalUri->isAbsolute()) {
+        if (empty($originalUri->__toString()) || $originalUri->isAbsolute()) {
             $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
         }
 
@@ -147,6 +147,6 @@ class Resolve extends AbstractUriModifier
 
         return $this->getBaseUri($relative)
             ->withPath($relativePath->__toString())
-            ->withQuery($query);
+            ->withQuery($queryString);
     }
 }

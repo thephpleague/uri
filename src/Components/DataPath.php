@@ -24,8 +24,10 @@ use SplFileObject;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-class DataPath extends Path implements DataPathInterface
+class DataPath extends AbstractComponent implements DataPathInterface
 {
+    use PathTrait;
+
     const DEFAULT_MIMETYPE = 'text/plain';
 
     const DEFAULT_PARAMETER = 'charset=us-ascii';
@@ -35,195 +37,91 @@ class DataPath extends Path implements DataPathInterface
     const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
     /**
-     * Data Path properties
+     * The mediatype mimetype
      *
-     * @var array
+     * @var string
      */
-    protected $data = [
-        'mimetype' => self::DEFAULT_MIMETYPE,
-        'parameters' => [self::DEFAULT_PARAMETER],
-        'isBinaryData' => false,
-        'data' => '',
+    protected $mimetype;
+
+    /**
+     * The mediatype parameters
+     *
+     * @var string[]
+     */
+    protected $parameters;
+
+    /**
+     * Is the Document bas64 encoded
+     *
+     * @var bool
+     */
+    protected $isBinaryData;
+
+    /**
+     * The document string representation
+     *
+     * @var string
+     */
+    protected $document;
+
+    /**
+     * @inheritdoc
+     */
+    protected static $characters_set = [
+        '/', ':', '@', '!', '$', '&', "'", '%',
+        '(', ')', '*', '+', ',', ';', '=', '?',
     ];
 
     /**
      * @inheritdoc
      */
-    public function getData()
-    {
-        return $this->data['data'];
-    }
+    protected static $characters_set_encoded = [
+        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
+        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
+    ];
 
     /**
      * @inheritdoc
      */
-    public function isBinaryData()
-    {
-        return $this->data['isBinaryData'];
-    }
+    protected static $invalidCharactersRegex = ',[?#],';
 
     /**
-     * @inheritdoc
-     */
-    public function getMimeType()
-    {
-        return $this->data['mimetype'];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getParameters()
-    {
-        return implode(';', $this->data['parameters']);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getMediaType()
-    {
-        return $this->getMimeType().';'.$this->getParameters();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function save($path, $mode = 'w')
-    {
-        $file = new SplFileObject($path, $mode);
-        $data = $this->isBinaryData() ? base64_decode($this->data['data']) : rawurldecode($this->data['data']);
-        $file->fwrite($data);
-
-        return $file;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return $this->format(
-            $this->getMimeType(),
-            $this->getParameters(),
-            $this->isBinaryData(),
-            $this->getData()
-        );
-    }
-
-    /**
-     * Format the DataURI string
+     * new instance
      *
-     * @param string $mimeType
-     * @param string $parameters
-     * @param bool   $isBinaryData
-     * @param string $data
-     *
-     * @return string
+     * @param string $path the component value
      */
-    protected function format($mimeType, $parameters, $isBinaryData, $data)
+    public function __construct($path = '')
     {
-        $str = $mimeType;
-        if (!empty($parameters)) {
-            $str .= ';'.$parameters;
+        $path = $this->validateString($path);
+        if ('' === $path) {
+            $path = static::DEFAULT_MIMETYPE.';'.static::DEFAULT_PARAMETER.',';
         }
-        if ($isBinaryData) {
-            $str .= ';'.static::BINARY_PARAMETER;
-        }
-
-        return $this->encodePath($str.','.$data);
+        $this->setComponentProperties($path);
     }
 
     /**
-     * @inheritdoc
-     */
-    public function toBinary()
-    {
-        if ($this->isBinaryData()) {
-            return $this;
-        }
-
-        return new static($this->format(
-            $this->getMimeType(),
-            $this->getParameters(),
-            !$this->isBinaryData(),
-            base64_encode(rawurldecode($this->getData()))
-        ));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toAscii()
-    {
-        if (!$this->isBinaryData()) {
-            return $this;
-        }
-
-        return new static($this->format(
-            $this->getMimeType(),
-            $this->getParameters(),
-            !$this->isBinaryData(),
-            rawurlencode(base64_decode($this->getData()))
-        ));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function withParameters($parameters)
-    {
-        if ($parameters == $this->getParameters()) {
-            return $this;
-        }
-
-        return new static($this->format(
-            $this->getMimeType(),
-            $parameters,
-            $this->isBinaryData(),
-            $this->getData()
-        ));
-    }
-
-    /**
-     * Create a new instance from a file path
+     * Set Data Path properties
      *
      * @param string $path
-     *
-     * @throws RuntimeException If the File is not readable
-     *
-     * @return static
      */
-    public static function createFromPath($path)
+    protected function setComponentProperties($path)
     {
-        if (!is_readable($path)) {
-            throw new RuntimeException(sprintf('The specified file `%s` is not readable', $path));
-        }
-
-        $res = str_replace(' ', '', (new \finfo(FILEINFO_MIME))->file($path));
-        $path = $res.';'.static::BINARY_PARAMETER.','.base64_encode(file_get_contents($path));
-
-        return new static($path);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function init($path)
-    {
-        if ('' === $path) {
-            $path = self::DEFAULT_MIMETYPE.';'.self::DEFAULT_PARAMETER.',';
-        }
         $this->assertValidComponent($path);
-        $this->data = $this->validateDataPath($path);
+        $parts = explode(',', $path, 2);
+        $mediatype = array_shift($parts);
+        $this->document = (string) array_shift($parts);
+        $mimetype = static::DEFAULT_MIMETYPE;
+        $parameters = static::DEFAULT_PARAMETER;
+        if (!empty($mediatype)) {
+            $mediatype = explode(';', $mediatype, 2);
+            $mimetype = array_shift($mediatype);
+            $parameters = (string) array_shift($mediatype);
+        }
+        $this->mimetype = $this->filterMimeType($mimetype);
+        $this->parameters = $this->filterParameters($parameters);
+        if ($this->isBinaryData) {
+            $this->validateDocument();
+        }
     }
 
     /**
@@ -243,47 +141,21 @@ class DataPath extends Path implements DataPathInterface
     }
 
     /**
-     * Validate the string as being a Data Path
+     * Filter the mimeType property
      *
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function validateDataPath($path)
-    {
-        $res = explode(',', $path, 2);
-        $matches = ['mediatype' => array_shift($res), 'data' => array_shift($res)];
-        $mimeType = self::DEFAULT_MIMETYPE;
-        $parameters = static::DEFAULT_PARAMETER;
-        if (!empty($matches['mediatype'])) {
-            $mediatype = explode(';', $matches['mediatype'], 2);
-            $mimeType = array_shift($mediatype);
-            $parameters = (string) array_shift($mediatype);
-        }
-        $this->filterMimeType($mimeType);
-        $extracts = $this->extractParameters($parameters);
-        $this->filterData($matches['data'], $extracts['isBinaryData']);
-
-        return [
-            'mimetype' => $mimeType,
-            'parameters' => explode(';', $extracts['parameters']),
-            'isBinaryData' => $extracts['isBinaryData'],
-            'data' => $matches['data'],
-        ];
-    }
-
-    /**
-     * Filter and Set the mimeType property
-     *
-     * @param string $mimeType
+     * @param string $mimetype
      *
      * @throws InvalidArgumentException If the mimetype is invalid
+     *
+     * @return string
      */
-    protected function filterMimeType($mimeType)
+    protected function filterMimeType($mimetype)
     {
-        if (!preg_match(self::REGEXP_MIMETYPE, $mimeType)) {
-            throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimeType));
+        if (!preg_match(static::REGEXP_MIMETYPE, $mimetype)) {
+            throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimetype));
         }
+
+        return $mimetype;
     }
 
     /**
@@ -291,61 +163,224 @@ class DataPath extends Path implements DataPathInterface
      *
      * @param string $parameters
      *
-     * @return array
+     * @throws InvalidArgumentException If the mediatype parameters contain invalid data
+     *
+     * @return string[]
      */
-    protected function extractParameters($parameters)
+    protected function filterParameters($parameters)
     {
-        $res = ['parameters' => static::DEFAULT_PARAMETER, 'isBinaryData' => false];
-        if ('' === $parameters) {
-            return $res;
+        $this->isBinaryData = false;
+        if ('' == $parameters) {
+            return [static::DEFAULT_PARAMETER];
         }
 
         if (preg_match(',(;|^)'.static::BINARY_PARAMETER.'$,', $parameters, $matches)) {
             $parameters = mb_substr($parameters, 0, - strlen($matches[0]));
-            $res['isBinaryData'] = true;
+            $this->isBinaryData = true;
         }
 
-        if (!empty($parameters)) {
-            $this->filterParameters($parameters);
-            $res['parameters'] = $parameters;
+        $params = array_filter(explode(';', $parameters));
+        if (!empty(array_filter($params, [$this, 'validateParameter']))) {
+            throw new InvalidArgumentException(sprintf('invalid mediatype parameters, `%s`', $parameters));
         }
 
-        return $res;
+        return $params;
     }
 
     /**
-     * Filter and Set the Parameter property
+     * Validate mediatype parameter
      *
-     * @param string $parameters
+     * @param string $parameter a mediatype parameter
      *
-     * @throws InvalidArgumentException If the parameter is invalid
+     * @return bool
      */
-    protected function filterParameters($parameters)
+    protected function validateParameter($parameter)
     {
-        $parameters = explode(';', $parameters);
-        foreach ($parameters as $value) {
-            if (0 === strpos($value, static::BINARY_PARAMETER) || 2 != count(explode('=', $value))) {
-                throw new InvalidArgumentException('Invalid mediatype');
-            }
-        }
+        $properties = explode('=', $parameter);
+
+        return 2 != count($properties) || mb_strtolower($properties[0], 'UTF-8') == static::BINARY_PARAMETER;
     }
 
     /**
-     * Validate the media body
-     *
-     * @param string $data         the Data part of the path
-     * @param bool   $isBinaryData tell wether the data part is encoded or not
+     * Validate the path document string representation
      *
      * @throws InvalidArgumentException If the data is invalid
      */
-    protected function filterData($data, $isBinaryData)
+    protected function validateDocument()
     {
-        if (!$isBinaryData) {
-            return;
-        }
-        $res = base64_decode($data, true);
-        if (false === $res || $data !== base64_encode($res)) {
+        $res = base64_decode($this->document, true);
+        if (false === $res || $this->document !== base64_encode($res)) {
             throw new InvalidArgumentException('The path data is invalid');
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getData()
+    {
+        return $this->document;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isBinaryData()
+    {
+        return $this->isBinaryData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMimeType()
+    {
+        return $this->mimetype;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getParameters()
+    {
+        return implode(';', $this->parameters);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMediaType()
+    {
+        return $this->getMimeType().';'.$this->getParameters();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($path, $mode = 'w')
+    {
+        $file = new SplFileObject($path, $mode);
+        $data = $this->isBinaryData ? base64_decode($this->document) : rawurldecode($this->document);
+        $file->fwrite($data);
+
+        return $file;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUriComponent()
+    {
+        return $this->__toString();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return $this->format(
+            $this->mimetype,
+            $this->getParameters(),
+            $this->isBinaryData,
+            $this->document
+        );
+    }
+
+    /**
+     * Format the DataURI string
+     *
+     * @param string $mimetype
+     * @param string $parameters
+     * @param bool   $isBinaryData
+     * @param string $data
+     *
+     * @return string
+     */
+    protected static function format($mimetype, $parameters, $isBinaryData, $data)
+    {
+        if ('' != $parameters) {
+            $parameters = ';'.$parameters;
+        }
+
+        if ($isBinaryData) {
+            $parameters .= ';'.static::BINARY_PARAMETER;
+        }
+
+        return static::encodePath($mimetype.$parameters.','.$data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toBinary()
+    {
+        if ($this->isBinaryData) {
+            return $this;
+        }
+
+        return new static($this->format(
+            $this->mimetype,
+            $this->getParameters(),
+            !$this->isBinaryData,
+            base64_encode(rawurldecode($this->document))
+        ));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toAscii()
+    {
+        if (!$this->isBinaryData) {
+            return $this;
+        }
+
+        return new static($this->format(
+            $this->mimetype,
+            $this->getParameters(),
+            !$this->isBinaryData,
+            rawurlencode(base64_decode($this->document))
+        ));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withParameters($parameters)
+    {
+        if ($parameters == $this->getParameters()) {
+            return $this;
+        }
+
+        return new static($this->format(
+            $this->mimetype,
+            $parameters,
+            $this->isBinaryData,
+            $this->document
+        ));
+    }
+
+    /**
+     * Create a new instance from a file path
+     *
+     * @param string $path
+     *
+     * @throws RuntimeException If the File is not readable
+     *
+     * @return static
+     */
+    public static function createFromPath($path)
+    {
+        if (!is_readable($path)) {
+            throw new RuntimeException(sprintf('The specified file `%s` is not readable', $path));
+        }
+
+        return new static(static::format(
+            str_replace(' ', '', (new \finfo(FILEINFO_MIME))->file($path)),
+            '',
+            true,
+            base64_encode(file_get_contents($path))
+        ));
     }
 }

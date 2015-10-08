@@ -73,6 +73,29 @@ class DataPathTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider invalidParametersString
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithParametersFailedWithInvalidParameters($path, $parameters)
+    {
+        Path::createFromPath($path)->withParameters($parameters);
+    }
+
+    public function invalidParametersString()
+    {
+        return [
+            [
+                'path' => dirname(__DIR__).'/data/red-nose.gif',
+                'parameters' => 'charset=binary;base64',
+            ],
+            [
+                'path' => dirname(__DIR__).'/data/hello-world.txt',
+                'parameters' => 'charset=binary;base64;foo=bar',
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider fileProvider
      * @param $uri
      */

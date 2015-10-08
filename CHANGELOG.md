@@ -13,6 +13,7 @@ All Notable changes to `League\Url` will be documented in this file
 - [BUG FIX] `UriParser` handling URI strings with invalid scheme
 - [BUG FIX] `QueryParser` handling numeric index [issue #25](https://github.com/thephpleague/uri/issues/25)
 - [BUG FIX] `DataPath` mimetype syntax validation [issue #21](https://github.com/thephpleague/uri/issues/21)
+- [BUG FIX] `DataPath::withParameters` the `;base64` binary code now always throw an `InvalidArgumentException`
 
 ### Deprecated
 

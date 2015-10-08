@@ -353,6 +353,10 @@ class DataPath extends AbstractComponent implements DataPathInterface
             return $this;
         }
 
+        if (preg_match(',(;|^)'.static::BINARY_PARAMETER.'$,', $parameters)) {
+            throw new InvalidArgumentException('The parameter data is invalid');
+        }
+
         return new static($this->format(
             $this->mimetype,
             $parameters,

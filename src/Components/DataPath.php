@@ -307,7 +307,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
             $parameters .= ';'.static::BINARY_PARAMETER;
         }
 
-        return static::encodePath($mimetype.$parameters.','.$data);
+        return static::encode($mimetype.$parameters.','.$data);
     }
 
     /**

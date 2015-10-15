@@ -122,6 +122,18 @@ class HttpTest extends PHPUnit_Framework_TestCase
                     'HTTP_HOST' => 'localhost:23',
                 ],
             ],
+            'with user info and HTTP AUTHORIZATION' => [
+                'https://foo:bar@localhost:23',
+                [
+                    'PHP_SELF' => '',
+                    'REQUEST_URI' => '',
+                    'SERVER_ADDR' => '127.0.0.1',
+                    'HTTP_AUTHORIZATION' => 'basic '.base64_encode('foo:bar'),
+                    'HTTPS' => 'on',
+                    'SERVER_PORT' => 23,
+                    'HTTP_HOST' => 'localhost:23',
+                ],
+            ],
             'without request uri' => [
                 'https://127.0.0.1:23/toto?foo=bar',
                 [

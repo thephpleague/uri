@@ -96,13 +96,17 @@ trait ImmutableComponentTrait
             return preg_quote($value, '/');
         }, static::$characters_set));
 
-        return preg_replace_callback(
+        $str = preg_replace_callback(
             '/(?:[^'.$reservedChars.']+|%(?![A-Fa-f0-9]{2}))/',
             function (array $matches) {
                 return rawurlencode($matches[0]);
             },
             $value
         );
+
+        return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
+            return strtoupper($matches['encode']);
+        }, $str);
     }
 
     /**

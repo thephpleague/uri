@@ -55,7 +55,7 @@ trait ImmutablePropertyTrait
                 (is_object($value) ? get_class($value) : gettype($value))
             ));
         }
-        
+
         if ('' === $value) {
             return null;
         }

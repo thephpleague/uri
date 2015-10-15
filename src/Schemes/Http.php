@@ -96,9 +96,19 @@ class Http extends AbstractHierarchicalUri implements UriInterface
      */
     protected static function fetchServerUserInfo(array $server)
     {
-        $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null];
+        $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => null];
+        $parser = new UriParser();
+        if (!empty($server['HTTP_AUTHORIZATION'])
+            && 0 === strpos(strtolower($server['HTTP_AUTHORIZATION']), 'basic')
+        ) {
+            $res = explode(':', base64_decode(substr($server['HTTP_AUTHORIZATION'], 6)), 2);
+            $login = array_shift($res);
+            $pass = array_shift($res);
 
-        return (new UriParser())->buildUserInfo($server['PHP_AUTH_USER'], $server['PHP_AUTH_PW']);
+            return $parser->buildUserInfo(rawurlencode($login), rawurlencode($pass));
+        }
+
+        return $parser->buildUserInfo(rawurlencode($server['PHP_AUTH_USER']), rawurlencode($server['PHP_AUTH_PW']));
     }
 
     /**

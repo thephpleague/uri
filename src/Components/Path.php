@@ -82,6 +82,6 @@ class Path extends AbstractComponent implements PathInterface
      */
     public function __toString()
     {
-        return $this->encodePath(static::encode($this->data));
+        return static::encode($this->data);
     }
 }

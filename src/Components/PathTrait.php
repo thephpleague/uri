@@ -196,21 +196,6 @@ trait PathTrait
     }
 
     /**
-     * Normalize path encoding
-     *
-     * @param string $path the path to normalize
-     *
-     * @param string
-     *
-     */
-    protected static function encodePath($path)
-    {
-        return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
-            return strtoupper($matches['encode']);
-        }, $path);
-    }
-
-    /**
      * Encode a segment or the entire path string
      *
      * @param  array  $matches

@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
-## Next - 2015-XX-XX
+## 4.0.1 - 2015-11-03
 
 ### Added
 
@@ -10,12 +10,12 @@ All Notable changes to `League\Url` will be documented in this file
 
 ### Fixed
 
-- [BUG FIX] `User` and `Pass` encoding
-- [BUG FIX] `Http::createFromServer` handling userinfo when not using `mod_php` 'HTTP_AUTHORIZATION'
-- [BUG FIX] `UriParser` handling URI strings with invalid scheme
-- [BUG FIX] `QueryParser` handling numeric index [issue #25](https://github.com/thephpleague/uri/issues/25)
-- [BUG FIX] `DataPath` mimetype syntax validation [issue #21](https://github.com/thephpleague/uri/issues/21)
-- [BUG FIX] `DataPath::withParameters` the `;base64` binary code now always throw an `InvalidArgumentException`
+- `User` and `Pass` encoding
+- `Http::createFromServer` handling userinfo when not using `mod_php` with `$_SERVER['HTTP_AUTHORIZATION']`
+- `UriParser` handling URI strings with invalid scheme
+- `QueryParser` handling numeric index [issue #25](https://github.com/thephpleague/uri/issues/25)
+- `DataPath` mimetype syntax validation [issue #21](https://github.com/thephpleague/uri/issues/21)
+- `DataPath::withParameters` the `;base64` binary code now always throw an `InvalidArgumentException`
 
 ### Deprecated
 

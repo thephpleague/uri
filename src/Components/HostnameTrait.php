@@ -94,7 +94,7 @@ trait HostnameTrait
      */
     protected function lower($str)
     {
-        return preg_replace_callback('/[A-Z]+/', function($matches) {
+        return preg_replace_callback('/[A-Z]+/', function ($matches) {
             return strtolower($matches[0]);
         }, $str);
     }

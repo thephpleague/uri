@@ -35,6 +35,8 @@ trait ImmutableComponentTrait
         '!', '$', '&', "'", '(', ')', '*', '+', ',', ';', '=', ':',
     ];
 
+    protected static $characters_set_compiled;
+
     /**
      * Encoded characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
      *
@@ -83,6 +85,15 @@ trait ImmutableComponentTrait
      */
     abstract public function __toString();
 
+    protected static function getReservedRegex()
+    {
+        if (!isset(static::$characters_set_compiled)) {
+            $reserved = preg_quote(implode('', static::$characters_set), '/');
+            static::$characters_set_compiled = '/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/S';
+        }
+        return static::$characters_set_compiled;
+    }
+
     /**
      * Encoding string according to RFC3986
      *
@@ -92,19 +103,15 @@ trait ImmutableComponentTrait
      */
     protected static function encode($value)
     {
-        $reservedChars = implode('', array_map(function ($value) {
-            return preg_quote($value, '/');
-        }, static::$characters_set));
-
         $str = preg_replace_callback(
-            '/(?:[^'.$reservedChars.']+|%(?![A-Fa-f0-9]{2}))/',
+            self::getReservedRegex(),
             function (array $matches) {
                 return rawurlencode($matches[0]);
             },
             $value
         );
 
-        return preg_replace_callback(',(?<encode>%[0-9A-F]{2}),i', function (array $matches) {
+        return preg_replace_callback(',(?<encode>%[0-9a-f]{2}),', function (array $matches) {
             return strtoupper($matches['encode']);
         }, $str);
     }

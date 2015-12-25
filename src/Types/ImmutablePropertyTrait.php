@@ -37,7 +37,7 @@ trait ImmutablePropertyTrait
     protected function withProperty($property, $value)
     {
         $value = $this->$property->modify($value);
-        if ($this->$property->sameValueAs($value)) {
+        if ($this->$property === $value) {
             return $this;
         }
         $newInstance = clone $this;

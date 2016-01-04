@@ -137,7 +137,7 @@ class QueryParser
      */
     protected function buildPair(callable $encoder, array $value, $key)
     {
-        return array_reduce($value, function (array $carry, $data) use ($key, $encoder) {
+        $reducer = function (array $carry, $data) use ($key, $encoder) {
             $pair = $key;
             if (null !== $data) {
                 $pair .= '='.$encoder($data);
@@ -145,7 +145,9 @@ class QueryParser
             $carry[] = $pair;
 
             return $carry;
-        }, []);
+        };
+
+        return array_reduce($value, $reducer, []);
     }
 
     /**

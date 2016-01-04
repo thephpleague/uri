@@ -22,12 +22,12 @@
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "ext-fileinfo": "*",
-        "psr/http-message": "^1.0",
-        "jeremykendall/php-domain-parser": "^3.0"
+        "jeremykendall/php-domain-parser": "^3.0",
+        "psr/http-message": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit" : "^4.0",
-        "fabpot/php-cs-fixer": "^1.9"
+        "fabpot/php-cs-fixer": "^1.9",
+        "phpunit/phpunit" : "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -40,7 +40,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit; vendor/bin/php-cs-fixer fix -v --diff --dry-run;"
+        "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;"
     },
     "extra": {
         "branch-alias": {

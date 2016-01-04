@@ -35,6 +35,11 @@ trait ImmutableComponentTrait
         '!', '$', '&', "'", '(', ')', '*', '+', ',', ';', '=', ':',
     ];
 
+    /**
+     * Path Character Decoding Regular Expression
+     *
+     * @var string
+     */
     protected static $characters_set_compiled;
 
     /**
@@ -85,6 +90,11 @@ trait ImmutableComponentTrait
      */
     abstract public function __toString();
 
+    /**
+     * Return the precompiled Path Character Decoding Regular Expression
+     *
+     * @return string
+     */
     protected static function getReservedRegex()
     {
         if (!isset(static::$characters_set_compiled)) {

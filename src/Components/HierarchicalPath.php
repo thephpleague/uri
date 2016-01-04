@@ -87,15 +87,17 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function validate($data)
     {
-        $regex = $this->getReservedRegex();
-
-        // Run the regex on the entire string rather than exploding.
-        // The separator should always be a reserved character.
-        $data = preg_replace_callback($regex, [$this, 'decodeSegmentPart'], $data);
-
-        return array_filter(explode(static::$separator, $data), function ($segment) {
+        $filterSegment = function ($segment) {
             return isset($segment);
-        });
+        };
+
+        $data = preg_replace_callback(
+            $this->getReservedRegex(),
+            [$this, 'decodeSegmentPart'],
+            $data
+        );
+
+        return array_filter(explode(static::$separator, $data), $filterSegment);
     }
 
     /**

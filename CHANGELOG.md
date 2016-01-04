@@ -2,6 +2,26 @@
 
 All Notable changes to `League\Url` will be documented in this file
 
+## Next- 2016-xx-xx
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- Improve Uri Component modification [issue #29](https://github.com/thephpleague/uri/issues/29)
+- Improve Path encoding/decoding [issue #28](https://github.com/thephpleague/uri/issues/28)
+- Improve lowercase transformation in hostname [issue #27](https://github.com/thephpleague/uri/issues/27)
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.0.1 - 2015-11-03
 
 ### Added

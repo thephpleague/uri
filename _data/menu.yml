@@ -1,0 +1,34 @@
+Getting Started:
+    Introduction: '/'
+    Changelog: '/changelog/'
+    Installation: '/installation/'
+    Usage: '/examples/'
+    Terminology: '/definitions/'
+Uri:
+    Instantiation: '/uri/instantiation/'
+    Properties: '/uri/properties/'
+Uri Schemes:
+    Http URIs: '/uri/schemes/http/'
+    Websocket URIs: '/uri/schemes/ws/'
+    FTP URI: '/uri/schemes/ftp/'
+    Data URI: '/uri/schemes/data-uri/'
+    Extension Guide: '/uri/extension/'
+Uri manipulation:
+    Overview: '/uri/manipulation/'
+    Host Modifiers: '/uri/manipulation/host/'
+    Query Modifiers: '/uri/manipulation/query/'
+    Path Modifiers: '/uri/manipulation/path/'
+    Uri Modifiers: '/uri/manipulation/generic/'
+Uri Parts API:
+    Overview: '/components/overview/'
+    User Information: '/components/userinfo/'
+    Host: '/components/host/'
+    Port: '/components/port/'
+    Query: '/components/query/'
+    Path: '/components/path/'
+    Hierarchical Path: '/components/hierarchical-path/'
+    Data Path: '/components/datauri-path/'
+Services:
+    Uri Parser: '/services/parser-uri/'
+    Query Parser: '/services/parser-query/'
+    Formatter: '/services/formatter/'

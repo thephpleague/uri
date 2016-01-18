@@ -1,6 +1,6 @@
 #Changelog
 
-All Notable changes to `League\Url` will be documented in this file
+All Notable changes to `League\Uri` will be documented in this file
 
 ## Next- 2016-xx-xx
 

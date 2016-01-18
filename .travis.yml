@@ -2,15 +2,14 @@ language: php
 
 sudo: false
 
-env:
-  global:
-    - COLLECT_COVERAGE=true
-
 matrix:
   include:
     - php: 5.5
+      env: COLLECT_COVERAGE=true
     - php: 5.6
+      env: COLLECT_COVERAGE=true
     - php: 7.0
+      env: COLLECT_COVERAGE=true
     - php: hhvm
       env: COLLECT_COVERAGE=false
   fast_finish: true

@@ -25,7 +25,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseSucced($uri, $expected)
     {
-        $this->assertSame($expected, $this->parser->parse($uri));
+        $this->assertSame($expected, $this->parser->__invoke($uri));
     }
 
     public function testValidURI()
@@ -378,7 +378,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseFailed($uri)
     {
-        $this->parser->parse($uri);
+        $this->parser->__invoke($uri);
     }
 
     public function testInvalidURI()

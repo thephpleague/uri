@@ -83,6 +83,18 @@ class UriParser
     }
 
     /**
+     * Parse a string as an URI according to the regexp form rfc3986
+     *
+     * @param string $uri The URI to parse
+     *
+     * @return array the array is similar to PHP's parse_url hash response
+     */
+    public function __invoke($uri)
+    {
+        return $this->parse($uri);
+    }
+
+    /**
      * Extract URI parts
      *
      * @see http://tools.ietf.org/html/rfc3986#appendix-B

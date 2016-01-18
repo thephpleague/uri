@@ -11,9 +11,12 @@ matrix:
     - php: 7.0
       env: COLLECT_COVERAGE=true
     - php: hhvm
+      env: COLLECT_COVERAGE=false
+  fast_finish: true
 
 cache:
   directories:
+    - vendor
     - $HOME/.composer/cache
 
 before_install:

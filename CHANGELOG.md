@@ -1,12 +1,14 @@
 #Changelog
 
-All Notable changes to `League\Url` will be documented in this file
+All Notable changes to `League\Uri` will be documented in this file
 
 ## Next- 2016-xx-xx
 
 ### Added
 
-- Nothing
+- `Formatter::preserveQuery` to improve query inclusion in URI string representation
+- `Formatter::preserveFragment` to improve fragment inclusion in URI string representation
+- `Formatter::__invoke` as an alias of `Formatter::format`
 
 ### Fixed
 

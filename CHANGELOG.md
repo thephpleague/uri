@@ -15,6 +15,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - Improve Uri Component modification [issue #29](https://github.com/thephpleague/uri/issues/29)
 - Improve Path encoding/decoding [issue #28](https://github.com/thephpleague/uri/issues/28)
 - Improve lowercase transformation in hostname [issue #27](https://github.com/thephpleague/uri/issues/27)
+- Bug when the fragment value is wrongly evaluated as empty [issue #31](https://github.com/thephpleague/uri/issues/31)
 
 ### Deprecated
 

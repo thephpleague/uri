@@ -44,7 +44,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     public function getUriComponent()
     {
         $component = $this->__toString();
-        if (!empty($component)) {
+        if ('' !== $component) {
             $component = FragmentInterface::DELIMITER.$component;
         }
 

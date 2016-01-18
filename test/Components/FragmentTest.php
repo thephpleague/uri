@@ -27,6 +27,7 @@ class FragmentTest extends PHPUnit_Framework_TestCase
         return [
             'null' => [null, ''],
             'empty' => ['', ''],
+            'evaluate empty' => ['0', '#0'],
             'hash'  => ['#', '#%23'],
             'toofan' => ['toofan', '#toofan'],
             'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@'],
@@ -50,7 +51,7 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
             'float'     => [1.2],
-            'array'      => [['foo']],
+            'array'     => [['foo']],
         ];
     }
 }

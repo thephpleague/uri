@@ -73,6 +73,23 @@ class Formatter
      */
     protected $querySeparator = '&';
 
+    /**
+     * Should the query component be preserved
+     *
+     * @var bool
+     */
+    protected $preserveQuery = false;
+
+    /**
+     * Should the fragment component string be preserved
+     *
+     * @var bool
+     */
+    protected $preserveFragment = false;
+
+    /**
+     * New Instance
+     */
     public function __construct()
     {
         $this->uriParser = new UriParser();
@@ -148,6 +165,34 @@ class Formatter
     }
 
     /**
+     * Whether we should preserve the Query component
+     * regardless of its value.
+     *
+     * If set to true the query delimiter will be appended
+     * to the URI regardless of the query string value
+     *
+     * @param bool $status
+     */
+    public function preserveQuery($status)
+    {
+        $this->preserveQuery = (bool) $status;
+    }
+
+    /**
+     * Whether we should preserve the Fragment component
+     * regardless of its value.
+     *
+     * If set to true the query delimiter will be appended
+     * to the URI regardless of the query string value
+     *
+     * @param bool $status
+     */
+    public function preserveFragment($status)
+    {
+        $this->preserveFragment = (bool) $status;
+    }
+
+    /**
      * Format an object according to the formatter properties
      *
      * @param UriInterface|Interfaces\Uri|Interfaces\Components\UriPart $input
@@ -167,6 +212,18 @@ class Formatter
         throw new InvalidArgumentException(
             'input must be an URI object or a League UriPart implemented object'
         );
+    }
+
+    /**
+     * Format an object according to the formatter properties
+     *
+     * @param UriInterface|Interfaces\Uri|Interfaces\Components\UriPart $input
+     *
+     * @return string
+     */
+    public function __invoke($input)
+    {
+        return $this->format($input);
     }
 
     /**
@@ -219,19 +276,12 @@ class Formatter
             $scheme .= ':';
         }
 
-        $query = $this->formatUriPart(new Query($uri->getQuery()));
-        if ('' !== $query) {
-            $query = '?'.$query;
-        }
-
-        $fragment = $uri->getFragment();
-        if ('' !== $fragment) {
-            $fragment = '#'.$fragment;
-        }
-
         $auth = $this->formatAuthority($uri);
 
-        return $scheme.$auth.$this->formatPath($uri->getPath(), $auth).$query.$fragment;
+        return $scheme.$auth
+            .$this->formatPath($uri->getPath(), $auth)
+            .$this->formatQuery($uri)
+            .$this->formatFragment($uri);
     }
 
     /**
@@ -257,5 +307,39 @@ class Formatter
             .$this->uriParser->buildUserInfo($components['user'], $components['pass'])
             .$this->formatHost(new Host($components['host']))
             .$port;
+    }
+
+    /**
+     * Format a URI Query component according to the Formatter properties
+     *
+     * @param UriInterface|Uri $uri
+     *
+     * @return string
+     */
+    protected function formatQuery($uri)
+    {
+        $query = $this->formatUriPart(new Query($uri->getQuery()));
+        if ($this->preserveQuery || '' != $query) {
+            $query = '?'.$query;
+        }
+
+        return $query;
+    }
+
+    /**
+     * Format a URI Fragment component according to the Formatter properties
+     *
+     * @param UriInterface|Uri $uri
+     *
+     * @return string
+     */
+    protected function formatFragment($uri)
+    {
+        $fragment = $uri->getFragment();
+        if ($this->preserveFragment || '' != $fragment) {
+            $fragment = '#'.$fragment;
+        }
+
+        return $fragment;
     }
 }

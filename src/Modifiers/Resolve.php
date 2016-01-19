@@ -1,12 +1,12 @@
 <?php
 /**
- * League.Url (http://url.thephpleague.com)
+ * League.Uri (http://uri.thephpleague.com)
  *
- * @package   League.url
+ * @package   League.uri
  * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @copyright 2013-2015 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
- * @version   4.0.0
+ * @version   4.1.0
  * @link      https://github.com/thephpleague/uri/
  */
 namespace League\Uri\Modifiers;
@@ -77,11 +77,11 @@ class Resolve extends AbstractUriModifier
     protected function generate($relative)
     {
         $scheme = $relative->getScheme();
-        if (!empty($scheme) && $scheme != $this->uri->getScheme()) {
+        if ('' !== $scheme && $scheme != $this->uri->getScheme()) {
             return $relative;
         }
 
-        if (!empty($relative->getAuthority())) {
+        if ('' !== $relative->getAuthority()) {
             return $relative->withScheme($this->uri->getScheme());
         }
 
@@ -98,12 +98,12 @@ class Resolve extends AbstractUriModifier
     protected function resolveRelative($relative)
     {
         $path  = $relative->getPath();
-        if (!empty($path)) {
+        if ('' !== $path) {
             return $this->resolveRelativePath($relative, $path, $relative->getQuery());
         }
 
         $query = $relative->getQuery();
-        if (!empty($query)) {
+        if ('' !== $query) {
             return $this->getBaseUri($relative)
                 ->withPath($this->uri->getPath())
                 ->withQuery($query);
@@ -136,7 +136,7 @@ class Resolve extends AbstractUriModifier
         $segments = $originalUri->toArray();
         array_pop($segments);
         $isAbsolute = HierarchicalPath::IS_RELATIVE;
-        if (empty($originalUri->__toString()) || $originalUri->isAbsolute()) {
+        if ('' === $originalUri->__toString() || $originalUri->isAbsolute()) {
             $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
         }
 

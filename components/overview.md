@@ -146,7 +146,7 @@ echo $query;     //display 'q=url&site=thephpleague'
 
 Since we are using immutable value objects, the source component is not modified instead a modified copy of the original object is returned.
 
-## Complex Url parts
+## Complex URI parts
 
 For more complex parts/components care has be taken to provide more useful methods to interact with their values. Additional methods and properties were added to the following classes:
 

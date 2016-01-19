@@ -54,14 +54,14 @@ use League\Uri\Schemes\Http as HttpUri;
 //You cand switch this League object with any PSR-7 UriInterface compatible object
 $uri = HttpUri::createFromString("http://www.example.com/report");
 
-//using the Pipeline URI modifier class 
+//using the Pipeline URI modifier class
 //we register and apply the common transformations
 $modifiers = (new Pipeline())
     ->pipe(new AppendSegment('/purchases/summary'))
     ->pipe(new ReplaceLabel(3, 'download'));
 $tmpUri = $modifiers->process($uri->withScheme('https'));
 
-//the specific transformation are applied here 
+//the specific transformation are applied here
 $links = [];
 foreach (['csv', 'json', 'xml'] as $extension) {
     $links[$extension] = (new Extension($extension))->__invoke($tmpUri);

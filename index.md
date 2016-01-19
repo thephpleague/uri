@@ -23,7 +23,7 @@ The library provides simple and intuitive classes to [instantiate](/uri/instanti
 - [FTP](/uri/schemes/ftp/);
 - [Data URIs](/uri/schemes/data-uri/);
 
-and allow [to easily manage others scheme specific URIs](/uri/extension/). 
+and allow [to easily manage others scheme specific URIs](/uri/extension/).
 
 The library ships also with:
 

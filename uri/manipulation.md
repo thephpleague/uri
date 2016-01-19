@@ -57,7 +57,7 @@ echo $newUri; // display http://www.example.com?foo=bar&taz#~typo
 ### URI modifiers principles
 
 ~~~php
-function(UriInterface $uri): UriInterface
+function(Psr\Http\Message\UriInterface $uri): Psr\Http\Message\UriInterface
 //or
 function(League\Uri\Interfaces\Uri $uri): League\Uri\Interfaces\Uri
 ~~~
@@ -76,7 +76,7 @@ Let's recreate the above example using a URI modifier.
 ~~~php
 use League\Uri\Components\Query;
 
-$$mergeQuery = function ($uri) {
+$mergeQuery = function ($uri) {
     if (!$uri instanceof League\Uri\Interfaces\Uri
         && !$uri instanceof Psr\Http\Message\UriInterface)
     {

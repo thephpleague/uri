@@ -26,11 +26,6 @@ namespace League\Uri\Interfaces;
  */
 interface Query extends Collection, Component
 {
-    /**
-     * URI component delimiter.
-     *
-     * @var string
-     */
     const DELIMITER = '?';
 
     /**

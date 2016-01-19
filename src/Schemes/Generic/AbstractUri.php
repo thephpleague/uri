@@ -270,7 +270,7 @@ abstract class AbstractUri
     protected function hasStandardPort()
     {
         $port = $this->port->toInt();
-        if (empty($port)) {
+        if (null === $port) {
             return true;
         }
 

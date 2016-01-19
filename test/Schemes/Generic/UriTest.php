@@ -177,4 +177,10 @@ class UriTest extends PHPUnit_Framework_TestCase
             ->withHost('')
             ->withPath('data:go');
     }
+
+    public function testEmptyValueDetection()
+    {
+        $expected = '//0:0@0/0?0#0';
+        $this->assertSame($expected, HttpUri::createFromString($expected)->__toString());
+    }
 }

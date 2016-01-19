@@ -68,8 +68,8 @@ class QueryParser
     /**
      * Parse a query string pair
      *
-     * @param callable $decoder a Callable to decode the query string pair
      * @param array    $res     The associative array to add the pair to
+     * @param callable $decoder a Callable to decode the query string pair
      * @param string   $pair    The query string pair
      *
      * @return array
@@ -79,7 +79,7 @@ class QueryParser
         $param = explode('=', $pair, 2);
         $key   = $decoder(array_shift($param));
         $value = array_shift($param);
-        if (!empty($value)) {
+        if (null !== $value) {
             $value = $decoder($value);
         }
 

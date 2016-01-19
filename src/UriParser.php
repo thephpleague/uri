@@ -76,10 +76,10 @@ class UriParser
         return $this->normalizeUriHash(array_merge(
             $this->parseAuthority($parts['authority']),
             [
-                'scheme' => empty($parts['scheme']) ? null : $parts['scheme'],
+                'scheme' => '' === $parts['scheme'] ? null : $parts['scheme'],
                 'path' => $parts['path'],
-                'query' => empty($parts['query']) ? null : mb_substr($parts['query'], 1, null, 'UTF-8'),
-                'fragment' => empty($parts['fragment']) ? null : mb_substr($parts['fragment'], 1, null, 'UTF-8'),
+                'query' => '' === $parts['query'] ? null : mb_substr($parts['query'], 1, null, 'UTF-8'),
+                'fragment' => '' === $parts['fragment'] ? null : mb_substr($parts['fragment'], 1, null, 'UTF-8'),
             ]
         ));
     }
@@ -144,17 +144,17 @@ class UriParser
     protected function parseAuthority($authority)
     {
         $res = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
-        if (empty($authority)) {
+        if ('' === $authority) {
             return $res;
         }
 
         $content = mb_substr($authority, 2, null, 'UTF-8');
-        if (empty($content)) {
+        if ('' === $content) {
             return ['host' => ''] + $res;
         }
 
         preg_match(self::REGEXP_AUTHORITY, $content, $auth);
-        if (!empty($auth['userinfo'])) {
+        if ('' !== $auth['userinfo']) {
             $userinfo = explode(':', $auth['ucontent'], 2);
             $res = ['user' => array_shift($userinfo), 'pass' => array_shift($userinfo)] + $res;
         }
@@ -190,7 +190,7 @@ class UriParser
      *
      * @param string $host
      *
-     * @return int|null
+     * @return string
      */
     protected function filterHost($host)
     {

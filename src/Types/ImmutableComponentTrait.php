@@ -67,7 +67,7 @@ trait ImmutableComponentTrait
      */
     protected function assertValidComponent($str)
     {
-        if (!empty(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $str)) {
+        if (isset(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $str)) {
             throw new InvalidArgumentException('The component contains invalid characters');
         }
     }

@@ -112,7 +112,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
         $this->document = (string) array_shift($parts);
         $mimetype = static::DEFAULT_MIMETYPE;
         $parameters = static::DEFAULT_PARAMETER;
-        if (!empty($mediatype)) {
+        if ('' !== $mediatype) {
             $mediatype = explode(';', $mediatype, 2);
             $mimetype = array_shift($mediatype);
             $parameters = (string) array_shift($mediatype);

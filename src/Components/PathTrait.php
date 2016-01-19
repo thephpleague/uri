@@ -114,9 +114,9 @@ trait PathTrait
      */
     public function hasTrailingSlash()
     {
-        $str = $this->__toString();
+        $path = $this->__toString();
 
-        return !empty($str) && '/' === mb_substr($str, -1, 1, 'UTF-8');
+        return '' !== $path && '/' === mb_substr($path, -1, 1, 'UTF-8');
     }
 
     /**
@@ -142,7 +142,7 @@ trait PathTrait
     {
         $path = $this->__toString();
 
-        return !empty($path) && '/' === mb_substr($path, 0, 1, 'UTF-8');
+        return '' !== $path && '/' === mb_substr($path, 0, 1, 'UTF-8');
     }
 
     /**
@@ -188,7 +188,8 @@ trait PathTrait
         }
 
         $extension = array_search($type, self::$typecodeList);
-        if (!empty($extension)) {
+        $extension = trim($extension);
+        if ('' !== $extension) {
             $extension = ';type='.$extension;
         }
 

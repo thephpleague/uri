@@ -98,7 +98,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     {
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => null];
         $parser = new UriParser();
-        if (!empty($server['HTTP_AUTHORIZATION'])
+        if ('' !== $server['HTTP_AUTHORIZATION']
             && 0 === strpos(strtolower($server['HTTP_AUTHORIZATION']), 'basic')
         ) {
             $res = explode(':', base64_decode(substr($server['HTTP_AUTHORIZATION'], 6)), 2);
@@ -180,7 +180,7 @@ class Http extends AbstractHierarchicalUri implements UriInterface
         }
 
         $server += ['PHP_SELF' => '', 'QUERY_STRING' => ''];
-        if (!empty($server['QUERY_STRING'])) {
+        if ('' !== $server['QUERY_STRING']) {
             $server['QUERY_STRING'] = '?'.$server['QUERY_STRING'];
         }
 

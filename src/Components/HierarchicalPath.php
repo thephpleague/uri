@@ -181,7 +181,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         $basename = array_pop($segments);
         $parts = explode(';', $basename, 2);
         $basenamePart = array_shift($parts);
-        if (empty($basenamePart)) {
+        if ('' === $basenamePart || is_null($basenamePart)) {
             return $this;
         }
 
@@ -210,11 +210,13 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             $basenamePart = mb_substr($basenamePart, 0, $length, 'UTF-8');
         }
 
-        if (!empty($parameterPart)) {
+        $parameterPart = trim($parameterPart);
+        if ('' !== $parameterPart) {
             $parameterPart = ";$parameterPart";
         }
 
-        if (!empty($extension)) {
+        $extension = trim($extension);
+        if ('' !== $extension) {
             $extension = ".$extension";
         }
 

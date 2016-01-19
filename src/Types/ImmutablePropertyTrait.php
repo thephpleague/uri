@@ -47,6 +47,13 @@ trait ImmutablePropertyTrait
         return $newInstance;
     }
 
+    /**
+     * Convert an empty string into a null value
+     *
+     * @param string $value
+     *
+     * @return string|null
+     */
     protected function filterPropertyValue($value)
     {
         if (null === $value) {

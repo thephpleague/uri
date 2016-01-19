@@ -78,12 +78,12 @@ class UserInfo implements UserInfoInterface
     public function __toString()
     {
         $userInfo = $this->user->__toString();
-        if (empty($userInfo)) {
+        if ('' === $userInfo) {
             return $userInfo;
         }
 
         $pass = $this->pass->__toString();
-        if (!empty($pass)) {
+        if ('' !== $pass) {
             $userInfo .= UserInfoInterface::SEPARATOR.$pass;
         }
 

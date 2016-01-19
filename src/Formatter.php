@@ -32,10 +32,8 @@ class Formatter
 {
     use PathFormatterTrait;
 
-    /**
-     * Constants for host formatting
-     */
     const HOST_AS_UNICODE = 1;
+
     const HOST_AS_ASCII   = 2;
 
     /**
@@ -195,7 +193,27 @@ class Formatter
     /**
      * Format an object according to the formatter properties
      *
-     * @param UriInterface|Interfaces\Uri|Interfaces\Components\UriPart $input
+     * @param mixed $input The input must be an object that implements one of
+     *                     the following interfaces:
+     *                     - League\Uri\Interfaces\Uri;
+     *                     - League\Uri\Interfaces\UriPart;
+     *                     - Psr\Http\Message\UriInterface;
+     *
+     * @return string
+     */
+    public function __invoke($input)
+    {
+        return $this->format($input);
+    }
+
+    /**
+     * Format an object according to the formatter properties
+     *
+     * @param mixed $input The input must be an object that implements one of
+     *                     the following interfaces:
+     *                     - League\Uri\Interfaces\Uri;
+     *                     - League\Uri\Interfaces\UriPart;
+     *                     - Psr\Http\Message\UriInterface;
      *
      * @return string
      */
@@ -210,20 +228,8 @@ class Formatter
         }
 
         throw new InvalidArgumentException(
-            'input must be an URI object or a League UriPart implemented object'
+            'input must be an URI object or a League UriPart object'
         );
-    }
-
-    /**
-     * Format an object according to the formatter properties
-     *
-     * @param UriInterface|Interfaces\Uri|Interfaces\Components\UriPart $input
-     *
-     * @return string
-     */
-    public function __invoke($input)
-    {
-        return $this->format($input);
     }
 
     /**
@@ -247,7 +253,7 @@ class Formatter
     }
 
     /**
-     * Format a HostInterface according to the Formatter properties
+     * Format a Host according to the Formatter properties
      *
      * @param HostInterface $host
      *
@@ -263,7 +269,7 @@ class Formatter
     }
 
     /**
-     * Format a Interfaces\Schemes\Uri according to the Formatter properties
+     * Format an Uri according to the Formatter properties
      *
      * @param Uri|UriInterface $uri
      *
@@ -299,7 +305,7 @@ class Formatter
 
         $components = $this->uriParser->parse((string) $uri);
         $port = $components['port'];
-        if (!empty($port)) {
+        if (null !== $port) {
             $port = ':'.$port;
         }
 
@@ -319,7 +325,7 @@ class Formatter
     protected function formatQuery($uri)
     {
         $query = $this->formatUriPart(new Query($uri->getQuery()));
-        if ($this->preserveQuery || '' != $query) {
+        if ($this->preserveQuery || '' !== $query) {
             $query = '?'.$query;
         }
 

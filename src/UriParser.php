@@ -34,11 +34,13 @@ class UriParser
 
     use ValidatorTrait;
 
-    const REGEXP_URI = ',^((?<scheme>[^:/?\#]+):)?
-        (?<authority>//([^/?\#]*))?
-        (?<path>[^?\#]*)
-        (?<query>\?([^\#]*))?
-        (?<fragment>\#(.*))?,x';
+    const REGEXP_URI = ',^
+        ((?<scheme>[^:/?\#]+):)?      # URI scheme component
+        (?<authority>//([^/?\#]*))?   # URI authority part
+        (?<path>[^?\#]*)              # URI path component
+        (?<query>\?([^\#]*))?         # URI query component
+        (?<fragment>\#(.*))?          # URI fragment component
+    ,x';
 
     const REGEXP_AUTHORITY = ',^(?<userinfo>(?<ucontent>.*?)@)?(?<hostname>.*?)?$,';
 
@@ -271,6 +273,6 @@ class UriParser
             return $pass;
         }
 
-        throw new InvalidArgumentException('The user component contains invalid characters');
+        throw new InvalidArgumentException('The pass component contains invalid characters');
     }
 }

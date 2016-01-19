@@ -9,7 +9,7 @@ URI
 [![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The `League\Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
+The `Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
 
 Highlights
 ------
@@ -24,7 +24,7 @@ Highlights
 Documentation
 ------
 
-Full documentation can be found at [url.thephpleague.com](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages](https://github.com/thephpleague/url/tree/gh-pages) branch
+Full documentation can be found at [url.thephpleague.com](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages](https://github.com/thephpleague/uri/tree/gh-pages) branch
 
 System Requirements
 -------
@@ -40,7 +40,7 @@ To use the library.
 Install
 -------
 
-Install `League\Uri` using Composer.
+Install `Uri` using Composer.
 
 ```
 $ composer require league/uri
@@ -49,7 +49,7 @@ $ composer require league/uri
 Testing
 -------
 
-`League\Uri` has a [PHPUnit](https://phpunit.de) test suite and a coding style compliance test suite using [PHP CS Fixer](http://cs.sensiolabs.org/). To run the tests, run the following command from the project folder.
+`Uri` has a [PHPUnit](https://phpunit.de) test suite and a coding style compliance test suite using [PHP CS Fixer](http://cs.sensiolabs.org/). To run the tests, run the following command from the project folder.
 
 ``` bash
 $ composer test

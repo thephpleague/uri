@@ -1,12 +1,12 @@
 <?php
 /**
- * League.Url (http://url.thephpleague.com)
+ * League.Uri (http://uri.thephpleague.com)
  *
- * @package   League.url
+ * @package   League.uri
  * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @copyright 2013-2015 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
- * @version   4.0.0
+ * @version   4.1.0
  * @link      https://github.com/thephpleague/uri/
  */
 namespace League\Uri\Schemes\Generic;
@@ -238,7 +238,7 @@ abstract class AbstractUri
     protected function getSchemeSpecificPart()
     {
         $auth = $this->getAuthority();
-        if (!empty($auth)) {
+        if ('' !== $auth) {
             $auth = '//'.$auth;
         }
 
@@ -275,7 +275,7 @@ abstract class AbstractUri
         }
 
         $scheme = $this->scheme->__toString();
-        if (empty($scheme)) {
+        if ('' === $scheme) {
             return false;
         }
 
@@ -297,8 +297,8 @@ abstract class AbstractUri
 
     /**
      * Tell whether the current URI is valid.
-     * 
-     * The URI object validity depends on the scheme. This method 
+     *
+     * The URI object validity depends on the scheme. This method
      * MUST be implemented on every URI object
      *
      * @return bool
@@ -321,7 +321,7 @@ abstract class AbstractUri
         $path = array_shift($path);
         $str = $this->scheme->getUriComponent().$this->getAuthority();
 
-        return !(empty($str) && strpos($path, '/') === false);
+        return !('' === $str && strpos($path, '/') === false);
     }
 
     /**

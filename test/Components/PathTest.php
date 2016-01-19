@@ -51,9 +51,9 @@ class PathTest extends PHPUnit_Framework_TestCase
         return [
             'contains ?' => ['to?to'],
             'contains #' => ['to#to'],
-            'bool'      => [true],
-            'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
+            'bool'       => [true],
+            'Std Class'  => [(object) 'foo'],
+            'float'      => [1.2],
             'array'      => [['foo']],
         ];
     }

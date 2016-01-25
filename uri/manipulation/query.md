@@ -21,6 +21,8 @@ echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 
 The sorting algorithm can be change at any given time. By default if none is provided. The sorting is done using PHP's `ksort` sort flag parameters. But you can also provide a callable as sorting mechanism using the `withAlgorithm` method.
 
+<p class="message-warning">The <code>withAlgorithm</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\KsortQuery;
@@ -52,6 +54,8 @@ echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%2
 
 At any given time you can create a new modifier with another query string to merge using the `withQuery` method.
 
+<p class="message-warning">The <code>withQuery</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\MergeQuery;
@@ -64,7 +68,6 @@ $altModifier = $modifier->withQuery('foo=1');
 $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://example.com/test.php?kingkong=toto&foo=1#doc3"
 ~~~
-
 
 ## Removing query keys
 
@@ -81,6 +84,8 @@ echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
 ~~~
 
 You can update the keys chosen by using the `withKeys` method
+
+<p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -118,6 +123,8 @@ You can update the URI modifier using:
 	- the `Collection::FILTER_USE_KEY` to filter against the query parameter name;
 	- the `Collection::FILTER_USE_VALUE` to filter against the query parameter value;
 	- the `Collection::FILTER_USE_BOTH` to filter against the query parameter value and name;
+
+<p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
 
 If no flag is used, by default the `Collection::FILTER_USE_VALUE` flag is used.
 If you are using PHP 5.6+ you can directly use PHP's `array_filter` constant:

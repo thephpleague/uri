@@ -97,6 +97,8 @@ echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 
 ### Updating the modifier parameters
 
+<p class="message-warning">The <code>withLabel</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 With the following URI modifiers:
 
 - `AppendLabel`
@@ -120,6 +122,8 @@ echo $altUri; //display "http://admin.example.com/path/to/the/sky/"
 ~~~
 
 In case of the `ReplaceLabel` modifier, the offset can also be modified.
+
+<p class="message-warning">The <code>withOffset</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -149,6 +153,8 @@ echo $newUri; //display "http://example.com/path/the/sky/"
 ~~~
 
 You can update the offsets chosen by using the `withKeys` method
+
+<p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -180,6 +186,8 @@ echo $newUri; //display "http://example/path/to/the/sky/"
 ~~~
 
 You can update the URI modifier using:
+
+<p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
 
 - `withCallable` method to alter the filtering callable
 - `withFlag` method to alter the filtering flag. Depending on which parameter you want to use to filter the host you can use:

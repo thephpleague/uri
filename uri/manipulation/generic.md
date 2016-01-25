@@ -22,12 +22,12 @@ echo $newUri; //displays "http://www.example.com/hello/p#~toto"
 
 ## Applying multiple modifiers to a single URI
 
-Since all modifiers returns a URI object instance it is possible to chain them together. To ease this chaining the package comes bundle with the `League\Uri\Modifiers\Pipeline` class. The class uses the pipeline pattern to modify the URI by passing the results from one modifier to the next one. 
+Since all modifiers returns a URI object instance it is possible to chain them together. To ease this chaining the package comes bundle with the `League\Uri\Modifiers\Pipeline` class. The class uses the pipeline pattern to modify the URI by passing the results from one modifier to the next one.
 
 The `League\Uri\Modifiers\Pipeline` uses two methods:
 
 - `Pipeline::pipe` to attach a URI modifier following the *First In First Out* rule.
-- `Pipeline::process` to apply sequencially each attached URI modifier to the submitted URI object. 
+- `Pipeline::process` to apply sequencially each attached URI modifier to the submitted URI object.
 
 
 ~~~php

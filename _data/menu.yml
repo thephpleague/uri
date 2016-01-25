@@ -15,10 +15,10 @@ Uri Schemes:
     Extension Guide: '/uri/extension/'
 Uri manipulation:
     Overview: '/uri/manipulation/'
-    Host Modifiers: '/uri/manipulation/host/'
-    Query Modifiers: '/uri/manipulation/query/'
-    Path Modifiers: '/uri/manipulation/path/'
     Uri Modifiers: '/uri/manipulation/generic/'
+    Host Modifiers: '/uri/manipulation/host/'
+    Path Modifiers: '/uri/manipulation/path/'
+    Query Modifiers: '/uri/manipulation/query/'
 Uri Parts API:
     Overview: '/components/overview/'
     User Information: '/components/userinfo/'

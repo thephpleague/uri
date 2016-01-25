@@ -107,4 +107,4 @@ var_dump($parser($uri));
 //];
 ~~~
 
-This invalid HTTP URI will be succefully parsed by the class.
+<p class="message-warning">This invalid HTTP URI is succefully parsed.</p>

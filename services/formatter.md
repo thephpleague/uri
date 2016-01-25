@@ -34,6 +34,8 @@ public Formatter::setHostEncoding(int $format): void
 public Formatter::getHostEncoding(void): int
 ~~~~~~
 
+<p class="message-warning">The <code>getHostEncoding</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
+
 A host can be output as encoded in ascii or in unicode. By default the formatter encode the host in unicode. To set the encoding you need to specify one of the predefined constant:
 
 - `Formatter::HOST_AS_UNICODE` to set the host encoding to IDN;
@@ -60,6 +62,8 @@ public Formatter::setQueryEncoding(int $encoding): void
 public Formatter::getQueryEncoding(void): int
 ~~~~~~
 
+<p class="message-warning">The <code>getQueryEncoding</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
+
 A `League\Uri\Components\Query` object is by default encoded by following RFC 3986. If you need to change this encoding to the old RFC 1738, you just need to update the query encoding as shown below using the following predefined constant:
 
 - `PHP_QUERY_RFC3986` to set the query encoding as per RFC 3986;
@@ -84,7 +88,9 @@ echo $formatter($query);         //displays foo=ba+r&baz=bar
 ~~~php
 public Formatter::setQuerySeparator(string $separator): void
 public Formatter::getQuerySeparator(void): string
-~~~~~~
+~~~
+
+<p class="message-warning">The <code>getQuerySeparator</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Formatter;

@@ -137,6 +137,8 @@ echo $newUri; //display "http://www.example.com/path/to/the/sea"
 
 ### Updating the modifier parameters
 
+<p class="message-warning">The <code>withSegment</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 With the following URI modifiers:
 
 - `AppendSegment`
@@ -160,6 +162,8 @@ echo $altUri; //display "http://www.example.com/path/to/the/sun/"
 ~~~
 
 In case of the `ReplaceSegment` modifier, the offset can also be modified.
+
+<p class="message-warning">The <code>withOffset</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -190,6 +194,8 @@ echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
 
 You can update the extension chosen by using the `withExtension` method
 
+<p class="message-warning">The <code>withExtension</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\Extension;
@@ -218,6 +224,8 @@ echo $newUri; //display "http://www.example.com/path/the/and/above"
 ~~~
 
 You can update the offsets chosen by using the `withKeys` method
+
+<p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -250,6 +258,8 @@ echo $newUri; //display "http://www.example.com/to/"
 
 You can update the URI modifier using:
 
+<p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
+
 - `withCallable` method to alter the filtering function
 - `withFlag` method to alter the filtering flag. depending on which parameter you want to use to filter the path you can use:
 	- the `Collection::FILTER_USE_KEY` to filter against the segment offset;
@@ -280,7 +290,6 @@ echo $altUri; //display "http://www.example.com/path/the/sky/"
 ~~~
 
 ## Ftp Uri Modifiers
-
 
 ### Add, Update, Remove the FTP typecode information
 
@@ -322,7 +331,10 @@ $newUri = $modifier($uri);
 echo $newUri; //display 'ftp://thephpleague.com/path/to/image.png'
 ~~~
 
-Just like others modifier it is possible to update the modifier typecode settings using the `Typecode::withTypecode` method.
+
+Just like others modifier it is possible to update the modifier typecode settings using the `Typecode::withType` method.
+
+<p class="message-warning">The <code>withType</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
 
 <p class="message-warning">When modifying the typecode the class only validate the return string. Additional check should be done to ensure that the path is valid for a given typecode.</p>
 
@@ -345,6 +357,8 @@ echo $newUri; //display "data:text/plain;charset=utf-8,Hello%20World!"
 
 You can update the offsets chosen by using the `withParameters` method
 
+<p class="message-warning">The <code>withParameters</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
 ~~~php
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriParameters;
@@ -357,7 +371,6 @@ $altModifier = $modifier->withParameters("charset=utf-16;foo=bar");
 $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "data:text/plain;charset=utf-16;foo=bar,Hello%20World!"
 ~~~
-
 
 ### Transcoding Data URI from ASCII to Binary
 

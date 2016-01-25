@@ -1,8 +1,8 @@
-#Changelog
+# Changelog
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next- 2016-xx-xx
+## Next - 2016-xx-xx
 
 ### Added
 
@@ -20,7 +20,22 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
-- Nothing
+- `Formatter::getHostEncoding`
+- `Formatter::getQueryEncoding`
+- `Formatter::getQuerySeparator`
+- `Modifiers\Filters\Flag::withFlags`
+- `Modifiers\Filters\ForCallbable::withCallable`
+- `Modifiers\Filters\ForCallbable::withCallable`
+- `Modifiers\Filters\Keys::withKeys`
+- `Modifiers\Filters\Label::withLabel`
+- `Modifiers\Filters\Offset::withOffset`
+- `Modifiers\Filters\QueryString::withQuery`
+- `Modifiers\Filters\Segment::withSegment`
+- `Modifiers\Filters\Uri::withUri`
+- `Modifiers\DataUriParameters\withParameters`
+- `Modifiers\Extension\withExtension`
+- `Modifiers\KsortQuery\withAlgorithm`
+- `Modifiers\Typecode\withType`
 
 ### Remove
 

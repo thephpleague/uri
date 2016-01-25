@@ -19,6 +19,7 @@ use InvalidArgumentException;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait Offset
 {
@@ -31,6 +32,10 @@ trait Offset
 
     /**
      * Return a new modifier with a new offset key
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @param int $offset
      *

@@ -17,6 +17,7 @@ namespace League\Uri\Modifiers\Filters;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait Keys
 {
@@ -29,6 +30,10 @@ trait Keys
 
     /**
      * Return a new instance with a new set of keys
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @param array $keys the list of keys to remove from the collection
      *

@@ -71,6 +71,10 @@ class Typecode extends AbstractPathModifier
     /**
      * Return a new instance with a different extension to use
      *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
+     *
      * @param int $type
      *
      * @return static

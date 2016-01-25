@@ -20,6 +20,7 @@ use League\Uri\Types\ValidatorTrait;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait Segment
 {
@@ -34,6 +35,10 @@ trait Segment
 
     /**
      * Return a instance with the specified path
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @param string $segment the data to be merged query can be
      *

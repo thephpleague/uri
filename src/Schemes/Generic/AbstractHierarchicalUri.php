@@ -83,7 +83,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri
      */
     public static function createFromString($uri = '')
     {
-        return static::createFromComponents((new UriParser())->parse($uri));
+        return static::createFromComponents((new UriParser())->__invoke($uri));
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri
      */
     public static function createFromComponents(array $components)
     {
-        $components = (new UriParser())->normalizeUriHash($components);
+        $components = self::normalizeUriHash($components);
 
         return new static(
             new Scheme($components['scheme']),

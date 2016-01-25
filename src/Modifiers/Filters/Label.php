@@ -20,6 +20,7 @@ use League\Uri\Types\ValidatorTrait;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait Label
 {
@@ -34,6 +35,10 @@ trait Label
 
     /**
      * Return a instance with the specified host
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @param string $label the data to be used
      *

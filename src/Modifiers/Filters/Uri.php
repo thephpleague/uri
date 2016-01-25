@@ -21,6 +21,7 @@ use Psr\Http\Message\UriInterface;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait Uri
 {
@@ -35,6 +36,10 @@ trait Uri
 
     /**
      * Return a new instance with a new set of keys
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *

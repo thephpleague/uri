@@ -43,6 +43,10 @@ class DataUriParameters extends AbstractPathModifier
     /**
      * Return a new modifier with a new parameters string to update
      *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
+     *
      * @param string $parameters the data to be used
      *
      * @return $this

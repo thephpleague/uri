@@ -69,6 +69,10 @@ class KsortQuery extends AbstractQueryModifier
     /**
      * Return a new instance with a new sort algorithm
      *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
+     *
      * @param callable|int $sort a PHP sort flag constant or a comparison function
      *                           which must return an integer less than, equal to,
      *                           or greater than zero if the first argument is

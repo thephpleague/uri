@@ -17,6 +17,7 @@ namespace League\Uri\Schemes\Generic;
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
+ * @internal
  */
 trait AuthorityValidatorTrait
 {

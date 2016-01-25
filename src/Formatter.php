@@ -18,7 +18,7 @@ use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Interfaces\UriPart;
-use League\Uri\Schemes\Generic\PathFormatterTrait;
+use League\Uri\Schemes\Generic\UriBuilderTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -30,7 +30,7 @@ use Psr\Http\Message\UriInterface;
  */
 class Formatter
 {
-    use PathFormatterTrait;
+    use UriBuilderTrait;
 
     const HOST_AS_UNICODE = 1;
 
@@ -49,13 +49,6 @@ class Formatter
      * @var int
      */
     protected $queryEncoding = PHP_QUERY_RFC3986;
-
-    /**
-     * URI Parser object
-     *
-     * @var UriParser
-     */
-    protected $uriParser;
 
     /**
      * Query Parser object
@@ -90,7 +83,6 @@ class Formatter
      */
     public function __construct()
     {
-        $this->uriParser = new UriParser();
         $this->queryParser = new QueryParser();
     }
 
@@ -109,6 +101,10 @@ class Formatter
 
     /**
      * Host encoding getter
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @return int
      */
@@ -133,6 +129,10 @@ class Formatter
     /**
      * Query encoding getter
      *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
+     *
      * @return int
      */
     public function getQueryEncoding()
@@ -154,6 +154,10 @@ class Formatter
 
     /**
      * Query separator getter
+     *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.1
      *
      * @return string
      */
@@ -303,14 +307,18 @@ class Formatter
             return '';
         }
 
-        $components = $this->uriParser->parse((string) $uri);
+        static $parser;
+        if (!$parser) {
+            $parser = new UriParser();
+        }
+
+        $components = $parser((string) $uri);
         $port = $components['port'];
         if (null !== $port) {
             $port = ':'.$port;
         }
 
-        return '//'
-            .$this->uriParser->buildUserInfo($components['user'], $components['pass'])
+        return '//'.$this->buildUserInfo($components['user'], $components['pass'])
             .$this->formatHost(new Host($components['host']))
             .$port;
     }

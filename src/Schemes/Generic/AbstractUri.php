@@ -35,7 +35,7 @@ abstract class AbstractUri
 
     use ImmutablePropertyTrait;
 
-    use PathFormatterTrait;
+    use UriBuilderTrait;
 
     /**
      * Host Component

@@ -14,7 +14,6 @@ namespace League\Uri\Schemes;
 use InvalidArgumentException;
 use League\Uri\Components\Host;
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
-use League\Uri\UriParser;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -97,7 +96,6 @@ class Http extends AbstractHierarchicalUri implements UriInterface
     protected static function fetchServerUserInfo(array $server)
     {
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => null];
-        $parser = new UriParser();
         if ('' !== $server['HTTP_AUTHORIZATION']
             && 0 === strpos(strtolower($server['HTTP_AUTHORIZATION']), 'basic')
         ) {
@@ -105,10 +103,10 @@ class Http extends AbstractHierarchicalUri implements UriInterface
             $login = array_shift($res);
             $pass = array_shift($res);
 
-            return $parser->buildUserInfo(rawurlencode($login), rawurlencode($pass));
+            return self::buildUserInfo(rawurlencode($login), rawurlencode($pass));
         }
 
-        return $parser->buildUserInfo(rawurlencode($server['PHP_AUTH_USER']), rawurlencode($server['PHP_AUTH_PW']));
+        return self::buildUserInfo(rawurlencode($server['PHP_AUTH_USER']), rawurlencode($server['PHP_AUTH_PW']));
     }
 
     /**

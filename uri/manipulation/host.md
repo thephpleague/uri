@@ -3,11 +3,11 @@ layout: default
 title: URI Modifiers which affect the URI Host component
 ---
 
-# Host component modifiers
+# Host modifiers
 
-## Modifying URI host
+Here's the documentation for the included URI modifiers which are modifying the URI host component.
 
-### Transcoding the host to ascii
+## Transcoding the host to ascii
 
 Transcodes the host into its ascii representation according to RFC3986:
 
@@ -18,10 +18,10 @@ use League\Uri\Modifiers\HostToAscii;
 $uri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
 $modifier = new HostToAscii();
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/"
+echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
 ~~~
 
-### Transcoding the host to its IDN form
+## Transcoding the host to its IDN form
 
 Transcodes the host into its idn representation according to RFC3986:
 
@@ -29,13 +29,14 @@ Transcodes the host into its idn representation according to RFC3986:
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\HostToUnicode;
 
-$uri = HttpUri::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/");
+$uriString = "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/";
+$uri = HttpUri::createFromString($uriString);
 $modifier = new HostToUnicode();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 ~~~
 
-### Removing Zone Identifier
+## Removing Zone Identifier
 
 Removes the host zone identifier if present
 
@@ -43,17 +44,28 @@ Removes the host zone identifier if present
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveZoneIdentifier;
 
-$uri = HttpUri::createFromString('http://[fe80::1234%25eth0-1]/path/to/the/sky.php');
+$uriString = 'http://[fe80::1234%25eth0-1]/path/to/the/sky.php';
+$uri = HttpUri::createFromString($uriString);
 $modifier = new RemoveZoneIdentifier();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
 ~~~
 
-## Modifying URI host labels
+## Appending labels
 
-### Appending labels
+### Description
+
+~~~php
+public AppendLabel::__construct(string $label)
+~~~
 
 Appends a label or a host to the current URI host.
+
+### Parameters
+
+`$label` must be a string
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -65,9 +77,21 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com.fr/path/to/the/sky/"
 ~~~
 
-### Prepending labels
+## Prepending labels
+
+### Description
+
+~~~php
+public PrependLabel::__construct(string $label)
+~~~
 
 Prepends a label or a host to the current URI path.
+
+### Parameters
+
+`$label` must be a string
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -79,9 +103,24 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://shop.www.example.com/path/to/the/sky/and/above"
 ~~~
 
-### Replacing labels
+## Replacing labels
+
+### Description
+
+~~~php
+public ReplaceLabel::__construct(int $offset, string $label)
+~~~
 
 Replaces a label from the current URI host with a new label or a host.
+
+### Parameters
+
+- `$label` must be a string;
+- `$offset` must be a valid positive integer or `0`;
+
+<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -93,11 +132,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 ~~~
 
-<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
+## Updating the modifier parameters
 
-### Updating the modifier parameters
-
-<p class="message-warning">The <code>withLabel</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+<p class="message-warning">The <code>withLabel</code> and <code>withOffset</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release.</p>
 
 With the following URI modifiers:
 
@@ -106,7 +143,7 @@ With the following URI modifiers:
 - `ReplaceLabel`
 
 You can update the label string using the `withLabel` method.
-This method expect a valid label/host and will return a new instance with the updated info.
+This method expects a valid label/host and will return a new instance with the updated info.
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -123,8 +160,6 @@ echo $altUri; //display "http://admin.example.com/path/to/the/sky/"
 
 In case of the `ReplaceLabel` modifier, the offset can also be modified.
 
-<p class="message-warning">The <code>withOffset</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
-
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
@@ -138,9 +173,19 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.thephpleague.com/path/to/the/sky/"
 ~~~
 
-### Removing selected labels
+## Removing selected labels
+
+### Description
+
+~~~php
+public RemoveLabels::__construct(array $keys = [])
+~~~
 
 Removes selected labels from the current URI host. Labels are indicated using an array containing the labels offsets.
+
+<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -152,9 +197,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
 ~~~
 
-You can update the offsets chosen by using the `withKeys` method
-
 <p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
+
+You can update the offsets chosen by using the `withKeys` method
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -169,9 +214,34 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://example/path/to/the/sky/"
 ~~~
 
-### Filtering selected labels
+## Filtering selected labels
 
-Filters selected labels from the current URI path to keep. The filtering method must be a callable. You can filter the labels based on their value or on their offset.
+### Description
+
+~~~php
+public FilterLabel::__construct(callable $callable, int $flag = 0)
+~~~
+
+Filter the labels from the current URI host to keep.
+
+### Parameters
+
+- The `$callable` argument is a `callable` used by PHP's `array_filter`
+- The `$flag` argument is a `int` used by PHP's `array_filter`
+
+<p class="message-notice">
+For Backward compatibility with PHP5.5 which lacks these flags constant you can use the library constants instead:</p>
+
+<table>
+<thead>
+<tr><th>League\Uri\Interfaces\Collection constants</th><th>PHP's 5.6+ constants</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Collection::FILTER_USE_KEY</code></td><td><code>ARRAY_FILTER_USE_KEY</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_BOTH</code></td><td><code>ARRAY_FILTER_USE_BOTH</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_VALUE</code></td><td><code>0</code></td></tr>
+</tbody>
+</table>
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -185,21 +255,14 @@ $modifier = new FilterLabel(function ($value) {
 echo $newUri; //display "http://example/path/to/the/sky/"
 ~~~
 
-You can update the URI modifier using:
+### Methods
 
 <p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
 
+You can update the URI modifier using:
+
 - `withCallable` method to alter the filtering callable
-- `withFlag` method to alter the filtering flag. Depending on which parameter you want to use to filter the host you can use:
-	- the `Collection::FILTER_USE_KEY` to filter against the label offset;
-	- the `Collection::FILTER_USE_VALUE` to filter against the label value;
-	- the `Collection::FILTER_USE_BOTH` to filter against the label value and offset;
-
-If no flag is used, by default the `Collection::FILTER_USE_VALUE` flag is used.
-If you are using PHP 5.6+ you can directly use PHP's `array_filter` constant:
-
-- `ARRAY_FILTER_USE_KEY` in place of `Collection::FILTER_USE_KEY`
-- `ARRAY_FILTER_USE_BOTH` in place of `Collection::FILTER_USE_BOTH`
+- `withFlag` method to alter the filtering flag.
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;

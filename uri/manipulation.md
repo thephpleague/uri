@@ -106,7 +106,7 @@ The anonymous function `$mergeQuery` is an rough example of a URI modifier. The 
 
 URI Modifiers can be grouped for simplicity in different categories that deals with
 
-- [manipulating the URI host](/uri/manipulation/host/);
-- [manipulating the URI query](/uri/manipulation/query/);
-- [manipulating the URI path](/uri/manipulation/path/);
-- [manipulating multiple URI components](/uri/manipulation/generic/);;
+- [manipulating the URI](/uri/manipulation/generic/);
+- [manipulating the URI host component](/uri/manipulation/host/);
+- [manipulating the URI path component](/uri/manipulation/path/);
+- [manipulating the URI query component](/uri/manipulation/query/);

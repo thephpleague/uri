@@ -3,11 +3,11 @@ layout: default
 title: URI Modifiers which affect the URI Path component
 ---
 
-# Path component modifiers
+# Path modifiers
 
-## Modifying URI path
+Here's the documentation for the included URI modifiers which are modifying the URI path component.
 
-### Removing dot segments
+## Removing dot segments
 
 Removes dot segments according to RFC3986:
 
@@ -21,7 +21,7 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/to/the/sky/"
 ~~~
 
-### Removing empty segments
+## Removing empty segments
 
 Removes adjacent separators with empty segment.
 
@@ -35,7 +35,7 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/"
 ~~~
 
-### Removing trailing slash
+## Removing trailing slash
 
 Removes the path trailing slash if present
 
@@ -49,7 +49,7 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky"
 ~~~
 
-### Adding trailing slash
+## Adding trailing slash
 
 Adds the path trailing slash if not present
 
@@ -63,7 +63,7 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky"
 ~~~
 
-### Removing leading slash
+## Removing leading slash
 
 Removes the path leading slash if present.
 
@@ -77,7 +77,7 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "path/to/the/sky"
 ~~~
 
-### Adding leading slash
+## Adding leading slash
 
 Adds the path leading slash if not present.
 
@@ -91,11 +91,21 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "/path/to/the/sky"
 ~~~
 
-## Modifying URI path segments
+## Appending segments
 
-### Appending segments
+### Description
+
+~~~php
+public AppendSegment::__construct(string $segment)
+~~~
 
 Appends a segment or a path to the current URI path.
+
+### Parameters
+
+`$segment` must be a string
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -107,9 +117,21 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 ~~~
 
-### Prepending segments
+## Prepending segments
+
+### Description
+
+~~~php
+public PrependSegment::__construct(string $segment)
+~~~
 
 Prepends a segment or a path to the current URI path.
+
+### Parameters
+
+`$segment` must be a string
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -121,9 +143,22 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky/and/above"
 ~~~
 
-### Replacing segments
+## Replacing segments
+
+### Description
+
+~~~php
+public ReplaceSegment::__construct(int $offset, string $segment)
+~~~
 
 Replaces a segment from the current URI path with a new segment or path.
+
+### Parameters
+
+- `$segment` must be a string;
+- `$offset` must be a valid positive integer or `0`;
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -135,9 +170,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea"
 ~~~
 
-### Updating the modifier parameters
+## Updating the modifier parameters
 
-<p class="message-warning">The <code>withSegment</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+<p class="message-warning">The <code>withSegment</code> and <code>withOffset</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release.</p>
 
 With the following URI modifiers:
 
@@ -163,8 +198,6 @@ echo $altUri; //display "http://www.example.com/path/to/the/sun/"
 
 In case of the `ReplaceSegment` modifier, the offset can also be modified.
 
-<p class="message-warning">The <code>withOffset</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
-
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
@@ -178,9 +211,21 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.example.com/sun/to/the/sky/"
 ~~~
 
-### Updating path extension
+## Updating path extension
+
+### Description
+
+~~~php
+public Extension::__construct(string $extension)
+~~~
 
 Adds, update and or remove the path extension from the current URI path.
+
+### Parameters
+
+`$extension` must be a valid string extension
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -192,9 +237,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
 ~~~
 
-You can update the extension chosen by using the `withExtension` method
-
 <p class="message-warning">The <code>withExtension</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
+You can update the extension chosen by using the `withExtension` method
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -209,9 +254,17 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.example.com/and/above/path/to/the/sky.php"
 ~~~
 
-### Removing selected segments
+## Removing selected segments
+
+### Description
+
+~~~php
+public RemoveSegments::__construct(array $keys = [])
+~~~
 
 Removes selected segments from the current URI path.
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -223,9 +276,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/the/and/above"
 ~~~
 
-You can update the offsets chosen by using the `withKeys` method
-
 <p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
+You can update the offsets chosen by using the `withKeys` method
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -240,9 +293,36 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.example.com/to/sky/"
 ~~~
 
-### Filtering selected segments
+## Filtering selected segments
+
+### Description
+
+~~~php
+public FilterSegments::__construct(callable $callable, int $flag = 0)
+~~~
 
 Filter selected segments from the current URI path to keep.
+
+### Parameters
+
+- The `$callable` argument is a `callable` used by PHP's `array_filter`
+- The `$flag` argument is a `int` used by PHP's `array_filter`
+
+<p class="message-notice">
+For Backward compatibility with PHP5.5 which lacks these flags constant you can use the library constants instead:</p>
+
+<table>
+<thead>
+<tr><th>League\Uri\Interfaces\Collection constants</th><th>PHP's 5.6+ constants</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Collection::FILTER_USE_KEY</code></td><td><code>ARRAY_FILTER_USE_KEY</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_BOTH</code></td><td><code>ARRAY_FILTER_USE_BOTH</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_VALUE</code></td><td><code>0</code></td></tr>
+</tbody>
+</table>
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -261,16 +341,7 @@ You can update the URI modifier using:
 <p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
 
 - `withCallable` method to alter the filtering function
-- `withFlag` method to alter the filtering flag. depending on which parameter you want to use to filter the path you can use:
-	- the `Collection::FILTER_USE_KEY` to filter against the segment offset;
-	- the `Collection::FILTER_USE_VALUE` to filter against the segment value;
-	- the `Collection::FILTER_USE_BOTH` to filter against the segment value and offset;
-
-If no flag is used, by default the `Collection::FILTER_USE_VALUE` flag is used.
-If you are using PHP 5.6+ you can directly use PHP's `array_filter` constant:
-
-- `ARRAY_FILTER_USE_KEY` in place of `Collection::FILTER_USE_KEY`
-- `ARRAY_FILTER_USE_BOTH` in place of `Collection::FILTER_USE_BOTH`
+- `withFlag` method to alter the filtering flag.
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -289,11 +360,19 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.example.com/path/the/sky/"
 ~~~
 
-## Ftp Uri Modifiers
+## Add, Update, Remove the FTP typecode information
 
-### Add, Update, Remove the FTP typecode information
+### Description
 
-The FTP typecode information can be modified using the `Typecode` URI modifier. This methods returns a new URI object with the modified typecode. With this URI modifier you can:
+~~~php
+public Typecode::__construct(int $flag = 0)
+~~~
+
+This methods returns a new URI object with the modified typecode.
+
+### Examples
+
+With this URI modifier you can:
 
 - suffix the path with a new typecode
 
@@ -339,31 +418,43 @@ Just like others modifier it is possible to update the modifier typecode setting
 <p class="message-warning">When modifying the typecode the class only validate the return string. Additional check should be done to ensure that the path is valid for a given typecode.</p>
 
 
-## Data Uri Modifiers
+## Update Data URI parameters
 
-### Update Data URI parameters
+### Description
+
+~~~php
+public DataUriParameters::__construct(string $parameters = 0)
+~~~
 
 Removes selected segments from the current URI path.
+
+### Parameters
+
+`$parameters` is a string containing the parameters to be associated with the Data Uri.
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriParameters;
 
-$uri = DataUri::createFromString("data:text/plain;charset=US-ASCII,Hello%20World!");
+$uriString = "data:text/plain;charset=US-ASCII,Hello%20World!";
+$uri = DataUri::createFromString($uriString);
 $modifier = new DataUriParameters("charset=utf-8");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "data:text/plain;charset=utf-8,Hello%20World!"
 ~~~
 
-You can update the offsets chosen by using the `withParameters` method
-
 <p class="message-warning">The <code>withParameters</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+
+You can update the offsets chosen by using the `withParameters` method
 
 ~~~php
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriParameters;
 
-$uri = DataUri::createFromString("data:text/plain;charset=US-ASCII,Hello%20World!");
+$uriString = "data:text/plain;charset=US-ASCII,Hello%20World!";
+$uri = DataUri::createFromString($uriString);
 $modifier = new DataUriParameters("charset=utf-8");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "data:text/plain;charset=utf-8,Hello%20World!"
@@ -372,7 +463,7 @@ $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "data:text/plain;charset=utf-16;foo=bar,Hello%20World!"
 ~~~
 
-### Transcoding Data URI from ASCII to Binary
+## Transcoding Data URI from ASCII to Binary
 
 Transcoding a data URI path from text to its base64 encoded version
 
@@ -380,13 +471,14 @@ Transcoding a data URI path from text to its base64 encoded version
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriToBinary;
 
-$uri = DataUri::createFromString("data:text/plain;charset=US-ASCII,Hello%20World!");
+$uriString = "data:text/plain;charset=US-ASCII,Hello%20World!";
+$uri = DataUri::createFromString($uriString);
 $modifier = new DataUriToBinary();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQh"
 ~~~
 
-### Transcoding Data URI from Binary to ascii
+## Transcoding Data URI from Binary to ascii
 
 Transcoding a data URI path from text to its base64 encoded version
 
@@ -394,7 +486,8 @@ Transcoding a data URI path from text to its base64 encoded version
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriToAscii;
 
-$uri = DataUri::createFromString("data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQh");
+$uriString = "data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQh";
+$uri = DataUri::createFromString($uriString);
 $modifier = new DataUriToAscii();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "data:text/plain;charset=US-ASCII,Hello%20World!"

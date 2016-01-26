@@ -5,9 +5,23 @@ title: URI Modifiers which affect multiple URI components
 
 # Generic URI Modifiers
 
+Here's the documentation for the included URI modifiers which are modifying multiple URI components at once.
+
 ## Resolving a relative URI
 
+### Description
+
+~~~php
+public Resolve::__construct(mixed $uri)
+~~~
+
 The `Resolve` URI Modifier provides the mean for resolving an URI as a browser would for an anchor tag. When performing URI resolution the returned URI is normalized according to RFC3986 rules. The uri to resolved must be another Uri object.
+
+### Parameters
+
+`$uri` **must be** a `League\Uri\Interfaces\Uri` or a `Psr\Http\Message` implemented object
+
+### Example
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -29,6 +43,7 @@ The `League\Uri\Modifiers\Pipeline` uses two methods:
 - `Pipeline::pipe` to attach a URI modifier following the *First In First Out* rule.
 - `Pipeline::process` to apply sequencially each attached URI modifier to the submitted URI object.
 
+<p class="message-notice">The <code>Pipeline::process</code> is an alias of <code>Pipeline::__invoke</code>.</p>
 
 ~~~php
 use League\Uri\Modifiers\HostToAscii;

@@ -25,7 +25,7 @@ If a scheme is present and the scheme specific part of a Http URI is not empty t
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri = HttpUri::createFromString('http://url.thephpleague.com/');
+$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withHost('')->withScheme('')->__toString();
 // will throw an RuntimeException
 // you can not remove the Host if a scheme is present
@@ -36,7 +36,7 @@ Instead you are require to proceed as below
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri = HttpUri::createFromString('http://url.thephpleague.com/');
+$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost('')->__toString(); //displays "/"
 ~~~
 
@@ -53,7 +53,7 @@ The Http URI class uses the specialized [HierarchicalPath](/components/hierarchi
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri = HttpUri::createFromString('http://url.thephpleague.com/uri/schemes/http.md');
+$uri = HttpUri::createFromString('http://uri.thephpleague.com/uri/schemes/http.md');
 echo $uri->path->getBasename();  //display 'http.md'
 echo $uri->path->getDirname();   //display '/uri/schemes'
 echo $uri->path->getExtension(); //display 'md'

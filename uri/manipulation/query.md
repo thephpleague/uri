@@ -3,25 +3,58 @@ layout: default
 title: URI Modifiers which affect the URI Query component
 ---
 
-# Query component modifiers
+# Query modifiers
+
+Here's the documentation for the included URI modifiers which are modifying the URI query component.
 
 ## Sorting the query keys
 
+### Description
+
+~~~php
+public KsortQuery::__construct(mixed $sort = SORT_REGULAR)
+~~~
+
 Sorts the query according to its key values.
+
+### Parameters
+
+The `$sort` argument can be:
+
+- one of PHP's sorting constant used by the [ksort function](http://php.net/ksort)
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\KsortQuery;
 
 $uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
-$modifier = new KsortQuery();
+$modifier = new KsortQuery(SORT_REGULAR);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
 ~~~
 
-The sorting algorithm can be change at any given time. By default if none is provided. The sorting is done using PHP's `ksort` sort flag parameters. But you can also provide a callable as sorting mechanism using the `withAlgorithm` method.
+- a user defined comparison function used by the [uksort function](http://php.net/uksort)
 
-<p class="message-warning">The <code>withAlgorithm</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+~~~php
+use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Modifiers\KsortQuery;
+
+$sort = function ($value1, $value2) {
+    return strcasecmp($value1, $value2);
+};
+
+$modifier = new KsortQuery($sort);
+
+$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
+~~~
+
+### Methods
+
+<p class="message-warning">The <code>withAlgorithm</code> method is deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
+
+The sorting algorithm can be change at any given time. By default if none is provided. The sorting is done using PHP's `ksort` sort flag parameters. But you can also provide a callable as sorting mechanism using the `withAlgorithm` method.
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -40,7 +73,15 @@ echo $altUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 
 ## Merging query string
 
+### Description
+
+~~~php
+public MergeQuery::__construct(string $query)
+~~~
+
 Merges a submitted query string to the URI object to be modified
+
+### Example
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -52,9 +93,11 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&&toto#doc3"
 ~~~
 
-At any given time you can create a new modifier with another query string to merge using the `withQuery` method.
+### Methods
 
-<p class="message-warning">The <code>withQuery</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+<p class="message-warning">The <code>withQuery</code> method is deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
+
+At any given time you can create a new modifier with another query string to merge using the `withQuery` method.
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -71,7 +114,15 @@ echo $altUri; //display "http://example.com/test.php?kingkong=toto&foo=1#doc3"
 
 ## Removing query keys
 
+### Description
+
+~~~php
+public RemoveQueryKeys::__construct(array $keys = [])
+~~~
+
 Removes query keys from the current URI path.
+
+### Examples
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -83,9 +134,11 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
 ~~~
 
-You can update the keys chosen by using the `withKeys` method
+### Methods
 
-<p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code>and will be removed in the next major release</p>
+<p class="message-warning">The <code>withKeys</code> method is deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
+
+You can update the keys chosen by using the `withKeys` method
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
@@ -102,6 +155,33 @@ echo $altUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 
 ## Filtering query key/values
 
+### Description
+
+~~~php
+public FilterQuery::__construct(callable $callable, int $flag = 0)
+~~~
+
+### Parameters
+
+- The `$callable` argument is a `callable` used by PHP's `array_filter`
+- The `$flag` argument is a `int` used by PHP's `array_filter`
+
+<p class="message-notice">
+For Backward compatibility with PHP5.5 which lacks these flags constant you can use the library constants instead:</p>
+
+<table>
+<thead>
+<tr><th>League\Uri\Interfaces\Collection constants</th><th>PHP's 5.6+ constants</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Collection::FILTER_USE_KEY</code></td><td><code>ARRAY_FILTER_USE_KEY</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_BOTH</code></td><td><code>ARRAY_FILTER_USE_BOTH</code></td></tr>
+<tr><td><code>Collection::FILTER_USE_VALUE</code></td><td><code>0</code></td></tr>
+</tbody>
+</table>
+
+### Examples
+
 Filter selected query keys and/or values from the current URI path to keep.
 
 ~~~php
@@ -109,28 +189,23 @@ use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
-$modifier = new FilterQuery(function ($value) {
+$filter = function ($value) {
     return strpos($value, 'f');
-}, Collection::FILTER_USE_KEY);
+};
+$uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";
+$uri = HttpUri::createFromString($uriString);
+$modifier = new FilterQuery($filter, Collection::FILTER_USE_KEY);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 ~~~
 
-You can update the URI modifier using:
-
-- `withCallable` method to alter the filtering function
-- `withFlag` method to alter the filtering flag. depending on which parameter you want to use to filter the path you can use:
-	- the `Collection::FILTER_USE_KEY` to filter against the query parameter name;
-	- the `Collection::FILTER_USE_VALUE` to filter against the query parameter value;
-	- the `Collection::FILTER_USE_BOTH` to filter against the query parameter value and name;
+### Methods
 
 <p class="message-warning">The <code>withCallable</code> and <code>withFlag</code> methods are deprecated since <code>version 4.1</code> and will be removed in the next major release</p>
 
-If no flag is used, by default the `Collection::FILTER_USE_VALUE` flag is used.
-If you are using PHP 5.6+ you can directly use PHP's `array_filter` constant:
+You can update the URI modifier using:
 
-- `ARRAY_FILTER_USE_KEY` in place of `Collection::FILTER_USE_KEY`
-- `ARRAY_FILTER_USE_BOTH` in place of `Collection::FILTER_USE_BOTH`
+- `withCallable` method to alter the filtering function;
+- `withFlag` method to alter the filtering flag;
 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;

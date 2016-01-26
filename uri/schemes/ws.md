@@ -21,7 +21,7 @@ $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
 //throw an RuntimeException - a fragment component was given
 
 
-$altUri = WsUri::createFromString('//thephpleague.com/path/to?here#content');
+$altUri = WsUri::createFromString('//thephpleague.com/path/to?here');
 //throw an InvalidArgumentException - no scheme was given
 ~~~
 

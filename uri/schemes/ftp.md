@@ -7,7 +7,7 @@ title: Ftp URIs
 
 To ease working with FTP URIs, the library comes bundle with a URI specific FTP class `League\Uri\Schemes\Ftp`.
 
-## Validating a FTP URI
+## Validation
 
 A FTP URI must contain the `ftp` scheme. It can not contains a query and or a fragment component.
 

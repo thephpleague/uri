@@ -40,11 +40,13 @@ The data URI class uses the [DataPath](/components/datauri-path/) class to repre
 ~~~php
 use League\Uri\Schemes\Data as DataUri;
 
-$uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Hello%20World%21');
+$uriString = 'data:text/plain;charset=us-ascii,Hello%20World%21';
+$uri = DataUri::createFromString($uriString);
 echo $uri->path->getMediaType(); //display 'text/plain;charset=us-ascii'
 echo $uri->path->getMimeType(); //display 'text/plain'
 echo $uri->path->getParameters(); //display 'charset=us-ascii'
 echo $uri->path->getData(); //display 'Hello%20World%21'
 $uri->path->isBinaryData(); //returns false
-$uri->path->save('/path/where/to/save/data', 'w'); //return a \SplFileObject reference
+$fileObject = $uri->path->save('/path/where/to/save/data', 'w');
+//$fileObject is a \SplFileObject reference
 ~~~

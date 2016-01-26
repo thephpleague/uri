@@ -22,6 +22,10 @@ If a new instance can not be created exceptions are thrown.
 
 ### From a string
 
+~~~php
+public static Uri::createFromString(string $uri = ''): Uri
+~~~
+
 Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parse using the library [internal URI parser](/services/parser-uri/).
 
 ~~~php
@@ -31,6 +35,10 @@ $uri = FtpUri::createFromString('ftp://host.example.com/path/to/image.png;type=i
 ~~~
 
 ### From parse_url results
+
+~~~php
+public static Uri::createFromComponents(array $components = []): Uri
+~~~
 
 You can also instantiate a new URI object using the `createFromComponents` named constructor by giving it the result of PHP's function `parse_url` or the library [internal URI parser](/services/parser-uri/).
 
@@ -42,9 +50,9 @@ $components = parse_url('wss://foo.example.com/path/to/index.php?param=value');
 $uri = WsUri::createFromComponents($components);
 ~~~
 
-### Instantiation from its default constructor
-
-Even thought it is possible, it is not recommend to instantiate any URI object using the default constructor. Since every URI may be instantiated differently. It is easier to always use the documentated named constructors.
+<div class="message-notice">
+It is not recommend to instantiate an URI object using the default constructor. It is easier to always use the documentated named constructors since each URI object requires a specific set of URI components objects.
+</div>
 
 ## Generic URI Handling
 

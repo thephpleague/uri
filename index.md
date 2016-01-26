@@ -25,11 +25,11 @@ The library provides simple and intuitive classes to [instantiate](/uri/instanti
 
 and allow [to easily manage others scheme specific URIs](/uri/extension/).
 
-The library ships also with:
+The library ships with:
 
 - a [RFC3986][] compliant parser for the [URI string](/services/parser-uri/);
 - a parser for the [URI query string](/services/parser-query/) that preserves its content;
-- a [URI formatter](/services/formatter/) to ease outputting URI strings;
+- a [URI formatter](/services/formatter/) to easily output URI strings;
 
 Highlights
 ------

@@ -73,7 +73,12 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns whether two UriPart objects represent the same value
+     * The comparison is based on the getUriComponent method
+     *
+     * @param UriPart $component
+     *
+     * @return bool
      */
     public function sameValueAs(UriPart $component)
     {
@@ -81,12 +86,18 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     abstract public function getUriComponent();
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     abstract public function __toString();
 
@@ -127,7 +138,14 @@ trait ImmutableComponentTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
      */
     public function modify($value)
     {

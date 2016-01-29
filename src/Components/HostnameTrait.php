@@ -30,14 +30,6 @@ trait HostnameTrait
     protected $isIdn = false;
 
     /**
-     * @inheritdoc
-     */
-    public function isIdn()
-    {
-        return $this->isIdn;
-    }
-
-    /**
      * Format an label collection for string representation of the Host
      *
      * @param array $labels  host labels

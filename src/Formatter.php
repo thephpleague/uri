@@ -195,13 +195,11 @@ class Formatter
     }
 
     /**
-     * Format an object according to the formatter properties
+     * Format an object
      *
-     * @param mixed $input The input must be an object that implements one of
-     *                     the following interfaces:
-     *                     - League\Uri\Interfaces\Uri;
-     *                     - League\Uri\Interfaces\UriPart;
-     *                     - Psr\Http\Message\UriInterface;
+     * @see Formatter::format
+     *
+     * @param UriPart|Uri|UriInterface $input
      *
      * @return string
      */
@@ -211,13 +209,17 @@ class Formatter
     }
 
     /**
-     * Format an object according to the formatter properties
+     * Format an object
      *
-     * @param mixed $input The input must be an object that implements one of
-     *                     the following interfaces:
-     *                     - League\Uri\Interfaces\Uri;
-     *                     - League\Uri\Interfaces\UriPart;
-     *                     - Psr\Http\Message\UriInterface;
+     * Format an object according to the formatter properties.
+     * The object must implement one of the following interface:
+     * <ul>
+     * <li>League\Uri\Interfaces\Uri
+     * <li>League\Uri\Interfaces\UriPart
+     * <li>Psr\Http\Message\UriInterface
+     * </ul>
+     *
+     * @param UriPart|Uri|UriInterface $input
      *
      * @return string
      */
@@ -297,7 +299,7 @@ class Formatter
     /**
      * Format a URI authority according to the Formatter properties
      *
-     * @param UriInterface|Uri $uri
+     * @param Uri|UriInterface $uri
      *
      * @return string
      */
@@ -326,7 +328,7 @@ class Formatter
     /**
      * Format a URI Query component according to the Formatter properties
      *
-     * @param UriInterface|Uri $uri
+     * @param Uri|UriInterface $uri
      *
      * @return string
      */
@@ -343,7 +345,7 @@ class Formatter
     /**
      * Format a URI Fragment component according to the Formatter properties
      *
-     * @param UriInterface|Uri $uri
+     * @param Uri|UriInterface $uri
      *
      * @return string
      */

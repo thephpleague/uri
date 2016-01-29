@@ -52,12 +52,15 @@ class UriParser
 
     const REGEXP_INVALID_PASS = ',[/?#@],';
 
+
     /**
      * Parse a string as an URI according to the regexp form rfc3986
      *
-     * @param string $uri The URI to parse
+     * @see UriParser::parse
      *
-     * @return array the array is similar to PHP's parse_url hash response
+     * @param string $uri
+     *
+     * @return array
      */
     public function __invoke($uri)
     {

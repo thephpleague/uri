@@ -58,6 +58,58 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * Returns whether or not the host is an IDN
+     *
+     * @return bool
+     */
+    public function isIdn()
+    {
+        return $this->isIdn;
+    }
+
+    /**
+     * Returns whether or not the host is an IP address
+     *
+     * @return bool
+     */
+    public function isIp()
+    {
+        return $this->hostAsIpv4 || $this->hostAsIpv6;
+    }
+
+    /**
+     * Returns whether or not the host is an IPv4 address
+     *
+     * @return bool
+     */
+    public function isIpv4()
+    {
+        return $this->hostAsIpv4;
+    }
+
+    /**
+     * Returns whether or not the host is an IPv6 address
+     *
+     * @return bool
+     */
+    public function isIpv6()
+    {
+        return $this->hostAsIpv6;
+    }
+
+    /**
+     * Returns whether or not the host has a ZoneIdentifier
+     *
+     * @return bool
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     */
+    public function hasZoneIdentifier()
+    {
+        return $this->hasZoneIdentifier;
+    }
+
+    /**
      * Host literal setter
      */
     protected function setLiteral()

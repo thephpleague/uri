@@ -39,7 +39,7 @@ Another way to acces a `League\Uri\Components\Port` object is to use an already 
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri  = HttpUri::createFromString('http://url.thephpleague.com:82');
+$uri  = HttpUri::createFromString('http://uri.thephpleague.com:82');
 $port = $uri->port; // $port is a League\Uri\Components\Port object;
 ~~~
 

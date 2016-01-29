@@ -30,7 +30,7 @@ echo $query; //display 'foo=bar&p=yolo&z'
 use League\Uri\Ws as WsUri;
 
 $uri = WsUri::createFromComponents(
-    parse_url('wss://url.thephpleague.com/path/to/here?foo=bar')
+    parse_url('wss://uri.thephpleague.com/path/to/here?foo=bar')
 );
 $query = $uri->query; //$query is a League\Uri\Components\Query object;
 ~~~

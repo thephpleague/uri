@@ -33,7 +33,7 @@ echo $end_slash; //display 'hello/world/'
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri  = HttpUri::createFromString('http://url.thephpleague.com/path/to/here');
+$uri  = HttpUri::createFromString('http://uri.thephpleague.com/path/to/here');
 $path = $uri->path; // $path is a League\Uri\Components\HierarchicalPath object;
 ~~~
 

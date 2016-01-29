@@ -12,7 +12,7 @@ Appart from being able to get all the URI component string using their respectiv
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri = HttpUri::createFromString("http://url.thephpleague.com/.././report/");
+$uri = HttpUri::createFromString("http://uri.thephpleague.com/.././report/");
 echo $uri->getPath(), PHP_EOL; //display "/.././report/"
 $normalizedPath = $uri->path
     ->withoutLeadingSlash()
@@ -28,7 +28,7 @@ var_dump($uri->host->toArray());
 //     2 => 'url',
 //);
 
-echo $uri->getHost(), PHP_EOL; //display "url.thephpleague.com"
+echo $uri->getHost(), PHP_EOL; //display "uri.thephpleague.com"
 echo $uri->host->getLabel(2), PHP_EOL; //display "url"
 echo $uri->host->getPublicSuffix(), PHP_EOL; //return com
 echo $uri->host->getRegisterableDomain(), PHP_EOL; //display 'thephpleague.com'

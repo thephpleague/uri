@@ -41,7 +41,7 @@ You can also access a `Host` object from a Uri object:
 ~~~php
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri  = HttpUri::createFromString('http://url.thephpleague.com/');
+$uri  = HttpUri::createFromString('http://uri.thephpleague.com/');
 $host = $uri->host; // $host is a League\Uri\Components\Host object;
 ~~~
 

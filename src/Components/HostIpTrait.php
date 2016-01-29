@@ -49,38 +49,6 @@ trait HostIpTrait
     protected static $local_link_prefix = '1111111010';
 
     /**
-     * @inheritdoc
-     */
-    public function isIp()
-    {
-        return $this->hostAsIpv4 || $this->hostAsIpv6;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isIpv4()
-    {
-        return $this->hostAsIpv4;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isIpv6()
-    {
-        return $this->hostAsIpv6;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasZoneIdentifier()
-    {
-        return $this->hasZoneIdentifier;
-    }
-
-    /**
      * Validate a Host as an IP
      *
      * @param string $str

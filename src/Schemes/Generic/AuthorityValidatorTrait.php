@@ -22,17 +22,43 @@ namespace League\Uri\Schemes\Generic;
 trait AuthorityValidatorTrait
 {
     /**
-     * @inheritdoc
+     * Retrieve the scheme specific part of the URI.
+     *
+     * If no specific part information is present, this method MUST return an empty
+     * string.
+     *
+     * @return string The URI authority, in "[user-info@]host[:port]" format.
      */
     abstract protected function getSchemeSpecificPart();
 
     /**
-     * @inheritdoc
+     * Retrieve the scheme component of the URI.
+     *
+     * If no scheme is present, this method MUST return an empty string.
+     *
+     * The value returned MUST be normalized to lowercase, per RFC 3986
+     * Section 3.1.
+     *
+     * The trailing ":" character is not part of the scheme and MUST NOT be
+     * added.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     *
+     * @return string The URI scheme.
      */
     abstract public function getScheme();
 
     /**
-     * @inheritdoc
+     * Retrieve the host component of the URI.
+     *
+     * If no host is present, this method MUST return an empty string.
+     *
+     * The value returned MUST be normalized to lowercase, per RFC 3986
+     * Section 3.2.2.
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
+     *
+     * @return string The URI host.
      */
     abstract public function getHost();
 

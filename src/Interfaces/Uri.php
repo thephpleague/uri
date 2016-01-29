@@ -197,7 +197,6 @@ interface Uri
      * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified scheme.
-     *
      */
     public function withScheme($scheme);
 
@@ -234,7 +233,6 @@ interface Uri
      * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified host.
-     *
      */
     public function withHost($host);
 
@@ -257,7 +255,6 @@ interface Uri
      * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified port.
-     *
      */
     public function withPort($port);
 
@@ -285,7 +282,6 @@ interface Uri
      * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified path.
-     *
      */
     public function withPath($path);
 
@@ -306,7 +302,6 @@ interface Uri
      * @throws \RuntimeException         if the returned URI object is invalid.
      *
      * @return self A new instance with the specified query string.
-     *
      */
     public function withQuery($query);
 

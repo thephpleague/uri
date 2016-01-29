@@ -50,7 +50,9 @@ trait HostnameInfoTrait
     protected $hostnameInfoLoaded = false;
 
     /**
-     * @inheritdoc
+     * Return the host public suffix
+     *
+     * @return string
      */
     public function getPublicSuffix()
     {
@@ -58,7 +60,9 @@ trait HostnameInfoTrait
     }
 
     /**
-     * @inheritdoc
+     * Return the host registrable domain
+     *
+     * @return string
      */
     public function getRegisterableDomain()
     {
@@ -66,7 +70,9 @@ trait HostnameInfoTrait
     }
 
     /**
-     * @inheritdoc
+     * Return the hostname subdomain
+     *
+     * @return string
      */
     public function getSubdomain()
     {
@@ -74,7 +80,9 @@ trait HostnameInfoTrait
     }
 
     /**
-     * @inheritdoc
+     * Tell whether the current public suffix is valid
+     *
+     * @return bool
      */
     public function isPublicSuffixValid()
     {
@@ -114,17 +122,24 @@ trait HostnameInfoTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     abstract public function __toString();
 
     /**
-     * @inheritdoc
+     * Returns whether or not the host is an IP address
+     *
+     * @return bool
      */
     abstract public function isIp();
 
     /**
-     * @inheritdoc
+     * Returns whether or not the host is a full qualified domain name
+     *
+     * @return bool
      */
     abstract public function isAbsolute();
 

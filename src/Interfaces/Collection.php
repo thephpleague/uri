@@ -35,7 +35,7 @@ interface Collection extends Countable, IteratorAggregate
     const FILTER_USE_KEY   = 2;
 
     /**
-     * Return an array representation of the collection
+     * Returns an array representation of the collection
      *
      * @return array
      */

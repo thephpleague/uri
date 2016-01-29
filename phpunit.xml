@@ -12,7 +12,7 @@
          stopOnFailure="false">
 
     <testsuites>
-        <testsuite name="League uri Test Suite">
+        <testsuite name="Uri Test Suite">
             <directory>test</directory>
         </testsuite>
     </testsuites>
@@ -30,4 +30,5 @@
         <log type="coverage-text" target="build/coverage.txt"/>
         <log type="coverage-clover" target="build/clover.xml"/>
     </logging>
+
 </phpunit>

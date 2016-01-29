@@ -33,7 +33,9 @@ trait ImmutableCollectionTrait
     protected $data = [];
 
     /**
-     * @inheritdoc
+     * Count elements of an object
+     *
+     * @return int
      */
     public function count()
     {
@@ -41,7 +43,9 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an external iterator
+     *
+     * @return ArrayIterator
      */
     public function getIterator()
     {
@@ -49,7 +53,9 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an array representation of the collection
+     *
+     * @return array
      */
     public function toArray()
     {
@@ -57,7 +63,11 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns whether the given key exists in the current instance
+     *
+     * @param string $key
+     *
+     * @return bool
      */
     public function hasKey($offset)
     {
@@ -65,7 +75,12 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns the component $keys.
+     *
+     * If a value is specified only the keys associated with
+     * the given value will be returned
+     *
+     * @return array
      */
     public function keys()
     {
@@ -77,7 +92,14 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance without the specified keys
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component
+     *
+     * @param array $keys the list of keys to remove from the collection
+     *
+     * @return static
      */
     public function without(array $offsets)
     {
@@ -90,7 +112,15 @@ trait ImmutableCollectionTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with only the specified value
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component
+     *
+     * @param callable $callable the list of keys to keep from the collection
+     * @param int      $flag     flag to determine what argument are sent to callback
+     *
+     * @return static
      */
     public function filter(callable $callable, $flag = Collection::FILTER_USE_VALUE)
     {

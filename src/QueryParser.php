@@ -28,9 +28,9 @@ class QueryParser
      *    - it does not modify or remove parameters keys
      *    - it does not create nested array
      *
-     * @param string    $str          The query string to parse
-     * @param string    $separator    The query string separator
-     * @param int|false $encodingType The query string encoding mechanism
+     * @param string   $str          The query string to parse
+     * @param string   $separator    The query string separator
+     * @param int|bool $encodingType The query string encoding mechanism
      *
      * @return array
      */
@@ -52,9 +52,9 @@ class QueryParser
     /**
      * validate the encoding type for the query related methods
      *
-     * @param int|false $encodingType
+     * @param int|bool $encodingType
      *
-     * @return int|false
+     * @return int|bool
      */
     protected function validateEncodingType($encodingType)
     {
@@ -104,9 +104,9 @@ class QueryParser
      *
      *    - it does not modify parameters keys
      *
-     * @param array     $arr          Query string parameters
-     * @param string    $separator    Query string separator
-     * @param int|false $encodingType Query string encoding
+     * @param array    $arr          Query string parameters
+     * @param string   $separator    Query string separator
+     * @param int|bool $encodingType Query string encoding
      *
      * @return string
      */
@@ -153,7 +153,7 @@ class QueryParser
     /**
      * Return the query string decoding mechanism
      *
-     * @param int|false $encodingType
+     * @param int|bool $encodingType
      *
      * @return callable
      */
@@ -179,7 +179,7 @@ class QueryParser
     /**
      * Return the query string encoding mechanism
      *
-     * @param int|false $encodingType
+     * @param int|bool $encodingType
      *
      * @return callable
      */

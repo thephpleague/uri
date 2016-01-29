@@ -48,17 +48,33 @@ trait PathTrait
     protected static $dotSegments = ['.' => 1, '..' => 1];
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     abstract public function __toString();
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
      */
     abstract public function modify($value);
 
     /**
-     * @inheritdoc
+     * Returns an instance without dot segments
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * the dot segment.
+     *
+     * @return static
      */
     public function withoutDotSegments()
     {
@@ -102,7 +118,13 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance without duplicate delimiters
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component normalized by removing
+     * multiple consecutive empty segment
+     *
+     * @return static
      */
     public function withoutEmptySegments()
     {
@@ -110,7 +132,9 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns whether or not the path has a trailing delimiter
+     *
+     * @return bool
      */
     public function hasTrailingSlash()
     {
@@ -120,7 +144,13 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a trailing slash
+     *
+     *
+     * @return static
      */
     public function withTrailingSlash()
     {
@@ -128,7 +158,12 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance without a trailing slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a trailing slash
+     *
+     * @return static
      */
     public function withoutTrailingSlash()
     {
@@ -136,7 +171,9 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns whether or not the path is absolute or relative
+     *
+     * @return bool
      */
     public function isAbsolute()
     {
@@ -146,7 +183,13 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component with a leading slash
+     *
+     *
+     * @return static
      */
     public function withLeadingSlash()
     {
@@ -154,7 +197,12 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance without a leading slash
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the path component without a leading slash
+     *
+     * @return static
      */
     public function withoutLeadingSlash()
     {
@@ -162,7 +210,14 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Retrieve the optional type associated to the path.
+     *
+     * The value returned MUST be one of the interface constant type
+     * If no type is associated the return constant must be self::FTP_TYPE_EMPTY
+     *
+     * @see http://tools.ietf.org/html/rfc1738#section-3.2.2
+     *
+     * @return int a typecode constant.
      */
     public function getTypecode()
     {
@@ -174,7 +229,20 @@ trait PathTrait
     }
 
     /**
-     * @inheritdoc
+     * Return an instance with the specified typecode.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified type appended to the path.
+     * if not
+     *
+     * Using self::FTP_TYPE_EMPTY is equivalent to removing the typecode.
+     *
+     * @param int $type one typecode constant.
+     *
+     * @throws InvalidArgumentException for invalid typecode.
+     *
+     * @return static
+     *
      */
     public function withTypecode($type)
     {

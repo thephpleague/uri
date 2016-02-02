@@ -11,6 +11,9 @@
  */
 namespace League\Uri\Modifiers;
 
+use League\Uri\Interfaces\Uri;
+use Psr\Http\Message\UriInterface;
+
 /**
  * A class to normalize URI objects
  *

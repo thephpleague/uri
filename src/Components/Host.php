@@ -156,10 +156,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      *
      * @return mixed
      */
-    public function getLabel($key, $default = null)
+    public function getLabel($offset, $default = null)
     {
-        if (isset($this->data[$key])) {
-            return $this->isIdn ? $this->data[$key] : idn_to_ascii($this->data[$key]);
+        if (isset($this->data[$offset])) {
+            return $this->isIdn ? $this->data[$offset] : idn_to_ascii($this->data[$offset]);
         }
 
         return $default;

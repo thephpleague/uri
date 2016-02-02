@@ -124,11 +124,11 @@ class Query implements QueryInterface
      *
      * @return mixed
      */
-    public function getValue($key, $default = null)
+    public function getValue($offset, $default = null)
     {
-        $key = rawurldecode($key);
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
+        $offset = rawurldecode($offset);
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
         }
 
         return $default;

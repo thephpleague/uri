@@ -26,7 +26,7 @@ class Normalize extends AbstractUriModifier
     /**
      * Return a Uri object modified according to the modifier
      *
-     * @param Uri|UriInterface $payload
+     * @param Uri|UriInterface $uri
      *
      * @return Uri|UriInterface
      */

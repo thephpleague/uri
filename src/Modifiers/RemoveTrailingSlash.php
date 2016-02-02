@@ -25,7 +25,7 @@ class RemoveTrailingSlash extends AbstractPathModifier
     /**
      * Modify a URI part
      *
-     * @param string $str the URI part string representation
+     * @param string $path the URI part string representation
      *
      * @return string the modified URI part string representation
      */

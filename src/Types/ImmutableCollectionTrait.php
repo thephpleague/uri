@@ -65,7 +65,7 @@ trait ImmutableCollectionTrait
     /**
      * Returns whether the given key exists in the current instance
      *
-     * @param string $key
+     * @param string $offset
      *
      * @return bool
      */
@@ -97,7 +97,7 @@ trait ImmutableCollectionTrait
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified component
      *
-     * @param array $keys the list of keys to remove from the collection
+     * @param array $offsets the list of keys to remove from the collection
      *
      * @return static
      */

@@ -46,8 +46,8 @@ class UserInfo implements UserInfoInterface
     /**
      * Create a new instance of UserInfo
      *
-     * @param UserInterface $user
-     * @param PassInterface $pass
+     * @param UserInterface|string $user
+     * @param PassInterface|string $pass
      */
     public function __construct($user = null, $pass = null)
     {

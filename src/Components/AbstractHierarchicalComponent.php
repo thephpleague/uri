@@ -190,9 +190,9 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
      *
      * @return static
      */
-    public function replace($key, $component)
+    public function replace($offset, $component)
     {
-        if (!empty($this->data) && !$this->hasKey($key)) {
+        if (!empty($this->data) && !$this->hasKey($offset)) {
             return $this;
         }
 
@@ -203,7 +203,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
         }
 
         return $this->newCollectionInstance(
-            array_merge(array_slice($source, 0, $key), $dest, array_slice($source, $key + 1))
+            array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset + 1))
         );
     }
 }

@@ -111,10 +111,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      *
      * @return mixed
      */
-    public function getSegment($key, $default = null)
+    public function getSegment($offset, $default = null)
     {
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
         }
 
         return $default;
@@ -198,10 +198,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the extension basename modified.
      *
-     * @param string $ext the new extension
-     *                    can preceeded with or without the dot (.) character
+     * @param string $extension the new extension
+     *                          can preceeded with or without the dot (.) character
      *
-     * @throws \LogicException If the basename is empty
+     * @throws InvalidArgumentException If the extension is invalid
      *
      * @return static
      */

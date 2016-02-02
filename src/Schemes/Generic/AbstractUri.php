@@ -171,13 +171,13 @@ abstract class AbstractUri
      *
      * @return static A new instance with the specified user information.
      */
-    public function withUserInfo($user, $pass = null)
+    public function withUserInfo($user, $password = null)
     {
-        if (null === $pass) {
-            $pass = '';
+        if (null === $password) {
+            $password = '';
         }
 
-        $userInfo = $this->userInfo->withUser($this->filterPropertyValue($user))->withPass($pass);
+        $userInfo = $this->userInfo->withUser($this->filterPropertyValue($user))->withPass($password);
         if ($this->userInfo->getUser() == $userInfo->getUser()
             && $this->userInfo->getPass() == $userInfo->getPass()
         ) {

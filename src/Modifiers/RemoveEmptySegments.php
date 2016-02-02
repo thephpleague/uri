@@ -23,7 +23,11 @@ use League\Uri\Components\Path;
 class RemoveEmptySegments extends AbstractPathModifier
 {
     /**
-     * @inheritdoc
+     * Modify a URI part
+     *
+     * @param string $str the URI part string representation
+     *
+     * @return string the modified URI part string representation
      */
     protected function modify($str)
     {

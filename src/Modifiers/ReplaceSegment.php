@@ -40,7 +40,11 @@ class ReplaceSegment extends AbstractPathModifier
     }
 
     /**
-     * @inheritdoc
+     * Modify a URI part
+     *
+     * @param string $str the URI part string representation
+     *
+     * @return string the modified URI part string representation
      */
     protected function modify($str)
     {

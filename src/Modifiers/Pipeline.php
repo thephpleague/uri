@@ -66,11 +66,13 @@ class Pipeline extends AbstractUriModifier
     }
 
     /**
-     * Return a Uri object modified according to the modifier
+     * Iteratively apply the modifiers to a URI object
      *
      * @param Uri|UriInterface $uri
      *
      * @return Uri|UriInterface
+     *
+     * @see {@link Pipeline::__invoke}
      */
     public function process($uri)
     {
@@ -78,7 +80,7 @@ class Pipeline extends AbstractUriModifier
     }
 
     /**
-     * Iteratively apply the modifier to a URI object
+     * Iteratively apply the modifiers to a URI object
      *
      * @param Uri|UriInterface $uri
      *

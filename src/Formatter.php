@@ -184,7 +184,7 @@ class Formatter
      * Whether we should preserve the Fragment component
      * regardless of its value.
      *
-     * If set to true the query delimiter will be appended
+     * If set to true the fragment delimiter will be appended
      * to the URI regardless of the query string value
      *
      * @param bool $status

@@ -11,10 +11,8 @@
  */
 namespace League\Uri\Schemes\Generic;
 
-use InvalidArgumentException;
-
 /**
- * A trait to format the Path component
+ * A trait to format URI components
  *
  * @package League.uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
@@ -26,16 +24,12 @@ trait UriBuilderTrait
     /**
      * Normalize URI components hash
      *
-     * @internal
-     *
-     * @todo change method visibility in the next major release to protected
-     *
      * @param array $components a hash representation of the URI components
      *                          similar to PHP parse_url function result
      *
      * @return array
      */
-    public static function normalizeUriHash(array $components)
+    protected static function normalizeUriHash(array $components)
     {
         return array_replace([
             'scheme' => null,
@@ -73,63 +67,22 @@ trait UriBuilderTrait
     /**
      * Format the user info
      *
-     * @internal
-     *
-     * @todo change method visibility in the next major release to protected
-     *
      * @param string $user
      * @param string $pass
      *
      * @return string
      */
-    public static function buildUserInfo($user, $pass)
+    protected static function buildUserInfo($user, $pass)
     {
-        $userinfo = self::filterUser($user);
+        $userinfo = $user;
         if (null === $userinfo) {
             return '';
         }
 
-        $pass = self::filterPass($pass);
         if (null !== $pass) {
             $userinfo .= ':'.$pass;
         }
 
         return $userinfo.'@';
-    }
-
-    /**
-     * Filter and format the user for URI string representation
-     *
-     * @param null|string $user
-     *
-     * @throws InvalidArgumentException If the user is invalid
-     *
-     * @return null|string
-     */
-    protected static function filterUser($user)
-    {
-        if (!preg_match(',[/?#@:],', $user)) {
-            return $user;
-        }
-
-        throw new InvalidArgumentException('The user component contains invalid characters');
-    }
-
-    /**
-     * Filter and format the pass for URI string representation
-     *
-     * @param null|string $pass
-     *
-     * @throws InvalidArgumentException If the pass is invalid
-     *
-     * @return null|string
-     */
-    protected static function filterPass($pass)
-    {
-        if (!preg_match(',[/?#@],', $pass)) {
-            return $pass;
-        }
-
-        throw new InvalidArgumentException('The pass component contains invalid characters');
     }
 }

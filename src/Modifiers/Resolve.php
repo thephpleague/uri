@@ -59,12 +59,16 @@ class Resolve extends AbstractUriModifier
     }
 
     /**
-     * @inheritdoc
+     * Return a Uri object modified according to the modifier
+     *
+     * @param Uri|UriInterface $payload
+     *
+     * @return Uri|UriInterface
      */
-    public function __invoke($relative)
+    public function __invoke($payload)
     {
-        $this->assertUriObject($relative);
-        $uri = $this->generate($relative);
+        $this->assertUriObject($payload);
+        $uri = $this->generate($payload);
 
         return (new RemoveDotSegments())->__invoke($uri);
     }

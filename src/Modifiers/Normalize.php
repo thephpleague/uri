@@ -21,7 +21,11 @@ namespace League\Uri\Modifiers;
 class Normalize extends AbstractUriModifier
 {
     /**
-     * @inheritdoc
+     * Return a Uri object modified according to the modifier
+     *
+     * @param Uri|UriInterface $payload
+     *
+     * @return Uri|UriInterface
      */
     public function __invoke($uri)
     {

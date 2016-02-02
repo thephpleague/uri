@@ -70,7 +70,7 @@ interface DataPath extends Path
     public function getParameters();
 
     /**
-     * Tell whether the data is binary safe encoded
+     * Tells whether the data is binary safe encoded
      *
      * @return bool
      */

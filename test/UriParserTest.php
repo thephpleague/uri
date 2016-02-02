@@ -390,40 +390,4 @@ class UriParserTest extends PHPUnit_Framework_TestCase
             'invalid host too long' => ['scheme://'.implode('.', array_fill(0, 128, 'a'))],
         ];
     }
-
-    /**
-     * @dataProvider validBuildUserInfoProvider
-     */
-    public function testBuildUserInfoSucced($user, $pass, $expected)
-    {
-        $this->assertSame($expected, $this->parser->buildUserInfo($user, $pass));
-    }
-
-    public function validBuildUserInfoProvider()
-    {
-        return [
-            ['user', 'pass', 'user:pass@'],
-            ['', 'pass', ':pass@'],
-            [null, 'pass', ''],
-            ['user', null, 'user@'],
-            ['user', '', 'user:@'],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidBuildUserInfoProvider
-     * @expectedException InvalidArgumentException
-     */
-    public function testBuildUserInfoFailed($user, $pass)
-    {
-        $this->parser->buildUserInfo($user, $pass);
-    }
-
-    public function invalidBuildUserInfoProvider()
-    {
-        return [
-            'invalid user' => ['dsfsd:f', 'dfdsqdsf'],
-            'invalid pass' => ['dqfdsf', 'sdq@fs'],
-        ];
-    }
 }

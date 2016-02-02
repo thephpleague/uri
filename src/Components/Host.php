@@ -118,7 +118,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance literal representation
+     * without encoding
+     *
+     * @return string
      */
     public function getLiteral()
     {
@@ -143,7 +146,15 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Retrieves a single host label.
+     *
+     * Retrieves a single host label. If the label offset has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the label offset
+     * @param mixed  $default Default value to return if the offset does not exist.
+     *
+     * @return mixed
      */
     public function getLabel($key, $default = null)
     {
@@ -155,7 +166,9 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns an array representation of the host
+     *
+     * @return array
      */
     public function toArray()
     {
@@ -163,7 +176,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     public function __toString()
     {
@@ -179,7 +195,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns a host in his punycode encoded form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host transcoded using to ascii the RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
      */
     public function toAscii()
     {
@@ -194,7 +217,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns a host in his IDN form
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance with the host in its IDN form using RFC 3492 rules
+     *
+     * @see http://tools.ietf.org/html/rfc3492
+     *
+     * @return static
      */
     public function toUnicode()
     {
@@ -219,7 +249,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * @inheritdoc
+     * Return an host without its zone identifier according to RFC6874
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance without the host zone identifier according to RFC6874
+     *
+     * @see http://tools.ietf.org/html/rfc6874#section-4
+     *
+     * @return static
      */
     public function withoutZoneIdentifier()
     {

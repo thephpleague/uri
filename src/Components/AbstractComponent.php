@@ -70,7 +70,10 @@ abstract class AbstractComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     public function __toString()
     {
@@ -78,7 +81,10 @@ abstract class AbstractComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {

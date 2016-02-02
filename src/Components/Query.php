@@ -87,7 +87,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     public function __toString()
     {
@@ -95,7 +98,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {
@@ -108,7 +114,15 @@ class Query implements QueryInterface
     }
 
     /**
-     * @inheritdoc
+     * Retrieves a single query parameter.
+     *
+     * Retrieves a single query parameter. If the parameter has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the parameter name
+     * @param mixed  $default Default value to return if the parameter does not exist.
+     *
+     * @return mixed
      */
     public function getValue($key, $default = null)
     {
@@ -121,7 +135,16 @@ class Query implements QueryInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance merge with the specified query
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param Query|string $query the data to be merged query can be
+     *                            - another Interfaces\Query object
+     *                            - a string or a Stringable object
+     *
+     * @return static
      */
     public function merge($query)
     {
@@ -137,7 +160,18 @@ class Query implements QueryInterface
     }
 
     /**
-     * @inheritdoc
+     * Sort the query string by offset, maintaining offset to data correlations.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified query
+     *
+     * @param callable|int $sort a PHP sort flag constant or a comparaison function
+     *                           which must return an integer less than, equal to,
+     *                           or greater than zero if the first argument is
+     *                           considered to be respectively less than, equal to,
+     *                           or greater than the second.
+     *
+     * @return static
      */
     public function ksort($sort = SORT_REGULAR)
     {

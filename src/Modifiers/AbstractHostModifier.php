@@ -11,6 +11,9 @@
  */
 namespace League\Uri\Modifiers;
 
+use League\Uri\Interfaces\Uri;
+use Psr\Http\Message\UriInterface;
+
 /**
  * Abstract Class to modify the Host component
  *
@@ -21,7 +24,11 @@ namespace League\Uri\Modifiers;
 abstract class AbstractHostModifier extends AbstractPartialUriModifier
 {
     /**
-     * @inheritdoc
+     * Return a Uri object modified according to the modifier
+     *
+     * @param Uri|UriInterface $payload
+     *
+     * @return Uri|UriInterface
      */
     public function __invoke($uri)
     {

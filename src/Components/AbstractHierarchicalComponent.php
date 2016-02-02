@@ -55,7 +55,9 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     abstract public function __construct($str);
 
     /**
-     * @inheritdoc
+     * Returns whether or not the component is absolute or not
+     *
+     * @return bool
      */
     public function isAbsolute()
     {
@@ -79,7 +81,10 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {
@@ -87,7 +92,14 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified component prepended
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the prepended data
+     *
+     * @param HierarchicalComponent|string $component the component to prepend
+     *
+     * @return static
      */
     public function prepend($component)
     {
@@ -98,7 +110,14 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified component appended
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the appended data
+     *
+     * @param HierarchicalComponent|string $component the component to append
+     *
+     * @return static
      */
     abstract public function append($component);
 
@@ -160,7 +179,16 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the modified segment
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the replaced data
+     *
+     * @param int                          $offset    the label offset to remove and replace by
+     *                                                the given component
+     * @param HierarchicalComponent|string $component the component added
+     *
+     * @return static
      */
     public function replace($key, $component)
     {

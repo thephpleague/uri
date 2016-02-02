@@ -41,7 +41,10 @@ class Scheme extends AbstractComponent implements SchemeInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {

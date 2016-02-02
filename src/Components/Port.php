@@ -47,7 +47,10 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {
@@ -55,7 +58,9 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * @inheritdoc
+     * Return an integer representation of the Port component
+     *
+     * @return null|int
      */
     public function toInt()
     {

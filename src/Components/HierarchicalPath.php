@@ -101,7 +101,15 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Retrieves a single path segment.
+     *
+     * Retrieves a single path segment. If the segment offset has not been set,
+     * returns the default value provided.
+     *
+     * @param string $offset  the segment offset
+     * @param mixed  $default Default value to return if the offset does not exist.
+     *
+     * @return mixed
      */
     public function getSegment($key, $default = null)
     {
@@ -124,7 +132,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified component appended
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified component with the appended data
+     *
+     * @param HierarchicalComponent|string $component the component to append
+     *
+     * @return static
      */
     public function append($component)
     {
@@ -140,7 +155,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Returns the path basename
+     *
+     * @return string
      */
     public function getBasename()
     {
@@ -150,7 +167,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Returns parent directory's path
+     *
+     * @return string
      */
     public function getDirname()
     {
@@ -162,7 +181,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Returns the basename extension
+     *
+     * @return string
      */
     public function getExtension()
     {
@@ -172,7 +193,17 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
-     * @inheritdoc
+     * Returns an instance with the specified basename extension
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the extension basename modified.
+     *
+     * @param string $ext the new extension
+     *                    can preceeded with or without the dot (.) character
+     *
+     * @throws \LogicException If the basename is empty
+     *
+     * @return static
      */
     public function withExtension($extension)
     {

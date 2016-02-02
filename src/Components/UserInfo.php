@@ -46,8 +46,8 @@ class UserInfo implements UserInfoInterface
     /**
      * Create a new instance of UserInfo
      *
-     * @param string $user
-     * @param string $pass
+     * @param UserInterface $user
+     * @param PassInterface $pass
      */
     public function __construct($user = null, $pass = null)
     {
@@ -57,7 +57,9 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Retrieve the user component of the URI User Info part
+     *
+     * @return string
      */
     public function getUser()
     {
@@ -65,7 +67,9 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Retrieve the pass component of the URI User Info part
+     *
+     * @return string
      */
     public function getPass()
     {
@@ -73,7 +77,10 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
      */
     public function __toString()
     {
@@ -91,7 +98,10 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
      */
     public function getUriComponent()
     {
@@ -104,7 +114,12 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Returns whether two UriPart objects represent the same value
+     * The comparison is based on the getUriComponent method
+     *
+     * @param UriPart $component
+     *
+     * @return bool
      */
     public function sameValueAs(UriPart $component)
     {
@@ -112,7 +127,18 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Return an instance with the specified user.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified user.
+     *
+     * An empty user is equivalent to removing the user information.
+     *
+     * @param string $user The user to use with the new instance.
+     *
+     * @throws \InvalidArgumentException for invalid user.
+     *
+     * @return static
      */
     public function withUser($user)
     {
@@ -120,7 +146,18 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * @inheritdoc
+     * Return an instance with the specified password.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified password.
+     *
+     * An empty password is equivalent to removing the password.
+     *
+     * @param string $pass The password to use with the new instance.
+     *
+     * @throws \InvalidArgumentException for invalid password.
+     *
+     * @return static
      */
     public function withPass($pass)
     {

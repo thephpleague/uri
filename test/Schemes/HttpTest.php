@@ -171,7 +171,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validUrlArray
+     * @dataProvider validUriArray
      * @param $expected
      * @param $input
      */
@@ -180,7 +180,7 @@ class HttpTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, HttpUri::createFromString($input)->__toString());
     }
 
-    public function validUrlArray()
+    public function validUriArray()
     {
         return [
             'with default port' => [

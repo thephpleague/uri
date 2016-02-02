@@ -17,7 +17,7 @@ use Psr\Http\Message\UriInterface;
 use RuntimeException;
 
 /**
- * A class to ease applying multiple modification 
+ * A class to ease applying multiple modification
  * on a URI object based on the pipeline pattern
  * This class is based on league.pipeline
  *
@@ -30,23 +30,22 @@ class Pipeline extends AbstractUriModifier
     /**
      * @var callable[]
      */
-    protected $collection;
+    protected $modifiers;
 
     /**
      * New instance
      *
-     * @param callable[] $collection
+     * @param callable[] $modifiers
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($collection = [])
+    public function __construct($modifiers = [])
     {
-        foreach ($collection as $modifier) {
+        foreach ($modifiers as $modifier) {
             if (!is_callable($modifier)) {
                 throw new InvalidArgumentException('All submitted modifiers should be callable');
             }
-
-            $this->collection[] = $modifier;
+            $this->modifiers[] = $modifier;
         }
     }
 
@@ -59,10 +58,10 @@ class Pipeline extends AbstractUriModifier
      */
     public function pipe(callable $modifier)
     {
-        $collection = $this->collection;
-        $collection[] = $modifier;
+        $clone = clone $this;
+        $clone->modifiers[] = $modifier;
 
-        return new static($collection);
+        return $clone;
     }
 
     /**
@@ -72,7 +71,7 @@ class Pipeline extends AbstractUriModifier
      *
      * @return Uri|UriInterface
      *
-     * @see {@link Pipeline::__invoke}
+     * @see Pipeline::__invoke
      */
     public function process($uri)
     {
@@ -92,7 +91,7 @@ class Pipeline extends AbstractUriModifier
     {
         $this->assertUriObject($uri);
         $submittedUriClass = get_class($uri);
-        foreach ($this->collection as $modifier) {
+        foreach ($this->modifiers as $modifier) {
             $uri = call_user_func($modifier, $uri);
             if (!is_object($uri) || $submittedUriClass !== get_class($uri)) {
                 throw new RuntimeException(

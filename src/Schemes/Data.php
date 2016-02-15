@@ -15,9 +15,11 @@ use InvalidArgumentException;
 use League\Uri\Components\DataPath as Path;
 use League\Uri\Components\Fragment;
 use League\Uri\Components\Host;
+use League\Uri\Components\Pass;
 use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Components\Scheme;
+use League\Uri\Components\User;
 use League\Uri\Components\UserInfo;
 use League\Uri\Interfaces\DataPath as PathInterface;
 use League\Uri\Interfaces\Fragment as FragmentInterface;
@@ -115,7 +117,7 @@ class Data extends AbstractUri implements Uri
 
         return new static(
             new Scheme($components['scheme']),
-            new UserInfo($components['user'], $components['pass']),
+            new UserInfo(new User($components['user']), new Pass($components['pass'])),
             new Host($components['host']),
             new Port($components['port']),
             new Path($components['path']),

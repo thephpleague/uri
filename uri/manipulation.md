@@ -14,6 +14,8 @@ title: Manipulating URI
 To completely replace one of the URI part you can use the modifying methods exposed by all URI object
 
 ~~~php
+<?php
+
 public Uri::withScheme(string $scheme): self
 public Uri::withUserInfo(string $user [, string $password = null]): self
 public Uri::withHost(string $host): self
@@ -26,6 +28,8 @@ public Uri::withFragment(string $fragment): self
 Since All URI object are immutable you can chain each modifying methods to simplify URI creation and/or modification.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString("ws://thephpleague.com/fr/")
@@ -44,6 +48,8 @@ echo $uri; //displays wss://foo:bar@www.example.com:81/how/are/you?foo=baz
 Often what you really want is to partially update one of the URI component. Using the current public API it is possible but requires several intermediary steps. For instance here's how you would update the query string from a given URI object:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 use League\Uri\Schemes\Http as HttpUri;
 
@@ -57,6 +63,8 @@ echo $newUri; // display http://www.example.com?foo=bar&taz#~typo
 ### URI modifiers principles
 
 ~~~php
+<?php
+
 function(Psr\Http\Message\UriInterface $uri): Psr\Http\Message\UriInterface
 //or
 function(League\Uri\Interfaces\Uri $uri): League\Uri\Interfaces\Uri
@@ -74,6 +82,8 @@ A URI modifier must follow the following rules:
 Let's recreate the above example using a URI modifier.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $mergeQuery = function ($uri) {
@@ -95,6 +105,8 @@ $mergeQuery = function ($uri) {
 And now the code becomes:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString("http://www.example.com?foo=toto#~typo");

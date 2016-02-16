@@ -12,6 +12,8 @@ To ease working with Data URIs, the library comes bundle with a URI specific Dat
 In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), because data URI represents files, you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
@@ -26,6 +28,8 @@ If the file is not readable or accessible an `RuntimeException` exception will b
 Even though all URI properties are defined and accessible attempt to set any component other than the path will result in the object throwing a `RuntimeException` exception. As adding data to theses URI parts will generate an invalid Data URI.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
@@ -38,6 +42,8 @@ $uri->withHost('example.com'); //thrown an RuntimeException
 The data URI class uses the [DataPath](/components/datauri-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying file.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 
 $uriString = 'data:text/plain;charset=us-ascii,Hello%20World%21';

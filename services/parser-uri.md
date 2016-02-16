@@ -10,6 +10,8 @@ Because the library parses URIs in accordance to RFC3986, it ships with it own U
 ## Parsing an URI to extract its components
 
 ~~~php
+<?php
+
 public UriParser::parse(string $uri): string
 public UriParser::__invoke(string $uri): string
 ~~~
@@ -25,6 +27,8 @@ Here are the main differences with PHP's `parse_url` function:
 The `UriParser::parse` always returns all URI components.
 
 ~~~php
+<?php
+
 use League\Uri\UriParser;
 
 $parser = new UriParser();
@@ -53,6 +57,8 @@ var_dump(parse_url('http://www.example.com/'));
 Accessing individual component is simple without needing extra parameters:
 
 ~~~php
+<?php
+
 use League\Uri\UriParser;
 
 $uri = 'http://www.example.com/';
@@ -65,6 +71,8 @@ parse_url($uri, PHP_URL_QUERY); //returns null
 A distinction is made between an unspecified component, which will be set to `null` and an empty component which will be equal to the empty string.
 
 ~~~php
+<?php
+
 use League\Uri\UriParser;
 
 $uri = 'http://www.example.com/?';
@@ -77,6 +85,8 @@ parse_url($uri, PHP_URL_QUERY); //returns `null`
 Since a URI is made of at least a path component, this component is never equal to `null`
 
 ~~~php
+<?php
+
 use League\Uri\UriParser;
 
 $uri = 'http://www.example.com?';
@@ -89,6 +99,8 @@ parse_url($uri, PHP_URL_PATH); //returns `null`
 <p class="message-notice">The <code>UriParser</code> class only parse and extract from the URI string its components. You still need to validate them against its scheme specific rules.</p>
 
 ~~~php
+<?php
+
 use League\Uri\UriParser;
 
 $uri = 'http:www.example.com';

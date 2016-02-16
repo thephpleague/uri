@@ -10,6 +10,8 @@ The Formatter service class helps you format your URI according to your output.
 ## Formatting URI and URI parts
 
 ~~~php
+<?php
+
 public Formatter::format(mixed $input): string
 public Formatter::__invoke(mixed $input): string
 ~~~~~~
@@ -30,6 +32,8 @@ This methods expect one of the following input:
 ### Host encoding strategy
 
 ~~~php
+<?php
+
 public Formatter::setHostEncoding(int $format): void
 public Formatter::getHostEncoding(void): int
 ~~~~~~
@@ -42,6 +46,8 @@ A host can be output as encoded in ascii or in unicode. By default the formatter
 - `Formatter::HOST_AS_ASCII`   to set the host encoding to ascii;
 
 ~~~php
+<?php
+
 use League\Uri\Formatter;
 use League\Uri\Components\Host;
 
@@ -58,6 +64,8 @@ echo $formatter($host);         //displays 'рф.ru'
 ### Query encoding strategy
 
 ~~~php
+<?php
+
 public Formatter::setQueryEncoding(int $encoding): void
 public Formatter::getQueryEncoding(void): int
 ~~~~~~
@@ -70,6 +78,8 @@ A `League\Uri\Components\Query` object is by default encoded by following RFC 39
 - `PHP_QUERY_RFC1738` to set the query encoding as per RFC 1738;
 
 ~~~php
+<?php
+
 use League\Uri\Formatter;
 use League\Uri\Components\Query;
 
@@ -86,6 +96,8 @@ echo $formatter($query);         //displays foo=ba+r&baz=bar
 ### Modifying the query separator
 
 ~~~php
+<?php
+
 public Formatter::setQuerySeparator(string $separator): void
 public Formatter::getQuerySeparator(void): string
 ~~~
@@ -93,6 +105,8 @@ public Formatter::getQuerySeparator(void): string
 <p class="message-warning">The <code>getQuerySeparator</code> method is deprecated since <code>version 4.1</code>  and will be removed in the next major release</p>
 
 ~~~php
+<?php
+
 use League\Uri\Formatter;
 use League\Uri\Components\Query;
 
@@ -112,6 +126,8 @@ Apart form URI component classes, the `Formatter::format` method can modify the 
 ### Concrete example
 
 ~~~php
+<?php
+
 use League\Uri\Formatter;
 use League\Uri\Schemes\Http as HttpUri;
 
@@ -129,6 +145,8 @@ echo $formatter(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar
 ## Preserving URI components
 
 ~~~php
+<?php
+
 public Formatter::preserveQuery(bool $status): void
 public Formatter::preserveFragment(bool $status): void
 ~~~~~~
@@ -138,6 +156,8 @@ public Formatter::preserveFragment(bool $status): void
 According to PSR-7 UriInterface, when a component is empty and optional, this is the case of the query and the fragment components, it is completely removed from the object representation. The following URIs will all produced the same string representation:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com?#');
@@ -152,6 +172,8 @@ echo $otherUri->__toString(); //return 'http://uri.thephpleague.com';
 If you need to preserve these URI parts you are required to specify it to the formatter as shown below:
 
 ~~~php
+<?php
+
 use League\Uri\Formatter;
 use League\Uri\Schemes\Http as HttpUri;
 

@@ -12,6 +12,8 @@ Here's the documentation for the included URI modifiers which are modifying the 
 Transcodes the host into its ascii representation according to RFC3986:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\HostToAscii;
 
@@ -26,6 +28,8 @@ echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
 Transcodes the host into its idn representation according to RFC3986:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\HostToUnicode;
 
@@ -41,6 +45,8 @@ echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 Removes the host zone identifier if present
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveZoneIdentifier;
 
@@ -56,6 +62,8 @@ echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
 ### Description
 
 ~~~php
+<?php
+
 public AppendLabel::__construct(string $label)
 ~~~
 
@@ -68,6 +76,8 @@ Appends a label or a host to the current URI host.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\AppendLabel;
 
@@ -82,6 +92,8 @@ echo $newUri; //display "http://www.example.com.fr/path/to/the/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public PrependLabel::__construct(string $label)
 ~~~
 
@@ -94,6 +106,8 @@ Prepends a label or a host to the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\PrependLabel;
 
@@ -108,6 +122,8 @@ echo $newUri; //display "http://shop.www.example.com/path/to/the/sky/and/above"
 ### Description
 
 ~~~php
+<?php
+
 public ReplaceLabel::__construct(int $offset, string $label)
 ~~~
 
@@ -123,6 +139,8 @@ Replaces a label from the current URI host with a new label or a host.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceLabel;
 
@@ -146,6 +164,8 @@ You can update the label string using the `withLabel` method.
 This method expects a valid label/host and will return a new instance with the updated info.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceLabel;
 
@@ -161,6 +181,8 @@ echo $altUri; //display "http://admin.example.com/path/to/the/sky/"
 In case of the `ReplaceLabel` modifier, the offset can also be modified.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
 
@@ -178,6 +200,8 @@ echo $altUri; //display "http://www.thephpleague.com/path/to/the/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public RemoveLabels::__construct(array $keys = [])
 ~~~
 
@@ -188,6 +212,8 @@ Removes selected labels from the current URI host. Labels are indicated using an
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveLabels;
 
@@ -202,6 +228,8 @@ echo $newUri; //display "http://example.com/path/the/sky/"
 You can update the offsets chosen by using the `withKeys` method
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveLabels;
 
@@ -219,6 +247,8 @@ echo $altUri; //display "http://example/path/to/the/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public FilterLabel::__construct(callable $callable, int $flag = 0)
 ~~~
 
@@ -244,6 +274,8 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 </table>
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterLabel;
 use League\Uri\Interfaces\Collection;
@@ -265,6 +297,8 @@ You can update the URI modifier using:
 - `withFlag` method to alter the filtering flag.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterLabel;
 use League\Uri\Interfaces\Collection;

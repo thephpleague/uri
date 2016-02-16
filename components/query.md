@@ -14,6 +14,8 @@ The library provides a `League\Uri\Components\Query` class to ease complex query
 A new `League\Uri\Components\Query` object can be instantiated using its the default constructor.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=yolo&z=');
@@ -27,6 +29,8 @@ echo $query; //display 'foo=bar&p=yolo&z'
 ### Using a League Uri object
 
 ~~~php
+<?php
+
 use League\Uri\Ws as WsUri;
 
 $uri = WsUri::createFromComponents(
@@ -43,6 +47,8 @@ It is possible to create a `Query` object using an `array` or a `Traversable` ob
 - If a given parameter value is an empty string il will be rendered without any value **but** with a `=` sign appended to it;
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query =  Query::createFromArray(['foo' => 'bar', 'p' => 'yolo', 'z' => '']);
@@ -59,6 +65,8 @@ echo $query; //display 'foo=bar&p&z='
 Basic query representations is done using the following methods:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -71,6 +79,8 @@ $query->getUriComponent(); //return '?foo=bar&p=y%20olo&z'
 A query can be represented as an array of its internal parameters. Through the use of the `Query::toArray` method the class returns the object array representation. This method uses `Parser::parseQuery` to create the array.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -91,6 +101,8 @@ $query->toArray();
 The class provides several methods to works with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate overs them.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -105,6 +117,8 @@ foreach ($query as $parameter => $value) {
 If you are interested in getting all the parameters names you can do so using the `Query::keys` method like show below:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -118,6 +132,8 @@ The methods returns all the parameters name, but if you supply an argument, only
 If you want to be sure that a parameter name exists before using it you can do so using the `Query::hasKey` method which returns `true` if the submitted parameter name exists in the current object.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -130,6 +146,8 @@ $query->hasKey('john'); //return false
 If you are only interested in a given parameter you can access it directly using the `Query::getValue` method as show below:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
@@ -153,6 +171,8 @@ Sometimes you may wish to sort your query. To do so, you can use the `Query::kso
 One of PHP's sorting constant used by the [sort function](http://php.net/sort). **In this case the query parameters are sorted from low to hight** like PHP's [ksort function](http://php.net/ksort)
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&baz=toto');
@@ -163,6 +183,8 @@ $newQuery->__toString(); //return baz=toto&foo=bar
 A user-defined comparison function which must return an integer less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second, like PHP's [uksort function](http://php.net/uksort)
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 
@@ -180,6 +202,8 @@ If you want to add or update the query parameters you need to use the `Query::me
 A string or a stringable object:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&baz=toto');
@@ -192,6 +216,8 @@ $newQuery->__toString(); //return foo=jane&baz=toto&r=stone
 Another `Query` object
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = Query::createFromArray(['foo' => 'bar', 'baz' => 'toto']);
@@ -204,6 +230,8 @@ $newQuery->__toString(); //return foo=jane&baz=toto&r=stone
 <p class="message-notice">Values equal to <code>null</code> or the empty string are merge differently.</p>
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = Query::createFromArray(['foo' => 'bar', 'baz' => 'toto']);
@@ -222,6 +250,8 @@ To remove parameters from the current object and returns a new `Query` object wi
 This argument can be an array containing a list of parameter names to remove.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&p=y+olo&z=');
@@ -238,6 +268,8 @@ Another way to select parameters from the query object is to filter them. Filter
 You can filter the query according to the parameters value:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&p=y+olo&z=');
@@ -250,6 +282,8 @@ echo $newQuery; //displays 'foo=bar&p=y+olo'
 You can filter the query according to the parameters name:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&p=y+olo&z=');
@@ -262,6 +296,8 @@ echo $newQuery; //displays 'foo=bar'
 You can filter the query according to the parameters name and value.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Query;
 
 $query = new Query('toto=foo&bar=foo&john=jane');

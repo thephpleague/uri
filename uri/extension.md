@@ -10,6 +10,8 @@ title: URIs extension
 Let say you want to create a `telnet` class to handle telnet URI. You just need to extends the <code>League\Uri\Schemes\Generic\AbstractHierarchicalUri</code> object and add telnet specific validation features to your class. Here's a quick example that you can further improve.
 
 ~~~php
+<?php
+
 namespace Example;
 
 use League\Uri\Schemes\Generic\AbstractHierarchicalUri;
@@ -48,6 +50,8 @@ class Telnet extends AbstractHierarchicalUri implements Uri
 And now you can easily make it works against any `telnet` scheme URI
 
 ~~~php
+<?php
+
 use Example\Telnet;
 
 $uri = Telnet::createFromString('TeLnEt://example.com:23/Hello%20There'):
@@ -81,6 +85,8 @@ Here's how we will proceed. We will:
 The main specific area of the `mailto` scheme URI is the path. It only contains valid emails separated by a comma as per RFC specification. It means we need an interface to manipulate the path as a collection of emails. So we can remove/append/prepend/replace/filter emails as we want. As a matter a fact there's already a interface for that in the library. To complete this interface we just need one method to retrieve one specific email from the path based on its index.
 
 ~~~php
+<?php
+
 namespace Example;
 
 use League\Uri\Interfaces\HierarchicalComponent;
@@ -118,6 +124,8 @@ We simply need to add:
 - the method to retrieve one email.
 
 ~~~php
+<?php
+
 namespace Example;
 
 use League\Uri\Components\AbstractHierarchicalComponent;
@@ -206,6 +214,8 @@ Now that we have a `MailtoPath` class we can create the main `Mailto` class.
 This time we will built the URI object by extending the <code>League\Uri\Schemes\Generic\AbstractUri</code> object by adding `mailto` specific validation rules to the class.
 
 ~~~php
+<?php
+
 namespace Example;
 
 use League\Uri\Components\Fragment;
@@ -343,6 +353,8 @@ class Mailto extends AbstractUri implements Uri
 Et voilà! You can already do this:
 
 ~~~php
+<?php
+
 use Example\Mailto;
 use League\Uri\Modifiers\MergeQuery;
 

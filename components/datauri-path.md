@@ -14,6 +14,8 @@ The library provides a `League\Uri\Components\DataPath` class to ease complex pa
 Just like any other component, a new `League\Uri\Components\DataPath` object can be instantiated using its default constructor.
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $path = new Path('text/plain;charset=us-ascii,Hello%20World%21');
@@ -27,6 +29,8 @@ echo $path; //returns 'text/plain;charset=us-ascii,Hello%20World%21'
 ### Using a Data Uri object
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 
 $uri  = DataUri::createFromString('data:text/plain;charset=us-ascii,Hello%20World%21');
@@ -40,6 +44,8 @@ $path = $uri->path; // $path is a League\Uri\Components\DataPath object;
 Because data URI represents files you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $path = Path::createFromPath('path/to/my/png/image.png');
@@ -56,6 +62,8 @@ If the file is not readable or accessible an InvalidArgumentException exception 
 Basic path representations is done using the following methods:
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $path = new Path('text/plain;charset=us-ascii,Hello%20World%21');
@@ -77,6 +85,8 @@ The DataPath class exposes the following specific methods:
 Each of these methods return a string. This string can be empty if the data where no supplied when constructing the URI.
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Hello%20World%21');
@@ -91,6 +101,8 @@ echo $uri->getData(); //returns 'Hello%20World%21'
 To tell whether the data URI represents some binary data you can call the `isBinaryData` method. This method which returns a boolean will return `true` if the data is in a binary state. The binary state is checked on instantiation. Invalid binary dataURI will throw an `InvalidArgumentException` exception on initiation.
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
@@ -110,6 +122,8 @@ Since we are dealing with a data and not just a URI, the only property that can 
 To set new parameters you should use the `withParameters` method:
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $path = new Path('text/plain;charset=us-ascii,Hello%20World%21');
@@ -124,6 +138,8 @@ echo $newPath; //returns 'text/plain;charset=utf-8,Hello%20World%21'
 Another manipulation is to transcode the data from ASCII to is base64 encoded (or binary) version. If no conversion is possible the former object is returned otherwise a new valid data uri object is created.
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $path = new Path('data:text/plain;charset=us-ascii,Hello%20World%21');
@@ -145,6 +161,8 @@ By default the open mode is set to `w`. If for any reason the file is not access
 The method returns the `SplFileObject` object used to save the data-uri data for further analysis/manipulation if you want.
 
 ~~~php
+<?php
+
 use League\Uri\Components\DataPath as Path;
 
 $uri = Path::createFromPath('path/to/my/file.png');

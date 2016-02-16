@@ -10,6 +10,8 @@ title: Examples
 Appart from being able to get all the URI component string using their respective getter method. the URI object also exposed all component as object throught PHP's magic `__get` method. You can use this ability to get even more informations about the URI objects.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString("http://uri.thephpleague.com/.././report/");
@@ -44,6 +46,8 @@ The package comes bundle with [URI modifiers](/uri/manipulation/#uri-modifiers) 
 Let's say you have a document that can be downloaded in different format (CSV, XML, JSON) and you quickly want to generate each format URI. This example illustrates how easy it is to generate theses different URIs from an original URI.
 
 ~~~php
+<?php
+
 use League\Uri\Modifiers\AppendSegment;
 use League\Uri\Modifiers\Extension;
 use League\Uri\Modifiers\Pipeline;
@@ -72,5 +76,4 @@ echo $uri, PHP_EOL;           // display "http://www.example.com/report"
 echo $links['csv'], PHP_EOL;  // display "https://download.example.com/report/purchases/summary.csv"
 echo $links['xml'], PHP_EOL;  // display "https://download.example.com/report/purchases/summary.xml"
 echo $links['json'], PHP_EOL; // display "https://download.example.com/report/purchases/summary.json"
-
 ~~~

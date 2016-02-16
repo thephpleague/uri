@@ -12,6 +12,8 @@ Here's the documentation for the included URI modifiers which are modifying the 
 ### Description
 
 ~~~php
+<?php
+
 public KsortQuery::__construct(mixed $sort = SORT_REGULAR)
 ~~~
 
@@ -24,6 +26,8 @@ The `$sort` argument can be:
 - one of PHP's sorting constant used by the [ksort function](http://php.net/ksort)
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\KsortQuery;
 
@@ -36,6 +40,8 @@ echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 - a user defined comparison function used by the [uksort function](http://php.net/uksort)
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\KsortQuery;
 
@@ -57,6 +63,8 @@ echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 The sorting algorithm can be change at any given time. By default if none is provided. The sorting is done using PHP's `ksort` sort flag parameters. But you can also provide a callable as sorting mechanism using the `withAlgorithm` method.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\KsortQuery;
 
@@ -76,6 +84,8 @@ echo $altUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 ### Description
 
 ~~~php
+<?php
+
 public MergeQuery::__construct(string $query)
 ~~~
 
@@ -84,6 +94,8 @@ Merges a submitted query string to the URI object to be modified
 ### Example
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\MergeQuery;
 
@@ -100,6 +112,8 @@ echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%2
 At any given time you can create a new modifier with another query string to merge using the `withQuery` method.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\MergeQuery;
 
@@ -117,6 +131,8 @@ echo $altUri; //display "http://example.com/test.php?kingkong=toto&foo=1#doc3"
 ### Description
 
 ~~~php
+<?php
+
 public RemoveQueryKeys::__construct(array $keys = [])
 ~~~
 
@@ -125,6 +141,8 @@ Removes query keys from the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveQueryKeys;
 
@@ -141,6 +159,8 @@ echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
 You can update the keys chosen by using the `withKeys` method
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveQueryKeys;
 
@@ -158,6 +178,8 @@ echo $altUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 ### Description
 
 ~~~php
+<?php
+
 public FilterQuery::__construct(callable $callable, int $flag = 0)
 ~~~
 
@@ -185,6 +207,8 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 Filter selected query keys and/or values from the current URI path to keep.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Interfaces\Collection;
@@ -208,6 +232,8 @@ You can update the URI modifier using:
 - `withFlag` method to alter the filtering flag;
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Interfaces\Collection;

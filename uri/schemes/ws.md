@@ -15,6 +15,8 @@ Websockets URIs must contain a `ws` or the `wss` scheme. It can not contain a fr
 <p class="message-notice">Adding contents to the fragment component throws an <code>RuntimeException</code> exception</p>
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
@@ -32,6 +34,8 @@ Apart from the fragment, the websockets URIs share the same [host validation lim
 Websockets URIs objects uses the specialized [HierarchicalPath](/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here');

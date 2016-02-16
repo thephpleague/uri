@@ -12,6 +12,8 @@ Even thought the package comes bundle with a serie of URI objects representing u
 You can access the URI individual parts and components using their respective getter methods.
 
 ~~~php
+<?php
+
 public Uri::getScheme(void): string
 public Uri::getUserInfo(void): string
 public Uri::getHost(void): string
@@ -25,6 +27,8 @@ public Uri::getFragment(void): string
 Which will lead to the following result for a simple URI:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz#title");
@@ -43,6 +47,8 @@ echo $uri->getFragment();  //displays "title"
 To access a specific URI part or component as an object you can use PHP's magic method `__get` as follow.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz");
@@ -58,6 +64,8 @@ $uri->fragment; //return a League\Uri\Components\Fragment object
 Using this technique you can get even more informations regarding your URI.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz");

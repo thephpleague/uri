@@ -12,6 +12,8 @@ The library provides a `League\Uri\Components\Port` class to ease port manipulat
 A new `League\Uri\Components\Port` object can be instantiated using its default constructor.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Port;
 
 $port = new Port(443);
@@ -37,6 +39,8 @@ The port component constructor accepts:
 Another way to acces a `League\Uri\Components\Port` object is to use an already instantiated League Uri object.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri  = HttpUri::createFromString('http://uri.thephpleague.com:82');
@@ -50,6 +54,8 @@ $port = $uri->port; // $port is a League\Uri\Components\Port object;
 Basic port representations is done using the following methods:
 
 ~~~php
+<?php
+
 use League\Uri\Components\Port;
 
 $port = new Port(21);
@@ -62,6 +68,8 @@ $port->getUriComponent(); //return ':21'
 A port is a integer between `1` and `65535`. To get the Port as an integer you can use the `Port::toInt` method. This method will return an integer if the port was defined and the `null` value otherwise.
 
 ~~~php
+<?php
+
 use League\Uri\Components\Port;
 
 $port = new Port(81);

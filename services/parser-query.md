@@ -12,6 +12,8 @@ Instead, the `League\Uri\QueryParser` class provides two public methods that can
 ## Parsing the query string into an array
 
 ~~~php
+<?php
+
 public QueryParser::parse(string $query_string [, string $separator = '&' [, int $encoding = RFC3986]]): array
 ~~~
 
@@ -27,6 +29,8 @@ The `QueryParser::parse` method returns an `array` representation of the query s
 <p class="message-notice">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
 
 ~~~php
+<?php
+
 use League\Uri\QueryParser;
 
 $parser = new QueryParser();
@@ -43,6 +47,8 @@ $arr = $parser->parse($query_string, '&', PHP_RFC3986);
 These behaviors, specific to PHP, may be considered to be a data loss transformation in other languages.
 
 ~~~php
+<?php
+
 $query_string = 'toto.foo=bar&toto.foo=baz';
 parse_str($query_string, $arr);
 // $arr is an array containing ["toto_foo" => "baz"]
@@ -51,6 +57,8 @@ parse_str($query_string, $arr);
 ## Building the query string from an array
 
 ~~~php
+<?php
+
 public QueryParser::build(array $data [, string $separator = '&' [, int $encoding = RFC3986]]): string
 ~~~
 
@@ -66,6 +74,8 @@ The `QueryParser::build` method returns and preserves string representation of t
 <p class="message-notice">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
 
 ~~~php
+<?php
+
 use League\Uri\QueryParser;
 
 $query_string = 'foo[]=bar&foo[]=baz';
@@ -87,6 +97,8 @@ No key indexes is added and the query string is safely recreated
 using PHP's `parse_str`
 
 ~~~php
+<?php
+
 $query_string = 'foo[]=bar&foo[]=baz';
 parse_str($query_string, $arr);
 // $arr = ["foo" => ['bar', 'baz']];
@@ -98,6 +110,8 @@ $res = rawurldecode(http_build_query($arr, '', PHP_QUERY_RFC3986));
 or using `QueryParser::parse`
 
 ~~~php
+<?php
+
 use League\Uri\QueryParser;
 
 $query_string = 'foo[]=bar&foo[]=baz';

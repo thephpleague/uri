@@ -23,12 +23,16 @@ If a new instance can not be created exceptions are thrown.
 ### From a string
 
 ~~~php
+<?php
+
 public static Uri::createFromString(string $uri = ''): Uri
 ~~~
 
 Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parse using the library [internal URI parser](/services/parser-uri/).
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://host.example.com/path/to/image.png;type=i');
@@ -37,12 +41,16 @@ $uri = FtpUri::createFromString('ftp://host.example.com/path/to/image.png;type=i
 ### From parse_url results
 
 ~~~php
+<?php
+
 public static Uri::createFromComponents(array $components = []): Uri
 ~~~
 
 You can also instantiate a new URI object using the `createFromComponents` named constructor by giving it the result of PHP's function `parse_url` or the library [internal URI parser](/services/parser-uri/).
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $components = parse_url('wss://foo.example.com/path/to/index.php?param=value');
@@ -76,6 +84,8 @@ These non destructives rules are:
 - the port number is removed from the URI string representation if the standard port is used;
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f+3#title");

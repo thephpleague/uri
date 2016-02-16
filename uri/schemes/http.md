@@ -10,6 +10,8 @@ title: Http URIs
 To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and non secure Http URI. In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), the `Http` class can be instantiated using the server variables.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 //don't forget to provide the $_SERVER array
@@ -23,6 +25,8 @@ $uri = HttpUri::createFromServer($_SERVER);
 If a scheme is present and the scheme specific part of a Http URI is not empty the URI can not contain an empty authority. Thus, some Http URI modifications must be applied in a specific order to preserve the URI validation.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
@@ -34,6 +38,8 @@ echo $uri->withHost('')->withScheme('')->__toString();
 Instead you are require to proceed as below
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
@@ -51,6 +57,8 @@ The `Http` class is compliant with PSR-7 `UriInterface` interface. This means th
 The Http URI class uses the specialized [HierarchicalPath](/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/uri/schemes/http.md');

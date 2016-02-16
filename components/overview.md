@@ -51,6 +51,8 @@ The default constructor expected an **encoded** string according to the componen
 <p class="message-warning">If the submitted value is invalid an <code>InvalidArgumentException</code> exception is thrown.</p>
 
 ~~~php
+<?php
+
 use League\Uri\Components;
 
 $scheme   = new Components\Scheme('http');
@@ -73,6 +75,8 @@ Each class provides several ways to represent the component value as string.
 The `__toString` method returns the string representation of the object. This is the form used when echoing the URI component from the URI object getter methods. No component delimiter is returned.
 
 ~~~php
+<?php
+
 use League\Uri\Components;
 
 $scheme = new Components\Scheme('http');
@@ -93,6 +97,8 @@ echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 The `getUriComponent` Returns the string representation of the URI part with its optional delimiters. This is the form used by the URI object `__toString` method when building the URI string representation.
 
 ~~~php
+<?php
+
 use League\Uri\Components;
 
 $scheme = new Components\Scheme('http');
@@ -110,6 +116,8 @@ echo $path->getUriComponent(); //displays '/toto%20le%20heros/file.xml'
 To compare two components to know if they represent the same value you can use the `sameValueAs` method which compares them according to their respective `getUriComponent` methods.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Components;
 
@@ -136,6 +144,8 @@ Each URI component class can have its content modified using the `modify` method
 <p class="message-warning">The <code>UserInfo</code> class does not include a <code>modify</code> method.</p>
 
 ~~~php
+<?php
+
 use League\Uri\Components;
 
 $query = new Components\Query('q=url&site=thephpleague');

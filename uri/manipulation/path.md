@@ -12,6 +12,8 @@ Here's the documentation for the included URI modifiers which are modifying the 
 Removes dot segments according to RFC3986:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveDotSegments;
 
@@ -26,6 +28,8 @@ echo $newUri; //display "http://www.example.com/to/the/sky/"
 Removes adjacent separators with empty segment.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveEmptySegments;
 
@@ -40,6 +44,8 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky/"
 Removes the path trailing slash if present
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveTrailingSlash;
 
@@ -54,6 +60,8 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky"
 Adds the path trailing slash if not present
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\AddTrailingSlash;
 
@@ -68,6 +76,8 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky"
 Removes the path leading slash if present.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveLeadingSlash;
 
@@ -82,6 +92,8 @@ echo $newUri; //display "path/to/the/sky"
 Adds the path leading slash if not present.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\AddLeadingSlash;
 
@@ -96,6 +108,8 @@ echo $newUri; //display "/path/to/the/sky"
 ### Description
 
 ~~~php
+<?php
+
 public AppendSegment::__construct(string $segment)
 ~~~
 
@@ -108,6 +122,8 @@ Appends a segment or a path to the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\AppendSegment;
 
@@ -122,6 +138,8 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 ### Description
 
 ~~~php
+<?php
+
 public PrependSegment::__construct(string $segment)
 ~~~
 
@@ -134,6 +152,8 @@ Prepends a segment or a path to the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\PrependSegment;
 
@@ -148,6 +168,8 @@ echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky/and/ab
 ### Description
 
 ~~~php
+<?php
+
 public ReplaceSegment::__construct(int $offset, string $segment)
 ~~~
 
@@ -161,6 +183,8 @@ Replaces a segment from the current URI path with a new segment or path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
 
@@ -184,6 +208,8 @@ You can update the segment string using the `withSegment` method.
 This method expect a valid segment/path and will return a new instance with the updated segment.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
 
@@ -199,6 +225,8 @@ echo $altUri; //display "http://www.example.com/path/to/the/sun/"
 In case of the `ReplaceSegment` modifier, the offset can also be modified.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceSegment;
 
@@ -216,6 +244,8 @@ echo $altUri; //display "http://www.example.com/sun/to/the/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public Extension::__construct(string $extension)
 ~~~
 
@@ -228,6 +258,8 @@ Adds, update and or remove the path extension from the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\Extension;
 
@@ -242,6 +274,8 @@ echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
 You can update the extension chosen by using the `withExtension` method
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\Extension;
 
@@ -259,6 +293,8 @@ echo $altUri; //display "http://www.example.com/and/above/path/to/the/sky.php"
 ### Description
 
 ~~~php
+<?php
+
 public RemoveSegments::__construct(array $keys = [])
 ~~~
 
@@ -267,6 +303,8 @@ Removes selected segments from the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveSegments;
 
@@ -281,6 +319,8 @@ echo $newUri; //display "http://www.example.com/path/the/and/above"
 You can update the offsets chosen by using the `withKeys` method
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\RemoveSegments;
 
@@ -298,6 +338,8 @@ echo $altUri; //display "http://www.example.com/to/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public FilterSegments::__construct(callable $callable, int $flag = 0)
 ~~~
 
@@ -325,6 +367,8 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterSegments;
 use League\Uri\Interfaces\Collection;
@@ -344,6 +388,8 @@ You can update the URI modifier using:
 - `withFlag` method to alter the filtering flag.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\FilterSegments;
 use League\Uri\Interfaces\Collection;
@@ -365,6 +411,8 @@ echo $altUri; //display "http://www.example.com/path/the/sky/"
 ### Description
 
 ~~~php
+<?php
+
 public Typecode::__construct(int $flag = 0)
 ~~~
 
@@ -377,6 +425,8 @@ With this URI modifier you can:
 - suffix the path with a new typecode
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Modifiers\Typecode;
 
@@ -389,6 +439,8 @@ echo $newUri; //display 'ftp://thephpleague.com/path/to/image.png;type=i'
 - update the already present typecode
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Modifiers\Typecode;
 
@@ -401,6 +453,8 @@ echo $newUri; //display 'ftp://thephpleague.com/path/to/image.png;type=d'
 - remove the current typecode by providing an empty string.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 use League\Uri\Modifiers\Typecode;
 
@@ -423,6 +477,8 @@ Just like others modifier it is possible to update the modifier typecode setting
 ### Description
 
 ~~~php
+<?php
+
 public DataUriParameters::__construct(string $parameters = 0)
 ~~~
 
@@ -435,6 +491,8 @@ Removes selected segments from the current URI path.
 ### Examples
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriParameters;
 
@@ -450,6 +508,8 @@ echo $newUri; //display "data:text/plain;charset=utf-8,Hello%20World!"
 You can update the offsets chosen by using the `withParameters` method
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriParameters;
 
@@ -468,6 +528,8 @@ echo $altUri; //display "data:text/plain;charset=utf-16;foo=bar,Hello%20World!"
 Transcoding a data URI path from text to its base64 encoded version
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriToBinary;
 
@@ -483,6 +545,8 @@ echo $newUri; //display "data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQ
 Transcoding a data URI path from text to its base64 encoded version
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Data as DataUri;
 use League\Uri\Modifiers\DataUriToAscii;
 

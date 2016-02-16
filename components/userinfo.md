@@ -17,6 +17,8 @@ The constructor expects 2 optional arguments:
 - the user password: a `League\Uri\Components\Pass` object, a string or the `null` value;
 
 ~~~php
+<?php
+
 use League\Uri\Components;
 
 $info = new Components\UserInfo('foo', 'bar');
@@ -39,6 +41,8 @@ echo $altInfo; //display 'foo:bar'
 You can also get a `UserInfo` object from a Hierarchical URI object:
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromComponents(parse_url('http://john:doe@example.com:81/'));
@@ -53,6 +57,8 @@ echo $userInfo; // display 'john:doe'
 Basic representations is done using the following methods:
 
 ~~~php
+<?php
+
 use League\Uri\Components\UserInfo;
 
 $info = new UserInfo('foo', 'bar');
@@ -65,6 +71,8 @@ $info->getUriComponent(); //return 'foo:bar@'
 To acces the user login and password information you need to call the respective `UserInfo::getUser` and `UserInfo::getPass` methods like shown below.
 
 ~~~php
+<?php
+
 use League\Uri\Components\UserInfo;
 use League\Uri\Schemes\Http;
 
@@ -80,6 +88,8 @@ $uri->userInfo->getPass(); //return 'doe'
 To get access to the component classes you can use PHP's magic `__get` method:
 
 ~~~php
+<?php
+
 use League\Uri\Components\UserInfo;
 use League\Uri\Schemes\Http;
 
@@ -100,6 +110,8 @@ Because the `UserInfo` class does not represent a URI component, it does not inc
 To modify the user login and password information you need to call the respective `UserInfo::withUser` and `UserInfo::withPass` methods like shown below.
 
 ~~~php
+<?php
+
 use League\Uri\Components\UserInfo;
 
 $info = new UserInfo('foo', 'bar');

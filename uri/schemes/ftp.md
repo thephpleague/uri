@@ -14,6 +14,8 @@ A FTP URI must contain the `ftp` scheme. It can not contains a query and or a fr
 <p class="message-notice">Adding contents to the fragment or query components throws an <code>RuntimeException</code> exception</p>
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
@@ -31,6 +33,8 @@ Apart from the fragment and the query components, the Ftp URIs share the same [h
 The FTP URI class uses the specialized [HierarchicalPath](/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');

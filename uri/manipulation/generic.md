@@ -12,6 +12,8 @@ Here's the documentation for the included URI modifiers which are modifying mult
 ### Description
 
 ~~~php
+<?php
+
 public Resolve::__construct(mixed $uri)
 ~~~
 
@@ -24,6 +26,8 @@ The `Resolve` URI Modifier provides the mean for resolving an URI as a browser w
 ### Example
 
 ~~~php
+<?php
+
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\Resolve;
 
@@ -46,6 +50,8 @@ The `League\Uri\Modifiers\Pipeline` uses two methods:
 <p class="message-notice">The <code>Pipeline::process</code> is an alias of <code>Pipeline::__invoke</code>.</p>
 
 ~~~php
+<?php
+
 use League\Uri\Modifiers\HostToAscii;
 use League\Uri\Modifiers\KsortQuery;
 use League\Uri\Modifiers\Pipeline;
@@ -83,6 +89,8 @@ To help wil URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</c
 If you normalized two URI objects it become easier to compare them to determine if they are referring to the same resource:
 
 ~~~php
+<?php
+
 use League\Uri\Modifiers\Normalize;
 use League\Uri\Schemes\Http as HttpUri;
 

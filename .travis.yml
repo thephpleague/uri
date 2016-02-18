@@ -16,15 +16,13 @@ matrix:
 
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 before_install:
-  - composer self-update
-  - composer validate
+  - travis_retry composer self-update
 
 install:
-  - travis_retry composer install --prefer-dist
+  - travis_retry composer update --no-interaction --prefer-source
 
 script:
   - composer test

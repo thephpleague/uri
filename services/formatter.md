@@ -141,7 +141,6 @@ echo $formatter(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar
 //displays https://xn--p1ai.ru:81?foo=ba%20r&amp;baz=bar
 ~~~
 
-
 ## Preserving URI components
 
 ~~~php

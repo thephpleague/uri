@@ -122,4 +122,3 @@ $arr = $parser->parse($query_string, '&', PHP_RFC3986);
 $res = rawurldecode(http_build_query($arr, '', PHP_QUERY_RFC3986));
 // $res equals foo[][0]=bar&oo[][1]=baz
 ~~~
-

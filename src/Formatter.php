@@ -321,8 +321,7 @@ class Formatter
         }
 
         return '//'.$this->buildUserInfo($components['user'], $components['pass'])
-            .$this->formatHost(new Host($components['host']))
-            .$port;
+            .$this->formatHost(new Host($components['host'])).$port;
     }
 
     /**

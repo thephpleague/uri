@@ -113,10 +113,10 @@ interface MailtoPathInterface extends Path, HierarchicalComponent
 
 ### The MailtoPath and the Mailto classes
 
-Now that we have defined a new specialized path interface. Let's implement it in the `MailtoPath` class. The library abstract classes and traits will help a lot. 
+Now that we have defined a new specialized path interface. Let's implement it in the `MailtoPath` class. The library abstract classes and traits will help a lot.
 
-- the `AbstractHierarchicalComponent` abstract class will add all manipulating methods needed. As well as all collections related methods to the class. 
-- the `PathTrait` trait will add basic path operations independent 
+- the `AbstractHierarchicalComponent` abstract class will add all manipulating methods needed. As well as all collections related methods to the class.
+- the `PathTrait` trait will add basic path operations independent
 
 We simply need to add:
 
@@ -209,7 +209,7 @@ class MailtoPath extends AbstractHierarchicalComponent implements MailtoPathInte
 }
 ~~~
 
-Now that we have a `MailtoPath` class we can create the main `Mailto` class. 
+Now that we have a `MailtoPath` class we can create the main `Mailto` class.
 
 This time we will built the URI object by extending the <code>League\Uri\Schemes\Generic\AbstractUri</code> object by adding `mailto` specific validation rules to the class.
 
@@ -314,7 +314,7 @@ class Mailto extends AbstractUri implements Uri
      */
     public static function createFromComponents(array $components)
     {
-        $components = (new UriParser())->normalizeUriHash($components);
+        $components = self::normalizeUriHash($components);
 
         return new static(
             new Scheme($components['scheme']),
@@ -359,7 +359,7 @@ use Example\Mailto;
 use League\Uri\Modifiers\MergeQuery;
 
 $mailto = Mailto::createFromEmails(['foo@example.com', 'info@thephpleague.com']);
-$mailto->__toString(); 
+$mailto->__toString();
 //returns 'mailto:foo@xexample.com,info@thephpleague.com';
 
 echo $mailto->path->getEmail(0); //returns 'foo@example.com'

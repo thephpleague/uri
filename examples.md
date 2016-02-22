@@ -27,14 +27,14 @@ var_dump($uri->host->toArray());
 // array(
 //     0 => 'com',
 //     1 => 'thephpleague',
-//     2 => 'url',
+//     2 => 'uri',
 //);
 
 echo $uri->getHost(), PHP_EOL; //display "uri.thephpleague.com"
-echo $uri->host->getLabel(2), PHP_EOL; //display "url"
+echo $uri->host->getLabel(2), PHP_EOL; //display "uri"
 echo $uri->host->getPublicSuffix(), PHP_EOL; //return com
 echo $uri->host->getRegisterableDomain(), PHP_EOL; //display 'thephpleague.com'
-echo $uri->host->getSubDomain(), PHP_EOL; //display 'url'
+echo $uri->host->getSubDomain(), PHP_EOL; //display 'uri'
 ~~~
 
 Each component exposes its own specific properties. Please refer to the documentation to get the full public API.

@@ -24,7 +24,7 @@ Highlights
 Documentation
 ------
 
-Full documentation can be found at [url.thephpleague.com](http://url.thephpleague.com). Contribute to this documentation in the [gh-pages](https://github.com/thephpleague/uri/tree/gh-pages) branch
+Full documentation can be found at [uri.thephpleague.com](http://uri.thephpleague.com). Contribute to this documentation in the [gh-pages](https://github.com/thephpleague/uri/tree/gh-pages) branch
 
 System Requirements
 -------

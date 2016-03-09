@@ -249,7 +249,7 @@ echo $altUri; //display "http://example/path/to/the/sky/"
 ~~~php
 <?php
 
-public FilterLabel::__construct(callable $callable, int $flag = 0)
+public FilterLabels::__construct(callable $callable, int $flag = 0)
 ~~~
 
 Filter the labels from the current URI host to keep.
@@ -277,13 +277,14 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 <?php
 
 use League\Uri\Schemes\Http as HttpUri;
-use League\Uri\Modifiers\FilterLabel;
+use League\Uri\Modifiers\FilterLabels;
 use League\Uri\Interfaces\Collection;
 
 $uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new FilterLabel(function ($value) {
+$modifier = new FilterLabels(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);
+$newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example/path/to/the/sky/"
 ~~~
 
@@ -300,17 +301,19 @@ You can update the URI modifier using:
 <?php
 
 use League\Uri\Schemes\Http as HttpUri;
-use League\Uri\Modifiers\FilterLabel;
+use League\Uri\Modifiers\FilterLabels;
 use League\Uri\Interfaces\Collection;
 
 $uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new FilterLabel(function ($value) {
+$modifier = new FilterLabels(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);
+$newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example/path/to/the/sky/"
+
 $altModifier = $modifier->withCallable(function ($value) {
     return false !== strpos($value, 'm');
-})->withFlag(Collection::FILTER_USE_VALUE');
+})->withFlag(Collection::FILTER_USE_VALUE);
 $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://example.com/path/to/the/sky/"
 ~~~

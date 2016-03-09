@@ -145,7 +145,7 @@ use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceLabel;
 
 $uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new ReplaceSegment(2, "admin.shop");
+$modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 ~~~
@@ -170,7 +170,7 @@ use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Modifiers\ReplaceLabel;
 
 $uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new ReplaceSegment(2, "admin.shop");
+$modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky/"
 $altModifier = $modifier->withLabel('admin');
@@ -184,13 +184,13 @@ In case of the `ReplaceLabel` modifier, the offset can also be modified.
 <?php
 
 use League\Uri\Schemes\Http as HttpUri;
-use League\Uri\Modifiers\ReplaceSegment;
+use League\Uri\Modifiers\ReplaceLabel;
 
 $uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new ReplaceSegment(2, "admin.shop");
+$modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky/"
-$altModifier = $modifier->withSegment('thephpleague')->withOffset(1);
+$altModifier = $modifier->withLabel('thephpleague')->withOffset(1);
 $altUri = $altModifier->__invoke($uri);
 echo $altUri; //display "http://www.thephpleague.com/path/to/the/sky/"
 ~~~

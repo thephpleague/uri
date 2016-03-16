@@ -27,39 +27,21 @@ trait ImmutableComponentTrait
     use ValidatorTrait;
 
     /**
-     * Characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
-     *
-     * @var array
-     */
-    protected static $characters_set = [
-        '!', '$', '&', "'", '(', ')', '*', '+', ',', ';', '=', ':',
-    ];
-
-    /**
-     * Path Character Decoding Regular Expression
+     * Reserved characters list
      *
      * @var string
      */
-    protected static $characters_set_compiled;
+    protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:";
 
     /**
-     * Encoded characters to conform to RFC3986 - http://tools.ietf.org/html/rfc3986#section-2
-     *
-     * @var array
-     */
-    protected static $characters_set_encoded = [
-        '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3A',
-    ];
-
-    /**
-     * Invalid Characters list
+     * Invalid characters list
      *
      * @var string
      */
     protected static $invalidCharactersRegex;
 
     /**
-     * Check the string against RFC3986 rules
+     * Asserts the string against RFC3986 rules
      *
      * @param string $str
      *
@@ -102,39 +84,29 @@ trait ImmutableComponentTrait
     abstract public function __toString();
 
     /**
-     * Return the precompiled Path Character Decoding Regular Expression
-     *
-     * @return string
-     */
-    protected static function getReservedRegex()
-    {
-        if (!isset(static::$characters_set_compiled)) {
-            $reserved = preg_quote(implode('', static::$characters_set), '/');
-            static::$characters_set_compiled = '/(?:[^'.$reserved.']+|%(?![A-Fa-f0-9]{2}))/S';
-        }
-        return static::$characters_set_compiled;
-    }
-
-    /**
      * Encoding string according to RFC3986
      *
-     * @param string $value
+     * @param string $str
      *
      * @return string
      */
-    protected static function encode($value)
+    protected static function encode($str)
     {
+        $encoder = function (array $matches) {
+            return rawurlencode($matches[0]);
+        };
+
+        $formatter = function (array $matches) {
+            return strtoupper($matches['encode']);
+        };
+
         $str = preg_replace_callback(
-            self::getReservedRegex(),
-            function (array $matches) {
-                return rawurlencode($matches[0]);
-            },
-            $value
+            '/(?:[^'.static::$reservedCharactersRegex.']+|%(?![A-Fa-f0-9]{2}))/S',
+            $encoder,
+            $str
         );
 
-        return preg_replace_callback(',(?<encode>%[0-9a-f]{2}),', function (array $matches) {
-            return strtoupper($matches['encode']);
-        }, $str);
+        return preg_replace_callback(',(?<encode>%[0-9a-f]{2}),', $formatter, $str);
     }
 
     /**

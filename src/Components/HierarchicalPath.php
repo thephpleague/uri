@@ -33,22 +33,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * @inheritdoc
      */
-    protected static $characters_set = [
-        '/', ':', '@', '!', '$', '&', "'", '%',
-        '(', ')', '*', '+', ',', ';', '=', '?',
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    protected static $characters_set_encoded = [
-        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
-        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
-    ];
-
-    /**
-     * @inheritdoc
-     */
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
@@ -91,11 +75,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             return isset($segment);
         };
 
-        $data = preg_replace_callback(
-            $this->getReservedRegex(),
-            [$this, 'decodeSegmentPart'],
-            $data
-        );
+        $data = $this->decodePath($data);
 
         return array_filter(explode(static::$separator, $data), $filterSegment);
     }
@@ -126,9 +106,8 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         if ($this->isAbsolute == self::IS_ABSOLUTE) {
             $front_delimiter = static::$separator;
         }
-        $path = $front_delimiter.implode(static::$separator, array_map([$this, 'encode'], $this->data));
 
-        return $this->encode($path);
+        return $front_delimiter.implode(static::$separator, array_map([$this, 'encodePath'], $this->data));
     }
 
     /**

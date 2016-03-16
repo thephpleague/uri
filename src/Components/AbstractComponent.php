@@ -77,7 +77,7 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return static::encode((string) $this->data);
+        return $this->encode($this->data);
     }
 
     /**

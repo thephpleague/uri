@@ -206,4 +206,12 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
             array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset + 1))
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromArray($properties['data'], $properties['isAbsolute']);
+    }
 }

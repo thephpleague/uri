@@ -26,6 +26,8 @@ class UserInfoTest extends PHPUnit_Framework_TestCase
     public function testSameValueAs($userinfo, $userinfobis, $expected)
     {
         $this->assertSame($expected, $userinfo->sameValueAs($userinfobis));
+        eval('$var = '.var_export($userinfobis, true).';');
+        $this->assertEquals($var, $userinfobis);
     }
 
     public function sameValueAsProvider()

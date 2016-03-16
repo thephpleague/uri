@@ -90,4 +90,12 @@ abstract class AbstractComponent
     {
         return $this->__toString();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return new static($properties['data']);
+    }
 }

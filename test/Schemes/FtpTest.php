@@ -18,7 +18,10 @@ class FtpTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromString($expected, $input)
     {
-        $this->assertSame($expected, FtpUri::createFromString($input)->__toString());
+        $uri = FtpUri::createFromString($input);
+        $this->assertSame($expected, $uri->__toString());
+        eval('$var = '.var_export($uri, true).';');
+        $this->assertEquals($var, $uri);
     }
 
     public function validArray()

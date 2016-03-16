@@ -29,6 +29,8 @@ class HostTest extends PHPUnit_Framework_TestCase
         $this->assertSame($isIpv4, $host->isIpv4());
         $this->assertSame($isIpv6, $host->isIpv6());
         $this->assertSame($uri, $host->getUriComponent());
+        eval('$var = '.var_export($host, true).';');
+        $this->assertEquals($var, $host);
     }
 
     public function validHostProvider()

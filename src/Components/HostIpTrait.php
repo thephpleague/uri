@@ -46,7 +46,7 @@ trait HostIpTrait
      *
      * @var string
      */
-    protected static $local_link_prefix = '1111111010';
+    protected static $localLinkPrefix = '1111111010';
 
     /**
      * Validate a Host as an IP
@@ -141,7 +141,7 @@ trait HostIpTrait
         };
         $res = array_reduce(str_split(unpack('A16', inet_pton($ipv6))[1]), $convert, '');
 
-        return substr($res, 0, 10) === self::$local_link_prefix;
+        return substr($res, 0, 10) === self::$localLinkPrefix;
     }
 
     /**

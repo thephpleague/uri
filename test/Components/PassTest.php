@@ -18,7 +18,10 @@ class PassTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUriComponent($raw, $parsed)
     {
-        $this->assertSame($parsed, (new Pass($raw))->getUriComponent());
+        $pass = new Pass($raw);
+        $this->assertSame($parsed, $pass->getUriComponent());
+        eval('$var = '.var_export($pass, true).';');
+        $this->assertEquals($var, $pass);
     }
 
     public function validUserProvider()

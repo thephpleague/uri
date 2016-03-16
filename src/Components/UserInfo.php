@@ -167,6 +167,14 @@ class UserInfo implements UserInfoInterface
     /**
      * @inheritdoc
      */
+    public static function __set_state(array $properties)
+    {
+        return new static($properties['user'], $properties['pass']);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function assertValidObject()
     {
     }

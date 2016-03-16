@@ -20,6 +20,8 @@ class FragmentTest extends PHPUnit_Framework_TestCase
     {
         $fragment = new Fragment($str);
         $this->assertSame($encoded, $fragment->getUriComponent());
+        eval('$var = '.var_export($fragment, true).';');
+        $this->assertEquals($var, $fragment);
     }
 
     public function validFragment()

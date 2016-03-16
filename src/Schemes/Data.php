@@ -145,4 +145,20 @@ class Data extends AbstractUri implements Uri
             new Fragment()
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $components)
+    {
+        return new static(
+            $components['scheme'],
+            $components['userInfo'],
+            $components['host'],
+            $components['port'],
+            $components['path'],
+            $components['query'],
+            $components['fragment']
+        );
+    }
 }

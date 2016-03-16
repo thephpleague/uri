@@ -393,6 +393,19 @@ class DataPath extends AbstractComponent implements DataPathInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return new static(static::format(
+            $properties['mimetype'],
+            implode(';', $properties['parameters']),
+            $properties['isBinaryData'],
+            $properties['document']
+        ));
+    }
+
+    /**
      * Return an instance with the specified mediatype parameters.
      *
      * This method MUST retain the state of the current instance, and return

@@ -200,4 +200,12 @@ class Query implements QueryInterface
 
         return static::createFromArray($data);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromArray($properties['data']);
+    }
 }

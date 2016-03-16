@@ -309,4 +309,17 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             $this->toArray()
         ));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        $host = static::createFromArray($properties['data'], $properties['isAbsolute']);
+        if (!$properties['isIdn']) {
+            return $host->toAscii();
+        }
+
+        return $host;
+    }
 }

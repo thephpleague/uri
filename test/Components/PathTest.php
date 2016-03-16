@@ -23,6 +23,8 @@ class PathTest extends PHPUnit_Framework_TestCase
         $property->setAccessible(true);
         $property->setValue($path, null);
         $this->assertSame($parsed, $path->getUriComponent());
+        eval('$var = '.var_export($path, true).';');
+        $this->assertEquals($var, $path);
     }
 
     public function validPathEncoding()

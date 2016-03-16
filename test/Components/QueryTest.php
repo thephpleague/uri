@@ -101,6 +101,8 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = $this->query->merge($input);
         $this->assertSame($expected, (string) $query);
+        eval('$var = '.var_export($query, true).';');
+        $this->assertEquals($var, $query);
     }
 
     public function validMergeValue()

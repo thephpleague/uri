@@ -5,6 +5,7 @@ namespace League\Uri\Test\Schemes\Generic;
 use InvalidArgumentException;
 use League\Uri\Components;
 use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\UriParser;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -182,5 +183,10 @@ class UriTest extends PHPUnit_Framework_TestCase
     {
         $expected = '//0:0@0/0?0#0';
         $this->assertSame($expected, HttpUri::createFromString($expected)->__toString());
+    }
+
+    public function testDebugInfo()
+    {
+        $this->assertSame((new UriParser())->__invoke($this->uri), $this->uri->__debugInfo());
     }
 }

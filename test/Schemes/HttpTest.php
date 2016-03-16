@@ -18,7 +18,10 @@ class HttpTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromServer($expected, $input)
     {
-        $this->assertSame($expected, HttpUri::createFromServer($input)->__toString());
+        $uri = HttpUri::createFromServer($input);
+        $this->assertSame($expected, $uri->__toString());
+        eval('$var = '.var_export($uri, true).';');
+        $this->assertEquals($var, $uri);
     }
 
     public function validServerArray()

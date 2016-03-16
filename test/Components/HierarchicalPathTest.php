@@ -22,6 +22,8 @@ class HierarchicalPathTest extends PHPUnit_Framework_TestCase
     {
         $path = new Path($raw);
         $this->assertSame($parsed, $path->__toString());
+        eval('$var = '.var_export($path, true).';');
+        $this->assertEquals($var, $path);
     }
 
     public function validPathProvider()

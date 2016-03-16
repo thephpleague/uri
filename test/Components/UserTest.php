@@ -20,6 +20,8 @@ class UserTest extends PHPUnit_Framework_TestCase
     {
         $user = new User($raw);
         $this->assertSame($parsed, $user->getUriComponent());
+        eval('$var = '.var_export($user, true).';');
+        $this->assertEquals($var, $user);
     }
 
     public function validUserProvider()

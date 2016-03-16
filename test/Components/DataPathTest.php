@@ -46,6 +46,8 @@ class DataPathTest extends PHPUnit_Framework_TestCase
     {
         $uri = Path::createFromPath(dirname(__DIR__).'/data/'.$path);
         $this->assertSame($expected, $uri->getMimeType());
+        eval('$var = '.var_export($uri, true).';');
+        $this->assertEquals($var, $uri);
     }
 
     public function validFilePath()
@@ -111,6 +113,8 @@ class DataPathTest extends PHPUnit_Framework_TestCase
     public function testToAscii($uri)
     {
         $this->assertFalse($uri->toAscii()->isBinaryData());
+        eval('$var = '.var_export($uri, true).';');
+        $this->assertEquals($var, $uri);
     }
 
     public function fileProvider()

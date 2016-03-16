@@ -20,6 +20,7 @@ use League\Uri\Interfaces\Query;
 use League\Uri\Interfaces\Scheme;
 use League\Uri\Interfaces\UserInfo;
 use League\Uri\Types\ImmutablePropertyTrait;
+use League\Uri\UriParser;
 use RuntimeException;
 
 /**
@@ -503,6 +504,14 @@ abstract class AbstractUri
         }
 
         return $this->userInfo->getUriComponent().$this->host->getUriComponent().$port;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return (new UriParser())->__invoke($this);
     }
 
     /**

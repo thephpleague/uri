@@ -17,7 +17,10 @@ class WsTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateFromString($expected, $input)
     {
-        $this->assertSame($expected, Ws::createFromString($input)->__toString());
+        $uri = Ws::createFromString($input);
+        $this->assertSame($expected, $uri->__toString());
+        eval('$var = '.var_export($uri, true).';');
+        $this->assertEquals($var, $uri);
     }
 
     public function validUrlArray()

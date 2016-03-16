@@ -16,6 +16,8 @@ class SchemeTest extends PHPUnit_Framework_TestCase
         $http_scheme = $scheme->modify('HTTP');
         $this->assertSame('http', $http_scheme->__toString());
         $this->assertSame('http:', $http_scheme->getUriComponent());
+        eval('$var = '.var_export($scheme, true).';');
+        $this->assertEquals($var, $scheme);
     }
 
     public function testEmptyScheme()

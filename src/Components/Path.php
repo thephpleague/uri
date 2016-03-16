@@ -27,22 +27,6 @@ class Path extends AbstractComponent implements PathInterface
     /**
      * @inheritdoc
      */
-    protected static $characters_set = [
-        '/', ':', '@', '!', '$', '&', "'", '%',
-        '(', ')', '*', '+', ',', ';', '=', '?',
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    protected static $characters_set_encoded = [
-        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
-        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
-    ];
-
-    /**
-     * @inheritdoc
-     */
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
@@ -55,32 +39,22 @@ class Path extends AbstractComponent implements PathInterface
         parent::__construct($this->validateString($path));
     }
 
+    public function __toString()
+    {
+        return $this->encodePath($this->data);
+    }
+
     /**
      * validate the submitted data
      *
      * @param string $path
      *
-     * @return array
+     * @return string
      */
     protected function validate($path)
     {
         $this->assertValidComponent($path);
 
-        return preg_replace_callback(
-            $this->getReservedRegex(),
-            [$this, 'decodeSegmentPart'],
-            $path
-        );
-    }
-
-    /**
-     * Returns the instance string representation; If the
-     * instance is not defined an empty string is returned
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return static::encode($this->data);
+        return $this->decodePath($path);
     }
 }

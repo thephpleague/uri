@@ -29,6 +29,11 @@ trait PathTrait
     protected static $typeRegex = ',^(?P<basename>.*);type=(?P<typecode>a|i|d)$,';
 
     /**
+     * Paht reserved characters regular expression
+     */
+    protected static $pathReservedCharactersRegex = "/(?:[^\!\$&'\(\)\*\+,;\=\:\/@\?%]+|%(?![A-Fa-f0-9]{2}))/S";
+
+    /**
      * Typecode value
      *
      * @var array
@@ -265,13 +270,40 @@ trait PathTrait
     }
 
     /**
-     * Encode a segment or the entire path string
+     * Encode a path string according to RFC3986
      *
-     * @param  array  $matches
-     * @return string
+     * @param mixed $subject can be a string or an array
+     *
+     * @return mixed The same type as the input parameter
      */
-    protected function decodeSegmentPart(array $matches)
+    protected static function encodePath($subject)
     {
-        return rawurldecode(array_shift($matches));
+        $encoder = function (array $matches) {
+            return rawurlencode($matches[0]);
+        };
+
+        $formatter = function (array $matches) {
+            return strtoupper($matches['encode']);
+        };
+
+        $subject = preg_replace_callback(self::$pathReservedCharactersRegex, $encoder, $subject);
+
+        return preg_replace_callback(',(?<encode>%[0-9a-f]{2}),', $formatter, $subject);
+    }
+
+    /**
+     * Decode a path string according to RFC3986
+     *
+     * @param mixed $subject can be a string or an array
+     *
+     * @return mixed The same type as the input parameter
+     */
+    protected static function decodePath($subject)
+    {
+        $decoder = function (array $matches) {
+            return rawurldecode($matches[0]);
+        };
+
+        return preg_replace_callback(self::$pathReservedCharactersRegex, $decoder, $subject);
     }
 }

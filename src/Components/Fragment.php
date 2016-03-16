@@ -25,18 +25,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     /**
      * @inheritdoc
      */
-    protected static $characters_set = [
-        '!', '$', '&', "'", '(', ')', '*', '+',
-        ',', ';', '=', ':', '@', '/', '?',
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    protected static $characters_set_encoded = [
-        '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B',
-        '%2C', '%3B', '%3D', '%3A', '%40', '%2F', '%3F',
-    ];
+    protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:\/@\?";
 
     /**
      * Returns the instance string representation

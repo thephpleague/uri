@@ -120,6 +120,10 @@ class Http extends AbstractHierarchicalUri implements UriInterface
      */
     protected static function fetchServerHost(array $server)
     {
+        if (isset($server['HTTP_X_FORWARDED_HOST'])) {
+            return static::fetchServerHostname($server['HTTP_X_FORWARDED_HOST']);
+        }
+
         if (isset($server['HTTP_HOST'])) {
             return static::fetchServerHostname($server['HTTP_HOST']);
         }
@@ -161,7 +165,12 @@ class Http extends AbstractHierarchicalUri implements UriInterface
             return strrev($matches['port']);
         }
 
-        return ':'.$server['SERVER_PORT'];
+        $key = 'HTTP_X_FORWARDED_PORT';
+        if (!array_key_exists($key, $server)) {
+            $key = 'SERVER_PORT';
+        }
+
+        return ':'.$server[$key];
     }
 
     /**

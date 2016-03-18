@@ -272,9 +272,9 @@ trait PathTrait
     /**
      * Encode a path string according to RFC3986
      *
-     * @param mixed $subject can be a string or an array
+     * @param string $subject can be a string or an array
      *
-     * @return mixed The same type as the input parameter
+     * @return string The same type as the input parameter
      */
     protected static function encodePath($subject)
     {
@@ -294,9 +294,9 @@ trait PathTrait
     /**
      * Decode a path string according to RFC3986
      *
-     * @param mixed $subject can be a string or an array
+     * @param string $subject can be a string or an array
      *
-     * @return mixed The same type as the input parameter
+     * @return string The same type as the input parameter
      */
     protected static function decodePath($subject)
     {

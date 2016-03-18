@@ -107,7 +107,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             $front_delimiter = static::$separator;
         }
 
-        return $front_delimiter.implode(static::$separator, array_map([$this, 'encodePath'], $this->data));
+        return $front_delimiter.$this->encodePath(implode(static::$separator, $this->data));
     }
 
     /**

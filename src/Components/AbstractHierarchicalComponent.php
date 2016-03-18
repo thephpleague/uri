@@ -104,9 +104,9 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     public function prepend($component)
     {
         return $this->createFromArray(
-            $this->validateComponent($component),
-            $this->isAbsolute)
-        ->append($this);
+                $this->validateComponent($component),
+                $this->isAbsolute
+            )->append($this);
     }
 
     /**

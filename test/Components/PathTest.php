@@ -5,7 +5,6 @@ namespace League\Uri\Test\Components;
 use InvalidArgumentException;
 use League\Uri\Components\Path;
 use PHPUnit_Framework_TestCase;
-use ReflectionClass;
 
 /**
  * @group path
@@ -19,9 +18,6 @@ class PathTest extends PHPUnit_Framework_TestCase
     public function testGetUriComponent($raw, $parsed)
     {
         $path = new Path($raw);
-        $property = (new ReflectionClass(Path::class))->getProperty('characters_set_compiled');
-        $property->setAccessible(true);
-        $property->setValue($path, null);
         $this->assertSame($parsed, $path->getUriComponent());
     }
 

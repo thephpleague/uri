@@ -67,22 +67,6 @@ class DataPath extends AbstractComponent implements DataPathInterface
     /**
      * @inheritdoc
      */
-    protected static $characters_set = [
-        '/', ':', '@', '!', '$', '&', "'", '%',
-        '(', ')', '*', '+', ',', ';', '=', '?',
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    protected static $characters_set_encoded = [
-        '%2F', '%3A', '%40', '%21', '%24', '%26', '%27', '%25',
-        '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D', '%3F',
-    ];
-
-    /**
-     * @inheritdoc
-     */
     protected static $invalidCharactersRegex = ',[?#],';
 
     /**
@@ -345,7 +329,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
             $parameters .= ';'.static::BINARY_PARAMETER;
         }
 
-        return static::encode($mimetype.$parameters.','.$data);
+        return static::encodePath($mimetype.$parameters.','.$data);
     }
 
     /**

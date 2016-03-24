@@ -66,10 +66,10 @@ It is not recommend to instantiate an URI object using the default constructor. 
 
 Out of the box the library provides the following specialized classes:
 
-- `League\Uri\Schemes\Data` which deals with [Data URIs](/uri/datauri/);
-- `League\Uri\Schemes\Ftp` which deals with the [FTP URIs](/uri/ftp/);
-- `League\Uri\Schemes\Http` which deals with [HTTP and HTTPS URIs](/uri/http/);
-- `League\Uri\Schemes\Ws` which deals with [WS and WSS (websocket) URIs](/uri/ws/);
+- `League\Uri\Schemes\Data` which deals with [Data URIs](/uri/schemes/data-uri/);
+- `League\Uri\Schemes\Ftp` which deals with the [FTP URIs](/uri/schemes/ftp/);
+- `League\Uri\Schemes\Http` which deals with [HTTP and HTTPS URIs](/uri/schemes/http/);
+- `League\Uri\Schemes\Ws` which deals with [WS and WSS (websocket) URIs](/uri/schemes/ws/);
 
 <p class="message-info">But you can easily <a href="/uri/extension/">create your own class</a> to manage others scheme specific URI.</p>
 

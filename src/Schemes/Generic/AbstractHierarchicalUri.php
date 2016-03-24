@@ -6,7 +6,7 @@
  * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @copyright 2013-2015 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
- * @version   4.1.0
+ * @version   4.1.1
  * @link      https://github.com/thephpleague/uri/
  */
 namespace League\Uri\Schemes\Generic;

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 4.1.1 - 2016-03-24
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- Bug fix path encoding [issue #38](https://github.com/thephpleague/uri/issues/38)
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.1.0 - 2016-02-18
 
 ### Added

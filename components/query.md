@@ -76,7 +76,7 @@ $query->getUriComponent(); //return '?foo=bar&p=y%20olo&z'
 
 ### Array representation
 
-A query can be represented as an array of its internal parameters. Through the use of the `Query::toArray` method the class returns the object array representation. This method uses `Parser::parseQuery` to create the array.
+A query can be represented as an array of its internal parameters. Through the use of the `Query::toArray` method the class returns the object's array representation. This method uses `Parser::parseQuery` to create the array.
 
 ~~~php
 <?php
@@ -92,13 +92,13 @@ $query->toArray();
 // ]
 ~~~
 
-<p class="message-warning">The array returned by <code>toArray</code> differs from the one returned by <code>parse_str</code> has it <a href="/services/parser-query/">preserves the query string values</a>.</p>
+<p class="message-warning">The array returned by <code>toArray</code> differs from the one returned by <code>parse_str</code> as it <a href="/services/parser-query/">preserves the query string values</a>.</p>
 
 ## Accessing Query content
 
 ### Countable and IteratorAggregate
 
-The class provides several methods to works with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate overs them.
+The class provides several methods to work with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate over them.
 
 ~~~php
 <?php
@@ -114,7 +114,7 @@ foreach ($query as $parameter => $value) {
 
 ### Parameter name
 
-If you are interested in getting all the parameters names you can do so using the `Query::keys` method like show below:
+If you are interested in getting all the parameter names you can do so using the `Query::keys` method as shown below:
 
 ~~~php
 <?php
@@ -127,7 +127,7 @@ $query->keys('bar');   //return ['foo'];
 $query->keys('gweta'); //return [];
 ~~~
 
-The methods returns all the parameters name, but if you supply an argument, only the parameters name whose value equals the argument are returned.
+The methods returns all the parameter names, but if you supply an argument, only the parameter names whose value equals the argument are returned.
 
 If you want to be sure that a parameter name exists before using it you can do so using the `Query::hasKey` method which returns `true` if the submitted parameter name exists in the current object.
 
@@ -143,7 +143,7 @@ $query->hasKey('john'); //return false
 
 ### Parameter value
 
-If you are only interested in a given parameter you can access it directly using the `Query::getValue` method as show below:
+If you are only interested in a given parameter you can access it directly using the `Query::getValue` method as shown below:
 
 ~~~php
 <?php
@@ -156,13 +156,13 @@ $query->getValue('gweta');        //return null
 $query->getValue('gweta', 'now'); //return 'now'
 ~~~
 
-The method returns the value of a specific parameter name. If the offset does not exists it will return the value specified by the second argument which default to `null`.
+The method returns the value of a specific parameter name. If the offset does not exist it will return the value specified by the second argument which defaults to `null`.
 
 ## Modifying a query
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> is thrown.</p>
+<p class="message-warning">When a modification fails an <code>InvalidArgumentException</code> is thrown.</p>
 
 ### Sort parameters
 
@@ -245,7 +245,7 @@ $newQuery->__toString(); //return foo=bar&baz=&r
 
 ### Remove parameters
 
-To remove parameters from the current object and returns a new `Query` object without them you must use the `Query::without` method. This method expects a single argument.
+To remove parameters from the current object and return a new `Query` object without them you must use the `Query::without` method. This method expects a single argument.
 
 This argument can be an array containing a list of parameter names to remove.
 
@@ -265,7 +265,7 @@ echo $newQuery; //displays 'z='
 
 Another way to select parameters from the query object is to filter them. Filtering is done using the same arguments as PHP's `array_filter`.
 
-You can filter the query according to the parameters value:
+You can filter the query by the parameter values:
 
 ~~~php
 <?php
@@ -279,7 +279,7 @@ $newQuery = $query->filter(function ($value) {
 echo $newQuery; //displays 'foo=bar&p=y+olo'
 ~~~
 
-You can filter the query according to the parameters name:
+You can filter the query by the parameter names:
 
 ~~~php
 <?php
@@ -293,7 +293,7 @@ $newQuery = $query->filter(function ($key) {
 echo $newQuery; //displays 'foo=bar'
 ~~~
 
-You can filter the query according to the parameters name and value.
+You can filter the query by the parameter names and values.
 
 ~~~php
 <?php
@@ -310,12 +310,12 @@ echo $newQuery; //displays 'toto=foo'
 
 By specifying the second argument flag you can change how filtering is done:
 
-- use `Query::FILTER_USE_VALUE` to filter according to the query parameter value;
-- use `Query::FILTER_USE_KEY` to filter according to the query parameter name;
-- use `Query::FILTER_USE_BOTH` to filter according to the query parameter name and value;
+- use `Query::FILTER_USE_VALUE` to filter by the query parameter value;
+- use `Query::FILTER_USE_KEY` to filter by the query parameter name;
+- use `Query::FILTER_USE_BOTH` to filter by the query parameter name and value;
 
 By default, if no flag is specified the method will filter the query using the `Query::FILTER_USE_VALUE` flag.
 
-<p class="message-info">If you are in PHP 5.6+ you can substitute these constants with PHP's <code>array_filter</code> flags constants <code>ARRAY_FILTER_USE_KEY</code> and <code>ARRAY_FILTER_USE_BOTH</code></p>
+<p class="message-info">If you are using PHP 5.6+ you can substitute these constants with PHP's <code>array_filter</code> flags constants <code>ARRAY_FILTER_USE_KEY</code> and <code>ARRAY_FILTER_USE_BOTH</code></p>
 
 <p class="message-notice">This method is used by the URI modifier <code>FilterQuery</code></p>

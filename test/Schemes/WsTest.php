@@ -71,4 +71,11 @@ class WsTest extends PHPUnit_Framework_TestCase
             ['ws://example.com:80/foo/bar?foo=bar#content'],
         ];
     }
+
+    public function testSetState()
+    {
+        $uri = Ws::createFromString('wss://a:b@c:442/d');
+        $generateUri = eval('return '.var_export($uri, true).';');
+        $this->assertEquals($uri, $generateUri);
+    }
 }

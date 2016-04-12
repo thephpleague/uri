@@ -76,4 +76,12 @@ class Port extends AbstractComponent implements PortInterface
     {
         $this->data = $this->validate($data);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['port' => $this->toInt()];
+    }
 }

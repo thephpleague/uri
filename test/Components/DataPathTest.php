@@ -4,13 +4,13 @@ namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\DataPath as Path;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 use RuntimeException;
 
 /**
  * @group data
  */
-class DataPathTest extends PHPUnit_Framework_TestCase
+class DataPathTest extends AbstractTestCase
 {
     /**
      * @dataProvider invalidDataUriPath
@@ -180,5 +180,18 @@ class DataPathTest extends PHPUnit_Framework_TestCase
     public function testDataPathConstructor()
     {
         $this->assertSame('text/plain;charset=us-ascii,', (string) new Path());
+    }
+
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $path = new Path();
+        $this->assertInternalType('array', $path->__debugInfo());
+        ob_start();
+        var_dump($path);
+        $res = ob_get_clean();
+        $this->assertContains($path->__toString(), $res);
     }
 }

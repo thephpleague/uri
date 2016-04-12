@@ -73,6 +73,14 @@ trait PathTrait
     abstract public function modify($value);
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['path' => $this->__toString()];
+    }
+
+    /**
      * Returns an instance without dot segments
      *
      * This method MUST retain the state of the current instance, and return

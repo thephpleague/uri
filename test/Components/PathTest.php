@@ -4,14 +4,28 @@ namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\Path;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group path
  * @group segmentmodifier
  */
-class PathTest extends PHPUnit_Framework_TestCase
+class PathTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Path('yolo');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('path', $res);
+    }
+
     /**
      * @dataProvider validPathEncoding
      */

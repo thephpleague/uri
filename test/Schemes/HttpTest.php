@@ -223,4 +223,11 @@ class HttpTest extends PHPUnit_Framework_TestCase
             ['wss:/example.com'],
         ];
     }
+
+    public function testSetState()
+    {
+        $uri = HttpUri::createFromString('https://a:b@c:442/d?q=r#f');
+        $generateUri = eval('return '.var_export($uri, true).';');
+        $this->assertEquals($uri, $generateUri);
+    }
 }

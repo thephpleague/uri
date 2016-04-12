@@ -26,4 +26,12 @@ class User extends AbstractComponent implements UserInterface
      * @inheritdoc
      */
     protected static $invalidCharactersRegex = ',[/:@?#],';
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['user' => $this->__toString()];
+    }
 }

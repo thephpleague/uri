@@ -41,6 +41,14 @@ class Scheme extends AbstractComponent implements SchemeInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['scheme' => $this->__toString()];
+    }
+
+    /**
      * Returns the instance string representation
      * with its optional URI delimiters
      *

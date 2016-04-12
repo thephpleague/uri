@@ -3,13 +3,27 @@
 namespace League\Uri\Test\Components;
 
 use League\Uri\Components\UserInfo;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group userinfo
  */
-class UserInfoTest extends PHPUnit_Framework_TestCase
+class UserInfoTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new UserInfo('yolo', 'oloy');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('userInfo', $res);
+    }
+
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();

@@ -3,13 +3,27 @@
 namespace League\Uri\Test\Components;
 
 use League\Uri\Components\Scheme;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group scheme
  */
-class SchemeTest extends PHPUnit_Framework_TestCase
+class SchemeTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Scheme('ignace');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('scheme', $res);
+    }
+
     public function testWithValue()
     {
         $scheme = new Scheme('ftp');

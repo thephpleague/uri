@@ -195,6 +195,22 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['host' => $this->__toString()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromArray($properties['data'], $properties['isAbsolute']);
+    }
+
+    /**
      * Returns a host in his punycode encoded form
      *
      * This method MUST retain the state of the current instance, and return

@@ -3,13 +3,27 @@
 namespace League\Uri\Test\Components;
 
 use League\Uri\Components\Port;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group port
  */
-class PortTest extends PHPUnit_Framework_TestCase
+class PortTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Port(42);
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('port', $res);
+    }
+
     public function testPortSetter()
     {
         $port = new Port(new Port(443));

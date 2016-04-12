@@ -72,4 +72,11 @@ class FtpTest extends PHPUnit_Framework_TestCase
             ['ftp://example.com?query#fragment'],
         ];
     }
+
+    public function testSetState()
+    {
+        $uri = FtpUri::createFromString('ftp://a:b@c:442/d');
+        $generateUri = eval('return '.var_export($uri, true).';');
+        $this->assertEquals($uri, $generateUri);
+    }
 }

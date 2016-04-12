@@ -26,4 +26,12 @@ class Pass extends AbstractComponent implements PassInterface
      * @inheritdoc
      */
     protected static $invalidCharactersRegex = ',[/?#@],';
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['pass' => $this->__toString()];
+    }
 }

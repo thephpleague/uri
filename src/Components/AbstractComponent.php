@@ -32,6 +32,14 @@ abstract class AbstractComponent
     protected $data;
 
     /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return new static($properties['data']);
+    }
+
+    /**
      * new instance
      *
      * @param string|null $data the component value

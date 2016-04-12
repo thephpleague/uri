@@ -5,14 +5,28 @@ namespace League\Uri\Test\Components;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri\Components\Host;
+use League\Uri\Test\AbstractTestCase;
 use LogicException;
-use PHPUnit_Framework_TestCase;
 
 /**
  * @group host
  */
-class HostTest extends PHPUnit_Framework_TestCase
+class HostTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Host('yolo');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('host', $res);
+    }
+
     /**
      * Test valid Host
      * @param $host

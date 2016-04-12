@@ -456,6 +456,23 @@ abstract class AbstractUri
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return [
+            'uri' => $this->__toString(),
+            'scheme' => $this->getScheme(),
+            'userInfo' => $this->getUserInfo(),
+            'host' => $this->getHost(),
+            'port' => $this->getPort(),
+            'path' => $this->getPath(),
+            'query' => $this->getQuery(),
+            'fragment' => $this->getFragment(),
+        ];
+    }
+
+    /**
      * Retrieve the scheme specific part of the URI.
      *
      * If no specific part information is present, this method MUST return an empty

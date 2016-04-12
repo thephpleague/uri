@@ -109,4 +109,20 @@ abstract class AbstractHierarchicalUri extends AbstractUri
             new Fragment($components['fragment'])
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return new static(
+            $properties['scheme'],
+            $properties['userInfo'],
+            $properties['host'],
+            $properties['port'],
+            $properties['path'],
+            $properties['query'],
+            $properties['fragment']
+        );
+    }
 }

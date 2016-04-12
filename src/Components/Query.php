@@ -87,6 +87,22 @@ class Query implements QueryInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['query' => $this->__toString()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromArray($properties['data']);
+    }
+
+    /**
      * Returns the instance string representation; If the
      * instance is not defined an empty string is returned
      *

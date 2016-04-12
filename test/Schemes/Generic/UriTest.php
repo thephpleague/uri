@@ -5,12 +5,12 @@ namespace League\Uri\Test\Schemes\Generic;
 use InvalidArgumentException;
 use League\Uri\Components;
 use League\Uri\Schemes\Http as HttpUri;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group uri
  */
-class UriTest extends PHPUnit_Framework_TestCase
+class UriTest extends AbstractTestCase
 {
     /**
      * @var HttpUri
@@ -182,5 +182,17 @@ class UriTest extends PHPUnit_Framework_TestCase
     {
         $expected = '//0:0@0/0?0#0';
         $this->assertSame($expected, HttpUri::createFromString($expected)->__toString());
+    }
+
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $this->assertInternalType('array', $this->uri->__debugInfo());
+        ob_start();
+        var_dump($this->uri);
+        $res = ob_get_clean();
+        $this->assertContains($this->uri->__toString(), $res);
     }
 }

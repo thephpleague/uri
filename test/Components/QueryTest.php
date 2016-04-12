@@ -5,12 +5,12 @@ namespace League\Uri\Test\Components;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri\Components\Query;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group query
  */
-class QueryTest extends PHPUnit_Framework_TestCase
+class QueryTest extends AbstractTestCase
 {
     /**
      * @var Query
@@ -20,6 +20,19 @@ class QueryTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->query = new Query('kingkong=toto');
+    }
+
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $this->assertInternalType('array', $this->query->__debugInfo());
+        ob_start();
+        var_dump($this->query);
+        $res = ob_get_clean();
+        $this->assertContains($this->query->__toString(), $res);
+        $this->assertContains('query', $res);
     }
 
     /**

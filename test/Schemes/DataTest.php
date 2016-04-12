@@ -175,4 +175,11 @@ class DataTest extends PHPUnit_Framework_TestCase
     {
         DataUri::createFromString('http:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
     }
+
+    public function testSetState()
+    {
+        $uri = DataUri::createFromPath('test/data/red-nose.gif');
+        $generateUri = eval('return '.var_export($uri, true).';');
+        $this->assertEquals($uri, $generateUri);
+    }
 }

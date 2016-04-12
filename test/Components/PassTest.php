@@ -4,13 +4,27 @@ namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\Pass;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group pass
  */
-class PassTest extends PHPUnit_Framework_TestCase
+class PassTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Pass('yolo');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('pass', $res);
+    }
+
     /**
      * @dataProvider validUserProvider
      * @param $raw

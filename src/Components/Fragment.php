@@ -28,6 +28,14 @@ class Fragment extends AbstractComponent implements FragmentInterface
     protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:\/@\?";
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['fragment' => $this->__toString()];
+    }
+
+    /**
      * Returns the instance string representation
      * with its optional URI delimiters
      *

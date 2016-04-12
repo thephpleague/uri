@@ -100,6 +100,17 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return $default;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromArray($properties['data'], $properties['isAbsolute']);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function __toString()
     {
         $front_delimiter = '';

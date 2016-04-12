@@ -432,4 +432,17 @@ class DataPath extends AbstractComponent implements DataPathInterface
             base64_encode(file_get_contents($path))
         ));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return new static(static::format(
+            $properties['mimetype'],
+            implode(';', $properties['parameters']),
+            $properties['isBinaryData'],
+            $properties['document']
+        ));
+    }
 }

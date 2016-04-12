@@ -5,14 +5,28 @@ namespace League\Uri\Test\Components;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath as Path;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group path
  * @group hierarchicalpath
  */
-class HierarchicalPathTest extends PHPUnit_Framework_TestCase
+class HierarchicalPathTest extends AbstractTestCase
 {
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Path('yolo');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('path', $res);
+    }
+
     /**
      * @param string $raw
      * @param string $parsed

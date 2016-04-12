@@ -4,12 +4,12 @@ namespace League\Uri\Test\Components;
 
 use InvalidArgumentException;
 use League\Uri\Components\Fragment;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
  * @group fragment
  */
-class FragmentTest extends PHPUnit_Framework_TestCase
+class FragmentTest extends AbstractTestCase
 {
     /**
      * @dataProvider validFragment
@@ -53,5 +53,19 @@ class FragmentTest extends PHPUnit_Framework_TestCase
             'float'     => [1.2],
             'array'     => [['foo']],
         ];
+    }
+
+    /**
+     * @supportsDebugInfo
+     */
+    public function testDebugInfo()
+    {
+        $component = new Fragment('yolo');
+        $this->assertInternalType('array', $component->__debugInfo());
+        ob_start();
+        var_dump($component);
+        $res = ob_get_clean();
+        $this->assertContains($component->__toString(), $res);
+        $this->assertContains('fragment', $res);
     }
 }

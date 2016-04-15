@@ -6,7 +6,7 @@ $(function() {
 
 (function (w) {
   var d = w.document,
-      headerList = d.querySelector('main').querySelectorAll("h2[id], h3[id]");
+      headerList = d.querySelector('main').querySelectorAll("h2[id]");
   for (var i = 0, header, link; header = headerList[i]; ++i) {
     link = d.createElement("a");
     link.className = "header-permalink";

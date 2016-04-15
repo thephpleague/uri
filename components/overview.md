@@ -167,3 +167,40 @@ For more complex parts/components care has be taken to provide more useful metho
 * `League\Uri\Components\HierarchicalPath` which handles [the hierarchical path component](/components/hierarchical-path/);
 * `League\Uri\Components\DataPath` which handles [the data path component](/components/datauri-path/);
 * `League\Uri\Components\Query` which handles [the query component](/components/query/);
+
+## Debugging URI parts and components
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+### __debugInfo
+
+All objects implements PHP5.6+ `__debugInfo` magic method in order to help developpers debug their code. The method is called by `var_dump` and displays the Uri components string representation.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Host;
+
+$host = new Host("uri.thephpleague.com");
+
+var_dump($host);
+//displays something like
+// object(League\Uri\Components\Host)#1 (1) {
+//     ["host"]=> string(11) "uri.thephpleague.com"
+// }
+~~~~~~
+
+### __set_state
+
+For the same purpose of debugging and object exportations PHP's magic method `__set_state` is also supported
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Host;
+
+$host = new Host("uri.thephpleague.com");
+$newHost = eval('return '.var_export($host, true).';');
+
+$host->__toString() == $newHost->__toString();
+~~~~~~

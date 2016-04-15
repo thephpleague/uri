@@ -13,6 +13,7 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Components\Host;
+use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Interfaces\Query as QueryInterface;
@@ -42,6 +43,13 @@ class Formatter
      * @var int
      */
     protected $hostEncoding = self::HOST_AS_UNICODE;
+
+    /**
+     * Port
+     *
+     * @var Port
+     */
+    protected $port;
 
     /**
      * query encoding property
@@ -111,6 +119,16 @@ class Formatter
     public function getHostEncoding()
     {
         return $this->hostEncoding;
+    }
+
+    /**
+     * Enforce Port presence
+     *
+     * @param null|int $port URI port value
+     */
+    public function setPort($port)
+    {
+        $this->port = new Port($port);
     }
 
     /**
@@ -293,7 +311,8 @@ class Formatter
         return $scheme.$auth
             .$this->formatPath($uri->getPath(), $auth)
             .$this->formatQuery($uri)
-            .$this->formatFragment($uri);
+            .$this->formatFragment($uri)
+        ;
     }
 
     /**
@@ -315,13 +334,32 @@ class Formatter
         }
 
         $components = $parser((string) $uri);
-        $port = $components['port'];
-        if (null !== $port) {
-            $port = ':'.$port;
+
+        return '//'
+            .$this->buildUserInfo($components['user'], $components['pass'])
+            .$this->formatHost(new Host($components['host']))
+            .$this->formatPort($components['port'])
+        ;
+    }
+
+    /**
+     * Format a URI port component according to the Formatter properties
+     *
+     * @param null|int $port
+     *
+     * @return string
+     */
+    protected function formatPort($port)
+    {
+        if ($this->port instanceof Port) {
+            return $this->port->getUriComponent();
         }
 
-        return '//'.$this->buildUserInfo($components['user'], $components['pass'])
-            .$this->formatHost(new Host($components['host'])).$port;
+        if (null !== $port) {
+            return ':'.$port;
+        }
+
+        return '';
     }
 
     /**

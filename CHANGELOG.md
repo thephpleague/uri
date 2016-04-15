@@ -2,6 +2,25 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next - 2016-XX-XX
+
+### Added
+
+- `Formatter::setPort`  to improve port inclusion in URI string representation
+- support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
+
+### Fixed
+
+- Nothing
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.1.1 - 2016-03-24
 
 ### Added

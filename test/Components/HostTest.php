@@ -27,6 +27,14 @@ class HostTest extends AbstractTestCase
         $this->assertContains('host', $res);
     }
 
+    public function testSetState()
+    {
+        $host = new Host('uri.thephpleague.com');
+        $this->assertSame('thephpleague.com', $host->getRegisterableDomain());
+        $generateHost = eval('return '.var_export($host, true).';');
+        $this->assertEquals($host, $generateHost);
+    }
+
     /**
      * Test valid Host
      * @param $host

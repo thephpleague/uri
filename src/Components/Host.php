@@ -207,7 +207,11 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     public static function __set_state(array $properties)
     {
-        return static::createFromArray($properties['data'], $properties['isAbsolute']);
+        $host = static::createFromArray($properties['data'], $properties['isAbsolute']);
+        $host->hostnameInfoLoaded = $properties['hostnameInfoLoaded'];
+        $host->hostnameInfo = $properties['hostnameInfo'];
+
+        return $host;
     }
 
     /**

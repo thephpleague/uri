@@ -38,6 +38,9 @@
             "League\\Uri\\Test\\": "test"
         }
     },
+    "bin": [
+        "bin/parse-uri"
+    ],
     "scripts": {
         "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;",
         "phpunit": "phpunit",
@@ -45,7 +48,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.1-dev"
+            "dev-master": "4.2-dev"
         }
     }
 }

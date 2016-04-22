@@ -116,8 +116,12 @@ trait HostnameInfoTrait
             $host = mb_substr($host, 0, -1, 'UTF-8');
         }
 
-        $this->hostnameInfo = $this->getPdpParser()->parseHost($host)->toArray();
-        $this->hostnameInfo['isPublicSuffixValid'] = $this->getPdpParser()->isSuffixValid($host);
+        $this->hostnameInfo = array_merge($this->hostnameInfo, $this->getPdpParser()->parseHost($host)->toArray());
+
+        if (null !== $this->hostnameInfo['publicSuffix']) {
+            $this->hostnameInfo['isPublicSuffixValid'] = $this->getPdpParser()->isSuffixValid($host);
+        }
+
         $this->hostnameInfoLoaded = true;
     }
 

@@ -8,10 +8,11 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - `Formatter::setPort`  to improve port inclusion in URI string representation
 - support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
+- A quick sanity check command line script `bin/parse-uri` to get informations from a submitted URI string.
 
 ### Fixed
 
-- Nothing
+- Bug fix `Host::isPublicSuffixValid` when no `publicSuffix` information is found
 
 ### Deprecated
 

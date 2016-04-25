@@ -7,8 +7,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `Formatter::setPort`  to improve port inclusion in URI string representation
-- support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
-- A quick sanity check command line script `bin/parse-uri` to get informations from a submitted URI string.
+- Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 
 ### Fixed
 

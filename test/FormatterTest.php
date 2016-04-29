@@ -19,7 +19,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     private $formatter;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->uri = HttpUri::createFromString(
             'http://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3'

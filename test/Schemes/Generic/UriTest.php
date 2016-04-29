@@ -17,14 +17,14 @@ class UriTest extends AbstractTestCase
      */
     private $uri;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->uri = HttpUri::createFromString(
             'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         $this->uri = null;
     }

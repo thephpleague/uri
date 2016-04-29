@@ -7,6 +7,7 @@ use League\Uri\Modifiers\Pipeline;
 use League\Uri\Modifiers\RemoveDotSegments;
 use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase as TestCase;
+use RuntimeException;
 
 /**
  * @group pipeline

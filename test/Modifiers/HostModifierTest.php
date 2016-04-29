@@ -21,6 +21,9 @@ use PHPUnit_Framework_TestCase;
  */
 class HostModifierTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var HttpUri
+     */
     private $uri;
 
     public function setUp()
@@ -32,6 +35,12 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validHostProvider
+     *
+     * @param string $label
+     * @param int    $key
+     * @param string $prepend
+     * @param string $append
+     * @param string $replace
      */
     public function testPrependLabelProcess($label, $key, $prepend, $append, $replace)
     {
@@ -41,6 +50,12 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validHostProvider
+     *
+     * @param string $label
+     * @param int    $key
+     * @param string $prepend
+     * @param string $append
+     * @param string $replace
      */
     public function testAppendLabelProcess($label, $key, $prepend, $append, $replace)
     {
@@ -50,6 +65,12 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validHostProvider
+     *
+     * @param string $label
+     * @param int    $key
+     * @param string $prepend
+     * @param string $append
+     * @param string $replace
      */
     public function testReplaceLabelProcess($label, $key, $prepend, $append, $replace)
     {
@@ -97,6 +118,9 @@ class HostModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validWithoutLabelsProvider
+     *
+     * @param array  $keys
+     * @param string $expected
      */
     public function testWithoutLabelsProcess($keys, $expected)
     {

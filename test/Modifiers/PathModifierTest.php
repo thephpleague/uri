@@ -31,6 +31,9 @@ use PHPUnit_Framework_TestCase;
  */
 class PathModifierTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var HttpUri
+     */
     private $uri;
 
     public function setUp()
@@ -42,7 +45,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider fileProvider
-     * @param $uri
+     *
+     * @param DataUri $binary
+     * @param DataUri $ascii
      */
     public function testToBinary($binary, $ascii)
     {
@@ -52,7 +57,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider fileProvider
-     * @param $uri
+     *
+     * @param DataUri $binary
+     * @param DataUri $ascii
      */
     public function testToAscii($binary, $ascii)
     {
@@ -83,6 +90,12 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validPathProvider
+     *
+     * @param string $segment
+     * @param int    $key
+     * @param string $append
+     * @param string $prepend
+     * @param string $replace
      */
     public function testAppendProcess($segment, $key, $append, $prepend, $replace)
     {
@@ -95,6 +108,12 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validPathProvider
+     *
+     * @param string $segment
+     * @param int    $key
+     * @param string $append
+     * @param string $prepend
+     * @param string $replace
      */
     public function testPrependProcess($segment, $key, $append, $prepend, $replace)
     {
@@ -107,6 +126,12 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validPathProvider
+     * 
+     * @param string $segment
+     * @param int    $key
+     * @param string $append
+     * @param string $prepend
+     * @param string $replace
      */
     public function testReplaceSegmentProcess($segment, $key, $append, $prepend, $replace)
     {
@@ -128,6 +153,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validWithoutSegmentsProvider
+     *
+     * @param array  $keys
+     * @param string $expected
      */
     public function testWithoutSegments($keys, $expected)
     {
@@ -179,6 +207,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validExtensionProvider
+     *
+     * @param string $extension
+     * @param string $expected
      */
     public function testExtensionProcess($extension, $expected)
     {
@@ -197,6 +228,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validTypeProvider
+     *
+     * @param int    $type
+     * @param string $expected
      */
     public function testTypecodeProcess($type, $expected)
     {
@@ -221,6 +255,8 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validSlashPresenceProvider
+     *
+     * @param string $uri
      */
     public function testWithoutLeadingSlashProcess($uri)
     {
@@ -234,6 +270,8 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validSlashPresenceProvider
+     *
+     * @param string $uri
      */
     public function testWithLeadingSlashProcess($uri)
     {

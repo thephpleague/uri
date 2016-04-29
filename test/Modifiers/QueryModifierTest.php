@@ -17,6 +17,9 @@ use PHPUnit_Framework_TestCase;
  */
 class QueryModifierTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var HttpUri
+     */
     private $uri;
 
     public function setUp()
@@ -58,6 +61,9 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validQueryProvider
+     *
+     * @param string $query
+     * @param string $expected
      */
     public function testMergeQuery($query, $expected)
     {
@@ -76,6 +82,9 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validQueryKsortProvider
+     *
+     * @param int|callable $input
+     * @param string       $expected
      */
     public function testKsortQuery($input, $expected)
     {
@@ -114,6 +123,9 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validWithoutQueryValuesProvider
+     *
+     * @param array  $input
+     * @param string $expected
      */
     public function testWithoutQueryValuesProcess($input, $expected)
     {

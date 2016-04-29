@@ -343,7 +343,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => null,
                 ],
             ],
-            'single word is a path' => [
+            'single word is a path, no' => [
                 'http:::/path',
                 [
                     'scheme' => 'http',

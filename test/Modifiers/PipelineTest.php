@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Uri\Test;
+namespace League\Uri\Test\Modifiers;
 
 use InvalidArgumentException;
 use League\Uri\Modifiers\Pipeline;

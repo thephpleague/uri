@@ -17,7 +17,7 @@ class QueryTest extends AbstractTestCase
      */
     protected $query;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->query = new Query('kingkong=toto');
     }

@@ -22,7 +22,7 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
      */
     private $uri;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->uri = HttpUri::createFromString(
             'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'

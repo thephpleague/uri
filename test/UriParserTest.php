@@ -16,7 +16,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
      */
     protected $parser;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->parser = new UriParser();
     }

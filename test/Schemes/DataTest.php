@@ -4,7 +4,6 @@ namespace League\Uri\Test\Schemes;
 
 use InvalidArgumentException;
 use League\Uri;
-use League\Uri\Components\DataPath as Path;
 use League\Uri\Schemes\Data as DataUri;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;

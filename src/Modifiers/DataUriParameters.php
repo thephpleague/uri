@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Components\DataPath;
 
 /**

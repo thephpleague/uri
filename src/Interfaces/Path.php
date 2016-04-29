@@ -11,6 +11,8 @@
  */
 namespace League\Uri\Interfaces;
 
+use InvalidArgumentException;
+
 /**
  * Value object representing a URI Path component.
  *

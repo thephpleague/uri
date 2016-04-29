@@ -91,7 +91,7 @@ class QueryTest extends AbstractTestCase
     public function createFromArrayFailedProvider()
     {
         return [
-            'Non traversable object' => [new \StdClass()],
+            'Non traversable object' => [new \stdClass()],
             'String' => ['toto=23'],
         ];
     }
@@ -101,7 +101,7 @@ class QueryTest extends AbstractTestCase
         $empty_query = new Query();
         $this->assertFalse($empty_query->sameValueAs($this->query));
         $query = $empty_query->merge($this->query);
-        $this->assertInstanceof('League\Uri\Interfaces\Query', $query);
+        $this->assertInstanceOf('League\Uri\Interfaces\Query', $query);
         $this->assertTrue($query->sameValueAs($this->query));
     }
 

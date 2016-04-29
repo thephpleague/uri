@@ -27,8 +27,8 @@ class UserInfoTest extends AbstractTestCase
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();
-        $this->assertInstanceof('League\Uri\Interfaces\User', $userinfo->user);
-        $this->assertInstanceof('League\Uri\Interfaces\Pass', $userinfo->pass);
+        $this->assertInstanceOf('League\Uri\Interfaces\User', $userinfo->user);
+        $this->assertInstanceOf('League\Uri\Interfaces\Pass', $userinfo->pass);
     }
 
     /**

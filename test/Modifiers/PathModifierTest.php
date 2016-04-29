@@ -234,7 +234,7 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
      */
     public function testTypecodeProcess($type, $expected)
     {
-        $modifier = (new Typecode(Path::FTP_TYPE_ASCII))->WithType($type);
+        $modifier = (new Typecode(Path::FTP_TYPE_ASCII))->withType($type);
 
         $this->assertSame($expected, $modifier($this->uri)->getPath());
     }

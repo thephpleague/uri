@@ -4,6 +4,7 @@ namespace League\Uri\Test\Schemes;
 
 use InvalidArgumentException;
 use League\Uri;
+use League\Uri\Interfaces;
 use League\Uri\Schemes\Data as DataUri;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -32,8 +33,8 @@ class DataTest extends PHPUnit_Framework_TestCase
         $this->assertSame($mediatype, $uri->path->getMediaType());
         $this->assertSame($data, $uri->path->getData());
         $this->assertSame($isBinaryData, $uri->path->isBinaryData());
-        $this->assertInstanceOf('League\Uri\Interfaces\Scheme', $uri->scheme);
-        $this->assertInstanceOf('League\Uri\Interfaces\DataPath', $uri->path);
+        $this->assertInstanceOf(Interfaces\Scheme::class, $uri->scheme);
+        $this->assertInstanceOf(Interfaces\DataPath::class, $uri->path);
     }
 
     public function validStringUri()

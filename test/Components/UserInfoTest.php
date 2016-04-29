@@ -3,6 +3,7 @@
 namespace League\Uri\Test\Components;
 
 use League\Uri\Components\UserInfo;
+use League\Uri\Interfaces;
 use League\Uri\Test\AbstractTestCase;
 
 /**
@@ -27,8 +28,8 @@ class UserInfoTest extends AbstractTestCase
     public function testGetterMethod()
     {
         $userinfo = new UserInfo();
-        $this->assertInstanceOf('League\Uri\Interfaces\User', $userinfo->user);
-        $this->assertInstanceOf('League\Uri\Interfaces\Pass', $userinfo->pass);
+        $this->assertInstanceOf(Interfaces\User::class, $userinfo->user);
+        $this->assertInstanceOf(Interfaces\Pass::class, $userinfo->pass);
     }
 
     /**

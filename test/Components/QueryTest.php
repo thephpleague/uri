@@ -5,6 +5,7 @@ namespace League\Uri\Test\Components;
 use ArrayIterator;
 use InvalidArgumentException;
 use League\Uri\Components\Query;
+use League\Uri\Interfaces;
 use League\Uri\Test\AbstractTestCase;
 
 /**
@@ -101,7 +102,7 @@ class QueryTest extends AbstractTestCase
         $empty_query = new Query();
         $this->assertFalse($empty_query->sameValueAs($this->query));
         $query = $empty_query->merge($this->query);
-        $this->assertInstanceOf('League\Uri\Interfaces\Query', $query);
+        $this->assertInstanceOf(Interfaces\Query::class, $query);
         $this->assertTrue($query->sameValueAs($this->query));
     }
 

@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use League\Uri\Components\DataPath as Path;
 use League\Uri\Test\AbstractTestCase;
 use RuntimeException;
+use SplFileObject;
 
 /**
  * @group data
@@ -148,7 +149,7 @@ class DataPathTest extends AbstractTestCase
         $newFilePath = dirname(__DIR__).'/data/temp.gif';
         $uri = Path::createFromPath(dirname(__DIR__).'/data/red-nose.gif');
         $res = $uri->save($newFilePath);
-        $this->assertInstanceOf('\SplFileObject', $res);
+        $this->assertInstanceOf(SplFileObject::class, $res);
         $res = null;
         $this->assertSame((string) $uri, (string) Path::createFromPath($newFilePath));
 
@@ -162,7 +163,7 @@ class DataPathTest extends AbstractTestCase
         $newFilePath = dirname(__DIR__).'/data/temp.txt';
         $uri = Path::createFromPath(dirname(__DIR__).'/data/hello-world.txt');
         $res = $uri->save($newFilePath);
-        $this->assertInstanceOf('\SplFileObject', $res);
+        $this->assertInstanceOf(SplFileObject::class, $res);
         $this->assertSame((string) $uri, (string) Path::createFromPath($newFilePath));
         $data = file_get_contents($newFilePath);
         $this->assertSame(base64_encode($data), $uri->getData());

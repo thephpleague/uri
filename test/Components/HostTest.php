@@ -258,7 +258,7 @@ class HostTest extends AbstractTestCase
             'string' => ['www.example.com', Host::IS_RELATIVE],
             'bool' => [true, Host::IS_RELATIVE],
             'integer' => [1, Host::IS_RELATIVE],
-            'object' => [new \StdClass(), Host::IS_RELATIVE],
+            'object' => [new \stdClass(), Host::IS_RELATIVE],
             'ipv6 FQDN' => [['::1'], Host::IS_ABSOLUTE],
             'unknown flag' => [['all', 'is', 'good'], 23],
         ];

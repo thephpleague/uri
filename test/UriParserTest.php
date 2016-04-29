@@ -11,6 +11,9 @@ use PHPUnit_Framework_TestCase;
  */
 class UriParserTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var UriParser
+     */
     protected $parser;
 
     public function setUp()
@@ -375,6 +378,8 @@ class UriParserTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider testInvalidURI
      * @expectedException InvalidArgumentException
+     *
+     * @param string $uri
      */
     public function testParseFailed($uri)
     {

@@ -54,6 +54,12 @@ class UserInfoTest extends AbstractTestCase
 
     /**
      * @dataProvider toArrayProvider
+     *
+     * @param string $login
+     * @param string $pass
+     * @param string $expected_user
+     * @param string $expected_pass
+     * @param string $expected_str
      */
     public function testToArray($login, $pass, $expected_user, $expected_pass, $expected_str)
     {

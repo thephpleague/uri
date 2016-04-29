@@ -220,10 +220,12 @@ class QueryTest extends AbstractTestCase
     }
 
     /**
-     * @param $params
-     * @param $callable
-     * @param $expected
      * @dataProvider filterProvider
+     *
+     * @param array    $params
+     * @param callable $callable
+     * @param int      $flag
+     * @param string   $expected
      */
     public function testFilter($params, $callable, $flag, $expected)
     {
@@ -351,6 +353,9 @@ class QueryTest extends AbstractTestCase
 
     /**
      * @dataProvider queryStringsForEncoding
+     *
+     * @param string $query
+     * @param string $expected
      */
     public function testQueryIsProperlyEncoded($query, $expected)
     {

@@ -402,6 +402,8 @@ class HierarchicalPathTest extends AbstractTestCase
     /**
      * @expectedException \InvalidArgumentException
      * @dataProvider invalidExtension
+     *
+     * @param string $extension
      */
     public function testWithExtensionWithInvalidExtension($extension)
     {
@@ -474,6 +476,10 @@ class HierarchicalPathTest extends AbstractTestCase
 
     /**
      * @dataProvider withExtensionProvider2
+     *
+     * @param string $uri
+     * @param string $extension
+     * @param string $expected
      */
     public function testWithExtensionPreserveTypeCode($uri, $extension, $expected)
     {

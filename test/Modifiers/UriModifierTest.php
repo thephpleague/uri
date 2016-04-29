@@ -97,6 +97,10 @@ class UriModifierTest extends TestCase
 
     /**
      * @dataProvider sameValueAsProvider
+     *
+     * @param HttpUri $league
+     * @param FtpUri  $psr7
+     * @param bool    $expected
      */
     public function testSameValueAs($league, $psr7, $expected)
     {

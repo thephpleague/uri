@@ -75,6 +75,9 @@ class DataPathTest extends AbstractTestCase
     /**
      * @dataProvider invalidParametersString
      * @expectedException InvalidArgumentException
+     *
+     * @param string $path
+     * @param string $parameters
      */
     public function testWithParametersFailedWithInvalidParameters($path, $parameters)
     {

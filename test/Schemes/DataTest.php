@@ -16,6 +16,13 @@ class DataTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider validStringUri
+     *
+     * @param string $str
+     * @param string $mimetype
+     * @param string $parameters
+     * @param string $mediatype
+     * @param string $data
+     * @param bool   $isBinaryData
      */
     public function testCreateFromString($str, $mimetype, $parameters, $mediatype, $data, $isBinaryData)
     {

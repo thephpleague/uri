@@ -15,8 +15,14 @@ use PHPUnit_Framework_TestCase;
  */
 class FormatterTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var HttpUri
+     */
     private $uri;
 
+    /**
+     * @var Formatter
+     */
     private $formatter;
 
     public function setUp()

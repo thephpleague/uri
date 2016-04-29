@@ -28,6 +28,9 @@ class PathTest extends AbstractTestCase
 
     /**
      * @dataProvider validPathEncoding
+     *
+     * @param string $raw
+     * @param string $parsed
      */
     public function testGetUriComponent($raw, $parsed)
     {

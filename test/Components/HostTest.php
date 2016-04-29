@@ -281,6 +281,10 @@ class HostTest extends AbstractTestCase
 
     /**
      * @dataProvider sameValueAsProvider
+     *
+     * @param string $host1
+     * @param string $host2
+     * @param bool   $bool
      */
     public function testSameValueAs($host1, $host2, $bool)
     {

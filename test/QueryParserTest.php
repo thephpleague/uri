@@ -10,6 +10,9 @@ use PHPUnit_Framework_TestCase;
  */
 class QueryParserTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var QueryParser
+     */
     protected $parser;
 
     public function setUp()
@@ -18,9 +21,12 @@ class QueryParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param  $query
-     * @param  $expected
      * @dataProvider parserProvider
+     *
+     * @param string $query
+     * @param string $separator
+     * @param int    $encoding
+     * @param array  $expected
      */
     public function testParse($query, $separator, $encoding, $expected)
     {

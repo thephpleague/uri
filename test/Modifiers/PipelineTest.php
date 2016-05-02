@@ -26,7 +26,7 @@ class PipelineTest extends TestCase
     {
         $pipeline = new Pipeline([new RemoveDotSegments()]);
         $alt = $pipeline->pipe(new RemoveDotSegments());
-        $this->assertInstanceOf('League\Uri\Modifiers\Pipeline', $alt);
+        $this->assertInstanceOf(Pipeline::class, $alt);
         $this->assertNotEquals($alt, $pipeline);
     }
 
@@ -35,7 +35,7 @@ class PipelineTest extends TestCase
         $uri = HttpUri::createFromString('http://www.example.com/path/../to/the/./sky.php?kingkong=toto&foo=bar+baz#doc3');
         $pipeline = new Pipeline([new RemoveDotSegments()]);
         $newUri = $pipeline->process($uri);
-        $this->assertInstanceOf('League\Uri\Schemes\Http', $newUri);
+        $this->assertInstanceOf(HttpUri::class, $newUri);
         $this->assertSame('/to/the/sky.php', $newUri->getPath());
     }
 

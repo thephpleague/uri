@@ -17,7 +17,7 @@ Here's the documentation for the included URI modifiers which are modifying mult
 public Resolve::__construct(mixed $uri)
 ~~~
 
-The `Resolve` URI Modifier provides the mean for resolving an URI as a browser would for an anchor tag. When performing URI resolution the returned URI is normalized according to RFC3986 rules. The uri to resolved must be another Uri object.
+The `Resolve` URI Modifier provides the mean for resolving an URI as a browser would for a relative URI. When performing URI resolution the returned URI is normalized according to RFC3986 rules. The uri to resolved must be another Uri object.
 
 ### Parameters
 
@@ -35,7 +35,7 @@ $baseUri     = HttpUri::createFromString("http://www.example.com/path/to/the/sky
 $relativeUri = HttpUri::createFromString("./p#~toto");
 $modifier    = new Resolve($baseUri);
 $newUri = $modifier->__invoke($relativeUri);
-echo $newUri; //displays "http://www.example.com/hello/p#~toto"
+echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 ~~~
 
 ## Applying multiple modifiers to a single URI

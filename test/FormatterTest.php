@@ -145,20 +145,20 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatterPreservedQuery()
     {
-        $expected = 'http://example.com?';
+        $expected = 'http://example.com';
         $uri = HttpUri::createFromString($expected);
         $this->formatter->preserveQuery(true);
-        $this->assertSame('http://example.com', (string) $uri);
-        $this->assertSame($expected, $this->formatter->__invoke($uri));
+        $this->assertSame($expected, (string) $uri);
+        $this->assertSame('http://example.com?', $this->formatter->__invoke($uri));
     }
 
     public function testFormatterPreservedFragment()
     {
-        $expected = 'http://example.com#';
+        $expected = 'http://example.com';
         $uri = HttpUri::createFromString($expected);
         $this->formatter->preserveFragment(true);
-        $this->assertSame('http://example.com', (string) $uri);
-        $this->assertSame($expected, $this->formatter->__invoke($uri));
+        $this->assertSame($expected, (string) $uri);
+        $this->assertSame('http://example.com#', $this->formatter->__invoke($uri));
     }
 
     public function testFormatterSetPort()

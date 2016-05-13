@@ -6,12 +6,14 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
+- `Component::getContent` returns the raw representation of a component
 - `Formatter::setPort`  to improve port inclusion in URI string representation
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 
 ### Fixed
 
 - Bug fix `Host::isPublicSuffixValid` when no `publicSuffix` information is found
+- On instantiation, query and fragment delimiter are preserved
 
 ### Deprecated
 

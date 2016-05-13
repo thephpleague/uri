@@ -35,7 +35,7 @@ class DataPathTest extends AbstractTestCase
     public function testWithPath()
     {
         $uri = new Path('text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
-        $this->assertSame($uri, $uri->modify($uri));
+        $this->assertSame($uri, $uri->modify((string) $uri));
     }
 
     /**

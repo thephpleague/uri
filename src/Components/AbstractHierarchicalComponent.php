@@ -55,6 +55,25 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     abstract public function __construct($str);
 
     /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        if ($value == $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
+    }
+
+    /**
      * Returns whether or not the component is absolute or not
      *
      * @return bool
@@ -78,6 +97,28 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
         }
 
         return $this->createFromArray($data, $this->isAbsolute);
+    }
+
+    /**
+     * Returns the component literal value. The return type can be
+     * <ul>
+     * <li> null: If the component is not defined
+     * <li> string: Otherwise
+     * </ul>
+     *
+     * @return string|null
+     */
+    abstract public function getContent();
+
+    /**
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getContent();
     }
 
     /**

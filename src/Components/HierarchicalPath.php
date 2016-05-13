@@ -112,7 +112,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     /**
      * @inheritdoc
      */
-    public function __toString()
+    public function getContent()
     {
         $front_delimiter = '';
         if ($this->isAbsolute == self::IS_ABSOLUTE) {

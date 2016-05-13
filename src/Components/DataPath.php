@@ -283,23 +283,11 @@ class DataPath extends AbstractComponent implements DataPathInterface
     }
 
     /**
-     * Returns the instance string representation
-     * with its optional URI delimiters
+     * Returns the component literal value.
      *
      * @return string
      */
-    public function getUriComponent()
-    {
-        return $this->__toString();
-    }
-
-    /**
-     * Returns the instance string representation; If the
-     * instance is not defined an empty string is returned
-     *
-     * @return string
-     */
-    public function __toString()
+    public function getContent()
     {
         return $this->format(
             $this->mimetype,

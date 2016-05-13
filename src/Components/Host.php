@@ -176,15 +176,12 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * Returns the instance string representation; If the
-     * instance is not defined an empty string is returned
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function __toString()
+    public function getContent()
     {
-        if (empty($this->data)) {
-            return '';
+        if ([] === $this->data) {
+            return null;
         }
 
         if ($this->isIp()) {

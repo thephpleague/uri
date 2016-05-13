@@ -462,13 +462,16 @@ abstract class AbstractUri
     {
         return [
             'uri' => $this->__toString(),
-            'scheme' => $this->getScheme(),
-            'userInfo' => $this->getUserInfo(),
-            'host' => $this->getHost(),
-            'port' => $this->getPort(),
-            'path' => $this->getPath(),
-            'query' => $this->getQuery(),
-            'fragment' => $this->getFragment(),
+            'scheme' => $this->scheme->getContent(),
+            'authority' => [
+                'user' => $this->userInfo->user->getContent(),
+                'pass' => $this->userInfo->pass->getContent(),
+                'host' => $this->host->getContent(),
+                'port' => $this->port->getContent(),
+            ],
+            'path' => $this->path->getContent(),
+            'query' => $this->query->getContent(),
+            'fragment' => $this->fragment->getContent(),
         ];
     }
 

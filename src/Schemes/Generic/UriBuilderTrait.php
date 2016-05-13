@@ -37,7 +37,7 @@ trait UriBuilderTrait
             'pass' => null,
             'host' => null,
             'port' => null,
-            'path' => null,
+            'path' => '',
             'query' => null,
             'fragment' => null,
         ], $components);

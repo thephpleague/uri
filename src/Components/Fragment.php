@@ -28,11 +28,60 @@ class Fragment extends AbstractComponent implements FragmentInterface
     protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:\/@\?";
 
     /**
+     * Preserve the delimiter
+     *
+     * @var string
+     */
+    protected $preserveDelimiter = false;
+
+    /**
+     * new instance
+     *
+     * @param string|null $data the component value
+     */
+    public function __construct($data = null)
+    {
+        if ($data !== null) {
+            $this->preserveDelimiter = true;
+            $this->init($data);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        $component = new static($properties['data']);
+        $component->preserveDelimiter = $properties['preserveDelimiter'];
+
+        return $component;
+    }
+
+    /**
      * @inheritdoc
      */
     public function __debugInfo()
     {
         return ['fragment' => $this->__toString()];
+    }
+
+    /**
+     * Returns the component literal value. The return type can be
+     * <ul>
+     * <li> null: If the component is not defined
+     * <li> string: Otherwise
+     * </ul>
+     *
+     * @return string|int|null
+     */
+    public function getContent()
+    {
+        if (null === $this->data && false === $this->preserveDelimiter) {
+            return null;
+        }
+
+        return $this->encode($this->data);
     }
 
     /**
@@ -44,10 +93,33 @@ class Fragment extends AbstractComponent implements FragmentInterface
     public function getUriComponent()
     {
         $component = $this->__toString();
-        if ('' !== $component) {
-            $component = FragmentInterface::DELIMITER.$component;
+        if ($this->preserveDelimiter) {
+            return FragmentInterface::DELIMITER.$component;
         }
 
         return $component;
+    }
+
+    /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        if (null === $value && $value === $this->getContent()) {
+            return $this;
+        }
+
+        if ($value === $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
     }
 }

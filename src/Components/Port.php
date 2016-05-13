@@ -47,14 +47,17 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * Returns the instance string representation
-     * with its optional URI delimiters
+     * Returns the component literal value. The return type can be
+     * <ul>
+     * <li> null: If the component is not defined
+     * <li> int: If the component is a defined port
+     * </ul>
      *
-     * @return string
+     * @return string|int|null
      */
-    public function getUriComponent()
+    public function getContent()
     {
-        return null === $this->data ? '' : PortInterface::DELIMITER.$this->data;
+        return $this->data;
     }
 
     /**
@@ -64,7 +67,23 @@ class Port extends AbstractComponent implements PortInterface
      */
     public function toInt()
     {
-        return $this->data;
+        return $this->getContent();
+    }
+
+    /**
+     * Returns the instance string representation
+     * with its optional URI delimiters
+     *
+     * @return string
+     */
+    public function getUriComponent()
+    {
+        $component = $this->__toString();
+        if ('' !== $component) {
+            return PortInterface::DELIMITER.$component;
+        }
+
+        return $component;
     }
 
     /**

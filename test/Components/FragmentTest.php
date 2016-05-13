@@ -26,7 +26,7 @@ class FragmentTest extends AbstractTestCase
     {
         return [
             'null' => [null, ''],
-            'empty' => ['', ''],
+            'empty' => ['', '#'],
             'evaluate empty' => ['0', '#0'],
             'hash'  => ['#', '#%23'],
             'toofan' => ['toofan', '#toofan'],

@@ -36,6 +36,10 @@ trait ImmutablePropertyTrait
      */
     protected function withProperty($property, $value)
     {
+        if ('' === $value && 'path' !== $property) {
+            $value = null;
+        }
+
         $value = $this->$property->modify($value);
         if ($this->$property === $value) {
             return $this;

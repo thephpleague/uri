@@ -78,6 +78,25 @@ abstract class AbstractComponent
     }
 
     /**
+     * Returns the component literal value. The return type can be
+     * <ul>
+     * <li> null: If the component is not defined
+     * <li> int: If the component is a defined port
+     * <li> string: Otherwise
+     * </ul>
+     *
+     * @return string|int|null
+     */
+    public function getContent()
+    {
+        if (null === $this->data) {
+            return null;
+        }
+
+        return $this->encode($this->data);
+    }
+
+    /**
      * Returns the instance string representation; If the
      * instance is not defined an empty string is returned
      *
@@ -85,7 +104,7 @@ abstract class AbstractComponent
      */
     public function __toString()
     {
-        return $this->encode($this->data);
+        return (string) $this->getContent();
     }
 
     /**
@@ -97,5 +116,24 @@ abstract class AbstractComponent
     public function getUriComponent()
     {
         return $this->__toString();
+    }
+
+    /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        if ($value === $this->getContent()) {
+            return $this;
+        }
+
+        return new static($value);
     }
 }

@@ -13,7 +13,6 @@ namespace League\Uri\Types;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\UriPart;
-use ReflectionClass;
 
 /**
  * Common methods for Component Value Object
@@ -107,24 +106,5 @@ trait ImmutableComponentTrait
         );
 
         return preg_replace_callback(',(?<encode>%[0-9a-f]{2}),', $formatter, $str);
-    }
-
-    /**
-     * Returns an instance with the specified string
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified data
-     *
-     * @param string $value
-     *
-     * @return static
-     */
-    public function modify($value)
-    {
-        if ($value == $this->__toString()) {
-            return $this;
-        }
-
-        return (new ReflectionClass(get_called_class()))->newInstance($value);
     }
 }

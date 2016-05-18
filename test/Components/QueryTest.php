@@ -62,15 +62,23 @@ class QueryTest extends AbstractTestCase
         $this->assertSame(['kingkong' => 'toto'], iterator_to_array($this->query, true));
     }
 
-    public function testGetUriComponent()
+    /**
+     * @dataProvider queryProvider
+     */
+    public function testGetUriComponent(Query $query, $expected)
     {
-        $this->assertSame('?kingkong=toto', $this->query->getUriComponent());
+        $this->assertSame($expected, $query->getUriComponent());
     }
 
-    public function testGetUriComponentWithoutArgument()
+    public function queryProvider()
     {
-        $query = new Query();
-        $this->assertSame('', $query->getUriComponent());
+        return [
+            'string' => [new Query('kingkong=toto'), '?kingkong=toto'],
+            'null' => [new Query(null), ''],
+            'empty string' => [new Query(''), '?'],
+            'empty array' => [Query::createFromArray([]), ''],
+            'non empty array' => [Query::createFromArray(['' => null]), '?'],
+        ];
     }
 
     public function testCreateFromArrayWithTraversable()

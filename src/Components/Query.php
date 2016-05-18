@@ -38,6 +38,13 @@ class Query implements QueryInterface
     protected static $separator = '&';
 
     /**
+     * Preserve the delimiter
+     *
+     * @var string
+     */
+    protected $preserveDelimiter = false;
+
+    /**
      * a new instance
      *
      * @param string $data
@@ -45,6 +52,7 @@ class Query implements QueryInterface
     public function __construct($data = null)
     {
         if (null !== $data) {
+            $this->preserveDelimiter = true;
             $this->data = $this->validate($data);
         }
     }
@@ -77,11 +85,11 @@ class Query implements QueryInterface
      */
     public static function createFromArray($data)
     {
-        $query = (new QueryParser())->build(
-            static::validateIterator($data),
-            static::$separator,
-            PHP_QUERY_RFC3986
-        );
+        $query = null;
+        $data = static::validateIterator($data);
+        if (!empty($data)) {
+            $query = (new QueryParser())->build($data, static::$separator, PHP_QUERY_RFC3986);
+        }
 
         return new static($query);
     }
@@ -91,7 +99,7 @@ class Query implements QueryInterface
      */
     public function __debugInfo()
     {
-        return ['query' => $this->__toString()];
+        return ['query' => $this->getContent()];
     }
 
     /**
@@ -99,7 +107,28 @@ class Query implements QueryInterface
      */
     public static function __set_state(array $properties)
     {
-        return static::createFromArray($properties['data']);
+        $component = static::createFromArray($properties['data']);
+        $component->preserveDelimiter = $properties['preserveDelimiter'];
+
+        return $component;
+    }
+
+    /**
+     * Returns the component literal value. The return type can be
+     * <ul>
+     * <li> null: If the component is not defined
+     * <li> string: Otherwise
+     * </ul>
+     *
+     * @return string|int|null
+     */
+    public function getContent()
+    {
+        if ([] === $this->data && false === $this->preserveDelimiter) {
+            return null;
+        }
+
+        return (new QueryParser())->build($this->data, static::$separator, PHP_QUERY_RFC3986);
     }
 
     /**
@@ -110,7 +139,7 @@ class Query implements QueryInterface
      */
     public function __toString()
     {
-        return (new QueryParser())->build($this->data, static::$separator, PHP_QUERY_RFC3986);
+        return (string) $this->getContent();
     }
 
     /**
@@ -122,11 +151,34 @@ class Query implements QueryInterface
     public function getUriComponent()
     {
         $query = $this->__toString();
-        if ('' !== $query) {
-            $query = QueryInterface::DELIMITER.$query;
+        if ($this->preserveDelimiter) {
+            return QueryInterface::DELIMITER.$query;
         }
 
         return $query;
+    }
+
+    /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        if (null === $value && $value === $this->getContent()) {
+            return $this;
+        }
+
+        if ($value === $this->__toString()) {
+            return $this;
+        }
+
+        return new static($value);
     }
 
     /**

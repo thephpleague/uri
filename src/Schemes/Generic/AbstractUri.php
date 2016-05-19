@@ -20,7 +20,6 @@ use League\Uri\Interfaces\Query;
 use League\Uri\Interfaces\Scheme;
 use League\Uri\Interfaces\UserInfo;
 use League\Uri\Types\ImmutablePropertyTrait;
-use RuntimeException;
 
 /**
  * common URI Object properties and methods
@@ -125,7 +124,7 @@ abstract class AbstractUri
      *
      * @throws InvalidArgumentException for invalid schemes.
      * @throws InvalidArgumentException for unsupported schemes.
-     * @throws RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified scheme.
      */
@@ -167,7 +166,7 @@ abstract class AbstractUri
      * @param string      $user     The user name to use for authority.
      * @param null|string $password The password associated with $user.
      *
-     * @throws RuntimeException if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified user information.
      */
@@ -218,7 +217,7 @@ abstract class AbstractUri
      * @param string $host The hostname to use with the new instance.
      *
      * @throws InvalidArgumentException for invalid hostnames.
-     * @throws RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified host.
      */
@@ -263,7 +262,7 @@ abstract class AbstractUri
      *                       removes the port information.
      *
      * @throws InvalidArgumentException for invalid ports.
-     * @throws RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified port.
      */
@@ -324,7 +323,7 @@ abstract class AbstractUri
      * @param string $path The path to use with the new instance.
      *
      * @throws InvalidArgumentException for invalid paths.
-     * @throws RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified path.
      */
@@ -373,7 +372,7 @@ abstract class AbstractUri
      * @param string $query The query string to use with the new instance.
      *
      * @throws InvalidArgumentException for invalid query strings.
-     * @throws RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified query string.
      */
@@ -417,7 +416,7 @@ abstract class AbstractUri
      *
      * @param string $fragment The fragment to use with the new instance.
      *
-     * @throws RuntimeException if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return static A new instance with the specified fragment.
      */
@@ -550,12 +549,14 @@ abstract class AbstractUri
     /**
      * Assert if the current URI object is valid
      *
-     * @throws RuntimeException if the resulting URI is not valid
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      */
     protected function assertValidObject()
     {
         if (!$this->isValid()) {
-            throw new RuntimeException('The URI properties will produce an invalid `'.get_class($this).'`');
+            throw new InvalidArgumentException(sprintf(
+                'The URI components will produce a `%s` instance in invalid state', get_class($this)
+            ));
         }
     }
 
@@ -609,7 +610,9 @@ abstract class AbstractUri
     {
         $scheme = $this->getScheme();
         if (!isset(static::$supportedSchemes[$scheme])) {
-            throw new InvalidArgumentException('The submitted scheme is unsupported by `'.get_class($this).'`');
+            throw new InvalidArgumentException(sprintf(
+                'The submitted scheme is unsupported by `%s`', get_class($this)
+            ));
         }
     }
 }

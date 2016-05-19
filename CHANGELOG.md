@@ -14,6 +14,8 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - Bug fix `Host::isPublicSuffixValid` when no `publicSuffix` information is found
 - On instantiation, query and fragment delimiter are preserved
+- `createFromComponents` failing with `parse_url` result when no path is defined
+- On URI transformation `InvalidArgumentException` exceptions are emitted instead of `RuntimeException` ones.
 
 ### Deprecated
 

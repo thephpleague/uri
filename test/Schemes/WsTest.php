@@ -6,6 +6,7 @@ use League\Uri\Schemes\Ws;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @group uri
  * @group ws
  */
 class WsTest extends PHPUnit_Framework_TestCase
@@ -51,22 +52,6 @@ class WsTest extends PHPUnit_Framework_TestCase
             ['http://example.com'],
             [''],
             ['//example.com'],
-        ];
-    }
-
-    /**
-     * @dataProvider runtimeExceptionExceptionProvider
-     * @expectedException \RuntimeException
-     * @param $input
-     */
-    public function testConstructorThrowRuntimeException($input)
-    {
-        Ws::createFromString($input);
-    }
-
-    public function runtimeExceptionExceptionProvider()
-    {
-        return [
             ['wss:/example.com'],
             ['ws://example.com:80/foo/bar?foo=bar#content'],
         ];

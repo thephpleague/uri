@@ -56,25 +56,11 @@ class UriParser
     /**
      * Parse a string as an URI according to the regexp form rfc3986
      *
-     * @see UriParser::parse
-     *
      * @param string $uri
      *
      * @return array
      */
     public function __invoke($uri)
-    {
-        return $this->parse($uri);
-    }
-
-    /**
-     * Parse a string as an URI according to the regexp form rfc3986
-     *
-     * @param string $uri The URI to parse
-     *
-     * @return array the array is similar to PHP's parse_url hash response
-     */
-    public function parse($uri)
     {
         $parts = $this->extractUriParts($uri);
 
@@ -87,6 +73,20 @@ class UriParser
                 'fragment' => '' === $parts['fragment'] ? null : mb_substr($parts['fragment'], 1, null, 'UTF-8'),
             ]
         ));
+    }
+
+    /**
+     * Parse a string as an URI according to the regexp form rfc3986
+     *
+     * @see UriParser::__invoke
+     *
+     * @param string $uri The URI to parse
+     *
+     * @return array the array is similar to PHP's parse_url hash response
+     */
+    public function parse($uri)
+    {
+        return $this->__invoke($uri);
     }
 
     /**

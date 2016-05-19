@@ -7,6 +7,7 @@ use League\Uri\Schemes\Ftp as FtpUri;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @group uri
  * @group ftp
  */
 class FtpTest extends PHPUnit_Framework_TestCase
@@ -52,22 +53,6 @@ class FtpTest extends PHPUnit_Framework_TestCase
             ['http://example.com'],
             [''],
             ['//example.com'],
-        ];
-    }
-
-    /**
-     * @dataProvider runtimeExceptionExceptionProvider
-     * @expectedException \RuntimeException
-     * @param $input
-     */
-    public function testConstructorThrowRuntimeException($input)
-    {
-        FtpUri::createFromString($input);
-    }
-
-    public function runtimeExceptionExceptionProvider()
-    {
-        return [
             ['ftp:example.com'],
             ['ftp://example.com?query#fragment'],
         ];

@@ -11,6 +11,8 @@
  */
 namespace League\Uri\Interfaces;
 
+use InvalidArgumentException;
+
 /**
  * Value object representing a URI.
  *
@@ -192,9 +194,9 @@ interface Uri
      *
      * @param string $scheme The scheme to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid schemes.
-     * @throws \InvalidArgumentException for unsupported schemes.
-     * @throws \RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for invalid schemes.
+     * @throws InvalidArgumentException for unsupported schemes.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified scheme.
      */
@@ -213,7 +215,7 @@ interface Uri
      * @param string      $user     The user name to use for authority.
      * @param null|string $password The password associated with $user.
      *
-     * @throws \RuntimeException if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified user information.
      */
@@ -229,8 +231,8 @@ interface Uri
      *
      * @param string $host The hostname to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid hostnames.
-     * @throws \RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for invalid hostnames.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified host.
      */
@@ -251,8 +253,8 @@ interface Uri
      * @param null|int $port The port to use with the new instance; a null value
      *                       removes the port information.
      *
-     * @throws \InvalidArgumentException for invalid ports.
-     * @throws \RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for invalid ports.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified port.
      */
@@ -278,8 +280,8 @@ interface Uri
      *
      * @param string $path The path to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid paths.
-     * @throws \RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for invalid paths.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified path.
      */
@@ -298,8 +300,8 @@ interface Uri
      *
      * @param string $query The query string to use with the new instance.
      *
-     * @throws \InvalidArgumentException for invalid query strings.
-     * @throws \RuntimeException         if the returned URI object is invalid.
+     * @throws InvalidArgumentException for invalid query strings.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified query string.
      */
@@ -318,7 +320,7 @@ interface Uri
      *
      * @param string $fragment The fragment to use with the new instance.
      *
-     * @throws \RuntimeException if the returned URI object is invalid.
+     * @throws InvalidArgumentException for transformations that would result in a object in invalid state.
      *
      * @return self A new instance with the specified fragment.
      */

@@ -7,6 +7,7 @@ use League\Uri\Schemes\Http as HttpUri;
 use PHPUnit_Framework_TestCase;
 
 /**
+ * @group uri
  * @group http
  */
 class HttpTest extends PHPUnit_Framework_TestCase

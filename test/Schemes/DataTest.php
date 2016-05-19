@@ -10,6 +10,7 @@ use PHPUnit_Framework_TestCase;
 use RuntimeException;
 
 /**
+ * @group uri
  * @group data
  */
 class DataTest extends PHPUnit_Framework_TestCase
@@ -134,7 +135,7 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException InvalidArgumentException
      */
     public function testCreateFromComponentsFailedInvalidMediatype()
     {
@@ -142,7 +143,7 @@ class DataTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException InvalidArgumentException
      */
     public function testCreateFromComponentsFailedWithRuntimeException()
     {

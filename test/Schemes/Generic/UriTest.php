@@ -143,7 +143,7 @@ class UriTest extends AbstractTestCase
 
     /**
      * @dataProvider invalidURI
-     * @expectedException \RuntimeException
+     * @expectedException InvalidArgumentException
      * @param $input
      */
     public function testCreateFromInvalidUrlKO($input)
@@ -160,7 +160,7 @@ class UriTest extends AbstractTestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testModificationFailedWithUnsupportedType()
     {
@@ -168,7 +168,7 @@ class UriTest extends AbstractTestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException InvalidArgumentException
      */
     public function testModificationFailed()
     {

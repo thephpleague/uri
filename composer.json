@@ -38,12 +38,9 @@
             "League\\Uri\\Test\\": "test"
         }
     },
-    "bin": [
-        "bin/parse-uri"
-    ],
     "scripts": {
         "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;",
-        "phpunit": "phpunit",
+        "phpunit": "phpunit --coverage-text",
         "phpcs": "php-cs-fixer fix -v --diff --dry-run;"
     },
     "extra": {

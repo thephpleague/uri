@@ -25,11 +25,6 @@ class Path extends AbstractComponent implements PathInterface
     use PathTrait;
 
     /**
-     * @inheritdoc
-     */
-    protected static $invalidCharactersRegex = ',[?#],';
-
-    /**
      * new instance
      *
      * @param string $path the component value
@@ -56,8 +51,6 @@ class Path extends AbstractComponent implements PathInterface
      */
     protected function validate($path)
     {
-        $this->assertValidComponent($path);
-
         return $this->decodePath($path);
     }
 }

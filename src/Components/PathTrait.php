@@ -31,7 +31,7 @@ trait PathTrait
     /**
      * Paht reserved characters regular expression
      */
-    protected static $pathReservedCharactersRegex = "/(?:[^\!\$&'\(\)\*\+,;\=\:\/@\?%]+|%(?![A-Fa-f0-9]{2}))/S";
+    protected static $pathReservedCharactersRegex = "/(?:[^\!\$&'\(\)\*\+,;\=\:\/@%]+|%(?![A-Fa-f0-9]{2}))/S";
 
     /**
      * Typecode value

@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Components;
 
-use InvalidArgumentException;
 use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\QueryParser;
 use League\Uri\Types\ImmutableCollectionTrait;
@@ -62,16 +61,11 @@ class Query implements QueryInterface
      *
      * @param string $str
      *
-     * @throws InvalidArgumentException If reserved characters are used
-     *
      * @return array
      */
     protected function validate($str)
     {
         $str = $this->validateString($str);
-        if (strpos($str, '#') !== false) {
-            throw new InvalidArgumentException('the query string must not contain a URI fragment');
-        }
 
         return (new QueryParser())->parse($str, static::$separator, false);
     }

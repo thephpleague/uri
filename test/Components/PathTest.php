@@ -51,6 +51,8 @@ class PathTest extends AbstractTestCase
             ['\\slashy', '%5Cslashy'],
             ['foo^bar', 'foo%5Ebar'],
             ['foo^bar/baz', 'foo%5Ebar/baz'],
+            ['to?to', 'to%3Fto'],
+            ['to#to', 'to%23to'],
         ];
     }
 
@@ -67,8 +69,6 @@ class PathTest extends AbstractTestCase
     public function invalidDataProvider()
     {
         return [
-            'contains ?' => ['to?to'],
-            'contains #' => ['to#to'],
             'bool'       => [true],
             'Std Class'  => [(object) 'foo'],
             'float'      => [1.2],

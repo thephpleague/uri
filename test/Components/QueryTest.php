@@ -53,7 +53,6 @@ class QueryTest extends AbstractTestCase
             'Std Class' => [(object) 'foo'],
             'float'     => [1.2],
             'array'      => [['foo']],
-            'contains a fragment' => ['foo#bar'],
         ];
     }
 
@@ -78,6 +77,8 @@ class QueryTest extends AbstractTestCase
             'empty string' => [new Query(''), '?'],
             'empty array' => [Query::createFromArray([]), ''],
             'non empty array' => [Query::createFromArray(['' => null]), '?'],
+            'contains a reserved word #' => [new Query('foo#bar'), '?foo%23bar'],
+            'contains a delimiter ?' => [new Query('?foo#bar'), '?%3Ffoo%23bar'],
         ];
     }
 

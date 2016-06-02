@@ -32,11 +32,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected static $separator = '/';
 
     /**
-     * @inheritdoc
-     */
-    protected static $invalidCharactersRegex = ',[?#],';
-
-    /**
      * New Instance
      *
      * @param string $path
@@ -44,7 +39,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     public function __construct($path = '')
     {
         $path = $this->validateString($path);
-        $this->assertValidComponent($path);
         $this->isAbsolute = self::IS_RELATIVE;
         if (static::$separator == mb_substr($path, 0, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;

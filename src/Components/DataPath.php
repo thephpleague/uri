@@ -65,11 +65,6 @@ class DataPath extends AbstractComponent implements DataPathInterface
     protected $document;
 
     /**
-     * @inheritdoc
-     */
-    protected static $invalidCharactersRegex = ',[?#],';
-
-    /**
      * new instance
      *
      * @param string $path the component value
@@ -113,7 +108,6 @@ class DataPath extends AbstractComponent implements DataPathInterface
      */
     protected function assertValidComponent($path)
     {
-        parent::assertValidComponent($path);
         if (!mb_detect_encoding($path, 'US-ASCII', true)
             || false === strpos($path, ',')
             || false !== strpos($path, '\n')

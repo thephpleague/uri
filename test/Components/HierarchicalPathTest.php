@@ -138,6 +138,8 @@ class HierarchicalPathTest extends AbstractTestCase
             'arbitrary cut 2' => [['foo/bar', 'baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
             'arbitrary cut 3' => [['foo/bar/baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
             'ending delimiter' => [['foo/bar/baz', ''], Path::IS_RELATIVE, 'foo/bar/baz/'],
+            'use reserved characters #' => [['all', 'i#s', 'good'], Path::IS_ABSOLUTE, '/all/i%23s/good'],
+            'use reserved characters ?' => [['all', 'i?s', 'good'], Path::IS_RELATIVE,  'all/i%3Fs/good'],
         ];
     }
 
@@ -160,8 +162,6 @@ class HierarchicalPathTest extends AbstractTestCase
             'integer' => [1, Path::IS_RELATIVE],
             'object' => [new \stdClass(), Path::IS_RELATIVE],
             'unknown flag' => [['all', 'is', 'good'], 23],
-            'use reserved characters #' => [['all', 'i#s', 'good'], Path::IS_ABSOLUTE],
-            'use reserved characters ?' => [['all', 'i?s', 'good'], Path::IS_RELATIVE],
         ];
     }
 

@@ -60,7 +60,7 @@ class UriParser
      *
      * @return array
      */
-    public function __invoke($uri)
+    public function parse($uri)
     {
         $parts = $this->extractUriParts($uri);
 
@@ -78,15 +78,15 @@ class UriParser
     /**
      * Parse a string as an URI according to the regexp form rfc3986
      *
-     * @see UriParser::__invoke
+     * @see UriParser::parse
      *
      * @param string $uri The URI to parse
      *
      * @return array the array is similar to PHP's parse_url hash response
      */
-    public function parse($uri)
+    public function __invoke($uri)
     {
-        return $this->__invoke($uri);
+        return $this->parse($uri);
     }
 
     /**

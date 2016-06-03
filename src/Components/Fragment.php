@@ -22,10 +22,6 @@ use League\Uri\Interfaces\Fragment as FragmentInterface;
  */
 class Fragment extends AbstractComponent implements FragmentInterface
 {
-    /**
-     * @inheritdoc
-     */
-    protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:\/@\?";
 
     /**
      * Preserve the delimiter
@@ -43,7 +39,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     {
         if ($data !== null) {
             $this->preserveDelimiter = true;
-            $this->init($data);
+            $this->data = $this->decodeQueryFragment($this->validateString($data));
         }
     }
 
@@ -81,7 +77,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
             return null;
         }
 
-        return $this->encode($this->data);
+        return $this->encodeQueryFragment($this->data);
     }
 
     /**

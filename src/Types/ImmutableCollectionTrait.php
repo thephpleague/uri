@@ -71,7 +71,7 @@ trait ImmutableCollectionTrait
      */
     public function hasKey($offset)
     {
-        return array_key_exists($this->validateOffset($offset), $this->data);
+        return array_key_exists($offset, $this->data);
     }
 
     /**
@@ -105,7 +105,7 @@ trait ImmutableCollectionTrait
     {
         $data = $this->data;
         foreach ($offsets as $offset) {
-            unset($data[$this->validateOffset($offset)]);
+            unset($data[$offset]);
         }
 
         return $this->newCollectionInstance($data);
@@ -206,21 +206,11 @@ trait ImmutableCollectionTrait
         }
 
         if (!is_array($data)) {
-            throw new InvalidArgumentException('Data passed to the method must be an array or a Traversable object');
+            throw new InvalidArgumentException(
+                'Data passed to the method must be an array or a Traversable object'
+            );
         }
 
         return $data;
-    }
-
-    /**
-     * Validate offset
-     *
-     * @param int|string $offset
-     *
-     * @return int|string
-     */
-    protected function validateOffset($offset)
-    {
-        return $offset;
     }
 }

@@ -60,7 +60,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
     public function testFormatWithSimpleString()
     {
         $uri = 'https://login:pass@gwóźdź.pl:443/test/query.php?kingkong=toto&foo=bar+baz#doc3';
-        $expected = 'https://login:pass@xn--gwd-hna98db.pl/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
+        $expected = 'https://login:pass@xn--gwd-hna98db.pl/test/query.php?kingkong=toto&amp;foo=bar+baz#doc3';
         $uri = HttpUri::createFromString($uri);
 
         $this->formatter->setQuerySeparator('&amp;');
@@ -92,13 +92,13 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame(PHP_QUERY_RFC3986, $this->formatter->getQueryEncoding());
         $this->formatter->setQueryEncoding(PHP_QUERY_RFC1738);
         $this->assertSame(PHP_QUERY_RFC1738, $this->formatter->getQueryEncoding());
-        $this->assertSame('kingkong=toto&foo=bar+baz', $this->formatter->__invoke($this->uri->query));
+        $this->assertSame('kingkong=toto&foo=bar%2Bbaz', $this->formatter->__invoke($this->uri->query));
     }
 
     public function testFormatQueryRFC3986()
     {
         $this->formatter->setQueryEncoding(PHP_QUERY_RFC3986);
-        $this->assertSame('kingkong=toto&foo=bar%20baz', $this->formatter->__invoke($this->uri->query));
+        $this->assertSame('kingkong=toto&foo=bar+baz', $this->formatter->__invoke($this->uri->query));
     }
 
     public function testFormatQueryWithSeparator()
@@ -106,14 +106,14 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('&', $this->formatter->getQuerySeparator());
         $this->formatter->setQuerySeparator('&amp;');
         $this->assertSame('&amp;', $this->formatter->getQuerySeparator());
-        $this->assertSame('kingkong=toto&amp;foo=bar%20baz', $this->formatter->__invoke($this->uri->query));
+        $this->assertSame('kingkong=toto&amp;foo=bar+baz', $this->formatter->__invoke($this->uri->query));
     }
 
     public function testFormat()
     {
         $this->formatter->setQuerySeparator('&amp;');
         $this->formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
-        $expected = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
+        $expected = 'http://login:pass@xn--gwd-hna98db.pl:443/test/query.php?kingkong=toto&amp;foo=bar+baz#doc3';
         $this->assertSame($expected, $this->formatter->__invoke($this->uri));
     }
 
@@ -128,7 +128,7 @@ class FormatterTest extends PHPUnit_Framework_TestCase
 
     public function testFormatWithoutAuthority()
     {
-        $expected = '/test/query.php?kingkong=toto&amp;foo=bar%20baz#doc3';
+        $expected = '/test/query.php?kingkong=toto&amp;foo=bar+baz#doc3';
         $uri = $this->uri->withScheme('')->withPort(null)->withUserInfo('')->withHost('');
         $this->formatter->setQuerySeparator('&amp;');
         $this->formatter->setHostEncoding(Formatter::HOST_AS_ASCII);

@@ -67,7 +67,7 @@ class Query implements QueryInterface
     {
         $str = $this->validateString($str);
 
-        return (new QueryParser())->parse($str, static::$separator, false);
+        return (new QueryParser())->parse($str, static::$separator, PHP_QUERY_RFC3986);
     }
 
     /**
@@ -188,7 +188,6 @@ class Query implements QueryInterface
      */
     public function getValue($offset, $default = null)
     {
-        $offset = rawurldecode($offset);
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }

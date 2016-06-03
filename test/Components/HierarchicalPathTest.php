@@ -40,17 +40,26 @@ class HierarchicalPathTest extends AbstractTestCase
 
     public function validPathProvider()
     {
+        $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
+
         return [
-            'empty'                                  => ['', ''],
-            'root path'                              => ['/', '/'],
-            'absolute path'                          => ['/path/to/my/file.csv', '/path/to/my/file.csv'],
-            'relative path'                          => ['you', 'you'],
-            'relative path with ending slash'        => ['foo/bar/', 'foo/bar/'],
-            'path with a space'                      => ['/shop/rev iew/', '/shop/rev%20iew/'],
+            'empty' => ['', ''],
+            'root path' => ['/', '/'],
+            'absolute path' => ['/path/to/my/file.csv', '/path/to/my/file.csv'],
+            'relative path' => ['you', 'you'],
+            'relative path with ending slash' => ['foo/bar/', 'foo/bar/'],
+            'path with a space' => ['/shop/rev iew/', '/shop/rev%20iew/'],
             'path with an encoded char in lowercase' => ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
             'path with an encoded char in uppercase' => ['/master/toto/%7Eetc', '/master/toto/%7Eetc'],
-            'path with character to encode'          => ['/foo^bar', '/foo%5Ebar'],
+            'path with character to encode' => ['/foo^bar', '/foo%5Ebar'],
             'path with a reserved characted encoded' => ['%2Ffoo^bar', '%2Ffoo%5Ebar'],
+            'Percent encode spaces' => ['/pa th', '/pa%20th'],
+            'Percent encode multibyte' => ['/€', '/%E2%82%AC'],
+            "Don't encode something that's already encoded" => ['/pa%20th', '/pa%20th'],
+            'Percent encode invalid percent encodings' => ['/pa%2-th', '/pa%252-th'],
+            "Don't encode path segments" => ['/pa/th//two', '/pa/th//two'],
+            "Don't encode unreserved chars or sub-delimiters" => ["/$unreserved", "/$unreserved"],
+            'Encoded unreserved chars are not decoded' => ['/p%61th', '/p%61th'],
         ];
     }
 
@@ -445,34 +454,6 @@ class HierarchicalPathTest extends AbstractTestCase
         ];
     }
 
-    public function pathTestProvider()
-    {
-        return [
-            // Percent encode spaces.
-            ['/baz bar', '/baz%20bar'],
-            // Don't encoding something that's already encoded.
-            ['/baz%20bar', '/baz%20bar'],
-            // Percent encode invalid percent encodings
-            ['/baz%2-bar', '/baz%252-bar'],
-            // Don't encode path segments
-            ['/baz/bar/bam~a', '/baz/bar/bam~a'],
-            ['/baz+bar', '/baz+bar'],
-            ['/baz:bar', '/baz:bar'],
-            ['/baz@bar', '/baz@bar'],
-            ['/baz(bar);bam/', '/baz(bar);bam/'],
-            ['/a-zA-Z0-9.-_~!$&\'()*+,;=:@', '/a-zA-Z0-9.-_~!$&\'()*+,;=:@'],
-        ];
-    }
-
-    /**
-     * @dataProvider pathTestProvider
-     * @param $input
-     * @param $output
-     */
-    public function testUriEncodesPathProperly($input, $output)
-    {
-        $this->assertSame($output, (new Path($input))->__toString());
-    }
 
     /**
      * @dataProvider withExtensionProvider2

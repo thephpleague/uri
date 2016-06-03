@@ -64,21 +64,37 @@ class QueryTest extends AbstractTestCase
     /**
      * @dataProvider queryProvider
      */
-    public function testGetUriComponent(Query $query, $expected)
+    public function testGetUriComponent($input, $expected)
     {
+        $query = is_array($input) ? Query::createFromArray($input) : new Query($input);
+
         $this->assertSame($expected, $query->getUriComponent());
     }
 
     public function queryProvider()
     {
+        $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
+
         return [
-            'string' => [new Query('kingkong=toto'), '?kingkong=toto'],
-            'null' => [new Query(null), ''],
-            'empty string' => [new Query(''), '?'],
-            'empty array' => [Query::createFromArray([]), ''],
-            'non empty array' => [Query::createFromArray(['' => null]), '?'],
-            'contains a reserved word #' => [new Query('foo#bar'), '?foo%23bar'],
-            'contains a delimiter ?' => [new Query('?foo#bar'), '?%3Ffoo%23bar'],
+            'string' => ['kingkong=toto', '?kingkong=toto'],
+            'null' => [null, ''],
+            'empty string' => ['', '?'],
+            'empty array' => [[], ''],
+            'non empty array' => [['' => null], '?'],
+            'contains a reserved word #' => ['foo#bar', '?foo%23bar'],
+            'contains a delimiter ?' => ['?foo#bar', '??foo%23bar'],
+            'key-only' => ['k^ey', '?k%5Eey'],
+            'key-value' => ['k^ey=valu`', '?k%5Eey=valu%60'],
+            'array-key-only' => ['key[]', '?key%5B%5D'],
+            'array-key-value' => ['key[]=valu`', '?key%5B%5D=valu%60'],
+            'complex' => ['k^ey&key[]=valu`&f<>=`bar', '?k%5Eey&key%5B%5D=valu%60&f%3C%3E=%60bar'],
+            'Percent encode spaces' => ['q=va lue', '?q=va%20lue'],
+            'Percent encode multibyte' => ['€', '?%E2%82%AC'],
+            "Don't encode something that's already encoded" => ['q=va%20lue', '?q=va%20lue'],
+            'Percent encode invalid percent encodings' => ['q=va%2-lue', '?q=va%252-lue'],
+            "Don't encode path segments" => ['q=va/lue', '?q=va/lue'],
+            "Don't encode unreserved chars or sub-delimiters" => [$unreserved, '?'.$unreserved],
+            'Encoded unreserved chars are not decoded' => ['q=v%61lue', '?q=v%61lue'],
         ];
     }
 
@@ -358,28 +374,6 @@ class QueryTest extends AbstractTestCase
                 },
                 ['superman' => 'lex luthor', 'superwoman' => 'joker'],
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider queryStringsForEncoding
-     *
-     * @param string $query
-     * @param string $expected
-     */
-    public function testQueryIsProperlyEncoded($query, $expected)
-    {
-        $this->assertSame($expected, (string) (new Query($query))->__toString());
-    }
-
-    public function queryStringsForEncoding()
-    {
-        return [
-            'key-only' => ['k^ey', 'k%5Eey'],
-            'key-value' => ['k^ey=valu`', 'k%5Eey=valu%60'],
-            'array-key-only' => ['key[]', 'key%5B%5D'],
-            'array-key-value' => ['key[]=valu`', 'key%5B%5D=valu%60'],
-            'complex' => ['k^ey&key[]=valu`&f<>=`bar', 'k%5Eey&key%5B%5D=valu%60&f%3C%3E=%60bar'],
         ];
     }
 }

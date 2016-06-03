@@ -11,6 +11,9 @@
  */
 namespace League\Uri;
 
+use League\Uri\Types\TranscoderTrait;
+use League\Uri\Types\ValidatorTrait;
+
 /**
  * a class to parse a URI query string according to RFC3986
  *
@@ -20,6 +23,9 @@ namespace League\Uri;
  */
 class QueryParser
 {
+    use ValidatorTrait;
+    use TranscoderTrait;
+
     /**
      * Parse a query string into an associative array
      *
@@ -37,7 +43,7 @@ class QueryParser
     public function parse($str, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
         $res = [];
-        if ('' == $str) {
+        if ('' === $str) {
             return $res;
         }
         $encodingType = $this->validateEncodingType($encodingType);
@@ -140,7 +146,7 @@ class QueryParser
         $reducer = function (array $carry, $data) use ($key, $encoder) {
             $pair = $key;
             if (null !== $data) {
-                $pair .= '='.$encoder($data);
+                $pair .= '='.call_user_func($encoder, $data);
             }
             $carry[] = $pair;
 
@@ -148,6 +154,26 @@ class QueryParser
         };
 
         return array_reduce($value, $reducer, []);
+    }
+
+    /**
+     *subject Return the query string encoding mechanism
+     *
+     * @param int|bool $encodingType
+     *
+     * @return callable
+     */
+    protected function getEncoder($encodingType)
+    {
+        if (PHP_QUERY_RFC3986 === $encodingType) {
+            return [$this, 'encodeQueryFragment'];
+        }
+
+        if (PHP_QUERY_RFC1738 === $encodingType) {
+            return 'urlencode';
+        }
+
+        return 'sprintf';
     }
 
     /**
@@ -160,45 +186,15 @@ class QueryParser
     protected function getDecoder($encodingType)
     {
         if (PHP_QUERY_RFC3986 === $encodingType) {
-            return function ($value) {
-                return rawurldecode($value);
-            };
+            return [$this, 'decodeQueryFragment'];
         }
 
         if (PHP_QUERY_RFC1738 === $encodingType) {
-            return function ($value) {
-                return urldecode($value);
-            };
+            return 'urldecode';
         }
 
         return function ($value) {
             return rawurldecode(str_replace('+', ' ', $value));
-        };
-    }
-
-    /**
-     * Return the query string encoding mechanism
-     *
-     * @param int|bool $encodingType
-     *
-     * @return callable
-     */
-    protected function getEncoder($encodingType)
-    {
-        if (PHP_QUERY_RFC3986 === $encodingType) {
-            return function ($value) {
-                return rawurlencode($value);
-            };
-        }
-
-        if (PHP_QUERY_RFC1738 === $encodingType) {
-            return function ($value) {
-                return urlencode($value);
-            };
-        }
-
-        return function ($value) {
-            return $value;
         };
     }
 }

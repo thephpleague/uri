@@ -14,6 +14,7 @@ use PHPUnit_Framework_TestCase;
 /**
  * @group query
  * @group modifier
+ * @group query-modifier
  */
 class QueryModifierTest extends PHPUnit_Framework_TestCase
 {
@@ -25,7 +26,7 @@ class QueryModifierTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->uri = HttpUri::createFromString(
-            'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
+            'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar%20baz#doc3'
         );
     }
 

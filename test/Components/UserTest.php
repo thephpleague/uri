@@ -30,23 +30,25 @@ class UserTest extends AbstractTestCase
      * @param $raw
      * @param $parsed
      */
-    public function testGetUriComponent($raw, $parsed)
+    public function testGetUriComponent($raw, $content, $parsed)
     {
         $user = new User($raw);
+        $this->assertSame($content, $user->getContent());
         $this->assertSame($parsed, $user->getUriComponent());
     }
 
     public function validUserProvider()
     {
         return [
-            ['toto', 'toto'],
-            ['bar---', 'bar---'],
+            ['toto', 'toto', 'toto'],
+            ['bar---', 'bar---', 'bar---'],
             ['', '', ''],
-            ['"bad"', '%22bad%22'],
-            ['<not good>', '%3Cnot%20good%3E'],
-            ['{broken}', '%7Bbroken%7D'],
-            ['`oops`', '%60oops%60'],
-            ['\\slashy', '%5Cslashy'],
+            [null, null, ''],
+            ['"bad"', '%22bad%22', '%22bad%22'],
+            ['<not good>', '%3Cnot%20good%3E', '%3Cnot%20good%3E'],
+            ['{broken}', '%7Bbroken%7D', '%7Bbroken%7D'],
+            ['`oops`', '%60oops%60', '%60oops%60'],
+            ['\\slashy', '%5Cslashy', '%5Cslashy'],
         ];
     }
 

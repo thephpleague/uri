@@ -13,7 +13,6 @@ namespace League\Uri\Components;
 
 use InvalidArgumentException;
 use League\Uri\Interfaces\Port as PortInterface;
-use League\Uri\Types\ValidatorTrait;
 
 /**
  * Value object representing a URI port component.
@@ -24,8 +23,6 @@ use League\Uri\Types\ValidatorTrait;
  */
 class Port extends AbstractComponent implements PortInterface
 {
-    use ValidatorTrait;
-
     /**
      * Validate Port data
      *

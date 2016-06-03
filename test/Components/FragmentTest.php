@@ -24,6 +24,8 @@ class FragmentTest extends AbstractTestCase
 
     public function validFragment()
     {
+        $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
+
         return [
             'null' => [null, ''],
             'empty' => ['', '#'],
@@ -32,6 +34,13 @@ class FragmentTest extends AbstractTestCase
             'toofan' => ['toofan', '#toofan'],
             'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@'],
             'encoded' => ['%^[]{}"<>\\', '#%25%5E%5B%5D%7B%7D%22%3C%3E%5C'],
+            'Percent encode spaces' => ['frag ment', '#frag%20ment'],
+            'Percent encode multibyte' => ['€', '#%E2%82%AC'],
+            "Don't encode something that's already encoded" => ['frag%20ment', '#frag%20ment'],
+            'Percent encode invalid percent encodings' => ['frag%2-ment', '#frag%252-ment'],
+            "Don't encode path segments" => ['frag/ment', '#frag/ment'],
+            "Don't encode unreserved chars or sub-delimiters" => [$unreserved, '#'.$unreserved],
+            'Encoded unreserved chars are not decoded' => ['fr%61gment', '#fr%61gment'],
         ];
     }
 

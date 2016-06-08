@@ -39,7 +39,7 @@ class Query implements QueryInterface
     /**
      * Preserve the delimiter
      *
-     * @var string
+     * @var bool
      */
     protected $preserveDelimiter = false;
 
@@ -108,13 +108,9 @@ class Query implements QueryInterface
     }
 
     /**
-     * Returns the component literal value. The return type can be
-     * <ul>
-     * <li> null: If the component is not defined
-     * <li> string: Otherwise
-     * </ul>
+     * Returns the component literal value.
      *
-     * @return string|int|null
+     * @return null|string
      */
     public function getContent()
     {

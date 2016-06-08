@@ -44,13 +44,9 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * Returns the component literal value. The return type can be
-     * <ul>
-     * <li> null: If the component is not defined
-     * <li> int: If the component is a defined port
-     * </ul>
+     * Returns the component literal value.
      *
-     * @return string|int|null
+     * @return null|int
      */
     public function getContent()
     {
@@ -64,7 +60,7 @@ class Port extends AbstractComponent implements PortInterface
      */
     public function toInt()
     {
-        return $this->getContent();
+        return $this->data;
     }
 
     /**

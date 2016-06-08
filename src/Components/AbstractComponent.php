@@ -78,12 +78,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * Returns the component literal value. The return type can be
-     * <ul>
-     * <li> null: If the component is not defined
-     * <li> int: If the component is a defined port
-     * <li> string: Otherwise
-     * </ul>
+     * Returns the component literal value.
      *
      * @return string|int|null
      */

@@ -3,7 +3,6 @@
 namespace League\Uri\Test\Schemes\Generic;
 
 use InvalidArgumentException;
-use League\Uri\Components;
 use League\Uri\Schemes\Http as HttpUri;
 use League\Uri\Test\AbstractTestCase;
 
@@ -108,40 +107,6 @@ class UriTest extends AbstractTestCase
     }
 
     /**
-     * @param $uri
-     * @param $expected
-     * @dataProvider pathFormattingProvider
-     */
-    public function testPathFormatting($uri, $expected)
-    {
-        $this->assertSame($expected, $uri->__toString());
-    }
-
-    public function pathFormattingProvider()
-    {
-        return [
-            [new HttpUri(
-                new Components\Scheme('http'),
-                new Components\UserInfo(),
-                new Components\Host('ExAmPLe.cOm'),
-                new Components\Port(),
-                new Components\HierarchicalPath('path/to/the/sky'),
-                new Components\Query(),
-                new Components\Fragment()
-            ), 'http://example.com/path/to/the/sky'],
-            [new HttpUri(
-                new Components\Scheme(),
-                new Components\UserInfo(),
-                new Components\Host(),
-                new Components\Port(),
-                new Components\HierarchicalPath('///path/to/the/sky'),
-                new Components\Query(),
-                new Components\Fragment()
-            ), '/path/to/the/sky'],
-        ];
-    }
-
-    /**
      * @dataProvider invalidURI
      * @expectedException InvalidArgumentException
      * @param $input
@@ -176,6 +141,17 @@ class UriTest extends AbstractTestCase
             ->withScheme('')
             ->withHost('')
             ->withPath('data:go');
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testModificationFailedWithEmptyAuthority()
+    {
+        HttpUri::createFromString('http://example.com/path')
+            ->withScheme('')
+            ->withHost('')
+            ->withPath('//toto');
     }
 
     public function testEmptyValueDetection()

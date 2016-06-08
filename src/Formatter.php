@@ -306,10 +306,9 @@ class Formatter
             $scheme .= ':';
         }
 
-        $auth = $this->formatAuthority($uri);
-
-        return $scheme.$auth
-            .$this->formatPath($uri->getPath(), $auth)
+        return $scheme
+            .$this->formatAuthority($uri)
+            .$uri->getPath()
             .$this->formatQuery($uri)
             .$this->formatFragment($uri)
         ;

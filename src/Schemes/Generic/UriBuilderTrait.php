@@ -44,27 +44,6 @@ trait UriBuilderTrait
     }
 
     /**
-     * Format the Path in a URI string
-     *
-     * @param string $path
-     * @param string $authority the Authority part
-     *
-     * @return string
-     */
-    protected function formatPath($path, $authority)
-    {
-        if ('' == $authority) {
-            return preg_replace(',^/+,', '/', $path);
-        }
-
-        if ('' !== $path && '/' != $path[0]) {
-            return '/'.$path;
-        }
-
-        return $path;
-    }
-
-    /**
      * Format the user info
      *
      * @param string $user

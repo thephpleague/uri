@@ -30,8 +30,6 @@ use League\Uri\Types\ImmutablePropertyTrait;
  */
 abstract class AbstractUri
 {
-    use AuthorityValidatorTrait;
-
     use ImmutablePropertyTrait;
 
     use UriBuilderTrait;
@@ -459,17 +457,7 @@ abstract class AbstractUri
      */
     public function __debugInfo()
     {
-        return [
-            'uri' => $this->__toString(),
-            'scheme' => $this->scheme->getContent(),
-            'user' => $this->userInfo->user->getContent(),
-            'pass' => $this->userInfo->pass->getContent(),
-            'host' => $this->host->getContent(),
-            'port' => $this->port->getContent(),
-            'path' => $this->path->getContent(),
-            'query' => $this->query->getContent(),
-            'fragment' => $this->fragment->getContent(),
-        ];
+        return ['uri' => $this->__toString()];
     }
 
     /**
@@ -482,13 +470,22 @@ abstract class AbstractUri
      */
     protected function getSchemeSpecificPart()
     {
-        $auth = $this->getAuthority();
-        if ('' !== $auth) {
-            $auth = '//'.$auth;
+        $authority = $this->getAuthority();
+
+        $res = array_filter([
+            $this->userInfo->getContent(),
+            $this->host->getContent(),
+            $this->port->getContent(),
+        ], function ($value) {
+            return null !== $value;
+        });
+
+        if (!empty($res)) {
+            $authority = '//'.$authority;
         }
 
-        return $auth
-            .$this->formatPath($this->path->getUriComponent(), $auth)
+        return $authority
+            .$this->path->getUriComponent()
             .$this->query->getUriComponent()
             .$this->fragment->getUriComponent();
     }
@@ -576,27 +573,19 @@ abstract class AbstractUri
     protected function isValidGenericUri()
     {
         $path = $this->path->getUriComponent();
-        if (false === strpos($path, ':')) {
+        if ('' !== $this->getAuthority()) {
+            return '' === $path || strpos($path, '/') === 0;
+        }
+
+        if (0 === strpos($path, '//')) {
+            return false;
+        }
+
+        if ('' !== $this->scheme->getUriComponent() || false === ($pos = strpos($path, ':'))) {
             return true;
         }
 
-        $path = explode(':', $path);
-        $path = array_shift($path);
-        $str = $this->scheme->getUriComponent().$this->getAuthority();
-
-        return !('' === $str && strpos($path, '/') === false);
-    }
-
-    /**
-     * Tell whether Http URI like scheme URI are valid
-     *
-     * @return bool
-     */
-    protected function isValidHierarchicalUri()
-    {
-        $this->assertSupportedScheme();
-
-        return $this->isAuthorityValid();
+        return false !== strpos(substr($path, 0, $pos), '/');
     }
 
     /**

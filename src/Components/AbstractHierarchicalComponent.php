@@ -100,11 +100,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * Returns the component literal value. The return type can be
-     * <ul>
-     * <li> null: If the component is not defined
-     * <li> string: Otherwise
-     * </ul>
+     * Returns the component literal value
      *
      * @return string|null
      */

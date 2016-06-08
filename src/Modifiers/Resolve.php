@@ -11,7 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Path;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\Uri as UriFilter;
 use Psr\Http\Message\UriInterface;
@@ -27,26 +27,6 @@ use Psr\Http\Message\UriInterface;
 class Resolve extends AbstractUriModifier
 {
     use UriFilter;
-
-    /**
-     * Generate the base URI to be used
-     *
-     * @param Uri|UriInterface $relative
-     *
-     * @return Uri|UriInterface
-     */
-    protected function getBaseUri($relative)
-    {
-        $userinfo = explode(':', $this->uri->getUserInfo(), 2);
-        $user = array_shift($userinfo);
-        $pass = array_shift($userinfo);
-
-        return $relative
-            ->withHost($this->uri->getHost())
-            ->withScheme($this->uri->getScheme())
-            ->withUserInfo($user, $pass)
-            ->withPort($this->uri->getPort());
-    }
 
     /**
      * New instance
@@ -68,89 +48,89 @@ class Resolve extends AbstractUriModifier
     public function __invoke($payload)
     {
         $this->assertUriObject($payload);
-        $uri = $this->generate($payload);
+        $uri = $this->resolveUri($payload);
 
-        return (new RemoveDotSegments())->__invoke($uri);
+        $path = (new Path($uri->getPath()))->withoutDotSegments();
+        if ('' !== $uri->getAuthority() && '' !== $path->__toString()) {
+            $path = $path->withLeadingSlash();
+        }
+
+        return $uri->withPath((string) $path);
     }
 
     /**
-     * @param Uri|UriInterface $relative
+     * Resolve the payload URI
+     *
+     * @param Uri|UriInterface $payload
      *
      * @return Uri|UriInterface
      */
-    protected function generate($relative)
+    protected function resolveUri($payload)
     {
-        $scheme = $relative->getScheme();
-        if ('' !== $scheme && $scheme != $this->uri->getScheme()) {
-            return $relative;
+        if ('' === (string) $payload) {
+            return $this->uri;
         }
 
-        if ('' !== $relative->getAuthority()) {
-            return $relative->withScheme($this->uri->getScheme());
+        if ('' !== $payload->getScheme()) {
+            return $payload;
         }
 
-        return $this->resolveRelative($relative)->withFragment($relative->getFragment());
+        if ('' !== $payload->getAuthority()) {
+            return $payload->withScheme($this->uri->getScheme());
+        }
+
+        return $this
+            ->resolveDomain($payload->getPath(), $payload->getQuery())
+            ->withFragment($payload->getFragment());
     }
 
     /**
-     * returns the resolve URI
+     * Resolve the URI for a Authority-less payload URI
      *
-     * @param Uri|UriInterface $relative the relative URI
+     * @param string $path
+     * @param string $query
      *
      * @return Uri|UriInterface
      */
-    protected function resolveRelative($relative)
+    protected function resolveDomain($path, $query)
     {
-        $path  = $relative->getPath();
-        if ('' !== $path) {
-            return $this->resolveRelativePath($relative, $path, $relative->getQuery());
+        if ('' === $path) {
+            if ('' === $query) {
+                $query = $this->uri->getQuery();
+            }
+
+            return $this->uri->withQuery($query);
         }
 
-        $query = $relative->getQuery();
-        if ('' !== $query) {
-            return $this->getBaseUri($relative)
-                ->withPath($this->uri->getPath())
-                ->withQuery($query);
+        if (0 === strpos($path, '/')) {
+            return $this->uri->withPath($path)->withQuery($query);
         }
 
-        return $this->getBaseUri($relative)
-            ->withPath($this->uri->getPath())
-            ->withQuery($this->uri->getQuery());
+        return $this->uri
+            ->withPath($this->mergePath($path)->__toString())
+            ->withQuery($query);
     }
 
     /**
-     * Return the resolve URI with a updated path and query
+     * Merging Relative URI path with Base URI path
      *
-     * @param Uri|UriInterface $relative    the relative URI
-     * @param string           $pathString  the relative path string
-     * @param string           $queryString the relative query string
+     * @param string $path
      *
-     * @return Uri|UriInterface
+     * @return PathInterface
      */
-    protected function resolveRelativePath($relative, $pathString, $queryString)
+    protected function mergePath($path)
     {
-        $relativePath = new HierarchicalPath($pathString);
-        if ($relativePath->isAbsolute()) {
-            return $this->getBaseUri($relative)
-                ->withPath($relativePath->__toString())
-                ->withQuery($queryString);
+        $basePath = $this->uri->getPath();
+        if ('' !== $this->uri->getAuthority() && '' === $basePath) {
+            return (new Path($path))->withLeadingSlash();
         }
 
-        $originalUri = $relativePath->modify($this->uri->getPath());
-        $segments = $originalUri->toArray();
-        array_pop($segments);
-        $isAbsolute = HierarchicalPath::IS_RELATIVE;
-        if ('' === $originalUri->__toString() || $originalUri->isAbsolute()) {
-            $isAbsolute = HierarchicalPath::IS_ABSOLUTE;
+        if ('' !== $basePath) {
+            $segments = explode('/', $basePath);
+            array_pop($segments);
+            $path = implode('/', $segments).'/'.$path;
         }
 
-        $relativePath = $relativePath->createFromArray(
-            array_merge($segments, $relativePath->toArray()),
-            $isAbsolute
-        );
-
-        return $this->getBaseUri($relative)
-            ->withPath($relativePath->__toString())
-            ->withQuery($queryString);
+        return new Path($path);
     }
 }

@@ -125,4 +125,31 @@ abstract class AbstractHierarchicalUri extends AbstractUri
             $properties['fragment']
         );
     }
+
+    /**
+     * Tell whether URI with an authority are valid
+     *
+     * @return bool
+     */
+    protected function isValidHierarchicalUri()
+    {
+        $this->assertSupportedScheme();
+
+        return $this->isAuthorityValid();
+    }
+
+    /**
+     * Tell whether the Auth URI is valid
+     *
+     * @return bool
+     */
+    protected function isAuthorityValid()
+    {
+        $pos = strpos($this->getSchemeSpecificPart(), '//');
+        if ('' !== $this->getScheme() && 0 !== $pos) {
+            return false;
+        }
+
+        return !('' === $this->getHost() && 0 === $pos);
+    }
 }

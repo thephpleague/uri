@@ -26,7 +26,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     /**
      * Preserve the delimiter
      *
-     * @var string
+     * @var bool
      */
     protected $preserveDelimiter = false;
 
@@ -63,13 +63,9 @@ class Fragment extends AbstractComponent implements FragmentInterface
     }
 
     /**
-     * Returns the component literal value. The return type can be
-     * <ul>
-     * <li> null: If the component is not defined
-     * <li> string: Otherwise
-     * </ul>
+     * Returns the component literal value
      *
-     * @return string|int|null
+     * @return string|null
      */
     public function getContent()
     {

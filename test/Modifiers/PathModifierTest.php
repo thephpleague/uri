@@ -253,46 +253,20 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
         $this->assertSame('/path/to/the/sky.php/', $modifier($this->uri)->getPath());
     }
 
-    /**
-     * @dataProvider validSlashPresenceProvider
-     *
-     * @param string $uri
-     */
-    public function testWithoutLeadingSlashProcess($uri)
+    public function testWithoutLeadingSlashProcess()
     {
         $modifier = new RemoveLeadingSlash();
+        $uri = HttpUri::createFromString('/foo/bar?q=b#h');
 
-        $this->assertSame(
-            (string) HierarchicalPath::createFromArray($uri->path->toArray()),
-            $modifier($uri)->getPath()
-        );
+        $this->assertSame('foo/bar?q=b#h', $modifier($uri)->__toString());
     }
 
-    /**
-     * @dataProvider validSlashPresenceProvider
-     *
-     * @param string $uri
-     */
-    public function testWithLeadingSlashProcess($uri)
+    public function testWithLeadingSlashProcess()
     {
         $modifier = new AddLeadingSlash();
+        $uri = HttpUri::createFromString('foo/bar?q=b#h');
 
-        $this->assertSame(
-            (string) HierarchicalPath::createFromArray($uri->path->toArray(), HierarchicalPath::IS_ABSOLUTE),
-            $modifier($uri)->getPath()
-        );
-    }
-
-    public function validSlashPresenceProvider()
-    {
-        $uri = HttpUri::createFromString(
-            'http://www.example.com/path/to/the/sky.php?kingkong=toto&foo=bar+baz#doc3'
-        );
-
-        return [
-            [$uri],
-            [$uri->withPath('toto/le heros')],
-        ];
+        $this->assertSame('/foo/bar?q=b#h', $modifier($uri)->__toString());
     }
 
     /**

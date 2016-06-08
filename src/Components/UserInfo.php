@@ -93,16 +93,15 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
-     * Returns the instance string representation; If the
-     * instance is not defined an empty string is returned
+     * Returns the component literal value.
      *
-     * @return string
+     * @return null|string
      */
-    public function __toString()
+    public function getContent()
     {
         $userInfo = $this->user->__toString();
         if ('' === $userInfo) {
-            return $userInfo;
+            return $this->user->getContent();
         }
 
         $pass = $this->pass->__toString();
@@ -111,6 +110,17 @@ class UserInfo implements UserInfoInterface
         }
 
         return $userInfo;
+    }
+
+    /**
+     * Returns the instance string representation; If the
+     * instance is not defined an empty string is returned
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getContent();
     }
 
     /**

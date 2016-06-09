@@ -9,6 +9,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Component::getContent` returns the raw representation of a component
 - `Formatter::setPort`  to improve port inclusion in URI string representation
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
+- Uri Modifier `Relativize`
 
 ### Fixed
 

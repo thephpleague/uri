@@ -80,7 +80,7 @@ class Resolve extends AbstractUriModifier
         }
 
         return $this
-            ->resolveDomain($payload->getPath(), $payload->getQuery())
+            ->resolvePathAndQuery($payload->getPath(), $payload->getQuery())
             ->withFragment($payload->getFragment());
     }
 
@@ -92,7 +92,7 @@ class Resolve extends AbstractUriModifier
      *
      * @return Uri|UriInterface
      */
-    protected function resolveDomain($path, $query)
+    protected function resolvePathAndQuery($path, $query)
     {
         if ('' === $path) {
             if ('' === $query) {

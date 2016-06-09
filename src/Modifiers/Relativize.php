@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\Path;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\Uri as UriFilter;
 use Psr\Http\Message\UriInterface;
@@ -82,22 +81,21 @@ class Relativize extends AbstractUriModifier
     /**
      * Relative the URI for a authority-less payload URI
      *
-     * @param string $targetPath
+     * @param string $path
      *
      * @return string
      */
-    protected function relativizePath($targetPath)
+    protected function relativizePath($path)
     {
-        $targetSegments = $this->getSegments($targetPath);
+        $targetSegments = $this->getSegments($path);
         $basename = array_pop($targetSegments);
         $basePath = $this->uri->getPath();
-        if ($basePath === $targetPath) {
-            return $this->formatPath($basename);
+        if ($basePath === $path) {
+            return $this->formatPath($basename, $basePath);
         }
 
         $baseSegments = $this->getSegments($basePath);
         array_pop($baseSegments);
-
         foreach ($baseSegments as $offset => $segment) {
             if (!isset($targetSegments[$offset]) || $segment !== $targetSegments[$offset]) {
                 break;
@@ -107,7 +105,7 @@ class Relativize extends AbstractUriModifier
         $targetSegments[] = $basename;
         $path = str_repeat('../', count($baseSegments)).implode('/', $targetSegments);
 
-        return $this->formatPath($path);
+        return $this->formatPath($path, $basePath);
     }
 
     /**
@@ -130,13 +128,14 @@ class Relativize extends AbstractUriModifier
      * Post formatting the path to keep a valid URI
      *
      * @param string $path
+     * @param string $basePath
      *
      * @return string
      */
-    protected function formatPath($path)
+    protected function formatPath($path, $basePath)
     {
         if ('' === $path) {
-            return './';
+            return in_array($basePath, ['', '/']) ? '/' : './';
         }
 
         if (false === ($colonPos = strpos($path, ':'))) {

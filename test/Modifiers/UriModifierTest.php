@@ -143,6 +143,8 @@ class UriModifierTest extends TestCase
             'relative double dot 2'   => [self::BASE_URI,       '../',                   '../'],
             'path with colon 1'       => ['http://a/b/c/d:p?q', 'http://a/b/c/d:p',      './d:p'],
             'path with colon 2'       => [self::BASE_URI,       'http://a/b/c/g/d:p',    'g/d:p'],
+            'scheme + auth 1'         => ['http://a',           'http://a?q#s',          '/?q#s'],
+            'scheme + auth 2'         => ['http://a/',          'http://a?q#s',          '/?q#s'],
         ];
     }
 

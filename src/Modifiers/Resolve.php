@@ -48,29 +48,6 @@ class Resolve extends AbstractUriModifier
     public function __invoke($payload)
     {
         $this->assertUriObject($payload);
-        $uri = $this->resolveUri($payload);
-
-        $path = (new Path($uri->getPath()))->withoutDotSegments();
-        if ('' !== $uri->getAuthority() && '' !== $path->__toString()) {
-            $path = $path->withLeadingSlash();
-        }
-
-        return $uri->withPath((string) $path);
-    }
-
-    /**
-     * Resolve the payload URI
-     *
-     * @param Uri|UriInterface $payload
-     *
-     * @return Uri|UriInterface
-     */
-    protected function resolveUri($payload)
-    {
-        if ('' === (string) $payload) {
-            return $this->uri;
-        }
-
         if ('' !== $payload->getScheme()) {
             return $payload;
         }
@@ -79,36 +56,44 @@ class Resolve extends AbstractUriModifier
             return $payload->withScheme($this->uri->getScheme());
         }
 
-        return $this
-            ->resolvePathAndQuery($payload->getPath(), $payload->getQuery())
-            ->withFragment($payload->getFragment());
+        $userInfo = explode(':', $this->uri->getUserInfo(), 2);
+        $components = $this->resolvePathAndQuery($payload->getPath(), $payload->getQuery());
+
+        return $payload
+            ->withPath($this->formatPath($components['path']))
+            ->withQuery($components['query'])
+            ->withHost($this->uri->getHost())
+            ->withPort($this->uri->getPort())
+            ->withUserInfo((string) array_shift($userInfo), array_shift($userInfo))
+            ->withScheme($this->uri->getScheme());
     }
 
     /**
      * Resolve the URI for a Authority-less payload URI
      *
-     * @param string $path
-     * @param string $query
+     * @param string $path  the payload path component
+     * @param string $query the payload query component
      *
-     * @return Uri|UriInterface
+     * @return string[]
      */
     protected function resolvePathAndQuery($path, $query)
     {
-        if ('' === $path) {
-            if ('' === $query) {
-                $query = $this->uri->getQuery();
+        $components = ['path' => $path, 'query' => $query];
+
+        if ('' === $components['path']) {
+            $components['path'] = $this->uri->getPath();
+            if ('' === $components['query']) {
+                $components['query'] = $this->uri->getQuery();
             }
 
-            return $this->uri->withQuery($query);
+            return $components;
         }
 
-        if (0 === strpos($path, '/')) {
-            return $this->uri->withPath($path)->withQuery($query);
+        if (0 !== strpos($components['path'], '/')) {
+            $components['path'] = $this->mergePath($components['path']);
         }
 
-        return $this->uri
-            ->withPath($this->mergePath($path)->__toString())
-            ->withQuery($query);
+        return $components;
     }
 
     /**
@@ -116,13 +101,13 @@ class Resolve extends AbstractUriModifier
      *
      * @param string $path
      *
-     * @return PathInterface
+     * @return string
      */
     protected function mergePath($path)
     {
         $basePath = $this->uri->getPath();
         if ('' !== $this->uri->getAuthority() && '' === $basePath) {
-            return (new Path($path))->withLeadingSlash();
+            return (new Path($path))->withLeadingSlash()->__toString();
         }
 
         if ('' !== $basePath) {
@@ -131,6 +116,23 @@ class Resolve extends AbstractUriModifier
             $path = implode('/', $segments).'/'.$path;
         }
 
-        return new Path($path);
+        return $path;
+    }
+
+    /**
+     * Format the resolved path
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function formatPath($path)
+    {
+        $path = (new Path($path))->withoutDotSegments();
+        if ('' !== $this->uri->getAuthority() && '' !== $path->__toString()) {
+            $path = $path->withLeadingSlash();
+        }
+
+        return (string) $path;
     }
 }

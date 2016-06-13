@@ -14,6 +14,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 /**
  * @group uri
  * @group modifier
+ * @group uri-modifier
  */
 class UriModifierTest extends TestCase
 {

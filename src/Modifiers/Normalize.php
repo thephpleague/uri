@@ -43,8 +43,6 @@ class Normalize extends AbstractUriModifier
             ]);
         }
 
-        return $modifier
-            ->process($uri)
-            ->withScheme(mb_strtolower($uri->getScheme(), 'UTF-8'));
+        return $modifier($uri)->withScheme($uri->getScheme());
     }
 }

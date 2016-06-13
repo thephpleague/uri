@@ -47,35 +47,18 @@ class Relativize extends AbstractUriModifier
     public function __invoke($payload)
     {
         $this->assertUriObject($payload);
-
-        return $this->relativizeUri($payload);
-    }
-
-    /**
-     * Resolve the payload URI
-     *
-     * @param Uri|UriInterface $payload
-     *
-     * @return Uri|UriInterface
-     */
-    protected function relativizeUri($payload)
-    {
         if ($this->uri->getScheme() !== $payload->getScheme()
             || $this->uri->getAuthority() !== $payload->getAuthority()
         ) {
             return $payload;
         }
 
-        $path = $this->relativizePath($payload->getPath());
-
-        return $this->uri
+        return $payload
             ->withScheme('')
             ->withPort(null)
             ->withUserInfo('')
             ->withHost('')
-            ->withPath($path)
-            ->withQuery($payload->getQuery())
-            ->withFragment($payload->getFragment());
+            ->withPath($this->relativizePath($payload->getPath()));
     }
 
     /**

@@ -25,13 +25,11 @@ class Path extends AbstractComponent implements PathInterface
     use PathTrait;
 
     /**
-     * new instance
-     *
-     * @param string $path the component value
+     * @inheritdoc
      */
-    public function __construct($path = '')
+    protected function validate($data)
     {
-        parent::__construct($this->validateString($path));
+        return $this->decodePath($this->validateString($data));
     }
 
     /**
@@ -48,17 +46,5 @@ class Path extends AbstractComponent implements PathInterface
     public function __toString()
     {
         return (string) $this->getContent();
-    }
-
-    /**
-     * validate the submitted data
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function validate($path)
-    {
-        return $this->decodePath($path);
     }
 }

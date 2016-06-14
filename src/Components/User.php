@@ -23,16 +23,15 @@ use League\Uri\Interfaces\User as UserInterface;
 class User extends AbstractComponent implements UserInterface
 {
     /**
-     * new instance
-     *
-     * @param string|null $data the component value
+     * @inheritdoc
      */
-    public function __construct($data = null)
+    protected function validate($data)
     {
-        if ($data !== null) {
-            $data = $this->validateString($data);
-            $this->data = $this->decodeComponent($data);
+        if (null === $data) {
+            return $data;
         }
+
+        return $this->decodeComponent($this->validateString($data));
     }
 
     /**

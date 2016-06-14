@@ -24,29 +24,21 @@ use League\Uri\Interfaces\Port as PortInterface;
 class Port extends AbstractComponent implements PortInterface
 {
     /**
-     * Validate Port data
-     *
-     * @param null|int $port
-     *
-     * @throws InvalidArgumentException if the submitted port is invalid
-     *
-     * @return null|int
+     * @inheritdoc
      */
-    protected function validate($port)
+    protected function validate($data)
     {
-        if ('' === $port) {
-            throw new InvalidArgumentException(
-                'Expected port to be a int or null; received an empty string'
-            );
+        if ('' === $data) {
+            throw new InvalidArgumentException('Expected port to be a int or null; received an empty string');
         }
 
-        return $this->validatePort($port);
+        return $this->validatePort($data);
     }
 
     /**
      * Returns the component literal value.
      *
-     * @return null|int
+     * @return int|null
      */
     public function getContent()
     {
@@ -56,11 +48,11 @@ class Port extends AbstractComponent implements PortInterface
     /**
      * Return an integer representation of the Port component
      *
-     * @return null|int
+     * @return int|null
      */
     public function toInt()
     {
-        return $this->data;
+        return $this->getContent();
     }
 
     /**
@@ -80,20 +72,10 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * Initialize the Port data
-     *
-     * @param null|int $data
-     */
-    protected function init($data)
-    {
-        $this->data = $this->validate($data);
-    }
-
-    /**
      * @inheritdoc
      */
     public function __debugInfo()
     {
-        return ['port' => $this->toInt()];
+        return ['port' => $this->getContent()];
     }
 }

@@ -23,16 +23,15 @@ use League\Uri\Interfaces\Pass as PassInterface;
 class Pass extends AbstractComponent implements PassInterface
 {
     /**
-     * new instance
-     *
-     * @param string|null $data the component value
+     * @inheritdoc
      */
-    public function __construct($data = null)
+    protected function validate($data)
     {
-        if ($data !== null) {
-            $data = $this->validateString($data);
-            $this->data = $this->decodeComponent($data);
+        if (null === $data) {
+            return $data;
         }
+
+        return $this->decodeComponent($this->validateString($data));
     }
 
     /**

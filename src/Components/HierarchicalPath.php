@@ -40,14 +40,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     {
         $path = $this->validateString($path);
         $this->isAbsolute = self::IS_RELATIVE;
-        if (static::$separator == mb_substr($path, 0, 1, 'UTF-8')) {
+        if (static::$separator == substr($path, 0, 1)) {
             $this->isAbsolute = self::IS_ABSOLUTE;
-            $path = mb_substr($path, 1, mb_strlen($path), 'UTF-8');
+            $path = substr($path, 1, strlen($path));
         }
 
         $append_delimiter = false;
-        if (static::$separator === mb_substr($path, -1, 1, 'UTF-8')) {
-            $path = mb_substr($path, 0, -1, 'UTF-8');
+        if (static::$separator === substr($path, -1, 1)) {
+            $path = substr($path, 0, -1);
             $append_delimiter = true;
         }
 

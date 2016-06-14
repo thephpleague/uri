@@ -50,10 +50,8 @@ class Query implements QueryInterface
      */
     public function __construct($data = null)
     {
-        if (null !== $data) {
-            $this->preserveDelimiter = true;
-            $this->data = $this->validate($data);
-        }
+        $this->data = $this->validate($data);
+        $this->preserveDelimiter = null !== $data;
     }
 
     /**
@@ -65,6 +63,10 @@ class Query implements QueryInterface
      */
     protected function validate($str)
     {
+        if (null === $str) {
+            return [];
+        }
+
         $str = $this->validateString($str);
 
         return (new QueryParser())->parse($str, static::$separator, PHP_QUERY_RFC3986);

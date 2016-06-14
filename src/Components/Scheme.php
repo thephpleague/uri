@@ -24,15 +24,15 @@ use League\Uri\Interfaces\Scheme as SchemeInterface;
 class Scheme extends AbstractComponent implements SchemeInterface
 {
     /**
-     * Validate and format the submitted string scheme
-     *
-     * @param  string                   $scheme
-     * @throws InvalidArgumentException if the scheme is invalid
-     *
-     * @return string
+     * @inheritdoc
      */
     protected function validate($scheme)
     {
+        if (null === $scheme) {
+            return $scheme;
+        }
+
+        $scheme = $this->validateString($scheme);
         if (!preg_match(',^[a-z]([-a-z0-9+.]+)?$,i', $scheme)) {
             throw new InvalidArgumentException(sprintf("Invalid Submitted scheme: '%s'", $scheme));
         }

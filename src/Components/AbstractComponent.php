@@ -46,21 +46,19 @@ abstract class AbstractComponent
      */
     public function __construct($data = null)
     {
-        if ($data !== null) {
-            $this->init($data);
-        }
+        $this->data = $this->validate($data);
     }
 
     /**
-     * Set data.
+     * Validate the component string
      *
-     * @param mixed $data The data to set.
+     * @param mixed $data
+     *
+     * @throws InvalidArgumentException if the component is no valid
+     *
+     * @return mixed
      */
-    protected function init($data)
-    {
-        $data = $this->validateString($data);
-        $this->data = $this->validate($data);
-    }
+    abstract protected function validate($data);
 
     /**
      * The component raw data

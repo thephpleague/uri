@@ -37,10 +37,20 @@ class Fragment extends AbstractComponent implements FragmentInterface
      */
     public function __construct($data = null)
     {
-        if ($data !== null) {
-            $this->preserveDelimiter = true;
-            $this->data = $this->decodeComponent($this->validateString($data));
+        $this->data = $this->validate($data);
+        $this->preserveDelimiter = null !== $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function validate($data)
+    {
+        if (null === $data) {
+            return $data;
         }
+
+        return $this->decodeComponent($this->validateString($data));
     }
 
     /**

@@ -77,4 +77,13 @@ class FragmentTest extends AbstractTestCase
         $this->assertContains($component->__toString(), $res);
         $this->assertContains('fragment', $res);
     }
+
+    public function testPreserverDelimiter()
+    {
+        $fragment = new Fragment();
+        $altFragment = $fragment->modify(null);
+        $this->assertSame($fragment, $altFragment);
+        $this->assertNull($altFragment->getContent());
+        $this->assertSame('', $altFragment->__toString());
+    }
 }

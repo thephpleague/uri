@@ -27,28 +27,32 @@ class UserTest extends AbstractTestCase
 
     /**
      * @dataProvider validUserProvider
-     * @param $raw
-     * @param $parsed
      */
-    public function testGetUriComponent($raw, $content, $parsed)
+    public function testGetUriComponent($raw, $parsed)
     {
         $user = new User($raw);
-        $this->assertSame($content, $user->getContent());
+        $this->assertSame($raw, $user->getContent());
         $this->assertSame($parsed, $user->getUriComponent());
     }
 
     public function validUserProvider()
     {
         return [
-            ['toto', 'toto', 'toto'],
-            ['bar---', 'bar---', 'bar---'],
-            ['', '', ''],
-            [null, null, ''],
-            ['"bad"', '%22bad%22', '%22bad%22'],
-            ['<not good>', '%3Cnot%20good%3E', '%3Cnot%20good%3E'],
-            ['{broken}', '%7Bbroken%7D', '%7Bbroken%7D'],
-            ['`oops`', '%60oops%60', '%60oops%60'],
-            ['\\slashy', '%5Cslashy', '%5Cslashy'],
+            ['toto', 'toto'],
+            ['bar---',  'bar---'],
+            ['', ''],
+            [null, ''],
+            ['"bad"', '%22bad%22'],
+            ['<not good>', '%3Cnot%20good%3E'],
+            ['{broken}', '%7Bbroken%7D'],
+            ['`oops`', '%60oops%60'],
+            ['\\slashy', '%5Cslashy'],
+            ['to@to', 'to%40to'],
+            ['to:to', 'to%3Ato'],
+            ['to/to', 'to%2Fto'],
+            ['to?to', 'to%3Fto'],
+            ['to#to', 'to%23to'],
+            ['to%61to', 'to%61to'],
         ];
     }
 
@@ -65,11 +69,6 @@ class UserTest extends AbstractTestCase
     public function invalidDataProvider()
     {
         return [
-            'invalid @ character' => ['to@to'],
-            'invalid : character' => ['to:to'],
-            'invalid / character' => ['to/to'],
-            'invalid ? character' => ['to?to'],
-            'invalid # character' => ['to#to'],
             'array' => [['coucou']],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],

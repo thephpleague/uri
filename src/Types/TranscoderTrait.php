@@ -20,122 +20,157 @@ namespace League\Uri\Types;
  */
 trait TranscoderTrait
 {
-    protected static $pathRegexp = "/(?:[^\!\$&'\(\)\*\+,;\=\:\/@%]+|%(?![A-Fa-f0-9]{2}))/S";
-
-    protected static $queryFragmentRegexp = "/(?:[^\!\$&'\(\)\*\+,;\=\:\/@%\?]+|%(?![A-Fa-f0-9]{2}))/S";
-
-    protected static $encodedRegexp = ',%(?<encode>[0-9a-fA-F]{2}),';
-
-    protected static $unreservedRegexp = '/[\w\.~]+/';
-
     /**
-     * Reserved characters list
+     * Encoded Characters regular expression pattern
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-2.1
      *
      * @var string
      */
-    protected static $reservedCharactersRegex = "\!\$&'\(\)\*\+,;\=\:";
+    protected static $encodedChars = '[A-Fa-f0-9]{2}';
 
     /**
-     * Encode a string according to RFC3986 Rules
+     * RFC3986 Sub delimiter characters regular expression pattern
      *
-     * @param string $subject
+     * @see http://tools.ietf.org/html/rfc3986#section-2.2
      *
-     * @return string
+     * @var string
      */
-    protected static function encodeQueryFragment($subject)
-    {
-        return self::encodeComponent($subject, self::$queryFragmentRegexp);
-    }
+    protected static $subdelimChars = "\!\$&'\(\)\*\+,;\=%";
+
+    /**
+     * RFC3986 unreserved characters regular expression pattern
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-2.3
+     *
+     * @var string
+     */
+    protected static $unreservedChars = 'A-Za-z0-9_\-\.~';
+
+    /**
+     * RFC3986 unreserved characters encoded regular expression pattern
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-2.3
+     *
+     * @var string
+     */
+    protected static $unreservedCharsEncoded = '2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]';
 
     /**
      * Encode a component string
      *
-     * @param string $subject The string to encode
-     * @param string $regexp  The component specific regular expression
+     * @param string $str     The string to encode
+     * @param string $pattern a regular expression pattern
      *
      * @return string
      */
-    protected static function encodeComponent($subject, $regexp)
+    protected static function encode($str, $pattern)
     {
+        $regexp = '/(?:[^'.self::$unreservedChars.$pattern.']+|%(?!'.self::$encodedChars.'))/';
         $encoder = function (array $matches) {
             return rawurlencode($matches[0]);
         };
 
+        $str = preg_replace_callback($regexp, $encoder, $str);
         $formatter = function (array $matches) {
             return strtoupper($matches[0]);
         };
 
-        $subject = preg_replace_callback($regexp, $encoder, $subject);
-
-        return preg_replace_callback(self::$encodedRegexp, $formatter, $subject);
+        return preg_replace_callback(',%'.self::$encodedChars.',', $formatter, $str);
     }
 
     /**
-     * Encoding string according to RFC3986
+     * Encode a user string according to RFC3986 Rules
      *
-     * @param string $subject
+     * @param string $str
      *
      * @return string
      */
-    protected static function encode($subject)
+    protected static function encodeUser($str)
     {
-        return self::encodeComponent(
-            $subject,
-            '/(?:[^'.static::$reservedCharactersRegex.']+|%(?![A-Fa-f0-9]{2}))/S'
-        );
+        return self::encode($str, self::$subdelimChars);
     }
 
     /**
-     * Decode a string according to RFC3986 Rules
+     * Encode a user string according to RFC3986 Rules
      *
-     * @param string $subject
+     * @param string $str
      *
      * @return string
      */
-    protected static function decodeQueryFragment($subject)
+    protected static function encodePass($str)
     {
-        $decoder = function (array $matches) {
-
-            $decode = chr(hexdec($matches['encode']));
-            if (preg_match(self::$unreservedRegexp, $decode)) {
-                return $matches[0];
-            }
-
-            if (preg_match('/[\[\]\+\?:]+/', $decode)) {
-                return $decode;
-            }
-
-            return rawurldecode($matches[0]);
-        };
-
-        return preg_replace_callback(self::$encodedRegexp, $decoder, self::encodeQueryFragment($subject));
+        return self::encode($str, self::$subdelimChars.'\:');
     }
 
     /**
      * Encode a path string according to RFC3986
      *
-     * @param string $subject can be a string or an array
+     * @param string $str can be a string or an array
      *
      * @return string The same type as the input parameter
      */
-    protected static function encodePath($subject)
+    protected static function encodePath($str)
     {
-        return self::encodeComponent($subject, self::$pathRegexp);
+        return self::encode($str, self::$subdelimChars.'\:\/@');
     }
 
     /**
-     * Decode a path string according to RFC3986
+     * Encode a string according to RFC3986 Rules
      *
-     * @param string $subject can be a string or an array
+     * @param string $str
      *
-     * @return string The same type as the input parameter
+     * @return string
      */
-    protected static function decodePath($subject)
+    protected static function encodeQueryFragment($str)
     {
-        $decoder = function (array $matches) {
+        return self::encode($str, self::$subdelimChars.'\:\/@\?');
+    }
+
+    /**
+     * Decode a component string
+     *
+     * @param string $str     The string to decode
+     * @param string $pattern a regular expression pattern
+     *
+     * @return string
+     */
+    protected static function decode($str, $pattern)
+    {
+        $regexp = ',%'.$pattern.',i';
+        $decoder = function (array $matches) use ($regexp) {
+
+            if (preg_match($regexp, $matches[0])) {
+                return strtoupper($matches[0]);
+            }
+
             return rawurldecode($matches[0]);
         };
 
-        return preg_replace_callback(self::$pathRegexp, $decoder, $subject);
+        return preg_replace_callback(',%'.self::$encodedChars.',', $decoder, $str);
+    }
+
+    /**
+     * Decode a component according to RFC3986
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    protected static function decodeComponent($str)
+    {
+        return self::decode($str, self::$unreservedCharsEncoded);
+    }
+
+    /**
+     * Decode a path component according to RFC3986
+     *
+     * @param string $str
+     *
+     * @return string
+     */
+    protected static function decodePath($str)
+    {
+        return self::decode($str, self::$unreservedCharsEncoded.'|2F');
     }
 }

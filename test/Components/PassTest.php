@@ -32,7 +32,9 @@ class PassTest extends AbstractTestCase
      */
     public function testGetUriComponent($raw, $parsed)
     {
-        $this->assertSame($parsed, (new Pass($raw))->getUriComponent());
+        $pass = new Pass($raw);
+        $this->assertSame($raw, $pass->getContent());
+        $this->assertSame($parsed, $pass->getUriComponent());
     }
 
     public function validUserProvider()
@@ -46,6 +48,12 @@ class PassTest extends AbstractTestCase
             ['{broken}', '%7Bbroken%7D'],
             ['`oops`', '%60oops%60'],
             ['\\slashy', '%5Cslashy'],
+            ['to@to', 'to%40to'],
+            ['to:to', 'to:to'],
+            ['to/to', 'to%2Fto'],
+            ['to?to', 'to%3Fto'],
+            ['to#to', 'to%23to'],
+            ['to%61to', 'to%61to'],
         ];
     }
 
@@ -62,10 +70,6 @@ class PassTest extends AbstractTestCase
     public function invalidDataProvider()
     {
         return [
-            'contains @' => ['to@to'],
-            'contains /' => ['to/to'],
-            'contains ?' => ['to?to'],
-            'contains #' => ['to#to'],
             'bool'      => [true],
             'Std Class' => [(object) 'foo'],
             'float'     => [1.2],

@@ -186,7 +186,7 @@ class QueryParser
     protected function getDecoder($encodingType)
     {
         if (PHP_QUERY_RFC3986 === $encodingType) {
-            return [$this, 'decodeQueryFragment'];
+            return [$this, 'decodeComponent'];
         }
 
         if (PHP_QUERY_RFC1738 === $encodingType) {

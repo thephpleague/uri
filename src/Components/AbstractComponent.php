@@ -63,32 +63,13 @@ abstract class AbstractComponent
     }
 
     /**
-     * validate the incoming data
+     * The component raw data
      *
-     * @param string $data
-     *
-     * @return string
-     */
-    protected function validate($data)
-    {
-        $data = filter_var($data, FILTER_UNSAFE_RAW, ['flags' => FILTER_FLAG_STRIP_LOW]);
-        $this->assertValidComponent($data);
-
-        return rawurldecode(trim($data));
-    }
-
-    /**
-     * Returns the component literal value.
-     *
-     * @return string|int|null
+     * @return string|null
      */
     public function getContent()
     {
-        if (null === $this->data) {
-            return null;
-        }
-
-        return $this->encode($this->data);
+        return $this->data;
     }
 
     /**

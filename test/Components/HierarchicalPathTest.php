@@ -52,7 +52,7 @@ class HierarchicalPathTest extends AbstractTestCase
             'path with an encoded char in lowercase' => ['/master/toto/a%c2%b1b', '/master/toto/a%C2%B1b'],
             'path with an encoded char in uppercase' => ['/master/toto/%7Eetc', '/master/toto/%7Eetc'],
             'path with character to encode' => ['/foo^bar', '/foo%5Ebar'],
-            'path with a reserved characted encoded' => ['%2Ffoo^bar', '%2Ffoo%5Ebar'],
+            'path with a reserved char encoded' => ['%2Ffoo^bar', '%2Ffoo%5Ebar'],
             'Percent encode spaces' => ['/pa th', '/pa%20th'],
             'Percent encode multibyte' => ['/€', '/%E2%82%AC'],
             "Don't encode something that's already encoded" => ['/pa%20th', '/pa%20th'],
@@ -120,7 +120,7 @@ class HierarchicalPathTest extends AbstractTestCase
     {
         return [
             ['/shop/rev iew/', 1, 'rev iew', null],
-            ['/shop/rev%20iew/', 1, 'rev%20iew', null],
+            ['/shop/rev%20iew/', 1, 'rev iew', null],
             ['/shop/rev%20iew/', 28, 'foo', 'foo'],
         ];
     }

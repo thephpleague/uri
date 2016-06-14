@@ -39,7 +39,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     {
         if ($data !== null) {
             $this->preserveDelimiter = true;
-            $this->data = $this->decodeQueryFragment($this->validateString($data));
+            $this->data = $this->decodeComponent($this->validateString($data));
         }
     }
 

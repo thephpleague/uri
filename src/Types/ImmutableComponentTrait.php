@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Types;
 
-use InvalidArgumentException;
 use League\Uri\Interfaces\UriPart;
 
 /**
@@ -25,27 +24,6 @@ trait ImmutableComponentTrait
 {
     use ValidatorTrait;
     use TranscoderTrait;
-
-    /**
-     * Invalid characters list
-     *
-     * @var string
-     */
-    protected static $invalidCharactersRegex;
-
-    /**
-     * Asserts the string against RFC3986 rules
-     *
-     * @param string $str
-     *
-     * @throws InvalidArgumentException If the string is invalid
-     */
-    protected function assertValidComponent($str)
-    {
-        if (isset(static::$invalidCharactersRegex) && preg_match(static::$invalidCharactersRegex, $str)) {
-            throw new InvalidArgumentException('The component contains invalid characters');
-        }
-    }
 
     /**
      * Returns whether two UriPart objects represent the same value
@@ -67,12 +45,4 @@ trait ImmutableComponentTrait
      * @return string
      */
     abstract public function getUriComponent();
-
-    /**
-     * Returns the instance string representation; If the
-     * instance is not defined an empty string is returned
-     *
-     * @return string
-     */
-    abstract public function __toString();
 }

@@ -4,13 +4,14 @@
  *
  * @package   League.uri
  * @author    Ignace Nyamagana Butera <nyamsprod@gmail.com>
- * @copyright 2013-2015 Ignace Nyamagana Butera
+ * @copyright 2016 Ignace Nyamagana Butera
  * @license   https://github.com/thephpleague/uri/blob/master/LICENSE (MIT License)
  * @version   4.2.0
  * @link      https://github.com/thephpleague/uri/
  */
 namespace League\Uri\Modifiers;
 
+use League\Uri\Components\Path;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\Uri as UriFilter;
 use Psr\Http\Message\UriInterface;
@@ -53,12 +54,14 @@ class Relativize extends AbstractUriModifier
             return $payload;
         }
 
+        $path = $this->relativizePath($payload->getPath());
+
         return $payload
             ->withScheme('')
             ->withPort(null)
             ->withUserInfo('')
             ->withHost('')
-            ->withPath($this->relativizePath($payload->getPath()));
+            ->withPath($this->formatPath($path));
     }
 
     /**
@@ -70,25 +73,24 @@ class Relativize extends AbstractUriModifier
      */
     protected function relativizePath($path)
     {
-        $targetSegments = $this->getSegments($path);
-        $basename = array_pop($targetSegments);
+        $segments = $this->getSegments($path);
+        $basename = array_pop($segments);
         $basePath = $this->uri->getPath();
         if ($basePath === $path) {
-            return $this->formatPath($basename, $basePath);
+            return $basename;
         }
 
         $baseSegments = $this->getSegments($basePath);
         array_pop($baseSegments);
         foreach ($baseSegments as $offset => $segment) {
-            if (!isset($targetSegments[$offset]) || $segment !== $targetSegments[$offset]) {
+            if (!isset($segments[$offset]) || $segment !== $segments[$offset]) {
                 break;
             }
-            unset($baseSegments[$offset], $targetSegments[$offset]);
+            unset($baseSegments[$offset], $segments[$offset]);
         }
-        $targetSegments[] = $basename;
-        $path = str_repeat('../', count($baseSegments)).implode('/', $targetSegments);
+        $segments[] = $basename;
 
-        return $this->formatPath($path, $basePath);
+        return str_repeat('../', count($baseSegments)).implode('/', $segments);
     }
 
     /**
@@ -100,25 +102,22 @@ class Relativize extends AbstractUriModifier
      */
     protected function getSegments($path)
     {
-        if ('' !== $path && '/' === $path[0]) {
-            $path = mb_substr($path, 1);
-        }
-
-        return explode('/', $path);
+        return explode('/', (string) (new Path($path))->withoutLeadingSlash());
     }
 
     /**
      * Post formatting the path to keep a valid URI
      *
      * @param string $path
-     * @param string $basePath
      *
      * @return string
      */
-    protected function formatPath($path, $basePath)
+    protected function formatPath($path)
     {
         if ('' === $path) {
-            return in_array($basePath, ['', '/']) ? '/' : './';
+            $basePath = $this->uri->getPath();
+
+            return in_array($basePath, ['', '/']) ? $basePath : './';
         }
 
         if (false === ($colonPos = strpos($path, ':'))) {

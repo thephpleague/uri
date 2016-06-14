@@ -43,6 +43,14 @@ class Path extends AbstractComponent implements PathInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return (string) $this->getContent();
+    }
+
+    /**
      * validate the submitted data
      *
      * @param string $path

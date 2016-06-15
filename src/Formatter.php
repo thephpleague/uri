@@ -45,13 +45,6 @@ class Formatter
     protected $hostEncoding = self::HOST_AS_UNICODE;
 
     /**
-     * Port
-     *
-     * @var Port
-     */
-    protected $port;
-
-    /**
      * query encoding property
      *
      * @var int
@@ -119,16 +112,6 @@ class Formatter
     public function getHostEncoding()
     {
         return $this->hostEncoding;
-    }
-
-    /**
-     * Enforce Port presence
-     *
-     * @param null|int $port URI port value
-     */
-    public function setPort($port)
-    {
-        $this->port = new Port($port);
     }
 
     /**
@@ -350,10 +333,6 @@ class Formatter
      */
     protected function formatPort($port)
     {
-        if ($this->port instanceof Port) {
-            return $this->port->getUriComponent();
-        }
-
         if (null !== $port) {
             return ':'.$port;
         }

@@ -160,23 +160,4 @@ class FormatterTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string) $uri);
         $this->assertSame('http://example.com#', $this->formatter->__invoke($uri));
     }
-
-    public function testFormatterSetPort()
-    {
-        $expected = 'http://example.com:80';
-        $uri = HttpUri::createFromString($expected);
-        $this->formatter->setPort(80);
-        $this->assertSame('http://example.com', (string) $uri);
-        $this->assertSame($expected, $this->formatter->__invoke($uri));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testFormatterSetPortThrowsException()
-    {
-        $expected = 'http://example.com:80';
-        $uri = HttpUri::createFromString($expected);
-        $this->formatter->setPort(-1);
-    }
 }

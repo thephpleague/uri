@@ -44,17 +44,44 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected $host;
 
     /**
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    {
+        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
+
+        if (!isset($type_list[$type])) {
+            throw new InvalidArgumentException('Please verify the submitted constant');
+        }
+
+        if (empty($data)) {
+            return new static();
+        }
+
+        if ([''] === $data) {
+            return new static('');
+        }
+
+        return new static(static::formatComponentString($data, $type));
+    }
+
+
+    /**
      * New instance
      *
      * @param null|string $host
      */
     public function __construct($host = null)
     {
-        if (null !== $host) {
-            $host = $this->validateString($host);
-            $this->data = $this->validate($host);
-            $this->setLiteral();
-        }
+        $this->data = $this->validate($host);
+        $this->setLiteral();
     }
 
     /**
@@ -118,6 +145,10 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns the instance literal representation
      * without encoding
      *
@@ -137,6 +168,15 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     protected function validate($str)
     {
+        if (null === $str) {
+            return [];
+        }
+
+        $str = $this->validateString($str);
+        if ('' === $str) {
+            return [''];
+        }
+
         $res = $this->validateIpHost($str);
         if (!empty($res)) {
             return $res;

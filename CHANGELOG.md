@@ -13,14 +13,18 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- Bug fix `Host::isPublicSuffixValid` when no `publicSuffix` information is found
+- Components encoding/decoding to be more RFC3986 compliant
+- `Host::isPublicSuffixValid` when no `publicSuffix` information is found
+- `Host::getRegisterableDomain` must always return a string as per the Host Interface
+- `Host::getSubdomain` must always return a string as per the Host Interface
+- `Host::isPublicSuffixValid` must always return a string as per the Host Interface
 - On instantiation, query and fragment delimiter are preserved
 - `createFromComponents` failing with `parse_url` result when no path is defined
-- On URI transformation `InvalidArgumentException` exceptions are emitted instead of `RuntimeException` ones.
+- On URI transformation `InvalidArgumentException` exceptions are emitted instead of `RuntimeException` ones to normalize exception to PSR-7
 
 ### Deprecated
 
-- Nothing
+- `Host::getLiteral` you should use `Host::getContent` instead
 
 ### Remove
 

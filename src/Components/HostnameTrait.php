@@ -39,7 +39,18 @@ trait HostnameTrait
      */
     protected function convertToAscii(array $labels, $convert)
     {
-        return $convert ? array_map('idn_to_ascii', $labels) : $labels;
+        if (!$convert) {
+            return $labels;
+        }
+
+        foreach ($labels as &$label) {
+            if ('' !== $label) {
+                $label = idn_to_ascii($label);
+            }
+        }
+        unset($label);
+
+        return $labels;
     }
 
     /**

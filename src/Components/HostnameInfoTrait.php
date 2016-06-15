@@ -37,9 +37,9 @@ trait HostnameInfoTrait
      */
     protected $hostnameInfo = [
         'isPublicSuffixValid' => false,
-        'publicSuffix' => null,
-        'registerableDomain' => null,
-        'subdomain' => null,
+        'publicSuffix' => '',
+        'registerableDomain' => '',
+        'subdomain' => '',
     ];
 
     /**
@@ -116,9 +116,12 @@ trait HostnameInfoTrait
             $host = mb_substr($host, 0, -1, 'UTF-8');
         }
 
-        $this->hostnameInfo = array_merge($this->hostnameInfo, $this->getPdpParser()->parseHost($host)->toArray());
+        $this->hostnameInfo = array_merge(
+            $this->hostnameInfo,
+            array_map('sprintf', $this->getPdpParser()->parseHost($host)->toArray())
+        );
 
-        if (null !== $this->hostnameInfo['publicSuffix']) {
+        if ('' !== $this->hostnameInfo['publicSuffix']) {
             $this->hostnameInfo['isPublicSuffixValid'] = $this->getPdpParser()->isSuffixValid($host);
         }
 

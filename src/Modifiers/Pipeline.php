@@ -42,11 +42,11 @@ class Pipeline extends AbstractUriModifier
     public function __construct($modifiers = [])
     {
         foreach ($modifiers as $modifier) {
-            if (!is_callable($modifier)) {
+            if (false === is_callable($modifier)) {
                 throw new InvalidArgumentException('All submitted modifiers should be callable');
             }
-            $this->modifiers[] = $modifier;
         }
+        $this->modifiers = $modifiers;
     }
 
     /**

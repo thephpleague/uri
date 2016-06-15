@@ -195,6 +195,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
         return new static(static::formatComponentString($data, $type));
     }
 
+
     /**
      * Return a formatted component string according to its type
      *

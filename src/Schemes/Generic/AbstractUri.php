@@ -596,7 +596,7 @@ abstract class AbstractUri
     protected function assertSupportedScheme()
     {
         $scheme = $this->getScheme();
-        if (!isset(static::$supportedSchemes[$scheme])) {
+        if (!array_key_exists($scheme, static::$supportedSchemes)) {
             throw new InvalidArgumentException(sprintf(
                 'The submitted scheme is unsupported by `%s`', get_class($this)
             ));

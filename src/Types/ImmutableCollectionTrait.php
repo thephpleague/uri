@@ -134,11 +134,11 @@ trait ImmutableCollectionTrait
             throw new InvalidArgumentException('Invalid or Unknown flag parameter');
         }
 
-        if ($flag == Collection::FILTER_USE_KEY) {
+        if ($flag === Collection::FILTER_USE_KEY) {
             return $this->filterByKeys($callable);
         }
 
-        if ($flag == Collection::FILTER_USE_BOTH) {
+        if ($flag === Collection::FILTER_USE_BOTH) {
             return $this->filterBoth($callable);
         }
 

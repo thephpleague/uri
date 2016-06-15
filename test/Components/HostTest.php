@@ -63,6 +63,7 @@ class HostTest extends AbstractTestCase
             'scoped naked ipv6' => ['fe80:1234::%251', true, false, true, '[fe80:1234::%251]'],
             'normalized' => ['Master.EXAMPLE.cOm', false, false, false, 'master.example.com'],
             'empty string' => ['', false, false, false, ''],
+            'null' => [null, false, false, false, ''],
             'dot ending' => ['example.com.', false, false, false, 'example.com.'],
             'partial numeric' => ['23.42c.two', false, false, false, '23.42c.two'],
             'all numeric' => ['98.3.2', false, false, false, '98.3.2'],
@@ -214,6 +215,8 @@ class HostTest extends AbstractTestCase
             'ip' => ['127.0.0.1', 1, ['127.0.0.1']],
             'string' => ['secure.example.com', 3, ['com', 'example', 'secure']],
             'numeric' => ['92.56.8', 3, ['8', '56', '92']],
+            'null' => [null, 0, []],
+            'empty string' => ['', 1, ['']],
         ];
     }
 
@@ -238,6 +241,10 @@ class HostTest extends AbstractTestCase
             'ip 2' => [['127.0', '0.1'], Host::IS_RELATIVE, '0.1.127.0'],
             'ip 3' => [['127.0.0.1'], Host::IS_RELATIVE, '127.0.0.1'],
             'FQDN' => [['com', 'example', 'www'], Host::IS_ABSOLUTE, 'www.example.com.'],
+            'empty' => [[''], Host::IS_RELATIVE, ''],
+            'null' => [[], Host::IS_RELATIVE, ''],
+            'empty' => [[''], Host::IS_ABSOLUTE, ''],
+            'null' => [[], Host::IS_ABSOLUTE, ''],
         ];
     }
 
@@ -492,12 +499,12 @@ class HostTest extends AbstractTestCase
     {
         return [
             ['www.waxaudio.com.au', 'com.au', 'waxaudio.com.au', 'www', true, 'www.waxaudio.com.au'],
-            ['giant.yyyy.', 'yyyy', 'giant.yyyy', null, false, 'giant.yyyy.'],
-            ['localhost', null, null, null, false, 'localhost'],
-            ['127.0.0.1', null, null, null, false, '127.0.0.1'],
-            ['[::1]', null, null, null, false, '::1'],
-            ['مثال.إختبار', 'إختبار', 'مثال.إختبار', null, false, 'مثال.إختبار'],
-            ['xn--p1ai.ru.', 'ru', 'xn--p1ai.ru', null, true, 'xn--p1ai.ru.'],
+            ['giant.yyyy.', 'yyyy', 'giant.yyyy', '', false, 'giant.yyyy.'],
+            ['localhost', '', '', '', false, 'localhost'],
+            ['127.0.0.1', '', '', '', false, '127.0.0.1'],
+            ['[::1]', '', '', '', false, '::1'],
+            ['مثال.إختبار', 'إختبار', 'مثال.إختبار', '', false, 'مثال.إختبار'],
+            ['xn--p1ai.ru.', 'ru', 'xn--p1ai.ru', '', true, 'xn--p1ai.ru.'],
         ];
     }
 }

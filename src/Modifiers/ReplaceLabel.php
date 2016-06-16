@@ -36,7 +36,7 @@ class ReplaceLabel extends AbstractHostModifier
     public function __construct($offset, $label)
     {
         $this->offset = $this->filterOffset($offset);
-        $this->label = $this->filterLabel($label);
+        $this->label = $this->filterLabel($label)->getContent();
     }
 
     /**

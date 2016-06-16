@@ -43,6 +43,8 @@ class AppendSegment extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) $this->segment->modify($str)->append($this->segment);
+        return (string) $this->segment
+            ->modify($str)
+            ->append((string) $this->segment);
     }
 }

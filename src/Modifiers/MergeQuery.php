@@ -43,6 +43,8 @@ class MergeQuery extends AbstractQueryModifier
      */
     protected function modify($str)
     {
-        return (string) $this->query->modify($str)->merge($this->query);
+        return (string) $this->query
+            ->modify($str)
+            ->merge((string) $this->query);
     }
 }

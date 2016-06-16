@@ -32,6 +32,25 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected static $separator = '/';
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    {
+        return static::createFromSegments($data, $type);
+    }
+
+   /**
      * return a new instance from an array or a traversable object
      *
      * @param \Traversable|string[] $data The segments list
@@ -49,46 +68,12 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
 
-        return new static(static::formatComponentString($data, $type));
-    }
-
-    /**
-     * Return a formatted component string according to its type
-     *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type
-     *
-     * @throws InvalidArgumentException If $data is invalid
-     *
-     * @return string
-     */
-    protected static function formatComponentString($data, $type)
-    {
         $path = implode(static::$separator, static::validateIterator($data));
         if (self::IS_ABSOLUTE == $type) {
-            return static::$separator.$path;
+            $path = static::$separator.$path;
         }
 
-        return $path;
-    }
-
-    /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release
-     *
-     * @deprecated deprecated since version 4.2
-     *
-     * return a new instance from an array or a traversable object
-     *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
-     *
-     * @throws InvalidArgumentException If $type is not a recognized constant
-     *
-     * @return static
-     */
-    public static function createFromArray($data, $type = self::IS_RELATIVE)
-    {
-        return static::createFromSegments($data, $type);
+        return new static($path);
     }
 
     /**
@@ -136,6 +121,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function __set_state(array $properties)
+    {
+        return static::createFromSegments($properties['data'], $properties['isAbsolute']);
+    }
+
+    /**
      * Return a new instance when needed
      *
      * @param array $data
@@ -144,10 +137,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function newCollectionInstance(array $data)
     {
-        if ($data == $this->data) {
-            return $this;
-        }
-
         return $this->createFromSegments($data, $this->isAbsolute);
     }
 
@@ -169,14 +158,6 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         return $default;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function __set_state(array $properties)
-    {
-        return static::createFromSegments($properties['data'], $properties['isAbsolute']);
     }
 
     /**
@@ -230,10 +211,10 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
             array_pop($source);
         }
 
-        return $this->newCollectionInstance(array_merge(
+        return $this->createFromSegments(array_merge(
             $source,
             $this->validateComponent($component)->toArray()
-        ));
+        ), $this->isAbsolute);
     }
 
     /**
@@ -304,7 +285,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
         $segments[] = $newBasename;
 
-        return $this->newCollectionInstance($segments);
+        return $this->createFromSegments($segments, $this->isAbsolute);
     }
 
     /**

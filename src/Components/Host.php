@@ -52,10 +52,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     protected function newCollectionInstance(array $data)
     {
-        if ($data == $this->data) {
-            return $this;
-        }
-
         return $this->createFromLabels($data, $this->isAbsolute);
     }
 
@@ -85,7 +81,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return new static('');
         }
 
-        return new static(static::formatComponentString($data, $type));
+        return new static(static::format($data, $type));
     }
 
     /**
@@ -262,7 +258,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this->formatIp($this->data[0]);
         }
 
-        return $this->formatComponentString($this->toArray(), $this->isAbsolute);
+        return $this->format($this->toArray(), $this->isAbsolute);
     }
 
     /**
@@ -278,7 +274,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     public static function __set_state(array $properties)
     {
-        $host = static::createFromArray($properties['data'], $properties['isAbsolute']);
+        $host = static::createFromLabels($properties['data'], $properties['isAbsolute']);
         $host->hostnameInfoLoaded = $properties['hostnameInfoLoaded'];
         $host->hostnameInfo = $properties['hostnameInfo'];
 
@@ -301,7 +297,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->formatComponentString(
+        return $this->modify($this->format(
             $this->convertToAscii($this->data, $this->isIdn),
             $this->isAbsolute
         ));
@@ -323,13 +319,20 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->formatComponentString($this->data, $this->isAbsolute));
+        return $this->modify($this->format($this->data, $this->isAbsolute));
     }
 
     /**
-     * @inheritdoc
+     * Return a formatted host string
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param bool                  $type
+     *
+     * @throws InvalidArgumentException If $data is invalid
+     *
+     * @return string
      */
-    protected static function formatComponentString($data, $type)
+    protected static function format($data, $type)
     {
         $hostname = implode(static::$separator, array_reverse(static::validateIterator($data)));
         if (self::IS_ABSOLUTE == $type) {
@@ -406,9 +409,9 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     public function append($component)
     {
-        return $this->newCollectionInstance(array_merge(
+        return $this->createFromLabels(array_merge(
             $this->validateComponent($component)->toArray(),
             $this->toArray()
-        ));
+        ), $this->isAbsolute);
     }
 }

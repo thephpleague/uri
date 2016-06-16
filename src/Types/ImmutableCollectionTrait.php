@@ -150,7 +150,7 @@ trait ImmutableCollectionTrait
      *
      * @param array $data
      *
-     * @return static
+     * @return $this
      */
     abstract protected function newCollectionInstance(array $data);
 

@@ -32,7 +32,7 @@ class AppendLabel extends AbstractHostModifier
      */
     public function __construct($label)
     {
-        $this->label = $this->filterLabel($label);
+        $this->label = $this->filterLabel($label)->getContent();
     }
 
     /**

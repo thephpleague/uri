@@ -83,15 +83,6 @@ abstract class AbstractHierarchicalComponent
     }
 
     /**
-     * Return a new instance when needed
-     *
-     * @param array $data
-     *
-     * @return static
-     */
-    abstract protected function newCollectionInstance(array $data);
-
-    /**
      * Returns the component literal value
      *
      * @return string|null
@@ -121,22 +112,6 @@ abstract class AbstractHierarchicalComponent
     }
 
     /**
-     * Validate a component as a HierarchicalComponent object
-     *
-     * @param HierarchicalComponent|string $component
-     *
-     * @return static
-     */
-    protected function validateComponent($component)
-    {
-        if (!$component instanceof HierarchicalComponent) {
-            return $this->modify($component);
-        }
-
-        return $component;
-    }
-
-    /**
      * Returns an instance with the modified segment
      *
      * This method MUST retain the state of the current instance, and return
@@ -160,8 +135,27 @@ abstract class AbstractHierarchicalComponent
             array_pop($dest);
         }
 
-        return $this->newCollectionInstance(
-            array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset + 1))
-        );
+        $data = array_merge(array_slice($source, 0, $offset), $dest, array_slice($source, $offset + 1));
+        if ($data === $this->data) {
+            return $this;
+        }
+
+        return $this->newCollectionInstance($data);
+    }
+
+    /**
+     * Validate a component as a HierarchicalComponent object
+     *
+     * @param HierarchicalComponent|string $component
+     *
+     * @return static
+     */
+    protected function validateComponent($component)
+    {
+        if (!$component instanceof HierarchicalComponent) {
+            return $this->modify($component);
+        }
+
+        return $component;
     }
 }

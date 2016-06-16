@@ -10,6 +10,9 @@ All Notable changes to `League\Uri` will be documented in this file
 - `User::getValue`, `Pass:getValue` and `Fragment::getValue` to access the decoded string representation
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 - Uri Modifier `Relativize` to complement `Resolve`
+- `Path::createFromSegments` to replace `Path::createFromArray`
+- `Host::createFromLabels` to replace `Host::createFromArray`
+- `Query::createFromPairs` to replace `Query::createFromArray`
 
 ### Fixed
 
@@ -26,6 +29,9 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - `Host::getLiteral` you should use `Host::getContent` instead
 - `Port::toInt` you should use `Port::getContent` instead
+- `Path::createFromArray`
+- `Host::createFromArray`
+- `Query::createFromArray`
 
 ### Remove
 

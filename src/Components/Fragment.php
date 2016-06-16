@@ -22,7 +22,6 @@ use League\Uri\Interfaces\Fragment as FragmentInterface;
  */
 class Fragment extends AbstractComponent implements FragmentInterface
 {
-
     /**
      * Preserve the delimiter
      *
@@ -90,28 +89,5 @@ class Fragment extends AbstractComponent implements FragmentInterface
         }
 
         return $component;
-    }
-
-    /**
-     * Returns an instance with the specified string
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified data
-     *
-     * @param string $value
-     *
-     * @return static
-     */
-    public function modify($value)
-    {
-        if (null === $value && $value === $this->getContent()) {
-            return $this;
-        }
-
-        if ($value === $this->__toString()) {
-            return $this;
-        }
-
-        return new static($value);
     }
 }

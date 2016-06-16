@@ -31,7 +31,7 @@ class PrependLabel extends AbstractHostModifier
      */
     public function __construct($label)
     {
-        $this->label = $this->filterLabel($label)->getContent();
+        $this->label = $this->filterLabel($label);
     }
 
     /**
@@ -43,6 +43,8 @@ class PrependLabel extends AbstractHostModifier
      */
     protected function modify($str)
     {
-        return (string) $this->label->modify($str)->prepend($this->label);
+        return (string) $this->label
+            ->modify($str)
+            ->prepend($this->label->getContent());
     }
 }

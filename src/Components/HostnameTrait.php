@@ -62,9 +62,6 @@ trait HostnameTrait
      */
     protected function validateStringHost($str)
     {
-        if ('' === $str) {
-            return [];
-        }
         $host = $this->lower($this->setIsAbsolute($str));
         $raw_labels = explode('.', $host);
         $labels = array_map(function ($value) {

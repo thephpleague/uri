@@ -25,28 +25,22 @@ class Pass extends AbstractComponent implements PassInterface
     /**
      * @inheritdoc
      */
-    protected function validate($data)
+    public function getContent()
     {
-        if (null === $data) {
-            return $data;
+        if (null === $this->data) {
+            return $this->data;
         }
 
-        return $this->decodeComponent($this->validateString($data));
+        return $this->encode((string) $this->data, self::$subdelimChars.'\:');
     }
 
     /**
-     * @inheritdoc
+     * Return the decoded string representation of the component
+     *
+     * @return string
      */
-    public function __toString()
+    public function getValue()
     {
-        return $this->encodePass((string) $this->data);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __debugInfo()
-    {
-        return ['pass' => $this->__toString()];
+        return (string) $this->data;
     }
 }

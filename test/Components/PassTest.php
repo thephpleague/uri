@@ -26,34 +26,59 @@ class PassTest extends AbstractTestCase
     }
 
     /**
-     * @dataProvider validUserProvider
+     * @dataProvider getUriComponentProvider
      * @param $raw
      * @param $parsed
      */
-    public function testGetUriComponent($raw, $parsed)
+    public function testGetUriComponent($raw, $content, $parsed)
     {
         $pass = new Pass($raw);
-        $this->assertSame($raw, $pass->getContent());
+        $this->assertSame($content, $pass->getContent());
         $this->assertSame($parsed, $pass->getUriComponent());
     }
 
-    public function validUserProvider()
+    public function getUriComponentProvider()
     {
         return [
-            ['toto', 'toto'],
-            ['bar---', 'bar---'],
+            ['toto', 'toto', 'toto'],
+            ['bar---', 'bar---', 'bar---'],
+            ['', '', ''],
+            [null, null, ''],
+            ['"bad"', '%22bad%22', '%22bad%22'],
+            ['<not good>', '%3Cnot%20good%3E', '%3Cnot%20good%3E'],
+            ['{broken}', '%7Bbroken%7D', '%7Bbroken%7D'],
+            ['`oops`', '%60oops%60', '%60oops%60'],
+            ['\\slashy', '%5Cslashy', '%5Cslashy'],
+            ['to@to', 'to%40to', 'to%40to'],
+            ['to:to', 'to:to', 'to:to'],
+            ['to/to', 'to%2Fto', 'to%2Fto'],
+            ['to?to', 'to%3Fto', 'to%3Fto'],
+            ['to#to', 'to%23to', 'to%23to'],
+            ['to%61to', 'to%61to', 'to%61to'],
+        ];
+    }
+
+    /**
+     * @dataProvider geValueProvider
+     */
+    public function testGetValue($str, $expected)
+    {
+        $this->assertSame($expected, (new Pass($str))->getValue());
+    }
+
+    public function geValueProvider()
+    {
+        return [
+            [null, ''],
             ['', ''],
-            ['"bad"', '%22bad%22'],
-            ['<not good>', '%3Cnot%20good%3E'],
-            ['{broken}', '%7Bbroken%7D'],
-            ['`oops`', '%60oops%60'],
-            ['\\slashy', '%5Cslashy'],
-            ['to@to', 'to%40to'],
-            ['to:to', 'to:to'],
-            ['to/to', 'to%2Fto'],
-            ['to?to', 'to%3Fto'],
-            ['to#to', 'to%23to'],
-            ['to%61to', 'to%61to'],
+            ['0', '0'],
+            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['€', '€'],
+            ['%E2%82%AC', '€'],
+            ['frag ment', 'frag ment'],
+            ['frag%20ment', 'frag ment'],
+            ['frag%2-ment', 'frag%2-ment'],
+            ['fr%61gment', 'fr%61gment'],
         ];
     }
 

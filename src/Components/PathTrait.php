@@ -72,8 +72,15 @@ trait PathTrait
      */
     public function __debugInfo()
     {
-        return ['path' => $this->__toString()];
+        return ['path' => $this->getContent()];
     }
+
+    /**
+     * The component raw data
+     *
+     * @return mixed
+     */
+    abstract public function getContent();
 
     /**
      * Returns an instance without dot segments

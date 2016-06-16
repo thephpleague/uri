@@ -32,6 +32,66 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     protected static $separator = '/';
 
     /**
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromSegments($data, $type = self::IS_RELATIVE)
+    {
+        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
+
+        if (!isset($type_list[$type])) {
+            throw new InvalidArgumentException('Please verify the submitted constant');
+        }
+
+        return new static(static::formatComponentString($data, $type));
+    }
+
+    /**
+     * Return a formatted component string according to its type
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type
+     *
+     * @throws InvalidArgumentException If $data is invalid
+     *
+     * @return string
+     */
+    protected static function formatComponentString($data, $type)
+    {
+        $path = implode(static::$separator, static::validateIterator($data));
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$separator.$path;
+        }
+
+        return $path;
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    {
+        return static::createFromSegments($data, $type);
+    }
+
+    /**
      * New Instance
      *
      * @param string $path
@@ -76,6 +136,22 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
+            return $this;
+        }
+
+        return $this->createFromSegments($data, $this->isAbsolute);
+    }
+
+    /**
      * Retrieves a single path segment.
      *
      * Retrieves a single path segment. If the segment offset has not been set,
@@ -100,7 +176,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public static function __set_state(array $properties)
     {
-        return static::createFromArray($properties['data'], $properties['isAbsolute']);
+        return static::createFromSegments($properties['data'], $properties['isAbsolute']);
     }
 
     /**
@@ -124,6 +200,17 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     public function __toString()
     {
         return (string) $this->getContent();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function prepend($component)
+    {
+        return $this->createFromSegments(
+                $this->validateComponent($component),
+                $this->isAbsolute
+            )->append($this);
     }
 
     /**

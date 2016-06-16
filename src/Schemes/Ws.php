@@ -36,7 +36,7 @@ class Ws extends AbstractHierarchicalUri implements Uri
      */
     protected function isValid()
     {
-        return '' === $this->fragment->getUriComponent()
+        return null === $this->fragment->getContent()
             && $this->isValidGenericUri()
             && $this->isValidHierarchicalUri();
     }

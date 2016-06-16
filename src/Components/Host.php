@@ -44,6 +44,22 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected $host;
 
     /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        if ($data == $this->data) {
+            return $this;
+        }
+
+        return $this->createFromLabels($data, $this->isAbsolute);
+    }
+
+    /**
      * return a new instance from an array or a traversable object
      *
      * @param \Traversable|string[] $data The segments list
@@ -53,7 +69,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      *
      * @return static
      */
-    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    public static function createFromLabels($data, $type = self::IS_RELATIVE)
     {
         static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
 
@@ -72,6 +88,24 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         return new static(static::formatComponentString($data, $type));
     }
 
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    {
+        return self::createFromLabels($data, $type);
+    }
 
     /**
      * New instance
@@ -236,7 +270,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      */
     public function __debugInfo()
     {
-        return ['host' => $this->__toString()];
+        return ['host' => $this->getContent()];
     }
 
     /**
@@ -354,6 +388,17 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $str;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function prepend($component)
+    {
+        return $this->createFromLabels(
+                $this->validateComponent($component),
+                $this->isAbsolute
+            )->append($this);
     }
 
     /**

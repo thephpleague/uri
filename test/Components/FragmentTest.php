@@ -12,17 +12,14 @@ use League\Uri\Test\AbstractTestCase;
 class FragmentTest extends AbstractTestCase
 {
     /**
-     * @dataProvider validFragment
-     * @param $str
-     * @param $encoded
+     * @dataProvider getUriComponentProvider
      */
-    public function testFragment($str, $encoded)
+    public function testGetUriComponent($str, $encoded)
     {
-        $fragment = new Fragment($str);
-        $this->assertSame($encoded, $fragment->getUriComponent());
+        $this->assertSame($encoded, (new Fragment($str))->getUriComponent());
     }
 
-    public function validFragment()
+    public function getUriComponentProvider()
     {
         $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
 
@@ -41,6 +38,30 @@ class FragmentTest extends AbstractTestCase
             "Don't encode path segments" => ['frag/ment', '#frag/ment'],
             "Don't encode unreserved chars or sub-delimiters" => [$unreserved, '#'.$unreserved],
             'Encoded unreserved chars are not decoded' => ['fr%61gment', '#fr%61gment'],
+        ];
+    }
+
+    /**
+     * @dataProvider geValueProvider
+     */
+    public function testGetValue($str, $expected)
+    {
+        $this->assertSame($expected, (new Fragment($str))->getValue());
+    }
+
+    public function geValueProvider()
+    {
+        return [
+            [null, ''],
+            ['', ''],
+            ['0', '0'],
+            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['€', '€'],
+            ['%E2%82%AC', '€'],
+            ['frag ment', 'frag ment'],
+            ['frag%20ment', 'frag ment'],
+            ['frag%2-ment', 'frag%2-ment'],
+            ['fr%61gment', 'fr%61gment'],
         ];
     }
 

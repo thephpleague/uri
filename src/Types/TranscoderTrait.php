@@ -80,30 +80,6 @@ trait TranscoderTrait
     }
 
     /**
-     * Encode a user string according to RFC3986 Rules
-     *
-     * @param string $str
-     *
-     * @return string
-     */
-    protected static function encodeUser($str)
-    {
-        return self::encode($str, self::$subdelimChars);
-    }
-
-    /**
-     * Encode a user string according to RFC3986 Rules
-     *
-     * @param string $str
-     *
-     * @return string
-     */
-    protected static function encodePass($str)
-    {
-        return self::encode($str, self::$subdelimChars.'\:');
-    }
-
-    /**
      * Encode a path string according to RFC3986
      *
      * @param string $str can be a string or an array

@@ -321,6 +321,7 @@ class HostTest extends AbstractTestCase
     public function withoutProvider()
     {
         return [
+            'remove unknown label' => ['secure.example.com', [34], 'secure.example.com'],
             'remove one string label' => ['secure.example.com', [0], 'secure.example'],
             'remove IP based label' => ['127.0.0.1', [0], ''],
             'remove silent excessive label index' => ['127.0.0.1', [0, 1] , ''],

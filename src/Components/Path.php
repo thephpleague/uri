@@ -39,12 +39,4 @@ class Path extends AbstractComponent implements PathInterface
     {
         return $this->encodePath($this->data);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return (string) $this->getContent();
-    }
 }

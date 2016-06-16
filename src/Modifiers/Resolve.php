@@ -107,7 +107,7 @@ class Resolve extends AbstractUriModifier
     {
         $basePath = $this->uri->getPath();
         if ('' !== $this->uri->getAuthority() && '' === $basePath) {
-            return (new Path($path))->withLeadingSlash()->__toString();
+            return (string) (new Path($path))->withLeadingSlash();
         }
 
         if ('' !== $basePath) {

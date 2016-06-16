@@ -81,7 +81,7 @@ class UserInfo implements UserInfoInterface
      */
     public function __debugInfo()
     {
-        return ['userInfo' => $this->__toString()];
+        return ['userInfo' => $this->getContent()];
     }
 
     /**

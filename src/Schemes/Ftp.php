@@ -35,7 +35,8 @@ class Ftp extends AbstractHierarchicalUri implements Uri
      */
     protected function isValid()
     {
-        return '' === $this->query->getUriComponent().$this->fragment->getUriComponent()
+        return null === $this->fragment->getContent()
+            && null === $this->query->getContent()
             && $this->isValidGenericUri()
             && $this->isValidHierarchicalUri();
     }

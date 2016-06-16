@@ -44,32 +44,12 @@ class Fragment extends AbstractComponent implements FragmentInterface
     /**
      * @inheritdoc
      */
-    protected function validate($data)
-    {
-        if (null === $data) {
-            return $data;
-        }
-
-        return $this->decodeComponent($this->validateString($data));
-    }
-
-    /**
-     * @inheritdoc
-     */
     public static function __set_state(array $properties)
     {
         $component = new static($properties['data']);
         $component->preserveDelimiter = $properties['preserveDelimiter'];
 
         return $component;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __debugInfo()
-    {
-        return ['fragment' => $this->__toString()];
     }
 
     /**
@@ -84,6 +64,16 @@ class Fragment extends AbstractComponent implements FragmentInterface
         }
 
         return $this->encodeQueryFragment($this->data);
+    }
+
+    /**
+     * Return the decoded string representation of the component
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return (string) $this->data;
     }
 
     /**

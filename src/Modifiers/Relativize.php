@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use League\Uri\Components\Path;
 use League\Uri\Interfaces\Uri;
 use League\Uri\Modifiers\Filters\Uri as UriFilter;
 use Psr\Http\Message\UriInterface;
@@ -102,7 +101,11 @@ class Relativize extends AbstractUriModifier
      */
     protected function getSegments($path)
     {
-        return explode('/', (string) (new Path($path))->withoutLeadingSlash());
+        if ('' !== $path && '/' === $path[0]) {
+            $path = substr($path, 1);
+        }
+
+        return explode('/', $path);
     }
 
     /**

@@ -36,16 +36,10 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
-     * Returns the component literal value.
+     * DEPRECATION WARNING! This method will be removed in the next major point release
      *
-     * @return int|null
-     */
-    public function getContent()
-    {
-        return $this->data;
-    }
-
-    /**
+     * @deprecated deprecated since version 4.2
+     *
      * Return an integer representation of the Port component
      *
      * @return int|null
@@ -69,13 +63,5 @@ class Port extends AbstractComponent implements PortInterface
         }
 
         return $component;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __debugInfo()
-    {
-        return ['port' => $this->getContent()];
     }
 }

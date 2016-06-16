@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Components;
 
-use InvalidArgumentException;
 use League\Uri\Interfaces\HierarchicalComponent;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
@@ -23,7 +22,7 @@ use League\Uri\Types\ImmutableComponentTrait;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   4.0.0
  */
-abstract class AbstractHierarchicalComponent implements HierarchicalComponent
+abstract class AbstractHierarchicalComponent
 {
     use ImmutableCollectionTrait;
 
@@ -90,14 +89,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
      *
      * @return static
      */
-    protected function newCollectionInstance(array $data)
-    {
-        if ($data == $this->data) {
-            return $this;
-        }
-
-        return $this->createFromArray($data, $this->isAbsolute);
-    }
+    abstract protected function newCollectionInstance(array $data);
 
     /**
      * Returns the component literal value
@@ -129,37 +121,7 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
     }
 
     /**
-     * Returns an instance with the specified component prepended
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified component with the prepended data
-     *
-     * @param HierarchicalComponent|string $component the component to prepend
-     *
-     * @return static
-     */
-    public function prepend($component)
-    {
-        return $this->createFromArray(
-                $this->validateComponent($component),
-                $this->isAbsolute
-            )->append($this);
-    }
-
-    /**
-     * Returns an instance with the specified component appended
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified component with the appended data
-     *
-     * @param HierarchicalComponent|string $component the component to append
-     *
-     * @return static
-     */
-    abstract public function append($component);
-
-    /**
-     * Validate a component as a HierarchicalComponentInterface object
+     * Validate a component as a HierarchicalComponent object
      *
      * @param HierarchicalComponent|string $component
      *
@@ -172,48 +134,6 @@ abstract class AbstractHierarchicalComponent implements HierarchicalComponent
         }
 
         return $component;
-    }
-
-    /**
-     * return a new instance from an array or a traversable object
-     *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
-     *
-     * @throws InvalidArgumentException If $type is not a recognized constant
-     *
-     * @return static
-     */
-    public static function createFromArray($data, $type = self::IS_RELATIVE)
-    {
-        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
-
-        if (!isset($type_list[$type])) {
-            throw new InvalidArgumentException('Please verify the submitted constant');
-        }
-
-        return new static(static::formatComponentString($data, $type));
-    }
-
-
-    /**
-     * Return a formatted component string according to its type
-     *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type
-     *
-     * @throws InvalidArgumentException If $data is invalid
-     *
-     * @return string
-     */
-    protected static function formatComponentString($data, $type)
-    {
-        $path = implode(static::$separator, static::validateIterator($data));
-        if (self::IS_ABSOLUTE == $type) {
-            return static::$separator.$path;
-        }
-
-        return $path;
     }
 
     /**

@@ -24,7 +24,6 @@ use League\Uri\Modifiers\Filters\Offset;
 class ReplaceLabel extends AbstractHostModifier
 {
     use Label;
-
     use Offset;
 
     /**
@@ -36,7 +35,7 @@ class ReplaceLabel extends AbstractHostModifier
     public function __construct($offset, $label)
     {
         $this->offset = $this->filterOffset($offset);
-        $this->label = $this->filterLabel($label)->getContent();
+        $this->label = $this->filterLabel($label);
     }
 
     /**
@@ -48,6 +47,8 @@ class ReplaceLabel extends AbstractHostModifier
      */
     protected function modify($str)
     {
-        return (string) $this->label->modify($str)->replace($this->offset, $this->label);
+        return (string) $this->label
+            ->modify($str)
+            ->replace($this->offset, $this->label->getContent());
     }
 }

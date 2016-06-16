@@ -454,6 +454,7 @@ class HostTest extends AbstractTestCase
         return [
             ['master.example.com', new Host('shop'), 2, 'shop.example.com'],
             ['master.example.com', 'shop', 2, 'shop.example.com'],
+            ['master.example.com', 'master', 2, 'master.example.com'],
             ['', new Host('::1'), 0, '[::1]'],
             ['', '::1', 0, '[::1]'],
             ['toto', new Host('::1'), 23, 'toto'],

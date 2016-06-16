@@ -54,6 +54,16 @@ abstract class AbstractHierarchicalComponent
     abstract public function __construct($str);
 
     /**
+     * Returns whether or not the component is absolute or not
+     *
+     * @return bool
+     */
+    public function isAbsolute()
+    {
+        return $this->isAbsolute == self::IS_ABSOLUTE;
+    }
+
+    /**
      * Returns an instance with the specified string
      *
      * This method MUST retain the state of the current instance, and return
@@ -65,21 +75,11 @@ abstract class AbstractHierarchicalComponent
      */
     public function modify($value)
     {
-        if ($value == $this->__toString()) {
+        if ($value === $this->getContent()) {
             return $this;
         }
 
         return new static($value);
-    }
-
-    /**
-     * Returns whether or not the component is absolute or not
-     *
-     * @return bool
-     */
-    public function isAbsolute()
-    {
-        return $this->isAbsolute == self::IS_ABSOLUTE;
     }
 
     /**

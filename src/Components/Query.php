@@ -44,6 +44,40 @@ class Query implements QueryInterface
     protected $preserveDelimiter = false;
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|array $data
+     *
+     * @return static
+     */
+    public static function createFromArray($data)
+    {
+        return self::createFromPairs($data);
+    }
+
+    /**
+     * return a new Query instance from an Array or a traversable object
+     *
+     * @param \Traversable|array $data
+     *
+     * @return static
+     */
+    public static function createFromPairs($data)
+    {
+        $query = null;
+        $data = static::validateIterator($data);
+        if (!empty($data)) {
+            $query = (new QueryParser())->build($data, static::$separator, PHP_QUERY_RFC3986);
+        }
+
+        return new static($query);
+    }
+
+    /**
      * a new instance
      *
      * @param string $data
@@ -67,27 +101,8 @@ class Query implements QueryInterface
             return [];
         }
 
-        $str = $this->validateString($str);
-
-        return (new QueryParser())->parse($str, static::$separator, PHP_QUERY_RFC3986);
-    }
-
-    /**
-     * return a new Query instance from an Array or a traversable object
-     *
-     * @param \Traversable|array $data
-     *
-     * @return static
-     */
-    public static function createFromArray($data)
-    {
-        $query = null;
-        $data = static::validateIterator($data);
-        if (!empty($data)) {
-            $query = (new QueryParser())->build($data, static::$separator, PHP_QUERY_RFC3986);
-        }
-
-        return new static($query);
+        return (new QueryParser())
+            ->parse($this->validateString($str), static::$separator, PHP_QUERY_RFC3986);
     }
 
     /**
@@ -103,7 +118,7 @@ class Query implements QueryInterface
      */
     public static function __set_state(array $properties)
     {
-        $component = static::createFromArray($properties['data']);
+        $component = static::createFromPairs($properties['data']);
         $component->preserveDelimiter = $properties['preserveDelimiter'];
 
         return $component;
@@ -162,11 +177,7 @@ class Query implements QueryInterface
      */
     public function modify($value)
     {
-        if (null === $value && $value === $this->getContent()) {
-            return $this;
-        }
-
-        if ($value === $this->__toString()) {
+        if ($value === $this->getContent()) {
             return $this;
         }
 
@@ -199,23 +210,21 @@ class Query implements QueryInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the modified query
      *
-     * @param Query|string $query the data to be merged query can be
-     *                            - another Interfaces\Query object
-     *                            - a string or a Stringable object
+     * @param QueryInterface|string $query the data to be merged
      *
      * @return static
      */
     public function merge($query)
     {
         if (!$query instanceof QueryInterface) {
-            $query = static::createFromArray($this->validate($query));
+            $query = static::createFromPairs($this->validate($query));
         }
 
         if ($this->sameValueAs($query)) {
             return $this;
         }
 
-        return static::createFromArray(array_merge($this->toArray(), $query->toArray()));
+        return static::createFromPairs(array_merge($this->toArray(), $query->toArray()));
     }
 
     /**
@@ -241,7 +250,7 @@ class Query implements QueryInterface
             return $this;
         }
 
-        return static::createFromArray($data);
+        return static::createFromPairs($data);
     }
 
     /**
@@ -257,6 +266,6 @@ class Query implements QueryInterface
             return $this;
         }
 
-        return static::createFromArray($data);
+        return static::createFromPairs($data);
     }
 }

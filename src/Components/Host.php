@@ -44,15 +44,22 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected $host;
 
     /**
-     * Return a new instance when needed
+     * DEPRECATION WARNING! This method will be removed in the next major point release
      *
-     * @param array $data
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
      */
-    protected function newCollectionInstance(array $data)
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
     {
-        return $this->createFromLabels($data, $this->isAbsolute);
+        return self::createFromLabels($data, $type);
     }
 
     /**
@@ -85,22 +92,23 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release
-     *
-     * @deprecated deprecated since version 4.2
-     *
-     * return a new instance from an array or a traversable object
+     * Return a formatted host string
      *
      * @param \Traversable|string[] $data The segments list
-     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     * @param int                   $type
      *
-     * @throws InvalidArgumentException If $type is not a recognized constant
+     * @throws InvalidArgumentException If $data is invalid
      *
-     * @return static
+     * @return string
      */
-    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    protected static function format($data, $type)
     {
-        return self::createFromLabels($data, $type);
+        $hostname = implode(static::$separator, array_reverse(static::validateIterator($data)));
+        if (self::IS_ABSOLUTE == $type) {
+            return $hostname.static::$separator;
+        }
+
+        return $hostname;
     }
 
     /**
@@ -111,7 +119,45 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function __construct($host = null)
     {
         $this->data = $this->validate($host);
-        $this->setLiteral();
+        $this->host = !$this->isIp() ? $this->__toString() : $this->data[0];
+    }
+
+    /**
+     * validate the submitted data
+     *
+     * @param string $str
+     *
+     * @return array
+     */
+    protected function validate($str)
+    {
+        if (null === $str) {
+            return [];
+        }
+
+        $str = $this->validateString($str);
+        if ('' === $str) {
+            return [''];
+        }
+
+        $res = $this->validateIpHost($str);
+        if (!empty($res)) {
+            return $res;
+        }
+
+        return $this->validateStringHost($str);
+    }
+
+    /**
+     * Return a new instance when needed
+     *
+     * @param array $data
+     *
+     * @return static
+     */
+    protected function newCollectionInstance(array $data)
+    {
+        return $this->createFromLabels($data, $this->isAbsolute);
     }
 
     /**
@@ -167,14 +213,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
-     * Host literal setter
-     */
-    protected function setLiteral()
-    {
-        $this->host = !$this->isIp() ? $this->__toString() : $this->data[0];
-    }
-
-    /**
      * DEPRECATION WARNING! This method will be removed in the next major point release
      *
      * @deprecated deprecated since version 4.2
@@ -187,32 +225,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function getLiteral()
     {
         return $this->host;
-    }
-
-    /**
-     * validate the submitted data
-     *
-     * @param string $str
-     *
-     * @return array
-     */
-    protected function validate($str)
-    {
-        if (null === $str) {
-            return [];
-        }
-
-        $str = $this->validateString($str);
-        if ('' === $str) {
-            return [''];
-        }
-
-        $res = $this->validateIpHost($str);
-        if (!empty($res)) {
-            return $res;
-        }
-
-        return $this->validateStringHost($str);
     }
 
     /**
@@ -320,26 +332,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $this->modify($this->format($this->data, $this->isAbsolute));
-    }
-
-    /**
-     * Return a formatted host string
-     *
-     * @param \Traversable|string[] $data The segments list
-     * @param bool                  $type
-     *
-     * @throws InvalidArgumentException If $data is invalid
-     *
-     * @return string
-     */
-    protected static function format($data, $type)
-    {
-        $hostname = implode(static::$separator, array_reverse(static::validateIterator($data)));
-        if (self::IS_ABSOLUTE == $type) {
-            return $hostname.static::$separator;
-        }
-
-        return $hostname;
     }
 
     /**

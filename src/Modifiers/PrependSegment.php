@@ -43,6 +43,8 @@ class PrependSegment extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) $this->segment->modify($str)->prepend($this->segment);
+        return (string) $this->segment
+            ->modify($str)
+            ->prepend((string) $this->segment);
     }
 }

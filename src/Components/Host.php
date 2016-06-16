@@ -53,6 +53,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      * @param \Traversable|string[] $data The segments list
      * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
+     * @throws InvalidArgumentException If $data is invalid
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
@@ -68,6 +69,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
      * @param \Traversable|string[] $data The segments list
      * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
+     * @throws InvalidArgumentException If $data is invalid
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
@@ -76,11 +78,12 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     {
         static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
 
+        $data = static::validateIterator($data);
         if (!isset($type_list[$type])) {
             throw new InvalidArgumentException('Please verify the submitted constant');
         }
 
-        if (empty($data)) {
+        if ([] === $data) {
             return new static();
         }
 
@@ -94,16 +97,14 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     /**
      * Return a formatted host string
      *
-     * @param \Traversable|string[] $data The segments list
-     * @param int                   $type
-     *
-     * @throws InvalidArgumentException If $data is invalid
+     * @param string[] $data The segments list
+     * @param int      $type
      *
      * @return string
      */
-    protected static function format($data, $type)
+    protected static function format(array $data, $type)
     {
-        $hostname = implode(static::$separator, array_reverse(static::validateIterator($data)));
+        $hostname = implode(static::$separator, array_reverse($data));
         if (self::IS_ABSOLUTE == $type) {
             return $hostname.static::$separator;
         }
@@ -393,7 +394,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         return $this->createFromLabels(
                 $this->validateComponent($component),
                 $this->isAbsolute
-            )->append($this);
+            )->append($this->__toString());
     }
 
     /**

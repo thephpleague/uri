@@ -48,6 +48,8 @@ class ReplaceSegment extends AbstractPathModifier
      */
     protected function modify($str)
     {
-        return (string) $this->segment->modify($str)->replace($this->offset, $this->segment);
+        return (string) $this->segment
+            ->modify($str)
+            ->replace($this->offset, (string) $this->segment);
     }
 }

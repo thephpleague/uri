@@ -41,6 +41,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      * @param \Traversable|string[] $data The segments list
      * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
+     * @throws InvalidArgumentException If $data is invalid
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
@@ -50,12 +51,13 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return static::createFromSegments($data, $type);
     }
 
-   /**
+    /**
      * return a new instance from an array or a traversable object
      *
      * @param \Traversable|string[] $data The segments list
      * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
      *
+     * @throws InvalidArgumentException If $data is invalid
      * @throws InvalidArgumentException If $type is not a recognized constant
      *
      * @return static
@@ -191,7 +193,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         return $this->createFromSegments(
                 $this->validateComponent($component),
                 $this->isAbsolute
-            )->append($this);
+            )->append($this->__toString());
     }
 
     /**

@@ -202,15 +202,15 @@ trait ImmutableCollectionTrait
     protected static function validateIterator($data)
     {
         if ($data instanceof Traversable) {
-            $data = iterator_to_array($data, true);
+            return iterator_to_array($data);
         }
 
-        if (!is_array($data)) {
-            throw new InvalidArgumentException(
-                'Data passed to the method must be an array or a Traversable object'
-            );
+        if (is_array($data)) {
+            return $data;
         }
 
-        return $data;
+        throw new InvalidArgumentException(
+            'Data passed to the method must be an array or a Traversable object'
+        );
     }
 }

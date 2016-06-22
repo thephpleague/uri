@@ -101,15 +101,8 @@ $uri = HttpUri::createFromString("http://example.com/path?query=value#fragment")
 
 var_dump($uri);
 //displays something like
-// object(League\Uri\Schemes\Http)#11 (8) {
+// object(League\Uri\Schemes\Http)#11 (1) {
 //     ["uri"]=> string(44) "http://example.com/path?query=value#fragment"
-//     ["scheme"]=> string(4) "http"
-//     ["userInfo"]=> string(0) ""
-//     ["host"]=> string(11) "example.com"
-//     ["port"]=> NULL
-//     ["path"]=> string(5) "/path"
-//     ["query"]=> string(11) "query=value"
-//     ["fragment"]=> string(8) "fragment"
 // }
 ~~~~~~
 

@@ -36,6 +36,26 @@ echo $altInfo; //display 'foo:bar'
 
 <p class="message-warning">If the submitted value are not valid user and/or password string an <code>InvalidArgumentException</code> will be thrown.</p>
 
+### Using a named constructor
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+~~~php
+<?php
+
+public static UserInfo::createFromString(string $uri = ''): Uri
+~~~
+
+Using the `createFromString` static method you can instantiate a new UserInfo object from a string or from any object that implements the `__toString` method.
+
+~~~php
+<?php
+
+use League\Uri\Components\UserInfo;
+
+$userinfo = UserInfo::createFromString('login:password');
+~~~
+
 ### Using a Uri object
 
 You can also get a `UserInfo` object from a Hierarchical URI object:

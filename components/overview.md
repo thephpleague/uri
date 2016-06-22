@@ -70,6 +70,16 @@ $fragment = new Components\Fragment('paragraphid');
 
 Each class provides several ways to represent the component value as string.
 
+### Basic representation
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+To get the normalized-encoded version of the URI part you must call the `getContent` method. This method return type depend on the URI part status:
+
+* `null` : If the part is not defined;
+* `string` : When the part is defined. This string is normalized and encoded according to the part rules;
+* `int` : In case of a defined and valid port;
+
 ### String representation
 
 The `__toString` method returns the string representation of the object. This is the form used when echoing the URI component from the URI object getter methods. No component delimiter is returned.
@@ -89,8 +99,7 @@ $path = new Components\Path('/toto le heros/file.xml');
 echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 ~~~
 
-<p class="message-notice"><code>Uri::getPort</code> uses the results of the <code>Port::toInt</code> method instead.</p>
-
+<p class="message-notice">since <code>version 4.2</code>. The <code>__toString</code> method is derived from the <code>getContent</code> method. As such, no distinction can be made between a empty and an undefined component.</p>
 
 ### URI-like representation
 

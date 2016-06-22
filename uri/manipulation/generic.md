@@ -38,6 +38,46 @@ $newUri = $modifier->__invoke($relativeUri);
 echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 ~~~
 
+## Relativize an URI
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+### Description
+
+~~~php
+<?php
+
+public Relativize::__construct(mixed $uri)
+~~~
+
+The `Relativize` URI Modifier provides the mean to construct a relative URI that when resolved against the same URI yields the same given URI. This modifier does the inverse of the Resolve modifier. The uri to relativize must be another Uri object.
+
+### Parameters
+
+`$uri` **must be** a `League\Uri\Interfaces\Uri` or a `Psr\Http\Message` implemented object
+
+### Example
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Modifiers\Relativize;
+use League\Uri\Modifiers\Resolve;
+
+require '/path/to/vendor/autoload.php';
+
+$baseUri = HttpUri::createFromString('http://www.example.com');
+$relativizer = new Relativize($baseUri);
+$resolver = new Resolve($baseUri);
+$uri = HttpUri::createFromString('http://www.example.com/?foo=toto#~typo');
+$relativeUri = $relativizer($uri);
+echo $relativeUri; // display "/?foo=toto#~typo
+echo $resolver($relativeUri); // display 'http://www.example.com/?foo=toto#~typo'
+~~~
+
+<p class="message-notice">To be sure that both operations yield the expected results both URI must be normalized.</p>
+
 ## Applying multiple modifiers to a single URI
 
 Since all modifiers returns a URI object instance it is possible to chain them together. To ease this chaining the package comes bundle with the `League\Uri\Modifiers\Pipeline` class. The class uses the pipeline pattern to modify the URI by passing the results from one modifier to the next one.

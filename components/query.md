@@ -41,7 +41,9 @@ $query = $uri->query; //$query is a League\Uri\Components\Query object;
 
 ### Using a named constructor
 
-It is possible to create a `Query` object using an `array` or a `Traversable` object with the `Query::createFromArray` method. The submitted data must provide an array which preserved key/value pairs similar to the result of [Parser::parseQuery](/services/parser/#parsing-the-query-string-into-an-array).
+<p class="message-info">Since <code>version 4.2</code> <code>createFromArray</code> is replaced by <code>createFromPairs</code>. <code>createFromArray</code>is deprecated and will be removed in the next major release</p>
+
+It is possible to create a `Query` object using an `array` or a `Traversable` object with the `Query::createFromPairs` method. The submitted data must provide an array which preserved key/value pairs similar to the result of [Parser::parseQuery](/services/parser/#parsing-the-query-string-into-an-array).
 
 - If a given parameter value is `null` it will be rendered without any value in the resulting query string;
 - If a given parameter value is an empty string il will be rendered without any value **but** with a `=` sign appended to it;
@@ -51,10 +53,10 @@ It is possible to create a `Query` object using an `array` or a `Traversable` ob
 
 use League\Uri\Components\Query;
 
-$query =  Query::createFromArray(['foo' => 'bar', 'p' => 'yolo', 'z' => '']);
+$query =  Query::createFromPairs(['foo' => 'bar', 'p' => 'yolo', 'z' => '']);
 echo $query; //display 'foo=bar&p=yolo&z='
 
-$query =  Query::createFromArray(['foo' => 'bar', 'p' => null, 'z' => '']);
+$query =  Query::createFromPairs(['foo' => 'bar', 'p' => null, 'z' => '']);
 echo $query; //display 'foo=bar&p&z='
 ~~~
 
@@ -220,7 +222,7 @@ Another `Query` object
 
 use League\Uri\Components\Query;
 
-$query    = Query::createFromArray(['foo' => 'bar', 'baz' => 'toto']);
+$query    = Query::createFromPairs(['foo' => 'bar', 'baz' => 'toto']);
 $newQuery = $query->merge(new Query('foo=jane&r=stone'));
 $newQuery->__toString(); //return foo=jane&baz=toto&r=stone
 // the 'foo' parameter was updated
@@ -234,7 +236,7 @@ $newQuery->__toString(); //return foo=jane&baz=toto&r=stone
 
 use League\Uri\Components\Query;
 
-$query    = Query::createFromArray(['foo' => 'bar', 'baz' => 'toto']);
+$query    = Query::createFromPairs(['foo' => 'bar', 'baz' => 'toto']);
 $newQuery = $query->merge('baz=&r');
 $newQuery->__toString(); //return foo=bar&baz=&r
 // the 'r' parameter was added without any value

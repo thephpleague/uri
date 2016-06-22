@@ -119,74 +119,6 @@ echo $formatter->format($query); //displays foo=ba%20r&amp;baz=bar
 echo $formatter($query);         //displays foo=ba%20r&amp;baz=bar
 ~~~
 
-### Port component presence
-
-~~~php
-<?php
-
-public Formatter::setPort(null|int $port): void
-~~~~~~
-
-<p class="message-notice">New in <code>version 4.2</code></p>
-
-According to PSR-7 `UriInterface`, when the port component is equal to the default port it is removed from the string representation. The following URIs will all produced the same string representation:
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http as HttpUri;
-
-$uri = HttpUri::createFromString('http://uri.thephpleague.com');
-$altUri = HttpUri::createFromString('http://uri.thephpleague.com:80');
-
-echo $uri->__toString();      //return 'http://uri.thephpleague.com';
-echo $altUri->__toString();   //return 'http://uri.thephpleague.com';
-~~~
-
-To manage the presence of the port component you are required to specify it to the Formatter object as shown below:
-
-~~~php
-<?php
-
-use League\Uri\Formatter;
-use League\Uri\Schemes\Http as HttpUri;
-
-$uri = HttpUri::createFromString('http://uri.thephpleague.com');
-$formatter = new Formatter();
-$formatter->setPort(80);
-echo $formatter($uri);  //return 'http://uri.thephpleague.com:80';
-~~~
-
-You can also use the same method to strip the resulting URI string of its Port component:
-
-~~~php
-<?php
-
-use League\Uri\Formatter;
-use League\Uri\Schemes\Http as HttpUri;
-
-$uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
-$formatter = new Formatter();
-$formatter->setPort(null);
-echo $formatter($uri);  //return 'http://uri.thephpleague.com';
-~~~
-
-<p class="message-notice">Once <code>Formatter::setPort</code> is used its value will <strong>always</strong> override the URI object port component.</p>
-
-<p class="message-warning">This method has no effect on the <code>Formatter</code> object when it is invoked on a <code>UriPart</code> object</p>
-
-~~~php
-<?php
-
-use League\Uri\Formatter;
-use League\Uri\Schemes\Port;
-
-$port = new Port(80);
-$formatter = new Formatter();
-$formatter->setPort(null);
-echo $formatter($port);  //return ':80';
-~~~
-
 ### Preserving URI components
 
 ~~~php
@@ -252,12 +184,11 @@ use League\Uri\Schemes\Http as HttpUri;
 
 $formatter = new Formatter();
 $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
-$formatter->setPort(42);
 $formatter->setQueryEncoding(PHP_QUERY_RFC3986);
 $formatter->setQuerySeparator('&amp;');
 $formatter->preserveFragment(true);
 
 echo $formatter->format(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
 echo $formatter(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
-//displays https://xn--p1ai.ru:42?foo=ba%20r&amp;baz=bar#
+//displays https://xn--p1ai.ru:81?foo=ba%20r&amp;baz=bar#
 ~~~

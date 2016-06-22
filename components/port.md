@@ -65,6 +65,8 @@ $port->getUriComponent(); //return ':21'
 
 ### Integer representation
 
+<p>Since <code>version 4.2</code> this method is deprecated please use <code>Port::getContent</code> instead.</p>
+
 A port is a integer between `1` and `65535`. To get the Port as an integer you can use the `Port::toInt` method. This method will return an integer if the port was defined and the `null` value otherwise.
 
 ~~~php

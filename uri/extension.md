@@ -373,4 +373,4 @@ $newMailto->__toString();
 //returns 'mailto:foo@example.com,info@thephpleague.com?subject=Hello%20World%21';
 ~~~
 
-<p class="message-notice">There are still room for improvement by adding specific URI modifiers but I'll leave that to you to strenghen the above code.</p>
+<p class="message-notice">There are still room for improvement by adding specific URI modifiers but I'll leave that to you to strengthen the above code.</p>

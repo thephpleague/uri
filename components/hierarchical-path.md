@@ -43,7 +43,9 @@ $path = $uri->path; // $path is a League\Uri\Components\HierarchicalPath object;
 
 ### Using a named constructor
 
-A path is a collection of segment delimited by the path delimiter `/`. So it is possible to create a `HierarchicalPath` object using a collection of segments with the `HierarchicalPath::createFromArray` method.
+<p class="message-info">Since <code>version 4.2</code> <code>createFromArray</code> is replaced by <code>createFromSegments</code>. <code>createFromArray</code>is deprecated and will be removed in the next major release</p>
+
+A path is a collection of segment delimited by the path delimiter `/`. So it is possible to create a `HierarchicalPath` object using a collection of segments with the `HierarchicalPath::createFromSegments` method.
 
 The method expects at most 2 arguments:
 
@@ -57,17 +59,17 @@ The method expects at most 2 arguments:
 
 use League\Uri\Components\HierarchicalPath as Path;
 
-$relative_path =  Path::createFromArray(['shop', 'example', 'com']);
+$relative_path =  Path::createFromSegments(['shop', 'example', 'com']);
 echo $relative_path; //display 'shop/example/com'
 
-$absolute_path = Path::createFromArray(['shop', 'example', 'com'], Path::IS_ABSOLUTE);
+$absolute_path = Path::createFromSegments(['shop', 'example', 'com'], Path::IS_ABSOLUTE);
 echo $absolute_path; //display '/shop/example/com'
 
-$end_slash = Path::createFromArray(['shop', 'example', 'com', ''], Path::IS_ABSOLUTE);
+$end_slash = Path::createFromSegments(['shop', 'example', 'com', ''], Path::IS_ABSOLUTE);
 echo $end_slash; //display '/shop/example/com/'
 ~~~
 
-<p class="message-info">To force the end slash when using the <code>Path::createFromArray</code> method you need to add an empty string as the last member of the submitted array.</p>
+<p class="message-info">To force the end slash when using the <code>Path::createFromSegments</code> method you need to add an empty string as the last member of the submitted array.</p>
 
 ## Path representations
 

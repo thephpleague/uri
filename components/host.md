@@ -51,11 +51,13 @@ $host = $uri->host; // $host is a League\Uri\Components\Host object;
 
 ### Using a named constructor
 
-A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromArray` method.
+<p class="message-info">Since <code>version 4.2</code> <code>createFromArray</code> is replaced by <code>createFromLabels</code>. <code>createFromArray</code>is deprecated and will be removed in the next major release</p>
+
+A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
 
 The method expects at most 2 arguments:
 
-- The first required argument must be a collection of label (an `array` or a `Traversable` object). **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**. 
+- The first required argument must be a collection of label (an `array` or a `Traversable` object). **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
 
 - The second optional argument, a `Host` constant, tells whether this is an <abbr title="Fully Qualified Domain Name">FQDN</abbr> or not:
     - `Host::IS_ABSOLUTE` creates an a fully qualified domain name `Host` object;
@@ -70,16 +72,16 @@ By default this optional argument equals to `Host::IS_RELATIVE`.
 
 use League\Uri\Components\Host;
 
-$host = Host::createFromArray(['com', 'example', 'shop']);
+$host = Host::createFromLabels(['com', 'example', 'shop']);
 echo $host; //display 'shop.example.com'
 
-$fqdn = Host::createFromArray(['com', 'example', 'shop'], Host::IS_ABSOLUTE);
+$fqdn = Host::createFromLabels(['com', 'example', 'shop'], Host::IS_ABSOLUTE);
 echo $fqdn; //display 'shop.example.com.'
 
-$ip_host = Host::createFromArray(['0.1', '127.0']);
+$ip_host = Host::createFromLabels(['0.1', '127.0']);
 echo $ip_host; //display '127.0.0.1'
 
-Host::createFromArray(['0.1', '127.0'], Host::IS_ABSOLUTE);
+Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
 //throws InvalidArgumentException
 ~~~
 
@@ -95,7 +97,7 @@ Whenever you create a new host your submitted data is normalized using non desct
 
 use League\Uri\Components\Host;
 
-$host = Host::createFromArray(['com', 'ExAmPle', 'shop']);
+$host = Host::createFromLabels(['com', 'ExAmPle', 'shop']);
 echo $host; //display 'shop.example.com'
 
 $ipv6 = new Host('::1');
@@ -201,19 +203,22 @@ $host = new Host('example.com');
 $host->__toString();      //return 'example.com'
 $host->getUriComponent(); //return 'example.com'
 $host->getLiteral();      //return 'example.com'
+$host->getContent();      //return 'example.com'
 
 $ipv4 = new Host('127.0.0.1');
 $ipv4->__toString();      //return '127.0.0.1'
 $ipv4->getUriComponent(); //return '127.0.0.1'
 $ipv4->getLiteral();      //return '127.0.0.1'
+$ipv4->getContent();      //return '127.0.0.1'
 
 $ipv6 = new Host('::1');
 $ipv6->__toString();      //return '[::1]'
 $ipv6->getUriComponent(); //return '[::1]'
 $ipv6->getLiteral();      //return '::1'
+$ipv6->getContent();      //return '127.0.0.1'
 ~~~
 
-<p class="message-notice">The <code>Host::getLiteral</code> method is useful to get the host raw IP representation without the IPv6 brackets for instance.</p>
+<p class="message-notice">The <code>Host::getLiteral</code> is deprecated and will be remove in the next major release. Please use instead the new method <code>Host::getContent</code>.</p>
 
 ### IDN support
 
@@ -344,7 +349,9 @@ echo $host->getSubdomain();           //display 'www'
 $host->isPublicSuffixValid();         //return a boolean 'true' in this example
 ~~~
 
-If the data is not found the methods listed above will all return `null` except for the `Host::isPublicSuffixValid` method which will return `false`.
+<p class="message-info">a bug fix is introduced in <code>version 4.2</code>. The methods always return a string to be compatible with the Host interface contract. Before <code>null</code> was returned.</p>
+
+If the data is not found the methods listed above will all return an **empty string** except for the `Host::isPublicSuffixValid` method which will return `false`.
 
 ~~~php
 <?php
@@ -352,9 +359,9 @@ If the data is not found the methods listed above will all return `null` except 
 use League\Uri\Components\Host;
 
 $host = new Host('192.158.26.30');
-echo $host->getPublicSuffix();        //return 'null'
-echo $host->getRegisterableDomain();  //return 'null'
-echo $host->getSubdomain();           //return 'null'
+echo $host->getPublicSuffix();        //return ''
+echo $host->getRegisterableDomain();  //return ''
+echo $host->getSubdomain();           //return ''
 $host->isPublicSuffixValid();         //return false
 ~~~
 

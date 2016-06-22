@@ -11,7 +11,7 @@ To ease working with FTP URIs, the library comes bundle with a URI specific FTP 
 
 A FTP URI must contain the `ftp` scheme. It can not contains a query and or a fragment component.
 
-<p class="message-notice">Adding contents to the fragment or query components throws an <code>RuntimeException</code> exception</p>
+<p class="message-notice">Adding contents to the fragment or query components throws an <code>InvalidArgumentException</code> exception</p>
 
 ~~~php
 <?php
@@ -19,7 +19,7 @@ A FTP URI must contain the `ftp` scheme. It can not contains a query and or a fr
 use League\Uri\Schemes\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
-$uri->withQuery('p=1'); //throw an RuntimeException - a query component was given
+$uri->withQuery('p=1'); //throw an InvalidArgumentException - a query component was given
 
 
 $altUri = FtpUri::createFromString('//thephpleague.com/path/to');

@@ -25,7 +25,7 @@ If the file is not readable or accessible an `RuntimeException` exception will b
 
 ## Validation
 
-Even though all URI properties are defined and accessible attempt to set any component other than the path will result in the object throwing a `RuntimeException` exception. As adding data to theses URI parts will generate an invalid Data URI.
+Even though all URI properties are defined and accessible attempt to set any component other than the path will result in the object throwing a `InvalidArgumentException` exception. As adding data to theses URI parts will generate an invalid Data URI.
 
 ~~~php
 <?php
@@ -34,7 +34,7 @@ use League\Uri\Schemes\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
 $uri->getHost(); //return '' an empty string
-$uri->withHost('example.com'); //thrown an RuntimeException
+$uri->withHost('example.com'); //thrown an InvalidArgumentException
 ~~~
 
 ## Properties

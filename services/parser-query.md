@@ -26,7 +26,9 @@ The `QueryParser::parse` method returns an `array` representation of the query s
     - `PHP_QUERY_RFC1738`
     - `false` if you don't want any encoding.
 
-<p class="message-notice">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
+<p class="message-info">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
+
+<p class="message-notice">The other encoding style will are deprecated and will be removed in the next major release. You should not rely on them.</p>
 
 ~~~php
 <?php
@@ -72,6 +74,8 @@ The `QueryParser::build` method returns and preserves string representation of t
     - `false` if you don't want any encoding.
 
 <p class="message-notice">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
+
+<p class="message-notice">The other encoding style will are deprecated and will be removed in the next major release. You should not rely on them.</p>
 
 ~~~php
 <?php

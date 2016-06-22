@@ -31,7 +31,7 @@ use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withHost('')->withScheme('')->__toString();
-// will throw an RuntimeException
+// will throw an InvalidArgumentException
 // you can not remove the Host if a scheme is present
 ~~~
 
@@ -46,7 +46,7 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost('')->__toString(); //displays "/"
 ~~~
 
-<p class="message-notice">When an invalid URI object is created a <code>RuntimeException</code> exception is thrown</p>
+<p class="message-notice">When an invalid URI object is created a <code>InvalidArgumentException</code> exception is thrown</p>
 
 ## Relation with PSR-7
 

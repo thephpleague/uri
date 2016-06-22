@@ -12,7 +12,7 @@ This class handles secure and non secure websockets URI.
 
 Websockets URIs must contain a `ws` or the `wss` scheme. It can not contain a fragment component as per [RFC6455](https://tools.ietf.org/html/rfc6455#section-3).
 
-<p class="message-notice">Adding contents to the fragment component throws an <code>RuntimeException</code> exception</p>
+<p class="message-notice">Adding contents to the fragment component throws an <code>InvalidArgumentException</code> exception</p>
 
 ~~~php
 <?php
@@ -20,7 +20,7 @@ Websockets URIs must contain a `ws` or the `wss` scheme. It can not contain a fr
 use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
-//throw an RuntimeException - a fragment component was given
+//throw an InvalidArgumentException - a fragment component was given
 
 
 $altUri = WsUri::createFromString('//thephpleague.com/path/to?here');

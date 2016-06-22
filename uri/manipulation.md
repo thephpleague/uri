@@ -7,7 +7,7 @@ title: Manipulating URI
 
 <p class="message-notice">If the modifications do not alter the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">The method may throw a <code>RuntimeException</code> exception if the resulting URI is not valid for a scheme specific URI.</p>
+<p class="message-warning">The method may throw a <code>InvalidArgumentException</code> exception if the resulting URI is not valid for a scheme specific URI.</p>
 
 ## Basic modifications
 

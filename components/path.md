@@ -25,6 +25,8 @@ $altPath = new Path('text/plain;charset=us-ascii,Hello%20World%21');
 echo $altPath; //display 'text/plain;charset=us-ascii,Hello%20World%21'
 ~~~
 
+<p class="message-warning">A <code>Path</code> can not be undefined (ie: accept <code>null</code> as a valid constructor argument</p>
+
 <p class="message-warning">If the submitted value is not a valid path an <code>InvalidArgumentException</code> will be thrown.</p>
 
 ## Path properties

@@ -43,7 +43,7 @@ $path = $uri->path; // $path is a League\Uri\Components\HierarchicalPath object;
 
 ### Using a named constructor
 
-<p class="message-info">Since <code>version 4.2</code> <code>createFromArray</code> is replaced by <code>createFromSegments</code>. <code>createFromArray</code>is deprecated and will be removed in the next major release</p>
+<p class="message-warning">Since <code>version 4.2</code> <code>createFromSegments</code> replaces <code>createFromArray</code>. <code>createFromArray</code> is deprecated and will be removed in the next major release</p>
 
 A path is a collection of segment delimited by the path delimiter `/`. So it is possible to create a `HierarchicalPath` object using a collection of segments with the `HierarchicalPath::createFromSegments` method.
 

@@ -7,6 +7,33 @@ title: URI Modifiers which affect multiple URI components
 
 Here's the documentation for the included URI modifiers which are modifying multiple URI components at once.
 
+## Normalize a URI
+
+To help wil URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI modifier is introduce to normalize URI according to the following rules:
+
+- The host component is converted into their ASCII representation;
+- The path component is normalized by removing dot segments as per RFC3986;
+- The query component is sorted according to its key offset;
+- The scheme component is lowercased;
+
+If you normalized two URI objects it become easier to compare them to determine if they are referring to the same resource:
+
+~~~php
+<?php
+
+use League\Uri\Modifiers\Normalize;
+use League\Uri\Schemes\Http as HttpUri;
+
+$uri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$altUri = HttpUri::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
+$modifier = new Normalize();
+
+$newUri    = $modifier->__invoke($uri);
+$newAltUri = $modifier->__invoke($altUri);
+
+var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
+~~~
+
 ## Resolving a relative URI
 
 ### Description
@@ -116,30 +143,3 @@ echo $origUri2Alt; //display http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/
 <p class="message-notice">The <code>League\Uri\Modifiers\Pipeline</code> is a URI modifier as well which can lead to advance modifications from you URI in a sane an normalized way.</p>
 
 <p class="message-info">This class is heavily influenced by the <a href="http://pipeline.thephpleague.com">League\Pipeline</a> package.</p>
-
-## Normalize a URI
-
-To help wil URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI modifier is introduce to normalize URI according to the following rules:
-
-- The host component is converted into their ASCII representation;
-- The path component is normalized by removing dot segments as per RFC3986;
-- The query component is sorted according to its key offset;
-- The scheme component is lowercased;
-
-If you normalized two URI objects it become easier to compare them to determine if they are referring to the same resource:
-
-~~~php
-<?php
-
-use League\Uri\Modifiers\Normalize;
-use League\Uri\Schemes\Http as HttpUri;
-
-$uri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
-$altUri = HttpUri::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
-$modifier = new Normalize();
-
-$newUri    = $modifier->__invoke($uri);
-$newAltUri = $modifier->__invoke($altUri);
-
-var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
-~~~

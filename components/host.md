@@ -51,7 +51,7 @@ $host = $uri->host; // $host is a League\Uri\Components\Host object;
 
 ### Using a named constructor
 
-<p class="message-info">Since <code>version 4.2</code> <code>createFromArray</code> is replaced by <code>createFromLabels</code>. <code>createFromArray</code>is deprecated and will be removed in the next major release</p>
+<p class="message-warning">Since <code>version 4.2</code> <code>createFromLabels</code> replaces <code>createFromArray</code>. <code>createFromArray</code> is deprecated and will be removed in the next major release</p>
 
 A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
 

@@ -9,7 +9,7 @@ title: URIs instantiation
 
 To ease URI instantiation, and because URIs come in different forms we used named constructors to offer several ways to instantiate the object.
 
-<div class="message-warning">If a new instance can not be created an <code>InvalidArgumentException</code> exception is thrown</div>
+<p class="message-warning">If a new instance can not be created an <code>InvalidArgumentException</code> exception is thrown</p>
 
 ### From a string
 

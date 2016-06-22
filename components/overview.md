@@ -80,6 +80,22 @@ To get the normalized-encoded version of the URI part you must call the `getCont
 * `string` : When the part is defined. This string is normalized and encoded according to the part rules;
 * `int` : In case of a defined and valid port;
 
+
+~~~php
+<?php
+
+use League\Uri\Components;
+
+$query = new Components\Query();
+echo $query->getContent(); //displays null
+
+$query = new Components\Query('');
+echo $query->getContent(); //displays ''
+
+$port = new Components\Port(23);
+echo $port->getContent(); //displays (int) 23;
+~~~
+
 ### String representation
 
 The `__toString` method returns the string representation of the object. This is the form used when echoing the URI component from the URI object getter methods. No component delimiter is returned.
@@ -119,6 +135,26 @@ echo $userinfo->getUriComponent(); //displays 'john@'
 $path = new Components\Path('/toto le heros/file.xml');
 echo $path->getUriComponent(); //displays '/toto%20le%20heros/file.xml'
 ~~~
+
+To understand the differences between the described representations see below:
+
+~~~php
+<?php
+
+use League\Uri\Components;
+
+$component = new Components\Fragment('');
+$component->getContent(); //returns ''
+echo $component; //displays ''
+echo $component->getUriComponent(); //displays '#'
+
+$altComponent = new Components\Fragment(null);
+$altComponent->getContent(); //returns null
+echo $component; //displays ''
+echo $altComponent->getUriComponent(); //displays ''
+~~~
+
+In both cases, the `__toString` returns the same value **but** the other methods do not.
 
 ## URI parts comparison
 
@@ -164,6 +200,38 @@ echo $query;     //display 'q=url&site=thephpleague'
 ~~~
 
 Since we are using immutable value objects, the source component is not modified instead a modified copy of the original object is returned.
+
+## Simple URI parts
+
+Simple URI parts are URI parts or components that are build as a simple string with no specific inner-meaning:
+
+- scheme
+- user
+- pass
+- port
+- fragment
+
+### Get decoded value
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+Beside, the scheme and the port component, which does not require it, a specific method `getValue` is added to access the decoded value of any simple component as seen in the following example:
+
+~~~php
+<?php
+
+use League\Uri\Components;
+
+$component = new Components\Fragment('%E2%82%AC');
+echo $component->getUriComponent(); //displays '#%E2%82%AC'
+echo $component->getValue(); //displays '€'
+~~~
+
+The `getValue` method is attached to the following classes:
+
+* `League\Uri\Components\Pass`
+* `League\Uri\Components\User`
+* `League\Uri\Components\Fragment`
 
 ## Complex URI parts
 

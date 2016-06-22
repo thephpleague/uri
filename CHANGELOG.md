@@ -13,6 +13,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Path::createFromSegments` to replace `Path::createFromArray`
 - `Host::createFromLabels` to replace `Host::createFromArray`
 - `Query::createFromPairs` to replace `Query::createFromArray`
+- `UserInfo::createFromString` to create a UserInfo object from a given string
 
 ### Fixed
 

@@ -51,7 +51,7 @@ trait ValidatorTrait
      *
      * @return string
      */
-    protected function validateString($str)
+    protected static function validateString($str)
     {
         if (is_string($str)) {
             return $str;

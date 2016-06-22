@@ -16,6 +16,7 @@ use League\Uri\Interfaces\UriPart;
 use League\Uri\Interfaces\User as UserInterface;
 use League\Uri\Interfaces\UserInfo as UserInfoInterface;
 use League\Uri\Types\ImmutablePropertyTrait;
+use League\Uri\Types\ValidatorTrait;
 
 /**
  * Value object representing the UserInfo part of an URI.
@@ -28,6 +29,7 @@ use League\Uri\Types\ImmutablePropertyTrait;
 class UserInfo implements UserInfoInterface
 {
     use ImmutablePropertyTrait;
+    use ValidatorTrait;
 
     /**
      * User Component
@@ -42,6 +44,23 @@ class UserInfo implements UserInfoInterface
      * @var Pass
      */
     protected $pass;
+
+    /**
+     * Create a new instance from a string
+     *
+     * @param string $str
+     *
+     * @return static
+     */
+    public static function createFromString($str)
+    {
+        $res = explode(UserInfoInterface::SEPARATOR, self::validateString($str), 2);
+
+        return new static(
+            new User(array_shift($res)),
+            new Pass(array_shift($res))
+        );
+    }
 
     /**
      * Create a new instance of UserInfo

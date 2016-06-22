@@ -31,7 +31,10 @@ class Pass extends AbstractComponent implements PassInterface
             return $this->data;
         }
 
-        return $this->encode((string) $this->data, self::$subdelimChars.'\:');
+        $regexp = '/(?:[^'.self::$unreservedChars.self::$subdelimChars.'\:]+
+            |%(?!'.self::$encodedChars.'))/x';
+
+        return $this->encode((string) $this->data, $regexp);
     }
 
     /**

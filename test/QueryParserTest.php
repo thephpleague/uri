@@ -92,4 +92,14 @@ class QueryParserTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($expected, $this->parser->build($arr, '&', 'yolo'));
     }
+
+    public function testParserBuilderPreserveQuery()
+    {
+        $querystring = 'uri=http://example.com?a=b%26c=d';
+        $data = $this->parser->parse($querystring);
+        $this->assertSame([
+            'uri' => 'http://example.com?a=b&c=d',
+        ], $data);
+        $this->assertSame($querystring, $this->parser->build($data));
+    }
 }

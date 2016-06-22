@@ -58,11 +58,14 @@ class Fragment extends AbstractComponent implements FragmentInterface
      */
     public function getContent()
     {
-        if (null === $this->data && false === $this->preserveDelimiter) {
+        if (null === $this->data) {
             return null;
         }
 
-        return $this->encodeQueryFragment($this->data);
+        $regexp = '/(?:[^'.self::$unreservedChars.self::$subdelimChars.'\:\/@\?]+
+            |%(?!'.self::$encodedChars.'))/x';
+
+        return $this->encode($this->data, $regexp);
     }
 
     /**

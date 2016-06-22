@@ -119,7 +119,7 @@ class QueryParser
     public function build(array $arr, $separator = '&', $encodingType = PHP_QUERY_RFC3986)
     {
         $encodingType = $this->validateEncodingType($encodingType);
-        $encoder = $this->getEncoder($encodingType);
+        $encoder = $this->getEncoder($encodingType, $separator);
         $arr = array_map(function ($value) {
             return !is_array($value) ? [$value] : $value;
         }, $arr);
@@ -163,10 +163,18 @@ class QueryParser
      *
      * @return callable
      */
-    protected function getEncoder($encodingType)
+    protected function getEncoder($encodingType, $separator)
     {
         if (PHP_QUERY_RFC3986 === $encodingType) {
-            return [$this, 'encodeQueryFragment'];
+            return function ($str) use ($separator) {
+                $subdelimChars = str_replace($separator, '', "!$'()*+,;=%:@?/&");
+                $subdelimChars = preg_quote($subdelimChars, '/');
+
+                $regexp = '/(?:[^'.self::$unreservedChars.$subdelimChars.']+
+                    |%(?!'.self::$encodedChars.'))/x';
+
+                return $this->encode($str, $regexp);
+            };
         }
 
         if (PHP_QUERY_RFC1738 === $encodingType) {

@@ -59,14 +59,13 @@ trait TranscoderTrait
     /**
      * Encode a component string
      *
-     * @param string $str     The string to encode
-     * @param string $pattern a regular expression pattern
+     * @param string $str    The string to encode
+     * @param string $regexp a regular expression
      *
      * @return string
      */
-    protected static function encode($str, $pattern)
+    protected static function encode($str, $regexp)
     {
-        $regexp = '/(?:[^'.self::$unreservedChars.$pattern.']+|%(?!'.self::$encodedChars.'))/';
         $encoder = function (array $matches) {
             return rawurlencode($matches[0]);
         };
@@ -88,19 +87,10 @@ trait TranscoderTrait
      */
     protected static function encodePath($str)
     {
-        return self::encode($str, self::$subdelimChars.'\:\/@');
-    }
+        $regexp = '/(?:[^'.self::$unreservedChars.self::$subdelimChars.'\:\/@]+|
+            %(?!'.self::$encodedChars.'))/x';
 
-    /**
-     * Encode a string according to RFC3986 Rules
-     *
-     * @param string $str
-     *
-     * @return string
-     */
-    protected static function encodeQueryFragment($str)
-    {
-        return self::encode($str, self::$subdelimChars.'\:\/@\?');
+        return self::encode($str, $regexp);
     }
 
     /**

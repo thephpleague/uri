@@ -34,9 +34,6 @@ class UserInfoTest extends AbstractTestCase
 
     /**
      * @dataProvider sameValueAsProvider
-     * @param $userinfo
-     * @param $userinfobis
-     * @param $expected
      */
     public function testSameValueAs($userinfo, $userinfobis, $expected)
     {
@@ -54,23 +51,17 @@ class UserInfoTest extends AbstractTestCase
     }
 
     /**
-     * @dataProvider toArrayProvider
-     *
-     * @param string $login
-     * @param string $pass
-     * @param string $expected_user
-     * @param string $expected_pass
-     * @param string $expected_str
+     * @dataProvider userInfoProvider
      */
-    public function testToArray($login, $pass, $expected_user, $expected_pass, $expected_str)
+    public function testConstructor($user, $pass, $expected_user, $expected_pass, $expected_str)
     {
-        $userinfo = new UserInfo($login, $pass);
+        $userinfo = new UserInfo($user, $pass);
         $this->assertSame($expected_user, $userinfo->getUser());
         $this->assertSame($expected_pass, $userinfo->getPass());
-        $this->assertSame($expected_str, (string) $userinfo->__toString());
+        $this->assertSame($expected_str, (string) $userinfo);
     }
 
-    public function toArrayProvider()
+    public function userInfoProvider()
     {
         return [
             ['login', 'pass', 'login', 'pass', 'login:pass'],
@@ -79,6 +70,28 @@ class UserInfoTest extends AbstractTestCase
             ['', null, '', '', ''],
             ['', '', '', '', ''],
             [null, 'pass', '', 'pass', ''],
+        ];
+    }
+
+    /**
+     * @dataProvider createFromStringProvider
+     */
+    public function testCreateFromString($str, $expected_user, $expected_pass, $expected_str)
+    {
+        $conn = UserInfo::createFromString($str);
+        $this->assertSame($expected_user, $conn->getUser());
+        $this->assertSame($expected_pass, $conn->getPass());
+        $this->assertSame($expected_str, (string) $conn);
+    }
+
+    public function createFromStringProvider()
+    {
+        return [
+            ['user:pass', 'user', 'pass', 'user:pass'],
+            ['user:', 'user', '', 'user'],
+            ['user', 'user', '', 'user'],
+            [':pass', '', 'pass', ''],
+            ['', '', '', ''],
         ];
     }
 }

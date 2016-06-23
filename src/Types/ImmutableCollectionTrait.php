@@ -84,7 +84,7 @@ trait ImmutableCollectionTrait
      */
     public function keys()
     {
-        if (0 == func_num_args()) {
+        if (0 === func_num_args()) {
             return array_keys($this->data);
         }
 

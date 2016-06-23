@@ -105,7 +105,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected static function format(array $data, $type)
     {
         $hostname = implode(static::$separator, array_reverse($data));
-        if (self::IS_ABSOLUTE == $type) {
+        if (self::IS_ABSOLUTE === $type) {
             return $hostname.static::$separator;
         }
 
@@ -378,7 +378,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     protected function setIsAbsolute($str)
     {
         $this->isAbsolute = self::IS_RELATIVE;
-        if ('.' == mb_substr($str, -1, 1, 'UTF-8')) {
+        if ('.' === mb_substr($str, -1, 1, 'UTF-8')) {
             $this->isAbsolute = self::IS_ABSOLUTE;
             $str = mb_substr($str, 0, -1, 'UTF-8');
         }

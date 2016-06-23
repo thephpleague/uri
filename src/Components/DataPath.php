@@ -146,7 +146,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
     protected function filterParameters($parameters)
     {
         $this->isBinaryData = false;
-        if ('' == $parameters) {
+        if ('' === $parameters) {
             return [static::DEFAULT_PARAMETER];
         }
 
@@ -174,7 +174,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
     {
         $properties = explode('=', $parameter);
 
-        return 2 != count($properties) || mb_strtolower($properties[0], 'UTF-8') == static::BINARY_PARAMETER;
+        return 2 != count($properties) || mb_strtolower($properties[0], 'UTF-8') === static::BINARY_PARAMETER;
     }
 
     /**
@@ -374,7 +374,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
      */
     public function withParameters($parameters)
     {
-        if ($parameters == $this->getParameters()) {
+        if ($parameters === $this->getParameters()) {
             return $this;
         }
 

@@ -262,7 +262,7 @@ class Query implements QueryInterface
      */
     protected function newCollectionInstance(array $data)
     {
-        if ($data == $this->data) {
+        if ($data === $this->data) {
             return $this;
         }
 

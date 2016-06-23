@@ -268,7 +268,7 @@ class Formatter
      */
     protected function formatHost(HostInterface $host)
     {
-        if (self::HOST_AS_ASCII == $this->hostEncoding) {
+        if (self::HOST_AS_ASCII === $this->hostEncoding) {
             return $host->toAscii()->__toString();
         }
 
@@ -306,7 +306,7 @@ class Formatter
      */
     protected function formatAuthority($uri)
     {
-        if ('' == $uri->getHost()) {
+        if ('' === $uri->getHost()) {
             return '';
         }
 

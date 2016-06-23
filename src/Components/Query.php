@@ -131,7 +131,7 @@ class Query implements QueryInterface
      */
     public function getContent()
     {
-        if ([] === $this->data) {
+        if (!$this->preserveDelimiter) {
             return null;
         }
 

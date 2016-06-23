@@ -23,35 +23,6 @@ use League\Uri\Interfaces\Fragment as FragmentInterface;
 class Fragment extends AbstractComponent implements FragmentInterface
 {
     /**
-     * Preserve the delimiter
-     *
-     * @var bool
-     */
-    protected $preserveDelimiter = false;
-
-    /**
-     * new instance
-     *
-     * @param string|null $data the component value
-     */
-    public function __construct($data = null)
-    {
-        $this->data = $this->validate($data);
-        $this->preserveDelimiter = null !== $data;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function __set_state(array $properties)
-    {
-        $component = new static($properties['data']);
-        $component->preserveDelimiter = $properties['preserveDelimiter'];
-
-        return $component;
-    }
-
-    /**
      * Returns the component literal value
      *
      * @return string|null
@@ -87,7 +58,7 @@ class Fragment extends AbstractComponent implements FragmentInterface
     public function getUriComponent()
     {
         $component = $this->__toString();
-        if ($this->preserveDelimiter) {
+        if (null !== $this->data) {
             return FragmentInterface::DELIMITER.$component;
         }
 

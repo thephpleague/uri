@@ -119,7 +119,7 @@ trait PathTrait
      */
     protected function filterDotSegments(array $carry, $segment)
     {
-        if ('..' == $segment) {
+        if ('..' === $segment) {
             array_pop($carry);
 
             return $carry;
@@ -182,7 +182,7 @@ trait PathTrait
      */
     public function withoutTrailingSlash()
     {
-        return !$this->hasTrailingSlash() ? $this : $this->modify(mb_substr($this->__toString(), 0, -1, 'UTF-8'));
+        return !$this->hasTrailingSlash() ? $this : $this->modify(mb_substr($this, 0, -1, 'UTF-8'));
     }
 
     /**
@@ -221,7 +221,7 @@ trait PathTrait
      */
     public function withoutLeadingSlash()
     {
-        return !$this->isAbsolute() ? $this : $this->modify(mb_substr($this->__toString(), 1, null, 'UTF-8'));
+        return !$this->isAbsolute() ? $this : $this->modify(mb_substr($this, 1, null, 'UTF-8'));
     }
 
     /**

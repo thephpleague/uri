@@ -71,7 +71,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
         }
 
         $path = implode(static::$separator, static::validateIterator($data));
-        if (self::IS_ABSOLUTE == $type) {
+        if (self::IS_ABSOLUTE === $type) {
             $path = static::$separator.$path;
         }
 
@@ -87,7 +87,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     {
         $path = $this->validateString($path);
         $this->isAbsolute = self::IS_RELATIVE;
-        if (static::$separator == substr($path, 0, 1)) {
+        if (static::$separator === substr($path, 0, 1)) {
             $this->isAbsolute = self::IS_ABSOLUTE;
             $path = substr($path, 1, strlen($path));
         }
@@ -168,7 +168,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     public function getContent()
     {
         $front_delimiter = '';
-        if ($this->isAbsolute == self::IS_ABSOLUTE) {
+        if ($this->isAbsolute === self::IS_ABSOLUTE) {
             $front_delimiter = static::$separator;
         }
 

@@ -186,7 +186,7 @@ class UriParser
      */
     protected function setIsAbsolute($host)
     {
-        return ('.' == mb_substr($host, -1, 1, 'UTF-8')) ? mb_substr($host, 0, -1, 'UTF-8') : $host;
+        return ('.' === mb_substr($host, -1, 1, 'UTF-8')) ? mb_substr($host, 0, -1, 'UTF-8') : $host;
     }
 
     /**

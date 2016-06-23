@@ -175,8 +175,8 @@ abstract class AbstractUri
         }
 
         $userInfo = $this->userInfo->withUser($this->filterPropertyValue($user))->withPass($password);
-        if ($this->userInfo->getUser() == $userInfo->getUser()
-            && $this->userInfo->getPass() == $userInfo->getPass()
+        if ($this->userInfo->getUser() === $userInfo->getUser()
+            && $this->userInfo->getPass() === $userInfo->getPass()
         ) {
             return $this;
         }

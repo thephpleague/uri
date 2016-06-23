@@ -60,7 +60,7 @@ abstract class AbstractHierarchicalComponent
      */
     public function isAbsolute()
     {
-        return $this->isAbsolute == self::IS_ABSOLUTE;
+        return $this->isAbsolute === self::IS_ABSOLUTE;
     }
 
     /**
@@ -131,7 +131,7 @@ abstract class AbstractHierarchicalComponent
 
         $source = $this->toArray();
         $dest   = $this->validateComponent($component)->toArray();
-        if ('' == $dest[count($dest) - 1]) {
+        if ('' === $dest[count($dest) - 1]) {
             array_pop($dest);
         }
 

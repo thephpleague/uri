@@ -165,20 +165,21 @@ class QueryParser
      */
     protected function getEncoder($encodingType, $separator)
     {
+        $separator = html_entity_decode($separator, ENT_HTML5, 'UTF-8');
+        $subdelimChars = str_replace($separator, '', "!$'()*+,;=%:@?/&");
+        $regexp = '/(?:[^'.self::$unreservedChars.preg_quote($subdelimChars, '/').']+
+            |%(?!'.self::$encodedChars.'))/x';
+
         if (PHP_QUERY_RFC3986 === $encodingType) {
-            return function ($str) use ($separator) {
-                $subdelimChars = str_replace($separator, '', "!$'()*+,;=%:@?/&");
-                $subdelimChars = preg_quote($subdelimChars, '/');
-
-                $regexp = '/(?:[^'.self::$unreservedChars.$subdelimChars.']+
-                    |%(?!'.self::$encodedChars.'))/x';
-
+            return function ($str) use ($regexp) {
                 return $this->encode($str, $regexp);
             };
         }
 
         if (PHP_QUERY_RFC1738 === $encodingType) {
-            return 'urlencode';
+            return function ($str) use ($regexp) {
+                return str_replace(['+', '~'], ['%2B', '%7E'], $this->encode($str, $regexp));
+            };
         }
 
         return 'sprintf';

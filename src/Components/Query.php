@@ -197,6 +197,8 @@ class Query implements QueryInterface
      */
     public function getValue($offset, $default = null)
     {
+        $offset = $this->validateString($offset);
+        $offset = $this->decodeComponent($offset);
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }

@@ -198,12 +198,8 @@ class QueryParser
             return [$this, 'decodeComponent'];
         }
 
-        if (PHP_QUERY_RFC1738 === $encodingType) {
-            return 'urldecode';
-        }
-
         return function ($value) {
-            return rawurldecode(str_replace('+', ' ', $value));
+            return $this->decodeComponent(str_replace('+', ' ', $value));
         };
     }
 }

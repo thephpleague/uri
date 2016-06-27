@@ -35,7 +35,7 @@ captain:future
   user   pass
 ~~~
 
-The `League\Uri` package uses two interfaces as fundation to implements any URI component or part.
+The `League\Uri` package uses two interfaces as fundation to implement any URI component or part.
 
 ## URI part interface
 
@@ -44,7 +44,7 @@ The `League\Uri` package uses two interfaces as fundation to implements any URI 
 
 namespace League\Uri\Interfaces;
 
-UriPart
+interface UriPart
 {
     //methods
     public function __toString(void);
@@ -53,11 +53,11 @@ UriPart
 }
 ~~~
 
-This interface exposes methods that must be attached to any URI part or component. Theses methods allow complementary representations of a URI component depending on the required context.
+The `UriPart` interface exposes methods that allow a basic representation of an URI part.
 
 ### UriPart::__toString
 
-Returns the normalized/encoded string version of the URI part/component. This is the form used when echoing the URI component from the URI object getter methods.
+Returns the normalized and encoded string version of the URI part. This is the form used when echoing the URI component from the URI object getter methods.
 
 ~~~php
 <?php
@@ -84,11 +84,11 @@ $path = new HierarchicalPath('/toto le heros/file.xml');
 echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 ~~~
 
-<p class="message-notice">Normalization and encoding are specific to the URI part/component.</p>
+<p class="message-notice">Normalization and encoding are specific to the URI part.</p>
 
 ### UriPart::getUriComponent
 
-Returns the normalized/encoded string version of the URI part/component with its optional delimiter if required. This is the form used by the URI object `__toString` method when building the URI string representation.
+Returns the string representation of the normalized and encoded URI part with its optional delimiter if required. This is the form used by the URI object `__toString` method when building the URI string representation.
 
 ~~~php
 <?php
@@ -105,16 +105,18 @@ use League\Uri\Components\Scheme;
 
 $scheme = new Scheme('HtTp');
 echo $scheme->getUriComponent(); //display 'http:'
+
+$userinfo = new UserInfo('john');
+echo $userinfo->getUriComponent(); //displays 'john@'
 ~~~
 
-<p class="message-notice">Normalization, encoding and delimiters are specific to the URI part/component.</p>
+<p class="message-notice">Normalization, encoding and delimiters are specific to the URI part.</p>
 
 ### UriPart::getContent
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
-
-Returns the normalized-encoded version of the URI part.
+Returns the normalized and encoded version of the URI part.
 
 ~~~php
 <?php
@@ -122,11 +124,11 @@ Returns the normalized-encoded version of the URI part.
 public UriPart::getContent(void): mixed
 ~~~
 
-The method return type depends on the URI part status:
+This method return type is:
 
-* `null` : If the part is not defined;
-* `string` : When the part is defined. This string is normalized and encoded according to the part rules;
-* `int` : In case of a defined and valid port;
+* `null` : If the URI part is not defined;
+* `string` : When the part is defined. This string is normalized and encoded according to the URI part rules;
+* `int` : When the defined Uri component is the Uri port;
 
 #### Example
 
@@ -136,23 +138,23 @@ The method return type depends on the URI part status:
 use League\Uri\Components\Query;
 use League\Uri\Components\Port;
 
-$query = new Query();
-echo $query->getContent(); //displays null
+$component = new Query();
+echo $component->getContent(); //displays null
 
-$query = new Query('');
-echo $query->getContent(); //displays ''
+$component = new Query('');
+echo $component->getContent(); //displays ''
 
-$port = new Port(23);
-echo $port->getContent(); //displays (int) 23;
+$component = new Port(23);
+echo $component->getContent(); //displays (int) 23;
 ~~~
 
 #### Notes
 
-<p class="message-notice">To avoid BC Break <code>getContent</code> is not yet part of the <code>UriPart</code> interface but will be added in the next major release.</p>
+<p class="message-notice">To avoid BC Break <code>getContent</code> is not part of the <code>UriPart</code> interface but will be added in the next major release.</p>
 
 ### Differences between UriPart representations
 
-To understand the differences between the described representations see below:
+To understand the differences between the described representations see the examples below:
 
 ~~~php
 <?php
@@ -172,13 +174,13 @@ echo $altComponent->getUriComponent(); //displays ''
 
 In both cases, the `__toString` returns the same value **but** the other methods do not.
 
-<p class="message-notice">The <code>__toString</code> method is unabled to distinguish between an empty  and an undefined URI component/part.</p>
+<p class="message-notice">The <code>__toString</code> method is unabled to distinguish between an empty and an undefined URI part.</p>
 
 ### UriPart::sameValueAs
 
 <p class="message-warning">Since <code>version 4.2</code> this method is deprecated.</p>
 
-Compares two `UriPart` object to determine whether they are equal or not. The comparison is based on the result of `UriPart::getUriComponent` for both objects.
+Compares two `UriPart` object to determine whether they are equal or not. The comparison is based on the result of `UriPart::getUriComponent` from both objects.
 
 ~~~php
 <?php
@@ -206,11 +208,11 @@ $host->sameValueAs($uri);
 //a PHP Fatal Error is issue or a PHP7+ TypeError is thrown
 ~~~
 
-<p class="message-warning">Only Url parts objects can be compared with each others, any other object will result in a PHP Fatal Error or a PHP7+ TypeError will be thrown.</p>
+<p class="message-warning">Only Uri parts objects can be compared, any other object will result in a PHP Fatal Error or a PHP7+ TypeError will be thrown.</p>
 
 ## URI component interface
 
-<p class="message-info">This interface which extends the <code>UriPart</code> interface is implemented by all URI components classes except for the <code>UserInfo</code> class which does not represent an Uri component.</p>
+<p class="message-info">This interface which extends the <code>UriPart</code> interface is only implemented by URI components classes.</p>
 
 ~~~php
 <?php
@@ -219,7 +221,7 @@ namespace League\Uri\Interfaces;
 
 use League\Uri\Interfaces\UriPart;
 
-Component extends UriPart
+interface Component extends UriPart
 {
     public function modify($value);
 }
@@ -289,11 +291,11 @@ $host->__toString() == $newHost->__toString();
 
 The `Uri` package comes bundle with the following classes:
 
-### URI part class
+### UriPart implementing classes
 
 * The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
 
-### URI components classes
+### Component implementing classes
 
 * The `League\Uri\Components\Scheme` handles [the scheme component](/components/scheme/);
 * The `League\Uri\Components\User` handles [the user component](/components/userinfo/);

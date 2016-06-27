@@ -5,78 +5,24 @@ title: The Pass component
 
 # The Pass component
 
-The library provides a `League\Uri\Components\Pass` class to ease user manipulation.
+The library provides a `Pass` class to ease user creation and manipulation.
 
 ## Instantiation
 
-### Default Constructor
-
-A new `League\Uri\Components\Pass` object can be instantiated using its default constructor.
+### Using the default constructor.
 
 ~~~php
 <?php
 
-use League\Uri\Components\Pass;
-
-$component = new Pass('ftp');
-echo $component; //display 'ftp'
-
-$empty_component = new Pass();
-echo $empty_component; //display ''
+public function __contruct($pass = null)
 ~~~
 
-The scheme component constructor accepts:
+The constructor accepts:
 
-- a valid string according to their component validation rules as explain in RFC3986;
+- a valid string according to RFC3986 rules;
 - the `null` value;
 
 <p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
-On instantiation the Pass is normalized using RFC3986 rules.
-
-### Using a League Uri object
-
-You can acces a `League\Uri\Components\Pass` object with an already instantiated League Uri object.
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http as HttpUri;
-
-$uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
-$component = $uri->userInfo->pass; // $pass is a League\Uri\Components\Pass object;
-~~~
-
-## Pass representations
-
-### UriPart representations
-
-Pass representations is done using the `UriPart` interface methods:
-
-~~~php
-<?php
-
-use League\Uri\Components\Pass;
-
-$component = new Pass('HtTp');
-$component->getContent();      //return 'http'
-$component->__toString();      //return 'http'
-$component->getUriComponent(); //return 'http'
-~~~
-
-<p class="message-notice"><code>getContent</code> added in <code>version 4.2</code></p>
-
-### Pass::getValue
-
-<p class="message-notice">New since <code>version 4.2</code></p>
-
-Returns the decoded value of a Pass component
-
-~~~php
-<?php
-
-public Pass::getValue(void): string
-~~~
 
 #### Example
 
@@ -85,9 +31,55 @@ public Pass::getValue(void): string
 
 use League\Uri\Components\Pass;
 
-$component = new Pass('%E2%82%AC');
-echo $component->getUriComponent(); //displays '%E2%82%AC'
-echo $component->getValue(); //displays '€'
+$user = new Pass('john');
+echo $user->getContent();      //display 'john'
+echo $user;                    //display 'john'
+echo $user->getUriComponent(); //display 'john'
+
+$user = new Pass();
+echo $user->getContent();      //display null
+echo $user;                    //display ''
+echo $user->getUriComponent(); //display ''
 ~~~
 
-To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/#componentmodify) the port object you should refer to the component overview section.
+<p class="message-info">On instantiation the user is encoded using RFC3986 rules.</p>
+
+### Using a League Uri object
+
+You can acces a `Pass` object with an already instantiated `Uri` object.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http as HttpUri;
+
+$uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
+$pass = $uri->pass; // $user is a League\Uri\Components\Pass object;
+~~~
+
+## Properties
+
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.
+
+### Getting the decoded value of the pass 
+
+<p class="message-notice">New in <code>version 4.2</code></p>
+
+~~~php
+<?php
+
+public function Pass::getValue(void): string
+~~~
+
+Returns the decoded string representation of the user component
+
+#### Example
+
+~~~php
+<?php
+use League\Uri\Components\Pass;
+
+$user = new Pass('frag%20ment');
+$user->getContent(); // display 'frag%20ment'
+$user->getValue(); // display 'frag ment'
+~~~

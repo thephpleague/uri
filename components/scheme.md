@@ -5,11 +5,26 @@ title: The Scheme component
 
 # The Scheme component
 
-The library provides a `League\Uri\Components\Scheme` class to ease scheme manipulation.
+The library provides a `Scheme` class to ease scheme creation and manipulation.
 
 ## Instantiation
 
-A new `League\Uri\Components\Scheme` object can be instantiated using its default constructor.
+### Using the default constructor.
+
+~~~php
+<?php
+
+public function __contruct($scheme = null)
+~~~
+
+The constructor accepts:
+
+- a valid string according to RFC3986 rules;
+- the `null` value;
+
+<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
+
+#### Example
 
 ~~~php
 <?php
@@ -17,47 +32,31 @@ A new `League\Uri\Components\Scheme` object can be instantiated using its defaul
 use League\Uri\Components\Scheme;
 
 $scheme = new Scheme('ftp');
-echo $scheme; //display 'ftp'
+echo $scheme->getContent();      //display 'ftp'
+echo $scheme;                    //display 'ftp'
+echo $scheme->getUriComponent(); //display 'ftp:'
 
-$empty_scheme = new Scheme();
-echo $empty_scheme; //display ''
+$scheme = new Scheme();
+echo $scheme->getContent();      //display null
+echo $scheme;                    //display ''
+echo $scheme->getUriComponent(); //display ''
 ~~~
 
-The scheme component constructor accepts:
-
-- a valid string according to their component validation rules as explain in RFC3986;
-- the `null` value;
-
-<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
-On instantiation the Scheme et normalized using RFC3986 rules (ie: the scheme is lowercased).
+<p class="message-info">On instantiation the scheme is normalized using RFC3986 rules.</p>
 
 ### Using a League Uri object
 
-You can acces a `League\Uri\Components\Scheme` object with an already instantiated League Uri object.
+You can acces a `Scheme` object with an already instantiated League\Uri object.
 
 ~~~php
 <?php
 
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri  = HttpUri::createFromString('http://uri.thephpleague.com:82');
+$uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
 $scheme = $uri->scheme; // $scheme is a League\Uri\Components\Scheme object;
 ~~~
 
-## Scheme representations
+## Properties
 
-Scheme representations is done using the `UriPart` interface methods:
-
-~~~php
-<?php
-
-use League\Uri\Components\Scheme;
-
-$scheme = new Scheme('HtTp');
-$scheme->getContent();      //return 'http'
-$scheme->__toString();      //return 'http'
-$scheme->getUriComponent(); //return 'http:'
-~~~
-
-To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/#componentmodify) the port object you should refer to the component overview section.
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.

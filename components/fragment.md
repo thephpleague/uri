@@ -5,30 +5,45 @@ title: The Fragment component
 
 # The Fragment component
 
-The library provides a `League\Uri\Components\Fragment` class to ease fragment manipulation.
+The library provides a `Fragment` class to ease fragment creation and manipulation.
 
 ## Instantiation
 
-A new `League\Uri\Components\Fragment` object can be instantiated using its default constructor.
+### Using the default constructor.
+
+~~~php
+<?php
+
+public function __contruct($fragment = null)
+~~~
+
+The constructor accepts:
+
+- a valid string according to their component validation rules as explain in RFC3986;
+- the `null` value;
+
+<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
 
 ~~~php
 <?php
 
 use League\Uri\Components\Fragment;
 
-$scheme = new Fragment('ftp');
-echo $scheme; //display 'ftp'
+$fragment = new Fragment('eur%20o');
+echo $fragment->getContent();      //display 'eur%20o'
+echo $fragment;                    //display 'eur%20o'
+echo $fragment->getUriComponent(); //display '#eur%20o'
 
-$empty_scheme = new Fragment();
-echo $empty_scheme; //display ''
+$fragment = new Fragment();
+echo $fragment->getContent();      //display null
+echo $fragment;                    //display ''
+echo $fragment->getUriComponent(); //display ''
+
+$fragment = new Fragment('');
+echo $fragment->getContent();      //display ''
+echo $fragment;                    //display ''
+echo $fragment->getUriComponent(); //display '#'
 ~~~
-
-The scheme component constructor accepts:
-
-- a valid string according to their component validation rules as explain in RFC3986;
-- the `null` value;
-
-<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
 
 ### Using a League Uri object
 
@@ -40,25 +55,12 @@ You can acces a `League\Uri\Components\Fragment` object with an already instanti
 use League\Uri\Fragments\Http as HttpUri;
 
 $uri  = HttpUri::createFromString('http://uri.thephpleague.com:82');
-$scheme = $uri->scheme; // $scheme is a League\Uri\Components\Fragment object;
+$fragment = $uri->fragment; // $fragment is a League\Uri\Components\Fragment object;
 ~~~
 
-## Fragment representations
+## Properties
 
-### UriPart representation
-
-Fragment representations is done using the `UriPart` interface methods:
-
-~~~php
-<?php
-
-use League\Uri\Components\Fragment;
-
-$component = new Fragment('HtTp');
-$component->getContent();      //return 'HtTp'
-$component->__toString();      //return 'HtTp'
-$component->getUriComponent(); //return '#HtTp'
-~~~
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.
 
 ### Fragment::getValue
 
@@ -83,5 +85,3 @@ $component = new Fragment('%E2%82%AC');
 echo $component->getUriComponent(); //displays '#%E2%82%AC'
 echo $component->getValue(); //displays '€'
 ~~~
-
-To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/#componentmodify) the port object you should refer to the component overview section.

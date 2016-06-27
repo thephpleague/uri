@@ -68,11 +68,12 @@ class Query implements QueryInterface
      */
     public static function createFromPairs($data)
     {
-        $query = null;
         $data = static::validateIterator($data);
-        if (!empty($data)) {
-            $query = (new QueryParser())->build($data, static::$separator, PHP_QUERY_RFC3986);
+        if (empty($data)) {
+            return new static();
         }
+
+        $query = (new QueryParser())->build($data, static::$separator);
 
         return new static($query);
     }
@@ -218,15 +219,12 @@ class Query implements QueryInterface
      */
     public function merge($query)
     {
-        if (!$query instanceof QueryInterface) {
-            $query = static::createFromPairs($this->validate($query));
-        }
-
-        if ($this->sameValueAs($query)) {
+        $pairs = !$query instanceof QueryInterface ? $this->validate($query) : $query->toArray();
+        if ($this->data === $pairs) {
             return $this;
         }
 
-        return static::createFromPairs(array_merge($this->toArray(), $query->toArray()));
+        return static::createFromPairs(array_merge($this->data, $pairs));
     }
 
     /**

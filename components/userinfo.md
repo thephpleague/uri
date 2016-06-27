@@ -19,22 +19,21 @@ The constructor expects 2 optional arguments:
 ~~~php
 <?php
 
-use League\Uri\Components;
+use League\Uri\Components\UserInfo;
+use League\Uri\Components\User;
+use League\Uri\Components\Pass;
 
-$info = new Components\UserInfo('foo', 'bar');
+$info = new UserInfo('foo', 'bar');
 echo $info; //display 'foo:bar'
 
-$emptyInfo = new Components\UserInfo();
+$emptyInfo = new UserInfo();
 echo $emptyInfo; //display ''
 
-$altInfo = new Components\UserInfo(
-	new Components\User('foo'),
-	new Components\Pass('bar')
-);
+$altInfo = new UserInfo(new User('foo'), new Pass('bar'));
 echo $altInfo; //display 'foo:bar'
 ~~~
 
-<p class="message-warning">If the submitted value are not valid user and/or password string an <code>InvalidArgumentException</code> will be thrown.</p>
+<p class="message-warning">If the submitted value are not valid user and/or password string an <code>InvalidArgumentException</code> exception is thrown.</p>
 
 ### Using a named constructor
 
@@ -43,7 +42,7 @@ echo $altInfo; //display 'foo:bar'
 ~~~php
 <?php
 
-public static UserInfo::createFromString(string $uri = ''): Uri
+public static UserInfo::createFromString(string $userinfo = ''): UserInfo
 ~~~
 
 Using the `createFromString` static method you can instantiate a new UserInfo object from a string or from any object that implements the `__toString` method.
@@ -82,9 +81,12 @@ Basic representations is done using the following methods:
 use League\Uri\Components\UserInfo;
 
 $info = new UserInfo('foo', 'bar');
+$info->getContent();     // return 'foo:bar'
 $info->__toString();      //return 'foo:bar'
 $info->getUriComponent(); //return 'foo:bar@'
 ~~~
+
+<p class="message-notice"><code>UserInfo::getContent</code> is new in <code>version 4.2</code></p>
 
 ## Accessing User information content
 
@@ -140,4 +142,4 @@ echo $new_info; //displays john:doe
 echo $info;     //displays foo:bar
 ~~~
 
-<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> is thrown.</p>
+<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> exception is thrown.</p>

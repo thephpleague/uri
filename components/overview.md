@@ -35,120 +35,137 @@ captain:future
   user   pass
 ~~~
 
-Apart from the authority part, each component and part of the URI is manageable through a dedicated interface:
+The `League\Uri` package uses two interfaces as fundation to implements any URI component or part.
 
-- The `League\Uri\Interfaces\Components\UriPart` handles any URI part;
-- The `League\Uri\Interfaces\Components\Component` extends the UriPart interface to handle components;
-
-In the library, all concrete classes that represent a URI part or component implements one or several of those interfaces. Just like the URI objects, these classes are defined as immutable value objects.
-
-## URI component instantiation
-
-The default constructor expected an **encoded** string according to the component validation rules as explained in RFC3986 or the `null` value to denote the component or URI part is not defined.
-
-<p class="message-notice">No component or uri part delimiter should be submitted to the classes constructor as they will be interpreted as part of the component value.</p>
-
-<p class="message-warning">If the submitted value is invalid an <code>InvalidArgumentException</code> exception is thrown.</p>
+## URI part interface
 
 ~~~php
 <?php
 
-use League\Uri\Components;
+namespace League\Uri\Interfaces;
 
-$scheme   = new Components\Scheme('http');
-$user     = new Components\User('john');
-$pass     = new Components\Pass('doe');
-$host     = new Components\Host('127.0.0.1');
-$port     = new Components\Port(443);
-$path     = new Components\HierarchicalPath('/foo/bar/file.csv');
-$dataPath = new Components\DataPath('charset=us-ascii;content-type:text/plain,Hello%20World!');
-$query    = new Components\Query('q=url&site=thephpleague');
-$fragment = new Components\Fragment('paragraphid');
+UriPart
+{
+    //methods
+    public function __toString(void);
+    public function getUriComponent(void);
+    public function sameValueAs(UriPart $component);
+}
 ~~~
 
-## URI part representations
+This interface exposes methods that must be attached to any URI part or component. Theses methods allow complementary representations of a URI component depending on the required context.
 
-Each class provides several ways to represent the component value as string.
+### UriPart::__toString
 
-### Basic representation
+Returns the normalized/encoded string version of the URI part/component. This is the form used when echoing the URI component from the URI object getter methods.
+
+~~~php
+<?php
+
+public UriPart::__toString(void): string
+~~~
+
+#### Example
+
+~~~php
+<?php
+
+use League\Uri\Components\Scheme;
+use League\Uri\Components\UserInfo;
+use League\Uri\Components\HierarchicalPath;
+
+$scheme = new Scheme('http');
+echo $scheme->__toString(); //displays 'http'
+
+$userinfo = new UserInfo('john');
+echo $userinfo->__toString(); //displays 'john'
+
+$path = new HierarchicalPath('/toto le heros/file.xml');
+echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
+~~~
+
+<p class="message-notice">Normalization and encoding are specific to the URI part/component.</p>
+<p class="message-notice">The <code>__toString</code> method is unabled to distinguish between an empty  and an undefined URI component/part.</p>
+
+### UriPart::getUriComponent
+
+Returns the normalized/encoded string version of the URI part/component with its optional delimiter if required. This is the form used by the URI object `__toString` method when building the URI string representation.
+
+~~~php
+<?php
+
+public UriPart::getUriComponent(void): string
+~~~
+
+#### Example
+
+~~~php
+<?php
+
+use League\Uri\Components\Scheme;
+
+$scheme = new Scheme('HtTp');
+echo $scheme->getUriComponent(); //display 'http:'
+~~~
+
+<p class="message-notice">Normalization, encoding and delimiters are specific to the URI part/component.</p>
+
+### UriPart::getContent
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
-To get the normalized-encoded version of the URI part you must call the `getContent` method. This method return type depend on the URI part status:
+
+Returns the normalized-encoded version of the URI part.
+
+~~~php
+<?php
+
+public UriPart::getContent(void): mixed
+~~~
+
+The method return type depends on the URI part status:
 
 * `null` : If the part is not defined;
 * `string` : When the part is defined. This string is normalized and encoded according to the part rules;
 * `int` : In case of a defined and valid port;
 
+#### Example
 
 ~~~php
 <?php
 
-use League\Uri\Components;
+use League\Uri\Components\Query;
+use League\Uri\Components\Port;
 
-$query = new Components\Query();
+$query = new Query();
 echo $query->getContent(); //displays null
 
-$query = new Components\Query('');
+$query = new Query('');
 echo $query->getContent(); //displays ''
 
-$port = new Components\Port(23);
+$port = new Port(23);
 echo $port->getContent(); //displays (int) 23;
 ~~~
 
-### String representation
+#### Notes
 
-The `__toString` method returns the string representation of the object. This is the form used when echoing the URI component from the URI object getter methods. No component delimiter is returned.
+<p class="message-notice">To avoid BC Break <code>getContent</code> is not yet part of the <code>UriPart</code> interface but will be added in the next major release.</p>
 
-~~~php
-<?php
-
-use League\Uri\Components;
-
-$scheme = new Components\Scheme('http');
-echo $scheme->__toString(); //displays 'http'
-
-$userinfo = new Components\UserInfo('john');
-echo $userinfo->__toString(); //displays 'john'
-
-$path = new Components\Path('/toto le heros/file.xml');
-echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
-~~~
-
-<p class="message-notice">since <code>version 4.2</code>. The <code>__toString</code> method is derived from the <code>getContent</code> method. As such, no distinction can be made between a empty and an undefined component.</p>
-
-### URI-like representation
-
-The `getUriComponent` Returns the string representation of the URI part with its optional delimiters. This is the form used by the URI object `__toString` method when building the URI string representation.
-
-~~~php
-<?php
-
-use League\Uri\Components;
-
-$scheme = new Components\Scheme('http');
-echo $scheme->getUriComponent(); //displays 'http:'
-
-$userinfo = new Components\UserInfo('john');
-echo $userinfo->getUriComponent(); //displays 'john@'
-
-$path = new Components\Path('/toto le heros/file.xml');
-echo $path->getUriComponent(); //displays '/toto%20le%20heros/file.xml'
-~~~
+### Differences between UriPart representations
 
 To understand the differences between the described representations see below:
 
 ~~~php
 <?php
 
-use League\Uri\Components;
+use League\Uri\Components\Fragment;
 
-$component = new Components\Fragment('');
+$component = new Fragment('');
 $component->getContent(); //returns ''
 echo $component; //displays ''
 echo $component->getUriComponent(); //displays '#'
 
-$altComponent = new Components\Fragment(null);
+$altComponent = new Fragment(null);
 $altComponent->getContent(); //returns null
 echo $component; //displays ''
 echo $altComponent->getUriComponent(); //displays ''
@@ -156,19 +173,30 @@ echo $altComponent->getUriComponent(); //displays ''
 
 In both cases, the `__toString` returns the same value **but** the other methods do not.
 
-## URI parts comparison
+### UriPart::sameValueAs
 
-To compare two components to know if they represent the same value you can use the `sameValueAs` method which compares them according to their respective `getUriComponent` methods.
+<p class="message-warning">Since <code>version 4.2</code> this method is deprecated.</p>
+
+Compares two `UriPart` object to determine whether they are equal or not. The comparison is based on the result of `UriPart::getUriComponent` for both objects.
 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
-use League\Uri\Components;
+public UriPart::sameValueAs(UriPart $component): bool
+~~~
 
-$host     = new Components\Host('www.ExAmPLE.com');
-$alt_host = new Components\Host('www.example.com');
-$fragment = new Components\Fragment('www.example.com');
+#### Example
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+use League\Uri\Components\Fragment;
+use League\Uri\Schemes\Http as HttpUri;
+
+$host     = new Host('www.ExAmPLE.com');
+$alt_host = new Host('www.example.com');
+$fragment = new Fragment('www.example.com');
 $uri      = HttpUri::createFromString('www.example.com');
 
 $host->sameValueAs($alt_host); //return true;
@@ -179,73 +207,47 @@ $host->sameValueAs($uri);
 
 <p class="message-warning">Only Url parts objects can be compared with each others, any other object will result in a PHP Fatal Error or a PHP7+ TypeError will be thrown.</p>
 
-## Component modification
+## URI component interface
 
-Each URI component class can have its content modified using the `modify` method. This method expects:
-
-- a string;
-- or the `null` value;
-
-<p class="message-warning">The <code>UserInfo</code> class does not include a <code>modify</code> method.</p>
+<p class="message-info">This interface which extends the <code>UriPart</code> interface is implemented by all URI components classes except for the `UserInfo` class which does not represent an Uri component.</p>
 
 ~~~php
 <?php
 
-use League\Uri\Components;
+namespace League\Uri\Interfaces;
 
-$query = new Components\Query('q=url&site=thephpleague');
+use League\Uri\Interfaces\UriPart;
+
+Component extends UriPart
+{
+    public function modify($value);
+}
+~~~
+
+### Component::modify
+
+Creates a new `Component` object with a modified content. The original object is not modified.
+
+~~~php
+<?php
+
+public Component::modify($value): Component
+~~~
+
+#### Example
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query = new Query('q=url&site=thephpleague');
 $new_query = $query->modify('q=yolo');
 echo $new_query; //displays 'q=yolo'
 echo $query;     //display 'q=url&site=thephpleague'
 ~~~
 
-Since we are using immutable value objects, the source component is not modified instead a modified copy of the original object is returned.
-
-## Simple URI parts
-
-Simple URI parts are URI parts or components that are build as a simple string with no specific inner-meaning:
-
-- scheme
-- user
-- pass
-- port
-- fragment
-
-### Get decoded value
-
-<p class="message-notice">New in <code>version 4.2</code></p>
-
-Beside, the scheme and the port component, which does not require it, a specific method `getValue` is added to access the decoded value of any simple component as seen in the following example:
-
-~~~php
-<?php
-
-use League\Uri\Components;
-
-$component = new Components\Fragment('%E2%82%AC');
-echo $component->getUriComponent(); //displays '#%E2%82%AC'
-echo $component->getValue(); //displays '€'
-~~~
-
-The `getValue` method is attached to the following classes:
-
-* `League\Uri\Components\Pass`
-* `League\Uri\Components\User`
-* `League\Uri\Components\Fragment`
-
-## Complex URI parts
-
-For more complex parts/components care has be taken to provide more useful methods to interact with their values. Additional methods and properties were added to the following classes:
-
-* `League\Uri\Components\UserInfo` which handles [the URI user information part](/components/userinfo/);
-* `League\Uri\Components\Host` which handles [the host component](/components/host/);
-* `League\Uri\Components\Port` which handles [the port component](/components/port/);
-* `League\Uri\Components\Path` which handles [the generic path component](/components/path/);
-* `League\Uri\Components\HierarchicalPath` which handles [the hierarchical path component](/components/hierarchical-path/);
-* `League\Uri\Components\DataPath` which handles [the data path component](/components/datauri-path/);
-* `League\Uri\Components\Query` which handles [the query component](/components/query/);
-
-## Debugging URI parts and components
+## Debugging
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
@@ -281,3 +283,17 @@ $newHost = eval('return '.var_export($host, true).';');
 
 $host->__toString() == $newHost->__toString();
 ~~~~~~
+
+## Available classes
+
+Apart from the authority part, each URI component and/or part is manageable through the following classes:
+
+* `League\Uri\Components\Scheme` which handles [the scheme component](/components/scheme/);
+* `League\Uri\Components\UserInfo` which handles [the URI user information part](/components/userinfo/);
+* `League\Uri\Components\Host` which handles [the host component](/components/host/);
+* `League\Uri\Components\Port` which handles [the port component](/components/port/);
+* `League\Uri\Components\Path` which handles [the generic path component](/components/path/);
+* `League\Uri\Components\HierarchicalPath` which handles [the hierarchical path component](/components/hierarchical-path/);
+* `League\Uri\Components\DataPath` which handles [the data path component](/components/datauri-path/);
+* `League\Uri\Components\Query` which handles [the query component](/components/query/);
+* `League\Uri\Components\Fragment` which handles [the fragment component](/components/fragment/);

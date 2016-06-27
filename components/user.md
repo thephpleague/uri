@@ -87,4 +87,4 @@ echo $component->getValue(); //displays '€'
 ~~~
 
 
-To [compare](/components/overview/#components-comparison) or [manipulate](/components/overview/#components-modification) the port object you should refer to the component overview section.
+To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/##componentmodify) the port object you should refer to the component overview section.

@@ -85,7 +85,6 @@ echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 ~~~
 
 <p class="message-notice">Normalization and encoding are specific to the URI part/component.</p>
-<p class="message-notice">The <code>__toString</code> method is unabled to distinguish between an empty  and an undefined URI component/part.</p>
 
 ### UriPart::getUriComponent
 
@@ -173,6 +172,8 @@ echo $altComponent->getUriComponent(); //displays ''
 
 In both cases, the `__toString` returns the same value **but** the other methods do not.
 
+<p class="message-notice">The <code>__toString</code> method is unabled to distinguish between an empty  and an undefined URI component/part.</p>
+
 ### UriPart::sameValueAs
 
 <p class="message-warning">Since <code>version 4.2</code> this method is deprecated.</p>
@@ -209,7 +210,7 @@ $host->sameValueAs($uri);
 
 ## URI component interface
 
-<p class="message-info">This interface which extends the <code>UriPart</code> interface is implemented by all URI components classes except for the `UserInfo` class which does not represent an Uri component.</p>
+<p class="message-info">This interface which extends the <code>UriPart</code> interface is implemented by all URI components classes except for the <code>UserInfo</code> class which does not represent an Uri component.</p>
 
 ~~~php
 <?php
@@ -288,12 +289,14 @@ $host->__toString() == $newHost->__toString();
 
 Apart from the authority part, each URI component and/or part is manageable through the following classes:
 
-* `League\Uri\Components\Scheme` which handles [the scheme component](/components/scheme/);
-* `League\Uri\Components\UserInfo` which handles [the URI user information part](/components/userinfo/);
-* `League\Uri\Components\Host` which handles [the host component](/components/host/);
-* `League\Uri\Components\Port` which handles [the port component](/components/port/);
-* `League\Uri\Components\Path` which handles [the generic path component](/components/path/);
-* `League\Uri\Components\HierarchicalPath` which handles [the hierarchical path component](/components/hierarchical-path/);
-* `League\Uri\Components\DataPath` which handles [the data path component](/components/datauri-path/);
-* `League\Uri\Components\Query` which handles [the query component](/components/query/);
-* `League\Uri\Components\Fragment` which handles [the fragment component](/components/fragment/);
+* The `League\Uri\Components\Scheme` handles [the scheme component](/components/scheme/);
+* The `League\Uri\Components\User` handles [the user component](/components/userinfo/);
+* The `League\Uri\Components\Pass` handles [the pass component](/components/userinfo/);
+* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
+* The `League\Uri\Components\Host` handles [the host component](/components/host/);
+* The `League\Uri\Components\Port` handles [the port component](/components/port/);
+* The `League\Uri\Components\Path` handles [the generic path component](/components/path/);
+* The `League\Uri\Components\HierarchicalPath` handles [the hierarchical path component](/components/hierarchical-path/);
+* The `League\Uri\Components\DataPath` handles [the data path component](/components/datauri-path/);
+* The `League\Uri\Components\Query` handles [the query component](/components/query/);
+* The `League\Uri\Components\Fragment` handles [the fragment component](/components/fragment/);

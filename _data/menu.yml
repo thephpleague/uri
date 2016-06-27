@@ -21,13 +21,17 @@ Uri manipulation:
     Query Modifiers: '/uri/manipulation/query/'
 Uri Parts API:
     Overview: '/components/overview/'
+    Scheme: '/components/scheme/'
+    User: '/components/user/'
+    Pass: '/components/pass/'
     User Information: '/components/userinfo/'
     Host: '/components/host/'
     Port: '/components/port/'
-    Query: '/components/query/'
     Path: '/components/path/'
     Hierarchical Path: '/components/hierarchical-path/'
     Data Path: '/components/datauri-path/'
+    Query: '/components/query/'
+    Fragment: '/components/fragment/'
 Services:
     Uri Parser: '/services/parser-uri/'
     Query Parser: '/services/parser-query/'

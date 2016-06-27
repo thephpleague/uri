@@ -148,6 +148,10 @@ interface Host extends HierarchicalComponent
     public function withoutZoneIdentifier();
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns the instance literal representation
      * without encoding
      *

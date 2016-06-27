@@ -33,6 +33,10 @@ interface Port extends Component
     const MINIMUM = 1;
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Return an integer representation of the Port component
      *
      * @return null|int

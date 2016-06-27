@@ -159,6 +159,10 @@ class UserInfo implements UserInfoInterface
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns whether two UriPart objects represent the same value
      * The comparison is based on the getUriComponent method
      *

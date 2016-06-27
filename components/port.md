@@ -80,4 +80,4 @@ $empty_port = new Port();
 $empty_port->toInt(); //return null
 ~~~
 
-To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/##componentmodify) the port object you should refer to the component overview section.
+To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/#componentmodify) the port object you should refer to the component overview section.

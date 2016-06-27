@@ -287,12 +287,17 @@ $host->__toString() == $newHost->__toString();
 
 ## Available classes
 
-Apart from the authority part, each URI component and/or part is manageable through the following classes:
+The `Uri` package comes bundle with the following classes:
+
+### URI part class
+
+* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
+
+### URI components classes
 
 * The `League\Uri\Components\Scheme` handles [the scheme component](/components/scheme/);
 * The `League\Uri\Components\User` handles [the user component](/components/userinfo/);
 * The `League\Uri\Components\Pass` handles [the pass component](/components/userinfo/);
-* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
 * The `League\Uri\Components\Host` handles [the host component](/components/host/);
 * The `League\Uri\Components\Port` handles [the port component](/components/port/);
 * The `League\Uri\Components\Path` handles [the generic path component](/components/path/);

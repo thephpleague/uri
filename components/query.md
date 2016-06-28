@@ -62,7 +62,7 @@ Returns a new `Query` object from an `array` or a `Traversable` object.
 public static function Query::createFromPairs(array $pairs): Query
 ~~~
 
-* `$pairs` : The submitted data must be an `array` or a `Traversable` key/value structure similar to the result of [Parser::parseQuery](/services/parser/#parsing-the-query-string-into-an-array).
+* `$pairs` : The submitted data must be an `array` or a `Traversable` key/value structure similar to the result of [QueryParser::parse](/services/parser-query/#parsing-the-query-string-into-an-array).
 
 #### Examples
 
@@ -93,6 +93,19 @@ echo $query; //display 'foo=bar&p&z='
 
 The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
+## Accessing query pairs
+
+~~~php
+<?php
+
+public function Query::getIterator(): ArrayIterator
+public function Query::count(): int
+public function Query::toArray(): array
+public function Query::keys(mixed $value = null): array
+public function Query::hasKey(string $offset): bool
+public function Query::getValue(string $offset, $default = null): mixed
+~~~
+
 ### Countable and IteratorAggregate
 
 The class provides several methods to work with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate over them.
@@ -111,7 +124,7 @@ foreach ($query as $key => $value) {
 
 <p class="message-info">When looping the returned data are decoded.</p>
 
-### Pair representation
+### Query::toArray
 
 A query can be represented as an array of its internal key/value pairs. Through the use of the `Query::toArray` method the class returns the object's array representation. This method uses `QueryParser::parse` to create the array.
 
@@ -133,17 +146,9 @@ $query->toArray();
 
 <p class="message-warning">The array returned by <code>toArray</code> differs from the one returned by <code>parse_str</code> as it <a href="/services/parser-query/">preserves the query string values</a>.</p>
 
-### Handling query key/value pairs
+### Query::keys
 
-~~~php
-<?php
-
-public function Query::keys(mixed $value = null): array
-public function Query::hasKey(string $offset): bool
-public function Query::getValue(string $offset, $default = null): mixed
-~~~
-
-The `Query::keys` returns the decoded query keys as shown below:
+Returns the decoded query keys as shown below:
 
 ~~~php
 <?php
@@ -158,7 +163,9 @@ $query->keys('gweta'); //return [];
 
 By default, the method returns all the keys names, but if you supply a value, only the keys whose value equals the value are returned.
 
-The `Query::haskey` tells whether the submitted key exists in the current `Query` object.
+### Query::hasKey
+
+Tells whether the submitted key exists in the current `Query` object.
 
 ~~~php
 <?php
@@ -170,7 +177,9 @@ $query->hasKey('p');    //return true
 $query->hasKey('john'); //return false
 ~~~
 
-The `Query::getValue` returns the decoded query value as shown below:
+### Query::getValue
+
+Returns the decoded query value of a specified pair key as shown below:
 
 ~~~php
 <?php
@@ -191,7 +200,7 @@ The method returns the value of a specific parameter name. If the offset does no
 
 <p class="message-warning">When a modification fails an <code>InvalidArgumentException</code> is thrown.</p>
 
-### Sort parameters
+### Query::ksort
 
 Returns a `Query` object with its pairs sorted according to its keys.
 
@@ -230,7 +239,7 @@ $newQuery->__toString(); //return baz=toto&foo=bar
 
 <p class="message-notice">This method is used by the URI modifier <code>KsortQuery</code></p>
 
-### Merging query string
+### Query::merge
 
 Returns a new `Query` object with its data merged.
 
@@ -286,7 +295,7 @@ $newQuery->__toString(); //return foo=bar&baz=&r
 
 <p class="message-info">This method is used by the URI modifier <code>MergeQuery</code></p>
 
-### Remove parameters
+### Query::without
 
 Returns a new `Query` object with deleted pairs according to their keys.
 
@@ -310,7 +319,7 @@ echo $newQuery; //displays 'z='
 
 <p class="message-notice">This method is used by the URI modifier <code>RemoveQueryKeys</code></p>
 
-### Filter the Query
+### Query::filter
 
 Returns a new `Query` object with filtered pairs.
 
@@ -329,10 +338,12 @@ You can filter the query by the pairs values:
 
 use League\Uri\Components\Query;
 
-$query    = new Query('foo=bar&p=y+olo&z=');
-$newQuery = $query->filter(function ($value) {
+$query = new Query('foo=bar&p=y+olo&z=');
+$filter = function ($value) {
     return !empty($value);
-}, Query::FILTER_USE_VALUE);
+};
+
+$newQuery = $query->filter($filter, Query::FILTER_USE_VALUE);
 echo $newQuery; //displays 'foo=bar&p=y+olo'
 ~~~
 
@@ -343,10 +354,12 @@ You can filter the query by the pairs keys:
 
 use League\Uri\Components\Query;
 
-$query    = new Query('foo=bar&p=y+olo&z=');
-$newQuery = $query->filter(function ($key) {
+$query = new Query('foo=bar&p=y+olo&z=');
+$filter = function ($key) {
     return strpos($key, 'f');
-}, Query::FILTER_USE_KEY);
+};
+
+$newQuery = $query->filter($filter, Query::FILTER_USE_KEY);
 echo $newQuery; //displays 'foo=bar'
 ~~~
 
@@ -358,10 +371,11 @@ You can filter the query by pairs
 use League\Uri\Components\Query;
 
 $query = new Query('toto=foo&bar=foo&john=jane');
-$newQuery = $query->filter(function ($value, $key) {
+$filter = function ($value, $key) {
     return (strpos($value, 'o') !== false && strpos($key, 'o') !== false);
-}, Query::FILTER_USE_BOTH);
+};
 
+$newQuery = $query->filter($filter, Query::FILTER_USE_BOTH);
 echo $newQuery; //displays 'toto=foo'
 ~~~
 

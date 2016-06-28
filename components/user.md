@@ -22,8 +22,6 @@ The constructor accepts:
 - a valid string according to RFC3986 rules;
 - the `null` value;
 
-<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
 #### Example
 
 ~~~php
@@ -42,11 +40,13 @@ echo $user;                    //display ''
 echo $user->getUriComponent(); //display ''
 ~~~
 
-<p class="message-info">On instantiation the user is encoded using RFC3986 rules.</p>
+<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
+
+<p class="message-info">On instantiation the submitted string is normalized using RFC3986 rules.</p>
 
 ### Using a League Uri object
 
-You can acces a `User` object with an already instantiated `Uri` object.
+You can access a `User` object with an already instantiated `Uri` object.
 
 ~~~php
 <?php
@@ -57,11 +57,11 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
 $user = $uri->user; // $user is a League\Uri\Components\User object;
 ~~~
 
-## Properties
+## Properties and Methods
 
-The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
-### Getting the decoded value of the user 
+### User::getValue
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
@@ -79,7 +79,7 @@ Returns the decoded string representation of the user component
 <?php
 use League\Uri\Components\User;
 
-$user = new User('frag%20ment');
-$user->getContent(); // display 'frag%20ment'
-$user->getValue(); // display 'frag ment'
+$user = new User('frag:ment');
+$user->getContent(); // display 'frag%3Ament'
+$user->getValue(); // display 'frag:ment'
 ~~~

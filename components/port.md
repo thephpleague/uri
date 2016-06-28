@@ -5,11 +5,25 @@ title: The Port component
 
 # The Port component
 
-The library provides a `League\Uri\Components\Port` class to ease port manipulation.
+The library provides a `Port` class to ease port manipulation.
 
 ## Instantiation
 
-A new `League\Uri\Components\Port` object can be instantiated using its default constructor.
+### Using the default constructor.
+
+~~~php
+<?php
+
+public function __contruct(int $port = null)
+~~~
+
+The constructor accepts:
+
+- a valid string according to their component validation rules as explain in RFC3986;
+- a integer between `1` and `65535`;
+- the `null` value;
+
+#### Examples
 
 ~~~php
 <?php
@@ -17,26 +31,28 @@ A new `League\Uri\Components\Port` object can be instantiated using its default 
 use League\Uri\Components\Port;
 
 $port = new Port(443);
-echo $port; //display '443'
+$port->getContent();           //return (int) 443
+echo $port;                    //display '443'
+echo $port->getUriComponent(); //display ':443'
 
 $string_port = new Port('443');
-echo $string_port; //display '443'
+$string_port->getContent();           //return (int) 443
+echo $string_port;                    //display '443'
+echo $string_port->getUriComponent(); //display ':443'
 
 $empty_port = new Port();
-echo $empty_port; //display ''
+$empty_port->getContent();           //return null
+echo $empty_port;                    //display ''
+echo $empty_port->getUriComponent(); //display ''
 ~~~
-
-The port component constructor accepts:
-
-- a valid string according to their component validation rules as explain in RFC3986;
-- a integer between `1` and `65535`;
-- the `null` value;
 
 <p class="message-warning">If the submitted value is not a valid port number an <code>InvalidArgumentException</code> exception is thrown.</p>
 
+<p class="message-info">On instantiation the submitted string is normalized using RFC3986 rules.</p>
+
 ### Using a League Uri object
 
-You can acces a `League\Uri\Components\Port` object with an already instantiated League Uri object.
+You can acces a `Port` object with an already instantiated League `Uri` object.
 
 ~~~php
 <?php
@@ -47,20 +63,9 @@ $uri  = HttpUri::createFromString('http://uri.thephpleague.com:82');
 $port = $uri->port; // $port is a League\Uri\Components\Port object;
 ~~~
 
-## Port representations
+## Properties and Methods
 
-Basic port representations is done using the `UriPart` interface methods:
-
-~~~php
-<?php
-
-use League\Uri\Components\Port;
-
-$port = new Port(21);
-$port->getContent();      //return '21'
-$port->__toString();      //return '21'
-$port->getUriComponent(); //return ':21'
-~~~
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
 ### Port::toInt
 
@@ -74,10 +79,8 @@ Return an integer if the port was defined or `null` otherwise.
 use League\Uri\Components\Port;
 
 $port = new Port(81);
-$port->toInt(); //return 81;
+$port->toInt(); //return (int) 81
 
 $empty_port = new Port();
 $empty_port->toInt(); //return null
 ~~~
-
-To [compare](/components/overview/#uripartsamevalueas) or [manipulate](/components/overview/#componentmodify) the port object you should refer to the component overview section.

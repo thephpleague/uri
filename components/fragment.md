@@ -22,8 +22,6 @@ The constructor accepts:
 - a valid string according to their component validation rules as explain in RFC3986;
 - the `null` value;
 
-<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
 ~~~php
 <?php
 
@@ -45,6 +43,10 @@ echo $fragment;                    //display ''
 echo $fragment->getUriComponent(); //display '#'
 ~~~
 
+<p class="message-warning">If the submitted value is not a valid, an <code>InvalidArgumentException</code> exception is thrown.</p>
+
+<p class="message-info">On instantiation the submitted string is normalized using RFC3986 rules.</p>
+
 ### Using a League Uri object
 
 You can acces a `League\Uri\Components\Fragment` object with an already instantiated League Uri object.
@@ -60,7 +62,7 @@ $fragment = $uri->fragment; // $fragment is a League\Uri\Components\Fragment obj
 
 ## Properties
 
-The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces.
 
 ### Fragment::getValue
 

@@ -210,6 +210,10 @@ $host->sameValueAs($uri);
 
 <p class="message-warning">Only Uri parts objects can be compared, any other object will result in a PHP Fatal Error or a PHP7+ TypeError will be thrown.</p>
 
+### UriPart implementing classes
+
+* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
+
 ## URI component interface
 
 <p class="message-info">This interface which extends the <code>UriPart</code> interface is only implemented by URI components classes.</p>
@@ -287,19 +291,11 @@ $newHost = eval('return '.var_export($host, true).';');
 $host->__toString() == $newHost->__toString();
 ~~~~~~
 
-## Available classes
-
-The `Uri` package comes bundle with the following classes:
-
-### UriPart implementing classes
-
-* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
-
 ### Component implementing classes
 
 * The `League\Uri\Components\Scheme` handles [the scheme component](/components/scheme/);
-* The `League\Uri\Components\User` handles [the user component](/components/userinfo/);
-* The `League\Uri\Components\Pass` handles [the pass component](/components/userinfo/);
+* The `League\Uri\Components\User` handles [the user component](/components/user/);
+* The `League\Uri\Components\Pass` handles [the pass component](/components/pass/);
 * The `League\Uri\Components\Host` handles [the host component](/components/host/);
 * The `League\Uri\Components\Port` handles [the port component](/components/port/);
 * The `League\Uri\Components\Path` handles [the generic path component](/components/path/);

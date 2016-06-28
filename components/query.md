@@ -5,13 +5,24 @@ title: The Query Component
 
 # The Query component
 
-The library provides a `League\Uri\Components\Query` class to ease complex query manipulation.
+The library provides a `Query` class to ease complex query manipulation.
 
 ## Query creation
 
 ### Using the default constructor
 
-A new `League\Uri\Components\Query` object can be instantiated using its the default constructor.
+~~~php
+<?php
+
+public function __contruct(string $query = null)
+~~~
+
+The constructor accepts:
+
+- a valid string according to RFC3986 rules;
+- the `null` value;
+
+#### Example
 
 ~~~php
 <?php
@@ -19,10 +30,12 @@ A new `League\Uri\Components\Query` object can be instantiated using its the def
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=yolo&z=');
+echo $query->getContent(); //display 'foo=bar&p=yolo&z'
 echo $query; //display 'foo=bar&p=yolo&z'
+echo $query->getUriComponent(); //display '?foo=bar&p=yolo&z'
 ~~~
 
-<p class="message-warning">When using the default constructor do not prepend your query delimiter to the string as it will be considered as part of the first parameter name.</p>
+<p class="message-info">When using the default constructor do not prepend your query delimiter to the string as it will be considered as part of the first parameter name.</p>
 
 <p class="message-warning">If the submitted value is not a valid query an <code>InvalidArgumentException</code> will be thrown.</p>
 
@@ -33,9 +46,7 @@ echo $query; //display 'foo=bar&p=yolo&z'
 
 use League\Uri\Ws as WsUri;
 
-$uri = WsUri::createFromComponents(
-    parse_url('wss://uri.thephpleague.com/path/to/here?foo=bar')
-);
+$uri = WsUri::createFromString('wss://uri.thephpleague.com/path/to/here?foo=bar');
 $query = $uri->query; //$query is a League\Uri\Components\Query object;
 ~~~
 
@@ -43,28 +54,48 @@ $query = $uri->query; //$query is a League\Uri\Components\Query object;
 
 <p class="message-warning">Since <code>version 4.2</code> <code>createFromPairs</code> replaces <code>createFromArray</code>. <code>createFromArray</code> is deprecated and will be removed in the next major release</p>
 
-It is possible to create a `Query` object using an `array` or a `Traversable` object with the `Query::createFromPairs` method. The submitted data must provide an array which preserved key/value pairs similar to the result of [Parser::parseQuery](/services/parser/#parsing-the-query-string-into-an-array).
+Returns a new `Query` object from an `array` or a `Traversable` object.
 
-- If a given parameter value is `null` it will be rendered without any value in the resulting query string;
-- If a given parameter value is an empty string il will be rendered without any value **but** with a `=` sign appended to it;
+~~~php
+<?php
+
+public static function Query::createFromPairs(array $pairs): Query
+~~~
+
+* `$pairs` : The submitted data must be an `array` or a `Traversable` key/value structure similar to the result of [Parser::parseQuery](/services/parser/#parsing-the-query-string-into-an-array).
+
+#### Examples
 
 ~~~php
 <?php
 
 use League\Uri\Components\Query;
 
-$query =  Query::createFromPairs(['foo' => 'bar', 'p' => 'yolo', 'z' => '']);
+$query =  Query::createFromPairs([
+    'foo' => 'bar',
+    'p' => 'yolo',
+    'z' => ''
+]);
 echo $query; //display 'foo=bar&p=yolo&z='
 
-$query =  Query::createFromPairs(['foo' => 'bar', 'p' => null, 'z' => '']);
+$query =  Query::createFromPairs([
+    'foo' => 'bar',
+    'p' => null,
+    'z' => ''
+]);
 echo $query; //display 'foo=bar&p&z='
 ~~~
 
-## Query representations
+- If a given parameter value is `null` it will be rendered without any value in the resulting query string;
+- If a given parameter value is an empty string il will be rendered without any value but with a `=` sign appended to it;
 
-### String representation
+## Properties and methods
 
-Basic query representations is done using the following methods:
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
+
+### Countable and IteratorAggregate
+
+The class provides several methods to work with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate over them.
 
 ~~~php
 <?php
@@ -72,13 +103,17 @@ Basic query representations is done using the following methods:
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
-$query->__toString();      //return 'foo=bar&p=y%20olo&z'
-$query->getUriComponent(); //return '?foo=bar&p=y%20olo&z'
+count($query); //return 4
+foreach ($query as $key => $value) {
+    //do something meaningful here
+}
 ~~~
 
-### Array representation
+<p class="message-info">When looping the returned data are decoded.</p>
 
-A query can be represented as an array of its internal parameters. Through the use of the `Query::toArray` method the class returns the object's array representation. This method uses `Parser::parseQuery` to create the array.
+### Pair representation
+
+A query can be represented as an array of its internal key/value pairs. Through the use of the `Query::toArray` method the class returns the object's array representation. This method uses `QueryParser::parse` to create the array.
 
 ~~~php
 <?php
@@ -94,29 +129,21 @@ $query->toArray();
 // ]
 ~~~
 
+<p class="message-info">The returned array contains decoded data.</p>
+
 <p class="message-warning">The array returned by <code>toArray</code> differs from the one returned by <code>parse_str</code> as it <a href="/services/parser-query/">preserves the query string values</a>.</p>
 
-## Accessing Query content
-
-### Countable and IteratorAggregate
-
-The class provides several methods to work with its parameters. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of parameters and use the `foreach` construct to iterate over them.
+### Handling query key/value pairs
 
 ~~~php
 <?php
 
-use League\Uri\Components\Query;
-
-$query = new Query('foo=bar&p=y+olo&z=');
-count($query); //return 4
-foreach ($query as $parameter => $value) {
-    //do something meaningful here
-}
+public function Query::keys(mixed $value = null): array
+public function Query::hasKey(string $offset): bool
+public function Query::getValue(string $offset, $default = null): mixed
 ~~~
 
-### Parameter name
-
-If you are interested in getting all the parameter names you can do so using the `Query::keys` method as shown below:
+The `Query::keys` returns the decoded query keys as shown below:
 
 ~~~php
 <?php
@@ -129,9 +156,9 @@ $query->keys('bar');   //return ['foo'];
 $query->keys('gweta'); //return [];
 ~~~
 
-The methods returns all the parameter names, but if you supply an argument, only the parameter names whose value equals the argument are returned.
+By default, the method returns all the keys names, but if you supply a value, only the keys whose value equals the value are returned.
 
-If you want to be sure that a parameter name exists before using it you can do so using the `Query::hasKey` method which returns `true` if the submitted parameter name exists in the current object.
+The `Query::haskey` tells whether the submitted key exists in the current `Query` object.
 
 ~~~php
 <?php
@@ -143,9 +170,7 @@ $query->hasKey('p');    //return true
 $query->hasKey('john'); //return false
 ~~~
 
-### Parameter value
-
-If you are only interested in a given parameter you can access it directly using the `Query::getValue` method as shown below:
+The `Query::getValue` returns the decoded query value as shown below:
 
 ~~~php
 <?php
@@ -168,9 +193,17 @@ The method returns the value of a specific parameter name. If the offset does no
 
 ### Sort parameters
 
-Sometimes you may wish to sort your query. To do so, you can use the `Query::ksort` method. This method expects a single argument which can be:
+Returns a `Query` object with its pairs sorted according to its keys.
 
-One of PHP's sorting constant used by the [sort function](http://php.net/sort). **In this case the query parameters are sorted from low to hight** like PHP's [ksort function](http://php.net/ksort)
+~~~php
+<?php
+
+public function Query::ksort(mixed $sort): Query
+~~~
+
+The single argument `sort` can be:
+
+One of PHP's sorting constant used by the [sort function](http://php.net/sort). **In this case the query parameters are sorted from low to high** like PHP's [ksort function](http://php.net/ksort)
 
 ~~~php
 <?php
@@ -197,9 +230,17 @@ $newQuery->__toString(); //return baz=toto&foo=bar
 
 <p class="message-notice">This method is used by the URI modifier <code>KsortQuery</code></p>
 
-### Add or Update parameters
+### Merging query string
 
-If you want to add or update the query parameters you need to use the `Query::merge` method. This method expects a single argument. This argument can be:
+Returns a new `Query` object with its data merged.
+
+~~~php
+<?php
+
+public function Query::merge(mixed $query): Query
+~~~
+
+This method expects a single argument which can be:
 
 A string or a stringable object:
 
@@ -229,7 +270,7 @@ $newQuery->__toString(); //return foo=jane&baz=toto&r=stone
 // the 'r' parameter was added
 ~~~
 
-<p class="message-notice">Values equal to <code>null</code> or the empty string are merge differently.</p>
+<p class="message-info">Values equal to <code>null</code> or the empty string are merge differently.</p>
 
 ~~~php
 <?php
@@ -243,13 +284,19 @@ $newQuery->__toString(); //return foo=bar&baz=&r
 // the 'baz' parameter was updated to an empty string and its = sign remains
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>MergeQuery</code></p>
+<p class="message-info">This method is used by the URI modifier <code>MergeQuery</code></p>
 
 ### Remove parameters
 
-To remove parameters from the current object and return a new `Query` object without them you must use the `Query::without` method. This method expects a single argument.
+Returns a new `Query` object with deleted pairs according to their keys.
 
-This argument can be an array containing a list of parameter names to remove.
+~~~php
+<?php
+
+public function Query::without(array $keys): Query
+~~~
+
+This method expects an array containing a list of keys to remove as its single argument.
 
 ~~~php
 <?php
@@ -265,9 +312,17 @@ echo $newQuery; //displays 'z='
 
 ### Filter the Query
 
-Another way to select parameters from the query object is to filter them. Filtering is done using the same arguments as PHP's `array_filter`.
+Returns a new `Query` object with filtered pairs.
 
-You can filter the query by the parameter values:
+~~~php
+<?php
+
+public function Query::filter(callable $filter, $flag = Query::FILTER_USE_VALUE): Query
+~~~
+
+Filtering is done using the same arguments as PHP's `array_filter`.
+
+You can filter the query by the pairs values:
 
 ~~~php
 <?php
@@ -276,12 +331,12 @@ use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&p=y+olo&z=');
 $newQuery = $query->filter(function ($value) {
-	return !empty($value);
+    return !empty($value);
 }, Query::FILTER_USE_VALUE);
 echo $newQuery; //displays 'foo=bar&p=y+olo'
 ~~~
 
-You can filter the query by the parameter names:
+You can filter the query by the pairs keys:
 
 ~~~php
 <?php
@@ -290,12 +345,12 @@ use League\Uri\Components\Query;
 
 $query    = new Query('foo=bar&p=y+olo&z=');
 $newQuery = $query->filter(function ($key) {
-	return strpos($key, 'f');
+    return strpos($key, 'f');
 }, Query::FILTER_USE_KEY);
 echo $newQuery; //displays 'foo=bar'
 ~~~
 
-You can filter the query by the parameter names and values.
+You can filter the query by pairs
 
 ~~~php
 <?php
@@ -312,9 +367,9 @@ echo $newQuery; //displays 'toto=foo'
 
 By specifying the second argument flag you can change how filtering is done:
 
-- use `Query::FILTER_USE_VALUE` to filter by the query parameter value;
-- use `Query::FILTER_USE_KEY` to filter by the query parameter name;
-- use `Query::FILTER_USE_BOTH` to filter by the query parameter name and value;
+- use `Query::FILTER_USE_VALUE` to filter by pairs value;
+- use `Query::FILTER_USE_KEY` to filter by pairs key;
+- use `Query::FILTER_USE_BOTH` to filter by pairs value and key;
 
 By default, if no flag is specified the method will filter the query using the `Query::FILTER_USE_VALUE` flag.
 

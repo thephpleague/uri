@@ -22,8 +22,6 @@ The constructor accepts:
 - a valid string according to RFC3986 rules;
 - the `null` value;
 
-<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
 #### Example
 
 ~~~php
@@ -31,10 +29,10 @@ The constructor accepts:
 
 use League\Uri\Components\Pass;
 
-$user = new Pass('john');
-echo $user->getContent();      //display 'john'
-echo $user;                    //display 'john'
-echo $user->getUriComponent(); //display 'john'
+$user = new Pass('jo@hn');
+echo $user->getContent();      //display 'jo%40hn'
+echo $user;                    //display 'jo%40hn'
+echo $user->getUriComponent(); //display 'jo%40hn'
 
 $user = new Pass();
 echo $user->getContent();      //display null
@@ -42,11 +40,13 @@ echo $user;                    //display ''
 echo $user->getUriComponent(); //display ''
 ~~~
 
-<p class="message-info">On instantiation the user is encoded using RFC3986 rules.</p>
+<p class="message-warning">If the submitted value is not a valid an <code>InvalidArgumentException</code> exception is thrown.</p>
+
+<p class="message-info">On instantiation the submitted string is normalized using RFC3986 rules.</p>
 
 ### Using a League Uri object
 
-You can acces a `Pass` object with an already instantiated `Uri` object.
+You can access a `Pass` object with an already instantiated `Uri` object.
 
 ~~~php
 <?php
@@ -57,11 +57,11 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com:82');
 $pass = $uri->pass; // $user is a League\Uri\Components\Pass object;
 ~~~
 
-## Properties
+## Properties and Methods
 
-The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#component-interface) interfaces.
+The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
-### Getting the decoded value of the pass 
+### Pass::getValue
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
@@ -80,6 +80,6 @@ Returns the decoded string representation of the user component
 use League\Uri\Components\Pass;
 
 $user = new Pass('frag%20ment');
-$user->getContent(); // display 'frag%20ment'
-$user->getValue(); // display 'frag ment'
+$user->getContent(); // display 'frag%40ment'
+$user->getValue();   // display 'frag@ment'
 ~~~

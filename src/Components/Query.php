@@ -254,6 +254,44 @@ class Query implements QueryInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function hasKey($offset)
+    {
+        $offset = $this->validateString($offset);
+        $offset = $this->decodeComponent($offset);
+
+        return array_key_exists($offset, $this->data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function keys()
+    {
+        if (0 === func_num_args()) {
+            return array_keys($this->data);
+        }
+
+        return array_keys($this->data, $this->decodeComponent(func_get_arg(0)), true);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function without(array $offsets)
+    {
+        $data = $this->data;
+        foreach ($offsets as $offset) {
+            unset($data[$this->decodeComponent($offset)]);
+        }
+
+        return $this->newCollectionInstance($data);
+    }
+
+
+
+    /**
      * Return a new instance when needed
      *
      * @param array $data

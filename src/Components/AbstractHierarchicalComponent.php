@@ -148,7 +148,7 @@ abstract class AbstractHierarchicalComponent
      *
      * @param HierarchicalComponent|string $component
      *
-     * @return HierarchicalComponent
+     * @return static
      */
     protected function validateComponent($component)
     {

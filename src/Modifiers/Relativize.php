@@ -42,6 +42,13 @@ class Relativize extends AbstractUriModifier
         $this->uri = $this->hostToAscii($uri);
     }
 
+    /**
+     * Convert the Uri host component to its ascii version
+     *
+     * @param Uri|UriInterface $uri
+     *
+     * @return Uri|UriInterface
+     */
     protected function hostToAscii($uri)
     {
         static $modifier;

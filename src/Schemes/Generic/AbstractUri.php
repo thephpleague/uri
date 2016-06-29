@@ -241,7 +241,7 @@ abstract class AbstractUri
      */
     public function getPort()
     {
-        return $this->hasStandardPort() ? null : $this->port->toInt();
+        return $this->hasStandardPort() ? null : $this->port->getContent();
     }
 
     /**
@@ -527,7 +527,7 @@ abstract class AbstractUri
      */
     protected function hasStandardPort()
     {
-        $port = $this->port->toInt();
+        $port = $this->port->getContent();
         if (null === $port) {
             return true;
         }

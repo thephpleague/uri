@@ -35,7 +35,8 @@ class Resolve extends AbstractUriModifier
      */
     public function __construct($uri)
     {
-        $this->uri = $this->filterUri($uri);
+        $this->assertUriObject($uri);
+        $this->uri = $uri;
     }
 
     /**

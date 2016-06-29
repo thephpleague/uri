@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Interfaces\Uri;
-use League\Uri\Modifiers\Filters\Uri as UriFilter;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -25,7 +24,12 @@ use Psr\Http\Message\UriInterface;
  */
 class Relativize extends AbstractUriModifier
 {
-    use UriFilter;
+    /**
+     * Base URI
+     *
+     * @var Uri|UriInterface
+     */
+    protected $uri;
 
     /**
      * New instance
@@ -34,7 +38,18 @@ class Relativize extends AbstractUriModifier
      */
     public function __construct($uri)
     {
-        $this->uri = $this->filterUri($uri);
+        $this->assertUriObject($uri);
+        $this->uri = $this->hostToAscii($uri);
+    }
+
+    protected function hostToAscii($uri)
+    {
+        static $modifier;
+        if (null === $modifier) {
+            $modifier = new HostToAscii();
+        }
+
+        return $modifier($uri);
     }
 
     /**
@@ -47,8 +62,10 @@ class Relativize extends AbstractUriModifier
     public function __invoke($payload)
     {
         $this->assertUriObject($payload);
-        if ($this->uri->getScheme() !== $payload->getScheme()
-            || $this->uri->getAuthority() !== $payload->getAuthority()
+        $payload_normalized = $this->hostToAscii($payload);
+
+        if ($this->uri->getScheme() !== $payload_normalized->getScheme()
+            || $this->uri->getAuthority() !== $payload_normalized->getAuthority()
         ) {
             return $payload;
         }

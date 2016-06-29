@@ -56,6 +56,10 @@ trait Uri
     /**
      * Validate the submitted keys
      *
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * @param LeagueUriInterface|UriInterface $uri The Uri Object
      *
      * @return LeagueUriInterface|UriInterface

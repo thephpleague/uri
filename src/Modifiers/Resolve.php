@@ -48,17 +48,21 @@ class Resolve extends AbstractUriModifier
      */
     public function __invoke($payload)
     {
-        $this->assertUriObject($payload);
-        if ('' !== $payload->getScheme()) {
-            return $payload;
+        $meta = \League\Uri\uri_get_meta_data($payload);
+        $path = $payload->getPath();
+        if ($meta['absolute_uri']) {
+            return $payload
+                ->withPath((new Path($path))->withoutDotSegments()->__toString());
         }
 
-        if ('' !== $payload->getAuthority()) {
-            return $payload->withScheme($this->uri->getScheme());
+        if ($meta['network_path']) {
+            return $payload
+                ->withScheme($this->uri->getScheme())
+                ->withPath((new Path($path))->withoutDotSegments()->__toString());
         }
 
         $userInfo = explode(':', $this->uri->getUserInfo(), 2);
-        $components = $this->resolvePathAndQuery($payload->getPath(), $payload->getQuery());
+        $components = $this->resolvePathAndQuery($path, $payload->getQuery());
 
         return $payload
             ->withPath($this->formatPath($components['path']))

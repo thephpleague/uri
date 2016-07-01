@@ -31,7 +31,8 @@
     "autoload": {
         "psr-4": {
             "League\\Uri\\": "src"
-        }
+        },
+        "files": ["src/functions_include.php"]
     },
     "autoload-dev": {
         "psr-4": {

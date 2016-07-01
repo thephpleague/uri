@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Modifiers;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
 use Psr\Http\Message\UriInterface;
 
@@ -38,7 +39,10 @@ class Relativize extends AbstractUriModifier
      */
     public function __construct($uri)
     {
-        $this->assertUriObject($uri);
+        if (!\League\Uri\uri_get_meta_data($uri)['absolute_uri']) {
+            throw new InvalidArgumentException('The Base URI must be an Absolute URI');
+        }
+
         $this->uri = $this->hostToAscii($uri);
     }
 

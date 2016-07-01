@@ -185,10 +185,9 @@ class UriModifierTest extends TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function relativizeLetThrowUriException()
+    public function testRelativizeThrowInvalidArgumentException()
     {
-        $dataUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde!');
-        (new Relativize($dataUri1))->__invoke($dataUri);
+        new Relativize(HttpUri::createFromString('//example.com'));
     }
 
     /**

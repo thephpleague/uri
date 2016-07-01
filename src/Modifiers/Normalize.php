@@ -32,15 +32,14 @@ class Normalize extends AbstractUriModifier
      */
     public function __invoke($uri)
     {
-        $this->assertUriObject($uri);
+        $modifier = new Pipeline([
+            new HostToAscii(),
+            new KsortQuery(),
+        ]);
 
-        static $modifier;
-        if (!$modifier instanceof Pipeline) {
-            $modifier = new Pipeline([
-                new HostToAscii(),
-                new RemoveDotSegments(),
-                new KsortQuery(),
-            ]);
+        $path = $uri->getPath();
+        if (!\League\Uri\uri_get_meta_data($uri)['relative_path']) {
+            $modifier = $modifier->pipe(new RemoveDotSegments());
         }
 
         return $modifier($uri)->withScheme($uri->getScheme());

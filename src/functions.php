@@ -29,8 +29,8 @@ use Psr\Http\Message\UriInterface;
  * <li>relative_path: Tell whether the URI is a relative_path relative reference
  * </ul>
  *
- * @link  https://tools.ietf.org/html/rfc3986#section_4.2
- * @link  https://tools.ietf.org/html/rfc3986#section_4.3
+ * @link  https://tools.ietf.org/html/rfc3986#section-4.2
+ * @link  https://tools.ietf.org/html/rfc3986#section-4.3
  * @since 4.2.0
  *
  * @param Uri|UriInterface $uri
@@ -39,7 +39,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @return array
  */
-function uri_get_meta_data($uri)
+function uri_getinfo($uri)
 {
     if (!$uri instanceof Uri && !$uri instanceof UriInterface) {
         throw new InvalidArgumentException(

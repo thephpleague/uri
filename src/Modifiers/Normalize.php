@@ -38,7 +38,7 @@ class Normalize extends AbstractUriModifier
         ]);
 
         $path = $uri->getPath();
-        if (!\League\Uri\uri_get_meta_data($uri)['relative_path']) {
+        if (!\League\Uri\uri_getinfo($uri)['relative_path']) {
             $modifier = $modifier->pipe(new RemoveDotSegments());
         }
 

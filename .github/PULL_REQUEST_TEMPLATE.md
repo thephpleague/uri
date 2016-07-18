@@ -12,7 +12,7 @@ _(Please explain your proposal)_
 
 _(Describe if they exists BC break)_
 
-### Targetted release version
+### Targeted release version
 
 _(Indicate the release version targeted for your PR)_
 

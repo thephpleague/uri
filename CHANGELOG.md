@@ -14,7 +14,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Host::createFromLabels` to replace `Host::createFromArray`
 - `Query::createFromPairs` to replace `Query::createFromArray`
 - `UserInfo::createFromString` to create a UserInfo object from a given string
-- `League\Uri\uri_getinfo` function to return URI reference state.
+- `League\Uri\uri_reference` function to return URI reference state.
 - autoloader to ease library usage without composer
 
 ### Fixed
@@ -27,6 +27,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - On instantiation, query and fragment delimiter are preserved
 - `createFromComponents` failing with `parse_url` result when no path is defined
 - On URI transformation `InvalidArgumentException` exceptions are emitted instead of `RuntimeException` ones to normalize exception to PSR-7
+- `Modifiers\Normalize` class to remove dot segments only on URI with absolute path.
 
 ### Deprecated
 

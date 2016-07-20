@@ -39,7 +39,7 @@ class Relativize extends AbstractUriModifier
      */
     public function __construct($uri)
     {
-        if (!\League\Uri\uri_getinfo($uri)['absolute_uri']) {
+        if (!\League\Uri\uri_reference($uri)['absolute_uri']) {
             throw new InvalidArgumentException('The Base URI must be an Absolute URI');
         }
 

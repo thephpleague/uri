@@ -38,10 +38,10 @@ class Normalize extends AbstractUriModifier
         ]);
 
         $path = $uri->getPath();
-        if (!\League\Uri\uri_getinfo($uri)['relative_path']) {
+        if ('' !== $uri->getScheme().$uri->getAuthority() || (isset($path[0]) && '/' === $path[0])) {
             $modifier = $modifier->pipe(new RemoveDotSegments());
         }
 
-        return $modifier($uri)->withScheme($uri->getScheme());
+        return $modifier($uri);
     }
 }

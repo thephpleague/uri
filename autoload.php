@@ -1,5 +1,9 @@
 <?php
 
+if (!function_exists('League\Uri\uri_reference')) {
+    require __DIR__.'/src/functions.php';
+}
+
 spl_autoload_register(function ($class) {
 
     $prefix = 'League\Uri\\';

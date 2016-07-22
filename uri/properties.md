@@ -96,21 +96,20 @@ To get more informations about component properties refer to the [components doc
 function League\Uri\uri_reference(mixed $uri [, mixed $base_uri]): array
 ~~~
 
-This function analyze the submitted URI object and returns an associative array containing information regarding the URI-reference.
+This function analyzes the submitted URI object and returns an associative array containing information regarding the URI-reference.
 
 As per [RFC3986](https://tools.ietf.org/html/rfc3986#section-4.1) URI-reference is used to denote the most common usage of a resource identifier. The specification defines 5 possible types of references for any given URI.
 
-- absolute URI : An URI with a scheme
-- network path : An URI without a scheme but with an authority
-- absolute path : An URI without a scheme and an authority and which contains an absolute path
-- relative path : An URI without a scheme and an authority and without an absolute path
-- same document : When a URI reference refers to a URI that is, aside from its fragment
-   component (if any), identical to the base URI.
+- absolute URI
+- network path
+- absolute path
+- relative path
+- same document
 
 ### Parameters
 
-- `$uri` must implement `Psr\Http\Message\UriInterface` or `League\Uri\Interfaces\Uri`
-- `$base_uri` when present must implement `Psr\Http\Message\UriInterface` or `League\Uri\Interfaces\Uri` useful if you want to detect same document references.
+- `$uri` implements `Psr\Http\Message\UriInterface` or `League\Uri\Interfaces\Uri`
+- `$base_uri`optional, implements `Psr\Http\Message\UriInterface` or `League\Uri\Interfaces\Uri`. Required if you want to detect same document reference.
 
 ### Returns Values
 
@@ -129,7 +128,7 @@ An associative array is returned. The following keys are always present within t
 
 use League\Uri\Schemes\Http as HttpUri;
 $uri = HttpUri::createFromString("//스타벅스코리아.com/how/are/you?foo=baz");
-$uribis = HttpUri::createFromString("//xn--oy2b35ckwhba574atvuzkc.com/how/are/you?foo=baz#bar");
+$alt_uri = HttpUri::createFromString("//xn--oy2b35ckwhba574atvuzkc.com/how/are/you?foo=baz#bar");
 
 var_dump(League\Uri\uri_reference($uri));
 //displays something like
@@ -141,14 +140,14 @@ var_dump(League\Uri\uri_reference($uri));
 //   'same_document' => bool(false)
 // }
 
-var_dump(League\Uri\uri_reference($uri, $uribis));
+var_dump(League\Uri\uri_reference($uri, $alt_uri));
 //displays something like
 // array(5) {
 //   'absolute_uri' => bool(false)
 //   'network_path' => bool(true)
 //   'absolute_path' => bool(false)
 //   'relative_path' => bool(false)
-//   'same_document' => bool(true)
+//   'same_document' => bool(true)  //can be true only if a base URI is provided
 // }
 ~~~
 
@@ -158,7 +157,7 @@ var_dump(League\Uri\uri_reference($uri, $uribis));
 
 ### __debugInfo
 
-All Uri objects from the package implements PHP5.6+ `__debugInfo` magic method in order to help developpers debug their code. The method is called by `var_dump` and displays the Uri components and the Uri string representations.
+All Uri objects from the package implements PHP5.6+ `__debugInfo` magic method in order to help developpers debug their code. The method is called by `var_dump` and returns an array with an `uri` key whose value is the object string representation.
 
 ~~~php
 <?php

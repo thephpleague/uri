@@ -79,6 +79,6 @@ These non destructives rules are:
 
 use League\Uri\Schemes\Http as HttpUri;
 
-$uri = HttpUri::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f+3#title");
+$uri = HttpUri::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f 3#title");
 echo $uri; //displays http://www.example.com/hellow/./wor%20ld?who=f%203#title
 ~~~

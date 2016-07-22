@@ -35,6 +35,10 @@ interface Collection extends Countable, IteratorAggregate
     const FILTER_USE_KEY   = 2;
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns an array representation of the collection
      *
      * @return array

@@ -143,6 +143,16 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     }
 
     /**
+     * Returns an array representation of the HierarchicalPath
+     *
+     * @return array
+     */
+    public function getSegments()
+    {
+        return $this->data;
+    }
+
+    /**
      * Retrieves a single path segment.
      *
      * Retrieves a single path segment. If the segment offset has not been set,
@@ -208,14 +218,14 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     public function append($component)
     {
-        $source = $this->toArray();
+        $source = $this->getSegments();
         if (!empty($source) && '' === end($source)) {
             array_pop($source);
         }
 
         return $this->createFromSegments(array_merge(
             $source,
-            $this->validateComponent($component)->toArray()
+            iterator_to_array($this->validateComponent($component))
         ), $this->isAbsolute);
     }
 
@@ -273,7 +283,7 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     public function withExtension($extension)
     {
         $extension = $this->formatExtension($extension);
-        $segments = $this->toArray();
+        $segments = $this->getSegments();
         $basename = array_pop($segments);
         $parts = explode(';', $basename, 2);
         $basenamePart = array_shift($parts);

@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\HierarchicalComponent;
 use League\Uri\Types\ImmutableCollectionTrait;
 use League\Uri\Types\ImmutableComponentTrait;
@@ -157,5 +158,53 @@ abstract class AbstractHierarchicalComponent
         }
 
         return $component;
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * return a new instance from an array or a traversable object
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type one of the constant IS_ABSOLUTE or IS_RELATIVE
+     *
+     * @throws InvalidArgumentException If $type is not a recognized constant
+     *
+     * @return static
+     */
+    public static function createFromArray($data, $type = self::IS_RELATIVE)
+    {
+        static $type_list = [self::IS_ABSOLUTE => 1, self::IS_RELATIVE => 1];
+        if (!isset($type_list[$type])) {
+            throw new InvalidArgumentException('Please verify the submitted constant');
+        }
+
+        return new static(static::formatComponentString($data, $type));
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * Return a formatted component string according to its type
+     *
+     * @param \Traversable|string[] $data The segments list
+     * @param int                   $type
+     *
+     * @throws InvalidArgumentException If $data is invalid
+     *
+     * @return string
+     */
+    protected static function formatComponentString($data, $type)
+    {
+        $path = implode(static::$separator, static::validateIterator($data));
+        if (self::IS_ABSOLUTE == $type) {
+            return static::$separator.$path;
+        }
+
+        return $path;
     }
 }

@@ -95,12 +95,14 @@ The component representation, comparison and manipulation is done using the pack
 
 ## Accessing query pairs
 
+<p class="message-warning">Since <code>version 4.2</code> <code>getPairs</code> replaces <code>toArray</code>. <code>toArray</code> is deprecated and will be removed in the next major release</p>
+
 ~~~php
 <?php
 
 public function Query::getIterator(): ArrayIterator
 public function Query::count(): int
-public function Query::toArray(): array
+public function Query::getPairs(): array
 public function Query::keys(mixed $value = null): array
 public function Query::hasKey(string $offset): bool
 public function Query::getValue(string $offset, $default = null): mixed
@@ -124,9 +126,11 @@ foreach ($query as $key => $value) {
 
 <p class="message-info">When looping the returned data are decoded.</p>
 
-### Query::toArray
+### Query::getPairs
 
-A query can be represented as an array of its internal key/value pairs. Through the use of the `Query::toArray` method the class returns the object's array representation. This method uses `QueryParser::parse` to create the array.
+<p class="message-warning">Since <code>version 4.2</code> <code>getPairs</code> replaces <code>toArray</code>. <code>toArray</code> is deprecated and will be removed in the next major release</p>
+
+A query can be represented as an array of its internal key/value pairs. Through the use of the `Query::getPairs` method the class returns the object's array representation. This method uses `QueryParser::parse` to create the array.
 
 ~~~php
 <?php
@@ -134,7 +138,7 @@ A query can be represented as an array of its internal key/value pairs. Through 
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
-$query->toArray();
+$query->getPairs();
 // returns [
 //     'foo' => 'bar',
 //     'p'   => 'y olo',
@@ -144,7 +148,7 @@ $query->toArray();
 
 <p class="message-info">The returned array contains decoded data.</p>
 
-<p class="message-warning">The array returned by <code>toArray</code> differs from the one returned by <code>parse_str</code> as it <a href="/services/parser-query/">preserves the query string values</a>.</p>
+<p class="message-warning">The array returned by <code>getPairs</code> differs from the one returned by <code>parse_str</code> as it <a href="/services/parser-query/">preserves the query string values</a>.</p>
 
 ### Query::keys
 

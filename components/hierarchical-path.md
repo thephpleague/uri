@@ -89,7 +89,9 @@ $path->getUriComponent(); //return '/path/to%20the/sky'
 
 ### Array representation
 
-A path can be represented as an array of its internal segments. Through the use of the `HierarchicalPath::toArray` method the class returns the object array representations.
+<p class="message-warning">Since <code>version 4.2</code> <code>getSegments</code> replaces <code>toArray</code>. <code>toArray</code> is deprecated and will be removed in the next major release</p>
+
+A path can be represented as an array of its internal segments. Through the use of the `HierarchicalPath::getSegments` method the class returns the object array representations.
 
 <p class="message-info">A path ending with a slash will have an empty string as the last member of its array representation.</p>
 
@@ -101,13 +103,13 @@ A path can be represented as an array of its internal segments. Through the use 
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path = new Path('/path/to/the/sky');
-$path->toArray(); //return ['path', 'to', 'the', 'sky'];
+$path->getSegments(); //return ['path', 'to', 'the', 'sky'];
 
 $absolute_path = new Path('/path/to/the/sky/');
-$absolute_path->toArray(); //return ['path', 'to', 'the', 'sky', ''];
+$absolute_path->getSegments(); //return ['path', 'to', 'the', 'sky', ''];
 
 $relative_path = new Path('path/to/the/sky/');
-$relative_path->toArray(); //return ['path', 'to', 'the', 'sky', ''];
+$relative_path->getSegments(); //return ['path', 'to', 'the', 'sky', ''];
 ~~~
 
 ## Accessing Path content

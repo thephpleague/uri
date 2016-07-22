@@ -65,5 +65,5 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com/uri/schemes/http.m
 echo $uri->path->getBasename();  //display 'http.md'
 echo $uri->path->getDirname();   //display '/uri/schemes'
 echo $uri->path->getExtension(); //display 'md'
-$uri->path->toArray(); //returns an array representation of the path segments
+$uri->path->getSegments(); //returns an array representation of the path segments
 ~~~

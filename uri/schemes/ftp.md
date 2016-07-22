@@ -41,5 +41,5 @@ $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i
 echo $uri->path->getBasename();  //display 'image.png;type=i'
 echo $uri->path->getDirname();   //display '/path/to'
 echo $uri->path->getExtension(); //display 'png'
-$uri->path->toArray(); //returns an array representation of the path segments
+$uri->path->getSegments(); //returns an array representation of the path segments
 ~~~

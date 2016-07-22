@@ -42,5 +42,5 @@ $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here');
 echo $uri->path->getBasename();  //display '/path'
 echo $uri->path->getDirname();   //display 'to'
 echo $uri->path->getExtension(); //display ''
-$uri->path->toArray(); //returns an array representation of the path segments
+$uri->path->getSegments(); //returns an array representation of the path segments
 ~~~

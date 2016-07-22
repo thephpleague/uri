@@ -243,7 +243,9 @@ echo $host->isIdn();     //return false
 
 ### Array representation
 
-A host can be splitted into its different labels. The class provides an array representation of a the host labels using the `Host::toArray` method. If the host is an IP, the array contains only one entry, the full IP.
+<p class="message-warning">Since <code>version 4.2</code> <code>toArray</code> replaces <code>getLabels</code>. <code>toArray</code> is deprecated and will be removed in the next major release</p>
+
+A host can be splitted into its different labels. The class provides an array representation of a the host labels using the `Host::getLabels` method. If the host is an IP, the array contains only one entry, the full IP.
 
 <p class="message-notice">The class uses a hierarchical representation of the Hostname. This mean that the host top-level domain is the array first item.</p>
 
@@ -253,13 +255,13 @@ A host can be splitted into its different labels. The class provides an array re
 use League\Uri\Components\Host;
 
 $host = new Host('secure.example.com');
-$arr = $host->toArray(); //return  ['com', 'example', 'secure'];
+$arr = $host->getLabels(); //return  ['com', 'example', 'secure'];
 
 $fqdn = new Host('secure.example.com.');
-$arr = $fqdn->toArray(); //return ['com', 'example', 'secure'];
+$arr = $fqdn->getLabels(); //return ['com', 'example', 'secure'];
 
 $host = new Host('::1');
-$arr = $host->toArray(); //return ['::1'];
+$arr = $host->getLabels(); //return ['::1'];
 ~~~
 
 <p class="message-warning">Once in array representation you can not distinguish a partially from a fully qualified domain name.</p>

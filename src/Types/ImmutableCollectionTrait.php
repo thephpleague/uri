@@ -53,6 +53,10 @@ trait ImmutableCollectionTrait
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns an array representation of the collection
      *
      * @return array

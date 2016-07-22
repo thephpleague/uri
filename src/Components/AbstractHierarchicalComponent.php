@@ -130,8 +130,8 @@ abstract class AbstractHierarchicalComponent
             return $this;
         }
 
-        $source = $this->toArray();
-        $dest   = $this->validateComponent($component)->toArray();
+        $source = iterator_to_array($this);
+        $dest   = iterator_to_array($this->validateComponent($component));
         if ('' === $dest[count($dest) - 1]) {
             array_pop($dest);
         }

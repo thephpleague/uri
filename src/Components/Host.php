@@ -229,6 +229,16 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * Returns an array representation of the Host
+     *
+     * @return array
+     */
+    public function getLabels()
+    {
+        return $this->convertToAscii($this->data, !$this->isIdn);
+    }
+
+    /**
      * Retrieves a single host label.
      *
      * Retrieves a single host label. If the label offset has not been set,
@@ -249,13 +259,17 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns an array representation of the host
      *
      * @return array
      */
     public function toArray()
     {
-        return $this->convertToAscii($this->data, !$this->isIdn);
+        return $this->getLabels();
     }
 
     /**
@@ -271,7 +285,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this->formatIp($this->data[0]);
         }
 
-        return $this->format($this->toArray(), $this->isAbsolute);
+        return $this->format($this->getLabels(), $this->isAbsolute);
     }
 
     /**
@@ -403,8 +417,8 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function append($component)
     {
         return $this->createFromLabels(array_merge(
-            $this->validateComponent($component)->toArray(),
-            $this->toArray()
+            iterator_to_array($this->validateComponent($component)),
+            $this->getLabels()
         ), $this->isAbsolute);
     }
 }

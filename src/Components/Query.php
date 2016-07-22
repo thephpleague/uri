@@ -186,6 +186,30 @@ class Query implements QueryInterface
     }
 
     /**
+     * Returns an array representation of the query
+     *
+     * @return array
+     */
+    public function getPairs()
+    {
+        return $this->data;
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * Returns an array representation of the query
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getPairs();
+    }
+
+    /**
      * Retrieves a single query parameter.
      *
      * Retrieves a single query parameter. If the parameter has not been set,
@@ -219,7 +243,7 @@ class Query implements QueryInterface
      */
     public function merge($query)
     {
-        $pairs = !$query instanceof QueryInterface ? $this->validate($query) : $query->toArray();
+        $pairs = !$query instanceof QueryInterface ? $this->validate($query) : $query->getPairs();
         if ($this->data === $pairs) {
             return $this;
         }

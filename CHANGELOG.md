@@ -11,8 +11,11 @@ All Notable changes to `League\Uri` will be documented in this file
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 - Uri Modifier `Relativize` to complement `Resolve`
 - `Path::createFromSegments` to replace `Path::createFromArray`
+- `Path::getSegments` to replace `Path::toArray`
 - `Host::createFromLabels` to replace `Host::createFromArray`
+- `Host::getLabels` to replace `Host::toArray`
 - `Query::createFromPairs` to replace `Query::createFromArray`
+- `Query::getPairs` to replace `Query::toArray`
 - `UserInfo::createFromString` to create a UserInfo object from a given string
 - `League\Uri\uri_reference` function to return URI reference state.
 - autoloader to ease library usage without composer
@@ -34,8 +37,11 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Host::getLiteral` you should use `Host::getContent` instead
 - `Port::toInt` you should use `Port::getContent` instead
 - `HierarchicalPath::createFromArray` you should use `HierarchicalPath::createFromSegments` instead
+- `HierarchicalPath::toArray` you should use `HierarchicalPath::getSegments` instead
 - `Host::createFromArray` you should use `HierarchicalPath::createFromLabels` instead
+- `Host::toArray` you should use `HierarchicalPath::getLabels` instead
 - `Query::createFromArray` you should use `HierarchicalPath::createFromPairs` instead
+- `Query::toArray` you should use `HierarchicalPath::getPairs` instead
 - `UriPart::sameValueAs`
 
 ### Remove

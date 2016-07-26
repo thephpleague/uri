@@ -167,35 +167,6 @@ class Query implements QueryInterface
     }
 
     /**
-     * Returns an instance with the specified string
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified data
-     *
-     * @param string $value
-     *
-     * @return static
-     */
-    public function modify($value)
-    {
-        if ($value === $this->getContent()) {
-            return $this;
-        }
-
-        return new static($value);
-    }
-
-    /**
-     * Returns an array representation of the query
-     *
-     * @return array
-     */
-    public function getPairs()
-    {
-        return $this->data;
-    }
-
-    /**
      * DEPRECATION WARNING! This method will be removed in the next major point release
      *
      * @deprecated deprecated since version 4.2
@@ -207,6 +178,16 @@ class Query implements QueryInterface
     public function toArray()
     {
         return $this->getPairs();
+    }
+
+    /**
+     * Returns an array representation of the query
+     *
+     * @return array
+     */
+    public function getPairs()
+    {
+        return $this->data;
     }
 
     /**
@@ -229,6 +210,25 @@ class Query implements QueryInterface
         }
 
         return $default;
+    }
+
+    /**
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        if ($value === $this->getContent()) {
+            return $this;
+        }
+
+        return new static($value);
     }
 
     /**

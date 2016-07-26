@@ -139,7 +139,7 @@ abstract class AbstractHierarchicalUri extends AbstractUri
     }
 
     /**
-     * Tell whether the Auth URI is valid
+     * Tell whether the Authority part is valid
      *
      * @return bool
      */

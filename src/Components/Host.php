@@ -229,6 +229,20 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * Returns an array representation of the host
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getLabels();
+    }
+
+    /**
      * Returns an array representation of the Host
      *
      * @return array
@@ -256,20 +270,6 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
         }
 
         return $default;
-    }
-
-    /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release
-     *
-     * @deprecated deprecated since version 4.2
-     *
-     * Returns an array representation of the host
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->getLabels();
     }
 
     /**

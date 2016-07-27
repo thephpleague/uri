@@ -226,6 +226,8 @@ class UriModifierTest extends TestCase
             [HttpUri::createFromString('http://example.org/~foo/'), HttpUri::createFromString('http://example.org:80/~foo/'), true],
             [HttpUri::createFromString('http://example.org/%7efoo/'), HttpUri::createFromString('http://example.org/%7Efoo/'), true],
             [HttpUri::createFromString('http://example.org/~foo/'), HttpUri::createFromString('http://example.ORG/bar/./../~foo/'), true],
+            [HttpUri::createFromString('/%7efoo/'), HttpUri::createFromString('/~foo/'), true],
+            [HttpUri::createFromString('../%7efoo/'), HttpUri::createFromString('../~foo/'), true],
         ];
     }
 }

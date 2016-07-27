@@ -48,7 +48,7 @@ class Resolve extends AbstractUriModifier
      */
     public function __invoke($payload)
     {
-        $meta = \League\Uri\uri_reference($payload);
+        $meta = uri_reference($payload);
         $path = $payload->getPath();
         if ($meta['absolute_uri']) {
             return $payload

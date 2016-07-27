@@ -1,7 +1,7 @@
 <?php
 
-if (!function_exists('League\Uri\uri_reference')) {
-    require __DIR__.'/src/functions.php';
+if (!function_exists('League\Uri\Modifiers\uri_reference')) {
+    require __DIR__.'/src/Modifiers/functions.php';
 }
 
 spl_autoload_register(function ($class) {

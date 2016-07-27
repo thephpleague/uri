@@ -12,7 +12,6 @@
 namespace League\Uri\Modifiers;
 
 use League\Uri\Interfaces\Uri;
-use League\Uri\Types\TranscoderTrait;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -24,8 +23,6 @@ use Psr\Http\Message\UriInterface;
  */
 class Normalize extends AbstractUriModifier
 {
-    use TranscoderTrait;
-
     /**
      * Return a Uri object modified according to the modifier
      *
@@ -35,50 +32,33 @@ class Normalize extends AbstractUriModifier
      */
     public function __invoke($uri)
     {
-        $modifier = new Pipeline([new HostToAscii(), new KsortQuery()]);
-
+        $this->assertUriObject($uri);
+        $modifiers = $this->getDefaultModifiers();
         $path = $uri->getPath();
-        if ('' !== $uri->getScheme().$uri->getAuthority() || (isset($path[0]) && '/' === $path[0])) {
-            $modifier = $modifier->pipe(new RemoveDotSegments());
+        if ('' !== $uri->getScheme().$uri->getAuthority()
+            || (isset($path[0]) && '/' === $path[0])) {
+            return $modifiers->pipe(new RemoveDotSegments())->__invoke($uri);
         }
 
-        return $this->decodeUri($modifier($uri));
+        return $modifiers->__invoke($uri);
     }
 
     /**
-     * Decode specific component of the URI
+     * Return the default modifier to apply on any URI object
      *
-     * @param Uri|UriInterface $uri
-     *
-     * @return Uri|UriInterface
+     * @return array
      */
-    protected function decodeUri($uri)
+    protected function getDefaultModifiers()
     {
-        foreach (['Path', 'Query', 'Fragment'] as $part) {
-            $uri = $this->decodeUriPart($uri, $part);
+        static $defaults;
+        if (null === $defaults) {
+            $defaults = new Pipeline([
+                new HostToAscii(),
+                new KsortQuery(),
+                new DecodeUnreservedCharacters(),
+            ]);
         }
 
-        return $uri;
-    }
-
-    /**
-     * Decode an URI part
-     *
-     * @param Uri|UriInterface $uri
-     * @param string           $property
-     *
-     * @return Uri|UriInterface
-     */
-    protected function decodeUriPart($uri, $property)
-    {
-        $value = preg_replace_callback(
-            ',%('.self::$unreservedCharsEncoded.'),i',
-            function (array $matches) {
-                return rawurldecode($matches[0]);
-            },
-            call_user_func([$uri, 'get'.$property])
-        );
-
-        return call_user_func([$uri, 'with'.$property], $value);
+        return $defaults;
     }
 }

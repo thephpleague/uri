@@ -11,7 +11,6 @@
  */
 namespace League\Uri\Modifiers;
 
-use InvalidArgumentException;
 use League\Uri\Interfaces\Uri;
 use Psr\Http\Message\UriInterface;
 
@@ -30,20 +29,17 @@ class Relativize extends AbstractUriModifier
      *
      * @var Uri|UriInterface
      */
-    protected $uri;
+    protected $base_uri;
 
     /**
      * New instance
      *
-     * @param Uri|UriInterface $uri
+     * @param Uri|UriInterface $base_uri
      */
-    public function __construct($uri)
+    public function __construct($base_uri)
     {
-        if (!uri_reference($uri)['absolute_uri']) {
-            throw new InvalidArgumentException('The Base URI must be an Absolute URI');
-        }
-
-        $this->uri = $this->hostToAscii($uri);
+        $this->assertUriObject($base_uri);
+        $this->base_uri = $this->hostToAscii($base_uri);
     }
 
     /**
@@ -66,33 +62,53 @@ class Relativize extends AbstractUriModifier
     /**
      * Return a Uri object modified according to the modifier
      *
-     * @param Uri|UriInterface $payload
+     * @param Uri|UriInterface $target
      *
      * @return Uri|UriInterface
      */
-    public function __invoke($payload)
+    public function __invoke($target)
     {
-        $this->assertUriObject($payload);
-        $payload_normalized = $this->hostToAscii($payload);
-
-        if ($this->uri->getScheme() !== $payload_normalized->getScheme()
-            || $this->uri->getAuthority() !== $payload_normalized->getAuthority()
-        ) {
-            return $payload;
+        $this->assertUriObject($target);
+        if (!$this->isRelativizable($target)) {
+            return $target;
         }
 
-        $path = $this->relativizePath($payload->getPath());
+        $target = $target->withScheme('')->withPort(null)->withUserInfo('')->withHost('');
 
-        return $payload
-            ->withScheme('')
-            ->withPort(null)
-            ->withUserInfo('')
-            ->withHost('')
-            ->withPath($this->formatPath($path));
+        $target_path = $target->getPath();
+        if ($target_path !== $this->base_uri->getPath()) {
+            return $target->withPath($this->relativizePath($target_path));
+        }
+
+        if ($target->getQuery() === $this->base_uri->getQuery()) {
+            return $target->withPath('')->withQuery('');
+        }
+
+        if ('' === $target->getQuery()) {
+            return $target->withPath($this->formatPathWithEmptyBaseQuery($target_path));
+        }
+
+        return $target->withPath('');
     }
 
     /**
-     * Relative the URI for a authority-less payload URI
+     * Tell whether the submitted URI object can be relativize
+     *
+     * @param Uri|UriInterface $target
+     *
+     * @return bool
+     */
+    protected function isRelativizable($target)
+    {
+        $target = $this->hostToAscii($target);
+
+        return $this->base_uri->getScheme() === $target->getScheme()
+            && $this->base_uri->getAuthority() === $target->getAuthority()
+            && !uri_reference($target)['relative_path'];
+    }
+
+    /**
+     * Relative the URI for a authority-less target URI
      *
      * @param string $path
      *
@@ -100,24 +116,19 @@ class Relativize extends AbstractUriModifier
      */
     protected function relativizePath($path)
     {
-        $segments = $this->getSegments($path);
-        $basename = array_pop($segments);
-        $basePath = $this->uri->getPath();
-        if ($basePath === $path) {
-            return $basename;
-        }
-
-        $baseSegments = $this->getSegments($basePath);
-        array_pop($baseSegments);
-        foreach ($baseSegments as $offset => $segment) {
-            if (!isset($segments[$offset]) || $segment !== $segments[$offset]) {
+        $base_segments = $this->getSegments($this->base_uri->getPath());
+        $target_segments = $this->getSegments($path);
+        $target_basename = array_pop($target_segments);
+        array_pop($base_segments);
+        foreach ($base_segments as $offset => $segment) {
+            if (!isset($target_segments[$offset]) || $segment !== $target_segments[$offset]) {
                 break;
             }
-            unset($baseSegments[$offset], $segments[$offset]);
+            unset($base_segments[$offset], $target_segments[$offset]);
         }
-        $segments[] = $basename;
+        $target_segments[] = $target_basename;
 
-        return str_repeat('../', count($baseSegments)).implode('/', $segments);
+        return $this->formatPath(str_repeat('../', count($base_segments)).implode('/', $target_segments));
     }
 
     /**
@@ -137,7 +148,7 @@ class Relativize extends AbstractUriModifier
     }
 
     /**
-     * Post formatting the path to keep a valid URI
+     * Formatting the path to keep a valid URI
      *
      * @param string $path
      *
@@ -146,20 +157,34 @@ class Relativize extends AbstractUriModifier
     protected function formatPath($path)
     {
         if ('' === $path) {
-            $basePath = $this->uri->getPath();
-
-            return in_array($basePath, ['', '/']) ? $basePath : './';
+            $base_path = $this->base_uri->getPath();
+            return in_array($base_path, ['', '/']) ? $base_path : './';
         }
 
-        if (false === ($colonPos = strpos($path, ':'))) {
+        if (false === ($colon_pos = strpos($path, ':'))) {
             return $path;
         }
 
-        $slashPos = strpos($path, '/');
-        if (false === $slashPos || $colonPos < $slashPos) {
+        $slash_pos = strpos($path, '/');
+        if (false === $slash_pos || $colon_pos < $slash_pos) {
             return "./$path";
         }
 
         return $path;
+    }
+
+    /**
+     * Formatting the path to keep a resolvable URI
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function formatPathWithEmptyBaseQuery($path)
+    {
+        $target_segments = $this->getSegments($path);
+        $basename = end($target_segments);
+
+        return '' === $basename ? './' : $basename;
     }
 }

@@ -42,42 +42,42 @@ class Resolve extends AbstractUriModifier
     /**
      * Return a Uri object modified according to the modifier
      *
-     * @param Uri|UriInterface $payload
+     * @param Uri|UriInterface $target
      *
      * @return Uri|UriInterface
      */
-    public function __invoke($payload)
+    public function __invoke($target)
     {
-        $meta = uri_reference($payload);
-        $path = $payload->getPath();
+        $meta = uri_reference($target);
+        $target_path = $target->getPath();
         if ($meta['absolute_uri']) {
-            return $payload
-                ->withPath((new Path($path))->withoutDotSegments()->__toString());
+            return $target
+                ->withPath((new Path($target_path))->withoutDotSegments()->__toString());
         }
 
         if ($meta['network_path']) {
-            return $payload
+            return $target
                 ->withScheme($this->uri->getScheme())
-                ->withPath((new Path($path))->withoutDotSegments()->__toString());
+                ->withPath((new Path($target_path))->withoutDotSegments()->__toString());
         }
 
-        $userInfo = explode(':', $this->uri->getUserInfo(), 2);
-        $components = $this->resolvePathAndQuery($path, $payload->getQuery());
+        $user_info = explode(':', $this->uri->getUserInfo(), 2);
+        $components = $this->resolvePathAndQuery($target_path, $target->getQuery());
 
-        return $payload
+        return $target
             ->withPath($this->formatPath($components['path']))
             ->withQuery($components['query'])
             ->withHost($this->uri->getHost())
             ->withPort($this->uri->getPort())
-            ->withUserInfo((string) array_shift($userInfo), array_shift($userInfo))
+            ->withUserInfo((string) array_shift($user_info), array_shift($user_info))
             ->withScheme($this->uri->getScheme());
     }
 
     /**
-     * Resolve the URI for a Authority-less payload URI
+     * Resolve the URI for a Authority-less target URI
      *
-     * @param string $path  the payload path component
-     * @param string $query the payload query component
+     * @param string $path  the target path component
+     * @param string $query the target query component
      *
      * @return string[]
      */
@@ -110,13 +110,13 @@ class Resolve extends AbstractUriModifier
      */
     protected function mergePath($path)
     {
-        $basePath = $this->uri->getPath();
-        if ('' !== $this->uri->getAuthority() && '' === $basePath) {
+        $base_path = $this->uri->getPath();
+        if ('' !== $this->uri->getAuthority() && '' === $base_path) {
             return (string) (new Path($path))->withLeadingSlash();
         }
 
-        if ('' !== $basePath) {
-            $segments = explode('/', $basePath);
+        if ('' !== $base_path) {
+            $segments = explode('/', $base_path);
             array_pop($segments);
             $path = implode('/', $segments).'/'.$path;
         }

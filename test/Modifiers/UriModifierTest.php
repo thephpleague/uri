@@ -121,7 +121,7 @@ class UriModifierTest extends TestCase
             'different scheme'        => [self::BASE_URI,       'https://a/b/c/d;p?q',   'https://a/b/c/d;p?q'],
             'different authority'     => [self::BASE_URI,       'https://g/b/c/d;p?q',   'https://g/b/c/d;p?q'],
             'empty uri'               => [self::BASE_URI,       '',                      ''],
-            'same uri'                => [self::BASE_URI,       self::BASE_URI,          'd;p?q'],
+            'same uri'                => [self::BASE_URI,       self::BASE_URI,          ''],
             'same path'               => [self::BASE_URI,       'http://a/b/c/d;p',      'd;p'],
             'parent path 1'           => [self::BASE_URI,       'http://a/b/c/',         './'],
             'parent path 2'           => [self::BASE_URI,       'http://a/b/',           '../'],
@@ -131,8 +131,8 @@ class UriModifierTest extends TestCase
             'sibling path 2'          => [self::BASE_URI,       'http://a/b/c/g/h',      'g/h'],
             'sibling path 3'          => [self::BASE_URI,       'http://a/b/g',          '../g'],
             'sibling path 4'          => [self::BASE_URI,       'http://a/g',            '../../g'],
-            'query'                   => [self::BASE_URI,       'http://a/b/c/d;p?y',    'd;p?y'],
-            'fragment'                => [self::BASE_URI,       'http://a/b/c/d;p?q#s',  'd;p?q#s'],
+            'query'                   => [self::BASE_URI,       'http://a/b/c/d;p?y',    '?y'],
+            'fragment'                => [self::BASE_URI,       'http://a/b/c/d;p?q#s',  '#s'],
             'path + query'            => [self::BASE_URI,       'http://a/b/c/g?y',      'g?y'],
             'path + fragment'         => [self::BASE_URI,       'http://a/b/c/g#s',      'g#s'],
             'path + query + fragment' => [self::BASE_URI,       'http://a/b/c/g?y#s',    'g?y#s'],
@@ -142,17 +142,26 @@ class UriModifierTest extends TestCase
             'relative single dot 2'   => [self::BASE_URI,       './',                    './'],
             'relative double dot 1'   => [self::BASE_URI,       '..',                    '..'],
             'relative double dot 2'   => [self::BASE_URI,       '../',                   '../'],
-            'path with colon 1'       => ['http://a/b/c/d:p?q', 'http://a/b/c/d:p',      './d:p'],
+            'path with colon 1'       => ['http://a/',          'http://a/d:p',          './d:p'],
             'path with colon 2'       => [self::BASE_URI,       'http://a/b/c/g/d:p',    'g/d:p'],
             'scheme + auth 1'         => ['http://a',           'http://a?q#s',          '?q#s'],
             'scheme + auth 2'         => ['http://a/',          'http://a?q#s',          '/?q#s'],
+            '2 relative paths 1'      => ['a/b',                '../..',                 '../..'],
+            '2 relative paths 2'      => ['a/b',                './.',                   './.'],
+            '2 relative paths 3'      => ['a/b',                '../c',                  '../c'],
+            '2 relative paths 4'      => ['a/b',                'c/..',                  'c/..'],
+            '2 relative paths 5'      => ['a/b',                'c/.',                   'c/.'],
+            'baseUri with query'      => ['/a/b/?q',            '/a/b/#h',               './#h'],
+            'targetUri with fragment' => ['/',                  '/#h',                   '#h'],
+            'same document'           => ['/',                  '/',                     ''],
+            'same URI normalized'     => ['http://a',           'http://a/',             ''],
         ];
     }
 
     /**
-     * @dataProvider emptyAbsolutePathProvider
+     * @dataProvider relativizeAndResolveProvider
      */
-    public function testResolvedAndRelativizedAddEmptyAbsolutePath(
+    public function testRelativizeAndResolve(
         $baseUri,
         $uri,
         $expectedRelativize,
@@ -170,24 +179,22 @@ class UriModifierTest extends TestCase
         $this->assertSame($expectedResolved, (string) $resolvedUri);
     }
 
-    public function emptyAbsolutePathProvider()
+    public function relativizeAndResolveProvider()
     {
         return [
-            'empty path'            => [self::BASE_URI, 'http://a/', '../../', 'http://a/'],
-            'absolute empty path'   => [self::BASE_URI, 'http://a',  '../../', 'http://a/'],
-            'relative single dot 1' => [self::BASE_URI, '.',         '.',      'http://a/b/c/'],
-            'relative single dot 2' => [self::BASE_URI, './',        './',     'http://a/b/c/'],
-            'relative double dot 1' => [self::BASE_URI, '..',        '..',     'http://a/b/'],
-            'relative double dot 2' => [self::BASE_URI, '../',       '../',    'http://a/b/'],
+            'empty path'            => [self::BASE_URI, 'http://a/', '../../',   'http://a/'],
+            'absolute empty path'   => [self::BASE_URI, 'http://a',  '../../',   'http://a/'],
+            'relative single dot 1' => [self::BASE_URI, '.',         '.',        'http://a/b/c/'],
+            'relative single dot 2' => [self::BASE_URI, './',        './',       'http://a/b/c/'],
+            'relative double dot 1' => [self::BASE_URI, '..',        '..',       'http://a/b/'],
+            'relative double dot 2' => [self::BASE_URI, '../',       '../',      'http://a/b/'],
+            '2 relative paths 1'    => ['a/b',          '../..',     '../..',    '/'],
+            '2 relative paths 2'    => ['a/b',          './.',       './.',      'a/'],
+            '2 relative paths 3'    => ['a/b',          '../c',      '../c',     'c'],
+            '2 relative paths 4'    => ['a/b',          'c/..',      'c/..',     'a/'],
+            '2 relative paths 5'    => ['a/b',          'c/.',       'c/.',      'a/c/'],
+            'path with colon'       => ['http://a/',    'http://a/d:p', './d:p', 'http://a/d:p'],
         ];
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testRelativizeThrowInvalidArgumentException()
-    {
-        new Relativize(HttpUri::createFromString('//example.com'));
     }
 
     /**

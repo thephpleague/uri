@@ -50,6 +50,14 @@ class Port extends AbstractComponent implements PortInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['port' => $this->getContent()];
+    }
+
+    /**
      * Returns the instance string representation
      * with its optional URI delimiters
      *

@@ -46,4 +46,12 @@ class Pass extends AbstractComponent implements PassInterface
     {
         return (string) $this->data;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['pass' => $this->getContent()];
+    }
 }

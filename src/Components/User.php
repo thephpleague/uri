@@ -38,6 +38,14 @@ class User extends AbstractComponent implements UserInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['user' => $this->getContent()];
+    }
+
+    /**
      * Return the decoded string representation of the component
      *
      * @return string

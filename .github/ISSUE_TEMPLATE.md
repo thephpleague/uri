@@ -1,6 +1,6 @@
 ## Issue summary
 
-_(Please explain in plain english your issue/feature request)_
+_(Please explain in plain english your issue)_
 
 ### System informations
 

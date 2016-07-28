@@ -12,7 +12,6 @@
 namespace League\Uri\Components;
 
 use League\Uri\Types\ImmutableComponentTrait;
-use ReflectionClass;
 
 /**
  * An abstract class to ease component manipulation
@@ -77,16 +76,6 @@ abstract class AbstractComponent
     public function getContent()
     {
         return $this->data;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __debugInfo()
-    {
-        $component = strtolower((new ReflectionClass($this))->getShortName());
-
-        return [$component => $this->getContent()];
     }
 
     /**

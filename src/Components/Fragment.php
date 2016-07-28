@@ -64,4 +64,12 @@ class Fragment extends AbstractComponent implements FragmentInterface
 
         return $component;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function __debugInfo()
+    {
+        return ['fragment' => $this->getContent()];
+    }
 }

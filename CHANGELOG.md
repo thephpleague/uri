@@ -19,7 +19,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Query::getPairs`
 - `UserInfo::createFromString` to create a UserInfo object from a given string
 - `Modifiers\uri_reference` function to return URI reference state.
-- autoloader to ease library usage without composer
 
 ### Fixed
 

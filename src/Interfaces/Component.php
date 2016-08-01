@@ -12,6 +12,10 @@
 namespace League\Uri\Interfaces;
 
 /**
+ * DEPRECATION WARNING! This class will be removed in the next major point release
+ *
+ * @deprecated deprecated since version 4.2
+ *
  * Value object representing a URI component.
  *
  * Instances of this interface are considered immutable; all methods that
@@ -26,6 +30,10 @@ namespace League\Uri\Interfaces;
 interface Component extends UriPart
 {
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Returns an instance with the specified string
      *
      * This method MUST retain the state of the current instance, and return

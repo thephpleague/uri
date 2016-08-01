@@ -324,7 +324,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->format(
+        return $this->withContent($this->format(
             $this->convertToAscii($this->data, $this->isIdn),
             $this->isAbsolute
         ));
@@ -346,7 +346,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
             return $this;
         }
 
-        return $this->modify($this->format($this->data, $this->isAbsolute));
+        return $this->withContent($this->format($this->data, $this->isAbsolute));
     }
 
     /**
@@ -362,7 +362,7 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function withoutZoneIdentifier()
     {
         if ($this->hasZoneIdentifier) {
-            return $this->modify(substr($this->data[0], 0, strpos($this->data[0], '%')));
+            return $this->withContent(substr($this->data[0], 0, strpos($this->data[0], '%')));
         }
 
         return $this;

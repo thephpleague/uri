@@ -7,6 +7,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `Component::getContent` returns the raw representation of a component
+- `Component::withContent` to create a new instance from a given content
 - `User::getValue`, `Pass:getValue` and `Fragment::getValue` to access the decoded string representation
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 - `Modifiers\Relativize`
@@ -17,7 +18,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Host::getLabels`
 - `Query::createFromPairs`
 - `Query::getPairs`
-- `UserInfo::createFromString` to create a UserInfo object from a given string
 - `Modifiers\uri_reference` function to return URI reference state.
 
 ### Fixed
@@ -35,6 +35,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
+- `Component::modify` use `Component::withContent` instead
 - `Host::getLiteral`
 - `Port::toInt` use `Port::getContent` instead
 - `HierarchicalPath::createFromArray` use `HierarchicalPath::createFromSegments` instead

@@ -76,9 +76,9 @@ class UserInfoTest extends AbstractTestCase
     /**
      * @dataProvider createFromStringProvider
      */
-    public function testCreateFromString($str, $expected_user, $expected_pass, $expected_str)
+    public function testWithContent($str, $expected_user, $expected_pass, $expected_str)
     {
-        $conn = UserInfo::createFromString($str);
+        $conn = (new UserInfo())->withContent($str);
         $this->assertSame($expected_user, $conn->getUser());
         $this->assertSame($expected_pass, $conn->getPass());
         $this->assertSame($expected_str, (string) $conn);
@@ -93,5 +93,22 @@ class UserInfoTest extends AbstractTestCase
             [':pass', '', 'pass', ''],
             ['', '', '', ''],
         ];
+    }
+
+    public function testWithContentReturnSameInstance()
+    {
+        $conn = new UserInfo('');
+        $this->assertSame($conn, $conn->withContent(':pass'));
+
+        $conn = new UserInfo('user', 'pass');
+        $this->assertSame($conn, $conn->withContent('user:pass'));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithContentThrowsInvalidArgumentException()
+    {
+        (new UserInfo())->withContent([]);
     }
 }

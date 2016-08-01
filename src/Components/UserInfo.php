@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\Pass as PassInterface;
 use League\Uri\Interfaces\UriPart;
 use League\Uri\Interfaces\User as UserInterface;
@@ -44,23 +45,6 @@ class UserInfo implements UserInfoInterface
      * @var Pass
      */
     protected $pass;
-
-    /**
-     * Create a new instance from a string
-     *
-     * @param string $str
-     *
-     * @return static
-     */
-    public static function createFromString($str)
-    {
-        $res = explode(UserInfoInterface::SEPARATOR, self::validateString($str), 2);
-
-        return new static(
-            new User(array_shift($res)),
-            new Pass(array_shift($res))
-        );
-    }
 
     /**
      * Create a new instance of UserInfo
@@ -211,6 +195,35 @@ class UserInfo implements UserInfoInterface
     public function withPass($pass)
     {
         return $this->withProperty('pass', $pass);
+    }
+
+    /**
+     * Create a new instance from a string
+     *
+     * @param string $str
+     *
+     * @return static
+     */
+    public function withContent($content = null)
+    {
+        if ($content === $this->getContent()) {
+            return $this;
+        }
+
+        if (null !== $content && !is_string($content)) {
+            throw new InvalidArgumentException(sprintf(
+                'Expected data to be a string or NULL; received "%s"',
+                gettype($content)
+            ));
+        }
+
+        $res = explode(UserInfoInterface::SEPARATOR, $content, 2);
+        $new = new static(array_shift($res), array_shift($res));
+        if ($new->getContent() === $this->getContent()) {
+            return $this;
+        }
+
+        return $new;
     }
 
     /**

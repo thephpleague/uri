@@ -65,6 +65,24 @@ trait PathTrait
      *
      * @return static
      */
+    abstract public function withContent($value = null);
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * @see withContent
+     *
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
     abstract public function modify($value);
 
     /**
@@ -104,7 +122,7 @@ trait PathTrait
             $new .= '/';
         }
 
-        return $this->modify($new);
+        return $this->withContent($new);
     }
 
     /**
@@ -143,7 +161,7 @@ trait PathTrait
      */
     public function withoutEmptySegments()
     {
-        return $this->modify(preg_replace(',/+,', '/', $this->__toString()));
+        return $this->withContent(preg_replace(',/+,', '/', $this->__toString()));
     }
 
     /**
@@ -169,7 +187,7 @@ trait PathTrait
      */
     public function withTrailingSlash()
     {
-        return $this->hasTrailingSlash() ? $this : $this->modify($this->__toString().'/');
+        return $this->hasTrailingSlash() ? $this : $this->withContent($this->__toString().'/');
     }
 
     /**
@@ -182,7 +200,7 @@ trait PathTrait
      */
     public function withoutTrailingSlash()
     {
-        return !$this->hasTrailingSlash() ? $this : $this->modify(mb_substr($this, 0, -1, 'UTF-8'));
+        return !$this->hasTrailingSlash() ? $this : $this->withContent(mb_substr($this, 0, -1, 'UTF-8'));
     }
 
     /**
@@ -208,7 +226,7 @@ trait PathTrait
      */
     public function withLeadingSlash()
     {
-        return $this->isAbsolute() ? $this : $this->modify('/'.$this->__toString());
+        return $this->isAbsolute() ? $this : $this->withContent('/'.$this->__toString());
     }
 
     /**
@@ -221,10 +239,14 @@ trait PathTrait
      */
     public function withoutLeadingSlash()
     {
-        return !$this->isAbsolute() ? $this : $this->modify(mb_substr($this, 1, null, 'UTF-8'));
+        return !$this->isAbsolute() ? $this : $this->withContent(mb_substr($this, 1, null, 'UTF-8'));
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Retrieve the optional type associated to the path.
      *
      * The value returned MUST be one of the interface constant type
@@ -244,6 +266,10 @@ trait PathTrait
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Return an instance with the specified typecode.
      *
      * This method MUST retain the state of the current instance, and return
@@ -276,6 +302,6 @@ trait PathTrait
             $extension = ';type='.$extension;
         }
 
-        return $this->modify($path.$extension);
+        return $this->withContent($path.$extension);
     }
 }

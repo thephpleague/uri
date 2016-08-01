@@ -110,12 +110,33 @@ abstract class AbstractComponent
      *
      * @return static
      */
-    public function modify($value)
+    public function withContent($value = null)
     {
         if ($value === $this->getContent()) {
             return $this;
         }
 
         return new static($value);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
+     * @see withContent
+     *
+     * Returns an instance with the specified string
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified data
+     *
+     * @param string $value
+     *
+     * @return static
+     */
+    public function modify($value)
+    {
+        return $this->withContent($value);
     }
 }

@@ -115,6 +115,10 @@ interface Path extends Component
     public function withoutLeadingSlash();
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Retrieve the optional type associated to the path.
      *
      * The value returned MUST be one of the interface constant type
@@ -127,6 +131,10 @@ interface Path extends Component
     public function getTypecode();
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release
+     *
+     * @deprecated deprecated since version 4.2
+     *
      * Return an instance with the specified typecode.
      *
      * This method MUST retain the state of the current instance, and return

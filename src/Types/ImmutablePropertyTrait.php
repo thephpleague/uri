@@ -40,7 +40,7 @@ trait ImmutablePropertyTrait
             $value = null;
         }
 
-        $value = $this->$property->modify($value);
+        $value = $this->$property->withContent($value);
         if ($this->$property === $value) {
             return $this;
         }

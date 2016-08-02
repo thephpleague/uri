@@ -306,21 +306,19 @@ class Formatter
      */
     protected function formatAuthority($uri)
     {
-        if ('' === $uri->getHost()) {
+        if ('' === $uri->getAuthority()) {
             return '';
         }
 
-        static $parser;
-        if (!$parser) {
-            $parser = new UriParser();
+        $userInfo = $uri->getUserInfo();
+        if ('' !== $userInfo) {
+            $userInfo .= '@';
         }
 
-        $components = $parser((string) $uri);
-
         return '//'
-            .$this->buildUserInfo($components['user'], $components['pass'])
-            .$this->formatHost(new Host($components['host']))
-            .$this->formatPort($components['port'])
+            .$userInfo
+            .$this->formatHost(new Host($uri->getHost()))
+            .$this->formatPort($uri->getPort())
         ;
     }
 

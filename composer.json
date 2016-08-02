@@ -4,7 +4,7 @@
     "description" : "URI manipulation library",
     "keywords": ["url", "uri", "rfc3986", "psr-7", "parse_url", "http", "https", "ws", "ftp", "data-uri"],
     "license": "MIT",
-    "homepage": "http://url.thephpleague.com",
+    "homepage": "http://uri.thephpleague.com",
     "authors": [
         {
             "name" : "Ignace Nyamagana Butera",
@@ -46,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.2-dev"
+            "dev-master": "4.2.x-dev"
         }
     },
     "config": {

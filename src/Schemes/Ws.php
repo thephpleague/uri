@@ -34,6 +34,17 @@ class Ws extends AbstractHierarchicalUri implements Uri
     /**
      * @inheritdoc
      */
+    protected function assertSupportedScheme()
+    {
+        $scheme = $this->getScheme();
+        if ('' !== $scheme) {
+            parent::assertSupportedScheme();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function isValid()
     {
         return null === $this->fragment->getContent()

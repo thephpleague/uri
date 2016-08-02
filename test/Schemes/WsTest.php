@@ -2,47 +2,63 @@
 
 namespace League\Uri\Test\Schemes;
 
-use League\Uri\Schemes\Ws;
-use PHPUnit_Framework_TestCase;
+use InvalidArgumentException;
+use League\Uri\Schemes\Ws as WsUri;
+use League\Uri\Test\AbstractTestCase;
 
 /**
- * @group uri
  * @group ws
  */
-class WsTest extends PHPUnit_Framework_TestCase
+class WsTest extends AbstractTestCase
 {
     /**
      * @dataProvider validUrlArray
      * @param $expected
      * @param $input
      */
-    public function testCreateFromString($expected, $input)
+    public function testCreateFromString($input, $expected)
     {
-        $this->assertSame($expected, Ws::createFromString($input)->__toString());
+        $this->assertSame($expected, WsUri::createFromString($input)->__toString());
     }
 
     public function validUrlArray()
     {
         return [
             'with default port' => [
+                'Ws://ExAmpLe.CoM:80/foo/bar?foo=bar',
                 'ws://example.com/foo/bar?foo=bar',
-                'ws://example.com:80/foo/bar?foo=bar',
             ],
             'with user info' => [
                 'wss://login:pass@example.com/',
                 'wss://login:pass@example.com/',
+            ],
+            'network path' => [
+                '//ExAmpLe.CoM:21',
+                '//example.com:21',
+            ],
+            'absolute path' => [
+                '/path/to/my/file',
+                '/path/to/my/file',
+            ],
+            'relative path' => [
+                '.././path/../is/./relative',
+                '.././path/../is/./relative',
+            ],
+            'empty string' => [
+                '',
+                '',
             ],
         ];
     }
 
     /**
      * @dataProvider invalidArgumentExceptionProvider
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @param $input
      */
     public function testConstructorThrowInvalidArgumentException($input)
     {
-        Ws::createFromString($input);
+        WsUri::createFromString($input);
     }
 
     public function invalidArgumentExceptionProvider()
@@ -50,16 +66,14 @@ class WsTest extends PHPUnit_Framework_TestCase
         return [
             ['ftp:example.com'],
             ['http://example.com'],
-            [''],
-            ['//example.com'],
             ['wss:/example.com'],
-            ['ws://example.com:80/foo/bar?foo=bar#content'],
+            ['//example.com:80/foo/bar?foo=bar#content'],
         ];
     }
 
     public function testSetState()
     {
-        $uri = Ws::createFromString('wss://a:b@c:442/d');
+        $uri = WsUri::createFromString('wss://a:b@c:442/d');
         $generateUri = eval('return '.var_export($uri, true).';');
         $this->assertEquals($uri, $generateUri);
     }

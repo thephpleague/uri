@@ -4,20 +4,19 @@ namespace League\Uri\Test\Schemes;
 
 use InvalidArgumentException;
 use League\Uri\Schemes\Ftp as FtpUri;
-use PHPUnit_Framework_TestCase;
+use League\Uri\Test\AbstractTestCase;
 
 /**
- * @group uri
  * @group ftp
  */
-class FtpTest extends PHPUnit_Framework_TestCase
+class FtpTest extends AbstractTestCase
 {
     /**
      * @dataProvider validArray
      * @param $expected
      * @param $input
      */
-    public function testCreateFromString($expected, $input)
+    public function testCreateFromString($input, $expected)
     {
         $this->assertSame($expected, FtpUri::createFromString($input)->__toString());
     }
@@ -26,12 +25,28 @@ class FtpTest extends PHPUnit_Framework_TestCase
     {
         return [
             'with default port' => [
+                'FtP://ExAmpLe.CoM:21/foo/bar',
                 'ftp://example.com/foo/bar',
-                'ftp://example.com:21/foo/bar',
             ],
             'with user info' => [
                 'ftp://login:pass@example.com/',
                 'ftp://login:pass@example.com/',
+            ],
+            'with network path' => [
+                '//ExAmpLe.CoM:80',
+                '//example.com:80',
+            ],
+            'absolute path' => [
+                '/path/to/my/file',
+                '/path/to/my/file',
+            ],
+            'relative path' => [
+                '.././path/../is/./relative',
+                '.././path/../is/./relative',
+            ],
+            'empty string' => [
+                '',
+                '',
             ],
         ];
     }
@@ -51,8 +66,6 @@ class FtpTest extends PHPUnit_Framework_TestCase
         return [
             ['wss:/example.com'],
             ['http://example.com'],
-            [''],
-            ['//example.com'],
             ['ftp:example.com'],
             ['ftp://example.com?query#fragment'],
         ];

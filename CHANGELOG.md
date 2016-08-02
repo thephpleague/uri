@@ -32,6 +32,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - On URI transformation `InvalidArgumentException` exceptions are emitted instead of `RuntimeException` ones to normalize exception to PSR-7
 - `Modifiers\Normalize` class removes dot segments only on URI with absolute path.
 - `Modifiers\Normalize` class decode all unreserved characters.
+- `Ftp` and `Ws` objects now accept relative reference URI without the scheme.
 
 ### Deprecated
 

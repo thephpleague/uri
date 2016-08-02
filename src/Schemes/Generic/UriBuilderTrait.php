@@ -54,11 +54,11 @@ trait UriBuilderTrait
     protected static function buildUserInfo($user, $pass)
     {
         $userinfo = $user;
-        if (null === $userinfo) {
+        if (in_array($userinfo, [null, ''], true)) {
             return '';
         }
 
-        if (null !== $pass) {
+        if (!in_array($pass, [null, ''], true)) {
             $userinfo .= ':'.$pass;
         }
 

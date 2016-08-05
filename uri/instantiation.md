@@ -19,7 +19,7 @@ To ease URI instantiation, and because URIs come in different forms we used name
 public static Uri::createFromString(string $uri = ''): Uri
 ~~~
 
-Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parse using the library [internal URI parser](/services/parser-uri/).
+Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parsed using the library [internal URI parser](/services/parser-uri/).
 
 ~~~php
 <?php

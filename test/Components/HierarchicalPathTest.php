@@ -499,4 +499,27 @@ class HierarchicalPathTest extends AbstractTestCase
             'with typecode' => ['/foo/bar.csv;type=a', 'csv'],
         ];
     }
+
+    /**
+     * @dataProvider geValueProvider
+     */
+    public function testGetValue($str, $expected)
+    {
+        $this->assertSame($expected, (new Path($str))->getDecoded());
+    }
+
+    public function geValueProvider()
+    {
+        return [
+            ['', ''],
+            ['0', '0'],
+            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['€', '€'],
+            ['%E2%82%AC', '€'],
+            ['frag ment', 'frag ment'],
+            ['frag%20ment', 'frag ment'],
+            ['frag%2-ment', 'frag%2-ment'],
+            ['fr%61gment', 'fr%61gment'],
+        ];
+    }
 }

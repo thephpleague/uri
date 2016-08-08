@@ -82,10 +82,14 @@ Basic path representations is done using the following methods:
 
 use League\Uri\Components\HierarchicalPath as Path;
 
-$path = new Path('/path/to the/sky');
-$path->__toString();      //return '/path/to%20the/sky'
-$path->getUriComponent(); //return '/path/to%20the/sky'
+$path = new Path('/windows/My Documents 100%20/foo.txt');
+$path->getUriComponent(); //return '/windows/My%20Documents%20100%20/foo.txt'
+$path->__toString();      //return '/windows/My%20Documents%20100%20/foo.txt'
+$path->getContent();      //return '/windows/My%20Documents%20100%20/foo.txt'
+$path->getDecoded();      //return '/windows/My Documents 100%20/foo.txt'
 ~~~
+
+<p class="message-notice"><code>getContent</code> and <code>getDecoded</code> were added in version <code>4.2</code></p>
 
 ### Array representation
 

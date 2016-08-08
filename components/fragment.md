@@ -64,7 +64,7 @@ $fragment = $uri->fragment; // $fragment is a League\Uri\Components\Fragment obj
 
 The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces.
 
-### Fragment::getValue
+### Fragment::getDecoded
 
 <p class="message-notice">New since <code>version 4.2</code></p>
 
@@ -73,7 +73,7 @@ Returns the decoded value of a fragment component
 ~~~php
 <?php
 
-public Fragment::getValue(void): string
+public Fragment::getDecoded(void): null|string
 ~~~
 
 #### Example
@@ -85,5 +85,5 @@ use League\Uri\Components\Fragment;
 
 $component = new Fragment('%E2%82%AC');
 echo $component->getUriComponent(); //displays '#%E2%82%AC'
-echo $component->getValue(); //displays '€'
+echo $component->getDecoded(); //displays '€'
 ~~~

@@ -61,17 +61,17 @@ $pass = $uri->pass; // $user is a League\Uri\Components\Pass object;
 
 The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
-### Pass::getValue
+### Pass::getDecoded
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
 ~~~php
 <?php
 
-public function Pass::getValue(void): string
+public function Pass::getDecoded(void): null|string
 ~~~
 
-Returns the decoded string representation of the user component
+Returns the decoded value of the component `getContent` method
 
 #### Example
 
@@ -81,5 +81,5 @@ use League\Uri\Components\Pass;
 
 $user = new Pass('frag%20ment');
 $user->getContent(); // display 'frag%40ment'
-$user->getValue();   // display 'frag@ment'
+$user->getDecoded();   // display 'frag@ment'
 ~~~

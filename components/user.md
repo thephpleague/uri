@@ -61,17 +61,17 @@ $user = $uri->user; // $user is a League\Uri\Components\User object;
 
 The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
 
-### User::getValue
+### User::getDecoded
 
 <p class="message-notice">New in <code>version 4.2</code></p>
 
 ~~~php
 <?php
 
-public function User::getValue(void): string
+public function User::getDecoded(void): null|string
 ~~~
 
-Returns the decoded string representation of the user component
+Returns the decoded version of the `getContent` method
 
 #### Example
 
@@ -81,5 +81,5 @@ use League\Uri\Components\User;
 
 $user = new User('frag:ment');
 $user->getContent(); // display 'frag%3Ament'
-$user->getValue(); // display 'frag:ment'
+$user->getDecoded(); // display 'frag:ment'
 ~~~

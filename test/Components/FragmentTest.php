@@ -46,13 +46,13 @@ class FragmentTest extends AbstractTestCase
      */
     public function testGetValue($str, $expected)
     {
-        $this->assertSame($expected, (new Fragment($str))->getValue());
+        $this->assertSame($expected, (new Fragment($str))->getDecoded());
     }
 
     public function geValueProvider()
     {
         return [
-            [null, ''],
+            [null, null],
             ['', ''],
             ['0', '0'],
             ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],

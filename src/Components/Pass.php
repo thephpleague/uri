@@ -40,11 +40,15 @@ class Pass extends AbstractComponent implements PassInterface
     /**
      * Return the decoded string representation of the component
      *
-     * @return string
+     * @return null|string
      */
-    public function getValue()
+    public function getDecoded()
     {
-        return (string) $this->data;
+        if (null === $this->data) {
+            return null;
+        }
+
+        return $this->data;
     }
 
     /**

@@ -6,9 +6,13 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- `Component::getContent` returns the raw representation of a component
-- `Component::withContent` to create a new instance from a given content
-- `User::getValue`, `Pass:getValue` and `Fragment::getValue` to access the decoded string representation
+- `Component::getContent` returns the raw encoded representation of a component
+- `Component::withContent` to create a new instance from a given raw encoded content
+- `getDecoded` method to access the decoded content for the following classes:
+    - `HierarchicalPath`
+    - `User`
+    - `Pass`
+    - `Fragment`
 - Support for PHP's magic methods `__debugInfo` and `__set_state` to improve debugging
 - `Modifiers\Relativize`
 - `Modifiers\DecodeUnreservedCharacters`

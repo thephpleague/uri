@@ -21,13 +21,11 @@ use League\Uri\Schemes\Ws as WsUri;
 
 $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
 //throw an InvalidArgumentException - a fragment component was given
-
-
-$altUri = WsUri::createFromString('//thephpleague.com/path/to?here');
-//throw an InvalidArgumentException - no scheme was given
 ~~~
 
 Apart from the fragment, the websockets URIs share the same [host validation limitation](/uri/schemes/http/#validation) as Http URIs.
+
+<p class="message-notice">Starting with version <code>4.2</code> schemeless FTP Uri will no longer trigger an <code>InvalidArgumentException</code> exception</p>
 
 ## Properties
 

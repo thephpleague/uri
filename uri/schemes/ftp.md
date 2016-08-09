@@ -20,11 +20,9 @@ use League\Uri\Schemes\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
 $uri->withQuery('p=1'); //throw an InvalidArgumentException - a query component was given
-
-
-$altUri = FtpUri::createFromString('//thephpleague.com/path/to');
-//throw an InvalidArgumentException - no scheme was given
 ~~~
+
+<p class="message-notice">Starting with version <code>4.2</code> schemeless FTP Uri will no longer trigger an <code>InvalidArgumentException</code> exception</p>
 
 Apart from the fragment and the query components, the Ftp URIs share the same [host validation limitation](/uri/schemes/http/#validation) as Http URIs.
 

@@ -112,7 +112,7 @@ interface Host extends HierarchicalComponent
     public function getLabel($offset, $default = null);
 
     /**
-     * Returns a host in his IDN form
+     * Returns a host in its IDN form
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the host in its IDN form using RFC 3492 rules
@@ -124,7 +124,7 @@ interface Host extends HierarchicalComponent
     public function toUnicode();
 
     /**
-     * Returns a host in his punycode encoded form
+     * Returns a host in its punycode encoded form
      *
      * This method MUST retain the state of the current instance, and return
      * an instance with the host transcoded using to ascii the RFC 3492 rules

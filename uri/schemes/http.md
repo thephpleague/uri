@@ -7,7 +7,7 @@ title: Http URIs
 
 ## Instantiation
 
-To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and non secure Http URI. In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), the `Http` class can be instantiated using the server variables.
+To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), the `Http` class can be instantiated using the server variables.
 
 ~~~php
 <?php
@@ -18,7 +18,7 @@ use League\Uri\Schemes\Http as HttpUri;
 $uri = HttpUri::createFromServer($_SERVER);
 ~~~
 
-<p class="message-warning">The method only rely on servers safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>
+<p class="message-warning">The method only relies on the server's safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>
 
 ## Validation
 
@@ -35,7 +35,7 @@ echo $uri->withHost('')->withScheme('')->__toString();
 // you can not remove the Host if a scheme is present
 ~~~
 
-Instead you are require to proceed as below
+Instead you are required to proceed as below
 
 ~~~php
 <?php
@@ -46,7 +46,7 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost('')->__toString(); //displays "/"
 ~~~
 
-<p class="message-notice">When an invalid URI object is created a <code>InvalidArgumentException</code> exception is thrown</p>
+<p class="message-notice">When an invalid URI object is created an <code>InvalidArgumentException</code> exception is thrown</p>
 
 ## Relation with PSR-7
 

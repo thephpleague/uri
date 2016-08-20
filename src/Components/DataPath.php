@@ -75,6 +75,7 @@ class DataPath extends AbstractComponent implements DataPathInterface
         if ('' === $path) {
             $path = static::DEFAULT_MIMETYPE.';'.static::DEFAULT_PARAMETER.',';
         }
+
         $this->validate($path);
     }
 

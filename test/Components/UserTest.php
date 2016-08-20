@@ -47,11 +47,11 @@ class UserTest extends AbstractTestCase
             ['{broken}', '%7Bbroken%7D', '%7Bbroken%7D'],
             ['`oops`', '%60oops%60', '%60oops%60'],
             ['\\slashy', '%5Cslashy', '%5Cslashy'],
-            ['to@to', 'to%40to', 'to%40to'],
-            ['to:to', 'to%3Ato', 'to%3Ato'],
-            ['to/to', 'to%2Fto', 'to%2Fto'],
-            ['to?to', 'to%3Fto', 'to%3Fto'],
-            ['to#to', 'to%23to', 'to%23to'],
+            ['to%40to', 'to%40to', 'to%40to'],
+            ['to%3Ato', 'to%3Ato', 'to%3Ato'],
+            ['to%2Fto', 'to%2Fto', 'to%2Fto'],
+            ['to%3Fto', 'to%3Fto', 'to%3Fto'],
+            ['to%23to', 'to%23to', 'to%23to'],
             ['to%61to', 'to%61to', 'to%61to'],
         ];
     }
@@ -70,7 +70,7 @@ class UserTest extends AbstractTestCase
             [null, null],
             ['', ''],
             ['0', '0'],
-            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['azAZ0-9%2F%3F-._~!$&\'()*+,;=%3A%40%^%2F[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
             ['€', '€'],
             ['%E2%82%AC', '€'],
             ['frag ment', 'frag ment'],
@@ -94,9 +94,10 @@ class UserTest extends AbstractTestCase
     {
         return [
             'array' => [['coucou']],
-            'bool'      => [true],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
+            'float' => [1.2],
+            'reserved chars' => ['to@to'],
         ];
     }
 }

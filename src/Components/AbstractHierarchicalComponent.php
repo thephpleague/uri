@@ -152,7 +152,7 @@ abstract class AbstractHierarchicalComponent
         }
 
         $source = iterator_to_array($this);
-        $dest   = iterator_to_array($this->validateComponent($component));
+        $dest = iterator_to_array($this->validateComponent($component));
         if ('' === $dest[count($dest) - 1]) {
             array_pop($dest);
         }

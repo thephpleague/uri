@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\Query as QueryInterface;
 use League\Uri\QueryParser;
 use League\Uri\Types\ImmutableCollectionTrait;
@@ -102,8 +103,30 @@ class Query implements QueryInterface
             return [];
         }
 
-        return (new QueryParser())
-            ->parse($this->validateString($str), static::$separator, PHP_QUERY_RFC3986);
+        $str = $this->filterEncodedQuery($this->validateString($str));
+
+        return (new QueryParser())->parse($str, static::$separator, PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * Filter the encoded query string
+     *
+     * @param string $str the encoded query
+     *
+     * @throws InvalidArgumentException If the encoded query is invalid
+     *
+     * @return string
+     */
+    protected function filterEncodedQuery($str)
+    {
+        if (false === strpos($str, '#')) {
+            return $str;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'The encoded query `%s` contains invalid characters',
+            $str
+        ));
     }
 
     /**

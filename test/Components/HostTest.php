@@ -377,7 +377,7 @@ class HostTest extends AbstractTestCase
      */
     public function testPrepend($raw, $prepend, $expected)
     {
-        $host    = new Host($raw);
+        $host = new Host($raw);
         $newHost = $host->prepend($prepend);
         $this->assertSame($expected, $newHost->__toString());
     }
@@ -411,7 +411,7 @@ class HostTest extends AbstractTestCase
      */
     public function testAppend($raw, $append, $expected)
     {
-        $host    = new Host($raw);
+        $host = new Host($raw);
         $newHost = $host->append($append);
         $this->assertSame($expected, $newHost->__toString());
     }

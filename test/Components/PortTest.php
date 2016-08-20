@@ -52,15 +52,15 @@ class PortTest extends AbstractTestCase
     public function invalidPortProvider()
     {
         return [
-            'empty string'                 => [''],
-            'string'                       => ['toto'],
-            'invalid port number too low'  => ['-23'],
+            'empty string' => [''],
+            'string' => ['toto'],
+            'invalid port number too low' => ['-23'],
             'invalid port number too high' => ['10000000'],
-            'invalid port number'          => ['0'],
-            'bool'                         => [true],
-            'Std Class'                    => [(object) 'foo'],
-            'float'                        => [1.2],
-            'array'                        => [['foo']],
+            'invalid port number' => ['0'],
+            'bool' => [true],
+            'Std Class' => [(object) 'foo'],
+            'float' => [1.2],
+            'array' => [['foo']],
         ];
     }
 

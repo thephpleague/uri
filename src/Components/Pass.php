@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\Pass as PassInterface;
 
 /**
@@ -22,6 +23,21 @@ use League\Uri\Interfaces\Pass as PassInterface;
  */
 class Pass extends AbstractComponent implements PassInterface
 {
+    /**
+     * @inheritdoc
+     */
+    protected function validate($str)
+    {
+        if (!is_string($str) || !preg_match(',[/?#@],', $str)) {
+            return parent::validate($str);
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'The encoded pass component `%s` contains invalid characters `/?#@`',
+            $str
+        ));
+    }
+
     /**
      * @inheritdoc
      */

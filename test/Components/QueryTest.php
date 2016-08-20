@@ -49,10 +49,11 @@ class QueryTest extends AbstractTestCase
     public function failedConstructor()
     {
         return [
-            'bool'      => [true],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
-            'array'      => [['foo']],
+            'float' => [1.2],
+            'array' => [['foo']],
+            'reserved char' => ['foo#bar'],
         ];
     }
 
@@ -81,8 +82,8 @@ class QueryTest extends AbstractTestCase
             'empty string' => ['', '?'],
             'empty array' => [[], ''],
             'non empty array' => [['' => null], '?'],
-            'contains a reserved word #' => ['foo#bar', '?foo%23bar'],
-            'contains a delimiter ?' => ['?foo#bar', '??foo%23bar'],
+            'contains a reserved word #' => ['foo%23bar', '?foo%23bar'],
+            'contains a delimiter ?' => ['?foo%23bar', '??foo%23bar'],
             'key-only' => ['k^ey', '?k%5Eey'],
             'key-value' => ['k^ey=valu`', '?k%5Eey=valu%60'],
             'array-key-only' => ['key[]', '?key%5B%5D'],
@@ -269,10 +270,10 @@ class QueryTest extends AbstractTestCase
         };
 
         return [
-            'empty query'  => [[], $func, Query::FILTER_USE_VALUE, ''],
-            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar'],
-            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, ''],
-            'remove None'  => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar&zozo=st.ay'],
+            'empty query' => [[], $func, Query::FILTER_USE_VALUE, ''],
+            'remove One' => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar'],
+            'remove All' => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, Query::FILTER_USE_VALUE, ''],
+            'remove None' => [['toto' => 'foo.bar', 'zozo' => 'st.ay'], $func, Query::FILTER_USE_VALUE, 'toto=foo.bar&zozo=st.ay'],
             'remove with filter both' => [['toto' => 'foo', 'foo' => 'bar'], $funcBoth, Query::FILTER_USE_BOTH, 'toto=foo'],
         ];
     }
@@ -295,10 +296,10 @@ class QueryTest extends AbstractTestCase
         };
 
         return [
-            'empty query'  => [[], $func, ''],
-            'remove One'   => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, ''],
-            'remove All'   => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, 'to.to=foobar'],
-            'remove None'  => [['to.to' => 'foo.bar', 'zo.zo' => 'st.ay'], $func, 'to.to=foo.bar&zo.zo=st.ay'],
+            'empty query' => [[], $func, ''],
+            'remove One' => [['toto' => 'foo.bar', 'zozo' => 'stay'], $func, ''],
+            'remove All' => [['to.to' => 'foobar', 'zozo' => 'stay'], $func, 'to.to=foobar'],
+            'remove None' => [['to.to' => 'foo.bar', 'zo.zo' => 'st.ay'], $func, 'to.to=foo.bar&zo.zo=st.ay'],
         ];
     }
 
@@ -335,9 +336,9 @@ class QueryTest extends AbstractTestCase
     public function invalidQueryStrings()
     {
         return [
-            'true'      => [ true ],
-            'false'     => [ false ],
-            'array'     => [ [ 'baz=bat' ] ],
+            'true' => [ true ],
+            'false' => [ false ],
+            'array' => [ [ 'baz=bat' ] ],
         ];
     }
 

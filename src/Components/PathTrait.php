@@ -37,7 +37,7 @@ trait PathTrait
         'a' => PathInterface::FTP_TYPE_ASCII,
         'i' => PathInterface::FTP_TYPE_BINARY,
         'd' => PathInterface::FTP_TYPE_DIRECTORY,
-        ''  => PathInterface::FTP_TYPE_EMPTY,
+        '' => PathInterface::FTP_TYPE_EMPTY,
     ];
 
     /**
@@ -46,6 +46,27 @@ trait PathTrait
      * @var array
      */
     protected static $dotSegments = ['.' => 1, '..' => 1];
+
+    /**
+     * Filter the encoded path string
+     *
+     * @param string $str the encoded path
+     *
+     * @throws InvalidArgumentException If the encoded path is invalid
+     *
+     * @return string
+     */
+    protected function filterEncodedPath($str)
+    {
+        if (!preg_match(',[?#],', $str)) {
+            return $str;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'The encoded path `%s` contains invalid characters',
+            $str
+        ));
+    }
 
     /**
      * Returns the instance string representation; If the
@@ -117,7 +138,7 @@ trait PathTrait
         }
 
         $input = explode('/', $current);
-        $new   = implode('/', array_reduce($input, [$this, 'filterDotSegments'], []));
+        $new = implode('/', array_reduce($input, [$this, 'filterDotSegments'], []));
         if (isset(static::$dotSegments[end($input)])) {
             $new .= '/';
         }

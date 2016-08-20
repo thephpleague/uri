@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Components;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\User as UserInterface;
 
 /**
@@ -22,6 +23,21 @@ use League\Uri\Interfaces\User as UserInterface;
  */
 class User extends AbstractComponent implements UserInterface
 {
+    /**
+     * @inheritdoc
+     */
+    protected function validate($str)
+    {
+        if (!is_string($str) || !preg_match(',[/:@?#],', $str)) {
+            return parent::validate($str);
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'The encoded user string `%s` contains invalid characters `/:@?#`',
+            $str
+        ));
+    }
+
     /**
      * @inheritdoc
      */

@@ -70,18 +70,18 @@ class QueryParserTest extends PHPUnit_Framework_TestCase
     public function buildProvider()
     {
         return [
-            'empty string'       => [[], ''],
-            'identical keys'     => [['a' => ['1', '2']], 'a=1&a=2'],
-            'no value'           => [['a' => null, 'b' => null], 'a&b'],
-            'empty value'        => [['a' => '', 'b' => ''], 'a=&b='],
-            'php array'          => [['a[]' => ['1', '2']], 'a[]=1&a[]=2'],
-            'preserve dot'       => [['a.b' => '3'], 'a.b=3'],
-            'no key stripping'   => [['a' => '', 'b' => null], 'a=&b'],
+            'empty string' => [[], ''],
+            'identical keys' => [['a' => ['1', '2']], 'a=1&a=2'],
+            'no value' => [['a' => null, 'b' => null], 'a&b'],
+            'empty value' => [['a' => '', 'b' => ''], 'a=&b='],
+            'php array' => [['a[]' => ['1', '2']], 'a[]=1&a[]=2'],
+            'preserve dot' => [['a.b' => '3'], 'a.b=3'],
+            'no key stripping' => [['a' => '', 'b' => null], 'a=&b'],
             'no value stripping' => [['a' => 'b='], 'a=b='],
-            'key only'           => [['a' => null], 'a'],
-            'preserve falsey 1'  => [['0' => null], '0'],
-            'preserve falsey 2'  => [['0' => ''], '0='],
-            'preserve falsey 3'  => [['a' => '0'], 'a=0'],
+            'key only' => [['a' => null], 'a'],
+            'preserve falsey 1' => [['0' => null], '0'],
+            'preserve falsey 2' => [['0' => ''], '0='],
+            'preserve falsey 3' => [['a' => '0'], 'a=0'],
         ];
     }
 

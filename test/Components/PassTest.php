@@ -49,11 +49,11 @@ class PassTest extends AbstractTestCase
             ['{broken}', '%7Bbroken%7D', '%7Bbroken%7D'],
             ['`oops`', '%60oops%60', '%60oops%60'],
             ['\\slashy', '%5Cslashy', '%5Cslashy'],
-            ['to@to', 'to%40to', 'to%40to'],
+            ['to%40to', 'to%40to', 'to%40to'],
             ['to:to', 'to:to', 'to:to'],
-            ['to/to', 'to%2Fto', 'to%2Fto'],
-            ['to?to', 'to%3Fto', 'to%3Fto'],
-            ['to#to', 'to%23to', 'to%23to'],
+            ['to%2Fto', 'to%2Fto', 'to%2Fto'],
+            ['to%3Fto', 'to%3Fto', 'to%3Fto'],
+            ['to%23to', 'to%23to', 'to%23to'],
             ['to%61to', 'to%61to', 'to%61to'],
         ];
     }
@@ -72,7 +72,7 @@ class PassTest extends AbstractTestCase
             [null, null],
             ['', ''],
             ['0', '0'],
-            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['azAZ0-9%2F%3F-._~!$&\'()*+,;=:%40%^%2F[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
             ['€', '€'],
             ['%E2%82%AC', '€'],
             ['frag ment', 'frag ment'],
@@ -95,10 +95,11 @@ class PassTest extends AbstractTestCase
     public function invalidDataProvider()
     {
         return [
-            'bool'      => [true],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
-            'array'      => [['foo']],
+            'float' => [1.2],
+            'array' => [['foo']],
+            'reserved chars' => ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
         ];
     }
 }

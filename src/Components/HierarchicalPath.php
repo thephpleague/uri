@@ -113,6 +113,8 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
      */
     protected function validate($data)
     {
+        $data = $this->filterEncodedPath($data);
+
         $filterSegment = function ($segment) {
             return isset($segment);
         };

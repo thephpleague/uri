@@ -69,10 +69,10 @@ class PathTest extends AbstractTestCase
     public function invalidDataProvider()
     {
         return [
-            'bool'       => [true],
-            'Std Class'  => [(object) 'foo'],
-            'float'      => [1.2],
-            'array'      => [['foo']],
+            'bool' => [true],
+            'Std Class' => [(object) 'foo'],
+            'float' => [1.2],
+            'array' => [['foo']],
         ];
     }
 
@@ -161,10 +161,10 @@ class PathTest extends AbstractTestCase
         return [
             'relative path without ending slash' => ['toto', 'toto/'],
             'absolute path without ending slash' => ['/toto', '/toto/'],
-            'root path'                          => ['/', '/'],
-            'empty path'                         => ['', '/'],
-            'relative path with ending slash'    => ['toto/', 'toto/'],
-            'absolute path with ending slash'    => ['/toto/', '/toto/'],
+            'root path' => ['/', '/'],
+            'empty path' => ['', '/'],
+            'relative path with ending slash' => ['toto/', 'toto/'],
+            'absolute path with ending slash' => ['/toto/', '/toto/'],
         ];
     }
 
@@ -183,10 +183,10 @@ class PathTest extends AbstractTestCase
         return [
             'relative path without ending slash' => ['toto', 'toto'],
             'absolute path without ending slash' => ['/toto', '/toto'],
-            'root path'                          => ['/', ''],
-            'empty path'                         => ['', ''],
-            'relative path with ending slash'    => ['toto/', 'toto'],
-            'absolute path with ending slash'    => ['/toto/', '/toto'],
+            'root path' => ['/', ''],
+            'empty path' => ['', ''],
+            'relative path with ending slash' => ['toto/', 'toto'],
+            'absolute path with ending slash' => ['/toto/', '/toto'],
         ];
     }
 
@@ -204,11 +204,11 @@ class PathTest extends AbstractTestCase
     {
         return [
             'relative path without leading slash' => ['toto', '/toto'],
-            'absolute path'                       => ['/toto', '/toto'],
-            'root path'                           => ['/', '/'],
-            'empty path'                          => ['', '/'],
-            'relative path with ending slash'     => ['toto/', '/toto/'],
-            'absolute path with ending slash'     => ['/toto/', '/toto/'],
+            'absolute path' => ['/toto', '/toto'],
+            'root path' => ['/', '/'],
+            'empty path' => ['', '/'],
+            'relative path with ending slash' => ['toto/', '/toto/'],
+            'absolute path with ending slash' => ['/toto/', '/toto/'],
         ];
     }
 
@@ -227,9 +227,9 @@ class PathTest extends AbstractTestCase
         return [
             'relative path without ending slash' => ['toto', 'toto'],
             'absolute path without ending slash' => ['/toto', 'toto'],
-            'root path'                          => ['/', ''],
-            'empty path'                         => ['', ''],
-            'absolute path with ending slash'    => ['/toto/', 'toto/'],
+            'root path' => ['/', ''],
+            'empty path' => ['', ''],
+            'absolute path with ending slash' => ['/toto/', 'toto/'],
         ];
     }
 

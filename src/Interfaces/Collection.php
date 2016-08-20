@@ -30,9 +30,9 @@ interface Collection extends Countable, IteratorAggregate
 {
     const FILTER_USE_VALUE = 0;
 
-    const FILTER_USE_BOTH  = 1;
+    const FILTER_USE_BOTH = 1;
 
-    const FILTER_USE_KEY   = 2;
+    const FILTER_USE_KEY = 2;
 
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release

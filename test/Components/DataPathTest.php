@@ -53,8 +53,8 @@ class DataPathTest extends AbstractTestCase
     {
         return [
             'text file' => ['hello-world.txt', 'text/plain'],
-            'img file'  => ['red-nose.gif', 'image/gif'],
-            'vcard file'  => ['john-doe.vcf', 'text/x-vcard'],
+            'img file' => ['red-nose.gif', 'image/gif'],
+            'vcard file' => ['john-doe.vcf', 'text/x-vcard'],
         ];
     }
 

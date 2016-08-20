@@ -126,7 +126,7 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validPathProvider
-     * 
+     *
      * @param string $segment
      * @param int    $key
      * @param string $append

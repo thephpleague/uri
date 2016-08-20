@@ -76,9 +76,10 @@ class HierarchicalPathTest extends AbstractTestCase
     public function failedConstructor()
     {
         return [
-            'bool'      => [true],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
+            'float' => [1.2],
+            'reserved chars' => ['foo?bar'],
         ];
     }
 
@@ -147,8 +148,8 @@ class HierarchicalPathTest extends AbstractTestCase
             'arbitrary cut 2' => [['foo/bar', 'baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
             'arbitrary cut 3' => [['foo/bar/baz'], Path::IS_ABSOLUTE, '/foo/bar/baz'],
             'ending delimiter' => [['foo/bar/baz', ''], Path::IS_RELATIVE, 'foo/bar/baz/'],
-            'use reserved characters #' => [['all', 'i#s', 'good'], Path::IS_ABSOLUTE, '/all/i%23s/good'],
-            'use reserved characters ?' => [['all', 'i?s', 'good'], Path::IS_RELATIVE,  'all/i%3Fs/good'],
+            'use reserved characters #' => [['all', 'i%23s', 'good'], Path::IS_ABSOLUTE, '/all/i%23s/good'],
+            'use reserved characters ?' => [['all', 'i%3fs', 'good'], Path::IS_RELATIVE,  'all/i%3Fs/good'],
         ];
     }
 
@@ -182,7 +183,7 @@ class HierarchicalPathTest extends AbstractTestCase
      */
     public function testPrepend($source, $prepend, $res)
     {
-        $path    = new Path($source);
+        $path = new Path($source);
         $newPath = $path->prepend($prepend);
         $this->assertSame($res, $newPath->__toString());
     }
@@ -209,7 +210,7 @@ class HierarchicalPathTest extends AbstractTestCase
      */
     public function testAppend($source, $append, $res)
     {
-        $path    = new Path($source);
+        $path = new Path($source);
         $newPath = $path->append($append);
         $this->assertSame($res, $newPath->__toString());
     }
@@ -447,10 +448,10 @@ class HierarchicalPathTest extends AbstractTestCase
         };
 
         return [
-            'empty query'  => [[], $func, '/'],
-            'remove One'   => [['toto', 'foo.bar', 'st.ay'], $func, '/foo.bar/st.ay'],
-            'remove All'   => [['foobar', 'stay'], $func, '/'],
-            'remove None'  => [['foo.bar', 'st.ay'], $func, '/foo.bar/st.ay'],
+            'empty query' => [[], $func, '/'],
+            'remove One' => [['toto', 'foo.bar', 'st.ay'], $func, '/foo.bar/st.ay'],
+            'remove All' => [['foobar', 'stay'], $func, '/'],
+            'remove None' => [['foo.bar', 'st.ay'], $func, '/foo.bar/st.ay'],
         ];
     }
 
@@ -513,7 +514,7 @@ class HierarchicalPathTest extends AbstractTestCase
         return [
             ['', ''],
             ['0', '0'],
-            ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
+            ['azAZ0-9/%3F-._~!$&\'()*+,;=:@%^/[]{}\"<>\\', 'azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
             ['€', '€'],
             ['%E2%82%AC', '€'],
             ['frag ment', 'frag ment'],

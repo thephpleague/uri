@@ -47,7 +47,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => 'fragment',
                 ],
             ],
-            'URI is not normalized' =>  [
+            'URI is not normalized' => [
                 'ScheMe://user:pass@HoSt:81/path?query#fragment',
                 [
                     'scheme' => 'ScheMe',
@@ -60,7 +60,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => 'fragment',
                 ],
             ],
-            'URI without scheme' =>  [
+            'URI without scheme' => [
                 '//user:pass@HoSt:81/path?query#fragment',
                 [
                     'scheme' => null,
@@ -73,7 +73,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => 'fragment',
                 ],
             ],
-            'URI without userinfo' =>  [
+            'URI without userinfo' => [
                 'scheme://HoSt:81/path?query#fragment',
                 [
                     'scheme' => 'scheme',
@@ -86,7 +86,7 @@ class UriParserTest extends PHPUnit_Framework_TestCase
                     'fragment' => 'fragment',
                 ],
             ],
-            'URI with empty userinfo' =>  [
+            'URI with empty userinfo' => [
                 'scheme://@HoSt:81/path?query#fragment',
                 [
                     'scheme' => 'scheme',

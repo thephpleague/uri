@@ -27,7 +27,7 @@ class FragmentTest extends AbstractTestCase
             'null' => [null, ''],
             'empty' => ['', '#'],
             'evaluate empty' => ['0', '#0'],
-            'hash'  => ['#', '#%23'],
+            'hash' => ['#', '#%23'],
             'toofan' => ['toofan', '#toofan'],
             'notencoded' => ["azAZ0-9/?-._~!$&'()*+,;=:@", '#azAZ0-9/?-._~!$&\'()*+,;=:@'],
             'encoded' => ['%^[]{}"<>\\', '#%25%5E%5B%5D%7B%7D%22%3C%3E%5C'],
@@ -78,10 +78,10 @@ class FragmentTest extends AbstractTestCase
     public function failedConstructor()
     {
         return [
-            'bool'      => [true],
+            'bool' => [true],
             'Std Class' => [(object) 'foo'],
-            'float'     => [1.2],
-            'array'     => [['foo']],
+            'float' => [1.2],
+            'array' => [['foo']],
         ];
     }
 

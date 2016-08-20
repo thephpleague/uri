@@ -72,19 +72,19 @@ class SchemeTest extends AbstractTestCase
     public function invalidSchemeProvider()
     {
         return [
-            'empty string'         => [''],
-            'invalid char'         => ['in,valid'],
-            'integer like string'  => ['123'],
-            'bool'                 => [true],
-            'Std Class'            => [(object) 'foo'],
-            'float'                => [1.2],
-            'array'                => [['foo']],
+            'empty string' => [''],
+            'invalid char' => ['in,valid'],
+            'integer like string' => ['123'],
+            'bool' => [true],
+            'Std Class' => [(object) 'foo'],
+            'float' => [1.2],
+            'array' => [['foo']],
         ];
     }
 
     public function testSameValueAs()
     {
-        $scheme  = new Scheme();
+        $scheme = new Scheme();
         $scheme1 = new Scheme('https');
         $this->assertFalse($scheme->sameValueAs($scheme1));
         $newscheme = $scheme1->modify(null);

@@ -35,7 +35,7 @@ class Formatter
 
     const HOST_AS_UNICODE = 1;
 
-    const HOST_AS_ASCII   = 2;
+    const HOST_AS_ASCII = 2;
 
     /**
      * host encoding property

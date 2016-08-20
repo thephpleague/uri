@@ -172,7 +172,7 @@ class DataTest extends PHPUnit_Framework_TestCase
     {
         return [
             'text file' => ['hello-world.txt', 'text/plain'],
-            'img file'  => ['red-nose.gif', 'image/gif'],
+            'img file' => ['red-nose.gif', 'image/gif'],
         ];
     }
 

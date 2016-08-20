@@ -83,7 +83,7 @@ class QueryParser
     protected function parsePair(array $res, callable $decoder, $pair)
     {
         $param = explode('=', $pair, 2);
-        $key   = $decoder(array_shift($param));
+        $key = $decoder(array_shift($param));
         $value = array_shift($param);
         if (null !== $value) {
             $value = $decoder($value);

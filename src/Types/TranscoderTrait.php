@@ -105,7 +105,6 @@ trait TranscoderTrait
     {
         $regexp = ',%'.$pattern.',i';
         $decoder = function (array $matches) use ($regexp) {
-
             if (preg_match($regexp, $matches[0])) {
                 return strtoupper($matches[0]);
             }

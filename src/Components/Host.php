@@ -406,9 +406,9 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function prepend($component)
     {
         return $this->createFromLabels(
-                $this->validateComponent($component),
-                $this->isAbsolute
-            )->append($this->__toString());
+            $this->validateComponent($component),
+            $this->isAbsolute
+        )->append($this->__toString());
     }
 
     /**

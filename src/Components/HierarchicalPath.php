@@ -211,9 +211,9 @@ class HierarchicalPath extends AbstractHierarchicalComponent implements Hierarch
     public function prepend($component)
     {
         return $this->createFromSegments(
-                $this->validateComponent($component),
-                $this->isAbsolute
-            )->append($this->__toString());
+            $this->validateComponent($component),
+            $this->isAbsolute
+        )->append($this->__toString());
     }
 
     /**

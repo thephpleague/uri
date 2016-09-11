@@ -311,7 +311,8 @@ abstract class AbstractUri
     {
         if (!$this->isValid()) {
             throw new InvalidArgumentException(sprintf(
-                'The URI components will produce a `%s` instance in invalid state', get_class($this)
+                'The URI components will produce a `%s` instance in invalid state',
+                get_class($this)
             ));
         }
     }
@@ -358,7 +359,8 @@ abstract class AbstractUri
     {
         if (!array_key_exists($this->scheme->__toString(), static::$supportedSchemes)) {
             throw new InvalidArgumentException(sprintf(
-                'The submitted scheme is unsupported by `%s`', get_class($this)
+                'The submitted scheme is unsupported by `%s`',
+                get_class($this)
             ));
         }
     }

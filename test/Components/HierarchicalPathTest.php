@@ -501,14 +501,6 @@ class HierarchicalPathTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @dataProvider geValueProvider
-     */
-    public function testGetValue($str, $expected)
-    {
-        $this->assertSame($expected, (new Path($str))->getDecoded());
-    }
-
     public function geValueProvider()
     {
         return [

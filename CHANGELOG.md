@@ -2,14 +2,13 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - 2016-XX-XX
+## Next - 2016-09-XX
 
 ### Added
 
 - `Component::getContent` returns the raw encoded representation of a component
 - `Component::withContent` to create a new instance from a given raw encoded content
 - `getDecoded` method to access the decoded content for the following classes:
-    - `HierarchicalPath`
     - `User`
     - `Pass`
     - `Fragment`

@@ -200,7 +200,7 @@ class UserInfo implements UserInfoInterface
     /**
      * Create a new instance from a string
      *
-     * @param string $str
+     * @param string $content
      *
      * @return static
      */

@@ -13,7 +13,6 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Components\Host;
-use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Interfaces\Host as HostInterface;
 use League\Uri\Interfaces\Query as QueryInterface;

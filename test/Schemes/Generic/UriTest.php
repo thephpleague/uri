@@ -61,6 +61,22 @@ class UriTest extends AbstractTestCase
         $this->assertNotEquals($this->uri, $this->uri->withFragment('doc2'));
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testThrowExceptionOnUnknowPropertySetting()
+    {
+        $this->uri->unknownProperty = true;
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testThrowExceptionOnUnknowPropertyUnsetting()
+    {
+        unset($this->uri->unknownProperty);
+    }
+
     public function testGetAuthority()
     {
         $this->assertSame('login:pass@secure.example.com:443', $this->uri->getAuthority());

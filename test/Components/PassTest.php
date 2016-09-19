@@ -102,4 +102,22 @@ class PassTest extends AbstractTestCase
             'reserved chars' => ['azAZ0-9/?-._~!$&\'()*+,;=:@%^/[]{}\"<>\\'],
         ];
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testThrowExceptionOnUnknowPropertySetting()
+    {
+        $pass = new Pass('foo');
+        $pass->unknownProperty = true;
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testThrowExceptionOnUnknowPropertyUnsetting()
+    {
+        $pass = new Pass('foo');
+        unset($pass->unknownProperty);
+    }
 }

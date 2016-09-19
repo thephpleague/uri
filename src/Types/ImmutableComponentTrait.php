@@ -11,6 +11,7 @@
  */
 namespace League\Uri\Types;
 
+use InvalidArgumentException;
 use League\Uri\Interfaces\UriPart;
 
 /**
@@ -49,4 +50,20 @@ trait ImmutableComponentTrait
      * @return string
      */
     abstract public function getUriComponent();
+
+    /**
+     * @inheritdoc
+     */
+    public function __set($property, $value)
+    {
+        throw new InvalidArgumentException(sprintf('%s is an undefined property', $property));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __unset($property)
+    {
+        throw new InvalidArgumentException(sprintf('%s is an undefined property', $property));
+    }
 }

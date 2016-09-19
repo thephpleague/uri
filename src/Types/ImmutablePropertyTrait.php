@@ -83,6 +83,22 @@ trait ImmutablePropertyTrait
     abstract protected function assertValidObject();
 
     /**
+     * @inheritdoc
+     */
+    public function __set($property, $value)
+    {
+        throw new InvalidArgumentException(sprintf('%s is an undefined property', $property));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __unset($property)
+    {
+        throw new InvalidArgumentException(sprintf('%s is an undefined property', $property));
+    }
+
+    /**
      * Magic read-only for protected properties
      *
      * @param string $property The property to read from

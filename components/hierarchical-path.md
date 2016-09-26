@@ -284,7 +284,7 @@ $newPath = $path->append(new Path('path'))->append('to/the/sky');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>AppendSegments</code></p>
+<p class="message-notice">This method is used by the URI modifier <code>AppendSegment</code></p>
 
 ### Prepend segments
 
@@ -300,7 +300,7 @@ $newPath = $path->prepend(new Path('sky'))->prepend(new Path('path/to/the'));
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier<code>PrependSegments</code></p>
+<p class="message-notice">This method is used by the URI modifier<code>PrependSegment</code></p>
 
 ### Replace segments
 

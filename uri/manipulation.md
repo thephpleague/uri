@@ -72,12 +72,12 @@ function(League\Uri\Interfaces\Uri $uri): League\Uri\Interfaces\Uri
 
 To ease these operations the package introduces the concept of URI modifiers
 
-A URI modifier must follow the following rules:
+A URI modifier:
 
-- It must be a callable. If the URI modifier is a class it must implement PHP's `__invoke` method.
-- The callable expects its single argument to be an League URI object or a PSR-7 `UriInterface` object and **must return a instance of the submitted object**.
-- If the URI modifier is an object it must be immutable. Updating its parameters must return a new instance with the modified parameters.
-- Apart from validating it's own parameters, URI modifiers are transparent when dealing with error and exceptions. They must not alter of silence them.
+- must be a callable. If the URI modifier is a class it must implement PHP's `__invoke` method.
+- expects its single argument to be an League URI object or a PSR-7 `UriInterface` object and **must return a instance of the submitted object**.
+- must be an immutable value object if it is an object.
+- are transparent when dealing with error and exceptions. They must not alter of silence them apart from validating their own parameters.
 
 Let's recreate the above example using a URI modifier.
 
@@ -85,11 +85,11 @@ Let's recreate the above example using a URI modifier.
 <?php
 
 use League\Uri\Components\Query;
+use League\Uri\Interfaces\Uri;
+use Psr\Http\Message\UriInterface;
 
 $mergeQuery = function ($uri) {
-    if (!$uri instanceof League\Uri\Interfaces\Uri
-        && !$uri instanceof Psr\Http\Message\UriInterface)
-    {
+    if (!$uri instanceof Uri && !$uri instanceof UriInterface) {
         throw new InvalidArgumentException(sprintf(
             'Expected data to be a valid URI object; received "%s"',
             (is_object($uri) ? get_class($uri) : gettype($uri))

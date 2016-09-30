@@ -7,7 +7,7 @@ title: Installation
 
 ## System Requirements
 
-* **PHP >= 5.5.9** but the latest stable version of PHP or HHVM is recommended;
+* **PHP >= 5.5.9** but the latest stable version of PHP is recommended;
 * `mbstring` extension;
 * `intl` extension;
 

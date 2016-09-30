@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - 2016-09-XX
+## 4.2.0 - 2016-09-30
 
 ### Added
 
@@ -26,9 +26,9 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - Components encoding/decoding to be more RFC3986 compliant
-- `Host::isPublicSuffixValid` when no `publicSuffix` information is found
 - `Host::getRegisterableDomain` must always return a string as per the host interface expected return type
 - `Host::getSubdomain` must always return a string as per the host interface expected return type
+- `Host::isPublicSuffixValid` when no `publicSuffix` information is found
 - `Host::isPublicSuffixValid` must always return a string as per the host interface expected return type
 - On instantiation, query and fragment delimiter are preserved
 - `createFromComponents` failing with `parse_url` result when no path is defined

@@ -44,10 +44,10 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Port::toInt` use `Port::getContent` instead
 - `HierarchicalPath::createFromArray` use `HierarchicalPath::createFromSegments` instead
 - `HierarchicalPath::toArray` use `HierarchicalPath::getSegments` instead
-- `Host::createFromArray` use `HierarchicalPath::createFromLabels` instead
-- `Host::toArray` use `HierarchicalPath::getLabels` instead
-- `Query::createFromArray` use `HierarchicalPath::createFromPairs` instead
-- `Query::toArray` use `HierarchicalPath::getPairs` instead
+- `Host::createFromArray` use `Host::createFromLabels` instead
+- `Host::toArray` use `Host::getLabels` instead
+- `Query::createFromArray` use `Query::createFromPairs` instead
+- `Query::toArray` use `Query::getPairs` instead
 - `UriPart::sameValueAs`
 
 ### Remove

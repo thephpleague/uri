@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next - 2016-11-xx
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- issue [#84](https://github.com/thephpleague/uri/issues/84)
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.2.0 - 2016-09-30
 
 ### Added

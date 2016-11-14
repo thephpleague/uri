@@ -96,6 +96,7 @@ class QueryTest extends AbstractTestCase
             "Don't encode path segments" => ['q=va/lue', '?q=va/lue'],
             "Don't encode unreserved chars or sub-delimiters" => [$unreserved, '?'.$unreserved],
             'Encoded unreserved chars are not decoded' => ['q=v%61lue', '?q=v%61lue'],
+            'bug fix issue 84' => ['fào=?%25bar&q=v%61lue', '?f%C3%A0o=?%25bar&q=v%61lue'],
         ];
     }
 

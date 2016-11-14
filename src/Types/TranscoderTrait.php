@@ -67,15 +67,14 @@ trait TranscoderTrait
     protected static function encode($str, $regexp)
     {
         $encoder = function (array $matches) {
+            if (preg_match('/^[A-Za-z0-9_\-\.~]$/', rawurldecode($matches[0]))) {
+                return $matches[0];
+            }
+
             return rawurlencode($matches[0]);
         };
 
-        $str = preg_replace_callback($regexp, $encoder, $str);
-        $formatter = function (array $matches) {
-            return strtoupper($matches[0]);
-        };
-
-        return preg_replace_callback(',%'.self::$encodedChars.',', $formatter, $str);
+        return preg_replace_callback($regexp, $encoder, $str);
     }
 
     /**

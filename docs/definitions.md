@@ -42,7 +42,7 @@ $uri === $uri2; //return false;
 
 ## Immutability
 
-To ease and ensure the integrity of the value, when a component is altered instead of modifying its current value, we return a new component with the changed value. This practice is called immutability.
+To ensure the integrity of the value, when a component is altered instead of modifying its current value, we return a new component with the changed value. This practice is called immutability.
 
 ~~~php
 <?php

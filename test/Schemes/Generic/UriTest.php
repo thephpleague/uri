@@ -170,6 +170,42 @@ class UriTest extends AbstractTestCase
             ->withPath('//toto');
     }
 
+    public function testWithPathWithEmptyString()
+    {
+        $uri = HttpUri::createFromString('http://example.com/path');
+
+        $modified = $uri->withPath('');
+
+        $this->assertNotSame($uri, $modified);
+
+        $this->assertSame('/path', $uri->getPath());
+        $this->assertSame('', $modified->getPath());
+    }
+
+    public function testWithPathWithAbsolutePath()
+    {
+        $uri = HttpUri::createFromString('http://example.com/path');
+
+        $modified = $uri->withPath('/new-path');
+
+        $this->assertNotSame($uri, $modified);
+
+        $this->assertSame('/path', $uri->getPath());
+        $this->assertSame('/new-path', $modified->getPath());
+    }
+
+    public function testWithPathWithRootlessPath()
+    {
+        $uri = HttpUri::createFromString('http://example.com/path');
+
+        $modified = $uri->withPath('new-path');
+
+        $this->assertNotSame($uri, $modified);
+
+        $this->assertSame('/path', $uri->getPath());
+        $this->assertSame('/new-path', $modified->getPath());
+    }
+
     public function testEmptyValueDetection()
     {
         $expected = '//0:0@0/0?0#0';

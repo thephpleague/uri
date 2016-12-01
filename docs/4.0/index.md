@@ -11,31 +11,31 @@ title: Uri
 [![Latest Stable Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)<br>
 [![Build Status](https://img.shields.io/travis/thephpleague/uri/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri)
+[![HHVM Status](https://img.shields.io/hhvm/league/uri.svg?style=flat-square)](http://hhvm.h4cc.de/package/league/uri)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/thephpleague/csv.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri/?branch=master)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/uri.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The library provides simple and intuitive classes to [instantiate](/schemes/) and [manipulate](/manipulations/) URIs and their [components](/components/) in PHP. Out of the box the library handles the following schemes:
+The library provides simple and intuitive classes to [instantiate](/uri/instantiation/) and [manipulate](/4.0/uri/manipulation/) URIs and their [components](/4.0/components/overview/) in PHP. Out of the box the library handles the following schemes:
 
-- HTTP/HTTPS;
-- Websockets;
-- FTP;
-- Data URIs;
-- File URIs;
+- [HTTP/HTTPS](/4.0/uri/schemes/http/);
+- [Websockets](/4.0/uri/schemes/ws/);
+- [FTP](/4.0/uri/schemes/ftp/);
+- [Data URIs](/4.0/uri/schemes/data-uri/);
 
-and allow to easily manage others scheme specific URIs.
+and allow [to easily manage others scheme specific URIs](/4.0/uri/extension/).
 
 The library ships with:
 
-- a [RFC3986][] compliant parser for the [URI string](/parser/);
-- a parser for the URI query string that preserves its content;
-- a URI formatter to easily output RFC3987 URI strings;
+- a [RFC3986][] compliant parser for the [URI string](/4.0/services/parser-uri/);
+- a parser for the [URI query string](/4.0/services/parser-query/) that preserves its content;
+- a [URI formatter](/4.0/services/formatter/) to easily output URI strings;
 
 Highlights
 ------
 
 - Simple API
-- [RFC3986][] and [RFC3987][] compliant
+- [RFC3986][] compliant
 - Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic
@@ -49,5 +49,4 @@ The package was created by Nyamagana Butera Ignace. Find him on Twitter at [@nya
 [PSR-4]: http://www.php-fig.org/psr/psr-4/
 [PSR-7]: http://www.php-fig.org/psr/psr-7/
 [RFC3986]: http://tools.ietf.org/html/rfc3986
-[RFC3987]: http://tools.ietf.org/html/rfc3987
 [@nyamsprod]: https://twitter.com/nyamsprod

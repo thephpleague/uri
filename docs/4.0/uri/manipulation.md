@@ -114,7 +114,7 @@ $newUri = $mergeQuery($uri);
 echo $newUri; // display http://www.example.com?foo=bar&taz#~typo
 ~~~
 
-The anonymous function `$mergeQuery` is an rough example of a URI modifier. The library `League\Uri\Modifiers\MergeQuery` [provides a better and more suitable implementation](/uri/manipulation/query/#merging-query-string).
+The anonymous function `$mergeQuery` is an rough example of a URI modifier. The library `League\Uri\Modifiers\MergeQuery` [provides a better and more suitable implementation](/4.0/uri/manipulation/query/#merging-query-string).
 
 URI Modifiers can be grouped for simplicity in different categories that deals with
 

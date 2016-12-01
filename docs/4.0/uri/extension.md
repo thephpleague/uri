@@ -59,7 +59,7 @@ echo $uri; //return telnet://example.com/Hello%20There
 Telnet::createFromString('http://example.org'): //will throw an InvalidArgumentException
 ~~~
 
-Of course you are free to add more methods to fulfill your own requirements. But remember that all general URI [properties](/uri/properties/) and [methods](/uri/manipulation/#basic-modifications) and [modifiers](/uri/manipulation/#uri-modifiers) are already usable with these simple steps.
+Of course you are free to add more methods to fulfill your own requirements. But remember that all general URI [properties](/4.0/uri/properties/) and [methods](/4.0/uri/manipulation/#basic-modifications) and [modifiers](/4.0/uri/manipulation/#uri-modifiers) are already usable with these simple steps.
 
 ## Creating a Generic URI Object
 

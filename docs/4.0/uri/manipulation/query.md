@@ -28,10 +28,10 @@ The `$sort` argument can be:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\KsortQuery;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new KsortQuery(SORT_REGULAR);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
@@ -42,7 +42,7 @@ echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\KsortQuery;
 
 $sort = function ($value1, $value2) {
@@ -51,7 +51,7 @@ $sort = function ($value1, $value2) {
 
 $modifier = new KsortQuery($sort);
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
 ~~~
@@ -65,10 +65,10 @@ The sorting algorithm can be change at any given time. By default if none is pro
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\KsortQuery;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new KsortQuery();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
@@ -96,10 +96,10 @@ Merges a submitted query string to the URI object to be modified
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\MergeQuery;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new MergeQuery('kingkong=godzilla&toto');
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&&toto#doc3"
@@ -114,10 +114,10 @@ At any given time you can create a new modifier with another query string to mer
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\MergeQuery;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new MergeQuery('kingkong=godzilla&toto');
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&&toto#doc3"
@@ -143,10 +143,10 @@ Removes query keys from the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveQueryKeys;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new RemoveQueryKeys(["foo"]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
@@ -161,10 +161,10 @@ You can update the keys chosen by using the `withKeys` method
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveQueryKeys;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new RemoveQueryKeys(["foo"]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
@@ -209,7 +209,7 @@ Filter selected query keys and/or values from the current URI path to keep.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Interfaces\Collection;
 
@@ -217,7 +217,7 @@ $filter = function ($value) {
     return strpos($value, 'f');
 };
 $uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";
-$uri = HttpUri::createFromString($uriString);
+$uri = Http::createFromString($uriString);
 $modifier = new FilterQuery($filter, Collection::FILTER_USE_KEY);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 ~~~
@@ -234,11 +234,11 @@ You can update the URI modifier using:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterQuery;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new FilterQuery(function ($value) {
     return strpos($value, 'f');
 }, Collection::FILTER_USE_KEY);

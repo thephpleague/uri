@@ -14,10 +14,10 @@ Transcodes the host into its ascii representation according to RFC3986:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\HostToAscii;
 
-$uri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
 $modifier = new HostToAscii();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
@@ -30,11 +30,11 @@ Transcodes the host into its idn representation according to RFC3986:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\HostToUnicode;
 
 $uriString = "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/";
-$uri = HttpUri::createFromString($uriString);
+$uri = Http::createFromString($uriString);
 $modifier = new HostToUnicode();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
@@ -47,11 +47,11 @@ Removes the host zone identifier if present
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveZoneIdentifier;
 
 $uriString = 'http://[fe80::1234%25eth0-1]/path/to/the/sky.php';
-$uri = HttpUri::createFromString($uriString);
+$uri = Http::createFromString($uriString);
 $modifier = new RemoveZoneIdentifier();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
@@ -78,10 +78,10 @@ Appends a label or a host to the current URI host.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\AppendLabel;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new AppendLabel("fr");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com.fr/path/to/the/sky/"
@@ -108,10 +108,10 @@ Prepends a label or a host to the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\PrependLabel;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new PrependLabel("shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://shop.www.example.com/path/to/the/sky/and/above"
@@ -141,10 +141,10 @@ Replaces a label from the current URI host with a new label or a host.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceLabel;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
@@ -166,10 +166,10 @@ This method expects a valid label/host and will return a new instance with the u
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceLabel;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky/"
@@ -183,10 +183,10 @@ In case of the `ReplaceLabel` modifier, the offset can also be modified.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceLabel;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceLabel(2, "admin.shop");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky/"
@@ -214,10 +214,10 @@ Removes selected labels from the current URI host. Labels are indicated using an
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveLabels;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([2]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
@@ -230,10 +230,10 @@ You can update the offsets chosen by using the `withKeys` method
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveLabels;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([2]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
@@ -276,11 +276,11 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterLabels;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new FilterLabels(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);
@@ -300,11 +300,11 @@ You can update the URI modifier using:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterLabels;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new FilterLabels(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);

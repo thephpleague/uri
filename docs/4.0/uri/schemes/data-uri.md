@@ -9,7 +9,7 @@ To ease working with Data URIs, the library comes bundle with a URI specific Dat
 
 ## Instantiation
 
-In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), because data URI represents files, you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor
+In addition to the [defined named constructors](/4.0/uri/instantiation/#uri-instantiation), because data URI represents files, you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor
 
 ~~~php
 <?php
@@ -39,7 +39,7 @@ $uri->withHost('example.com'); //thrown an InvalidArgumentException
 
 ## Properties
 
-The data URI class uses the [DataPath](/components/datauri-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying file.
+The data URI class uses the [DataPath](/4.0/components/datauri-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying file.
 
 ~~~php
 <?php

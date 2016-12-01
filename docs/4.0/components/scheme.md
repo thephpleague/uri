@@ -59,4 +59,4 @@ $scheme = $uri->scheme; // $scheme is a League\Uri\Components\Scheme object;
 
 ## Properties and Methods
 
-The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces.
+The component representation, comparison and manipulation is done using the package [UriPart](/4.0/components/overview/#uri-part-interface) and the [Component](/4.0/components/overview/#uri-component-interface) interfaces.

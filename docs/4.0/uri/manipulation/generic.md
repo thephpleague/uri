@@ -22,10 +22,10 @@ If you normalized two URI objects it become easier to compare them to determine 
 <?php
 
 use League\Uri\Modifiers\Normalize;
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 
-$uri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
-$altUri = HttpUri::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
+$uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$altUri = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
 $modifier = new Normalize();
 
 $newUri    = $modifier->__invoke($uri);
@@ -55,11 +55,11 @@ The `Resolve` URI Modifier provides the mean for resolving an URI as a browser w
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\Resolve;
 
-$baseUri     = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
-$relativeUri = HttpUri::createFromString("./p#~toto");
+$baseUri     = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$relativeUri = Http::createFromString("./p#~toto");
 $modifier    = new Resolve($baseUri);
 $newUri = $modifier->__invoke($relativeUri);
 echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
@@ -88,16 +88,16 @@ The `Relativize` URI Modifier provides the mean to construct a relative URI that
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\Relativize;
 use League\Uri\Modifiers\Resolve;
 
 require '/path/to/vendor/autoload.php';
 
-$baseUri = HttpUri::createFromString('http://www.example.com');
+$baseUri = Http::createFromString('http://www.example.com');
 $relativizer = new Relativize($baseUri);
 $resolver = new Resolve($baseUri);
-$uri = HttpUri::createFromString('http://www.example.com/?foo=toto#~typo');
+$uri = Http::createFromString('http://www.example.com/?foo=toto#~typo');
 $relativeUri = $relativizer($uri);
 echo $relativeUri; // display "/?foo=toto#~typo
 echo $resolver($relativeUri); // display 'http://www.example.com/?foo=toto#~typo'
@@ -123,10 +123,10 @@ use League\Uri\Modifiers\HostToAscii;
 use League\Uri\Modifiers\KsortQuery;
 use League\Uri\Modifiers\Pipeline;
 use League\Uri\Modifiers\RemoveDotSegments;
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 
-$origUri = HttpUri::createFromString("http://스타벅스코리아.com/to/the/sky/");
-$origUri2 = HttpUri::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
+$origUri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$origUri2 = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
 
 $modifier = (new Pipeline())
 	->pipe(new RemoveDotSegment())

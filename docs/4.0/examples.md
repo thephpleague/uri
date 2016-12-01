@@ -41,7 +41,7 @@ Each component exposes its own specific properties. Please refer to the document
 
 ## Using URI Modifiers
 
-The package comes bundle with [URI modifiers](/uri/manipulation/#uri-modifiers) which enable modifying any League URI object as well as any PSR-7 `UriInterface` objects in a simple and intuitive way.
+The package comes bundle with [URI modifiers](/4.0/uri/manipulation/#uri-modifiers) which enable modifying any League URI object as well as any PSR-7 `UriInterface` objects in a simple and intuitive way.
 
 Let's say you have a document that can be downloaded in different format (CSV, XML, JSON) and you quickly want to generate each format URI. This example illustrates how easy it is to generate theses different URIs from an original URI.
 

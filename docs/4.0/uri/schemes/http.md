@@ -7,7 +7,7 @@ title: Http URIs
 
 ## Instantiation
 
-To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the [defined named constructors](/uri/instantiation/#uri-instantiation), the `Http` class can be instantiated using the server variables.
+To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the [defined named constructors](/4.0/uri/instantiation/#uri-instantiation), the `Http` class can be instantiated using the server variables.
 
 ~~~php
 <?php
@@ -54,7 +54,7 @@ The `Http` class is compliant with PSR-7 `UriInterface` interface. This means th
 
 ## Properties
 
-The Http URI class uses the specialized [HierarchicalPath](/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
+The Http URI class uses the specialized [HierarchicalPath](/4.0/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
 <?php

@@ -212,7 +212,7 @@ $host->sameValueAs($uri);
 
 ### UriPart implementing classes
 
-* The `League\Uri\Components\UserInfo` handles [the user information part](/components/userinfo/);
+* The `League\Uri\Components\UserInfo` handles [the user information part](/4.0/components/userinfo/);
 
 ## URI component interface
 
@@ -293,13 +293,13 @@ $host->__toString() == $newHost->__toString();
 
 ### Component implementing classes
 
-* The `League\Uri\Components\Scheme` handles [the scheme component](/components/scheme/);
-* The `League\Uri\Components\User` handles [the user component](/components/user/);
-* The `League\Uri\Components\Pass` handles [the pass component](/components/pass/);
-* The `League\Uri\Components\Host` handles [the host component](/components/host/);
-* The `League\Uri\Components\Port` handles [the port component](/components/port/);
-* The `League\Uri\Components\Path` handles [the generic path component](/components/path/);
-* The `League\Uri\Components\HierarchicalPath` handles [the hierarchical path component](/components/hierarchical-path/);
-* The `League\Uri\Components\DataPath` handles [the data path component](/components/datauri-path/);
-* The `League\Uri\Components\Query` handles [the query component](/components/query/);
-* The `League\Uri\Components\Fragment` handles [the fragment component](/components/fragment/);
+* The `League\Uri\Components\Scheme` handles [the scheme component](/4.0/components/scheme/);
+* The `League\Uri\Components\User` handles [the user component](/4.0/components/user/);
+* The `League\Uri\Components\Pass` handles [the pass component](/4.0/components/pass/);
+* The `League\Uri\Components\Host` handles [the host component](/4.0/components/host/);
+* The `League\Uri\Components\Port` handles [the port component](/4.0/components/port/);
+* The `League\Uri\Components\Path` handles [the generic path component](/4.0/components/path/);
+* The `League\Uri\Components\HierarchicalPath` handles [the hierarchical path component](/4.0/components/hierarchical-path/);
+* The `League\Uri\Components\DataPath` handles [the data path component](/4.0/components/datauri-path/);
+* The `League\Uri\Components\Query` handles [the query component](/4.0/components/query/);
+* The `League\Uri\Components\Fragment` handles [the fragment component](/4.0/components/fragment/);

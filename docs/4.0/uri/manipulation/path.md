@@ -14,10 +14,10 @@ Removes dot segments according to RFC3986:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveDotSegments;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/../to/the/./sky/");
+$uri = Http::createFromString("http://www.example.com/path/../to/the/./sky/");
 $modifier = new RemoveDotSegments();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/to/the/sky/"
@@ -30,10 +30,10 @@ Removes adjacent separators with empty segment.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveEmptySegments;
 
-$uri = HttpUri::createFromString("http://www.example.com/path//to/the//sky/");
+$uri = Http::createFromString("http://www.example.com/path//to/the//sky/");
 $modifier = new RemoveEmptySegments();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/"
@@ -46,10 +46,10 @@ Removes the path trailing slash if present
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveTrailingSlash;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveTrailingSlash();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky"
@@ -62,10 +62,10 @@ Adds the path trailing slash if not present
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\AddTrailingSlash;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new AddTrailingSlash();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky"
@@ -78,10 +78,10 @@ Removes the path leading slash if present.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveLeadingSlash;
 
-$uri = HttpUri::createFromString("/path/to/the/sky/");
+$uri = Http::createFromString("/path/to/the/sky/");
 $modifier = new RemoveLeadingSlash();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "path/to/the/sky"
@@ -94,10 +94,10 @@ Adds the path leading slash if not present.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\AddLeadingSlash;
 
-$uri = HttpUri::createFromString("path/to/the/sky/");
+$uri = Http::createFromString("path/to/the/sky/");
 $modifier = new AddLeadingSlash();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "/path/to/the/sky"
@@ -124,10 +124,10 @@ Appends a segment or a path to the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\AppendSegment;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new AppendSegment("and/above");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
@@ -154,10 +154,10 @@ Prepends a segment or a path to the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\PrependSegment;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new PrependSegment("and/above");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky/and/above"
@@ -185,10 +185,10 @@ Replaces a segment from the current URI path with a new segment or path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceSegment;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea"
@@ -210,10 +210,10 @@ This method expect a valid segment/path and will return a new instance with the 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceSegment;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea/"
@@ -227,10 +227,10 @@ In case of the `ReplaceSegment` modifier, the offset can also be modified.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\ReplaceSegment;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea/"
@@ -260,10 +260,10 @@ Adds, update and or remove the path extension from the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\Extension;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new Extension("csv");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
@@ -276,10 +276,10 @@ You can update the extension chosen by using the `withExtension` method
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\Extension;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new Extension("csv");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
@@ -305,10 +305,10 @@ Removes selected segments from the current URI path.
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveSegments;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveSegments([1,3]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/the/and/above"
@@ -321,10 +321,10 @@ You can update the offsets chosen by using the `withKeys` method
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveSegments;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveSegments([1,3]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/the/and/above/"
@@ -369,11 +369,11 @@ For Backward compatibility with PHP5.5 which lacks these flags constant you can 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterSegments;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new FilterSegments(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);
@@ -390,11 +390,11 @@ You can update the URI modifier using:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\FilterSegments;
 use League\Uri\Interfaces\Collection;
 
-$uri = HttpUri::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new FilterSegments(function ($value) {
     return $value > 0 && $value < 2;
 }, Collection::FILTER_USE_KEY);

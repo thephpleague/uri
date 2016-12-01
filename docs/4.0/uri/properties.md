@@ -82,7 +82,7 @@ $uri->query->getValue("foo"); //return "baz"
 
 <p class="message-notice">The actual methods attach to each component depend on the underlying component object used. For instance a <code>DataUri::path</code> object does not expose the same methods as a <code>Ws::path</code> object would.</p>
 
-To get more informations about component properties refer to the [components documentation](/components/overview/)
+To get more informations about component properties refer to the [components documentation](/4.0/components/overview/)
 
 ## Getting URI object reference status
 

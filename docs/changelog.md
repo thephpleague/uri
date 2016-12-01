@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Version 4 - Changelog
+title: Changelog
 ---
 
 # Changelog

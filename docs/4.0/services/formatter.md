@@ -135,11 +135,11 @@ According to PSR-7 UriInterface, when a component is empty and optional, this is
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 
-$uri = HttpUri::createFromString('http://uri.thephpleague.com?#');
-$altUri = HttpUri::createFromString('http://uri.thephpleague.com#');
-$otherUri = HttpUri::createFromString('http://uri.thephpleague.com?');
+$uri = Http::createFromString('http://uri.thephpleague.com?#');
+$altUri = Http::createFromString('http://uri.thephpleague.com#');
+$otherUri = Http::createFromString('http://uri.thephpleague.com?');
 
 echo $uri->__toString();      //return 'http://uri.thephpleague.com';
 echo $altUri->__toString();   //return 'http://uri.thephpleague.com';
@@ -152,7 +152,7 @@ If you need to preserve these URI parts you are required to specify it to the fo
 <?php
 
 use League\Uri\Formatter;
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 
 $formatter = new Formatter();
 $formatter->preserveQuery(true);
@@ -180,7 +180,7 @@ Apart form URI component classes, the `Formatter::format` method can modify the 
 <?php
 
 use League\Uri\Formatter;
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 
 $formatter = new Formatter();
 $formatter->setHostEncoding(Formatter::HOST_AS_ASCII);
@@ -188,7 +188,7 @@ $formatter->setQueryEncoding(PHP_QUERY_RFC3986);
 $formatter->setQuerySeparator('&amp;');
 $formatter->preserveFragment(true);
 
-echo $formatter->format(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
-echo $formatter(HttpUri::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
+echo $formatter->format(Http::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
+echo $formatter(Http::createFromString('https://рф.ru:81?foo=ba%20r&baz=bar'));
 //displays https://xn--p1ai.ru:81?foo=ba%20r&amp;baz=bar#
 ~~~

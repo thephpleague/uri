@@ -59,7 +59,7 @@ $user = $uri->user; // $user is a League\Uri\Components\User object;
 
 ## Properties and Methods
 
-The component representation, comparison and manipulation is done using the package [UriPart](/components/overview/#uri-part-interface) and the [Component](/components/overview/#uri-component-interface) interfaces methods.
+The component representation, comparison and manipulation is done using the package [UriPart](/4.0/components/overview/#uri-part-interface) and the [Component](/4.0/components/overview/#uri-component-interface) interfaces methods.
 
 ### User::getDecoded
 

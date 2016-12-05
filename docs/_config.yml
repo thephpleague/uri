@@ -1,4 +1,4 @@
 ---
 permalink: pretty
-gems:
+ gems:
   - jekyll-redirect-from

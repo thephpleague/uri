@@ -1,6 +1,5 @@
 ---
 layout: default
-permalink: /
 title: Uri
 ---
 
@@ -15,7 +14,7 @@ title: Uri
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/uri.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The library provides simple and intuitive classes to [instantiate](/schemes/) and [manipulate](/manipulations/) URIs and their [components](/components/) in PHP. Out of the box the library handles the following schemes:
+The library is a meta package which provides simple and intuitive classes to [instantiate](/dev-master/schemes/) and [manipulate](/dev-master/manipulations/) URIs and their [components](/dev-master/components/) in PHP. Out of the box the library handles the following schemes:
 
 - HTTP/HTTPS;
 - Websockets;
@@ -27,9 +26,9 @@ and allow to easily manage others scheme specific URIs.
 
 The library ships with:
 
-- a [RFC3986][] compliant parser for the [URI string](/parser/);
-- a parser for the URI query string that preserves its content;
+- a [RFC3986][] compliant parser for the [URI string](/dev-master/parser/);
 - a URI formatter to easily output RFC3987 URI strings;
+- URI middlewares to ease URI manipulations
 
 Highlights
 ------
@@ -41,7 +40,8 @@ Highlights
 - Framework Agnostic
 - Composer ready, [PSR-2][] and [PSR-4][] compliant
 
-## Questions?
+Questions?
+------
 
 The package was created by Nyamagana Butera Ignace. Find him on Twitter at [@nyamsprod][].
 

@@ -7,7 +7,7 @@
     {% assign version = page.url | remove_first: "/" | split: "/"" | first %}
     {% assign upgrading_pages = version %}
 
-    {% if version != '5.x' %}
+    {% if version != 'dev-master' %}
         {% if version != '4.0' %}
             {% assign version = site.data.project.default_version %}
         {% endif %}

@@ -18,7 +18,7 @@ use League\Uri\Components\Host;
 
 $uri = Http::createFromString("http://uri.thephpleague.com/.././report/");
 echo $uri->getPath(), PHP_EOL; //display "/.././report/"
-$normalizedPath = (new HierarchicalPath($uri->path))
+$normalizedPath = (new HierarchicalPath($uri->getPath()))
     ->withoutLeadingSlash()
     ->withoutTrailingSlash()
     ->withoutDotSegments();
@@ -42,9 +42,9 @@ echo $host->getSubDomain(), PHP_EOL; //display 'uri'
 
 Each component exposes its own specific properties. Please refer to the documentation to get the full public API.
 
-## Using URI Modifiers
+## Using URI Middlewares
 
-The package comes bundle with [URI modifiers](/uri/manipulations/) which enable modifying any League URI object as well as any PSR-7 `UriInterface` objects in a simple and intuitive way.
+The package comes bundle with [URI middlewares](/uri/manipulations/) which enable modifying any League URI object as well as any PSR-7 `UriInterface` objects in a simple and intuitive way.
 
 Let's say you have a document that can be downloaded in different format (CSV, XML, JSON) and you quickly want to generate each format URI. This example illustrates how easy it is to generate theses different URIs from an original URI.
 

@@ -15,9 +15,8 @@ Let say you want to create a `telnet` class to handle telnet URI. You just need 
 namespace Example;
 
 use League\Uri\Schemes\AbstractUri;
-use League\Uri\Interfaces\Uri;
 
-class Telnet extends AbstractUri implements Uri
+class Telnet extends AbstractUri
 {
     /**
      * Supported Schemes with their associated port
@@ -80,10 +79,9 @@ We simply need to add:
 namespace Example;
 
 use League\Uri\Schemes\AbstractUri;
-use League\Uri\Schemes\Exception;
-use League\Uri\Interfaces\Uri;
+use League\Uri\Schemes\Exceptions\Exception;
 
-class Mailto extends AbstractUri implements Uri
+class Mailto extends AbstractUri
 {
     /**
      * Validate any changes made to the URI object

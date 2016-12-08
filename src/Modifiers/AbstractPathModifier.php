@@ -34,6 +34,12 @@ abstract class AbstractPathModifier extends AbstractPartialUriModifier
     {
         $this->assertUriObject($uri);
 
-        return $uri->withPath($this->modify($uri->getPath()));
+        $path = $this->modify($uri->getPath());
+        if ('' != $uri->getAuthority() && '' != $path && '/' != $path[0]) {
+            $path = '/'.$path;
+        }
+
+
+        return $uri->withPath($path);
     }
 }

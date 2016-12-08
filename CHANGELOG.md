@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- issue [#91](https://github.com/thephpleague/uri/issues/91) Path modifier must be RFC3986 compliant
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.2.1 - 2016-11-24
 
 ### Added

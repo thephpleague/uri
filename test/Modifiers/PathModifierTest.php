@@ -107,6 +107,42 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider validAppendPathProvider
+     */
+    public function testAppendProcessWithRelativePath($uri, $segment, $expected)
+    {
+        $modifier = new AppendSegment('new-segment');
+        $uri = HttpUri::createFromString('http://www.example.com');
+        $this->assertSame('http://www.example.com/new-segment', (string) $modifier($uri));
+    }
+
+    public function validAppendPathProvider()
+    {
+        return [
+            'uri with trailing slash' => [
+                'uri' => 'http://www.example.com/report/',
+                'segment' => 'new-segment',
+                'expected' => 'http://www.example.com/report/new-segment',
+            ],
+            'uri with path without trailing slash' => [
+                'uri' => 'http://www.example.com/report',
+                'segment' => 'new-segment',
+                'expected' => 'http://www.example.com/report/new-segment',
+            ],
+            'uri with absolute path' => [
+                'uri' => 'http://www.example.com/',
+                'segment' => 'new-segment',
+                'expected' => 'http://www.example.com/new-segment',
+            ],
+            'uri with empty path' => [
+                'uri' => 'http://www.example.com',
+                'segment' => 'new-segment',
+                'expected' => 'http://www.example.com/new-segment',
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider validPathProvider
      *
      * @param string $segment

@@ -28,7 +28,7 @@ The `QueryParser::parse` method returns an `array` representation of the query s
 
 <p class="message-info">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
 
-<p class="message-notice">The other encoding style will are deprecated and will be removed in the next major release. You should not rely on them.</p>
+<p class="message-notice">The other encoding styles are deprecated and will be removed in the next major release. You should not rely on them.</p>
 
 ~~~php
 <?php
@@ -37,8 +37,8 @@ use League\Uri\QueryParser;
 
 $parser = new QueryParser();
 $query_string = 'toto.foo=bar&toto.foo=baz';
-$arr = $parser->parse($query_string, '&', PHP_RFC3986);
-// $arr is an array containing ["toto.foo" => [["bar", "baz"]]
+$arr = $parser->parse($query_string, '&', PHP_QUERY_RFC3986);
+// $arr is an array containing ["toto.foo" => ["bar", "baz"]]
 ~~~
 
 ### Main differences with `parse_str`:
@@ -75,7 +75,7 @@ The `QueryParser::build` method returns and preserves string representation of t
 
 <p class="message-notice">By default or if the submitted encoding is invalid the encoding is set to PHP constant <code>PHP_QUERY_RFC3986</code></p>
 
-<p class="message-notice">The other encoding style will are deprecated and will be removed in the next major release. You should not rely on them.</p>
+<p class="message-notice">The other encoding styles are deprecated and will be removed in the next major release. You should not rely on them.</p>
 
 ~~~php
 <?php
@@ -83,20 +83,20 @@ The `QueryParser::build` method returns and preserves string representation of t
 use League\Uri\QueryParser;
 
 $query_string = 'foo[]=bar&foo[]=baz';
-$parser = new Parser();
-$arr = $parser->parse($query_string, '&', PHP_RFC3986);
+$parser = new QueryParser();
+$arr = $parser->parse($query_string, '&', PHP_QUERY_RFC3986);
 var_export($arr);
 // $arr include the following data ["foo[]" => ['bar', 'baz']];
 
-$res =$parser->build($arr, '&', false);
+$res = $parser->build($arr, '&', false);
 // $res = 'foo[]=bar&foo[]=baz'
 ~~~
 
-No key indexes is added and the query string is safely recreated
+No key indexes are added and the query string is safely recreated
 
 ### Main differences with `http_build_query`:
 
-`http_build_query` always adds array numeric prefix to the query string even when they are not needed
+`http_build_query` always adds array numeric prefix to the query string even when they are not needed.
 
 using PHP's `parse_str`
 
@@ -107,7 +107,7 @@ $query_string = 'foo[]=bar&foo[]=baz';
 parse_str($query_string, $arr);
 // $arr = ["foo" => ['bar', 'baz']];
 
-$res = rawurldecode(http_build_query($arr, '', PHP_QUERY_RFC3986));
+$res = rawurldecode(http_build_query($arr, '', '&', PHP_QUERY_RFC3986));
 // $res equals foo[0]=bar&foo[1]=baz
 ~~~
 
@@ -119,10 +119,10 @@ or using `QueryParser::parse`
 use League\Uri\QueryParser;
 
 $query_string = 'foo[]=bar&foo[]=baz';
-$parser = new Parser();
-$arr = $parser->parse($query_string, '&', PHP_RFC3986);
+$parser = new QueryParser();
+$arr = $parser->parse($query_string, '&', PHP_QUERY_RFC3986);
 // $arr = ["foo[]" => ['bar', 'baz']];
 
-$res = rawurldecode(http_build_query($arr, '', PHP_QUERY_RFC3986));
-// $res equals foo[][0]=bar&oo[][1]=baz
+$res = rawurldecode(http_build_query($arr, '', '&', PHP_QUERY_RFC3986));
+// $res equals foo[][0]=bar&foo[][1]=baz
 ~~~

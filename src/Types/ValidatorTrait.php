@@ -53,8 +53,8 @@ trait ValidatorTrait
      */
     protected static function validateString($str)
     {
-        if (is_string($str)) {
-            return $str;
+        if (is_string($str) || is_object($str) && method_exists($str, '__toString')) {
+            return (string) $str;
         }
 
         throw new InvalidArgumentException(sprintf(

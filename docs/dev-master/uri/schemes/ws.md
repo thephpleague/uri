@@ -10,7 +10,7 @@ This class handles secure and non secure websockets URI.
 
 ## Validation
 
-Websockets URIs must contain a `ws` or the `wss` scheme. It can not contain a fragment component as per [RFC6455](https://tools.ietf.org/html/rfc6455#section-3).
+The scheme of a Websocket URI must be equal to `ws`, `wss` or be undefined. It can not contain a fragment component as per [RFC6455](https://tools.ietf.org/html/rfc6455#section-3).
 
 <p class="message-notice">Adding contents to the fragment component throws an <code>InvalidArgumentException</code> exception</p>
 

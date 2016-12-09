@@ -40,6 +40,7 @@
         Terminology: '/4.0/definitions/'
         Installation: '/4.0/installation/'
         Usage: '/4.0/examples/'
+        Changelog: '/4.0/changelog/'
     Uri:
         Instantiation: '/4.0/uri/instantiation/'
         Properties: '/4.0/uri/properties/'

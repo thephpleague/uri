@@ -36,8 +36,8 @@
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "ext-fileinfo": "*",
-        "league/uri-schemes": "~0.3",
-        "league/uri-manipulations": "~0.1"
+        "league/uri-schemes": "~0.4",
+        "league/uri-manipulations": "~0.2"
     },
     "extra": {
         "branch-alias": {

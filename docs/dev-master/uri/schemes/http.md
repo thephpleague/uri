@@ -7,7 +7,7 @@ title: Http URIs
 
 ## Instantiation
 
-To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the [defined named constructors](/dev-master/uri/index/#instantiation), the `Http` class can be instantiated using the server variables.
+To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the default named constructors, the `Http` class can be instantiated using the server variables.
 
 ~~~php
 <?php
@@ -21,6 +21,8 @@ $uri = HttpUri::createFromServer($_SERVER);
 <p class="message-warning">The method only relies on the server's safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>
 
 ## Validation
+
+The scheme of a HTTP(s) URI must be equal to `http`, `https` or be undefined.
 
 If a scheme is present and the scheme specific part of a Http URI is not empty the URI can not contain an empty authority. Thus, some Http URI modifications must be applied in a specific order to preserve the URI validation.
 

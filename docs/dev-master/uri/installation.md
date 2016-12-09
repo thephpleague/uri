@@ -6,7 +6,6 @@ title: Uri objects scheme specific
 Installation
 =======
 
-
 System Requirements
 -------
 

@@ -9,7 +9,7 @@ To ease working with FTP URIs, the library comes bundle with a URI specific FTP 
 
 ## Validation
 
-A FTP URI must contain the `ftp` scheme. It can not contains a query and or a fragment component.
+The scheme of a FTP URI must be equal to `ftp` or be undefined. It can not contains a query and or a fragment component.
 
 <p class="message-notice">Adding contents to the fragment or query components throws an <code>InvalidArgumentException</code> exception</p>
 

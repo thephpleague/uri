@@ -74,7 +74,12 @@ trait TranscoderTrait
             return rawurlencode($matches[0]);
         };
 
-        return preg_replace_callback($regexp, $encoder, $str);
+        $res = preg_replace_callback($regexp, $encoder, $str);
+        if (null !== $res) {
+            return $res;
+        }
+
+        return rawurlencode($str);
     }
 
     /**

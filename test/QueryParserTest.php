@@ -85,6 +85,14 @@ class QueryParserTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testBuildWithMalformedUtf8Chars()
+    {
+        $this->assertSame(
+            'badutf8=%A0TM1TMS061114IP1',
+            $this->parser->build(['badutf8' => rawurldecode('%A0TM1TMS061114IP1')])
+        );
+    }
+
     public function testFailSafeQueryParsing()
     {
         $arr = ['a' => '1', 'b' => 'le heros'];

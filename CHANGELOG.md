@@ -12,6 +12,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - issue [#91](https://github.com/thephpleague/uri/issues/91) Path modifier must be RFC3986 compliant
 - issue [#94](https://github.com/thephpleague/uri/issues/91) Improve Query parser encoder
+- `Formatter::__invoke` path must be RFC3986 compliant
 
 ### Deprecated
 

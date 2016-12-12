@@ -111,9 +111,9 @@ class PathModifierTest extends PHPUnit_Framework_TestCase
      */
     public function testAppendProcessWithRelativePath($uri, $segment, $expected)
     {
-        $modifier = new AppendSegment('new-segment');
-        $uri = HttpUri::createFromString('http://www.example.com');
-        $this->assertSame('http://www.example.com/new-segment', (string) $modifier($uri));
+        $modifier = new AppendSegment($segment);
+        $uri = HttpUri::createFromString($uri);
+        $this->assertSame($expected, (string) $modifier($uri));
     }
 
     public function validAppendPathProvider()

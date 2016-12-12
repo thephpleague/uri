@@ -288,9 +288,14 @@ class Formatter
             $scheme .= ':';
         }
 
+        $path = $uri->getPath();
+        if ('' != $uri->getAuthority() && '' != $path && '/' != $path[0]) {
+            $path = '/'.$path;
+        }
+
         return $scheme
             .$this->formatAuthority($uri)
-            .$uri->getPath()
+            .$path
             .$this->formatQuery($uri)
             .$this->formatFragment($uri)
         ;

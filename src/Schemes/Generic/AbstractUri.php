@@ -258,6 +258,14 @@ abstract class AbstractUri
     }
 
     /**
+     * @inheritdoc
+     */
+    public function toString()
+    {
+        return $this->__toString();
+    }
+
+    /**
      * Retrieve the scheme specific part of the URI.
      *
      * If no specific part information is present, this method MUST return an empty

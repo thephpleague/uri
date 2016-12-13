@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if page.url == '/' %}
+    {% assign version = page.url | remove_first: "/" | split: "/"" | first %}
+    {% assign upgrading_pages = version %}
+
+    {% if version != 'dev-master' %}
+        {% if version != '4.0' %}
+            {% assign version = site.data.project.default_version %}
+        {% endif %}
+    {% endif %}
+
+    {% capture version_home %}/{{ version }}/{% endcapture %}
+
+    {% if page.url == '/'  or page.url == version_home %}
         <title>{{ site.data.project.title }} - {{ site.data.project.tagline }}</title>
     {% else %}
         <title>{{ page.title }} - {{ site.data.project.title }}</title>
     {% endif %}
+
+    {% if site.github.url %}
+        <base href="{{ site.github.url }}/{{ version }}/">
+    {% else %}
+        <base href="/{{ version }}/">
+    {% endif %}
+
     {% if site.data.project.description %}
         <meta name="description" content="{{ site.data.project.description }}">
     {% endif %}
+
     {% if site.data.images.favicon %}
         <link rel="icon" type="image/x-icon" href="{{ site.data.images.favicon }}" />
     {% else %}
         <link rel="icon" type="image/x-icon" href="http://theme.thephpleague.com/img/favicon.ico" />
     {% endif %}
+
     {% if site.data.images.apple_touch %}
         <link rel="apple-touch-icon-precomposed" href="{{ site.data.images.apple_touch }}">
     {% else %}
@@ -38,7 +58,7 @@
 </section>
 
 <header>
-    <a class="logo" href="/">
+    <a class="logo" href="{% if version == site.data.project.default_version %}/{% else %}/{{ version }}/{% endif %}">
         {% if site.data.images.logo %}
             <span class="icon">
                 <img src="{{ site.data.images.logo }}" width="50" height="40" alt="{{ site.data.project.title }} - {{ site.data.project.tagline }}">
@@ -60,7 +80,13 @@
 
 <main>
     <menu>
-        {% for section in site.data.menu %}
+        <select class="versions">
+            {% for v in site.data.menu %}
+                <option data-url="{% if v[0] == site.data.project.default_version %}/{% else %}/{{ v[0] }}/{% endif %}" {% if version == v[0] %}selected="selected"{% endif %}>                    Version: {{ v[0] }}
+                </option>
+            {% endfor %}
+        </select>
+        {% for section in site.data.menu[version] %}
             <h2>{{ section[0] }}</h2>
             <ul>
                 {% for link in section[1] %}
@@ -72,6 +98,11 @@
         {% endfor %}
     </menu>
     <article>
+
+    {% if version == 'dev-master' %}
+<p class="message-warning">This is the experimental branch for the future v5. Documentation and API may contains obsolete information!!</p>
+    {% endif %}
+
         {{ content }}
     </article>
 </main>

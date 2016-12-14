@@ -31,7 +31,7 @@ System Requirements
 
 You need:
 
-- **PHP >= 5.5.0** or **HHVM >= 3.6**, but the latest stable version of PHP/HHVM is recommended
+- **PHP >= 5.6.4** but the latest stable version of PHP is recommended
 - the `mbstring` extension
 - the `intl` extension
 

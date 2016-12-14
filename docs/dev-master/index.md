@@ -14,7 +14,7 @@ title: Uri
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/uri.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/uri)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The library is a **meta package** which provides simple and intuitive classes to [instantiate](/dev-master/schemes/) and [manipulate](/dev-master/manipulations/) URIs and their [components](/dev-master/components/) in PHP. Out of the box the library handles the following schemes:
+The library is a **meta package** which provides simple and intuitive classes to [parse](/dev-master/parser/), [instantiate](/dev-master/schemes/) and [manipulate](/dev-master/manipulations/) URIs and their [components](/dev-master/components/) in PHP. Out of the box the library handles the following schemes:
 
 - HTTP/HTTPS;
 - Websockets;
@@ -27,8 +27,8 @@ and allow to easily manage others scheme specific URIs.
 The library ships with:
 
 - a [RFC3986][] compliant parser for the [URI string](/dev-master/parser/);
-- a URI formatter to easily output RFC3987 URI strings;
-- URI middlewares to ease URI manipulations
+- a URI formatter to easily output [RFC3987][] URI strings;
+- URI middlewares and functions to ease URI manipulations
 
 Highlights
 ------

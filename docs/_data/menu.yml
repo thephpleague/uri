@@ -3,7 +3,6 @@
         Overview: '/dev-master/'
         Installation: '/dev-master/installation/'
         Usage: '/dev-master/usage/'
-        Changelog: '/dev-master/changelog/'
     Uri parser:
         Overview: '/dev-master/parser/'
         Installation: '/dev-master/parser/installation/'
@@ -34,13 +33,16 @@
         References: '/dev-master/manipulations/references/'
         Formatter: '/dev-master/manipulations/formatter/'
         Middlewares: '/dev-master/manipulations/middlewares/'
+    Upgrading Guide:
+        Introduction: '/upgrading/'
+        Changelog: '/changelog/'
+        4.x to 5.x: '/upgrading/5.0/'
 '4.0':
     Getting Started:
         Introduction: '/4.0/'
         Terminology: '/4.0/definitions/'
         Installation: '/4.0/installation/'
         Usage: '/4.0/examples/'
-        Changelog: '/4.0/changelog/'
     Uri:
         Instantiation: '/4.0/uri/instantiation/'
         Properties: '/4.0/uri/properties/'
@@ -73,3 +75,7 @@
         Uri Parser: '/4.0/services/parser-uri/'
         Query Parser: '/4.0/services/parser-query/'
         Formatter: '/4.0/services/formatter/'
+    Upgrading Guide:
+        Introduction: '/upgrading/'
+        Changelog: '/changelog/'
+        4.x to 5.x: '/upgrading/5.0/'

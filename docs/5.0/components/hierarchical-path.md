@@ -5,18 +5,106 @@ title: The Hierarchical Path component
 
 # The Hierarchical Path component
 
-The library provides a `League\Uri\Components\HierarchicalPath` class to ease complex path manipulation on a Hierarchical URI object like `http` scheme URI. The class exposes the same method as the default `Path` object with methods dedicated to manipulate hierarchical paths.
+The library provides a `HierarchicalPath` class to ease HTTP like path creation and manipulation. This URI component object exposes :
 
-## Path creation
+- the [package common API](/5.0/components/api/)
+- the [path common API](/5.0/components/path)
 
-### Using a named constructor
+but also provide specific methods to work with segments-type URI path components.
+
+<p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
+
+<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> exception is thrown.</p>
+
+## Manipulating the path as a filesystem path
+
+THe `HierarchicalPath` allows you to access and manipulate the path as if it was a filesystem path.
+
+### The parent directory path
+
+~~~php
+<?php
+
+public HierarchicalPath::getDirname(void): string
+public HierarchicalPath::withDirname(string $dirname): self
+~~~
+
+`getDirname` returns the path parent's directory while `withDirname` returns a new instance with the modified parent's directory path.
+
+<p class="message-notice">This method is used by the URI modifier <code>Dirname</code></p>
+
+### The path basename
+
+~~~php
+<?php
+
+
+public HierarchicalPath::getBasename(void): string
+public HierarchicalPath::withBasename(string $basename): self
+~~~
+
+`getBasename` returns the complete trailing segment of a path, including its extension optional path parameters. You can change the segment content using the complementary `withBasename` method. This method expects a string and returns a new instance with the modified basename.
+
+<p class="message-notice">This method is used by the URI modifier <code>Basename</code></p>
+
+### The basename extension
+
+~~~php
+<?php
+
+public HierarchicalPath::getExtension(void): string
+public HierarchicalPath::withExtension(string $extension): self
+~~~
+
+If you are only interested in getting the basename extension, you can directly call the `getExtension` method. The method only returns the basename extension as a string if present. The leading `.` delimiter is removed from the method output. The complementary method `withExtension` is provided to modify the basename extension. Both methods do not interact with the path parameters if present.
+
+<p class="message-warning"><code>withExtension</code> will throw an <code>InvalidArgumentException</code> exception if the extension contains the path delimiter.</p>
+
+<p class="message-notice">This method is used by the URI modifier <code>Extension</code></p>
+
+### Usage
+
+#### Accessing the properties
+
+~~~php
+<?php
+
+use League\Uri\Components\HierarchicalPath as Path;
+
+$path = new Path('/path/to/the/sky.txt');
+$path->getExtension(); //return 'txt'
+$path->getBasename();  //return 'sky.txt'
+$path->getDirname();   //return '/path/to/the'
+~~~
+
+#### Modifying the path
+
+~~~php
+<?php
+
+use League\Uri\Components\HierarchicalPath as Path;
+
+$path = new Path('/path/to/the/sky.txt;foo=bar');
+$new_path = $path
+    ->withDirname('/foo')
+    ->withExtension('csv');
+echo $new_path; // display /foo/sky.csv;foo=bar
+
+$alt_path = $path
+    ->withBasename('paradise.html');
+echo $alt_path; // display /foo/paradise.html
+~~~
+
+## The path as a segments collection
+
+### HierarchicalPath::createFromSegments
 
 A path is a collection of segment delimited by the path delimiter `/`. So it is possible to create a `HierarchicalPath` object using a collection of segments with the `HierarchicalPath::createFromSegments` method.
 
 The method expects at most 2 arguments:
 
 - The first required argument must be a collection of segments (an `array` or a `Traversable` object)
-- The second optional argument, a `Uri\Path` constant, tells whether this is a rootless path or not:
+- The second optional argument, a `HierarchicalPath` constant, tells whether this is a rootless path or not:
     - `HierarchicalPath::IS_ABSOLUTE`: the created object will represent an absolute path;
     - `HierarchicalPath::IS_RELATIVE`: the created object will represent a rootless path;
 
@@ -37,9 +125,7 @@ echo $end_slash; //display '/shop/example/com/'
 
 <p class="message-info">To force the end slash when using the <code>Path::createFromSegments</code> method you need to add an empty string as the last member of the submitted array.</p>
 
-## Path representations
-
-### Collection representation
+### Accessing the path segments
 
 A path can be represented as an array of its internal segments. Through the use of the `HierarchicalPath::getSegments` method the class returns the object array representations.
 
@@ -62,11 +148,7 @@ $relative_path = new Path('path/to/the/sky/');
 $relative_path->getSegments(); //return ['path', 'to', 'the', 'sky', ''];
 ~~~
 
-## Accessing Path content
-
-### Countable and IteratorAggregate
-
-The class provides several methods to works with its segments. The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of segments and use the `foreach` construct to iterate overs them.
+The class implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of segments and use the `foreach` construct to iterate overs them.
 
 ~~~php
 <?php
@@ -80,7 +162,7 @@ foreach ($path as $offset => $segment) {
 }
 ~~~
 
-### Segment offsets
+### Accessing the segments offset
 
 If you are interested in getting all the segments offsets you can do so using the `HierarchicalPath::keys` method like shown below:
 
@@ -95,9 +177,11 @@ $path->keys('sky');   //return [3];
 $path->keys('gweta'); //return [];
 ~~~
 
-The method returns an array containing all the segments offsets. If you supply an argument, only the offsets whose segment value equals the argument are returned.
+The method returns all the segment keys, but if you supply an argument, only the keys whose segment value equals the argument are returned.
 
-### Segment content
+<p class="message-info">The supplied argument is decoded to enable matching the corresponding keys.</p>
+
+### Accessing the segments content
 
 If you are only interested in a given segment you can access it directly using the `HierarchicalPath::getSegment` method as show below:
 
@@ -112,10 +196,11 @@ $path->getSegment(23);        //return null
 $path->getSegment(23, 'now'); //return 'now'
 ~~~
 
-The method returns the value of a specific offset. If the offset does not exists it will return the value specified by the optional second argument or `null`.
+<p class="message-notice"><code>HierarchicalPath::getSegment</code> always returns the decoded representation.</p>
 
+If the offset does not exists it will return the value specified by the optional second argument or `null`.
 
-This method supports negative offsets
+<p class="message-info"><code>HierarchicalPath::getSegment</code> supports negative offsets</code></p>
 
 ~~~php
 <?php
@@ -128,95 +213,7 @@ $path->getSegment(-23);        //return null
 $path->getSegment(-23, 'now'); //return 'now'
 ~~~
 
-### The basename
-
-To ease working with path you can get the trailing segment of a path by using the `HierarchicalPath::getBasename` method, this method takes no argument. If the segment ends with an extension, it will be included in the output.
-
-~~~php
-<?php
-
-use League\Uri\Components\HierarchicalPath as Path;
-
-$path = new Path('/path/to/the/sky');
-$path->getBasename(); //return 'sky'
-
-$alt_path = new Path('path/to/the/sky.html');
-$alt_path->getBasename(); //return 'sky.html'
-~~~
-
-### The basename extension
-
-If you are only interested in getting the basename extension, you can directly call the `HierarchicalPath::getExtension` method. This method, which takes no argument, returns the trailing segment extension as a string if present or an empty string. The leading `.` delimiter is removed from the method output.
-
-~~~php
-<?php
-
-use League\Uri\Components\HierarchicalPath as Path;
-
-$path = new Path('/path/to/the/sky');
-$path->getBasename(); //return ''
-
-$path = new Path('/path/to/file.csv');
-$path->getExtension(); //return 'csv';
-~~~
-
-The `getExtension` method takes into account path parameters:
-
-~~~php
-<?php
-
-use League\Uri\Components\HierarchicalPath as Path;
-
-$path = new Path('/path/to/the/sky.txt;foo=bar,baz');
-$path->getBasename();  //return 'sky.txt;foo=bar,baz'
-$path->getExtension(); //return 'txt';
-~~~
-
-### The dirname
-
-Conversely, you can get the path dirname by using the `HierarchicalPath::getDirname` method, this method takes no argument and works like PHP's `dirname` function.
-
-~~~php
-<?php
-
-use League\Uri\Components\HierarchicalPath as Path;
-
-$path = new Path('/path/to/the/sky.txt');
-$path->getExtension(); //return 'txt'
-$path->getBasename();  //return 'sky.txt'
-$path->getDirname();   //return '/path/to/the'
-~~~
-
-## Path normalization
-
-<p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
-
-<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> exception is thrown.</p>
-
-Out of the box, the `HierarchicalPath` object operates a number of non destructive normalizations. For instance, the path is correctly URI encoded against the RFC3986 rules.
-
-## Modifying Path
-
-### Path extension manipulation
-
-You can easily change or remove the extension from the path basename using the `HierarchicalPath::withExtension` method.
-
-<p class="message-info">No update will be made if the <code>basename</code> is empty</p>
-
-<p class="message-warning">This method will throw an <code>InvalidArgumentException</code> exception if the extension contains the path delimiter.</p>
-
-~~~php
-<?php
-
-use League\Uri\Components\HierarchicalPath as Path;
-
-$path    = new Path('/path/to/the/sky');
-$newPath = $path->withExtension('csv');
-echo $newPath->getExtension(); //displays csv;
-echo $path->getExtension();    //displays '';
-~~~
-
-<p class="message-notice">This method is used by the URI modifier <code>Extension</code></p>
+## Manipulating the path segments
 
 ### Append segments
 
@@ -228,7 +225,7 @@ To append segments to the current object you need to use the `HierarchicalPath::
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path    = new Path();
-$newPath = $path->append(new Path('path'))->append('to/the/sky');
+$newPath = $path->append('path')->append('to/the/sky');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 
@@ -244,7 +241,7 @@ To prepend segments to the current path you need to use the `HierarchicalPath::p
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path    = new Path();
-$newPath = $path->prepend(new Path('sky'))->prepend(new Path('path/to/the'));
+$newPath = $path->prepend('sky')->prepend(path/to/the');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 
@@ -263,8 +260,8 @@ To replace a segment you must use the `HierarchicalPath::replace` method with th
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path    = new Path('/foo/example/com');
-$newPath = $path->replace(0, new Path('bar/baz'));
-$Path->__toString(); //return /bar/baz/example/com
+$newPath = $path->replace(0, 'bar/baz');
+$newPath->__toString(); //return /bar/baz/example/com
 ~~~
 
 <p class="message-notice">if the specified offset does not exists, no modification is performed and the current object is returned.</p>

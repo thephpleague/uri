@@ -6,7 +6,7 @@ title: URI components
 Uri Components API
 =======
 
-Any URI component object exposes the following methods and constant defined in the `League\Uri\Components\ComponentInterface` interface:
+All URI component objects expose the following methods and constant defined in the `League\Uri\Components\ComponentInterface` interface:
 
 ~~~php
 <?php
@@ -24,17 +24,15 @@ public function ComponentInterface::withContent(?string $content): self
 
 ## ComponentInterface::isNull
 
-Returns `true` if the object value is equal to `null`.
-
+Returns `true` if the component value is equal to `null`.
 
 ## ComponentInterface::isEmpty
 
-Returns `true` if the object value is equal to `null` or represents the empty string.
-
+Returns `true` if the component value is equal to `null` or represents the empty string.
 
 ## ComponentInterface::getContent
 
-Returns the normalized and encoded version of the component.
+Returns an encoded version of the component or `null`.
 
 ~~~php
 <?php
@@ -42,13 +40,13 @@ Returns the normalized and encoded version of the component.
 public function ComponentInterface::getContent(string $enc_type = ComponentInterface::RFC3986_ENCODING): mixed
 ~~~
 
-This method return type can be:
+This method returns type can be:
 
 * `null` : If the component is not defined;
 * `string` : When the component is defined. This string is normalized and encoded according to the component rules;
 * `int` : If it is a defined port component;
 
-When the `$enc_type` parameter is used, the method returns a value encoded against:
+When the `$enc_type` parameter is used, and a string is returned, the value can be encoded against:
 
 - the RFC3986 rules with `ComponentInterface::RFC3986_ENCODING`;
 - the RFC3987 rules with `ComponentInterface::RFC3987_ENCODING`;
@@ -108,7 +106,7 @@ $path = new HierarchicalPath('/toto le heros/file.xml');
 echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 ~~~
 
-<p class="message-notice">Normalization and encoding are specific to the component.</p>
+<p class="message-notice">Normalization and encoding are component specific.</p>
 
 ## ComponentInterface::getUriComponent
 
@@ -134,11 +132,18 @@ $userinfo = new UserInfo('john');
 echo $userinfo->getUriComponent(); //displays 'john@'
 ~~~
 
-<p class="message-notice">Normalization, encoding and delimiters are specific to the URI part.</p>
+<p class="message-notice">Normalization, encoding and delimiters are component specific.</p>
 
 ## ComponentInterface::withContent
 
-This method accepts any string in no particular encoding but will try to normalize the string to be RFC3986 compliant.
+This method accepts:
+
+- the `null` value
+- a string in no particular encoding.
+
+Returns a new instance with the modified content.
+
+<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
 
 ~~~php
 <?php
@@ -160,9 +165,29 @@ echo $host->withContent('bébé.be')->getContent(Host::RFC3987_ENCODING); //disp
 Creating new objects
 --------
 
-To instantiate a new component object you can use the default constructor as follow:
+All URI object can be instantiate using the default constructor by providing a string or the `null` value.
 
 ~~~php
 <?php
-public ComponentInterface::__construct(string $content = null): void
+public Component::__construct(string $content = null): void
 ~~~
+
+<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
+
+
+List of URI component objects
+--------
+
+The following URI component objects are defined (order alphabetically):
+
+- [DataPath](/5.0/components/data/) : the Data Path component [RFC 2397](https://tools.ietf.org/html/rfc2397)
+- [HierarchicalPath](/5.0/components/hierarchicalpath/) : the hierarchical Path component [RFC 3986](https://tools.ietf.org/html/rfc3986)
+- [Host](/5.0/components/host/) : the Host component
+- [Fragment](/5.0/components/fragment/) : the Fragment component
+- [Path](/5.0/components/path/) : the generic Path component
+- [Port](/5.0/components/hierarchicalpath/) : the Port component
+- [Query](/5.0/components/query/) : the Query component
+- [Scheme](/5.0/components/scheme/) : the Scheme component
+- [UserInfo](/5.0/components/userinfo/) : the User Info component
+
+Some URI component objects expose more methods to enable better manipulations.

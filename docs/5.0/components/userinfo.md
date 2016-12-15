@@ -6,7 +6,7 @@ title: The User information component
 The UserInfo
 =======
 
-The library provides a `UserInfo` class to ease complex user information manipulation. The object implements the `League\Uri\Components\ComponentInterface` Interface.
+The library provides a `UserInfo` class to ease user information creation and manipulation. This URI component object exposes the [package common API](/5.0/components/api/), but also provide specific methods to work with the URI user information part.
 
 ## Accessing User information content
 
@@ -17,7 +17,7 @@ public UserInfo::getUser(string $enc_type = ComponentInterface::RFC3986_ENCODING
 public UserInfo::getPass(string $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
 ~~~
 
-To acces the user login and password information you need to call the respective `UserInfo::getUser` and `UserInfo::getPass` methods like shown below.
+To access the user login and password information you need to call the respective `UserInfo::getUser` and `UserInfo::getPass` methods like shown below.
 
 ~~~php
 <?php
@@ -52,7 +52,7 @@ public UserInfo::withUserInfo(string $user [, string $password = null]): self
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-Because the `UserInfo` is composed of at most two component the `UserInfo::withUserInfo` method is introduced to ease modify the object content.
+Because the `UserInfo` is composed of at most two components the `UserInfo::withUserInfo` method is introduced to ease modify the object content.
 
 ~~~php
 <?php

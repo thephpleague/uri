@@ -113,61 +113,16 @@ echo $newHost; //displays '[fe80::1]';
 
 <p class="message-notice">This method is used by the URI modifier <code>RemoveZoneIdentifier</code></p>
 
-
 ## Host represented by an registered named
 
-### Host::createFromLabels
-
-A registered name is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
-
-The method expects at most 2 arguments:
-
-- The first required argument must be a collection of label (an `array` or a `Traversable` object). **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
-
-- The second optional argument, a `Host` constant, tells whether this is an <abbr title="Fully Qualified Domain Name">FQDN</abbr> or not:
-    - `Host::IS_ABSOLUTE` creates an a fully qualified domain name `Host` object;
-    - `Host::IS_RELATIVE` creates an a partially qualified domain name `Host` object;
-
-By default this optional argument equals to `Host::IS_RELATIVE`.
-
-<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>InvalidArgumentException</code> if you try to create an fully qualified domain name with a valid IP address.</p>
-
 ~~~php
 <?php
 
 use League\Uri\Components\Host;
 
-$host = Host::createFromLabels(['com', 'example', 'shop']);
-echo $host; //display 'shop.example.com'
-
-$fqdn = Host::createFromLabels(['com', 'example', 'shop'], Host::IS_ABSOLUTE);
-echo $fqdn; //display 'shop.example.com.'
-
-$ip_host = Host::createFromLabels(['0.1', '127.0']);
-echo $ip_host; //display '127.0.0.1'
-
-Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
-//throws InvalidArgumentException
-~~~
-
-### Normalization
-
-Whenever you create a new host your submitted data is normalized using non desctructive operations:
-
-- the host is lowercased;
-- the host is converted to its ascii representation;
-
-~~~php
-<?php
-
-use League\Uri\Components\Host;
-
-$host = Host::createFromLabels(['com', 'ExAmPle', 'shop']);
-echo $host; //display 'shop.example.com'
-
-$host = Host::createFromLabels(['be', 'bébé']);
-echo $host; //display 'xn--bb-bjab.be'
-
+$host    = new Host('uri.thephpleague.com');
+$host->isIp(); //return false
+echo $newHost; //displays 'uri.thephpleague.com';
 ~~~
 
 ### Partial or fully qualified domain name
@@ -293,6 +248,60 @@ echo $newHost; //displays 'shop.11.be'
 <p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you try to update an IP type host</p>
 
 ## Host as a Hierarchical Collection
+
+### Host::createFromLabels
+
+A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
+
+The method expects at most 2 arguments:
+
+- The first required argument must be a collection of label (an `array` or a `Traversable` object). **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
+
+- The second optional argument, a `Host` constant, tells whether this is an <abbr title="Fully Qualified Domain Name">FQDN</abbr> or not:
+    - `Host::IS_ABSOLUTE` creates an a fully qualified domain name `Host` object;
+    - `Host::IS_RELATIVE` creates an a partially qualified domain name `Host` object;
+
+By default this optional argument equals to `Host::IS_RELATIVE`.
+
+<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>InvalidArgumentException</code> if you try to create an fully qualified domain name with a valid IP address.</p>
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = Host::createFromLabels(['com', 'example', 'shop']);
+echo $host; //display 'shop.example.com'
+
+$fqdn = Host::createFromLabels(['com', 'example', 'shop'], Host::IS_ABSOLUTE);
+echo $fqdn; //display 'shop.example.com.'
+
+$ip_host = Host::createFromLabels(['0.1', '127.0']);
+echo $ip_host; //display '127.0.0.1'
+
+Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
+//throws InvalidArgumentException
+~~~
+
+### Normalization
+
+Whenever you create a new host your submitted data is normalized using non desctructive operations:
+
+- the host is lowercased;
+- the host is converted to its ascii representation;
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = Host::createFromLabels(['com', 'ExAmPle', 'shop']);
+echo $host; //display 'shop.example.com'
+
+$host = Host::createFromLabels(['be', 'bébé']);
+echo $host; //display 'xn--bb-bjab.be'
+
+~~~
 
 ### Accessing the Host labels
 

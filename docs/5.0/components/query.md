@@ -53,7 +53,7 @@ echo $query; //display 'foo=bar&p&z='
 
 ## Properties and methods
 
-The component representation, comparison and manipulation is done using the package [Component](/dev-master/components/api/) interfaces methods.
+The component representation, comparison and manipulation is done using the package [Component](/5.0/components/api/) interfaces methods.
 
 ## Accessing query pairs
 
@@ -335,7 +335,7 @@ Instead, the class provides:
 ~~~php
 <?php
 
-public Query::parse(string $query_string [, string $separator = '&' [, int $encoding = RFC3986_ENCODING]]): array
+public Query::parse(string $query_string [, string $separator = '&']): array
 ~~~
 
 The `Query::parse` method returns an `array` representation of the query string which preserve key/value pairs. The method expects at most 3 arguments:

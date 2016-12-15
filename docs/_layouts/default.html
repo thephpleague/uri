@@ -7,7 +7,7 @@
     {% assign version = page.url | remove_first: "/" | split: "/"" | first %}
     {% assign upgrading_pages = version %}
 
-    {% if version != 'dev-master' %}
+    {% if version != '5.0' %}
         {% if version != '4.0' %}
             {% assign version = site.data.project.default_version %}
         {% endif %}
@@ -99,8 +99,8 @@
     </menu>
     <article>
 
-    {% if version == 'dev-master' %}
-<p class="message-warning">This is the experimental branch for the future v5. Documentation and API may contains obsolete information!!</p>
+    {% if version == '5.0' %}
+<p class="message-warning">This is the documentation for the future v5 release. The public API and documentation may contain obsolete or inaccurate information regarding this release.</p>
     {% endif %}
 
         {{ content }}

@@ -15,11 +15,11 @@ All URI objects are located under the following namespace : `League\Uri\Schemes`
 
 The following URI objects are defined (order alphabetically):
 
-- [Data](/dev-master/uri/schemes/data/) : represents a Data scheme URI
-- [File](/dev-master/uri/schemes/file/) : represents a File scheme URI
-- [FTP](/dev-master/uri/schemes/ftp/) : represents a FTP scheme URI
-- [Http](/dev-master/uri/schemes/http/) : represents a HTTP/HTTPS scheme URI, implements PSR-7 `UriInterface`
-- [Ws](/dev-master/uri/schemes/ws/) : represents a WS/WSS scheme URI
+- [Data](/5.0/uri/schemes/data/) : represents a Data scheme URI
+- [File](/5.0/uri/schemes/file/) : represents a File scheme URI
+- [FTP](/5.0/uri/schemes/ftp/) : represents a FTP scheme URI
+- [Http](/5.0/uri/schemes/http/) : represents a HTTP/HTTPS scheme URI, implements PSR-7 `UriInterface`
+- [Ws](/5.0/uri/schemes/ws/) : represents a WS/WSS scheme URI
 
 
-<p class="message-info">But you can easily <a href="/dev-master/uri/extension/">create your own class</a> to manage others scheme specific URI.</p>
+<p class="message-info">But you can easily <a href="/5.0/uri/extension/">create your own class</a> to manage others scheme specific URI.</p>

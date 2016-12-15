@@ -23,4 +23,4 @@ $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
 //throw an InvalidArgumentException - a fragment component was given
 ~~~
 
-Apart from the fragment, the websockets URIs share the same [host validation limitation](/dev-master/uri/schemes/http/#validation) as Http URIs.
+Apart from the fragment, the websockets URIs share the same [host validation limitation](/5.0/uri/schemes/http/#validation) as Http URIs.

@@ -8,7 +8,7 @@ permalink: upgrading/5.0/
 
 `League\Uri 5.0` is a new major version that comes with backward compatibility breaks.
 
-This guide will help you migrate from a 4.x version to 5.0. It will only explain backward compatibility breaks, it will not present the new features ([read the documentation for that](/dev-master/)).
+This guide will help you migrate from a 4.x version to 5.0. It will only explain backward compatibility breaks, it will not present the new features ([read the documentation for that](/5.0/)).
 
 ## Installation
 

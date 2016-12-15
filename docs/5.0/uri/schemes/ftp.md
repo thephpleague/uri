@@ -22,4 +22,4 @@ $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i
 $uri->withQuery('p=1'); //throw an InvalidArgumentException - a query component was given
 ~~~
 
-Apart from the fragment and the query components, the Ftp URIs share the same [host validation limitation](/dev-master/uri/schemes/http/#validation) as Http URIs.
+Apart from the fragment and the query components, the Ftp URIs share the same [host validation limitation](/5.0/uri/schemes/http/#validation) as Http URIs.

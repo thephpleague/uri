@@ -207,10 +207,9 @@ By default, the method returns all the keys names, but if you supply a value, on
 
 <p class="message-info">The supplied argument is fully decoded to enable matching the corresponding keys.</p>
 
-
 ### Accessing a specific pair
 
-If you are only interested in a given pair you can access it directly using the `Query::getValue` method as show below:
+If you are only interested in a given pair you can access it directly using the `Query::getPair` method as show below:
 
 ~~~php
 <?php
@@ -218,12 +217,31 @@ If you are only interested in a given pair you can access it directly using the 
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&p=y+olo&z=');
-$query->getValue('foo');          //return 'bar'
-$query->getValue('gweta');        //return null
-$query->getValue('gweta', 'now'); //return 'now'
+$query->getPair('foo');          //return 'bar'
+$query->getPair('gweta');        //return null
+$query->getPair('gweta', 'now'); //return 'now'
 ~~~
 
 The method returns the value of a specific parameter name. If the offset does not exist it will return the value specified by the second argument which defaults to `null`.
+
+
+### Detecting the presence of a specific pair
+
+Because a pair value can be `null` the `Query::hasKey` method is used to remove the possible `Query::getPair` result ambiguity.
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query = new Query('foo=bar&p&z=');
+$query->getPair('foo');   //return 'bar'
+$query->getPair('p');     //return null
+$query->getPair('gweta'); //return null
+
+$query->hasKey('gweta'); //return false
+$query->hasKey('p');     //return true
+~~~
 
 ## Manipulating the query pairs
 

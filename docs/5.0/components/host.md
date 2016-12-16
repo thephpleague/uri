@@ -113,6 +113,22 @@ echo $newHost; //displays '[fe80::1]';
 
 <p class="message-notice">This method is used by the URI modifier <code>RemoveZoneIdentifier</code></p>
 
+### Getting the IP string representation
+
+You can retrieve the IP string representation from the Host object using the `getIp` method. If the Host is not an IP `null` will be returned instead.
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('[fe80::1%25eth0-1]');
+$host->getIp(); //returns 'fe80::1%eth0-1'
+
+$newHost = $host->withContent('uri.thephpleague.com');
+$newHost->getIp(); //returns null
+~~~
+
 ## Host represented by an registered named
 
 ~~~php

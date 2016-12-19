@@ -11,6 +11,7 @@ All URI component objects expose the following methods and constant defined in t
 ~~~php
 <?php
 
+const ComponentInterface::RFC1738_ENCODING = 1;
 const ComponentInterface::RFC3986_ENCODING = 2;
 const ComponentInterface::RFC3987_ENCODING = 3;
 const ComponentInterface::NO_ENCODING = 255;
@@ -48,6 +49,7 @@ This method returns type can be:
 
 When the `$enc_type` parameter is used, and a string is returned, the value can be encoded against:
 
+- the RFC1738 rules with `ComponentInterface::RFC1738_ENCODING`;
 - the RFC3986 rules with `ComponentInterface::RFC3986_ENCODING`;
 - the RFC3987 rules with `ComponentInterface::RFC3987_ENCODING`;
 - or no rules at all with `ComponentInterface::NO_ENCODING`;

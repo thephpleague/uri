@@ -19,8 +19,8 @@ List of URI component objects
 
 The following URI component objects are defined (order alphabetically):
 
-- [DataPath](/5.0/components/data/) : the Data Path component [RFC 2397](https://tools.ietf.org/html/rfc2397)
-- [HierarchicalPath](/5.0/components/hierarchicalpath/) : the hierarchical Path component [RFC 3986](https://tools.ietf.org/html/rfc3986)
+- [DataPath](/5.0/components/data/) : the Data Path component
+- [HierarchicalPath](/5.0/components/hierarchicalpath/) : the hierarchical Path component
 - [Host](/5.0/components/host/) : the Host component
 - [Fragment](/5.0/components/fragment/) : the Fragment component
 - [Path](/5.0/components/path/) : the generic Path component

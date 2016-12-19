@@ -23,5 +23,6 @@ $ composer require league/uri-manipulations
 Dependencies
 -------
 
-- [uri-interfaces](https://github.com/thephpleague/uri-interfaces)
-- [uri-components](https://github.com/thephpleague/uri-components)
+- [PSR-7 UriInterface](http://php-fig.org/psr/psr-7/)
+- [League URI Interfaces](https://github.com/thephpleague/uri-interfaces)
+- [League URI Components](https://github.com/thephpleague/uri-components)

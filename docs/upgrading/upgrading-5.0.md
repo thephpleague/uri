@@ -292,8 +292,6 @@ echo $path->without(['path']); //throw an InvalidArgumentException exception;
 
 ## Query
 
-The `Query::hasKey` method has been removed as it was redundant with how `Query::getValue` works.
-
 The `Query::merge` method no longer accepts another `Query` object as a valid parameter you need to supply a string.
 
 Before:

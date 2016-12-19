@@ -17,13 +17,19 @@ The library does not rely on PHP’s `parse_str` and `http_build_query` function
 ~~~php
 <?php
 
-public static Query::parse(string $query_string [, string $separator = '&']): array
+public static Query::parse(string $query_string [, string $separator = '&' [, int $enc_type = ComponentInterface::RFC3986_ENCODING]]): array
 ~~~
 
 This method parse the query string into an associative `array` of key/pairs value. The methods expects two arguments:
 
 - The query string **required**;
 - The query string separator **optional**, by default it is set to `&`;
+- The query string encoding. One of the `ComponentInterface` encoding type constant.
+
+    - `ComponentInterface::RFC1738_ENCONDING`
+    - `ComponentInterface::RFC3986_ENCONDING`
+    - `ComponentInterface::RFC3987_ENCONDING`
+    - `ComponentInterface::NO_ENCONDING`
 
 The value returned for each pair can be:
 
@@ -58,6 +64,7 @@ The `Query::build` restore the query string from the result of the `Query::parse
 - A valid `array` of data to convert;
 - The query string separator, by default it is set to `&`;
 - The query string encoding. It can be:
+    - `ComponentInterface::RFC1738_ENCODING`
     - `ComponentInterface::RFC3986_ENCODING`
     - `ComponentInterface::RFC3987_ENCODING`
     - `ComponentInterface::NO_ENCODING` if you don't want any encoding.

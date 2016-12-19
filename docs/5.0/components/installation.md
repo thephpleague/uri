@@ -25,4 +25,4 @@ $ composer require league/uri-components
 Dependencies
 -------
 
-- [php-domain-parser](https://github.com/jeremykendall/php-domain-parser)
+- [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser)

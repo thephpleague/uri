@@ -15,14 +15,20 @@ For instance here's how you would update the query string from a given URI objec
 ~~~php
 <?php
 
-use League\Uri\Components\Query;
 use Slim\Http\Uri as SlimUri;
 
 $uri = SlimUri::createFromString("http://www.example.com?foo=toto#~typo");
-$uriQuery = new Query($uri->getQuery());
-$updateQuery = $uriQuery->merge("foo=bar&taz=");
-$newUri = $uri->withQuery($updateQuery->__toString());
-echo $newUri; // display http://www.example.com?foo=bar&taz#~typo
+$source_query = $uri->getQuery();
+parse_str($source_query, $pairs);
+$new_pairs = ['foo' => 'bar', 'taz' => ''];
+$new_query = http_build_query(
+    array_merge($pairs, $new_pairs),
+    '',
+    '&',
+    PHP_QUERY_RFC3986
+);
+$new_uri = $uri->withQuery($new_query);
+echo $new_uri; // display http://www.example.com?foo=bar&taz=#~typo
 ~~~
 
 Using an URI middleware the code becomes
@@ -30,13 +36,13 @@ Using an URI middleware the code becomes
 ~~~php
 <?php
 
-use League\Uri\Modifier\MergeQuery;
+use League\Uri\Modifiers\MergeQuery;
 use Slim\Http\Uri as SlimUri;
 
 $modifier = new MergeQuery("foo=bar&taz=");
 $uri = SlimUri::createFromString("http://www.example.com?foo=toto#~typo");
-$newQuery = $modifier($uri);
-echo $newUri; // display http://www.example.com?foo=bar&taz=#~typo
+$new_uri = $modifier($uri);
+echo $new_uri; // display http://www.example.com?foo=bar&taz=#~typo
 ~~~
 
 Technically, an URI middleware:
@@ -60,34 +66,7 @@ function(Psr\Http\Message\UriInteface $uri): Psr\Http\Message\UriInteface
 function(League\Uri\Interfaces\Uri $uri): League\Uri\Interfaces\Uri
 ~~~
 
-## Complete URI Middlewares
-
-### Normalize a URI
-
-To help wil URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI modifier is introduce to normalize URI according to the following rules:
-
-- The host component is converted into their ASCII representation;
-- The path component is normalized by removing dot segments as per RFC3986;
-- The query component is sorted according to its key offset;
-- The scheme component is lowercased;
-
-If you normalized two URI objects it become easier to compare them to determine if they are referring to the same resource:
-
-~~~php
-<?php
-
-use League\Uri\Modifiers\Normalize;
-use League\Uri\Schemes\Http;
-
-$uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
-$altUri = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
-$modifier = new Normalize();
-
-$newUri    = $modifier->__invoke($uri);
-$newAltUri = $modifier->__invoke($altUri);
-
-var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
-~~~
+## Middlewares which manipulate several URI components
 
 ### Resolving a relative URI
 
@@ -126,7 +105,35 @@ echo $relativeUri; // display "/?foo=toto#~typo
 echo $resolver($relativeUri); // display 'http://www.example.com/?foo=toto#~typo'
 ~~~
 
-<p class="message-notice">To be sure that both operations yield the expected results both URI must be normalized.</p>
+### URI comparison
+
+To help with URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI modifier is introduce to normalize URI according to the following rules:
+
+- The host component is converted into their ASCII representation;
+- The path component is normalized by removing dot segments as per RFC3986;
+- The query component is sorted according to its key offset;
+- The scheme component is lowercased;
+- Unreserved characters are decoded;
+
+If you normalized two URI objects it become easier to compare them to determine if they are representing the same resource:
+
+~~~php
+<?php
+
+use League\Uri\Modifiers\Normalize;
+use League\Uri\Schemes\Http;
+
+$uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$altUri = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
+$modifier = new Normalize();
+
+$newUri    = $modifier->__invoke($uri);
+$newAltUri = $modifier->__invoke($altUri);
+
+var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
+~~~
+
+<p class="message-notice">You should avoid using the Normalize modifier for anything else but URI comparison as some changes applied may introduce some data loss.</p>
 
 ### Applying multiple modifiers to a single URI
 
@@ -152,9 +159,9 @@ $origUri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/"
 $origUri2 = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
 
 $modifier = (new Pipeline())
-	->pipe(new RemoveDotSegment())
-	->pipe(new HostToAscii())
-	->pipe(new KsortQuery());
+    ->pipe(new RemoveDotSegment())
+    ->pipe(new HostToAscii())
+    ->pipe(new KsortQuery());
 
 $origUri1Alt = $modifier->process($origUri1);
 $origUri2Alt = $modifier->process($origUri2);
@@ -168,9 +175,9 @@ echo $origUri2Alt; //display http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/
 <p class="message-info">This class is heavily influenced by the <a href="http://pipeline.thephpleague.com">League\Pipeline</a> package.</p>
 
 
-## Query Middlewares:
+## Query specific URI Middlewares
 
-All middlewares normalize the component
+In addition to modifiying the URI query component, the middleware normalizes the query string to RFC3986
 
 ### Sorting the query keys
 
@@ -260,9 +267,9 @@ $modifier = new FilterQuery($filter, ARRAY_FILTER_USE_KEY);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 ~~~
 
-## Path Middlewares
+## Path specific URI Middlewares
 
-All middlewares normalize the URI path component
+In addition to modifiying the URI path component, the middleware normalizes the path encoding to RFC3986.
 
 ### Removing dot segments
 
@@ -360,6 +367,86 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "/path/to/the/sky"
 ~~~
 
+### Updating path dirname
+
+Adds, update and or remove the path dirname from the current URI path.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\Dirname;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$modifier = new Dirname("/road/to");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/road/to/sky"
+~~~
+
+### Updating path basename
+
+Adds, update and or remove the path basename from the current URI path.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\Basename;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$modifier = new Basename("paradise.xml");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/path/to/the/paradise.xml"
+~~~
+
+### Updating path extension
+
+Adds, update and or remove the path extension from the current URI path.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\Extension;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$modifier = new Extension("csv");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/path/to/the/sky.csv"
+~~~
+
+### Add the path basepath
+
+Adds the path basepath from the current URI path.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\AddBasePath;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$modifier = new AddBasePath("/the/real");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/the/real/path/to/the/sky"
+~~~
+
+### Remove the path basepath
+
+Removes the path basepath from the current URI path.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\RemoveBasePath;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$modifier = new RemoveBasePath("/path/to/the");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/sky"
+~~~
+
 ### Appending segments
 
 Appends a segment or a path to the current URI path.
@@ -406,22 +493,6 @@ $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea"
-~~~
-
-### Updating path extension
-
-Adds, update and or remove the path extension from the current URI path.
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http;
-use League\Uri\Modifiers\Extension;
-
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
-$modifier = new Extension("csv");
-$newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky.csv"
 ~~~
 
 ### Removing selected segments
@@ -508,9 +579,9 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "data:text/plain;charset=US-ASCII,Hello%20World!"
 ~~~
 
-## Host Middlewares
+## Host specific URI Middlewares
 
-All middlewares normalize the component
+In addition to modifiying the URI host component, the middleware normalizes the host encoding.
 
 ### Transcoding the host to ascii
 
@@ -564,6 +635,40 @@ $uri = Http::createFromString($uriString);
 $modifier = new RemoveZoneIdentifier();
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
+~~~
+
+### Adding the root label
+
+Adds the root label if not present
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\AddRootLabel;
+
+$uriString = 'http://example.com:83';
+$uri = Http::createFromString($uriString);
+$modifier = new AddRootLabel();
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display 'http://example.com.:83'
+~~~
+
+### Removing the root label
+
+Removes the root label if present
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\RemoveRootLabel;
+
+$uriString = 'http://example.com.#yes';
+$uri = Http::createFromString($uriString);
+$modifier = new RemoveRootLabel();
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display 'http://example.com#yes'
 ~~~
 
 ### Appending labels

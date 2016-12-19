@@ -28,16 +28,21 @@ Most modern frameworks will include Composer out of the box, but ensure the foll
 require 'vendor/autoload.php';
 ~~~
 
-## Dependencies
+## Packages
 
-This library depends on:
+The URI meta package contains:
+
+the following **fully** decoupled libraries:
 
 - [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser)
-- [league-uri-interfaces](https://github.com/thephpleague/uri-interfaces)
-- [league-uri-parser](https://github.com/thephpleague/uri-parser)
-- [league-uri-schemes](https://github.com/thephpleague/uri-schemes)
-- [league-uri-components](https://github.com/thephpleague/uri-components)
-- [league-uri-manipulations](https://github.com/thephpleague/uri-manipulations)
+- [League Uri Interfaces](https://github.com/thephpleague/uri-interfaces)
+- [League Uri Parser](https://github.com/thephpleague/uri-parser)
+- [League Uri Components](https://github.com/thephpleague/uri-components)
+
+the following libraries:
+
+- [League Uri Schemes](https://github.com/thephpleague/uri-schemes)
+- [League Uri Manipulations](https://github.com/thephpleague/uri-manipulations)
 
 [Packagist]: https://packagist.org/packages/league/uri
 [Composer]: https://getcomposer.org/

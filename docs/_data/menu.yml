@@ -17,6 +17,12 @@
         Data: '/5.0/uri/schemes/data/'
         File: '/5.0/uri/schemes/file/'
         Extension Guide: '/5.0/uri/extension/'
+    Uri manipulations:
+        Overview: '/5.0/manipulations/'
+        Installation: '/5.0/manipulations/installation/'
+        URI References: '/5.0/manipulations/references/'
+        URI Formatter: '/5.0/manipulations/formatter/'
+        URI Middlewares: '/5.0/manipulations/middlewares/'
     Uri components:
         Overview: '/5.0/components/'
         Installation: '/5.0/components/installation/'
@@ -30,12 +36,6 @@
         DataPath: '/5.0/components/data-path/'
         Query: '/5.0/components/query/'
         Fragment: '/5.0/components/fragment/'
-    Uri manipulations:
-        Overview: '/5.0/manipulations/'
-        Installation: '/5.0/manipulations/installation/'
-        References: '/5.0/manipulations/references/'
-        Formatter: '/5.0/manipulations/formatter/'
-        Middlewares: '/5.0/manipulations/middlewares/'
     Upgrading Guide:
         Introduction: '/upgrading/'
         Changelog: '/changelog/'

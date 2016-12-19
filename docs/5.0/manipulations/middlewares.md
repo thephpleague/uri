@@ -8,7 +8,7 @@ URI middlewares
 
 ## Definition
 
-An URI middleware is a function or a class using the pipeline pattern to modify an URI.
+An URI middleware is a function or a class which provides a convenient mechanism for filtering and manipulating an URI object. The only **hard** requirement is that a URI middleware **MUST** returns an URI object instance identical to the one it received.
 
 ## Example
 
@@ -37,7 +37,7 @@ $new_uri = $uri->withQuery($new_query);
 echo $new_uri; // display http://www.example.com?fo_o=bar&taz=#~typo
 ~~~
 
-Using an corresponding `MergeQuery` middleware the code becomes
+Using the provided `League\Uri\Modifiers\MergeQuery` middleware the code becomes
 
 ~~~php
 <?php
@@ -57,7 +57,7 @@ echo $new_uri;
 // $new_uri is a SlimUri object
 ~~~
 
-<p class="message-notice">In addition to merging both queries, the <code>MergeQuery</code> middleware won't mangle your data during merging and the RFC3986 encoding will be enforced through out the modifications.</p>
+<p class="message-notice">In addition to merging the query to the URI, the <code>MergeQuery</code> middleware won't mangle your data during merging and the RFC3986 encoding will be enforced through out the modifications.</p>
 
 ## URI Middleware requirements
 

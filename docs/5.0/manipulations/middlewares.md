@@ -8,7 +8,9 @@ URI middlewares
 
 ## Definition
 
-An URI middleware is a function or a class which eases modifying an URI. They encapsulate the logic to modify your submitted URI and reduce boilerplate codes.
+An URI middleware is a function or a class using the pipeline pattern to modify an URI.
+
+## Example
 
 For instance here's how you would update the query string from a given URI object:
 
@@ -17,8 +19,9 @@ For instance here's how you would update the query string from a given URI objec
 
 use Slim\Http\Uri as SlimUri;
 
-$base_uri = "http://www.example.com?foo=toto#~typo";
-$query_to_merge = 'foo=bar&taz=';
+$base_uri = "http://www.example.com?fo.o=toto#~typo";
+$query_to_merge = 'fo.o=bar&taz=';
+
 $uri = SlimUri::createFromString($base_uri);
 $source_query = $uri->getQuery();
 parse_str($source_query, $pairs);
@@ -29,11 +32,12 @@ $new_query = http_build_query(
     '&',
     PHP_QUERY_RFC3986
 );
+
 $new_uri = $uri->withQuery($new_query);
-echo $new_uri; // display http://www.example.com?foo=bar&taz=#~typo
+echo $new_uri; // display http://www.example.com?fo_o=bar&taz=#~typo
 ~~~
 
-Using an URI middleware the code becomes
+Using an corresponding `MergeQuery` middleware the code becomes
 
 ~~~php
 <?php
@@ -41,18 +45,23 @@ Using an URI middleware the code becomes
 use League\Uri\Modifiers\MergeQuery;
 use Slim\Http\Uri as SlimUri;
 
-$base_uri = "http://www.example.com?foo=toto#~typo";
-$query_to_merge = 'foo=bar&taz=';
+$base_uri = "http://www.example.com?fo.o=toto#~typo";
+$query_to_merge = 'fo.o=bar&taz=';
 
-$modifier = new MergeQuery($query_to_merge);
 $uri = SlimUri::createFromString($base_uri);
+$modifier = new MergeQuery($query_to_merge);
+
 $new_uri = $modifier($uri);
-echo $new_uri; // display http://www.example.com?foo=bar&taz=#~typo
+echo $new_uri;
+// display http://www.example.com?fo.o=bar&taz=#~typo
+// $new_uri is a SlimUri object
 ~~~
 
-<p class="message-info">In addition to merging both queries, using, the middleware won't mangle your data during merging and the RFC3986 encoding will be respected through out the modifications.</p>
+<p class="message-notice">In addition to merging both queries, the <code>MergeQuery</code> middleware won't mangle your data during merging and the RFC3986 encoding will be enforced through out the modifications.</p>
 
-Technically, an URI middleware:
+## URI Middleware requirements
+
+An URI middleware:
 
 - is a callable. If the URI middleware is a class it must implement PHP’s `__invoke` method.
 - expects its single argument to be an URI object which implements either:
@@ -180,7 +189,6 @@ echo $origUri2Alt; //display http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/
 <p class="message-notice">The <code>League\Uri\Modifiers\Pipeline</code> is a URI modifier as well which can lead to advance modifications from you URI in a sane an normalized way.</p>
 
 <p class="message-info">This class is heavily influenced by the <a href="http://pipeline.thephpleague.com">League\Pipeline</a> package.</p>
-
 
 ## Query specific URI Middlewares
 

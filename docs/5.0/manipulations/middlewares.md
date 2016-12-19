@@ -17,10 +17,12 @@ For instance here's how you would update the query string from a given URI objec
 
 use Slim\Http\Uri as SlimUri;
 
-$uri = SlimUri::createFromString("http://www.example.com?foo=toto#~typo");
+$base_uri = "http://www.example.com?foo=toto#~typo";
+$query_to_merge = 'foo=bar&taz=';
+$uri = SlimUri::createFromString($base_uri);
 $source_query = $uri->getQuery();
 parse_str($source_query, $pairs);
-$new_pairs = ['foo' => 'bar', 'taz' => ''];
+parse_str($query_to_merge, $new_pairs);
 $new_query = http_build_query(
     array_merge($pairs, $new_pairs),
     '',
@@ -39,11 +41,16 @@ Using an URI middleware the code becomes
 use League\Uri\Modifiers\MergeQuery;
 use Slim\Http\Uri as SlimUri;
 
-$modifier = new MergeQuery("foo=bar&taz=");
-$uri = SlimUri::createFromString("http://www.example.com?foo=toto#~typo");
+$base_uri = "http://www.example.com?foo=toto#~typo";
+$query_to_merge = 'foo=bar&taz=';
+
+$modifier = new MergeQuery($query_to_merge);
+$uri = SlimUri::createFromString($base_uri);
 $new_uri = $modifier($uri);
 echo $new_uri; // display http://www.example.com?foo=bar&taz=#~typo
 ~~~
+
+<p class="message-info">In addition to merging both queries, using, the middleware won't mangle your data during merging and the RFC3986 encoding will be respected through out the modifications.</p>
 
 Technically, an URI middleware:
 

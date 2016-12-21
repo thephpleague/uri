@@ -33,7 +33,7 @@
         "issues": "https://github.com/thephpleague/uri/issues"
     },
     "require": {
-        "php" : ">=5.6.4",
+        "php" : ">=7.0",
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "ext-fileinfo": "*",

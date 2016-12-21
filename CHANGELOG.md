@@ -4,7 +4,13 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ## Next
 
+### Added
+
 The library is now a metapackage, you can read the [migration guide](/docs/upgrading/5.0/) for upgrading or the complete [documentation for the new version](/docs/dev-master/).
+
+### Remove
+
+- PHP5 support
 
 ## 4.2.2 - 2016-12-12
 

@@ -339,3 +339,27 @@ use League\Uri\Components\Query;
 $query = new Query('foo=bar&baz');
 echo $query->without([1]); //throw an InvalidArgumentException exception;
 ~~~
+
+The `Query::getValue` method is renamed `Query::getPair` for consistency with the other URI components object.
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query = new Query('foo=bar&baz');
+echo $query->getValue('bar', 'default'); //display 'default';
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query = new Query('foo=bar&baz');
+echo $query->getPair('bar', 'default'); //display 'default';
+~~~

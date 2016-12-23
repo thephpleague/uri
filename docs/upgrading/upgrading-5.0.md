@@ -22,7 +22,7 @@ This will edit (or create) your `composer.json` file.
 
 ## PHP version requirement
 
-`League\Uri 5.0` requires a PHP version greater or equal than 5.6.4 (was previously 5.5.9).
+`League\Uri 5.0` requires a PHP version greater or equal than 7.0.0 (was previously 5.5.9).
 
 <p class="message-warning">The package does not work on <code>HHVM</code></p>
 

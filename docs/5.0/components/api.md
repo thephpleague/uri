@@ -11,10 +11,10 @@ All URI component objects expose the following methods and constant defined in t
 ~~~php
 <?php
 
+const ComponentInterface::NO_ENCODING = 0;
 const ComponentInterface::RFC1738_ENCODING = 1;
 const ComponentInterface::RFC3986_ENCODING = 2;
 const ComponentInterface::RFC3987_ENCODING = 3;
-const ComponentInterface::NO_ENCODING = 255;
 public function ComponentInterface::isNull(void): bool
 public function ComponentInterface::isEmpty(void): bool
 public function ComponentInterface::getContent(string $enc_type = ComponentInterface::RFC3986_ENCODING): mixed
@@ -59,9 +59,7 @@ When the `$enc_type` parameter is used, and a string is returned, the value can 
 ~~~php
 <?php
 
-use League\Uri\Components\Query;
-use League\Uri\Components\Path;
-use League\Uri\Components\Port;
+use League\Uri\Components\{Query, Path, Port};
 
 $query = new Query();
 $query->isNull(); //returns true
@@ -150,8 +148,7 @@ Returns a new instance with the modified content.
 ~~~php
 <?php
 
-use League\Uri\Components\Query;
-use League\Uri\Components\Host;
+use League\Uri\Components\{Query, Host};
 
 $query = new Query();
 echo $query->withContent('')->getContent(); //returns ''

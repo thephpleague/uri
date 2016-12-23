@@ -11,7 +11,7 @@ System Requirements
 
 You need:
 
-- **PHP >= 5.6.4**  but the latest stable version of PHP is recommended
+- **PHP >= 7.0**  but the latest stable version of PHP is recommended
 
 Installation
 --------

@@ -241,8 +241,6 @@ echo $newHost; //displays 'www.11.co.uk'
 
 <p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
 
-<p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you try to update an IP type host</p>
-
 #### Update the Host subdomains
 
 You can update the subdomain part of the host.
@@ -260,8 +258,6 @@ echo $newHost; //displays 'shop.11.be'
 <p class="message-notice">This method is used by the URI modifier <code>Subdomain</code></p>
 
 <p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
-
-<p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you try to update an IP type host</p>
 
 ## Host as a Hierarchical Collection
 

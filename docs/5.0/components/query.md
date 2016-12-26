@@ -331,6 +331,37 @@ $newQuery->__toString(); //return foo=bar&baz=&r
 
 <p class="message-info">This method is used by the URI modifier <code>MergeQuery</code></p>
 
+### Append query strings
+
+`Query::append` returns a new `Query` object with its data append to it.
+
+~~~php
+<?php
+
+public function Query::append(string $key, $value): Query
+~~~
+
+This method expects 2 arguments
+
+- a `$key` : the pair key
+- a `$value` : the new value to append to the query. The value can be `null` a string or an array containing `null` or strings values.
+
+If the key does not exist, the new pair is appended to the query string.
+If the key does exist, the new value is appended to the original key.
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query    = new Query('foo=bar&john=doe');
+$newQuery = $query->append('foo', 'baz');
+$newQuery->__toString(); //return foo=jane&foo=baz&john=doe
+// a new foo parameter is added
+~~~
+
+<p class="message-info">This method is used by the URI modifier <code>AppendQuery</code></p>
+
 ### Removing pairs from the query
 
 `Query::without` returns a new `Query` object with deleted pairs according to their keys.
@@ -354,73 +385,3 @@ echo $newQuery; //displays 'z='
 ~~~
 
 <p class="message-notice">This method is used by the URI modifier <code>RemoveQueryKeys</code></p>
-
-### Filtering the query
-
-`Query::filter` Returns a new `Query` object with filtered pairs.
-
-~~~php
-<?php
-
-public function Query::filter(callable $filter, $flag = 0): Query
-~~~
-
-Filtering is done using the same arguments as PHP's `array_filter`.
-
-You can filter the query by the pairs values:
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query = new Query('foo=bar&p=y+olo&z=');
-$filter = function ($value) {
-    return !empty($value);
-};
-
-$newQuery = $query->filter($filter);
-echo $newQuery; //displays 'foo=bar&p=y+olo'
-~~~
-
-You can filter the query by the pairs keys:
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query = new Query('foo=bar&p=y+olo&z=');
-$filter = function ($key) {
-    return strpos($key, 'f');
-};
-
-$newQuery = $query->filter($filter, ARRAY_FILTER_USE_KEY);
-echo $newQuery; //displays 'foo=bar'
-~~~
-
-You can filter the query with both the value and the key
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query = new Query('toto=foo&bar=foo&john=jane');
-$filter = function ($value, $key) {
-    return (strpos($value, 'o') !== false && strpos($key, 'o') !== false);
-};
-
-$newQuery = $query->filter($filter, ARRAY_FILTER_USE_BOTH);
-echo $newQuery; //displays 'toto=foo'
-~~~
-
-By specifying the second argument flag you can change how filtering is done:
-
-- use `0` to filter by pairs value;
-- use `ARRAY_FILTER_USE_KEY` to filter by pairs key;
-- use `ARRAY_FILTER_USE_BOTH` to filter by pairs value and key;
-
-By default, the flag value is `0`, just like with `array_filter`.
-
-<p class="message-notice">This method is used by the URI modifier <code>FilterQuery</code></p>

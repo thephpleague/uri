@@ -8,6 +8,10 @@ URI
 
 The `Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
 
+
+**The latest stable source code is available at https://github.com/thephpleague/uri/tree/4.x.**
+
+
 Highlights
 ------
 
@@ -28,7 +32,7 @@ System Requirements
 
 You need:
 
-- **PHP >= 5.6.4** but the latest stable version of PHP is recommended
+- **PHP >= 7.0** but the latest stable version of PHP is recommended
 - the `mbstring` extension
 - the `intl` extension
 

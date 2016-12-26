@@ -234,7 +234,7 @@ The method returns the value of a specific parameter name. If the offset does no
 
 ### Detecting the presence of a specific pair
 
-Because a pair value can be `null` the `Query::hasKey` method is used to remove the possible `Query::getPair` result ambiguity.
+Because a pair value can be `null` the `Query::hasPair` method is used to remove the possible `Query::getPair` result ambiguity.
 
 ~~~php
 <?php
@@ -246,8 +246,8 @@ $query->getPair('foo');   //return 'bar'
 $query->getPair('p');     //return null
 $query->getPair('gweta'); //return null
 
-$query->hasKey('gweta'); //return false
-$query->hasKey('p');     //return true
+$query->hasPair('gweta'); //return false
+$query->hasPair('p');     //return true
 ~~~
 
 ## Manipulating the query pairs

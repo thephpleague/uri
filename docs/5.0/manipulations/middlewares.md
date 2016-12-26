@@ -244,7 +244,23 @@ use League\Uri\Modifiers\MergeQuery;
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new MergeQuery('kingkong=godzilla&toto');
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&&toto#doc3"
+echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&toto#doc3"
+~~~
+
+### Append data to the query string
+
+Append a submitted query string to the URI object to be modified.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\AppendQuery;
+
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$modifier = new AppendQuery('kingkong=godzilla&toto');
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://example.com/test.php?kingkong=toto&kingkong=godzilla&foo=bar%20baz&toto#doc3"
 ~~~
 
 ### Removing query keys
@@ -261,25 +277,6 @@ $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar
 $modifier = new RemoveQueryKeys(["foo"]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
-~~~
-
-### Filtering query key/values
-
-Filter selected query keys and/or values from the current query to keep.
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http;
-use League\Uri\Modifiers\FilterQuery;
-
-$filter = function ($value) {
-    return strpos($value, 'f');
-};
-$uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";
-$uri = Http::createFromString($uriString);
-$modifier = new FilterQuery($filter, ARRAY_FILTER_USE_KEY);
-echo $newUri; //display "http://example.com/test.php?foo=bar%20baz#doc3"
 ~~~
 
 ## Path specific URI Middlewares
@@ -526,23 +523,6 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/the/and/above"
 ~~~
 
-### Filtering selected segments
-
-Filter selected segments from the current URI path to keep.
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http;
-use League\Uri\Modifiers\FilterSegments;
-
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new FilterSegments(function ($value) {
-    return $value > 0 && $value < 2;
-}, ARRAY_FILTER_USE_KEY);
-echo $newUri; //display "http://www.example.com/to/"
-~~~
-
 ### Update Data URI parameters
 
 Update Data URI parameters
@@ -750,22 +730,4 @@ $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([2]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
-~~~
-
-### Filtering selected labels
-
-Filter the labels from the current URI host to keep.
-
-~~~php
-<?php
-
-use League\Uri\Schemes\Http;
-use League\Uri\Modifiers\FilterLabels;
-
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new FilterLabels(function ($value) {
-    return $value > 0 && $value < 2;
-}, ARRAY_FILTER_USE_KEY);
-$newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://example/path/to/the/sky/"
 ~~~

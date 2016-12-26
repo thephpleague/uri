@@ -32,6 +32,19 @@ Even though all URI properties are defined and accessible attempt to set any com
 
 use League\Uri\Schemes\File as FileUri;
 
-$uri = DataUri::createFromUnixPath('/path/./../relative');
+$uri = FileUri::createFromUnixPath('/path/./../relative');
 $uri->withQuery('foo=bar'); //thrown an InvalidArgumentException
+~~~
+
+## URI normalization
+
+If the host file is the empty string it will be converted to `localhost`.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\File as FileUri;
+
+$uri = FileUri::createFromString('file:///path/to/file.csv');
+echo $uri; //display file://localhost/path/to/file.csv
 ~~~

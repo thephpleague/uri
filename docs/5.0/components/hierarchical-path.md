@@ -95,7 +95,7 @@ $alt_path = $path
 echo $alt_path; // display /foo/paradise.html
 ~~~
 
-## The path as a segments collection
+## The path as a collection of segments
 
 ### HierarchicalPath::createFromSegments
 
@@ -264,13 +264,15 @@ $newPath = $path->replace(0, 'bar/baz');
 $newPath->__toString(); //return /bar/baz/example/com
 ~~~
 
+<p class="message-info">Just like the <code>HierarchicalPath::getSegment</code> this method supports negative offset.</p>
+
 <p class="message-notice">if the specified offset does not exists, no modification is performed and the current object is returned.</p>
 
 <p class="message-notice">This method is used by the URI modifier<code>ReplaceSegment</code></p>
 
 ### Remove segments
 
-To remove segments from the current object and returns a new `HierarchicalPath` object without them you must use the `HierarchicalPath::without` method. This method expects a single argument. This argument is an array containing a list of parameter names to remove.
+To remove segments from the current object and returns a new `HierarchicalPath` object without them you must use the `HierarchicalPath::delete` method. This method expects a single argument. This argument is an array containing a list of parameter names to remove.
 
 ~~~php
 <?php
@@ -278,10 +280,11 @@ To remove segments from the current object and returns a new `HierarchicalPath` 
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path = new Path('/path/to/the/sky');
-$newPath = $path->without([0, 1]);
+$newPath = $path->delete([0, 1]);
 $newPath->__toString(); //return '/the/sky'
 ~~~
 
+<p class="message-info">Just like the <code>HierarchicalPath::getSegment</code> this method supports negative offset.</p>
 
 <p class="message-notice">if the specified offset does not exists, no modification is performed and the current object is returned.</p>
 

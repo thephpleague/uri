@@ -325,10 +325,10 @@ Removes the path trailing slash if present
 use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveTrailingSlash;
 
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/path/?foo=bar");
 $modifier = new RemoveTrailingSlash();
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://www.example.com/path/to/the/sky"
+echo $newUri; //display "http://www.example.com/path?foo=bar"
 ~~~
 
 ### Adding trailing slash
@@ -341,10 +341,10 @@ Adds the path trailing slash if not present
 use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\AddTrailingSlash;
 
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$uri = Http::createFromString("http://www.example.com/sky#top");
 $modifier = new AddTrailingSlash();
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://www.example.com/path/to/the/sky"
+echo $newUri; //display "http://www.example.com/sky/#top"
 ~~~
 
 ### Removing leading slash
@@ -421,10 +421,10 @@ Adds, update and or remove the path extension from the current URI path.
 use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\Extension;
 
-$uri = Http::createFromString("http://www.example.com/path/to/the/sky");
+$uri = Http::createFromString("http://www.example.com/export.html");
 $modifier = new Extension("csv");
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://www.example.com/path/to/the/sky.csv"
+echo $newUri; //display "http://www.example.com/export.csv"
 ~~~
 
 ### Add the path basepath
@@ -504,6 +504,22 @@ use League\Uri\Modifiers\ReplaceSegment;
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
 $newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/path/to/the/sea/"
+~~~
+
+<p class="message-info">This modifier supports negative offset</p>
+
+The previous example can be rewritten using negative offset:
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\ReplaceSegment;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$modifier = new ReplaceSegment(-1, "sea");
+$newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea"
 ~~~
 
@@ -518,9 +534,23 @@ use League\Uri\Schemes\Http;
 use League\Uri\Modifiers\RemoveSegments;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
-$modifier = new RemoveSegments([1,3]);
+$modifier = new RemoveSegments([1, 3]);
 $newUri = $modifier->__invoke($uri);
-echo $newUri; //display "http://www.example.com/path/the/and/above"
+echo $newUri; //display "http://www.example.com/path/the/"
+~~~
+
+<p class="message-info">This modifier supports negative offset</p>
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\RemoveSegments;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$modifier = new RemoveSegments([-1, -2]);
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://www.example.com/path/the"
 ~~~
 
 ### Update Data URI parameters
@@ -585,12 +615,13 @@ Transcodes the host into its ascii representation according to RFC3986:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use GuzzleHttp\Psr7\Uri;
 use League\Uri\Modifiers\HostToAscii;
 
-$uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$uri = new Uri("http://스타벅스코리아.com/to/the/sky/");
 $modifier = new HostToAscii();
 $newUri = $modifier->__invoke($uri);
+echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
 ~~~
 
@@ -603,17 +634,18 @@ Transcodes the host into its idn representation according to RFC3986:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use GuzzleHttp\Psr7\Uri;
 use League\Uri\Modifiers\HostToUnicode;
 
 $uriString = "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/";
-$uri = Http::createFromString($uriString);
+$uri = new Uri($uriString);
 $modifier = new HostToUnicode();
 $newUri = $modifier->__invoke($uri);
+echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 ~~~
 
-<p class="message-notice">This middleware will have no effect on a <code>League\Uri\Schemes\Http</code> class as this conversion is done by default.</p>
+<p class="message-notice">This middleware will have no effect on a <code>League\Uri\Schemes\Http</code> class because the object always transcode the host component into its ascii representation.</p>
 
 ### Removing Zone Identifier
 
@@ -622,13 +654,14 @@ Removes the host zone identifier if present
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use Zend\Diactoros\Uri;
 use League\Uri\Modifiers\RemoveZoneIdentifier;
 
 $uriString = 'http://[fe80::1234%25eth0-1]/path/to/the/sky.php';
-$uri = Http::createFromString($uriString);
+$uri = new Uri($uriString);
 $modifier = new RemoveZoneIdentifier();
 $newUri = $modifier->__invoke($uri);
+echo get_class($newUri); //display \Zend\Diactoros\Uri
 echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
 ~~~
 
@@ -714,11 +747,27 @@ $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 ~~~
 
+<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
+
+<p class="message-info">This modifier supports negative offset</p>
+
+The previous example can be rewritten using negative offset:
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\ReplaceLabel;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$modifier = new ReplaceLabel(-1, "admin.shop");
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
+~~~
+
 ### Removing selected labels
 
 Removes selected labels from the current URI host. Labels are indicated using an array containing the labels offsets.
-
-<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
 
 ~~~php
 <?php
@@ -728,6 +777,25 @@ use League\Uri\Modifiers\RemoveLabels;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([2]);
+$newUri = $modifier->__invoke($uri);
+echo $newUri; //display "http://example.com/path/the/sky/"
+~~~
+
+<p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
+
+<p class="message-info">This modifier supports negative offset</p>
+
+The previous example can be rewritten using negative offset:
+
+~~~php
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\RemoveLabels;
+
+$uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
+$modifier = new RemoveLabels([-1]);
 $newUri = $modifier->__invoke($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
 ~~~

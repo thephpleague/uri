@@ -468,7 +468,7 @@ echo $newHost; //return bar.baz.example.com
 
 #### Removing labels
 
-To remove labels from the current object you can use the `Host::without` method. This method expects a single argument and will returns a new `Host` object without the selected labels. The argument is an array containing a list of offsets to remove.
+To remove labels from the current object you can use the `Host::delete` method. This method expects a single argument and will returns a new `Host` object without the selected labels. The argument is an array containing a list of offsets to remove.
 
 ~~~php
 <?php
@@ -476,9 +476,11 @@ To remove labels from the current object you can use the `Host::without` method.
 use League\Uri\Components\Host;
 
 $host    = new Host('toto.example.com');
-$newHost = $host->without([1]);
+$newHost = $host->delete([1]);
 $newHost->__toString(); //return toto.com
 ~~~
+
+<p class="message-info">Just like the <code>Host::getLabel</code> this method supports negative offset.</p>
 
 <p class="message-warning">if the specified offsets do not exist, no modification is performed and the current object is returned.</p>
 

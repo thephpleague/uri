@@ -37,7 +37,9 @@
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "ext-fileinfo": "*",
-        "league/uri-schemes": "dev-master",
+        "league/uri-interfaces": "^1.0",
+        "league/uri-parser": "^1.0",
+        "league/uri-schemes": "^1.0",
         "league/uri-manipulations": "dev-master"
     },
     "extra": {

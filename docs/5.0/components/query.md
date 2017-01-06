@@ -350,10 +350,10 @@ This method parse the query string into an associative `array` of key/pairs valu
 - The query string separator **optional**, by default it is set to `&`;
 - The query string encoding. One of the `ComponentInterface` encoding type constant.
 
-    - `ComponentInterface::RFC1738_ENCONDING`
-    - `ComponentInterface::RFC3986_ENCONDING`
-    - `ComponentInterface::RFC3987_ENCONDING`
-    - `ComponentInterface::NO_ENCONDING`
+    - `ComponentInterface::RFC1738_ENCODING`
+    - `ComponentInterface::RFC3986_ENCODING`
+    - `ComponentInterface::RFC3987_ENCODING`
+    - `ComponentInterface::NO_ENCODING`
 
 The value returned for each pair can be:
 
@@ -423,10 +423,10 @@ This method deserializes the query string parameters into an associative `array`
 - The query string separator **optional**, by default it is set to `&`;
 - The query string encoding. One of the `ComponentInterface` encoding type constant.
 
-    - `ComponentInterface::RFC1738_ENCONDING`
-    - `ComponentInterface::RFC3986_ENCONDING`
-    - `ComponentInterface::RFC3987_ENCONDING`
-    - `ComponentInterface::NO_ENCONDING`
+    - `ComponentInterface::RFC1738_ENCODING`
+    - `ComponentInterface::RFC3986_ENCODING`
+    - `ComponentInterface::RFC3987_ENCODING`
+    - `ComponentInterface::NO_ENCODING`
 
 The main differences are with `parse_str` usage are the following:
 

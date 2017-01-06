@@ -6,10 +6,22 @@ title: RFC3986 - RFC3987 Parser
 URI Parser API
 =======
 
-This is a drop-in replacement to PHP's `parse_url` function, with the following differences:
+The parser exposes the following methods
 
+~~~php
+<?php
 
-### The parser is RFC3986 compliant
+use League\Uri\Parser;
+
+public function __invoke(string $uri): array
+public function isHost(string $host): bool
+~~~
+
+## URI parsing
+
+The `Parser::__invoke` method is a drop-in replacement to PHP's `parse_url` function, with the following differences:
+
+### The parser is RFC3986/RFC3987 compliant
 
 ~~~php
 <?php
@@ -38,6 +50,7 @@ var_export(parse_url('http://foo.com?@bar.com/'));
 //  'user' => 'foo.com?',
 //  'path' => '/',
 //);
+// Depending on the PHP version
 ~~~
 
 ### The Parser returns all URI components.
@@ -83,7 +96,7 @@ $parser($uri)['query']; //returns null
 parse_url($uri, PHP_URL_QUERY); //returns null
 ~~~
 
-### Empty component and undefined component are not equal
+### Empty component and undefined component are not treated the same
 
 A distinction is made between an unspecified component, which will be set to `null` and an empty component which will be equal to the empty string.
 
@@ -120,7 +133,7 @@ parse_url($uri, PHP_URL_PATH); //returns null
 
 use League\Uri\Parser;
 
-$uri = '//user@:80';
+$uri = '//example.com:toto';
 $parser = new Parser();
 $parser($uri);
 //throw a ParserException
@@ -157,9 +170,9 @@ var_export($parser($uri));
 
 <p class="message-warning">This invalid HTTP URI is successfully parsed.</p>
 
-### Validating the URI host component
+## Validating the URI host component
 
-If you have a host string you can validate it against the parser as shown below:
+If you have a host **string** you can validate it against the parser as shown below:
 
 ~~~php
 <?php
@@ -170,3 +183,5 @@ $parser = new Parser();
 $parser->isHost('example.com'); //returns true
 $parser->isHost('/path/to/yes'); //returns false
 ~~~
+
+The string can be RFC3987 or RFC3986 compliant.

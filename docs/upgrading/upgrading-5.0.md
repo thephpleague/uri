@@ -136,12 +136,12 @@ $uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
 $uri->path; //triggers an exception
 ~~~
 
-## Uri components interfaces
+## Uri Component interfaces
 
-The interfaces use to be located under the `League\Uri\Interfaces`. Now the interfaces are under the `League\Uri\Components`. All the specific interfaces for each component have been remove for simplicity. The only remaining interfaces are:
+Each component used to have a specific interface located under the `League\Uri\Interfaces`. Starting with the new release, all specific interfaces for each component have been remove. The only remaining interfaces are:
 
-- `League\Uri\Components\ComponentInterface`: The default interface for each URI component object
-- `League\Uri\Components\PathInterface`: The default interface for the path component. It extends the `ComponentInterface`.
+- `League\Uri\Components\EncodingInterface`:  which holds the encoding constants.
+- `League\Uri\Components\ComponentInterface`: The default interface for each URI component object which extends the `EncodingInterface` interface.
 
 The following classes are removed:
 
@@ -180,7 +180,11 @@ echo $host; // display 'xn--bb-bjab.be'
 echo $host->getContent(Host::RFC3987_ENCODING); //display 'bébé.be
 ~~~
 
-The `Host::getLabel` and `Host::replace` accept negative offset.
+All methods interacting with the host label accept negative offset:
+
+- `Host::getLabel`
+- `Host::replace` 
+- `Host::delete`
 
 The returned value of `Host::getLabel`, if it exists, is the RFC3987 representation.
 
@@ -210,7 +214,7 @@ $new_host = $host->replace(-1, 'baby');
 echo $new_host; // display 'baby.be'
 ~~~
 
-`Host::without` is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
+`Host::without` is renamed `Host::delete` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
 
 Before:
 
@@ -231,14 +235,19 @@ After:
 use League\Uri\Components\HierarchicalPath;
 
 $host = new Host('thephpleague.com');
-echo $host->without(['com']); //throw an InvalidArgumentException exception;
+echo $host->delete(['com']); //throw an InvalidArgumentException exception;
 ~~~
 
 ## HierarchicalPath
 
 The `HierarchicalPath::hasKey` method has been removed as it was redundant with how `HierarchicalPath::getSegment` works.
 
-`HierarchicalPath::getSegment` and `HierarchicalPath::replace` now accept negative offset.
+
+All methods interacting with the path segment offset accept negative offset:
+
+- `Host::getLabel`
+- `Host::replace` 
+- `Host::delete`
 
 Before:
 
@@ -266,7 +275,7 @@ $new_path = $path->replace(-1, 'sea');
 echo $new_path; // display '/path/to/the/sea'
 ~~~
 
-`HierarchicalPath::without` is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
+`HierarchicalPath::without` is renamed `HierarchicalPath::delete` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
 
 Before:
 
@@ -287,7 +296,7 @@ After:
 use League\Uri\Components\HierarchicalPath;
 
 $path = new HierarchicalPath('/path/to/the/sky');
-echo $path->without(['path']); //throw an InvalidArgumentException exception;
+echo $path->delete(['path']); //throw an InvalidArgumentException exception;
 ~~~
 
 ## Query
@@ -316,7 +325,7 @@ $query = new Query('foo=bar&baz');
 echo $query->merge(new Query('baz=foo')); //throw an InvalidArgumentException exception;
 ~~~
 
-`Query::without` is more strict. submitted an array that contains anything else than a string will trigger a exception.
+`Query::without` is renamed `Query::delete` and is more strict. submitted an array that contains anything else than a string will trigger a exception.
 
 Before:
 
@@ -337,7 +346,7 @@ After:
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&baz');
-echo $query->without([1]); //throw an InvalidArgumentException exception;
+echo $query->delete([1]); //throw an InvalidArgumentException exception;
 ~~~
 
 The `Query::getValue` method is renamed `Query::getPair` for consistency with the other URI components object.

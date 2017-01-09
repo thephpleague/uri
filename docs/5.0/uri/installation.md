@@ -26,5 +26,5 @@ Dependencies
 -------
 
 - [PSR-7](http://www.php-fig.org/psr/psr-7/)
-- [uri-interfaces](https://github.com/thephpleague/uri-interfaces)
-- [uri-parser](https://github.com/thephpleague/uri-parser)
+- [League Uri Interfaces](https://github.com/thephpleague/uri-interfaces)
+- [League Uri Parser](/5.0/parser/)

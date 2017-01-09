@@ -25,4 +25,4 @@ Dependencies
 
 - [PSR-7 UriInterface](http://php-fig.org/psr/psr-7/)
 - [League URI Interfaces](https://github.com/thephpleague/uri-interfaces)
-- [League URI Components](https://github.com/thephpleague/uri-components)
+- [League URI Components](/5.0/components/)

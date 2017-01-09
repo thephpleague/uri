@@ -12,29 +12,19 @@ The library provides a `Host` class to ease host creation and manipulation. This
 
 <p class="message-warning">When a modification fails an <code>InvalidArgumentException</code> exception is thrown.</p>
 
-## Host types
-
-### IP address or registered name
-
-There are two type of host:
-
-- Hosts represented by an IP;
-- Hosts represented by a registered name;
-
-To determine what type of host you are dealing with the `Host` class provides the `isIp` method:
+## Host represented by an IP
 
 ~~~php
 <?php
 
-use League\Uri\Components\Host;
-
-$host = new Host('example.com');
-$host->isIp(); //return false;
-$ip_host = $host->withContent('127.0.0.1');
-$ip_host->isIp(); //return true;
+public static function Host::createFromIp(string $ip): self
+public function Host::isIp(void): bool
+public function Host::isIpv4(void): bool
+public function Host::isIpv6(void): bool
+public function Host::hasZoneIdentifier(void): bool
+public function Host::getIp(void): string
+public function Host::withoutZoneIdentifier(void): self
 ~~~
-
-## Host represented by an IP
 
 ### Host::createFromIp
 
@@ -56,6 +46,24 @@ Host::createFromIp('uri.thephpleague.com');
 ~~~
 
 ### IPv4 or IPv6
+
+There are two type of host:
+
+- Hosts represented by an IP;
+- Hosts represented by a registered name;
+
+To determine what type of host you are dealing with the `Host` class provides the `isIp` method:
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('example.com');
+$host->isIp(); //return false;
+$ip_host = $host->withContent('127.0.0.1');
+$ip_host->isIp(); //return true;
+~~~
 
 Knowing that you are dealing with an IP is good, knowing that its an IPv4 or an IPv6 is better.
 
@@ -131,62 +139,17 @@ $newHost->getIp(); //returns null
 
 ## Host represented by an registered named
 
-~~~php
-<?php
-
-use League\Uri\Components\Host;
-
-$host    = new Host('uri.thephpleague.com');
-$host->isIp(); //return false
-echo $newHost; //displays 'uri.thephpleague.com';
-~~~
-
-### Partial or fully qualified domain name
-
 If you don't have a IP then you are dealing with a registered name. A registered name is a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1). As such a registered name can not, for example, contain an `_`.
 
-A registered name is considered absolute or as being a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
-
 ~~~php
 <?php
-
-use League\Uri\Components\Host;
-
-$host = new Host('example.com');
-$host->isIp();       //return false
-$host->isAbsolute(); //return false
-
-$fqdn = new Host('example.com.');
-$fqdn->isIp();       //return false
-$fqdn->isAbsolute(); //return true
-
-$ip = new Host('[::1]');
-$ip->isIp();       //return true
-$ip->isAbsolute(); //return false
+public function Host::getPublicSuffix(void): string
+public function Host::isPublicSuffixValid(void): bool
+public function Host::getRegisterableDomain(void): string
+public function Host::getSubDomain(void): string
+public function Host::withRegisterableDomain(string $host): self
+public function Host::withSubDomain(string $host): self
 ~~~
-
-#### Updating the host status
-
-To update the host state from FDQN to a PQDN and vice-versa you can use 2 methods
-
-- `withRootLabel`
-- `withoutRootLabel`
-
-These methods which takes not argument add or remove the root empty label from the host as see below:
-
-~~~php
-<?php
-
-use League\Uri\Components\Host;
-
-$host = new Host('www.11.be');
-echo $host->withRootLabel() //display 'www.11.be.'
-echo $host->withoutRootLabel() //display 'www.11.be'
-~~~
-
-<p class="message-notice">Theses methods are used by the URI modifiers <code>AddRootLabel</code> and <code>RemoveRootLabel</code></p>
-
-<p class="message-warning">Trying to update the root label of an IP type host will trigger a <code>InvalidArgumentException</code></p>
 
 ### Host public informations
 
@@ -261,6 +224,21 @@ echo $newHost; //displays 'shop.11.be'
 
 ## Host as a Hierarchical Collection
 
+~~~php
+<?php
+public static function Host::createFromLabels($data, int $type = self::IS_RELATIVE): self
+public function Host::isAbsolute(void): bool
+public function Host::getLabels(void): array
+public function Host::getLabel(int $offset, $default = null): mixed
+public function Host::keys([string $label]): array
+public function Host::withRootLabel(void): self
+public function Host::withoutRootLabel(void): self
+public function Host::prepend(string $host): self
+public function Host::append(string $host): self
+public function Host::replaceLabel(int $offset, string $host): self
+public function Host::withoutLabels(array $offsets): self
+~~~
+
 ### Host::createFromLabels
 
 A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
@@ -294,6 +272,54 @@ echo $ip_host; //display '127.0.0.1'
 Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
 //throws InvalidArgumentException
 ~~~
+
+### Partial or fully qualified domain name
+
+A host is considered absolute or as being a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('example.com');
+$host->isIp();       //return false
+$host->isAbsolute(); //return false
+
+$fqdn = new Host('example.com.');
+$fqdn->isIp();       //return false
+$fqdn->isAbsolute(); //return true
+
+$ip = new Host('[::1]');
+$ip->isIp();       //return true
+$ip->isAbsolute(); //return false
+~~~
+
+<p class="message-warning"><strong>IP type host can not be FQDN</strong></p>
+
+
+#### Updating the host status
+
+To update the host state from FDQN to a PQDN and vice-versa you can use 2 methods
+
+- `withRootLabel`
+- `withoutRootLabel`
+
+These methods which takes not argument add or remove the root empty label from the host as see below:
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('www.11.be');
+echo $host->withRootLabel() //display 'www.11.be.'
+echo $host->withoutRootLabel() //display 'www.11.be'
+~~~
+
+<p class="message-notice">Theses methods are used by the URI modifiers <code>AddRootLabel</code> and <code>RemoveRootLabel</code></p>
+
+<p class="message-warning">Trying to update the root label of an IP type host will trigger a <code>InvalidArgumentException</code></p>
 
 ### Normalization
 
@@ -445,7 +471,7 @@ echo $newHost; //return toto.example.com
 
 #### Replacing labels
 
-To replace a label you must use the `Host::replace` method with two arguments:
+To replace a label you must use the `Host::replaceLabel` method with two arguments:
 
 - The label's key to replace if it exists **MUST BE** an integer.
 - The data to replace the key with. This data must be a string or `null`.
@@ -456,7 +482,7 @@ To replace a label you must use the `Host::replace` method with two arguments:
 use League\Uri\Components\Host;
 
 $host    = new Host('foo.example.com');
-$newHost = $host->replace(2, 'bar.baz');
+$newHost = $host->replaceLabel(2, 'bar.baz');
 echo $newHost; //return bar.baz.example.com
 ~~~
 
@@ -468,7 +494,7 @@ echo $newHost; //return bar.baz.example.com
 
 #### Removing labels
 
-To remove labels from the current object you can use the `Host::delete` method. This method expects a single argument and will returns a new `Host` object without the selected labels. The argument is an array containing a list of offsets to remove.
+To remove labels from the current object you can use the `Host::withoutLabels` method. This method expects a single argument and will returns a new `Host` object without the selected labels. The argument is an array containing a list of offsets to remove.
 
 ~~~php
 <?php
@@ -476,7 +502,7 @@ To remove labels from the current object you can use the `Host::delete` method. 
 use League\Uri\Components\Host;
 
 $host    = new Host('toto.example.com');
-$newHost = $host->delete([1]);
+$newHost = $host->withoutLabels([1]);
 $newHost->__toString(); //return toto.com
 ~~~
 

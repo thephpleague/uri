@@ -13,8 +13,8 @@ The library provides a `UserInfo` class to ease user information creation and ma
 ~~~php
 <?php
 
-public UserInfo::getUser(string $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
-public UserInfo::getPass(string $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
+public UserInfo::getUser(int $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
+public UserInfo::getPass(int $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
 ~~~
 
 To access the user login and password information you need to call the respective `UserInfo::getUser` and `UserInfo::getPass` methods like shown below.

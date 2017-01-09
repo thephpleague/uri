@@ -38,7 +38,6 @@ public HierarchicalPath::withDirname(string $dirname): self
 ~~~php
 <?php
 
-
 public HierarchicalPath::getBasename(void): string
 public HierarchicalPath::withBasename(string $basename): self
 ~~~
@@ -96,6 +95,20 @@ echo $alt_path; // display /foo/paradise.html
 ~~~
 
 ## The path as a collection of segments
+
+~~~php
+<?php
+
+public static function HierarchicalPath::createFromSegments($data, int $type = self::IS_RELATIVE): self
+public function HierarchicalPath::isAbsolute(void): bool
+public function HierarchicalPath::getSegments(void): array
+public function HierarchicalPath::getSegment(int $offset, $default = null): mixed
+public function HierarchicalPath::keys([string $segment]): array
+public function HierarchicalPath::prepend(string $path): self
+public function HierarchicalPath::append(string $path): self
+public function HierarchicalPath::replaceSegment(int $offset, string $path): self
+public function HierarchicalPath::withoutSegments(array $offsets): self
+~~~
 
 ### HierarchicalPath::createFromSegments
 
@@ -249,7 +262,7 @@ $newPath->__toString(); //return path/to/the/sky
 
 ### Replace segments
 
-To replace a segment you must use the `HierarchicalPath::replace` method with the following arguments:
+To replace a segment you must use the `HierarchicalPath::replaceSegment` method with the following arguments:
 
 - `$offset` which represents the segment offset to remove if it exists.
 - `$data` which represents the data to be inject.  This data can be a string, an object which implements the `__toString` method or another `HierarchicalPath` object.
@@ -260,7 +273,7 @@ To replace a segment you must use the `HierarchicalPath::replace` method with th
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path    = new Path('/foo/example/com');
-$newPath = $path->replace(0, 'bar/baz');
+$newPath = $path->replaceSegment(0, 'bar/baz');
 $newPath->__toString(); //return /bar/baz/example/com
 ~~~
 
@@ -272,7 +285,7 @@ $newPath->__toString(); //return /bar/baz/example/com
 
 ### Remove segments
 
-To remove segments from the current object and returns a new `HierarchicalPath` object without them you must use the `HierarchicalPath::delete` method. This method expects a single argument. This argument is an array containing a list of parameter names to remove.
+To remove segments from the current object and returns a new `HierarchicalPath` object without them you must use the `HierarchicalPath::withoutSegments` method. This method expects a single argument. This argument is an array containing a list of parameter names to remove.
 
 ~~~php
 <?php
@@ -280,7 +293,7 @@ To remove segments from the current object and returns a new `HierarchicalPath` 
 use League\Uri\Components\HierarchicalPath as Path;
 
 $path = new Path('/path/to/the/sky');
-$newPath = $path->delete([0, 1]);
+$newPath = $path->withoutSegments([0, 1]);
 $newPath->__toString(); //return '/the/sky'
 ~~~
 

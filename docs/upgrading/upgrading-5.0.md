@@ -165,7 +165,7 @@ use League\Uri\Components\Host;
 $host = new Host('bébé.be');
 echo $host; //display 'bébé.be
 $rfc3986_host = $host->toAscii();
-echp $rfc3986_host; // display 'xn--bb-bjab.be'
+echo $rfc3986_host; // display 'xn--bb-bjab.be'
 ~~~
 
 After:
@@ -184,7 +184,7 @@ All methods interacting with the host label accept negative offset:
 
 - `Host::getLabel`
 - `Host::replace` 
-- `Host::delete`
+- `Host::withoutLabels`
 
 The returned value of `Host::getLabel`, if it exists, is the RFC3987 representation.
 
@@ -214,7 +214,7 @@ $new_host = $host->replace(-1, 'baby');
 echo $new_host; // display 'baby.be'
 ~~~
 
-`Host::without` is renamed `Host::delete` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
+`Host::without` is renamed `Host::withoutLabels` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
 
 Before:
 
@@ -235,19 +235,18 @@ After:
 use League\Uri\Components\HierarchicalPath;
 
 $host = new Host('thephpleague.com');
-echo $host->delete(['com']); //throw an InvalidArgumentException exception;
+echo $host->withoutLabels(['com']); //throw an InvalidArgumentException exception;
 ~~~
 
 ## HierarchicalPath
 
 The `HierarchicalPath::hasKey` method has been removed as it was redundant with how `HierarchicalPath::getSegment` works.
 
-
 All methods interacting with the path segment offset accept negative offset:
 
-- `Host::getLabel`
-- `Host::replace` 
-- `Host::delete`
+- `Host::getSegment`
+- `Host::replaceSegment` 
+- `Host::withoutSegments`
 
 Before:
 
@@ -275,7 +274,7 @@ $new_path = $path->replace(-1, 'sea');
 echo $new_path; // display '/path/to/the/sea'
 ~~~
 
-`HierarchicalPath::without` is renamed `HierarchicalPath::delete` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
+`HierarchicalPath::without` is renamed `HierarchicalPath::withoutSegments` and is more strict. Submitting an array that contains anything else than a integer will trigger a exception.
 
 Before:
 
@@ -296,7 +295,7 @@ After:
 use League\Uri\Components\HierarchicalPath;
 
 $path = new HierarchicalPath('/path/to/the/sky');
-echo $path->delete(['path']); //throw an InvalidArgumentException exception;
+echo $path->withoutSegments(['path']); //throw an InvalidArgumentException exception;
 ~~~
 
 ## Query

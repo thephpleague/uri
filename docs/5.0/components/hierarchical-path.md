@@ -18,52 +18,19 @@ but also provide specific methods to work with segments-type URI path components
 
 ## Manipulating the path as a filesystem path
 
-THe `HierarchicalPath` allows you to access and manipulate the path as if it was a filesystem path.
+The `HierarchicalPath` allows you to access and manipulate the path as if it was a filesystem path.
 
-### The parent directory path
-
-~~~php
-<?php
-
-public HierarchicalPath::getDirname(void): string
-public HierarchicalPath::withDirname(string $dirname): self
-~~~
-
-`getDirname` returns the path parent's directory while `withDirname` returns a new instance with the modified parent's directory path.
-
-<p class="message-notice">This method is used by the URI modifier <code>Dirname</code></p>
-
-### The path basename
+### Accessing the path
 
 ~~~php
 <?php
 
-public HierarchicalPath::getBasename(void): string
-public HierarchicalPath::withBasename(string $basename): self
+public function HierarchicalPath::getDirname(void): string
+public function HierarchicalPath::getBasename(void): string
+public function HierarchicalPath::getExtension(void): string
 ~~~
 
-`getBasename` returns the complete trailing segment of a path, including its extension optional path parameters. You can change the segment content using the complementary `withBasename` method. This method expects a string and returns a new instance with the modified basename.
-
-<p class="message-notice">This method is used by the URI modifier <code>Basename</code></p>
-
-### The basename extension
-
-~~~php
-<?php
-
-public HierarchicalPath::getExtension(void): string
-public HierarchicalPath::withExtension(string $extension): self
-~~~
-
-If you are only interested in getting the basename extension, you can directly call the `getExtension` method. The method only returns the basename extension as a string if present. The leading `.` delimiter is removed from the method output. The complementary method `withExtension` is provided to modify the basename extension. Both methods do not interact with the path parameters if present.
-
-<p class="message-warning"><code>withExtension</code> will throw an <code>InvalidArgumentException</code> exception if the extension contains the path delimiter.</p>
-
-<p class="message-notice">This method is used by the URI modifier <code>Extension</code></p>
-
-### Usage
-
-#### Accessing the properties
+#### Usage
 
 ~~~php
 <?php
@@ -76,7 +43,19 @@ $path->getBasename();  //return 'sky.txt'
 $path->getDirname();   //return '/path/to/the'
 ~~~
 
-#### Modifying the path
+### Modifying the path
+
+~~~php
+<?php
+
+public function HierarchicalPath::withDirname(string $dirname): self
+public function HierarchicalPath::withBasename(string $basename): self
+public function HierarchicalPath::withExtension(string $extension): self
+~~~
+
+<p class="message-warning"><code>withExtension</code> will throw an <code>InvalidArgumentException</code> exception if the extension contains the path delimiter.</p>
+
+#### Usage
 
 ~~~php
 <?php
@@ -104,6 +83,8 @@ public function HierarchicalPath::isAbsolute(void): bool
 public function HierarchicalPath::getSegments(void): array
 public function HierarchicalPath::getSegment(int $offset, $default = null): mixed
 public function HierarchicalPath::keys([string $segment]): array
+public function HierarchicalPath::count(void): int
+public function HierarchicalPath::getIterator(void): ArrayIterator
 public function HierarchicalPath::prepend(string $path): self
 public function HierarchicalPath::append(string $path): self
 public function HierarchicalPath::replaceSegment(int $offset, string $path): self
@@ -143,8 +124,6 @@ echo $end_slash; //display '/shop/example/com/'
 A path can be represented as an array of its internal segments. Through the use of the `HierarchicalPath::getSegments` method the class returns the object array representations.
 
 <p class="message-info">A path ending with a slash will have an empty string as the last member of its array representation.</p>
-
-<p class="message-warning">Once in array representation you can not distinguish a relative from a absolute path</p>
 
 ~~~php
 <?php
@@ -242,8 +221,6 @@ $newPath = $path->append('path')->append('to/the/sky');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>AppendSegment</code></p>
-
 ### Prepend segments
 
 To prepend segments to the current path you need to use the `HierarchicalPath::prepend` method. This method accept a single argument which represents the data to be prepended. This data can be a string, an object which implements the `__toString` method or another `HierarchicalPath` object:
@@ -257,8 +234,6 @@ $path    = new Path();
 $newPath = $path->prepend('sky')->prepend(path/to/the');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
-
-<p class="message-notice">This method is used by the URI modifier<code>PrependSegment</code></p>
 
 ### Replace segments
 
@@ -281,8 +256,6 @@ $newPath->__toString(); //return /bar/baz/example/com
 
 <p class="message-notice">if the specified offset does not exists, no modification is performed and the current object is returned.</p>
 
-<p class="message-notice">This method is used by the URI modifier<code>ReplaceSegment</code></p>
-
 ### Remove segments
 
 To remove segments from the current object and returns a new `HierarchicalPath` object without them you must use the `HierarchicalPath::withoutSegments` method. This method expects a single argument. This argument is an array containing a list of parameter names to remove.
@@ -300,5 +273,3 @@ $newPath->__toString(); //return '/the/sky'
 <p class="message-info">Just like the <code>HierarchicalPath::getSegment</code> this method supports negative offset.</p>
 
 <p class="message-notice">if the specified offset does not exists, no modification is performed and the current object is returned.</p>
-
-<p class="message-notice">This method is used by the URI modifier<code>RemoveSegments</code></p>

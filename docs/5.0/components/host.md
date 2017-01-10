@@ -119,8 +119,6 @@ $newHost = $host->withoutZoneIdentifier();
 echo $newHost; //displays '[fe80::1]';
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>RemoveZoneIdentifier</code></p>
-
 ### Getting the IP string representation
 
 You can retrieve the IP string representation from the Host object using the `getIp` method. If the Host is not an IP `null` will be returned instead.
@@ -200,8 +198,6 @@ $newHost = $host->withRegisterableDomain('co.uk');
 echo $newHost; //displays 'www.11.co.uk'
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>RegisterableDomain</code></p>
-
 <p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
 
 #### Update the Host subdomains
@@ -218,8 +214,6 @@ $newHost = $host->withSubdomain('shop');
 echo $newHost; //displays 'shop.11.be'
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>Subdomain</code></p>
-
 <p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
 
 ## Host as a Hierarchical Collection
@@ -231,6 +225,8 @@ public function Host::isAbsolute(void): bool
 public function Host::getLabels(void): array
 public function Host::getLabel(int $offset, $default = null): mixed
 public function Host::keys([string $label]): array
+public function Host::count(void): int
+public function Host::getIterator(void): ArrayIterator
 public function Host::withRootLabel(void): self
 public function Host::withoutRootLabel(void): self
 public function Host::prepend(string $host): self
@@ -451,8 +447,6 @@ $newHost = $host->append('toto')->append('example.com');
 echo $newHost; //return toto.example.com
 ~~~
 
-<p class="message-notice">This method is used by the URI modifier <code>appendLabels</code></p>
-
 #### Prepending labels
 
 To prepend labels to the current host you need to use the `Host::prepend` method. This method accept a single argument which represents the data to be prepended. This data can be a string or `null`.
@@ -466,8 +460,6 @@ $host    = new Host();
 $newHost = $host->prepend('example.com')->prepend('toto');
 echo $newHost; //return toto.example.com
 ~~~
-
-<p class="message-notice">This method is used by the URI modifier <code>prependLabels</code></p>
 
 #### Replacing labels
 
@@ -490,8 +482,6 @@ echo $newHost; //return bar.baz.example.com
 
 <p class="message-warning">if the specified offset does not exist, no modification is performed and the current object is returned.</p>
 
-<p class="message-notice">This method is used by the URI modifier <code>replaceLabel</code></p>
-
 #### Removing labels
 
 To remove labels from the current object you can use the `Host::withoutLabels` method. This method expects a single argument and will returns a new `Host` object without the selected labels. The argument is an array containing a list of offsets to remove.
@@ -509,5 +499,3 @@ $newHost->__toString(); //return toto.com
 <p class="message-info">Just like the <code>Host::getLabel</code> this method supports negative offset.</p>
 
 <p class="message-warning">if the specified offsets do not exist, no modification is performed and the current object is returned.</p>
-
-<p class="message-notice">This method is used by the URI modifier <code>RemoveSegments</code></p>

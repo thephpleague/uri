@@ -3,10 +3,23 @@ layout: default
 title: URI components
 ---
 
-Uri Components API
+Components common API
 =======
 
-All URI component objects expose the following methods and constant defined in the `League\Uri\Components\ComponentInterface` interface:
+## Creating new URI component object
+
+All URI object can be instantiate using the default constructor by providing a string or the `null` value.
+
+~~~php
+<?php
+public Component::__construct(string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
+
+## Accessing URI component representation
+
+Once instantiated, all URI component objects expose the methods and constant defined in the `ComponentInterface` interface. This interface is used to normalized URI component representation while taking into account each component specificity.
 
 ~~~php
 <?php
@@ -17,49 +30,41 @@ const ComponentInterface::RFC3986_ENCODING = 2;
 const ComponentInterface::RFC3987_ENCODING = 3;
 public function ComponentInterface::isNull(void): bool
 public function ComponentInterface::isEmpty(void): bool
-public function ComponentInterface::getContent(string $enc_type = ComponentInterface::RFC3986_ENCODING): mixed
-public function ComponentInterface::__toString(): string
+public function ComponentInterface::getContent(string $enc_type = self::RFC3986_ENCODING): mixed
+public function ComponentInterface::__toString(void): string
 public function ComponentInterface::getUriComponent(void): string
-public function ComponentInterface::withContent(?string $content): self
 ~~~
 
-## ComponentInterface::isNull
-
-Returns `true` if the component value is equal to `null`.
-
-## ComponentInterface::isEmpty
-
-Returns `true` if the component value is equal to `null` or represents the empty string.
-
-## ComponentInterface::getContent
-
-Returns an encoded version of the component or `null`.
+Which will lead to the following results:
 
 ~~~php
 <?php
 
-public function ComponentInterface::getContent(string $enc_type = ComponentInterface::RFC3986_ENCODING): mixed
-~~~
+use League\Uri\Components\{
+	Scheme,
+	UserInfo,
+	HierarchicalPath,
+	Host,
+	Query,
+	Path,
+	Port
+};
 
-This method returns type can be:
+$scheme = new Scheme('HtTp');
+echo $scheme->__toString(); //displays 'http'
+echo $scheme->getUriComponent(); //display 'http:'
 
-* `null` : If the component is not defined;
-* `string` : When the component is defined. This string is normalized and encoded according to the component rules;
-* `int` : If it is a defined port component;
+$userinfo = new UserInfo('john');
+echo $userinfo->__toString(); //displays 'john'
+echo $userinfo->getUriComponent(); //displays 'john@'
 
-When the `$enc_type` parameter is used, and a string is returned, the value can be encoded against:
+$path = new HierarchicalPath('/toto le heros/file.xml');
+echo $path->getContent(HierarchicalPath::NO_ENCODING); //displays '/toto le heros/file.xml'
+echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
 
-- the RFC1738 rules with `ComponentInterface::RFC1738_ENCODING`;
-- the RFC3986 rules with `ComponentInterface::RFC3986_ENCODING`;
-- the RFC3987 rules with `ComponentInterface::RFC3987_ENCODING`;
-- or no rules at all with `ComponentInterface::NO_ENCODING`;
-
-### Example
-
-~~~php
-<?php
-
-use League\Uri\Components\{Query, Path, Port};
+$host = new Host('bébé.be');
+echo $host; //displays 'xn--bb-bjab.be'
+echo $host->getContent(Host::RFC3987_ENCODING); //displays 'bébé.be'
 
 $query = new Query();
 $query->isNull(); //returns true
@@ -77,102 +82,55 @@ $port->isEmpty(); //returns false
 echo $port->getContent(); //displays (int) 23;
 ~~~
 
-## ComponentInterface::__toString
 
-Returns the normalized and RFC3986 encoded string version of the component.
+- `ComponentInterface::__toString` returns the normalized and RFC3986 encoded string version of the component.
+- `ComponentInterface::getUriComponent` returns the same output as `ComponentInterface::__toString` with the component optional delimiter.
 
-~~~php
-<?php
+For a more generalized representation you must use the `ComponentInterface::getContent` method. This method returns type can be:
 
-public ComponentInterface::__toString(void): string
-~~~
+* `null` : If `ComponentInterface::isNull` returns `true`;
+* `string` : If `ComponentInterface::isNull` returns `false`;
+* `int`: For a defined URI component Port object;
 
-### Example
+ The string is normalized and encoded according to the component rules and the optional `$enc_type` parameter. The `$enc_type` parameter can take on of the following values:
 
-~~~php
-<?php
-
-use League\Uri\Components\Scheme;
-use League\Uri\Components\UserInfo;
-use League\Uri\Components\HierarchicalPath;
-
-$scheme = new Scheme('http');
-echo $scheme->__toString(); //displays 'http'
-
-$userinfo = new UserInfo('john');
-echo $userinfo->__toString(); //displays 'john'
-
-$path = new HierarchicalPath('/toto le heros/file.xml');
-echo $path->__toString(); //displays '/toto%20le%20heros/file.xml'
-~~~
+- `ComponentInterface::RFC1738_ENCODING` encodes the component using RFC1738 rules;
+- `ComponentInterface::RFC3986_ENCODING` encodes the component using RFC3986 rules;
+- `ComponentInterface::RFC3987_ENCODING` encodes the component using RFC3987 rules;
+- `ComponentInterface::NO_ENCODING` no encoding is done;
 
 <p class="message-notice">Normalization and encoding are component specific.</p>
+<p class="message-notice">By default, <code>$enc_type</code> equals <code>ComponentInterface::RFC3986_ENCODING</code></p>
 
-## ComponentInterface::getUriComponent
+## Modifying URI component object
 
-Returns the string representation of the normalized and RFC3986 encoded URI part with its optional delimiter if required.
-
-~~~php
-<?php
-
-public UriPart::getUriComponent(void): string
-~~~
-
-### Example
-
-~~~php
-<?php
-
-use League\Uri\Components\Scheme;
-
-$scheme = new Scheme('HtTp');
-echo $scheme->getUriComponent(); //display 'http:'
-
-$userinfo = new UserInfo('john');
-echo $userinfo->getUriComponent(); //displays 'john@'
-~~~
-
-<p class="message-notice">Normalization, encoding and delimiters are component specific.</p>
-
-## ComponentInterface::withContent
-
-This method accepts:
+All URI component objects can be modified with the `ComponentInterface::withContent` method. This method accepts:
 
 - the `null` value
 - a string in no particular encoding.
 
-Returns a new instance with the modified content.
+and returns a new instance with the modified content.
 
 <p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
 
 ~~~php
 <?php
 
-use League\Uri\Components\{Query, Host};
+use League\Uri\Components\{
+	Query,
+	Host
+};
 
 $query = new Query();
-echo $query->withContent('')->getContent(); //returns ''
-
-$query = new Query('');
-$query->withContent(null)->getContent(); //returns null
+$new_query = $query->withContent('');
+echo $query->getContent(); //returns null
+echo $new_query->getContent(); //returns ''
 
 $host = new Host('thephpleague.com');
-echo $host->withContent('bébé.be')->getContent(); //displays 'xn--bb-bjab.be';
-echo $host->withContent('bébé.be')->getContent(Host::RFC3987_ENCODING); //displays 'bébé.be';
+$new_host = $host->withContent('bébé.be');
+echo $new_host->getContent(); //displays 'xn--bb-bjab.be';
+echo $new_host->getContent(Host::RFC3987_ENCODING); //displays 'bébé.be';
 ~~~
-
-Creating new objects
---------
-
-All URI object can be instantiate using the default constructor by providing a string or the `null` value.
-
-~~~php
-<?php
-public Component::__construct(string $content = null): void
-~~~
-
-<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
-
 
 List of URI component objects
 --------

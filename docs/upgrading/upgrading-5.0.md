@@ -183,7 +183,7 @@ echo $host->getContent(Host::RFC3987_ENCODING); //display 'bébé.be
 All methods interacting with the host label accept negative offset:
 
 - `Host::getLabel`
-- `Host::replace` 
+- `Host::replace`
 - `Host::withoutLabels`
 
 The returned value of `Host::getLabel`, if it exists, is the RFC3987 representation.
@@ -197,7 +197,7 @@ use League\Uri\Components\Host;
 
 $host = new Host('bébé.be');
 echo $host->getLabel(-1, 'toto'); //display 'toto';
-$new_host = $host->replace(-1, 'baby');
+$new_host = $host->replaceLabel(-1, 'baby');
 echo $new_host; // display 'bébé.be'
 ~~~
 
@@ -210,7 +210,7 @@ use League\Uri\Components\Host;
 
 $host = new Host('bébé.be');
 echo $host->getLabel(-1, 'toto'); //display 'bébé';
-$new_host = $host->replace(-1, 'baby');
+$new_host = $host->replaceLabel(-1, 'baby');
 echo $new_host; // display 'baby.be'
 ~~~
 
@@ -245,7 +245,7 @@ The `HierarchicalPath::hasKey` method has been removed as it was redundant with 
 All methods interacting with the path segment offset accept negative offset:
 
 - `Host::getSegment`
-- `Host::replaceSegment` 
+- `Host::replaceSegment`
 - `Host::withoutSegments`
 
 Before:
@@ -256,7 +256,7 @@ Before:
 use League\Uri\Components\HierarchicalPath;
 
 $path = new HierarchicalPath('/path/to/the/sky');
-echo $path->getLabel(-1, 'toto'); //display 'toto';
+echo $path->getSegment(-1, 'toto'); //display 'toto';
 $new_path = $path->replace(-1, 'sea');
 echo $new_path; // display '/path/to/the/sky'
 ~~~
@@ -269,8 +269,8 @@ After:
 use League\Uri\Components\HierarchicalPath;
 
 $path = new HierarchicalPath('/path/to/the/sky');
-echo $path->getLabel(-1, 'toto'); //display 'sky';
-$new_path = $path->replace(-1, 'sea');
+echo $path->getSegment(-1, 'toto'); //display 'sky';
+$new_path = $path->replaceSegment(-1, 'sea');
 echo $new_path; // display '/path/to/the/sea'
 ~~~
 
@@ -324,7 +324,7 @@ $query = new Query('foo=bar&baz');
 echo $query->merge(new Query('baz=foo')); //throw an InvalidArgumentException exception;
 ~~~
 
-`Query::without` is renamed `Query::delete` and is more strict. submitted an array that contains anything else than a string will trigger a exception.
+`Query::without` is renamed `Query::withoutPairs` and is more strict. submitted an array that contains anything else than a string will trigger a exception.
 
 Before:
 
@@ -345,7 +345,7 @@ After:
 use League\Uri\Components\Query;
 
 $query = new Query('foo=bar&baz');
-echo $query->delete([1]); //throw an InvalidArgumentException exception;
+echo $query->withoutPairs([1]); //throw an InvalidArgumentException exception;
 ~~~
 
 The `Query::getValue` method is renamed `Query::getPair` for consistency with the other URI components object.

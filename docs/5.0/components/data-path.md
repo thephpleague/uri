@@ -23,16 +23,15 @@ echo $uri; //returns 'image/png;charset=binary;base64,...'
 
 If the file is not readable or accessible an InvalidArgumentException exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
 
-## Properties
-
-### Attributes
+## Accessing the path properties
 
 The DataPath class exposes the following specific methods:
 
-- `getMediaType`: This method returns the Data URI current mediatype;
-- `getMimeType`: This method returns the Data URI current mimetype;
-- `getParameters`: This method returns the parameters associated with the mediatype;
-- `getData`: This methods returns the encoded data contained is the Data URI;
+- `getMediaType`: Returns the Data URI current mediatype;
+- `getMimeType`: Returns the Data URI current mimetype;
+- `getParameters`: Returns the parameters associated with the mediatype;
+- `getData`: Returns the encoded data contained is the Data URI;
+- `isBinaryData`: Tells whether the data URI represents some binary data
 
 Each of these methods return a string. This string can be empty if the data where no supplied when constructing the URI.
 
@@ -41,44 +40,31 @@ Each of these methods return a string. This string can be empty if the data wher
 
 use League\Uri\Components\DataPath as Path;
 
-$uri = DataUri::createFromString('data:text/plain;charset=us-ascii,Hello%20World%21');
-echo $uri->getMediaType(); //returns 'text/plain;charset=us-ascii'
-echo $uri->getMimeType(); //returns 'text/plain'
-echo $uri->getParameters(); //returns 'charset=us-ascii'
-echo $uri->getData(); //returns 'Hello%20World%21'
+$path = new DataPath('text/plain;charset=us-ascii,Hello%20World%21');
+echo $path->getMediaType(); //returns 'text/plain;charset=us-ascii'
+echo $path->getMimeType(); //returns 'text/plain'
+echo $path->getParameters(); //returns 'charset=us-ascii'
+echo $path->getData(); //returns 'Hello%20World%21'
+$path->isBinaryData(); //returns false
+
+$binary_path = DataPath::createFromPath('path/to/my/png/image.png');
+$binary_path->isBinaryData(); //returns true
 ~~~
 
-### Is it a binary data ?
-
-To tell whether the data URI represents some binary data you can call the `isBinaryData` method. This method which returns a boolean will return `true` if the data is in a binary state. The binary state is checked on instantiation. Invalid binary dataURI will throw an `InvalidArgumentException` exception on initiation.
-
-~~~php
-<?php
-
-use League\Uri\Components\DataPath as Path;
-
-$uri = DataUri::createFromPath('path/to/my/png/image.png');
-$uri->isBinaryData(); //returns true
-$altUri = DataUri::createFromString('data:text/plain;charset=us-ascii,Hello%20World%21');
-$altUri->isBinaryData(); //returns false
-~~~
-
-## Manipulation
-
-The data URI Path class is an immutable object everytime you manipulate the object a new object is returned with the modified value if needed.
+## Modifying the path properties
 
 ### Update the Data URI parameters
 
-Since we are dealing with a data and not just a URI, the only property that can be easily modified are its optional parameters.
+Since we are dealing with a data and not just a URI, the only property that can be modified are its optional parameters.
 
 To set new parameters you should use the `withParameters` method:
 
 ~~~php
 <?php
 
-use League\Uri\Components\DataPath as Path;
+use League\Uri\Components\DataPath;
 
-$path = new Path('text/plain;charset=us-ascii,Hello%20World%21');
+$path = new DataPath('text/plain;charset=us-ascii,Hello%20World%21');
 $newPath = $path->withParameters('charset=utf-8');
 echo $newPath; //returns 'text/plain;charset=utf-8,Hello%20World%21'
 ~~~
@@ -92,16 +78,16 @@ Another manipulation is to transcode the data from ASCII to is base64 encoded (o
 ~~~php
 <?php
 
-use League\Uri\Components\DataPath as Path;
+use League\Uri\Components\DataPath;
 
-$path = new Path('data:text/plain;charset=us-ascii,Hello%20World%21');
+$path = new DataPath('data:text/plain;charset=us-ascii,Hello%20World%21');
 $path->isBinaryData(); // return false;
 $newPath = $path->toBinary();
 $newPath->isBinaryData(); //return true;
 $newPath->toAscii()->sameValueAs($path); //return true;
 ~~~
 
-## Saving the Data URI Path
+## Saving the data path
 
 Since the path can be interpreted as a file, it is possible to save it to a specified path using the dedicated `save` method. This method accepts two parameters:
 
@@ -115,9 +101,9 @@ The method returns the `SplFileObject` object used to save the data-uri data for
 ~~~php
 <?php
 
-use League\Uri\Components\DataPath as Path;
+use League\Uri\Components\DataPath;
 
-$uri = Path::createFromPath('path/to/my/file.png');
+$path = DataPath::createFromPath('path/to/my/file.png');
 $file = $uri->save('path/where/to/save/my/image.png');
 //$file is a SplFileObject which point to the newly created file;
 ~~~

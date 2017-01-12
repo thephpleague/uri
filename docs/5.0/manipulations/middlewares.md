@@ -8,7 +8,7 @@ URI middlewares
 
 ## Definition
 
-An URI middleware is a function or a class which provides a convenient mechanism for filtering and manipulating an URI object. The only **hard** requirement is that a URI middleware **MUST** returns an URI object instance identical to the one it received.
+An URI middleware is a class which provides a convenient mechanism for filtering and manipulating an URI object. The only **hard** requirement is that a URI middleware **MUST** returns an an URI instance of the same class that the one it received.
 
 ## Example
 
@@ -51,7 +51,7 @@ $query_to_merge = 'fo.o=bar&taz=';
 $uri = SlimUri::createFromString($base_uri);
 $modifier = new MergeQuery($query_to_merge);
 
-$new_uri = $modifier($uri);
+$new_uri = $modifier->process($uri);
 echo $new_uri;
 // display http://www.example.com?fo.o=bar&taz=#~typo
 // $new_uri is a SlimUri object
@@ -59,27 +59,56 @@ echo $new_uri;
 
 <p class="message-notice">In addition to merging the query to the URI, the <code>MergeQuery</code> middleware won't mangle your data during merging and the RFC3986 encoding will be enforced through out the modifications.</p>
 
-## URI Middleware requirements
+## URI Middleware Interface
 
-An URI middleware:
+~~~php
+<?php
 
-- is a callable. If the URI middleware is a class it must implement PHP’s `__invoke` method.
+public function UriMiddlewareInterface::process($uri);
+~~~
+
+The `UriMiddlewareInterface::process` :
+
 - expects its single argument to be an URI object which implements either:
 
     - `Psr\Http\Message\UriInteface`;
     - `League\Uri\Interfaces\Uri`;
 
-- must return a instance of the submitted object.
+- must return a instance of the same class as the submitted object.
 - is transparent when dealing with error and exceptions. It must not alter of silence them apart from validating their own parameters.
 
-Here's a the URI middleware signature
+### URI middleware and callable
+
+To avoid a major BC break, all implemented URI middlewares still support the `__invoke` method. The method is an alias of the `process` method.
 
 ~~~php
 <?php
 
-function(Psr\Http\Message\UriInteface $uri): Psr\Http\Message\UriInteface
-//or
-function(League\Uri\Interfaces\Uri $uri): League\Uri\Interfaces\Uri
+use League\Uri\Modifiers\MergeQuery;
+use Slim\Http\Uri as SlimUri;
+
+$uri = SlimUri::createFromString("http://www.example.com?fo.o=toto#~typo");
+$new_uri = (new MergeQuery('fo.o=bar&taz='))($uri);
+echo $new_uri; // display http://www.example.com?fo.o=bar&taz=#~typo
+               // $new_uri is a SlimUri object
+~~~
+
+Converting a callable or a function into a Uri Middleware is easy with the `CallableUriMiddleware` class. This class takes a callable as its unique argument and adapt its usage to the `UriMiddleware` interface.
+
+~~~php
+<?php
+
+use League\Uri\Modifiers\CallableUriMiddleware;
+use Slim\Http\Uri as SlimUri;
+
+$callable = function ($uri) {
+    return $uri->withHost('thephpleague.com');
+};
+
+$uri = SlimUri::createFromString("http://www.example.com?fo.o=toto#~typo");
+$new_uri = (new CallableUriMiddleware($callable))($uri);
+echo $new_uri; // display http://thephpleague.com?fo.o=toto#~typo
+               // $new_uri is a SlimUri object
 ~~~
 
 ## Middlewares which manipulate several URI components
@@ -97,7 +126,7 @@ use League\Uri\Modifiers\Resolve;
 $baseUri     = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $relativeUri = Http::createFromString("./p#~toto");
 $modifier    = new Resolve($baseUri);
-$newUri = $modifier->__invoke($relativeUri);
+$newUri = $modifier->process($relativeUri);
 echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 ~~~
 
@@ -116,9 +145,9 @@ $baseUri = Http::createFromString('http://www.example.com');
 $relativizer = new Relativize($baseUri);
 $resolver = new Resolve($baseUri);
 $uri = Http::createFromString('http://www.example.com/?foo=toto#~typo');
-$relativeUri = $relativizer($uri);
+$relativeUri = $relativizer->process($uri);
 echo $relativeUri; // display "/?foo=toto#~typo
-echo $resolver($relativeUri); // display 'http://www.example.com/?foo=toto#~typo'
+echo $resolver->process($relativeUri); // display 'http://www.example.com/?foo=toto#~typo'
 ~~~
 
 ### URI comparison
@@ -143,8 +172,8 @@ $uri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
 $altUri = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
 $modifier = new Normalize();
 
-$newUri    = $modifier->__invoke($uri);
-$newAltUri = $modifier->__invoke($altUri);
+$newUri    = $modifier->process($uri);
+$newAltUri = $modifier->process($altUri);
 
 var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
 ~~~
@@ -158,9 +187,6 @@ Since all modifiers returns a URI object instance it is possible to chain them t
 The `League\Uri\Modifiers\Pipeline` uses two methods:
 
 - `Pipeline::pipe` to attach a URI modifier following the *First In First Out* rule.
-- `Pipeline::process` to apply sequencially each attached URI modifier to the submitted URI object.
-
-<p class="message-notice">The <code>Pipeline::process</code> is an alias of <code>Pipeline::__invoke</code>.</p>
 
 ~~~php
 <?php
@@ -186,7 +212,7 @@ echo $origUri1Alt; //display http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/
 echo $origUri2Alt; //display http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/
 ~~~
 
-<p class="message-notice">The <code>League\Uri\Modifiers\Pipeline</code> is a URI modifier as well which can lead to advance modifications from you URI in a sane an normalized way.</p>
+<p class="message-notice">The <code>League\Uri\Modifiers\Pipeline</code> is a URI middleware as well which can lead to advance modifications from you URI in a sane an normalized way.</p>
 
 <p class="message-info">This class is heavily influenced by the <a href="http://pipeline.thephpleague.com">League\Pipeline</a> package.</p>
 
@@ -208,7 +234,7 @@ use League\Uri\Modifiers\KsortQuery;
 
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new KsortQuery(SORT_REGULAR);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
 ~~~
 
@@ -227,7 +253,7 @@ $sort = function ($value1, $value2) {
 $modifier = new KsortQuery($sort);
 
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
 ~~~
 
@@ -243,7 +269,7 @@ use League\Uri\Modifiers\MergeQuery;
 
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new MergeQuery('kingkong=godzilla&toto');
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=godzilla&foo=bar%20baz&toto#doc3"
 ~~~
 
@@ -259,7 +285,7 @@ use League\Uri\Modifiers\AppendQuery;
 
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new AppendQuery('kingkong=godzilla&toto');
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto&kingkong=godzilla&foo=bar%20baz&toto#doc3"
 ~~~
 
@@ -275,7 +301,7 @@ use League\Uri\Modifiers\RemoveQueryKeys;
 
 $uri = Http::createFromString("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
 $modifier = new RemoveQueryKeys(["foo"]);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
 ~~~
 
@@ -295,7 +321,7 @@ use League\Uri\Modifiers\RemoveDotSegments;
 
 $uri = Http::createFromString("http://www.example.com/path/../to/the/./sky/");
 $modifier = new RemoveDotSegments();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/to/the/sky/"
 ~~~
 
@@ -311,7 +337,7 @@ use League\Uri\Modifiers\RemoveEmptySegments;
 
 $uri = Http::createFromString("http://www.example.com/path//to/the//sky/");
 $modifier = new RemoveEmptySegments();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/"
 ~~~
 
@@ -327,7 +353,7 @@ use League\Uri\Modifiers\RemoveTrailingSlash;
 
 $uri = Http::createFromString("http://www.example.com/path/?foo=bar");
 $modifier = new RemoveTrailingSlash();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path?foo=bar"
 ~~~
 
@@ -343,7 +369,7 @@ use League\Uri\Modifiers\AddTrailingSlash;
 
 $uri = Http::createFromString("http://www.example.com/sky#top");
 $modifier = new AddTrailingSlash();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/sky/#top"
 ~~~
 
@@ -359,7 +385,7 @@ use League\Uri\Modifiers\RemoveLeadingSlash;
 
 $uri = Http::createFromString("/path/to/the/sky/");
 $modifier = new RemoveLeadingSlash();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "path/to/the/sky"
 ~~~
 
@@ -375,7 +401,7 @@ use League\Uri\Modifiers\AddLeadingSlash;
 
 $uri = Http::createFromString("path/to/the/sky/");
 $modifier = new AddLeadingSlash();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "/path/to/the/sky"
 ~~~
 
@@ -391,7 +417,7 @@ use League\Uri\Modifiers\Dirname;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new Dirname("/road/to");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/road/to/sky"
 ~~~
 
@@ -407,7 +433,7 @@ use League\Uri\Modifiers\Basename;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new Basename("paradise.xml");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/paradise.xml"
 ~~~
 
@@ -423,7 +449,7 @@ use League\Uri\Modifiers\Extension;
 
 $uri = Http::createFromString("http://www.example.com/export.html");
 $modifier = new Extension("csv");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/export.csv"
 ~~~
 
@@ -439,7 +465,7 @@ use League\Uri\Modifiers\AddBasePath;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new AddBasePath("/the/real");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/the/real/path/to/the/sky"
 ~~~
 
@@ -455,7 +481,7 @@ use League\Uri\Modifiers\RemoveBasePath;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky");
 $modifier = new RemoveBasePath("/path/to/the");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/sky"
 ~~~
 
@@ -471,7 +497,7 @@ use League\Uri\Modifiers\AppendSegment;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new AppendSegment("and/above");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 ~~~
 
@@ -487,7 +513,7 @@ use League\Uri\Modifiers\PrependSegment;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new PrependSegment("and/above");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky/and/above"
 ~~~
 
@@ -503,7 +529,7 @@ use League\Uri\Modifiers\ReplaceSegment;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(3, "sea");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea/"
 ~~~
 
@@ -519,7 +545,7 @@ use League\Uri\Modifiers\ReplaceSegment;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceSegment(-1, "sea");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea"
 ~~~
 
@@ -535,7 +561,7 @@ use League\Uri\Modifiers\RemoveSegments;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveSegments([1, 3]);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/the/"
 ~~~
 
@@ -549,7 +575,7 @@ use League\Uri\Modifiers\RemoveSegments;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveSegments([-1, -2]);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/the"
 ~~~
 
@@ -566,7 +592,7 @@ use League\Uri\Modifiers\DataUriParameters;
 $uriString = "data:text/plain;charset=US-ASCII,Hello%20World!";
 $uri = DataUri::createFromString($uriString);
 $modifier = new DataUriParameters("charset=utf-8");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "data:text/plain;charset=utf-8,Hello%20World!"
 ~~~
 
@@ -583,7 +609,7 @@ use League\Uri\Modifiers\DataUriToBinary;
 $uriString = "data:text/plain;charset=US-ASCII,Hello%20World!";
 $uri = DataUri::createFromString($uriString);
 $modifier = new DataUriToBinary();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQh"
 ~~~
 
@@ -600,7 +626,7 @@ use League\Uri\Modifiers\DataUriToAscii;
 $uriString = "data:text/plain;charset=US-ASCII;base64,SGVsbG8gV29ybGQh";
 $uri = DataUri::createFromString($uriString);
 $modifier = new DataUriToAscii();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "data:text/plain;charset=US-ASCII,Hello%20World!"
 ~~~
 
@@ -620,7 +646,7 @@ use League\Uri\Modifiers\HostToAscii;
 
 $uri = new Uri("http://스타벅스코리아.com/to/the/sky/");
 $modifier = new HostToAscii();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
 ~~~
@@ -640,7 +666,7 @@ use League\Uri\Modifiers\HostToUnicode;
 $uriString = "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/./sky/";
 $uri = new Uri($uriString);
 $modifier = new HostToUnicode();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 ~~~
@@ -660,7 +686,7 @@ use League\Uri\Modifiers\RemoveZoneIdentifier;
 $uriString = 'http://[fe80::1234%25eth0-1]/path/to/the/sky.php';
 $uri = new Uri($uriString);
 $modifier = new RemoveZoneIdentifier();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo get_class($newUri); //display \Zend\Diactoros\Uri
 echo $newUri; //display 'http://[fe80::1234]/path/to/the/sky.php'
 ~~~
@@ -678,7 +704,7 @@ use League\Uri\Modifiers\AddRootLabel;
 $uriString = 'http://example.com:83';
 $uri = Http::createFromString($uriString);
 $modifier = new AddRootLabel();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display 'http://example.com.:83'
 ~~~
 
@@ -695,7 +721,7 @@ use League\Uri\Modifiers\RemoveRootLabel;
 $uriString = 'http://example.com.#yes';
 $uri = Http::createFromString($uriString);
 $modifier = new RemoveRootLabel();
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display 'http://example.com#yes'
 ~~~
 
@@ -711,7 +737,7 @@ use League\Uri\Modifiers\AppendLabel;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new AppendLabel("fr");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com.fr/path/to/the/sky/"
 ~~~
 
@@ -727,7 +753,7 @@ use League\Uri\Modifiers\PrependLabel;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new PrependLabel("shop");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://shop.www.example.com/path/to/the/sky/and/above"
 ~~~
 
@@ -743,7 +769,7 @@ use League\Uri\Modifiers\ReplaceLabel;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceLabel(2, "admin.shop");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 ~~~
 
@@ -761,7 +787,7 @@ use League\Uri\Modifiers\ReplaceLabel;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new ReplaceLabel(-1, "admin.shop");
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 ~~~
 
@@ -777,7 +803,7 @@ use League\Uri\Modifiers\RemoveLabels;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([2]);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
 ~~~
 
@@ -788,7 +814,6 @@ echo $newUri; //display "http://example.com/path/the/sky/"
 The previous example can be rewritten using negative offset:
 
 ~~~php
-~~~php
 <?php
 
 use League\Uri\Schemes\Http;
@@ -796,6 +821,6 @@ use League\Uri\Modifiers\RemoveLabels;
 
 $uri = Http::createFromString("http://www.example.com/path/to/the/sky/");
 $modifier = new RemoveLabels([-1]);
-$newUri = $modifier->__invoke($uri);
+$newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/path/the/sky/"
 ~~~

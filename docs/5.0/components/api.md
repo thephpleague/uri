@@ -8,12 +8,14 @@ Components common API
 
 ## Creating new URI component object
 
-All URI object can be instantiate using the default constructor by providing a string or the `null` value.
+All URI object can be instantiate using the default constructor by providing:
 
 ~~~php
 <?php
-public Component::__construct(string $content = null): void
+public Component::__construct($content = null): void
 ~~~
+
+the `$content` argument can be `null`, a string **or** an integer (in case of the `Port` object).
 
 <p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
 
@@ -30,7 +32,7 @@ const ComponentInterface::RFC3986_ENCODING = 2;
 const ComponentInterface::RFC3987_ENCODING = 3;
 public function ComponentInterface::isNull(void): bool
 public function ComponentInterface::isEmpty(void): bool
-public function ComponentInterface::getContent(string $enc_type = self::RFC3986_ENCODING): mixed
+public function ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
 public function ComponentInterface::__toString(void): string
 public function ComponentInterface::getUriComponent(void): string
 ~~~

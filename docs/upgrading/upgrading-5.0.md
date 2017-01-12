@@ -26,6 +26,32 @@ This will edit (or create) your `composer.json` file.
 
 <p class="message-warning">The package does not work on <code>HHVM</code></p>
 
+## Magic methods
+
+all the magic getter methods have been removed from the URI and/or URI components objects:
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+
+$uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
+$uri->path; //returns a League\Uri\Components\HierarchicalPath object
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+
+$uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
+$uri->path; //triggers an exception
+~~~
+
 ## Uri Parser
 
 The `League\Uri\UriParser` class is renamed `League\Uri\Parser`
@@ -110,19 +136,21 @@ $pairs = Query::parse('foo=bar&baz');
 $query = Query::build($pairs);
 ~~~
 
-## Magic methods
+## Uri Middlewares
 
-all the magic getter methods have been removed from the URI and/or URI components objects:
+Starting with version 5.0, middlewares are now coded against an interface. To continue to use your old middlewares you need to use the `CallableUriMiddleware` class adapter.
 
 Before:
 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\Pipeline;
 
-$uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
-$uri->path; //returns a League\Uri\Components\HierarchicalPath object
+$pipeline = (new Pipeline())->pipe(function ($uri) {
+	return $uri->withHost('thephpleague.com');
+});
+...
 ~~~
 
 After:
@@ -130,11 +158,42 @@ After:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\Pipeline;
 
-$uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
-$uri->path; //triggers an exception
+$pipeline = (new Pipeline())->pipe(new CallableUriMiddleware(function ($uri) {
+	return $uri->withHost('thephpleague.com');
+}));
+...
 ~~~
+
+The same goes with the Pipeline constructor.
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Modifiers\Pipeline;
+
+$pipeline = new Pipeline([function ($uri) {
+	return $uri->withHost('thephpleague.com');
+})];
+...
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Modifiers\Pipeline;
+
+$pipeline = Pipeline::createFromCallables([function ($uri) {
+	return $uri->withHost('thephpleague.com');
+})];
+...
+~~~
+
 
 ## Uri Component interfaces
 

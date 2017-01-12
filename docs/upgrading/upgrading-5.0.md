@@ -159,6 +159,7 @@ After:
 <?php
 
 use League\Uri\Modifiers\Pipeline;
+use League\Uri\Modifiers\CallableUriMiddleware;
 
 $pipeline = (new Pipeline())->pipe(new CallableUriMiddleware(function ($uri) {
 	return $uri->withHost('thephpleague.com');

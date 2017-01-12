@@ -106,7 +106,7 @@ $callable = function ($uri) {
 };
 
 $uri = SlimUri::createFromString("http://www.example.com?fo.o=toto#~typo");
-$new_uri = (new CallableUriMiddleware($callable))($uri);
+$new_uri = (new CallableUriMiddleware($callable))->process($uri);
 echo $new_uri; // display http://thephpleague.com?fo.o=toto#~typo
                // $new_uri is a SlimUri object
 ~~~

@@ -10,25 +10,25 @@ The library provides a `Host` class to ease host creation and manipulation. This
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">When a modification fails an <code>InvalidArgumentException</code> exception is thrown.</p>
+<p class="message-warning">When a modification fails an <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
 ## Host represented by an IP
 
 ~~~php
 <?php
 
-public static function Host::createFromIp(string $ip): self
-public function Host::isIp(void): bool
-public function Host::isIpv4(void): bool
-public function Host::isIpv6(void): bool
-public function Host::hasZoneIdentifier(void): bool
-public function Host::getIp(void): string
-public function Host::withoutZoneIdentifier(void): self
+public static Host::createFromIp(string $ip): self
+public Host::isIp(void): bool
+public Host::isIpv4(void): bool
+public Host::isIpv6(void): bool
+public Host::hasZoneIdentifier(void): bool
+public Host::getIp(void): string
+public Host::withoutZoneIdentifier(void): self
 ~~~
 
 ### Host::createFromIp
 
-This method allow creating an Host object from an IP. If the submitted IP is invalid a `InvalidArgumentException` exception is thrown.
+This method allow creating an Host object from an IP. If the submitted IP is invalid a `League\Uri\Components\Exception` exception is thrown.
 
 ~~~php
 <?php
@@ -42,7 +42,7 @@ $ipv6 = Host::createFromIp('::1');
 echo $ipv6; //display '[::1]'
 
 Host::createFromIp('uri.thephpleague.com');
-//throws InvalidArgumentException
+//throws League\Uri\Components\Exception
 ~~~
 
 ### IPv4 or IPv6
@@ -141,12 +141,12 @@ If you don't have a IP then you are dealing with a registered name. A registered
 
 ~~~php
 <?php
-public function Host::getPublicSuffix(void): string
-public function Host::isPublicSuffixValid(void): bool
-public function Host::getRegisterableDomain(void): string
-public function Host::getSubDomain(void): string
-public function Host::withRegisterableDomain(string $host): self
-public function Host::withSubDomain(string $host): self
+public Host::getPublicSuffix(void): string
+public Host::isPublicSuffixValid(void): bool
+public Host::getRegisterableDomain(void): string
+public Host::getSubDomain(void): string
+public Host::withRegisterableDomain(string $host): self
+public Host::withSubDomain(string $host): self
 ~~~
 
 ### Host public informations
@@ -198,7 +198,7 @@ $newHost = $host->withRegisterableDomain('co.uk');
 echo $newHost; //displays 'www.11.co.uk'
 ~~~
 
-<p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
+<p class="message-warning">This method throws an <code>League\Uri\Components\Exception</code> if you submit a FQDN.</p>
 
 #### Update the Host subdomains
 
@@ -214,25 +214,27 @@ $newHost = $host->withSubdomain('shop');
 echo $newHost; //displays 'shop.11.be'
 ~~~
 
-<p class="message-warning">This method throws an <code>InvalidArgumentException</code> if you submit a FQDN.</p>
+<p class="message-warning">This method throws an <code>League\Uri\Components\Exception</code> if you submit a FQDN.</p>
 
 ## Host as a Hierarchical Collection
 
 ~~~php
 <?php
-public static function Host::createFromLabels($data, int $type = self::IS_RELATIVE): self
-public function Host::isAbsolute(void): bool
-public function Host::getLabels(void): array
-public function Host::getLabel(int $offset, $default = null): mixed
-public function Host::keys([string $label]): array
-public function Host::count(void): int
-public function Host::getIterator(void): ArrayIterator
-public function Host::withRootLabel(void): self
-public function Host::withoutRootLabel(void): self
-public function Host::prepend(string $host): self
-public function Host::append(string $host): self
-public function Host::replaceLabel(int $offset, string $host): self
-public function Host::withoutLabels(array $offsets): self
+const Host::IS_RELATIVE = 0;
+const Host::IS_ABSOLUTE = 1;
+public static Host::createFromLabels($data, int $type = self::IS_RELATIVE): self
+public Host::isAbsolute(void): bool
+public Host::getLabels(void): array
+public Host::getLabel(int $offset, $default = null): mixed
+public Host::keys([string $label]): array
+public Host::count(void): int
+public Host::getIterator(void): ArrayIterator
+public Host::withRootLabel(void): self
+public Host::withoutRootLabel(void): self
+public Host::prepend(string $host): self
+public Host::append(string $host): self
+public Host::replaceLabel(int $offset, string $host): self
+public Host::withoutLabels(array $offsets): self
 ~~~
 
 ### Host::createFromLabels
@@ -249,7 +251,7 @@ The method expects at most 2 arguments:
 
 By default this optional argument equals to `Host::IS_RELATIVE`.
 
-<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>InvalidArgumentException</code> if you try to create an fully qualified domain name with a valid IP address.</p>
+<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>League\Uri\Components\Exception</code> if you try to create an fully qualified domain name with a valid IP address.</p>
 
 ~~~php
 <?php
@@ -266,7 +268,7 @@ $ip_host = Host::createFromLabels(['0.1', '127.0']);
 echo $ip_host; //display '127.0.0.1'
 
 Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
-//throws InvalidArgumentException
+//throws League\Uri\Components\Exception
 ~~~
 
 ### Partial or fully qualified domain name
@@ -313,9 +315,7 @@ echo $host->withRootLabel() //display 'www.11.be.'
 echo $host->withoutRootLabel() //display 'www.11.be'
 ~~~
 
-<p class="message-notice">Theses methods are used by the URI modifiers <code>AddRootLabel</code> and <code>RemoveRootLabel</code></p>
-
-<p class="message-warning">Trying to update the root label of an IP type host will trigger a <code>InvalidArgumentException</code></p>
+<p class="message-warning">Trying to update the root label of an IP type host will trigger a <code>League\Uri\Components\Exception</code></p>
 
 ### Normalization
 

@@ -13,8 +13,8 @@ The parser exposes the following methods
 
 use League\Uri\Parser;
 
-public function __invoke(string $uri): array
-public function isHost(string $host): bool
+public Parser::__invoke(string $uri): array
+public Parser::isHost(string $host): bool
 ~~~
 
 ## URI parsing

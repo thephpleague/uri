@@ -10,7 +10,7 @@ The library provides a `Query` class to ease query string creation and manipulat
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">When a modification fails an <code>InvalidArgumentException</code> exception is thrown.</p>
+<p class="message-warning">When a modification fails an <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
 ## Query as a PHP data transport layer
 
@@ -87,15 +87,15 @@ The method returns the value of a specific argument. If the argument does not ex
 ~~~php
 <?php
 
-public static function Query::parse(string $query_string [, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
-public static function Query::build(array $pairs [, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
-public static function Query::createFromPairs(iterable $pairs): self
-public function Query::getIterator(): ArrayIterator
-public function Query::count(): int
-public function Query::getPairs(): array
-public function Query::getPair(string $offset, $default = null): mixed
-public function Query::hasPair(string $offset): bool
-public function Query::keys([mixed $value = null]): array
+public static Query::parse(string $query_string [, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+public static Query::build(array $pairs [, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
+public static Query::createFromPairs(iterable $pairs): self
+public Query::getIterator(): ArrayIterator
+public Query::count(): int
+public Query::getPairs(): array
+public Query::getPair(string $offset, $default = null): mixed
+public Query::hasPair(string $offset): bool
+public Query::keys([mixed $value = null]): array
 ~~~
 
 This class mainly represents the query string as a collection of key/value pairs.
@@ -128,6 +128,12 @@ $arr = Query::parse($query_string, '&');
 // ]
 ~~~
 
+
+<p class="message-warning"><code>Query::parse</code> is not simlar to <code>parse_str</code>, <code>Query::extract</code> is.</p>
+
+<p class="message-warning"><code>Query::parse</code> and <code>Query::extract</code> both convert the query string into an array but <code>Query::parse</code> logic don't result in data loss.</p>
+
+
 ### Query::build
 
 The `Query::build` restore the query string from the result of the `Query::parse` method. The method expects at most 3 arguments:
@@ -151,6 +157,9 @@ var_export($arr);
 $res = Query::build($arr, '&', false);
 // $res = 'foo[]=bar&foo[]=baz'
 ~~~
+
+<p class="message-warning"><code>Query::build</code> is not similar to <code>http_build_query</code>.</p>
+
 
 ### Query::createFromPairs
 
@@ -277,10 +286,10 @@ By default, the method returns all the keys, but if you supply a value, only the
 ~~~php
 <?php
 
-public function Query::merge(string $query): self
-public function Query::append(string $query): self
-public function Query::ksort(mixed $sort): self
-public function Query::withoutPairs(array $offsets): array
+public Query::merge(string $query): self
+public Query::append(string $query): self
+public Query::ksort(mixed $sort): self
+public Query::withoutPairs(array $offsets): array
 ~~~
 
 ### Query::merge
@@ -290,7 +299,7 @@ public function Query::withoutPairs(array $offsets): array
 ~~~php
 <?php
 
-public function Query::merge(string $query): Query
+public Query::merge(string $query): Query
 ~~~
 
 This method expects a single argument which is a string
@@ -328,7 +337,7 @@ $newQuery->__toString(); //return foo=bar&baz=&r
 ~~~php
 <?php
 
-public function Query::append(string $query): Query
+public Query::append(string $query): Query
 ~~~
 
 This method expects a single argument which is a string

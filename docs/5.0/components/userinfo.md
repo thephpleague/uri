@@ -65,4 +65,4 @@ echo $new_info; //displays john:doe
 echo $info;     //displays foo:bar
 ~~~
 
-<p class="message-warning">If the modification is invalid a <code>InvalidArgumentException</code> exception is thrown.</p>
+<p class="message-warning">If the modification is invalid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>

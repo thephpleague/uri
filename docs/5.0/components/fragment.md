@@ -7,6 +7,10 @@ title: The Fragment component
 
 The library provides a `Fragment` class to ease fragment creation and manipulation.
 
+## Properties and Methods
+
+This URI component object only exposes the [package common API](/5.0/components/api/).
+
 ## Usage
 
 ~~~php
@@ -40,8 +44,4 @@ echo $alt_fragment->getUriComponent(); //display '#'
 
 <p class="message-notice">The delimiter <code>#</code> is not part of the component value and <strong>must not</strong> be added.</p>
 
-<p class="message-warning">If the submitted value is not valid an <code>InvalidArgumentException</code> exception is thrown.</p>
-
-## Properties and Methods
-
-This URI component object only exposes the [package common API](/5.0/components/api/).
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>

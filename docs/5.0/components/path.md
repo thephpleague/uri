@@ -22,7 +22,7 @@ public Path::withoutEmptySegments(void): self
 
 <p class="message-notice">According to <code>RFC3986</code>, the component content can not be equal to <code>null</code> therefore <code>Path::isNull</code> always returns <code>false</code></p>
 
-<p class="message-warning">Because path are scheme specific, some methods may trigger an <code>InvalidArgumentException</code> if for a given scheme the path does not support the given modification</p>
+<p class="message-warning">Because path are scheme specific, some methods may trigger an <code>League\Uri\Components\Exception</code> if for a given scheme the path does not support the given modification</p>
 
 
 ## Path properties
@@ -74,7 +74,7 @@ $altPath->hasTrailingSlash(); //return true
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> exception is thrown.</p>
+<p class="message-warning">When a modification fails a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
 Out of the box, the `Path` object operates a number of non destructive normalizations. For instance, the path is correctly URI encoded against the RFC3986 rules.
 
@@ -94,8 +94,6 @@ echo $newPath;                //displays 'path/to/the/sky%7Bfoo%7D'
 $newPath->sameValueAs($path); //returns false;
 ~~~
 
-<p class="message-notice">This method is used by the URI Modifier <code>RemoveDotSegments</code></p>
-
 ### Removing empty segments
 
 Sometimes your path may contain multiple adjacent delimiters. Since removing them may result in a semantically different URI, this normalization can not be applied by default. To remove adjacent delimiters you can call the `Path::withoutEmptySegments` method which convert you path as described below:
@@ -111,8 +109,6 @@ echo $path;                   //displays 'path////to/the/sky//'
 echo $newPath;                //displays 'path/to/the/sky/'
 $newPath->sameValueAs($path); //returns false;
 ~~~
-
-<p class="message-notice">This method is used by the URI Modifier <code>RemoveEmptySegments</code></p>
 
 ### Manipulating the trailing slash
 
@@ -131,8 +127,6 @@ echo $path;     //displays 'path/to/the/sky/'
 echo $newPath;  //displays 'path/to/the/sky'
 ~~~
 
-<p class="message-notice">This method is used by the URI Modifier <code>RemoveTrailingSlash</code></p>
-
 Conversely, `Path::withTrailingSlash` will append a slash at the end of your path only if no slash is already present.
 
 ~~~php
@@ -145,8 +139,6 @@ $newPath = $path->withTrailingSlash();
 echo $path;    //displays '/path/to/the/sky'
 echo $newPath; //displays '/path/to/the/sky/'
 ~~~
-
-<p class="message-notice">This method is used by the URI Modifier <code>AddTrailingSlash</code></p>
 
 ### Manipulating the leading slash
 
@@ -165,8 +157,6 @@ echo $path;    //displays 'path/to/the/sky/'
 echo $newPath; //displays 'path/to/the/sky'
 ~~~
 
-<p class="message-notice">This method is used by the URI Modifier <code>RemoveLeadingSlash</code></p>
-
 `Path::withLeadingSlash` will convert an relative path into a absolute one by prepending the path with a slash if none is present.
 
 ~~~php
@@ -179,8 +169,6 @@ $newPath = $path->withTrailingSlash();
 echo $raw_path; //displays '/path/to/the/sky'
 echo $newPath;  //displays '/path/to/the/sky/'
 ~~~
-
-<p class="message-notice">This method is used by the URI Modifier <code>AddLeadingSlash</code></p>
 
 ## Specialized Path Object
 

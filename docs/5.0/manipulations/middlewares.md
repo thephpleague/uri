@@ -8,7 +8,7 @@ URI middlewares
 
 ## Definition
 
-An URI middleware is a class which provides a convenient mechanism for filtering and manipulating an URI object. The only **hard** requirement is that a URI middleware **MUST** returns an an URI instance of the same class that the one it received.
+An URI middleware is a class which provides a convenient mechanism for filtering and manipulating an URI object. The only **hard** requirement is that a URI middleware **MUST** returns an URI instance of the same type that the one it received.
 
 ## Example
 
@@ -57,7 +57,12 @@ echo $new_uri;
 // $new_uri is a SlimUri object
 ~~~
 
-<p class="message-notice">In addition to merging the query to the URI, the <code>MergeQuery</code> middleware won't mangle your data during merging and the RFC3986 encoding will be enforced through out the modifications.</p>
+In addition to merging the query to the URI, `MergeQuery` has:
+
+- enforced RFC3986 encoding through out the modifications;
+- not mangle your data during merging;
+- returned an URI object of the same class as the one it received;
+
 
 ## URI Middleware Interface
 
@@ -74,12 +79,10 @@ The `UriMiddlewareInterface::process` :
     - `Psr\Http\Message\UriInteface`;
     - `League\Uri\Interfaces\Uri`;
 
-- must return a instance of the same class as the submitted object.
+- must return a instance of the same type as the submitted object.
 - is transparent when dealing with error and exceptions. It must not alter of silence them apart from validating their own parameters.
 
-### URI middleware and callable
-
-To avoid a major BC break, all implemented URI middlewares still support the `__invoke` method. The method is an alias of the `process` method.
+<p class="message-notice">To reduce BC break, all implemented URI middlewares still support the <code>__invoke</code> method. The method is an alias of the <code>process</code> method.</p>
 
 ~~~php
 <?php
@@ -93,12 +96,12 @@ echo $new_uri; // display http://www.example.com?fo.o=bar&taz=#~typo
                // $new_uri is a SlimUri object
 ~~~
 
-Converting a callable or a function into a Uri Middleware is easy with the `CallableUriMiddleware` class. This class takes a callable as its unique argument and adapt its usage to the `UriMiddleware` interface.
+Converting a callable into a Uri Middleware is easy with the `CallableAdapter` class. This class takes a callable as its unique argument and adapt its usage to the `UriMiddlewareInterface` interface.
 
 ~~~php
 <?php
 
-use League\Uri\Modifiers\CallableUriMiddleware;
+use League\Uri\Modifiers\CallableAdapter;
 use Slim\Http\Uri as SlimUri;
 
 $callable = function ($uri) {
@@ -106,7 +109,7 @@ $callable = function ($uri) {
 };
 
 $uri = SlimUri::createFromString("http://www.example.com?fo.o=toto#~typo");
-$new_uri = (new CallableUriMiddleware($callable))->process($uri);
+$new_uri = (new CallableAdapter($callable))->process($uri);
 echo $new_uri; // display http://thephpleague.com?fo.o=toto#~typo
                // $new_uri is a SlimUri object
 ~~~
@@ -115,7 +118,7 @@ echo $new_uri; // display http://thephpleague.com?fo.o=toto#~typo
 
 ### Resolving a relative URI
 
-The `Resolve` URI Modifier provides the mean for resolving an URI as a browser would for a relative URI. When performing URI resolution the returned URI is normalized according to RFC3986 rules. The uri to resolved must be another Uri object.
+The `Resolve` URI Middleware provides the mean for resolving an URI as a browser would for a relative URI. When performing URI resolution the returned URI is normalized according to RFC3986 rules. The uri to resolved must be another Uri object.
 
 ~~~php
 <?php
@@ -132,7 +135,7 @@ echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 
 ### Relativize an URI
 
-The `Relativize` URI Modifier provides the mean to construct a relative URI that when resolved against the same URI yields the same given URI. This modifier does the inverse of the Resolve modifier. The uri to relativize must be another Uri object.
+The `Relativize` URI Middleware provides the mean to construct a relative URI that when resolved against the same URI yields the same given URI. This modifier does the inverse of the Resolve modifier. The uri to relativize must be another Uri object.
 
 ~~~php
 <?php
@@ -152,7 +155,7 @@ echo $resolver->process($relativeUri); // display 'http://www.example.com/?foo=t
 
 ### URI comparison
 
-To help with URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI modifier is introduce to normalize URI according to the following rules:
+To help with URI objects comparison, the  <code>League\Uri\Modifiers\Normalize</code> URI Middleware is introduce to normalize URI according to the following rules:
 
 - The host component is converted into their ASCII representation;
 - The path component is normalized by removing dot segments as per RFC3986;
@@ -178,15 +181,13 @@ $newAltUri = $modifier->process($altUri);
 var_dump($newUri->__toString() === $newAltUri->__toString()); //return true
 ~~~
 
-<p class="message-notice">You should avoid using the Normalize modifier for anything else but URI comparison as some changes applied may introduce some data loss.</p>
+<p class="message-notice">You should avoid using the Normalize URI middleware for anything else but URI comparison as some changes applied may introduce some data loss.</p>
 
-### Applying multiple modifiers to a single URI
+### Applying multiple URI middleware to a single URI
 
-Since all modifiers returns a URI object instance it is possible to chain them together. To ease this chaining the package comes bundle with the `League\Uri\Modifiers\Pipeline` class. The class uses the pipeline pattern to modify the URI by passing the results from one modifier to the next one.
+Since all URI middleware returns a URI object instance it is possible to chain them together. To ease this chaining the package comes bundle with the `League\Uri\Modifiers\Pipeline` class. The class uses the pipeline pattern to modify the URI by passing the results from one modifier to the next one.
 
-The `League\Uri\Modifiers\Pipeline` uses two methods:
-
-- `Pipeline::pipe` to attach a URI modifier following the *First In First Out* rule.
+The `League\Uri\Modifiers\Pipeline` uses the `Pipeline::pipe` to attach a URI Middleware following the *First In First Out* rule.
 
 ~~~php
 <?php
@@ -196,8 +197,9 @@ use League\Uri\Modifiers\KsortQuery;
 use League\Uri\Modifiers\Pipeline;
 use League\Uri\Modifiers\RemoveDotSegments;
 use League\Uri\Schemes\Http;
+use Slim\Http\Uri;
 
-$origUri = Http::createFromString("http://스타벅스코리아.com/to/the/sky/");
+$origUri = Uri::createFromString("http://스타벅스코리아.com/to/the/sky/");
 $origUri2 = Http::createFromString("http://xn--oy2b35ckwhba574atvuzkc.com/path/../to/the/./sky/");
 
 $modifier = (new Pipeline())
@@ -238,7 +240,7 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?foo=bar%20baz&kingkong=toto#doc3"
 ~~~
 
-#### Using a user defined comparison function used by the [uksort function](http://php.net/uksort)
+#### Using a user defined comparison function like the [uksort function](http://php.net/uksort)
 
 ~~~php
 <?php
@@ -289,9 +291,9 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto&kingkong=godzilla&foo=bar%20baz&toto#doc3"
 ~~~
 
-### Removing query keys
+### Removing query pairs
 
-Removes query keys from the current URI path.
+Removes query pairs from the current URI query string by providing the pairs key.
 
 ~~~php
 <?php
@@ -485,9 +487,9 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/sky"
 ~~~
 
-### Appending segments
+### Appending path
 
-Appends a segment or a path to the current URI path.
+Appends a path to the current URI path.
 
 ~~~php
 <?php
@@ -503,7 +505,7 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 
 ### Prepending segments
 
-Prepends a segment or a path to the current URI path.
+Prepends a path to the current URI path.
 
 ~~~php
 <?php
@@ -517,9 +519,9 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/and/above/path/to/the/sky/and/above"
 ~~~
 
-### Replacing segments
+### Replacing a path segment
 
-Replaces a segment from the current URI path with a new segment or path.
+Replaces a segment from the current URI path with a new path.
 
 ~~~php
 <?php
@@ -533,7 +535,7 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/to/the/sea/"
 ~~~
 
-<p class="message-info">This modifier supports negative offset</p>
+<p class="message-info">This URI middleware supports negative offset</p>
 
 The previous example can be rewritten using negative offset:
 
@@ -551,7 +553,7 @@ echo $newUri; //display "http://www.example.com/path/to/the/sea"
 
 ### Removing selected segments
 
-Removes selected segments from the current URI path.
+Removes selected segments from the current URI path by providing the segments offset.
 
 ~~~php
 <?php
@@ -565,7 +567,7 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://www.example.com/path/the/"
 ~~~
 
-<p class="message-info">This modifier supports negative offset</p>
+<p class="message-info">This URI middleware supports negative offset</p>
 
 ~~~php
 <?php
@@ -632,7 +634,7 @@ echo $newUri; //display "data:text/plain;charset=US-ASCII,Hello%20World!"
 
 ## Host specific URI Middlewares
 
-In addition to modifiying the URI host component, the middleware normalizes the host encoding.
+In addition to modifiying the URI host component, the middleware normalizes the host content.
 
 ### Transcoding the host to ascii
 
@@ -651,7 +653,7 @@ echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://xn--oy2b35ckwhba574atvuzkc.com/to/the/sky/"
 ~~~
 
-<p class="message-notice">This middleware will have no effect on a <code>League\Uri\Schemes\Http</code> class as this conversion is done by default.</p>
+<p class="message-notice">This middleware will have no effect on <strong>League URI objects</strong> as this conversion is done by default.</p>
 
 ### Transcoding the host to its IDN form
 
@@ -671,7 +673,7 @@ echo get_class($newUri); //display \GuzzleHttp\Psr7\Uri
 echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 ~~~
 
-<p class="message-notice">This middleware will have no effect on a <code>League\Uri\Schemes\Http</code> class because the object always transcode the host component into its ascii representation.</p>
+<p class="message-notice">This middleware will have no effect on <strong>League URI objects</strong> because the object always transcode the host component into its RFC3986/ascii representation.</p>
 
 ### Removing Zone Identifier
 
@@ -727,7 +729,7 @@ echo $newUri; //display 'http://example.com#yes'
 
 ### Appending labels
 
-Appends a label or a host to the current URI host.
+Appends a host to the current URI host.
 
 ~~~php
 <?php
@@ -743,7 +745,7 @@ echo $newUri; //display "http://www.example.com.fr/path/to/the/sky/"
 
 ### Prepending labels
 
-Prepends a label or a host to the current URI path.
+Prepends a host to the current URI path.
 
 ~~~php
 <?php
@@ -757,9 +759,9 @@ $newUri = $modifier->process($uri);
 echo $newUri; //display "http://shop.www.example.com/path/to/the/sky/and/above"
 ~~~
 
-### Replacing labels
+### Replacing host label
 
-Replaces a label from the current URI host with a new label or a host.
+Replaces a label from the current URI host with a host.
 
 ~~~php
 <?php
@@ -775,7 +777,7 @@ echo $newUri; //display "http://admin.shop.example.com/path/to/the/sky"
 
 <p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
 
-<p class="message-info">This modifier supports negative offset</p>
+<p class="message-info">This URI middleware supports negative offset</p>
 
 The previous example can be rewritten using negative offset:
 
@@ -809,7 +811,7 @@ echo $newUri; //display "http://example.com/path/the/sky/"
 
 <p class="message-notice">The host is considered as a hierarchical component, labels are indexed from right to left according to host RFC</p>
 
-<p class="message-info">This modifier supports negative offset</p>
+<p class="message-info">This URI middleware supports negative offset</p>
 
 The previous example can be rewritten using negative offset:
 

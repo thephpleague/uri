@@ -46,10 +46,14 @@ After:
 ~~~php
 <?php
 
+use League\Uri\Components\HierarchicalPath;
 use League\Uri\Schemes\Http;
 
 $uri = Http::createFromString('http://uri.thephpleague.com/upgrading/');
 $uri->path; //triggers an exception
+
+$path = new HierarchicalPath($uri->getPath());
+ //$path is a League\Uri\Components\HierarchicalPath object
 ~~~
 
 ## Uri Parser
@@ -76,13 +80,13 @@ After:
 use League\Uri\Parser;
 
 $uri = 'http://uri.thephpleague.com/5.0/';
-$parser = new UriParser();
+$parser = new Parser();
 $components = $parser($uri);
 ~~~
 
 ## Uri Formatter
 
-The `League\Uri\Formatter` class is moved under the  `League\Uri\Modifiers` namespace. The setter methods have been simplified and renamed to allow returning RFC3987 encoded URI or URI component more easily.
+The `League\Uri\Formatter` class is moved under the  `League\Uri\Modifiers` namespace. The setter methods have been simplified to allow better formatting.
 
 Before:
 
@@ -138,7 +142,7 @@ $query = Query::build($pairs);
 
 ## Uri Middlewares
 
-Starting with version 5.0, middlewares are now coded against an interface. To continue to use your old middlewares you need to use the `CallableUriMiddleware` class adapter.
+Starting with version 5.0, middlewares are now coded against an interface. To continue to use your old middlewares you need to use the `CallableAdapter` class adapter.
 
 Before:
 
@@ -147,9 +151,11 @@ Before:
 
 use League\Uri\Modifiers\Pipeline;
 
-$pipeline = (new Pipeline())->pipe(function ($uri) {
+$callable = function ($uri) {
 	return $uri->withHost('thephpleague.com');
-});
+};
+
+$pipeline = (new Pipeline())->pipe($callable);
 ...
 ~~~
 
@@ -158,12 +164,14 @@ After:
 ~~~php
 <?php
 
+use League\Uri\Modifiers\CallableAdapter;
 use League\Uri\Modifiers\Pipeline;
-use League\Uri\Modifiers\CallableUriMiddleware;
 
-$pipeline = (new Pipeline())->pipe(new CallableUriMiddleware(function ($uri) {
+$callable = function ($uri) {
 	return $uri->withHost('thephpleague.com');
-}));
+};
+
+$pipeline = (new Pipeline())->pipe(new CallableAdapter($callable));
 ...
 ~~~
 
@@ -195,7 +203,6 @@ $pipeline = Pipeline::createFromCallables([function ($uri) {
 ...
 ~~~
 
-
 ## Uri Component interfaces
 
 Each component used to have a specific interface located under the `League\Uri\Interfaces`. Starting with the new release, all specific interfaces for each component have been remove. The only remaining interfaces are:
@@ -210,6 +217,31 @@ The following classes are removed:
 
 ## Host
 
+You can no longer instantiate a Host object using the raw IP representation. Instead you are required to use the `Host::createFromIp` named constructor.
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('::1');
+echo $host; //display '[::1]'
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$host = new Host('::1'); //triggers an Exception
+$host = Host::createFromIp('::1')->__toString(); //display '[::1]'
+~~~
+
+
 The following methods have been removed:
 
 - `Host::hasKey`: is redundant with how `Host::getLabel` works
@@ -223,8 +255,8 @@ Before:
 use League\Uri\Components\Host;
 
 $host = new Host('bébé.be');
-echo $host; //display 'bébé.be
-$rfc3986_host = $host->toAscii();
+echo $host; //display 'bébé.be'
+$rfc3986_host = $host->toAscii(); // is a League\Uri\Components\Host object
 echo $rfc3986_host; // display 'xn--bb-bjab.be'
 ~~~
 
@@ -243,7 +275,7 @@ echo $host->getContent(Host::RFC3987_ENCODING); //display 'bébé.be
 All methods interacting with the host label accept negative offset:
 
 - `Host::getLabel`
-- `Host::replace`
+- `Host::replaceLabel`
 - `Host::withoutLabels`
 
 The returned value of `Host::getLabel`, if it exists, is the RFC3987 representation.
@@ -292,13 +324,45 @@ After:
 ~~~php
 <?php
 
-use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Host;
 
 $host = new Host('thephpleague.com');
 echo $host->withoutLabels(['com']); //throw an InvalidArgumentException exception;
 ~~~
 
 ## HierarchicalPath
+
+The `HierarchicalPath::createFromSegments` will always take into account the second parameter.
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Components\HierarchicalPath;
+
+$path = HierarchicalPath::createFromSegments(
+	['', 'path', 'to', 'here'],
+	HierarchicalPath::IS_RELATIVE
+);
+$path->isAbsolute(); //return true;
+echo $path; //display '/path/to/here';
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Components\HierarchicalPath;
+
+$path = HierarchicalPath::createFromSegments(
+	['', 'path', 'to', 'here'],
+	HierarchicalPath::IS_RELATIVE
+);
+$path->isAbsolute(); //return false;
+echo $path; //display 'path/to/here';
+~~~
 
 The `HierarchicalPath::hasKey` method has been removed as it was redundant with how `HierarchicalPath::getSegment` works.
 
@@ -360,31 +424,7 @@ echo $path->withoutSegments(['path']); //throw an InvalidArgumentException excep
 
 ## Query
 
-The `Query::merge` method no longer accepts another `Query` object as a valid parameter you need to supply a string.
-
-Before:
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query = new Query('foo=bar&baz');
-echo $query->merge(new Query('baz=foo')); //display 'foo=bar&baz=foo';
-~~~
-
-After:
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query = new Query('foo=bar&baz');
-echo $query->merge(new Query('baz=foo')); //throw an InvalidArgumentException exception;
-~~~
-
-`Query::without` is renamed `Query::withoutPairs` and is more strict. submitted an array that contains anything else than a string will trigger a exception.
+`Query::without` is renamed `Query::withoutPairs` and is more strict. submitted an array that contains anything else than strings will trigger a exception.
 
 Before:
 

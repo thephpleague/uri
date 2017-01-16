@@ -56,7 +56,8 @@ use Example\Telnet;
 
 $uri = Telnet::createFromString('TeLnEt://example.com:23/Hello%20There'):
 echo $uri; //return telnet://example.com/Hello%20There
-Telnet::createFromString('http://example.org'): //will throw an InvalidArgumentException
+Telnet::createFromString('http://example.org'):
+//will throw an League\Uri\Schemes\UriException
 ~~~
 
 ## Advance URI Object creation
@@ -160,11 +161,12 @@ Et voilà! You can already do this:
 use Example\Mailto;
 
 $subject = http_build_query(['subject' => 'Hello World!'], '', '&', PHP_QUERY_RFC3986);
-$mailto = Mailto::createFromEmails(['foo@example.com', 'info@thephpleague.com'])->withQuery($subject);
+$mailto = Mailto::createFromEmails(['foo@example.com', 'info@thephpleague.com'])
+    ->withQuery($subject);
 $mailto->__toString();
 //returns 'mailto:foo@example.com,info@thephpleague.com?subject=Hello%20World%21';
 ~~~
 
 ## URI manipulations
 
-Of course you are free to add more methods to fulfill your own requirements. But remember that all general URI properties, methods and middlewares are already usable with these simple steps.
+Of course you are free to add more methods to fulfill your own requirements. But remember that the URI common API and <a href="/5.0/manipulations/middlewares/">the URI middlewares</a> are already usable with these simple steps.

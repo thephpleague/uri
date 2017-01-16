@@ -33,7 +33,7 @@ Even though all URI properties are defined and accessible attempt to set any com
 use League\Uri\Schemes\File as FileUri;
 
 $uri = FileUri::createFromUnixPath('/path/./../relative');
-$uri->withQuery('foo=bar'); //thrown an InvalidArgumentException
+$uri->withQuery('foo=bar'); // will throw an League\Uri\Schemes\UriException
 ~~~
 
 ## URI normalization

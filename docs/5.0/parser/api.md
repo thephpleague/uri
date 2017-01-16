@@ -136,7 +136,7 @@ use League\Uri\Parser;
 $uri = '//example.com:toto';
 $parser = new Parser();
 $parser($uri);
-//throw a ParserException
+//throw a League\Uri\Exception
 
 parse_url($uri); //returns false
 ~~~

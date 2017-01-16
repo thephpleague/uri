@@ -35,7 +35,7 @@ use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withHost('')->withScheme('')->__toString();
-// will throw an InvalidArgumentException
+// will throw an League\Uri\Schemes\UriException
 // you can not remove the Host if a scheme is present
 ~~~
 
@@ -50,12 +50,12 @@ $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost('')->__toString(); //displays "/"
 ~~~
 
-<p class="message-notice">When an invalid URI object is created an <code>InvalidArgumentException</code> exception is thrown</p>
+<p class="message-notice">When an invalid URI object is created an <code>UriException</code> exception is thrown</p>
 
 
 ### Path validity
 
-According to RFC3986, if an HTTP URI contains a non empty authority part, the URI path must be the empty string or absolute. Thus, some modification may trigger an <code>InvalidArgumentException</code>.
+According to RFC3986, if an HTTP URI contains a non empty authority part, the URI path must be the empty string or absolute. Thus, some modification may trigger an <code>UriException</code>.
 
 ~~~php
 <?php
@@ -64,8 +64,7 @@ use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withPath('uri/schemes/http');
-// will throw an InvalidArgumentException
-// you can not add a rootless path
+// will throw an League\Uri\Schemes\UriException
 ~~~
 
 Instead you are required to submit a absolute path
@@ -92,4 +91,4 @@ echo $uri->withPath('uri/schemes/http'); // displays 'uri/schemes/http?foo=bar'
 
 ## Relation with PSR-7
 
-The `Http` class is compliant with PSR-7 `UriInterface` interface. This means that you can use this class anytime you need a PSR-7 compliant URI object.
+The `Http` class implements the PSR-7 `UriInterface` interface. This means that you can use this class anytime you need a PSR-7 compliant URI object.

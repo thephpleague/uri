@@ -15,8 +15,8 @@ To instantiate a new URI object you can use two named constructors:
 
 ~~~php
 <?php
-public Uri::createFromString(string $uri = ''): Uri
-public Uri::createFromComponents(array $components): Uri
+public static Uri::createFromString(string $uri = ''): Uri
+public static Uri::createFromComponents(array $components): Uri
 ~~~
 
 - The `Uri::createFromString` named constructor returns an new URI object from a string.

@@ -17,9 +17,9 @@ In addition to the defined named constructors, because file path depends on the 
 ~~~php
 <?php
 
-use League\Uri\Schemes\File as FileUri;
+use League\Uri\Schemes\File;
 
-$uri = FileUri::createFromWidowsPath(c:\windows\My Documents\my word.docx);
+$uri = File::createFromWidowsPath('c:\windows\My Documents\my word.docx');
 echo $uri; //returns 'file://localhost/c:My%20Documents/my%20word.docx'
 ~~~
 
@@ -30,9 +30,9 @@ Even though all URI properties are defined and accessible attempt to set any com
 ~~~php
 <?php
 
-use League\Uri\Schemes\File as FileUri;
+use League\Uri\Schemes\File;
 
-$uri = FileUri::createFromUnixPath('/path/./../relative');
+$uri = File::createFromUnixPath('/path/./../relative');
 $uri->withQuery('foo=bar'); // will throw an League\Uri\Schemes\UriException
 ~~~
 
@@ -43,8 +43,8 @@ If the host file is the empty string it will be converted to `localhost`.
 ~~~php
 <?php
 
-use League\Uri\Schemes\File as FileUri;
+use League\Uri\Schemes\File;
 
-$uri = FileUri::createFromString('file:///path/to/file.csv');
+$uri = File::createFromString('file:///path/to/file.csv');
 echo $uri; //display file://localhost/path/to/file.csv
 ~~~

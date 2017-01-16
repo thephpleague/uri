@@ -69,7 +69,7 @@ In addition to merging the query to the URI, `MergeQuery` has:
 ~~~php
 <?php
 
-public function UriMiddlewareInterface::process($uri);
+public UriMiddlewareInterface::process($uri);
 ~~~
 
 The `UriMiddlewareInterface::process` :
@@ -82,7 +82,7 @@ The `UriMiddlewareInterface::process` :
 - must return a instance of the same type as the submitted object.
 - is transparent when dealing with error and exceptions. It must not alter of silence them apart from validating their own parameters.
 
-<p class="message-notice">To reduce BC break, all implemented URI middlewares still support the <code>__invoke</code> method. The method is an alias of the <code>process</code> method.</p>
+<p class="message-info">To reduce BC break, all implemented URI middlewares still support the <code>__invoke</code> method. The method is an alias of the <code>process</code> method.</p>
 
 ~~~php
 <?php

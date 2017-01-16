@@ -14,7 +14,7 @@ but also provide specific methods to work with segments-type URI path components
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
-<p class="message-warning">When a modification fails a <code>InvalidArgumentException</code> exception is thrown.</p>
+<p class="message-warning">When a modification fails a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
 ## Manipulating the path as a filesystem path
 
@@ -25,9 +25,9 @@ The `HierarchicalPath` allows you to access and manipulate the path as if it was
 ~~~php
 <?php
 
-public function HierarchicalPath::getDirname(void): string
-public function HierarchicalPath::getBasename(void): string
-public function HierarchicalPath::getExtension(void): string
+public HierarchicalPath::getDirname(void): string
+public HierarchicalPath::getBasename(void): string
+public HierarchicalPath::getExtension(void): string
 ~~~
 
 #### Usage
@@ -48,12 +48,12 @@ $path->getDirname();   //return '/path/to/the'
 ~~~php
 <?php
 
-public function HierarchicalPath::withDirname(string $dirname): self
-public function HierarchicalPath::withBasename(string $basename): self
-public function HierarchicalPath::withExtension(string $extension): self
+public HierarchicalPath::withDirname(string $dirname): self
+public HierarchicalPath::withBasename(string $basename): self
+public HierarchicalPath::withExtension(string $extension): self
 ~~~
 
-<p class="message-warning"><code>withExtension</code> will throw an <code>InvalidArgumentException</code> exception if the extension contains the path delimiter.</p>
+<p class="message-warning"><code>withExtension</code> will throw an <code>League\Uri\Components\Exception</code> exception if the extension contains the path delimiter.</p>
 
 #### Usage
 
@@ -77,18 +77,19 @@ echo $alt_path; // display /foo/paradise.html
 
 ~~~php
 <?php
-
-public static function HierarchicalPath::createFromSegments($data, int $type = self::IS_RELATIVE): self
-public function HierarchicalPath::isAbsolute(void): bool
-public function HierarchicalPath::getSegments(void): array
-public function HierarchicalPath::getSegment(int $offset, $default = null): mixed
-public function HierarchicalPath::keys([string $segment]): array
-public function HierarchicalPath::count(void): int
-public function HierarchicalPath::getIterator(void): ArrayIterator
-public function HierarchicalPath::prepend(string $path): self
-public function HierarchicalPath::append(string $path): self
-public function HierarchicalPath::replaceSegment(int $offset, string $path): self
-public function HierarchicalPath::withoutSegments(array $offsets): self
+const HierarchicalPath::IS_RELATIVE = 0;
+const HierarchicalPath::IS_ABSOLUTE = 1;
+public static HierarchicalPath::createFromSegments($data, int $type = self::IS_RELATIVE): self
+public HierarchicalPath::isAbsolute(void): bool
+public HierarchicalPath::getSegments(void): array
+public HierarchicalPath::getSegment(int $offset, $default = null): mixed
+public HierarchicalPath::keys([string $segment]): array
+public HierarchicalPath::count(void): int
+public HierarchicalPath::getIterator(void): ArrayIterator
+public HierarchicalPath::prepend(string $path): self
+public HierarchicalPath::append(string $path): self
+public HierarchicalPath::replaceSegment(int $offset, string $path): self
+public HierarchicalPath::withoutSegments(array $offsets): self
 ~~~
 
 ### HierarchicalPath::createFromSegments

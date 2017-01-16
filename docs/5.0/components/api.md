@@ -19,6 +19,10 @@ the `$content` argument can be `null`, a string **or** an integer (in case of th
 
 <p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
 
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
 ## Accessing URI component representation
 
 Once instantiated, all URI component objects expose the methods and constant defined in the `ComponentInterface` interface. This interface is used to normalized URI component representation while taking into account each component specificity.
@@ -30,11 +34,11 @@ const ComponentInterface::NO_ENCODING = 0;
 const ComponentInterface::RFC1738_ENCODING = 1;
 const ComponentInterface::RFC3986_ENCODING = 2;
 const ComponentInterface::RFC3987_ENCODING = 3;
-public function ComponentInterface::isNull(void): bool
-public function ComponentInterface::isEmpty(void): bool
-public function ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
-public function ComponentInterface::__toString(void): string
-public function ComponentInterface::getUriComponent(void): string
+public ComponentInterface::isNull(void): bool
+public ComponentInterface::isEmpty(void): bool
+public ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
+public ComponentInterface::__toString(void): string
+public ComponentInterface::getUriComponent(void): string
 ~~~
 
 Which will lead to the following results:
@@ -101,8 +105,8 @@ For a more generalized representation you must use the `ComponentInterface::getC
 - `ComponentInterface::RFC3987_ENCODING` encodes the component using RFC3987 rules;
 - `ComponentInterface::NO_ENCODING` no encoding is done;
 
-<p class="message-notice">Normalization and encoding are component specific.</p>
-<p class="message-notice">By default, <code>$enc_type</code> equals <code>ComponentInterface::RFC3986_ENCODING</code></p>
+<p class="message-info">Normalization and encoding are component specific.</p>
+<p class="message-info">By default, <code>$enc_type</code> equals <code>ComponentInterface::RFC3986_ENCODING</code></p>
 
 ## Modifying URI component object
 
@@ -113,7 +117,7 @@ All URI component objects can be modified with the `ComponentInterface::withCont
 
 and returns a new instance with the modified content.
 
-<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
+<p class="message-info">submitted string is normalized to be RFC3986 compliant.</p>
 
 ~~~php
 <?php
@@ -133,6 +137,8 @@ $new_host = $host->withContent('bébé.be');
 echo $new_host->getContent(); //displays 'xn--bb-bjab.be';
 echo $new_host->getContent(Host::RFC3987_ENCODING); //displays 'bébé.be';
 ~~~
+
+<p class="message-warning">If the submitted value is not valid an <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
 List of URI component objects
 --------

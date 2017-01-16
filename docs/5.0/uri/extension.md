@@ -163,8 +163,8 @@ use Example\Mailto;
 $subject = http_build_query(['subject' => 'Hello World!'], '', '&', PHP_QUERY_RFC3986);
 $mailto = Mailto::createFromEmails(['foo@example.com', 'info@thephpleague.com'])
     ->withQuery($subject);
-$mailto->__toString();
-//returns 'mailto:foo@example.com,info@thephpleague.com?subject=Hello%20World%21';
+echo $mailto;
+//displays 'mailto:foo@example.com,info@thephpleague.com?subject=Hello%20World%21';
 ~~~
 
 ## URI manipulations

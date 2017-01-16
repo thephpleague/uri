@@ -20,7 +20,7 @@ public Uri::createFromComponents(array $components): Uri
 - The `Uri::createFromString` named constructor returns an new URI object from a string.
 - The `Uri::createFromComponents` named constructor returns an new URI object from the return value of PHP’s function `parse_url`.
 
-<p class="message-warning">If you supply your own array to <code>createFromComponents</code> some URI components may not be well parse or validated.</p>
+<p class="message-warning">If you supply your own array to <code>createFromComponents</code> some URI components may not be well validated.</p>
 
 
 Accessing URI properties

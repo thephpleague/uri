@@ -122,7 +122,7 @@ use League\Uri\Components\Query;
 $query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
 $arr = Query::parse($query_string, '&');
 // [
-//     "toto.foo" => [["bar", "baz"],
+//     "toto.foo" => ["bar", "baz"],
 //     "foo" => null,
 //     "baz" => "",
 // ]

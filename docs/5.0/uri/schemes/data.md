@@ -21,11 +21,11 @@ echo $uri; //returns 'data:image/png;charset=binary;base64,...'
 //where '...' represent the base64 representation of the file
 ~~~
 
-If the file is not readable or accessible an `InvalidArgumentException` exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
+If the file is not readable or accessible an `UriException` exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
 
 ## Validation
 
-Even though all URI properties are defined and accessible attempt to set any component other than the path will result in the object throwing a `InvalidArgumentException` exception. As adding data to theses URI parts will generate an invalid Data URI.
+Even though all URI properties are defined and accessible attempt to set any component other than the path will result in the object throwing a `UriException` exception. As adding data to theses URI parts will generate an invalid Data URI.
 
 ~~~php
 <?php
@@ -34,5 +34,5 @@ use League\Uri\Schemes\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
 $uri->getHost(); //return '' an empty string
-$uri->withHost('example.com'); //thrown an InvalidArgumentException
+$uri->withHost('example.com'); // will throw an League\Uri\Schemes\UriException
 ~~~

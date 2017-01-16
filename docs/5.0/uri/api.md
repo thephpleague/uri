@@ -9,6 +9,8 @@ URI Objects API
 Creating new URI objects
 -------
 
+### URI instantiation
+
 To instantiate a new URI object you can use two named constructors:
 
 ~~~php
@@ -20,7 +22,54 @@ public Uri::createFromComponents(array $components): Uri
 - The `Uri::createFromString` named constructor returns an new URI object from a string.
 - The `Uri::createFromComponents` named constructor returns an new URI object from the return value of PHP’s function `parse_url`.
 
-<p class="message-warning">If you supply your own array to <code>createFromComponents</code> some URI components may not be well validated.</p>
+<p class="message-warning">If you supply your own hash to <code>createFromComponents</code>, you are responsible for providing well parsed components without their URI delimiters.</p>
+
+### URI validation
+
+A `League\Uri\Schemes\UriException` exception is triggered if an invalid URI is given.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Data;
+
+$uri = Data::createFromComponents(
+    parse_url("http://uri.thephpleague/5.0/uri/api")
+);
+// throws a League\Uri\Schemes\UriException
+// because the http scheme is not supported
+~~~
+
+Because `createFromString` internally use `League\Uri\Parser` if the supplied URI string is invalid a `League\Uri\Exception` can be thrown on instantiation.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+
+$uri = Http::createFromString(':');
+// throws a League\Uri\Exception
+// because the URI string is invalid
+~~~
+
+<p class="message-info">Because the <code>League\Uri\Schemes\UriException</code> exception extends <code>League\Uri\Exception</code> you can catch any exception triggered by the package using the following code.</p>
+
+<p class="message-info"><code>League\Uri\Exception</code> extends PHP's SPL <code>InvalidArgumentException</code>.</p>
+
+
+~~~php
+<?php
+
+use League\Uri\Exception;
+use League\Uri\Schemes\Http;
+
+try {
+	$uri = Http::createFromString(':');
+} catch (Exception $e) {
+	//$e is either League\Uri\Exception
+	//or League\Uri\Schemes\UriException
+}
+~~~
 
 
 Accessing URI properties
@@ -66,7 +115,7 @@ Modifying URI properties
 
 To replace one of the URI part you can use the modifying methods exposed by all URI object. If the modifications do not alter the current object, it is returned as is, otherwise, a new modified object is returned.
 
-<p class="message-warning">The method will trigger a <code>InvalidArgumentException</code> exception if the resulting URI is not valid. The modification validaity is scheme dependant.</p>
+<p class="message-notice">Any modification method can trigger a <code>League\Uri\Schemes\UriException</code> exception if the resulting URI is not valid. Just like with the instantiation methods, validition is scheme dependant.</p>
 
 ~~~php
 <?php

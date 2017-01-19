@@ -71,7 +71,7 @@ $tmpUri = $modifiers->process($uri->withScheme('https'));
 //the specific transformation are applied here
 $links = [];
 foreach (['csv', 'json', 'xml'] as $extension) {
-    $links[$extension] = (new Extension($extension))->__invoke($tmpUri);
+    $links[$extension] = (new Extension($extension))->process($tmpUri);
 }
 
 // $links is an array of League\Uri\Schemes\Http objects

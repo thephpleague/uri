@@ -13,7 +13,7 @@ The Formatter class helps you format your URI according to your output.
 ~~~php
 <?php
 
-public Formatter::setEncoding(string $format): void
+public Formatter::setEncoding(int $format): void
 public Formatter::setQuerySeparator(string $separator): void
 public Formatter::preserveQuery(bool $status): void
 public Formatter::preserveFragment(bool $status): void
@@ -55,7 +55,7 @@ use League\Uri\Formatter;
 use Zend\Diactoros\Uri as DiactorosUri;
 
 $formatter = new Formatter();
-$formatter->setHostEncoding(Formatter::RFC3987);
+$formatter->setHostEncoding(Formatter::RFC3987_ENCODING);
 $formatter->setQuerySeparator('&amp;');
 $formatter->preserveFragment(true);
 

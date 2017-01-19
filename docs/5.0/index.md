@@ -12,7 +12,7 @@ title: Uri
 [![Build Status](https://img.shields.io/travis/thephpleague/uri/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The library is a **meta package** which provides simple and intuitive classes to [parse](/5.0/parser/), [instantiate](/5.0/schemes/) and [manipulate](/5.0/manipulations/) URIs and their [components](/5.0/components/) in PHP. Out of the box the library handles the following schemes:
+The library is a **meta package** which provides simple and intuitive classes to [parse](/5.0/parser/), [validate](/5.0/schemes/) and [manipulate](/5.0/manipulations/) URIs and their [components](/5.0/components/) in PHP. Out of the box the library validate the following URI specific schemes:
 
 - HTTP/HTTPS;
 - Websockets;
@@ -24,9 +24,9 @@ and allow to easily manage others scheme specific URIs.
 
 The library ships with:
 
-- a [RFC3986][] compliant parser for the [URI string](/5.0/parser/);
-- a URI formatter to easily output [RFC3987][] URI strings;
-- URI middlewares and functions to ease URI manipulations
+- a [RFC3986][] and [RFC3987][] compliant parser for the [URI string](/5.0/parser/);
+- a [URI formatter](/5.0/manipulations/formatter/) to easily output [RFC3987][] URI strings;
+- [URI middlewares](/5.0/manipulations/middlewares/) and functions to ease URI manipulations;
 
 Highlights
 ------
@@ -36,15 +36,12 @@ Highlights
 - Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic
-- Composer ready, [PSR-2][] and [PSR-4][] compliant
 
 Questions?
 ------
 
 The package was created by Nyamagana Butera Ignace. Find him on Twitter at [@nyamsprod][].
 
-[PSR-2]: http://www.php-fig.org/psr/psr-2/
-[PSR-4]: http://www.php-fig.org/psr/psr-4/
 [PSR-7]: http://www.php-fig.org/psr/psr-7/
 [RFC3986]: http://tools.ietf.org/html/rfc3986
 [RFC3987]: http://tools.ietf.org/html/rfc3987

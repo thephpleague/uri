@@ -6,6 +6,8 @@ title: Uri Object API
 URI Objects API
 =======
 
+The URI objects are mainly used to validate and normalized URI against RFC3986 and each scheme specific validation rules.
+
 Creating new URI objects
 -------
 
@@ -22,9 +24,12 @@ public static Uri::createFromComponents(array $components): Uri
 - The `Uri::createFromString` named constructor returns an new URI object from a string.
 - The `Uri::createFromComponents` named constructor returns an new URI object from the return value of PHP’s function `parse_url`.
 
+<p class="message-warning">The default constructor is protected and can not be accessed to instantiate a new object.</p>
+
 <p class="message-warning">If you supply your own hash to <code>createFromComponents</code>, you are responsible for providing well parsed components without their URI delimiters.</p>
 
 ### URI validation
+
 
 A `League\Uri\Schemes\UriException` exception is triggered if an invalid URI is given.
 

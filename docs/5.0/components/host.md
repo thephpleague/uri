@@ -135,7 +135,7 @@ $newHost = $host->withContent('uri.thephpleague.com');
 $newHost->getIp(); //returns null
 ~~~
 
-## Host represented by an registered named
+## Host represented by a registered name
 
 If you don't have a IP then you are dealing with a registered name. A registered name is a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1). As such a registered name can not, for example, contain an `_`.
 
@@ -184,7 +184,7 @@ echo $host->getSubdomain();           //return ''
 $host->isPublicSuffixValid();         //return false
 ~~~
 
-#### Updating the the Registerable domain part
+### Updating the Registerable domain part
 
 You can update the registerable domain part of the host.
 
@@ -200,7 +200,7 @@ echo $newHost; //displays 'www.11.co.uk'
 
 <p class="message-warning">This method throws an <code>League\Uri\Components\Exception</code> if you submit a FQDN.</p>
 
-#### Update the Host subdomains
+### Update the Host subdomains
 
 You can update the subdomain part of the host.
 

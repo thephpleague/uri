@@ -5,7 +5,13 @@ title: The Data Uri Path component
 
 # Data URI Path
 
-The library provides a `League\Uri\Components\DataPath` class to ease complex path manipulation on a Data URI object. The class exposes the same method as the `League\Uri\Components\Path` object and adds methods dedicated to manipulate Data URI paths.
+
+The library provides a `DataPath` class to ease complex path manipulation on a Data URI object. This URI component object exposes :
+
+- the [package common API](/5.0/components/api/)
+- the [path common API](/5.0/components/path)
+
+but also provide specific methods to work with Data URI paths.
 
 ## Instantiation using a file path
 
@@ -21,7 +27,7 @@ echo $uri; //returns 'image/png;charset=binary;base64,...'
 //where '...' represent the base64 representation of the file
 ~~~
 
-If the file is not readable or accessible an InvalidArgumentException exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
+If the file is not readable or accessible a `League\Uri\Components\Exception` exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
 
 ## Accessing the path properties
 

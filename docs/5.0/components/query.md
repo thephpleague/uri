@@ -22,7 +22,7 @@ The library provides a `Query` class to ease query string creation and manipulat
 public static Query::extract(string $query[, string $separator = '&' [, int $enc_type = ComponentInterface::RFC3986_ENCODING]]): array
 ~~~
 
-This method deserializes the query string parameters into an associative `array` similar to PHP's `parse_str` when used with its optional second argument. The methods expects the following arguments:
+This method deserializes the query string parameters into an associative `array` similar to PHP's `parse_str` when used with its optional second argument. This static public method expects the following arguments:
 
 - The query string **required**;
 - The query string separator **optional**, by default it is set to `&`;

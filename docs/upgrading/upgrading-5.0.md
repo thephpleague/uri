@@ -197,9 +197,9 @@ After:
 
 use League\Uri\Modifiers\Pipeline;
 
-$pipeline = Pipeline::createFromCallables([function ($uri) {
+$pipeline = new Pipeline([new CallableAdapter(function ($uri) {
 	return $uri->withHost('thephpleague.com');
-})];
+}))];
 ...
 ~~~
 

@@ -36,11 +36,11 @@ An associative array is returned. The following keys are always present within t
 <?php
 
 use GuzzleHttp\Psr7\Uri as GuzzleUri;
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Schemes\Http;
 use function League\Uri\Modifiers\uri_reference;
 
 $guzzle_uri = new GuzzleUri("//스타벅스코리아.com/how/are/you?foo=baz");
-$alt_uri = HttpUri::createFromString("//xn--oy2b35ckwhba574atvuzkc.com/how/are/you?foo=baz#bar");
+$alt_uri = Http::createFromString("//xn--oy2b35ckwhba574atvuzkc.com/how/are/you?foo=baz#bar");
 
 var_dump(uri_reference($guzzle_uri));
 //displays

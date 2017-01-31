@@ -238,7 +238,7 @@ After:
 use League\Uri\Components\Host;
 
 $host = new Host('::1'); //triggers an Exception
-$host = Host::createFromIp('::1')->__toString(); //display '[::1]'
+echo Host::createFromIp('::1'); //display '[::1]'
 ~~~
 
 

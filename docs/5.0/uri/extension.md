@@ -135,11 +135,11 @@ class Mailto extends AbstractUri
      * A specific named constructor to speed up
      * creating a new instance from a collection of mails
      *
-     * @param \Traversable|string[] $emails
+     * @param string[] $emails
      *
      * @return static
      */
-    public static function createFromEmails($emails)
+    public static function createFromEmails(array $emails)
     {
         $verif = filter_var($emails, FILTER_VALIDATE_EMAIL, FILTER_REQUIRE_ARRAY);
         if ($emails !== $verif) {

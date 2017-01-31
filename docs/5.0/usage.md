@@ -65,7 +65,7 @@ $uri = new GuzzleUri("http://www.example.com/report");
 //we register and apply the common transformations
 $modifiers = (new Pipeline())
     ->pipe(new AppendSegment('/purchases/summary'))
-    ->pipe(new ReplaceLabel(3, 'download'));
+    ->pipe(new ReplaceLabel(-1, 'download'));
 $tmpUri = $modifiers->process($uri->withScheme('https'));
 
 //the specific transformation are applied here
@@ -79,4 +79,5 @@ echo $uri, PHP_EOL;           // display "http://www.example.com/report"
 echo $links['csv'], PHP_EOL;  // display "https://download.example.com/report/purchases/summary.csv"
 echo $links['xml'], PHP_EOL;  // display "https://download.example.com/report/purchases/summary.xml"
 echo $links['json'], PHP_EOL; // display "https://download.example.com/report/purchases/summary.json"
+echo get_class($links['json']), PHP_EOL; // display "GuzzleHttp\Psr7\Uri"
 ~~~

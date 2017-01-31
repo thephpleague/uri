@@ -24,10 +24,10 @@ $query_to_merge = 'fo.o=bar&taz=';
 
 $uri = SlimUri::createFromString($base_uri);
 $source_query = $uri->getQuery();
-parse_str($source_query, $pairs);
-parse_str($query_to_merge, $new_pairs);
+parse_str($source_query, $params);
+parse_str($query_to_merge, $new_params);
 $new_query = http_build_query(
-    array_merge($pairs, $new_pairs),
+    array_merge($params, $new_params),
     '',
     '&',
     PHP_QUERY_RFC3986

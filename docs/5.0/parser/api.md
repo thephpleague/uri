@@ -172,7 +172,14 @@ var_export($parser($uri));
 
 ## Validating the URI host component
 
-If you have a host **string** you can validate it against the parser as shown below:
+If you have a host **string** you can validate it against the parser. The host is considered to be valid if it is:
+
+- an empty string;
+- a IPv4;
+- a formatted IPv6 (with or without its zone identifier);
+- a registered name;
+
+A registered name is a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1). As such a registered name can not, for example, contain an `_`. The registered name can be RFC3987 or RFC3986 compliant.
 
 ~~~php
 <?php
@@ -182,6 +189,6 @@ use League\Uri\Parser;
 $parser = new Parser();
 $parser->isHost('example.com'); //returns true
 $parser->isHost('/path/to/yes'); //returns false
+$parser->isHost('[:]'); //returns true
+$parser->isHost('[127.0.0.1]'); //returns false
 ~~~
-
-The string can be RFC3987 or RFC3986 compliant.

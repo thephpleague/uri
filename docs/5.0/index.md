@@ -1,5 +1,6 @@
 ---
 layout: default
+permalink: /
 title: Uri
 ---
 

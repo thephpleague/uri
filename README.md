@@ -9,14 +9,11 @@ URI
 The `Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
 
 
-**The latest stable source code is available at https://github.com/thephpleague/uri/tree/4.x.**
-
-
 Highlights
 ------
 
 - Simple API
-- [RFC3986](http://tools.ietf.org/html/rfc3986) compliant
+- [RFC3986](http://tools.ietf.org/html/rfc3986) and [RFC3987](http://tools.ietf.org/html/rfc3987) compliant
 - Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic

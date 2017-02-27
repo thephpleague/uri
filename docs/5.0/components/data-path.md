@@ -86,7 +86,7 @@ Another manipulation is to transcode the data from ASCII to is base64 encoded (o
 
 use League\Uri\Components\DataPath;
 
-$path = new DataPath('data:text/plain;charset=us-ascii,Hello%20World%21');
+$path = new DataPath('text/plain;charset=us-ascii,Hello%20World%21');
 $path->isBinaryData(); // return false;
 $newPath = $path->toBinary();
 $newPath->isBinaryData(); //return true;

@@ -1,6 +1,6 @@
 '5.0':
     Getting Started:
-        Overview: '/5.0/'
+        Overview: '/'
         Installation: '/5.0/installation/'
         Usage: '/5.0/usage/'
     Uri parser:

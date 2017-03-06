@@ -19,8 +19,6 @@
     ],
     "license": "MIT",
     "homepage": "http://uri.thephpleague.com",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "authors": [
         {
             "name" : "Ignace Nyamagana Butera",

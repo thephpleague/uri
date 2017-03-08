@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="homepage">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site.data.project.tagline }} - {{ site.data.project.title }}</title>
+    {% if site.data.project.description %}
+        <meta name="description" content="{{ site.data.project.description }}">
+    {% endif %}
+    {% if site.data.images.favicon %}
+        <link rel="icon" type="image/x-icon" href="{{ site.data.images.favicon }}" />
+    {% else %}
+        <link rel="icon" type="image/x-icon" href="http://theme.thephpleague.com/img/favicon.ico" />
+    {% endif %}
+    {% if site.data.images.apple_touch %}
+        <link rel="apple-touch-icon-precomposed" href="{{ site.data.images.apple_touch }}">
+    {% else %}
+        <link rel="apple-touch-icon-precomposed" href="http://theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
+    {% endif %}
+    <link rel="stylesheet" href="http://theme.thephpleague.com/css/all.css?2">
+    <link rel="stylesheet" href="/custom.css?6">
+</head>
+<body>
+
+<section class="all_packages">
+    <a href="http://thephpleague.com/">
+        <img src="http://theme.thephpleague.com/img/loep_logo.png" width="195" height="200" alt="The League of Extraordinary Packages">
+    </a>
+    <h2>Our Packages:</h2>
+    <ul>
+        <!-- Loaded via JavaScript -->
+    </ul>
+</section>
+
+{{ content }}
+
+<footer>
+    <span>&copy; Copyright <a href="http://thephpleague.com">The League of Extraordinary Packages</a>.</span>
+    <span>Site design by <a href="http://reinink.ca">Jonathan Reinink</a>.</span>
+</footer>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://theme.thephpleague.com/js/scripts.js"></script>
+<script src="/custom.js"></script>
+
+{% if site.data.project.google_analytics_tracking_id %}
+    <script>
+        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='//www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        ga('create','{{  site.data.project.google_analytics_tracking_id }}');ga('send','pageview');
+    </script>
+{% endif %}
+
+</body>
+</html>

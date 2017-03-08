@@ -43,7 +43,7 @@
         <link rel="apple-touch-icon-precomposed" href="http://theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     {% endif %}
     <link rel="stylesheet" href="http://theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/custom.css">
+    <link rel="stylesheet" href="/custom.css?6">
 </head>
 <body>
 
@@ -58,7 +58,7 @@
 </section>
 
 <header>
-    <a class="logo" href="{% if version == site.data.project.default_version %}/{% else %}/{{ version }}/{% endif %}">
+    <a class="logo" href="/">
         {% if site.data.images.logo %}
             <span class="icon">
                 <img src="{{ site.data.images.logo }}" width="50" height="40" alt="{{ site.data.project.title }} - {{ site.data.project.tagline }}">
@@ -80,12 +80,13 @@
 
 <main>
     <menu>
+        <div class="tool">
         <select class="versions">
             {% for v in site.data.menu %}
-                <option data-url="{% if v[0] == site.data.project.default_version %}/{% else %}/{{ v[0] }}/{% endif %}" {% if version == v[0] %}selected="selected"{% endif %}>                    Version: {{ v[0] }}
-                </option>
+                <option data-url="/{{ v[0] }}/" {% if version == v[0] %}selected="selected"{% endif %}>Version: {{ v[0] }}</option>
             {% endfor %}
         </select>
+        </div>
         {% for section in site.data.menu[version] %}
             <h2>{{ section[0] }}</h2>
             <ul>

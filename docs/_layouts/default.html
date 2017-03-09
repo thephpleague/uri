@@ -80,13 +80,11 @@
 
 <main>
     <menu>
-        <div class="tool">
         <select class="versions">
             {% for v in site.data.menu %}
                 <option data-url="/{{ v[0] }}/" {% if version == v[0] %}selected="selected"{% endif %}>Version: {{ v[0] }}</option>
             {% endfor %}
         </select>
-        </div>
         {% for section in site.data.menu[version] %}
             <h2>{{ section[0] }}</h2>
             <ul>

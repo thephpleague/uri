@@ -63,19 +63,21 @@ layout: homepage
         <div class="content">
           <p><code>League\Uri 5.0</code></p>
           <ul>
-            <li>Release Date: <strong>2017-02-06</strong></li>
             <li>Requires: <strong>PHP >= 7.0.0</strong></li>
+            <li>Release Date: <strong>2017-02-06</strong></li>
+            <li>Supported Until: <strong>TBD</strong></li>
           </ul>
           <p><a href="/5.0/">Full Documentation</a></p>
         </div>
       </div>
-      <div class="version legacy">
-        <h2>No longer Supported</h2>
+      <div class="version security">
+        <h2>Old stable release</h2>
         <div class="content">
           <p><code>League\Uri 4.0</code></p>
           <ul>
-            <li>Release Date: <strong>2015-09-23</strong></li>
             <li>Requires: <strong>PHP >= 5.5.9</strong></li>
+            <li>Release Date: <strong>2015-09-23</strong></li>
+            <li>Supported Until: <strong>2017-08-06</strong></li>
           </ul>
           <p><a href="/4.0/">Full Documentation</a></p>
         </div>

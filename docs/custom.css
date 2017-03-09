@@ -235,6 +235,12 @@ h5:hover .header-permalink {
     background: #e75557;
 }
 
+.documentation .version ul {
+    list-style:none;
+    text-align:left;
+}
+
+
 .documentation .version .content {
     padding:1em 0;
     background: #fff;
@@ -274,6 +280,24 @@ h5:hover .header-permalink {
 
 .documentation .legacy a:hover {
     background: #c94034;
+}
+
+.documentation .security {
+    border-color:#ff8300;
+}
+
+.documentation .security h2 {
+    background:#ff8300;
+}
+
+.documentation .security a {
+    background: #ff8300;
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 #a85401;
+}
+
+.documentation .security a:hover {
+    background: #e56b00;
 }
 
 .documentation .current {
@@ -357,6 +381,10 @@ h5:hover .header-permalink {
         float:left;
         margin:5%;
         width:289px;
+    }
+
+    .documentation .security {
+        float:right;
     }
 
     .documentation .legacy {

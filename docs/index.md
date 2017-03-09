@@ -82,6 +82,9 @@ layout: homepage
           <p><a href="/4.0/">Full Documentation</a></p>
         </div>
       </div>
+
+      <p class="footnote">Once a new major version is released, the previous stable release remains supported for six (6) more months through patches and/or security fixes.</p>
+
     </div>
   </div>
   <div class="questions">

@@ -2,7 +2,6 @@
     Getting Started:
         Overview: '/5.0/'
         Installation: '/5.0/installation/'
-        Usage: '/5.0/usage/'
     Uri parser:
         Overview: '/5.0/parser/'
         Installation: '/5.0/parser/installation/'
@@ -42,10 +41,9 @@
         4.x to 5.x: '/upgrading/5.0/'
 '4.0':
     Getting Started:
-        Introduction: '/4.0/'
-        Terminology: '/4.0/definitions/'
+        Overview: '/4.0/'
         Installation: '/4.0/installation/'
-        Usage: '/4.0/examples/'
+        Terminology: '/4.0/definitions/'
     Uri:
         Instantiation: '/4.0/uri/instantiation/'
         Properties: '/4.0/uri/properties/'

@@ -200,6 +200,10 @@ h5:hover .header-permalink {
     font-size:36px;
 }
 
+.documentation .footnote {
+    clear:both;
+}
+
 .documentation .version {
     margin:.3em auto;
     padding:0;
@@ -240,7 +244,6 @@ h5:hover .header-permalink {
     text-align:left;
 }
 
-
 .documentation .version .content {
     padding:1em 0;
     background: #fff;
@@ -264,22 +267,22 @@ h5:hover .header-permalink {
     background: #0a7c87;
 }
 
-.documentation .legacy {
-    border-color:#e74c3c;
+.documentation .current {
+    border-color:#2db56a;
 }
 
-.documentation .legacy h2 {
-    background:#e74c3c;
+.documentation .current h2 {
+    background:#2db56a;
 }
 
-.documentation .legacy a {
-    background: #e74c3c;
+.documentation .current a {
+    background: #2db56a;
     border-radius: 4px;
-    box-shadow: 3px 3px 0 #a3342a;
+    box-shadow: 3px 3px 0 #1a7742;
 }
 
-.documentation .legacy a:hover {
-    background: #c94034;
+.documentation .current a:hover {
+    background: #259b58;
 }
 
 .documentation .security {
@@ -300,22 +303,22 @@ h5:hover .header-permalink {
     background: #e56b00;
 }
 
-.documentation .current {
-    border-color:#2db56a;
+.documentation .legacy {
+    border-color:#e74c3c;
 }
 
-.documentation .current h2 {
-    background:#2db56a;
+.documentation .legacy h2 {
+    background:#e74c3c;
 }
 
-.documentation .current a {
-    background: #2db56a;
+.documentation .legacy a {
+    background: #e74c3c;
     border-radius: 4px;
-    box-shadow: 3px 3px 0 #1a7742;
+    box-shadow: 3px 3px 0 #a3342a;
 }
 
-.documentation .current a:hover {
-    background: #259b58;
+.documentation .legacy a:hover {
+    background: #c94034;
 }
 
 .questions {

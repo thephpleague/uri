@@ -1,5 +1,34 @@
+# Documentation website
 title: "URI"
 tagline: "Modern API to process URI in PHP."
 description: "Modern API to process URI in PHP"
 google_analytics_tracking_id: UA-46050814-14
-default_version: "5.0"
+# Github repository
+repository: 'uri'
+releases:
+  current:
+    version: '5.0'
+    requires: 'PHP >= 7.0.0'
+    latest: '5.0.0 - 2017-02-06'
+    supported_until: 'TBD'
+    documentation_link: '/5.0/'
+  previous:
+    version: '4.0'
+    requires: 'PHP >= 5.5.9'
+    latest: '4.2.2 - 2016-12-12'
+    supported_until: '2017-08-06'
+    documentation_link: '/4.0/'
+author:
+    name: 'Ignace Nyamagana Butera'
+    twitter_account: 'nyamsprod'
+# Homepage specific
+highlights:
+  description: 'The library provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
+        any kind of RFC3986 compliant URI through extensions and middlewares.'
+  features:
+      - 'Simple and extensible API'
+      - '<a href="http://tools.ietf.org/html/rfc3986">RFC3986</a> compliant'
+      - 'Implements <a href="http://www.php-fig.org/psr/psr-7/">PSR-7</a> <code>UriInterface</code> interface'
+      - 'Framework-agnostic'
+composer: '$ composer require league/uri'
+support: 'Once a new major version is released, the previous stable release remains supported for six more months through patches and security fixes.'

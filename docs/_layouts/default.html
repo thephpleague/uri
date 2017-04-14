@@ -7,10 +7,8 @@
     {% assign version = page.url | remove_first: "/" | split: "/"" | first %}
     {% assign upgrading_pages = version %}
 
-    {% if version != '4.0' %}
-        {% if version != '5.0' %}
-            {% assign version = site.data.project.default_version %}
-        {% endif %}
+    {% if version == '' or version == 'upgrading' %}
+        {% assign version = site.data.project.releases.current.version %}
     {% endif %}
 
     {% capture version_home %}/{{ version }}/{% endcapture %}
@@ -43,7 +41,7 @@
         <link rel="apple-touch-icon-precomposed" href="http://theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     {% endif %}
     <link rel="stylesheet" href="http://theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/custom.css?9">
+    <link rel="stylesheet" href="/custom.css?11">
 </head>
 <body>
 
@@ -81,11 +79,23 @@
 <main>
     <menu>
         <select class="versions">
-            {% for v in site.data.menu %}
+            {% for v in site.data.menu.version %}
                 <option data-url="/{{ v[0] }}/" {% if version == v[0] %}selected="selected"{% endif %}>Version: {{ v[0] }}</option>
             {% endfor %}
         </select>
-        {% for section in site.data.menu[version] %}
+
+        {% for section in site.data.menu.version[version] %}
+            <h2>{{ section[0] }}</h2>
+            <ul>
+                {% for link in section[1] %}
+                    <li {% if page.url == link[1] %}class="selected"{% endif %}>
+                        <a href="{{ link[1] }}">{{ link[0] }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+
+        {% for section in site.data.menu.upgrading %}
             <h2>{{ section[0] }}</h2>
             <ul>
                 {% for link in section[1] %}

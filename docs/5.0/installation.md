@@ -37,11 +37,11 @@ the following **fully** decoupled libraries:
 - [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser)
 - [League Uri Interfaces](https://github.com/thephpleague/uri-interfaces)
 - [League Uri Parser](https://github.com/thephpleague/uri-parser)
-- [League Uri Components](https://github.com/thephpleague/uri-components)
 
 the following libraries:
 
 - [League Uri Schemes](https://github.com/thephpleague/uri-schemes)
+- [League Uri Components](https://github.com/thephpleague/uri-components)
 - [League Uri Manipulations](https://github.com/thephpleague/uri-manipulations)
 
 [Packagist]: https://packagist.org/packages/league/uri

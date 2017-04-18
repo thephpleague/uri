@@ -34,7 +34,7 @@ If a scheme is present and the scheme specific part of a Http URI is not empty t
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
-echo $uri->withHost('')->withScheme('')->__toString();
+echo $uri->withHost('')->withScheme('');
 // will throw an League\Uri\Schemes\UriException
 // you can not remove the Host if a scheme is present
 ~~~
@@ -47,7 +47,7 @@ Instead you are required to proceed as below
 use League\Uri\Schemes\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
-echo $uri->withScheme('')->withHost('')->__toString(); //displays "/"
+echo $uri->withScheme('')->withHost(''); //displays "/"
 ~~~
 
 <p class="message-notice">When an invalid URI object is created an <code>UriException</code> exception is thrown</p>

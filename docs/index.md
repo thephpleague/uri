@@ -2,7 +2,7 @@
 layout: homepage
 ---
 
-# Overview
+# Features
 
 ## Parsing URI
 
@@ -46,23 +46,24 @@ echo $uri; //displays http://xn--bb-bjab.be?#
 
 ## URI Middlewares
 
-A collection of URI middlewares to enable reliable URI modifications.
+A collection of URI middlewares to enable reliable URI modifications with any given League URI object or [PSR-7](http://www.php-fig.org/psr/psr-7/) `UriInterface` compatible implementation.
 
 ~~~php
 <?php
 
 use League\Uri\Modifiers\MergeQuery;
-use League\Uri\Schemes\Http as HttpUri;
+use Zend\Diactoros\Uri;
 
 $base_uri = "http://www.example.com?fo.o=toto#~typo";
 $query_to_merge = 'fo.o=bar&taz=';
 
-$uri = HttpUri::createFromString($base_uri);
+$uri = new Uri($base_uri);
 $modifier = new MergeQuery($query_to_merge);
 
 $new_uri = $modifier->process($uri);
 echo $new_uri;
 // display http://www.example.com?fo.o=bar&taz=#~typo
+// $new_uri is a Zend\Diactoros\Uri instance
 ~~~
 
 ## URI components

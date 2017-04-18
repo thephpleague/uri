@@ -37,12 +37,16 @@ blockquote {
 
 /* ---------- header automatic permalink -----------*/
 
+.example .header-permalink,
 .header-permalink {
     text-decoration: none;
     color:transparent;
     font-size:.8em;
     vertical-align: super;
 }
+
+
+
 .header-permalink:hover,
 h1:hover .header-permalink,
 h2:hover .header-permalink,
@@ -152,6 +156,10 @@ h5:hover .header-permalink {
 
 .example p {
     text-align: left;
+}
+
+.example a {
+    color:#6abcdd;
 }
 
 .highlights {

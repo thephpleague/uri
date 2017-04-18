@@ -19,7 +19,7 @@
         <link rel="apple-touch-icon-precomposed" href="http://theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     {% endif %}
     <link rel="stylesheet" href="http://theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/custom.css?11">
+    <link rel="stylesheet" href="/custom.css?12">
 </head>
 <body>
 
@@ -44,6 +44,12 @@
 
 <main>
 
+  <div class="example">
+    <div class="inner-content">
+{{ content }}
+    </div>
+  </div>
+
   <div class="highlights">
     <div class="inner-content">
       <div class="column one">
@@ -59,12 +65,6 @@
           {% endfor %}
         </ol>
       </div>
-    </div>
-  </div>
-
-  <div class="example">
-    <div class="inner-content">
-{{ content }}
     </div>
   </div>
 

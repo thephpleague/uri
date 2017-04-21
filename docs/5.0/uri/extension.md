@@ -25,7 +25,7 @@ class Telnet extends AbstractUri
      *
      * @var array
      */
-    protected static $supportedSchemes = [
+    protected static $supported_schemes = [
         'telnet' => 23,
     ];
 

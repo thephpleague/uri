@@ -21,11 +21,11 @@ class Telnet extends AbstractUri
     /**
      * Supported Schemes with their associated port
      *
-     * This property override the Parent supportedSchemes empty array
+     * This property override the Parent supported_schemes empty array
      *
      * @var array
      */
-    protected static $supportedSchemes = [
+    protected static $supported_schemes = [
         'telnet' => 23,
     ];
 

@@ -44,30 +44,6 @@
 
 <main>
 
-  <div class="highlights">
-    <div class="inner-content">
-      <div class="column one">
-        <h1>Highlights</h1>
-        <div class="description">
-        <p>{{ site.data.project.highlights.description }}</p>
-        </div>
-      </div>
-      <div class="column two">
-        <ol>
-          {% for feature in site.data.project.highlights.features %}
-          <li><p>{{ feature }}</p></li>
-          {% endfor %}
-        </ol>
-      </div>
-    </div>
-  </div>
-
-  <div class="example">
-    <div class="inner-content">
-{{ content }}
-    </div>
-  </div>
-
   <div class="documentation">
     <div class="inner-content">
       <h1>Releases</h1>
@@ -136,6 +112,30 @@
       </div>
 {% endif %}
       <p class="footnote">{{ site.data.project.support }}</p>
+    </div>
+  </div>
+
+  <div class="highlights">
+    <div class="inner-content">
+      <div class="column one">
+        <h1>Highlights</h1>
+        <div class="description">
+        <p>{{ site.data.project.highlights.description }}</p>
+        </div>
+      </div>
+      <div class="column two">
+        <ol>
+          {% for feature in site.data.project.highlights.features %}
+          <li><p>{{ feature }}</p></li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="example">
+    <div class="inner-content">
+{{ content }}
     </div>
   </div>
 

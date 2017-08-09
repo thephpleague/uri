@@ -12,7 +12,7 @@ releases:
     latest: '5.0.0 - 2017-02-06'
     supported_until: 'TBD'
     documentation_link: '/5.0/'
-  previous:
+  legacy:
     version: '4.0'
     requires: 'PHP >= 5.5.9'
     latest: '4.2.2 - 2016-12-12'

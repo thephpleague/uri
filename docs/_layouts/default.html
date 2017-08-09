@@ -107,6 +107,17 @@
         {% endfor %}
     </menu>
     <article>
+    {% if version == site.data.project.releases.next.version %}
+        <p class="message-notice">This is the documentation for the upcoming <code>version {{ version }}</code>. This is a work in progress</p>
+    {% endif %}
+
+    {% if version == site.data.project.releases.previous.version %}
+        <p class="message-notice">This is the documentation for <code>version {{ version }}</code> which will be supported until <strong>{{ site.data.project.releases.previous.supported_until }}</strong>. Please consider upgrading your code to <a href="{{ site.data.project.releases.current.documentation_link }}">the latest stable version</a></p>
+    {% endif %}
+
+    {% if version == site.data.project.releases.legacy.version %}
+        <p class="message-notice">This is the documentation for the unsupported <code>version {{ version }}</code>. Please consider upgrading your code to <a href="{{ site.data.project.releases.current.documentation_link }}">the latest stable version</a></p>
+    {% endif %}
         {{ content }}
     </article>
 </main>

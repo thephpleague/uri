@@ -11,7 +11,7 @@ URI Parser
 
 use League\Uri;
 
-final class Parser
+class Parser
 {
 	public function __invoke(string $uri): array
 	public function isHost(string $host): bool

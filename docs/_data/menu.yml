@@ -7,7 +7,7 @@ version:
             Overview: '/5.0/parser/'
             Installation: '/5.0/parser/installation/'
             API: '/5.0/parser/api/'
-            Parser: '/5.0/parser/parser/'
+            URI Parser: '/5.0/parser/parser/'
         Uri schemes:
             Overview: '/5.0/uri/'
             Installation: '/5.0/uri/installation/'

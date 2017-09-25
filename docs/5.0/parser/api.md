@@ -1,6 +1,6 @@
 ---
 layout: default
-title: RFC3986 - RFC3987 Parser
+title: URI Parser Public API
 ---
 
 Public API

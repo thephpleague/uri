@@ -45,7 +45,7 @@ trait HostnameTrait
 
         foreach ($labels as &$label) {
             if ('' !== $label) {
-                $label = idn_to_ascii($label);
+                $label = PHP_VERSION_ID >= 70200 ? @idn_to_ascii($label) : idn_to_ascii($label);
             }
         }
         unset($label);
@@ -65,14 +65,14 @@ trait HostnameTrait
         $host = $this->lower($this->setIsAbsolute($str));
         $raw_labels = explode('.', $host);
         $labels = array_map(function ($value) {
-            return idn_to_ascii($value);
+            return PHP_VERSION_ID >= 70200 ? @idn_to_ascii($value) : idn_to_ascii($value);
         }, $raw_labels);
 
         $this->assertValidHost($labels);
         $this->isIdn = $raw_labels !== $labels;
 
         return array_reverse(array_map(function ($label) {
-            return idn_to_utf8($label);
+            return PHP_VERSION_ID >= 70200 ? @idn_to_utf8($label) : idn_to_utf8($label);
         }, $labels));
     }
 

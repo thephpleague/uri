@@ -132,6 +132,10 @@ class DataPath extends AbstractComponent implements DataPathInterface
             throw new InvalidArgumentException(sprintf('invalid mimeType, `%s`', $mimetype));
         }
 
+        if ($mimetype === 'text/vcard') {
+            $mimetype = 'text/x-vcard';
+        }
+
         return $mimetype;
     }
 

@@ -20,7 +20,7 @@
         "ext-mbstring" : "*",
         "ext-intl" : "*",
         "ext-fileinfo": "*",
-        "jeremykendall/php-domain-parser": "^3.0",
+        "jeremykendall/php-domain-parser": "4.0.3-alpha",
         "php" : ">=5.5.9",
         "psr/http-message": "^1.0"
     },

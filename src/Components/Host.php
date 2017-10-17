@@ -266,7 +266,15 @@ class Host extends AbstractHierarchicalComponent implements HostInterface
     public function getLabel($offset, $default = null)
     {
         if (isset($this->data[$offset])) {
-            return $this->isIdn ? rawurldecode($this->data[$offset]) : idn_to_ascii($this->data[$offset]);
+            if ($this->isIdn) {
+                return rawurldecode($this->data[$offset]);
+            }
+
+            if (PHP_VERSION_ID >= 70200) {
+                return @idn_to_ascii($this->data[$offset]);
+            }
+
+            return idn_to_ascii($this->data[$offset]);
         }
 
         return $default;

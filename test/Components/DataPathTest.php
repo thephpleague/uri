@@ -46,15 +46,15 @@ class DataPathTest extends AbstractTestCase
     public function testCreateFromPath($path, $expected)
     {
         $uri = Path::createFromPath(dirname(__DIR__).'/data/'.$path);
-        $this->assertSame($expected, $uri->getMimeType());
+        $this->assertContains($uri->getMimeType(), $expected);
     }
 
     public function validFilePath()
     {
         return [
-            'text file' => ['hello-world.txt', 'text/plain'],
-            'img file' => ['red-nose.gif', 'image/gif'],
-            'vcard file' => ['john-doe.vcf', 'text/x-vcard'],
+            'text file' => ['hello-world.txt', ['text/plain']],
+            'img file' => ['red-nose.gif', ['image/gif']],
+            'vcard file' => ['john-doe.vcf', ['text/x-vcard', 'text/vcard']],
         ];
     }
 

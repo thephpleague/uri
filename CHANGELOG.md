@@ -2,6 +2,26 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 4.2.3 - 2017-10-17
+
+**FINAL 4.x RELEASE**
+
+### Added
+
+- Nothing
+
+### Fixed
+
+- issue [#105](https://github.com/thephpleague/uri/issues/105) Adding support for PHP7.2
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 4.2.2 - 2016-12-12
 
 ### Added

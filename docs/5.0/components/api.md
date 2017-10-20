@@ -30,15 +30,19 @@ Once instantiated, all URI component objects expose the methods and constant def
 ~~~php
 <?php
 
-const ComponentInterface::NO_ENCODING = 0;
-const ComponentInterface::RFC1738_ENCODING = 1;
-const ComponentInterface::RFC3986_ENCODING = 2;
-const ComponentInterface::RFC3987_ENCODING = 3;
-public ComponentInterface::isNull(void): bool
-public ComponentInterface::isEmpty(void): bool
-public ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
-public ComponentInterface::__toString(void): string
-public ComponentInterface::getUriComponent(void): string
+
+interface ComponentInterface
+{
+	const ComponentInterface::NO_ENCODING = 0;
+	const ComponentInterface::RFC1738_ENCODING = 1;
+	const ComponentInterface::RFC3986_ENCODING = 2;
+	const ComponentInterface::RFC3987_ENCODING = 3;
+	public function ComponentInterface::__toString(void): string
+	public function ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
+	public function ComponentInterface::getUriComponent(void): string
+	public function ComponentInterface::isEmpty(void): bool
+	public function ComponentInterface::isNull(void): bool
+}
 ~~~
 
 Which will lead to the following results:

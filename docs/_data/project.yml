@@ -15,7 +15,7 @@ releases:
   legacy:
     version: '4.0'
     requires: 'PHP >= 5.5.9'
-    latest: '4.2.2 - 2016-12-12'
+    latest: '4.2.3 - 2017-10-17'
     supported_until: '2017-08-06'
     documentation_link: '/4.0/'
 author:

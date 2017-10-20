@@ -6,10 +6,9 @@ title: URI Parser Public API
 Public API
 =======
 
-<p class="message-notice">helper functions are available since version <code>1.1.0</code></p>
-
-
 ## URI parsing
+
+<p class="message-notice"><code>Uri\parse</code> is available since version <code>1.1.0</code></p>
 
 URI parsing can be done:
 
@@ -53,6 +52,8 @@ var_export(Uri\parse('http://foo.com?@bar.com/'));
 
 ## URI building
 
+<p class="message-notice"><code>Uri\build</code> is available since version <code>1.1.0</code></p>
+
 You can rebuild a URI from a array using the helper function `Uri\build`.
 
 ~~~php
@@ -76,7 +77,31 @@ echo $uri; //displays http://foo.com?@bar.com/
 
 The `Uri\build` function never output the `pass` component as suggested by [RFC3986](https://tools.ietf.org/html/rfc3986#section-7.5).
 
+## Scheme validation
+
+<p class="message-notice">available since version <code>1.2.0</code></p>
+
+You can validate any scheme component using:
+
+- the `Uri\Parser::isScheme` method;
+- the helper function `Uri\is_scheme` which is an alias for `Uri\Parser::isScheme` method.
+
+~~~php
+<?php
+
+use League\Uri;
+
+$parser = new Uri\Parser();
+$parser->isScheme('example.com'); //returns false
+$parser->isScheme('ssh+svn'); //returns true
+
+Uri\is_scheme('data');  //returns true
+Uri\is_scheme('data:'); //returns false
+~~~
+
 ## Host validation
+
+<p class="message-notice"><code>Uri\is_host</code> is available since version <code>1.1.0</code></p>
 
 You can validate any host component using:
 
@@ -98,3 +123,24 @@ Uri\is_host('[:]'); //returns true
 Uri\is_host('[127.0.0.1]'); //returns false
 ~~~
 
+## Port validation
+
+<p class="message-notice">available since version <code>1.2.0</code></p>
+
+You can validate any port component using:
+
+- the `Uri\Parser::isPort` method;
+- the helper function `Uri\is_port` which is an alias for `Uri\Parser::isPort` method.
+
+~~~php
+<?php
+
+use League\Uri;
+
+$parser = new Uri\Parser();
+$parser->isPort('example.com'); //returns false
+$parser->isPort(888);           //returns true
+
+Uri\is_port('23');    //returns true
+Uri\is_port('data:'); //returns false
+~~~

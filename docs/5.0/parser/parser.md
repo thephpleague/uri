@@ -171,6 +171,27 @@ var_export($parser($uri));
 
 <p class="message-warning">This invalid HTTP URI is successfully parsed.</p>
 
+## Scheme validation
+
+<p class="message-notice">available since version <code>1.2.0</code></p>
+
+If you have a scheme **string** you can validate it against the parser. The scheme is considered to be valid if it is:
+
+- an empty string;
+- a string which follow [RFC3986 rules](https://tools.ietf.org/html/rfc3986#section-3.1);
+
+~~~php
+<?php
+
+use League\Uri\Parser;
+
+$parser = new Parser();
+$parser->isScheme('example.com'); //returns false
+$parser->isScheme('ssh+svn'); //returns true
+$parser->isScheme('data');  //returns true
+$parser->isScheme('data:'); //returns false
+~~~
+
 ## Host validation
 
 If you have a host **string** you can validate it against the parser. The host is considered to be valid if it is:
@@ -192,4 +213,24 @@ $parser->isHost('example.com'); //returns true
 $parser->isHost('/path/to/yes'); //returns false
 $parser->isHost('[:]'); //returns true
 $parser->isHost('[127.0.0.1]'); //returns false
+~~~
+
+## Port validation
+
+<p class="message-notice">available since version <code>1.2.0</code></p>
+
+If you have a port, you can validate it against the parser. The port is considered to be valid if it is:
+
+- a numeric value which follow [RFC3986 rules](https://tools.ietf.org/html/rfc3986#section-3.2.3);
+
+~~~php
+<?php
+
+use League\Uri\Parser;
+
+$parser = new Parser();
+$parser->isPort('example.com'); //returns false
+$parser->isPort(888);           //returns true
+$parser->isPort('23');    //returns true
+$parser->isPort('data:'); //returns false
 ~~~

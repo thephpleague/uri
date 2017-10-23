@@ -5,16 +5,18 @@ title: URIs extension
 
 # Creating other URI objects
 
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
+
 ## Creating a simple URI object
 
-Let say you want to create a `telnet` class to handle telnet URI. You just need to extends the <code>League\Uri\Schemes\AbstractUri</code> object and add telnet specific validation features to your class. Here's a quick example that you can further improve.
+Let say you want to create a `telnet` class to handle telnet URI. You just need to extends the <code>League\Uri\AbstractUri</code> object and add telnet specific validation features to your class. Here's a quick example that you can further improve.
 
 ~~~php
 <?php
 
 namespace Example;
 
-use League\Uri\Schemes\AbstractUri;
+use League\Uri\AbstractUri;
 
 class Telnet extends AbstractUri
 {
@@ -57,7 +59,7 @@ use Example\Telnet;
 $uri = Telnet::createFromString('TeLnEt://example.com:23/Hello%20There'):
 echo $uri; //return telnet://example.com/Hello%20There
 Telnet::createFromString('http://example.org'):
-//will throw an League\Uri\Schemes\UriException
+//will throw an League\Uri\UriException
 ~~~
 
 ## Advance URI Object creation
@@ -79,8 +81,8 @@ We simply need to add:
 
 namespace Example;
 
-use League\Uri\Schemes\AbstractUri;
-use League\Uri\Schemes\UriException;
+use League\Uri\AbstractUri;
+use League\Uri\UriException;
 
 class Mailto extends AbstractUri
 {

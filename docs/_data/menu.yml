@@ -6,8 +6,8 @@ version:
         Uri parser:
             Overview: '/5.0/parser/'
             Installation: '/5.0/parser/installation/'
-            API: '/5.0/parser/api/'
             URI Parser: '/5.0/parser/parser/'
+            functions: '/5.0/parser/api/'
         Uri schemes:
             Overview: '/5.0/uri/'
             Installation: '/5.0/uri/installation/'
@@ -17,7 +17,9 @@ version:
             FTP: '/5.0/uri/schemes/ftp/'
             Data: '/5.0/uri/schemes/data/'
             File: '/5.0/uri/schemes/file/'
+            Generic URI: '/5.0/uri/schemes/uri/'
             Extension Guide: '/5.0/uri/extension/'
+            Factory: '/5.0/uri/factory/'
         Uri manipulations:
             Overview: '/5.0/manipulations/'
             Installation: '/5.0/manipulations/installation/'
@@ -37,6 +39,7 @@ version:
             DataPath: '/5.0/components/data-path/'
             Query: '/5.0/components/query/'
             Fragment: '/5.0/components/fragment/'
+            functions: '/5.0/components/functions/'
     '4.0':
         Getting Started:
             Overview: '/4.0/'

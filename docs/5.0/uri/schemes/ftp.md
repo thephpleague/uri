@@ -5,7 +5,9 @@ title: Ftp URIs
 
 # Ftp URI
 
-To ease working with FTP URIs, the library comes bundle with a URI specific FTP class `League\Uri\Schemes\Ftp`.
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
+
+To ease working with FTP URIs, the library comes bundle with a URI specific FTP class `League\Uri\Ftp`.
 
 ## Validation
 
@@ -16,10 +18,10 @@ The scheme of a FTP URI must be equal to `ftp` or be undefined. It can not conta
 ~~~php
 <?php
 
-use League\Uri\Schemes\Ftp as FtpUri;
+use League\Uri\Ftp as FtpUri;
 
 $uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
-$uri->withQuery('p=1'); // will throw an League\Uri\Schemes\UriException
+$uri->withQuery('p=1'); // will throw an League\Uri\UriException
 ~~~
 
 Apart from the fragment,  the query components and the scheme definition, the FTP URIs share the same [validation rules](/5.0/uri/schemes/http/#validation) as Http URIs.

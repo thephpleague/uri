@@ -5,6 +5,8 @@ title: File URIs
 
 # File URI
 
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
+
 To ease working with File URIs, the library comes bundle with a URI specific File class.
 
 ## Instantiation
@@ -17,7 +19,7 @@ In addition to the defined named constructors, because file path depends on the 
 ~~~php
 <?php
 
-use League\Uri\Schemes\File;
+use League\Uri\File;
 
 $uri = File::createFromWidowsPath('c:\windows\My Documents\my word.docx');
 echo $uri; //returns 'file://localhost/c:My%20Documents/my%20word.docx'
@@ -30,10 +32,10 @@ Even though all URI properties are defined and accessible attempt to set any com
 ~~~php
 <?php
 
-use League\Uri\Schemes\File;
+use League\Uri\File;
 
 $uri = File::createFromUnixPath('/path/./../relative');
-$uri->withQuery('foo=bar'); // will throw an League\Uri\Schemes\UriException
+$uri->withQuery('foo=bar'); // will throw an League\Uri\UriException
 ~~~
 
 ## URI normalization
@@ -43,7 +45,7 @@ If the host file is the empty string it will be converted to `localhost`.
 ~~~php
 <?php
 
-use League\Uri\Schemes\File;
+use League\Uri\File;
 
 $uri = File::createFromString('file:///path/to/file.csv');
 echo $uri; //display file://localhost/path/to/file.csv

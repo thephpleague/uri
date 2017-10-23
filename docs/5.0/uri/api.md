@@ -6,7 +6,9 @@ title: Uri Object API
 URI Objects API
 =======
 
-The URI objects are mainly used to validate and normalized URI against RFC3986 and each scheme specific validation rules.
+The URI objects are mainly used to validate and normalized URI against `RFC3986` and each scheme specific validation rules.
+
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
 
 Creating new URI objects
 -------
@@ -28,20 +30,17 @@ public static Uri::createFromComponents(array $components): Uri
 
 <p class="message-warning">If you supply your own hash to <code>createFromComponents</code>, you are responsible for providing well parsed components without their URI delimiters.</p>
 
-### URI validation
-
-
-A `League\Uri\Schemes\UriException` exception is triggered if an invalid URI is given.
+A `League\Uri\UriException` exception is triggered if an invalid URI is given.
 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Data;
+use League\Uri\Data;
 
 $uri = Data::createFromComponents(
     parse_url("http://uri.thephpleague/5.0/uri/api")
 );
-// throws a League\Uri\Schemes\UriException
+// throws a League\Uri\UriException
 // because the http scheme is not supported
 ~~~
 
@@ -50,14 +49,14 @@ Because `createFromString` internally use `League\Uri\Parser` if the supplied UR
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use League\Uri\Http;
 
 $uri = Http::createFromString(':');
 // throws a League\Uri\Exception
 // because the URI string is invalid
 ~~~
 
-<p class="message-info">Because the <code>League\Uri\Schemes\UriException</code> exception extends <code>League\Uri\Exception</code> you can catch any exception triggered by the package using the following code.</p>
+<p class="message-info">Because the <code>League\Uri\UriException</code> exception extends <code>League\Uri\Exception</code> you can catch any exception triggered by the package using the following code.</p>
 
 <p class="message-info"><code>League\Uri\Exception</code> extends PHP's SPL <code>InvalidArgumentException</code>.</p>
 
@@ -66,16 +65,15 @@ $uri = Http::createFromString(':');
 <?php
 
 use League\Uri\Exception;
-use League\Uri\Schemes\Http;
+use League\Uri\Http;
 
 try {
 	$uri = Http::createFromString(':');
 } catch (Exception $e) {
 	//$e is either League\Uri\Exception
-	//or League\Uri\Schemes\UriException
+	//or League\Uri\UriException
 }
 ~~~
-
 
 Accessing URI properties
 -------
@@ -101,7 +99,7 @@ Which will lead to the following result for a simple HTTP URI:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http;
+use League\Uri\Http;
 
 $uri = Http::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz#title");
 echo $uri;                 //displays "http://foo:bar@www.example.com:81/how/are/you?foo=baz#title"
@@ -120,7 +118,7 @@ Modifying URI properties
 
 To replace one of the URI part you can use the modifying methods exposed by all URI object. If the modifications do not alter the current object, it is returned as is, otherwise, a new modified object is returned.
 
-<p class="message-notice">Any modification method can trigger a <code>League\Uri\Schemes\UriException</code> exception if the resulting URI is not valid. Just like with the instantiation methods, validition is scheme dependant.</p>
+<p class="message-notice">Any modification method can trigger a <code>League\Uri\UriException</code> exception if the resulting URI is not valid. Just like with the instantiation methods, validition is scheme dependant.</p>
 
 ~~~php
 <?php
@@ -139,7 +137,7 @@ Since All URI object are immutable you can chain each modifying methods to simpl
 ~~~php
 <?php
 
-use League\Uri\Schemes\Ws;
+use League\Uri\Ws;
 
 $uri = Ws::createFromString("ws://thephpleague.com/fr/")
     ->withScheme("wss")
@@ -167,7 +165,7 @@ These non destructives rules are:
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f 3#title");
 echo $uri; //displays http://www.example.com/hello/./wor%20ld?who=f%203#title

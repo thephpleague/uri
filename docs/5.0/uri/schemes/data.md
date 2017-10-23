@@ -5,6 +5,8 @@ title: Data URIs
 
 # Data URI
 
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
+
 To ease working with Data URIs, the library comes bundle with a URI specific Data class. This class follows [RFC2397](http://tools.ietf.org/html/rfc2397)
 
 ## Instantiation
@@ -14,7 +16,7 @@ In addition to the defined named constructors, because data URI represents files
 ~~~php
 <?php
 
-use League\Uri\Schemes\Data as DataUri;
+use League\Uri\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
 echo $uri; //returns 'data:image/png;charset=binary;base64,...'
@@ -30,9 +32,9 @@ Even though all URI properties are defined and accessible attempt to set any com
 ~~~php
 <?php
 
-use League\Uri\Schemes\Data as DataUri;
+use League\Uri\Data as DataUri;
 
 $uri = DataUri::createFromPath('path/to/my/png/image.png');
 $uri->getHost(); //return '' an empty string
-$uri->withHost('example.com'); // will throw an League\Uri\Schemes\UriException
+$uri->withHost('example.com'); // will throw an League\Uri\UriException
 ~~~

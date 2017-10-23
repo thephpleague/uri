@@ -5,14 +5,16 @@ title: Http URIs
 
 # Http, Https URI
 
+<p class="message-warning">Starting with version <code>1.1.0</code> all URI objects are defined in the <code>League\Uri</code> namespace. The <code>League\Uri\Schemes</code> namespace is deprecated and will be removed in the next major release.</p>
+
 ## Instantiation
 
-To work with Http URIs you can use the `League\Uri\Schemes\Http` class. This class handles secure and insecure Http URI. In addition to the default named constructors, the `Http` class can be instantiated using the server variables.
+To work with Http URIs you can use the `League\Uri\Http` class. This class handles secure and insecure Http URI. In addition to the default named constructors, the `Http` class can be instantiated using the server variables.
 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 //don't forget to provide the $_SERVER array
 $uri = HttpUri::createFromServer($_SERVER);
@@ -31,11 +33,11 @@ If a scheme is present and the scheme specific part of a Http URI is not empty t
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withHost('')->withScheme('');
-// will throw an League\Uri\Schemes\UriException
+// will throw an League\Uri\UriException
 // you can not remove the Host if a scheme is present
 ~~~
 
@@ -44,7 +46,7 @@ Instead you are required to proceed as below
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost(''); //displays "/"
@@ -60,11 +62,11 @@ According to RFC3986, if an HTTP URI contains a non empty authority part, the UR
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withPath('uri/schemes/http');
-// will throw an League\Uri\Schemes\UriException
+// will throw an League\Uri\UriException
 ~~~
 
 Instead you are required to submit a absolute path
@@ -72,7 +74,7 @@ Instead you are required to submit a absolute path
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString('http://uri.thephpleague.com/');
 echo $uri->withPath('/uri/schemes/http'); // displays 'http://uri.thephpleague.com/uri/schemes/http'
@@ -83,7 +85,7 @@ Of note this does not mean that rootless path are forbidden, the following code 
 ~~~php
 <?php
 
-use League\Uri\Schemes\Http as HttpUri;
+use League\Uri\Http as HttpUri;
 
 $uri = HttpUri::createFromString('?foo=bar');
 echo $uri->withPath('uri/schemes/http'); // displays 'uri/schemes/http?foo=bar'

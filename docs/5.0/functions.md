@@ -14,7 +14,17 @@ Because these functions require different URI packages. Some of them may be miss
 
 <div class="functions-listing-container">
 	<div class="functions-listing">
-		<h3>URI informations</h3>
+		<h3>URI creation</h3>
+		<ul>
+			<li><a href="/5.0/parser/parser/#uri-parsing">parse</a></li>
+			<li><a href="/5.0/parser/builder/">build</a></li>
+			<li><a href="/5.0/uri/factory/#the-create-method">create</a></li>
+			<li><a href="/5.0/manipulations/middlewares/#resolving-a-relative-uri">resolve</a></li>
+			<li><a href="/5.0/manipulations/middlewares/#relativize-an-uri">relativize</a></li>
+		</ul>
+	</div>
+	<div class="functions-listing">
+		<h3>URI information</h3>
 		<ul>
 			<li><a href="/5.0/parser/parser/#scheme-validation">is_scheme</a></li>
 			<li><a href="/5.0/parser/parser/#host-validation">is_host</a></li>
@@ -28,25 +38,21 @@ Because these functions require different URI packages. Some of them may be miss
 		</ul>
 	</div>
 	<div class="functions-listing">
-		<h3>Manipulating the complete URI</h3>
+		<h3>URI conversion</h3>
 		<ul>
-			<li><a href="/5.0/parser/parser/#uri-parsing">parse</a></li>
-			<li><a href="/5.0/parser/builder/">build</a></li>
 			<li><a href="/5.0/manipulations/formatter/#function-alias">uri_to_rfc3986</a></li>
 			<li><a href="/5.0/manipulations/formatter/#function-alias">uri_to_rfc3987</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#uri-comparison">normalize</a></li>
-			<li><a href="/5.0/manipulations/middlewares/#rrelativize-an-uri">relativize</a></li>
-			<li><a href="/5.0/manipulations/middlewares/#resolving-a-relative-uri">resolve</a></li>
 		</ul>
 	</div>
 	<div class="functions-listing">
-		<h3>Manipulating the URI query string</h3>
+		<h3>Manipulating the URI query</h3>
 		<ul>
 			<li><a href="/5.0/components/query/#queryextract">parse_query</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#merging-query-string">merge_query</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#append-data-to-the-query-string">append_query</a></li>
-			<li><a href="/5.0/manipulations/middlewares/#removing-query-pairs">remove_pairs</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#sorting-the-query-keys">sort_query</a></li>
+			<li><a href="/5.0/manipulations/middlewares/#removing-query-pairs">remove_pairs</a></li>
 		</ul>
 	</div>
 	<div class="functions-listing">
@@ -56,13 +62,13 @@ Because these functions require different URI packages. Some of them may be miss
 			<li><a href="/5.0/manipulations/middlewares/#transcoding-the-host-to-its-idn-form">host_to_unicode</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#updating-the-host-registrable-domain">replace_registrabledomain</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#updating-the-host-subdomain">replace_subdomain</a></li>
+			<li><a href="/5.0/manipulations/middlewares/#removing-zone-identifier">remove_zone_id</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#adding-the-root-label">add_root_label</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#removing-the-root-label">remove_root_label</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#appending-labels">append_host</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#prepending-labels">prepend_host</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#removing-selected-labels">remove_labels</a></li>
 			<li><a href="/5.0/manipulations/middlewares/#replacing-host-label">replace_label</a></li>
-			<li><a href="/5.0/manipulations/middlewares/#removing-zone-identifier">remove_zone_id</a></li>
 		</ul>
 	</div>
 	<div class="functions-listing">

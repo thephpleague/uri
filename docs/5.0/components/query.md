@@ -48,6 +48,22 @@ $arr = Query::extract($query_string);
 // $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
 ~~~
 
+<p class="message-info">Since version <code>1.1.0</code> The alias function <code>Uri\parse_query</code> is available</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'foo.bar=bar&foo_bar=baz';
+parse_str($query_string, $out);
+var_export($out);
+// $out = ["foo_bar" => 'baz'];
+
+$arr = Uri\parse_query($query_string);
+// $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
+~~~
+
 ### Query::getParams
 
 If you already have an instantiated `Query` object you can return all the query string deserialized arguments using the `Query::getParams` method:

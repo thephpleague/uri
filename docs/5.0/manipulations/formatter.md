@@ -6,19 +6,30 @@ title: URI formatter
 URI Formatter
 =======
 
-The Formatter class helps you format your URI according to your output.
-
-## API
-
 ~~~php
 <?php
 
-public Formatter::setEncoding(int $format): void
-public Formatter::setQuerySeparator(string $separator): void
-public Formatter::preserveQuery(bool $status): void
-public Formatter::preserveFragment(bool $status): void
-public Formatter::__invoke(mixed $uri): string
+
+use League\Uri\Modifiers;
+
+class Formatter
+{
+	public function __invoke(mixed $uri): string
+	public function preserveQuery(bool $status): void
+	public function preserveFragment(bool $status): void
+	public function setEncoding(int $format): void
+	public function setQuerySeparator(string $separator): void
+}
+
+// function aliases
+
+function League\Uri\uri_to_rfc3986(mixed $uri): string
+function League\Uri\uri_to_rfc3987(mixed $uri): string
 ~~~
+
+The Formatter class helps you format your URI according to your output.
+
+## API
 
 This main method `__invoke` expects an object implementing one of the following interface:
 
@@ -62,4 +73,35 @@ $formatter->preserveFragment(true);
 $uri = new DiactorosUri('https://xn--p1ai.ru:81?foo=ba%20r&baz=bar');
 echo $formatter($uri);
 //displays 'https://рф.ru:81?foo=ba r&amp;baz=bar#'
+~~~
+
+## Function alias
+
+<p class="message-notice">available since version <code>1.1.0</code></p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+function uri_to_rfc3986(mixed $uri): string
+function uri_to_rfc3987(mixed $uri): string
+~~~
+
+These functions convert any The PSR-7 `UriInterface` or `League\Interfaces\Uri` implementing object into an URI string encoded in RFC3986 or RFC3987.  
+`Uri\uri_to_rfc3986` and `Uri\uri_to_rfc3987` always preserve query and fragment presence.
+
+~~~php
+<?php
+
+use League\Uri;
+use Zend\Diactoros\Uri as DiactorosUri;
+
+$uri = new DiactorosUri('http://xn--bb-bjab.be/toto/тестовый_путь/')
+
+echo Uri\uri_to_rfc3986($uri);
+// displays 'http://xn--bb-bjab.be/toto/%D1%82%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D1%8B%D0%B9_%D0%BF%D1%83%D1%82%D1%8C/'
+
+echo Uri\uri_to_rfc3987($uri);
+// displays 'http://bébé.be/toto/тестовый_путь/',
 ~~~

@@ -3,11 +3,12 @@ version:
         Getting Started:
             Overview: '/5.0/'
             Installation: '/5.0/installation/'
+            Functions Listing: '/5.0/functions/'
         Uri parser:
             Overview: '/5.0/parser/'
             Installation: '/5.0/parser/installation/'
             URI Parser: '/5.0/parser/parser/'
-            functions: '/5.0/parser/api/'
+            URI Builder: '/5.0/parser/builder/'
         Uri schemes:
             Overview: '/5.0/uri/'
             Installation: '/5.0/uri/installation/'
@@ -39,7 +40,6 @@ version:
             DataPath: '/5.0/components/data-path/'
             Query: '/5.0/components/query/'
             Fragment: '/5.0/components/fragment/'
-            functions: '/5.0/components/functions/'
     '4.0':
         Getting Started:
             Overview: '/4.0/'

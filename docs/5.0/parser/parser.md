@@ -15,7 +15,16 @@ class Parser
 {
 	public function __invoke(string $uri): array
 	public function isHost(string $host): bool
+	public function isScheme(string $scheme): bool
+	public function isPort(mixed $port): bool
 }
+
+//function aliases
+
+function parse(string $uri): array
+function is_host(sttring $host): bool
+function is_scheme(string $scheme): bool
+function is_port(mixed $port): bool
 ~~~
 
 ## URI parsing
@@ -171,6 +180,27 @@ var_export($parser($uri));
 
 <p class="message-warning">This invalid HTTP URI is successfully parsed.</p>
 
+The library also provides a function alias to `Parser::__invoke`, `Uri\parse`:
+
+~~~php
+<?php
+
+use League\Uri;
+
+$components = Uri\parse('http://foo.com?@bar.com/');
+//returns the following array
+//array(
+//  'scheme' => 'http',
+//  'user' => null,
+//  'pass' => null,
+//  'host' => 'foo.com',
+//  'port' => null,
+//  'path' => '',
+//  'query' => '@bar.com/',
+//  'fragment' => null,
+//);
+~~~
+
 ## Scheme validation
 
 <p class="message-notice">available since version <code>1.2.0</code></p>
@@ -190,6 +220,19 @@ $parser->isScheme('example.com'); //returns false
 $parser->isScheme('ssh+svn'); //returns true
 $parser->isScheme('data');  //returns true
 $parser->isScheme('data:'); //returns false
+~~~
+
+The library also provides a function alias `Uri\is_scheme`:
+
+~~~php
+<?php
+
+use League\Uri;
+
+Uri\is_scheme('example.com'); //returns false
+Uri\is_scheme('ssh+svn'); //returns true
+Uri\is_scheme('data');  //returns true
+Uri\is_scheme('data:'); //returns false
 ~~~
 
 ## Host validation
@@ -215,6 +258,19 @@ $parser->isHost('[:]'); //returns true
 $parser->isHost('[127.0.0.1]'); //returns false
 ~~~
 
+The library also provides a function alias `Uri\is_host`:
+
+~~~php
+<?php
+
+use League\Uri;
+
+Uri\is_host('example.com'); //returns true
+Uri\is_host('/path/to/yes'); //returns false
+Uri\is_host('[:]'); //returns true
+Uri\is_host('[127.0.0.1]'); //returns false
+~~~
+
 ## Port validation
 
 <p class="message-notice">available since version <code>1.2.0</code></p>
@@ -233,4 +289,17 @@ $parser->isPort('example.com'); //returns false
 $parser->isPort(888);           //returns true
 $parser->isPort('23');    //returns true
 $parser->isPort('data:'); //returns false
+~~~
+
+The library also provides a function alias `Uri\is_port`:
+
+~~~php
+<?php
+
+use League\Uri;
+
+Uri\is_port('example.com'); //returns false
+Uri\is_port(888);           //returns true
+Uri\is_port('23');    //returns true
+Uri\is_port('data:'); //returns false
 ~~~

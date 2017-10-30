@@ -421,3 +421,26 @@ h5:hover .header-permalink {
         margin:1%;
     }
 }*/
+
+
+@media screen and (min-width: 910px) {
+    .functions-listing ul:after {
+        content: '';
+        display:table;
+        clear:both;
+    }
+
+    .functions-listing li {
+        float:left;
+        width: calc(100% / 2 - 1em);
+        margin:.3em .3em .3em 0;
+    }
+}
+
+@media screen and (min-width: 1080px) {
+    .functions-listing li {
+        float:left;
+        width: calc(100% / 3 - 1em);
+        margin:.3em .3em .3em 0;
+    }
+}

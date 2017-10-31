@@ -3,7 +3,8 @@ version:
         Getting Started:
             Overview: '/5.0/'
             Installation: '/5.0/installation/'
-            Functions Listing: '/5.0/functions/'
+        Uri functions:
+            Cheat Sheet:  '/5.0/functions/'
         Uri parser:
             Overview: '/5.0/parser/'
             Installation: '/5.0/parser/installation/'

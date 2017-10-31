@@ -3,7 +3,7 @@ layout: default
 title: URI functions cheat sheet
 ---
 
-# Functions Cheat Sheet
+# URI Functions
 
 ## Introduction
 

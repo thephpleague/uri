@@ -39,7 +39,7 @@
         "league/uri-components": "^1.1",
         "league/uri-manipulations": "^1.1",
         "league/uri-parser": "^1.2",
-        "league/uri-schemes": "^1.0",
+        "league/uri-schemes": "dev-master",
         "php" : ">=7.0",
         "psr/http-message": "^1.0"
     },

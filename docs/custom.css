@@ -412,6 +412,7 @@ h5:hover .header-permalink {
         float:right;
     }
 }
+
 /*
 @media screen and (min-width: 910px) {
 
@@ -422,11 +423,20 @@ h5:hover .header-permalink {
     }
 }*/
 
-
 .item-list {
     -webkit-column-gap:1em;
        -moz-column-gap:1em;
             column-gap:1em;
+}
+
+.item-list li a {
+    color:#ff4043;
+    text-decoration: none;
+}
+
+.item-list a:hover {
+    color:#800;
+    text-decoration: underline;
 }
 
 @media screen and (min-width: 480px) and (max-width: 550px) {

@@ -16,9 +16,9 @@ In addition to the defined named constructors, because data URI represents files
 ~~~php
 <?php
 
-use League\Uri\Data as DataUri;
+use League\Uri;
 
-$uri = DataUri::createFromPath('path/to/my/png/image.png');
+$uri = Uri\Data::createFromPath('path/to/my/png/image.png');
 echo $uri; //returns 'data:image/png;charset=binary;base64,...'
 //where '...' represent the base64 representation of the file
 ~~~
@@ -32,9 +32,9 @@ Even though all URI properties are defined and accessible attempt to set any com
 ~~~php
 <?php
 
-use League\Uri\Data as DataUri;
+use League\Uri;
 
-$uri = DataUri::createFromPath('path/to/my/png/image.png');
+$uri = Uri\Data::createFromPath('path/to/my/png/image.png');
 $uri->getHost(); //return '' an empty string
 $uri->withHost('example.com'); // will throw an League\Uri\UriException
 ~~~

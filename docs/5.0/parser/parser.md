@@ -180,6 +180,10 @@ var_export($parser($uri));
 
 <p class="message-warning">This invalid HTTP URI is successfully parsed.</p>
 
+### function alias
+
+<p class="message-info">available since version <code>1.1.0</code></p>
+
 The library also provides a function alias to `Parser::__invoke`, `Uri\parse`:
 
 ~~~php
@@ -203,7 +207,7 @@ $components = Uri\parse('http://foo.com?@bar.com/');
 
 ## Scheme validation
 
-<p class="message-notice">available since version <code>1.2.0</code></p>
+<p class="message-info">available since version <code>1.2.0</code></p>
 
 If you have a scheme **string** you can validate it against the parser. The scheme is considered to be valid if it is:
 
@@ -273,7 +277,7 @@ Uri\is_host('[127.0.0.1]'); //returns false
 
 ## Port validation
 
-<p class="message-notice">available since version <code>1.2.0</code></p>
+<p class="message-info">available since version <code>1.2.0</code></p>
 
 If you have a port, you can validate it against the parser. The port is considered to be valid if it is:
 

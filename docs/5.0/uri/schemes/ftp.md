@@ -18,9 +18,9 @@ The scheme of a FTP URI must be equal to `ftp` or be undefined. It can not conta
 ~~~php
 <?php
 
-use League\Uri\Ftp as FtpUri;
+use League\Uri;
 
-$uri = FtpUri::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
+$uri = Uri\Ftp::createFromString('ftp://thephpleague.com/path/to/image.png;type=i');
 $uri->withQuery('p=1'); // will throw an League\Uri\UriException
 ~~~
 

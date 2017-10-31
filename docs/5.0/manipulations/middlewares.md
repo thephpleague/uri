@@ -17,12 +17,12 @@ For instance here's how you would update the query string from a given URI objec
 ~~~php
 <?php
 
-use Slim\Http\Uri as SlimUri;
+use Slim\Http\Uri;
 
 $base_uri = "http://www.example.com?fo.o=toto#~typo";
 $query_to_merge = 'fo.o=bar&taz=';
 
-$uri = SlimUri::createFromString($base_uri);
+$uri = Uri::createFromString($base_uri);
 $source_query = $uri->getQuery();
 parse_str($source_query, $params);
 parse_str($query_to_merge, $new_params);
@@ -43,12 +43,12 @@ Using the provided `League\Uri\Modifiers\MergeQuery` middleware the code becomes
 <?php
 
 use League\Uri\Modifiers\MergeQuery;
-use Slim\Http\Uri as SlimUri;
+use Slim\Http\Uri;
 
 $base_uri = "http://www.example.com?fo.o=toto#~typo";
 $query_to_merge = 'fo.o=bar&taz=';
 
-$uri = SlimUri::createFromString($base_uri);
+$uri = Uri::createFromString($base_uri);
 $modifier = new MergeQuery($query_to_merge);
 
 $new_uri = $modifier->process($uri);
@@ -158,8 +158,8 @@ echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 
 use League\Uri;
 
-$baseUri     = Http::createFromString("http://www.example.com/path/to/the/sky/");
-$relativeUri = Http::createFromString("./p#~toto");
+$baseUri     = Uri\Http::createFromString("http://www.example.com/path/to/the/sky/");
+$relativeUri = Uri\Http::createFromString("./p#~toto");
 $newUri = Uri\resolve($relativeUri, $baseUri);
 echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 ~~~
@@ -756,7 +756,6 @@ echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 use League\Uri;
 
 $uri = Uri\create("http://www.example.com/path/to/the/sky/");
-$modifier = new AppendSegment("and/above");
 $newUri = Uri\append_path($uri, 'and/above');
 echo $newUri; //display "http://www.example.com/path/to/the/sky/and/above"
 ~~~

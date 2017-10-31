@@ -35,9 +35,9 @@ A `League\Uri\UriException` exception is triggered if an invalid URI is given.
 ~~~php
 <?php
 
-use League\Uri\Data;
+use League\Uri;
 
-$uri = Data::createFromComponents(
+$uri = Uri\Data::createFromComponents(
     parse_url("http://uri.thephpleague/5.0/uri/api")
 );
 // throws a League\Uri\UriException
@@ -49,9 +49,9 @@ Because `createFromString` internally use `League\Uri\Parser` if the supplied UR
 ~~~php
 <?php
 
-use League\Uri\Http;
+use League\Uri;
 
-$uri = Http::createFromString(':');
+$uri = Uri\Http::createFromString(':');
 // throws a League\Uri\Exception
 // because the URI string is invalid
 ~~~
@@ -64,12 +64,11 @@ $uri = Http::createFromString(':');
 ~~~php
 <?php
 
-use League\Uri\Exception;
-use League\Uri\Http;
+use League\Uri;
 
 try {
-	$uri = Http::createFromString(':');
-} catch (Exception $e) {
+	$uri = Uri\Http::createFromString(':');
+} catch (Uri\Exception $e) {
 	//$e is either League\Uri\Exception
 	//or League\Uri\UriException
 }
@@ -99,9 +98,9 @@ Which will lead to the following result for a simple HTTP URI:
 ~~~php
 <?php
 
-use League\Uri\Http;
+use League\Uri;
 
-$uri = Http::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz#title");
+$uri = Uri\Http::createFromString("http://foo:bar@www.example.com:81/how/are/you?foo=baz#title");
 echo $uri;                 //displays "http://foo:bar@www.example.com:81/how/are/you?foo=baz#title"
 echo $uri->getScheme();    //displays "http"
 echo $uri->getUserInfo();  //displays "foo:bar"
@@ -137,9 +136,9 @@ Since All URI object are immutable you can chain each modifying methods to simpl
 ~~~php
 <?php
 
-use League\Uri\Ws;
+use League\Uri;
 
-$uri = Ws::createFromString("ws://thephpleague.com/fr/")
+$uri = Uri\Ws::createFromString("ws://thephpleague.com/fr/")
     ->withScheme("wss")
     ->withUserInfo("foo", "bar")
     ->withHost("www.example.com")
@@ -165,11 +164,11 @@ These non destructives rules are:
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f 3#title");
+$uri = Uri\Http::createFromString("hTTp://www.ExAmPLE.com:80/hello/./wor ld?who=f 3#title");
 echo $uri; //displays http://www.example.com/hello/./wor%20ld?who=f%203#title
 
-$uri = HttpUri::createFromComponent(parse_url("hTTp://www.bébé.be?#"));
+$uri = Uri\Http::createFromComponent(parse_url("hTTp://www.bébé.be?#"));
 echo $uri; //displays http://xn--bb-bjab.be?#
 ~~~

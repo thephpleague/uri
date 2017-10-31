@@ -28,28 +28,30 @@ function create(
 ): LeagueUriInterface|UriInterface
 ~~~
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 Most of the time you receive a URI string without any information about it scheme to ease URI object creation you can use the `League\Uri\Factory` object.
 
 ## The constructor
 
-The constructor takes a iterable structure which maps a URI scheme to a specific class. This class must either implements the PSR UriInterface of the League Uri Interface. By default the factory uses all the class found in the league URI scheme package.
+The constructor takes a iterable structure which maps a URI scheme to a specific class. This class must either implements the `PSR-7` `UriInterface` or the League URI `UriInterface`.  
+
+<p class="message-info">By default, the factory uses all the URI objects supported by the league URI scheme package.</p>
 
 ~~~php
 <?php
 
-use League\Uri\Factory;
-use Zend\Diactoros\Uri;
+use League\Uri;
+use Zend\Diactoros\Uri as DiactorosUri;
 
 $http_uri = 'http://thephpleague.com';
 $https_uri = 'https://thephpleague.com';
 
-$factory = new Factory();
+$factory = new Uri\Factory();
 $uri = $factory->create($http_uri);  // will return a Uri\Http object
 $uri = $factory->create($https_uri); // will return a Uri\Http object
 
-$factorybis = new Factory(['http' => Uri::class]);
+$factorybis = new Uri\Factory(['http' => DiactorosUri::class]);
 $uri = $factorybis->create($http_uri); // will return a Zend\Diactoros\Uri object
 $uri = $factorybis->create($https_uri); // will return a Uri\Http object
 ~~~
@@ -61,7 +63,7 @@ $uri = $factorybis->create($https_uri); // will return a Uri\Http object
 The `Factory::create` method instantiates an absolute URI or resolves a relative URI against another absolute URI. If present the absolute URI can be:
 
 - a League URI object
-- a PSR UriInterface object
+- a `PSR-7` `UriInterface` object
 - a string
 
 Exceptions are thrown if:
@@ -74,9 +76,9 @@ When a base URI is given the URI is resolved against that base URI just like a b
 ~~~php
 <?php
 
-use League\Uri\Factory;
+use League\Uri;
 
-$factory = new Factory();
+$factory = new Uri\Factory();
 $uri = $factory->create('./p#~toto', 'http://thephpleague.com/uri/5.0/uri/');
 echo $uri; //returns 'http://thephpleague.com/uri/5.0/uri/p#~toto'
 ~~~
@@ -86,11 +88,11 @@ If the given URI shares the same scheme as the base URI or does not have a schem
 ~~~php
 <?php
 
-use League\Uri\Factory;
-use Zend\Diactors\Uri;
+use League\Uri;
+use Zend\Diactors\Uri as DiactorosUri;
 
-$zendUri = new Uri('http://thephpleague.com/uri/5.0/uri/');
-$factory = new Factory();
+$zendUri = new DiactorosUri('http://thephpleague.com/uri/5.0/uri/');
+$factory = new Uri\Factory();
 $http_uri = $factory->create('./p#~toto', $zendUri);
 // will return a Zend\Diactors\Uri object
 ~~~
@@ -100,9 +102,9 @@ If the given URI does not share the same scheme as the base URI but has a scheme
 ~~~php
 <?php
 
-use League\Uri\Factory;
+use League\Uri;
 
-$factory = new Factory();
+$factory = new Uri\Factory();
 $ftp_uri = $factorybis->create(
     'ftp://example.com/file.md',
     'http://thephpleague.com/uri/5.0/uri/'
@@ -115,12 +117,11 @@ If the scheme is not recognzied the factory will use the [generic URI](/5.0/uri/
 ~~~php
 <?php
 
-use League\Uri\Factory;
-use League\Uri\Http;
+use League\Uri;
 
-$currentUri = Http::createFromServer($_SERVER);
+$currentUri = Uri\Http::createFromServer($_SERVER);
 
-$factory = new Factory();
+$factory = new Uri\Factory();
 $uri = $factorybis->create('mailto:info@thephpleague.com', $currentUri);
 // will return a generic League\Uri\Uri object
 ~~~
@@ -133,15 +134,15 @@ The `Uri\create` function is a alias of the `Factory::create` method call.
 <?php
 
 use League\Uri;
-use Zend\Diactors\Uri as ZendPsrUri;
+use Zend\Diactoros\Uri as DiactorosUri;
 
 $uri = Uri\create('./p#~toto', 'http://thephpleague.com/uri/5.0/uri/');
 echo $uri; //returns 'http://thephpleague.com/uri/5.0/uri/p#~toto'
 		   // which is a Uri\Http object
 
-$zendUri = new ZendPsrUri('http://thephpleague.com/uri/5.0/uri/');
+$zendUri = new Diactoros('http://thephpleague.com/uri/5.0/uri/');
 
 $uri = Uri\create('./p#~toto', $zendUri);
 echo $uri; //returns 'http://thephpleague.com/uri/5.0/uri/p#~toto'
-		   // which is a Zend\Diactors\Uri object
+		   // which is a Zend\Diactoros\Uri object
 ~~~

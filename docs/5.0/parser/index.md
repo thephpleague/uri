@@ -11,8 +11,6 @@ URI Parser
 
 This package contains
 
-- a userland PHP uri parser compliant with [RFC 3986](http://tools.ietf.org/html/rfc3986) and [RFC 3987](http://tools.ietf.org/html/rfc3987).
+- a userland PHP uri parser compliant with [RFC 3986](http://tools.ietf.org/html/rfc3986) and [RFC 3987](http://tools.ietf.org/html/rfc3987) to replace PHP's `parse_url` function.
 
 - helper functions to ease parsing and building URI.
-
-Functions and methods are exposed to replace PHP's `parse_url` function

@@ -13,6 +13,7 @@ version:
             Overview: '/5.0/uri/'
             Installation: '/5.0/uri/installation/'
             API: '/5.0/uri/api/'
+            Factory: '/5.0/uri/factory/'
             Http(s): '/5.0/uri/schemes/http/'
             Websocket(s): '/5.0/uri/schemes/ws/'
             FTP: '/5.0/uri/schemes/ftp/'
@@ -20,7 +21,6 @@ version:
             File: '/5.0/uri/schemes/file/'
             Generic URI: '/5.0/uri/schemes/uri/'
             Extension Guide: '/5.0/uri/extension/'
-            Factory: '/5.0/uri/factory/'
         Uri manipulations:
             Overview: '/5.0/manipulations/'
             Installation: '/5.0/manipulations/installation/'

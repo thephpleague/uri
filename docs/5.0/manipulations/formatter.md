@@ -77,15 +77,15 @@ echo $formatter($uri);
 
 ## Function alias
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 ~~~php
 <?php
 
 use League\Uri;
 
-function uri_to_rfc3986(mixed $uri): string
-function uri_to_rfc3987(mixed $uri): string
+function Uri\uri_to_rfc3986(mixed $uri): string
+function Uri\uri_to_rfc3987(mixed $uri): string
 ~~~
 
 These functions convert any The PSR-7 `UriInterface` or `League\Interfaces\Uri` implementing object into an URI string encoded in RFC3986 or RFC3987.  

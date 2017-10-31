@@ -14,10 +14,10 @@ To work with Http URIs you can use the `League\Uri\Http` class. This class handl
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
 //don't forget to provide the $_SERVER array
-$uri = HttpUri::createFromServer($_SERVER);
+$uri = Uri\Http::createFromServer($_SERVER);
 ~~~
 
 <p class="message-warning">The method only relies on the server's safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>
@@ -33,9 +33,9 @@ If a scheme is present and the scheme specific part of a Http URI is not empty t
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
+$uri = Uri\Http::createFromString('http://uri.thephpleague.com/');
 echo $uri->withHost('')->withScheme('');
 // will throw an League\Uri\UriException
 // you can not remove the Host if a scheme is present
@@ -46,9 +46,9 @@ Instead you are required to proceed as below
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
+$uri = Uri\Http::createFromString('http://uri.thephpleague.com/');
 echo $uri->withScheme('')->withHost(''); //displays "/"
 ~~~
 
@@ -62,9 +62,9 @@ According to RFC3986, if an HTTP URI contains a non empty authority part, the UR
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
+$uri = Uri\Http::createFromString('http://uri.thephpleague.com/');
 echo $uri->withPath('uri/schemes/http');
 // will throw an League\Uri\UriException
 ~~~
@@ -74,9 +74,9 @@ Instead you are required to submit a absolute path
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString('http://uri.thephpleague.com/');
+$uri = Uri\Http::createFromString('http://uri.thephpleague.com/');
 echo $uri->withPath('/uri/schemes/http'); // displays 'http://uri.thephpleague.com/uri/schemes/http'
 ~~~
 
@@ -85,9 +85,9 @@ Of note this does not mean that rootless path are forbidden, the following code 
 ~~~php
 <?php
 
-use League\Uri\Http as HttpUri;
+use League\Uri;
 
-$uri = HttpUri::createFromString('?foo=bar');
+$uri = Uri\Http::createFromString('?foo=bar');
 echo $uri->withPath('uri/schemes/http'); // displays 'uri/schemes/http?foo=bar'
 ~~~
 

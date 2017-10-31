@@ -18,9 +18,9 @@ The scheme of a Websocket URI must be equal to `ws`, `wss` or be undefined. It c
 ~~~php
 <?php
 
-use League\Uri\Ws as WsUri;
+use League\Uri;
 
-$uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
+$uri = Uri\Ws::createFromString('wss://thephpleague.com/path/to?here#content');
 // will throw an League\Uri\UriException
 ~~~
 

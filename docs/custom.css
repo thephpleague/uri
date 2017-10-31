@@ -423,14 +423,14 @@ h5:hover .header-permalink {
 }*/
 
 
-.functions-listing ul {
+.item-list {
     -webkit-column-gap:1em;
        -moz-column-gap:1em;
             column-gap:1em;
 }
 
 @media screen and (min-width: 480px) and (max-width: 550px) {
-    .functions-listing ul {
+    .item-list {
         -webkit-column-count:2;
            -moz-column-count:2;
                 column-count:2;
@@ -438,7 +438,7 @@ h5:hover .header-permalink {
 }
 
 @media screen and (min-width: 710px) {
-    .functions-listing ul {
+    .item-list {
         -webkit-column-count:2;
            -moz-column-count:2;
                 column-count:2;
@@ -446,7 +446,7 @@ h5:hover .header-permalink {
 }
 
 @media screen and (min-width: 1160px) {
-    .functions-listing ul {
+    .item-list {
         -webkit-column-count:3;
            -moz-column-count:3;
                 column-count:3;

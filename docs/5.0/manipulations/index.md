@@ -12,7 +12,6 @@ URI manipulations
 The `League Uri Manipulations` repository contains:
 
 - an URI formatter to format URI string representation output;
-- a function `uri_reference` to get the URI object reference information according to RFC3986;
 - URI middlewares to filter Uri objects;
 
 To be used, the URI objects are required to implement one of the following interface:

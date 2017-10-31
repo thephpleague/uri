@@ -9,17 +9,19 @@ URI references
 ~~~php
 <?php
 
-function League\Uri\is_absolute(mixed $uri): bool
-function League\Uri\is_network_path(mixed $uri): bool
-function League\Uri\is_absolute_path(mixed $uri): bool
-function League\Uri\is_relative_path(mixed $uri): bool
-function League\Uri\is_same_document(mixed $uri, mixed $base_uri): bool
-function League\Uri\Modifiers\uri_reference(mixed $uri [, mixed $base_uri]): array
+use League\Uri;
+
+function Uri\is_absolute(mixed $uri): bool
+function Uri\is_network_path(mixed $uri): bool
+function Uri\is_absolute_path(mixed $uri): bool
+function Uri\is_relative_path(mixed $uri): bool
+function Uri\is_same_document(mixed $uri, mixed $base_uri): bool
+function Uri\Modifiers\uri_reference(mixed $uri [, mixed $base_uri]): array
 ~~~
 
 ## is_absolute
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 The `is_absolute` function tells whether the given URI object represents an absolute URI.
 
@@ -34,7 +36,7 @@ Uri\is_absolute(Uri\Http::createFromString("/🍣🍺")); //returns false
 
 ## is_absolute_path
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 The `is_absolute_path` function tells whether the given URI object represents an absolute URI path.
 
@@ -49,7 +51,7 @@ Uri\is_absolute_path(Uri\Http::createFromString("/🍣🍺")); //returns true
 
 ## is_network_path
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 The `is_network_path` function tells whether the given URI object represents an network path URI.
 
@@ -64,7 +66,7 @@ Uri\is_network_path(Uri\Http::createFromString("/🍣🍺")); //returns false
 
 ## is_relative_path
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 The `is_relative_path` function tells whether the given URI object represents a relative path.
 
@@ -79,7 +81,7 @@ Uri\is_relative_path(Uri\Http::createFromString("/🍣🍺")); //returns false
 
 ## is_same_document
 
-<p class="message-notice">available since version <code>1.1.0</code></p>
+<p class="message-info">available since version <code>1.1.0</code></p>
 
 The `is_same_document` function tells whether the given URI object represents the same document.
 

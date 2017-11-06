@@ -36,7 +36,7 @@
         "ext-fileinfo": "*",
         "jeremykendall/php-domain-parser": "4.0.3-alpha",
         "league/uri-interfaces": "^1.0",
-        "league/uri-components": "^1.1",
+        "league/uri-components": "^1.2",
         "league/uri-manipulations": "^1.1",
         "league/uri-parser": "^1.2",
         "league/uri-schemes": "^1.1",
@@ -45,7 +45,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "5.0.x-dev"
+            "dev-master": "5.1.x-dev"
         }
     },
     "config": {

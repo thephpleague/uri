@@ -93,7 +93,9 @@ Because these functions require different URI packages. Some of them may be miss
 ### URI components
 
 <ul class="item-list">
-	<li><a href="/5.0/components/query/#queryextract">parse_query</a></li>
+	<li><a href="/5.0/components/query/#queryparse">parse_query</a></li>
+	<li><a href="/5.0/components/query/#queryextract">extract_query</a></li>
+	<li><a href="/5.0/components/query/#querybuild">build_query</a></li>
 	<li><a href="/5.0/parser/parser/#scheme-validation">is_scheme</a></li>
 	<li><a href="/5.0/parser/parser/#host-validation">is_host</a></li>
 	<li><a href="/5.0/parser/parser/#port-validation">is_port</a></li>

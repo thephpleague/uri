@@ -48,7 +48,7 @@ $arr = Query::extract($query_string);
 // $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
 ~~~
 
-<p class="message-info">Since version <code>1.1.0</code> The alias function <code>Uri\parse_query</code> is available</p>
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\extract_query</code> is available</p>
 
 ~~~php
 <?php
@@ -60,9 +60,10 @@ parse_str($query_string, $out);
 var_export($out);
 // $out = ["foo_bar" => 'baz'];
 
-$arr = Uri\parse_query($query_string);
+$arr = Uri\extract_query($query_string);
 // $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
 ~~~
+
 
 ### Query::getParams
 
@@ -149,6 +150,21 @@ $arr = Query::parse($query_string, '&');
 
 <p class="message-warning"><code>Query::parse</code> and <code>Query::extract</code> both convert the query string into an array but <code>Query::parse</code> logic don't result in data loss.</p>
 
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\parse_query</code> is available</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
+$arr = Uri\parse_query($query_string, '&');
+// [
+//     "toto.foo" => ["bar", "baz"],
+//     "foo" => null,
+//     "baz" => "",
+// ]
+~~~
 
 ### Query::build
 
@@ -176,6 +192,21 @@ $res = Query::build($arr, '&', false);
 
 <p class="message-warning"><code>Query::build</code> is not similar to <code>http_build_query</code>.</p>
 
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\build_query</code> is available</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'foo[]=bar&foo[]=baz';
+$arr = Query::parse($query_string, '&', Query::RFC3986_ENCODING);
+var_export($arr);
+// $arr include the following data ["foo[]" => ['bar', 'baz']];
+
+$res = Uri\build_query($arr, '&', false);
+// $res = 'foo[]=bar&foo[]=baz'
+~~~
 
 ### Query::createFromPairs
 

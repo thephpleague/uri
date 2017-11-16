@@ -18,9 +18,9 @@ class HierarchicalPath implements ComponentInterface, IteratorAggregate, Countab
 {
 	const IS_RELATIVE = 0;
 	const IS_ABSOLUTE = 1;
+	public static function createFromSegments(iterable $data, int $type = self::IS_RELATIVE): self
 	public function __construct(?string $content = null): void
 	public function append(string $path): self
-	public static function createFromSegments($data, int $type = self::IS_RELATIVE): self
 	public function getBasename(void): string
 	public function getDirname(void): string
 	public function getExtension(void): string

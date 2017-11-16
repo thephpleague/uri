@@ -18,10 +18,10 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 {
 	const IS_ABSOLUTE = 1;
 	const IS_RELATIVE = 0;
+	public static function createFromIp(string $ip): self
+	public static function createFromLabels(iterable $data, int $type = self::IS_RELATIVE): self
 	public function __construct(?string $content = null): void
 	public function append(string $host): self
-	public static function createFromIp(string $ip): self
-	public static function createFromLabels($data, int $type = self::IS_RELATIVE): self
 	public function getIp(void): string
 	public function getLabel(int $offset, $default = null): mixed
 	public function getLabels(void): array
@@ -269,7 +269,7 @@ echo $newHost; //displays 'shop.11.be'
 <?php
 const Host::IS_RELATIVE = 0;
 const Host::IS_ABSOLUTE = 1;
-public static Host::createFromLabels($data, int $type = self::IS_RELATIVE): self
+public static Host::createFromLabels(iterable $data, int $type = self::IS_RELATIVE): self
 public Host::isAbsolute(void): bool
 public Host::getLabels(void): array
 public Host::getLabel(int $offset, $default = null): mixed

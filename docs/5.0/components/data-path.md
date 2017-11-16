@@ -16,8 +16,8 @@ but also provide specific methods to work with Data URI paths.
 <?php
 class DataPath implements ComponentInterface
 {
-	public function __construct(?string $content = null): void
 	public static function createFromPath(string $path): self
+	public function __construct(?string $content = null): void
 	public function getMediaType(void): string
 	public function getMimeType(void): string
 	public function getParameters(void): string

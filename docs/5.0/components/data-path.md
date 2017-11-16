@@ -5,7 +5,6 @@ title: The Data Uri Path component
 
 # Data URI Path
 
-
 The library provides a `DataPath` class to ease complex path manipulation on a Data URI object. This URI component object exposes :
 
 - the [package common API](/5.0/components/api/)
@@ -13,21 +12,57 @@ The library provides a `DataPath` class to ease complex path manipulation on a D
 
 but also provide specific methods to work with Data URI paths.
 
+~~~php
+<?php
+class DataPath implements ComponentInterface
+{
+	public function __construct(?string $content = null): void
+	public static function createFromPath(string $path): self
+	public function getMediaType(void): string
+	public function getMimeType(void): string
+	public function getParameters(void): string
+	public function getData(void): string
+	public function isBinaryData(void): bool
+	public function save(string $path): SplFileObject
+	public function toBinary(void): self
+	public function toAscii(void): self
+	public function withParameters(string $parameters): self
+}
+~~~
+
+## Instantiation using the constructor
+
+~~~php
+<?php
+public DataPath::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
 ## Instantiation using a file path
 
-Because data URI represents files you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor
+~~~php
+<?php
+public static function DataPath::createFromPath(string $path): self
+~~~
+
+Because data URI represents files you can also instantiate a new data URI object from a file path using the `createFromPath` named constructor.
 
 ~~~php
 <?php
 
-use League\Uri\Components\DataPath as Path;
+use League\Uri\Components\DataPath;
 
-$path = Path::createFromPath('path/to/my/png/image.png');
+$path = DataPath::createFromPath('path/to/my/png/image.png');
 echo $uri; //returns 'image/png;charset=binary;base64,...'
 //where '...' represent the base64 representation of the file
 ~~~
 
-If the file is not readable or accessible a `League\Uri\Components\Exception` exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in RFC2045.
+If the file is not readable or accessible a `League\Uri\Components\Exception` exception will be thrown. The class uses PHP's `finfo` class to detect the required mediatype as defined in `RFC2045`.
 
 ## Accessing the path properties
 
@@ -44,7 +79,7 @@ Each of these methods return a string. This string can be empty if the data wher
 ~~~php
 <?php
 
-use League\Uri\Components\DataPath as Path;
+use League\Uri\Components\DataPath ;
 
 $path = new DataPath('text/plain;charset=us-ascii,Hello%20World%21');
 echo $path->getMediaType(); //returns 'text/plain;charset=us-ascii'
@@ -90,7 +125,7 @@ $path = new DataPath('text/plain;charset=us-ascii,Hello%20World%21');
 $path->isBinaryData(); // return false;
 $newPath = $path->toBinary();
 $newPath->isBinaryData(); //return true;
-$newPath->toAscii()->sameValueAs($path); //return true;
+$newPath->toAscii() == $path; //return true;
 ~~~
 
 ## Saving the data path

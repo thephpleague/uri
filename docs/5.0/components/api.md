@@ -6,42 +6,27 @@ title: URI components
 Components common API
 =======
 
-## Creating new URI component object
-
-All URI object can be instantiate using the default constructor by providing:
-
-~~~php
-<?php
-public Component::__construct($content = null): void
-~~~
-
-the `$content` argument can be `null`, a string **or** an integer (in case of the `Port` object).
-
-<p class="message-notice">submitted string is normalized to be RFC3986 compliant.</p>
-
-<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
-
-The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
-
 ## Accessing URI component representation
 
-Once instantiated, all URI component objects expose the methods and constant defined in the `ComponentInterface` interface. This interface is used to normalized URI component representation while taking into account each component specificity.
+Once instantiated, all URI component objects expose the methods and constants defined in the `ComponentInterface` interface.
+
+This interface is used to normalized URI component representation while taking into account each component specificity.
 
 ~~~php
 <?php
-
 
 interface ComponentInterface
 {
-	const ComponentInterface::NO_ENCODING = 0;
-	const ComponentInterface::RFC1738_ENCODING = 1;
-	const ComponentInterface::RFC3986_ENCODING = 2;
-	const ComponentInterface::RFC3987_ENCODING = 3;
-	public function ComponentInterface::__toString(void): string
-	public function ComponentInterface::getContent(int $enc_type = self::RFC3986_ENCODING): mixed
-	public function ComponentInterface::getUriComponent(void): string
-	public function ComponentInterface::isEmpty(void): bool
-	public function ComponentInterface::isNull(void): bool
+	const NO_ENCODING = 0;
+	const RFC1738_ENCODING = 1;
+	const RFC3986_ENCODING = 2;
+	const RFC3987_ENCODING = 3;
+
+	public function __toString(void): string
+	public function getContent(int $enc_type = self::RFC3986_ENCODING): mixed
+	public function getUriComponent(void): string
+	public function isEmpty(void): bool
+	public function isNull(void): bool
 }
 ~~~
 
@@ -50,15 +35,14 @@ Which will lead to the following results:
 ~~~php
 <?php
 
-use League\Uri\Components\{
-	Scheme,
-	UserInfo,
-	HierarchicalPath,
-	Host,
-	Query,
-	Path,
-	Port
-};
+use League\Uri\Components\Scheme;
+use League\Uri\Components\UserInfo,
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Host;
+use League\Uri\Components\Query;
+use League\Uri\Components\Path;
+use League\Uri\Components\Port;
+
 
 $scheme = new Scheme('HtTp');
 echo $scheme->__toString(); //displays 'http'
@@ -126,10 +110,8 @@ and returns a new instance with the modified content.
 ~~~php
 <?php
 
-use League\Uri\Components\{
-	Query,
-	Host
-};
+use League\Uri\Components\Host;
+use League\Uri\Components\Query;
 
 $query = new Query();
 $new_query = $query->withContent('');

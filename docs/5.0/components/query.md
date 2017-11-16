@@ -12,6 +12,50 @@ The library provides a `Query` class to ease query string creation and manipulat
 
 <p class="message-warning">When a modification fails an <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
+~~~php
+<?php
+class Query implements ComponentInterface, Countable, IteratorAggregate
+{
+	public static function build(array $pairs[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
+	public static function extract(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+	public static function parse(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+	public static function createFromPairs(array $pairs): self
+	public static function createFromParams(array $params): self
+	public function __construct(?string $content = null): void
+	public function append(string $query): self
+	public function getPair(string $name, mixed $default = null): mixed
+	public function getPairs(void): array
+	public function getParam(string $name, mixed $default = null): mixed
+	public function getParams(void): array
+	public function hasPair(string $name): bool
+	public function keys([mixed $value]): array
+	public function ksort(mixed sort): self
+	public function merge(string $query): self
+	public function withoutNumericIndices(void): self
+	public function withoutPairs(array $offsets): self
+	public function withoutParams(array $offset): self
+}
+
+//functions aliases
+
+function build_query(array $pairs[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
+function extract_query(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+function parse_query(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+~~~
+
+## Creating a new object using the default constructor
+
+~~~php
+<?php
+public Query::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
 ## Query as a PHP data transport layer
 
 ### Query::extract

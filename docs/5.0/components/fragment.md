@@ -7,7 +7,20 @@ title: The Fragment component
 
 The library provides a `Fragment` class to ease fragment creation and manipulation.
 
-## Properties and Methods
+## Creating a new object
+
+~~~php
+<?php
+public Fragment::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
+## Properties and methods
 
 This URI component object only exposes the [package common API](/5.0/components/api/).
 

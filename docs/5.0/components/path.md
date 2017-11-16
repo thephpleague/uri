@@ -6,24 +6,39 @@ title: Path Component
 Path Component
 =======
 
-URI path component objects are modelled depending on the URI as such each URI scheme specific must implement its own path object. To ease Path usage, the package comes with a generic Path object as well as two more specialized Path objects. All Path objects expose the following methods:
+URI path component objects are modelled depending on the URI as such each URI scheme specific must implement its own path object. To ease usage, the package comes with a generic `Path` object as well as two more specialized Path objects. All Path objects expose the following methods:
 
 ~~~php
 <?php
 
-public Path::isAbsolute(void): bool
-public Path::withLeadingSlash(void): self
-public Path::withoutLeadingSlash(void): self
-public Path::withoutDotSegments(void): self
-public Path::withTrailingSlash(void): self
-public Path::withoutTrailingSlash(void): self
-public Path::withoutEmptySegments(void): self
+class Path implements ComponentInterface
+{
+	public function isAbsolute(void): bool
+	public function withLeadingSlash(void): self
+	public function withoutLeadingSlash(void): self
+	public function withoutDotSegments(void): self
+	public function withTrailingSlash(void): self
+	public function withoutTrailingSlash(void): self
+	public function withoutEmptySegments(void): self
+}
 ~~~
 
 <p class="message-notice">According to <code>RFC3986</code>, the component content can not be equal to <code>null</code> therefore <code>Path::isNull</code> always returns <code>false</code></p>
 
 <p class="message-warning">Because path are scheme specific, some methods may trigger an <code>League\Uri\Components\Exception</code> if for a given scheme the path does not support the given modification</p>
 
+## Creating a new object
+
+~~~php
+<?php
+public Path::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
 
 ## Path properties
 

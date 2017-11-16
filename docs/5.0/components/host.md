@@ -12,6 +12,53 @@ The library provides a `Host` class to ease host creation and manipulation. This
 
 <p class="message-warning">When a modification fails an <code>League\Uri\Components\Exception</code> exception is thrown.</p>
 
+~~~php
+<?php
+class Host implements ComponentInterface, Countable, IteratorAggregate
+{
+	const IS_ABSOLUTE = 1;
+	const IS_RELATIVE = 0;
+	public function __construct(?string $content = null): void
+	public function append(string $host): self
+	public static function createFromIp(string $ip): self
+	public static function createFromLabels($data, int $type = self::IS_RELATIVE): self
+	public function getIp(void): string
+	public function getLabel(int $offset, $default = null): mixed
+	public function getLabels(void): array
+	public function getPublicSuffix(void): string
+	public function getRegisterableDomain(void): string
+	public function getSubDomain(void): string
+	public function hasZoneIdentifier(void): bool
+	public function isIp(void): bool
+	public function isIpv4(void): bool
+	public function isIpv6(void): bool
+	public function isPublicSuffixValid(void): bool
+	public function isAbsolute(void): bool
+	public function keys([string $label]): array
+	public function prepend(string $host): self
+	public function replaceLabel(int $offset, string $host): self
+	public function withoutZoneIdentifier(void): self
+	public function withRegisterableDomain(string $host): self
+	public function withSubDomain(string $host): self
+	public function withRootLabel(void): self
+	public function withoutRootLabel(void): self
+	public function withoutLabels(array $offsets): self
+}
+~~~
+
+## Creating a new object using the default constructor
+
+~~~php
+<?php
+public Host::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
 ## Host represented by an IP
 
 ~~~php

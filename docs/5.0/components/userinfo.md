@@ -8,13 +8,36 @@ The UserInfo
 
 The library provides a `UserInfo` class to ease user information creation and manipulation. This URI component object exposes the [package common API](/5.0/components/api/), but also provide specific methods to work with the URI user information part.
 
+~~~php
+<?php
+
+class UserInfo implements ComponentInterface
+{
+	public getUser(int $enc_type = self::RFC3986_ENCODING): ?string
+	public getPass(int $enc_type = self::RFC3986_ENCODING): ?string
+}
+~~~
+
+## Creating a new object
+
+~~~php
+<?php
+public UserInfo::__construct(?string $content = null): void
+~~~
+
+<p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+<p class="message-warning">If the submitted value is not valid a <code>League\Uri\Components\Exception</code> exception is thrown.</p>
+
+The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
+
 ## Accessing User information content
 
 ~~~php
 <?php
 
-public UserInfo::getUser(int $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
-public UserInfo::getPass(int $enc_type = ComponentInterface::RFC3986_ENCODING): string|null
+public UserInfo::getUser(int $enc_type = ComponentInterface::RFC3986_ENCODING): ?string
+public UserInfo::getPass(int $enc_type = ComponentInterface::RFC3986_ENCODING): ?string
 ~~~
 
 To access the user login and password information you need to call the respective `UserInfo::getUser` and `UserInfo::getPass` methods like shown below.
@@ -47,7 +70,7 @@ $info->getUser();                           //return 'b%C3%A9b%C3%A9'
 ~~~php
 <?php
 
-public UserInfo::withUserInfo(string $user [, string $password = null]): self
+public UserInfo::withUserInfo(string $user [, ?string $password = null]): self
 ~~~
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>

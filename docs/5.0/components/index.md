@@ -31,9 +31,3 @@ The following URI component objects are defined (order alphabetically):
 - [Query](/5.0/components/query/) : the Query component
 - [Scheme](/5.0/components/scheme/) : the Scheme component
 - [UserInfo](/5.0/components/userinfo/) : the User Info component
-
-
-List of URI component function
---------
-
-- [parse_query](/5.0/components/functions) : to replace and improve PHP's `parse_str` function

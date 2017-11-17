@@ -25,7 +25,7 @@ class Query implements ComponentInterface, \Countable, \IteratorAggregate
 	public static function createFromParams(iterable $params, string $separator = '&'): self
 	public static function extract(string $query, string $separator = '&', int $enc_type = self::RFC3986_ENCODING): array
 	public static function parse(string $query, string $separator = '&', int $enc_type = self::RFC3986_ENCODING): array
-	public function __construct(?string $content = null): void
+	public function __construct(?string $content = null, string $separator = '&'): void
 	public function append(string $query): self
 	public function getPair(string $name, mixed $default = null): mixed
 	public function getPairs(void): array

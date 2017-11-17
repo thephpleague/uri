@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 5.1.0 - 2017-11-17
+
+### Added
+
+- Support for PHP7.2
+
+### Fixed
+
+- Update library dependencies
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 5.0.0 - 2017-02-06
 
 ### Added

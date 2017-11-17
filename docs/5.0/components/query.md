@@ -14,13 +14,17 @@ The library provides a `Query` class to ease query string creation and manipulat
 
 ~~~php
 <?php
-class Query implements ComponentInterface, Countable, IteratorAggregate
+
+use League\Uri;
+use League\Uri\Components;
+
+class Query implements ComponentInterface, \Countable, \IteratorAggregate
 {
-	public static function build(array $pairs[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
-	public static function createFromPairs(iterable $pairs[, string $separator = '&']): self
-	public static function createFromParams(iterable $params[, string $separator = '&']): self
-	public static function extract(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
-	public static function parse(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+	public static function build(iterable $pairs, string $separator = '&' , int $enc_type = self::RFC3986_ENCODING): string
+	public static function createFromPairs(iterable $pairs, string $separator = '&'): self
+	public static function createFromParams(iterable $params, string $separator = '&'): self
+	public static function extract(string $query, string $separator = '&', int $enc_type = self::RFC3986_ENCODING): array
+	public static function parse(string $query, string $separator = '&', int $enc_type = self::RFC3986_ENCODING): array
 	public function __construct(?string $content = null): void
 	public function append(string $query): self
 	public function getPair(string $name, mixed $default = null): mixed
@@ -32,6 +36,7 @@ class Query implements ComponentInterface, Countable, IteratorAggregate
 	public function keys([mixed $value]): array
 	public function ksort(mixed sort): self
 	public function merge(string $query): self
+	public function withoutEmptyPairs(void): self
 	public function withoutNumericIndices(void): self
 	public function withoutPairs(array $offsets): self
 	public function withoutParams(array $offset): self
@@ -40,9 +45,9 @@ class Query implements ComponentInterface, Countable, IteratorAggregate
 
 //functions aliases
 
-function build_query(array $pairs[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): string
-function extract_query(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
-function parse_query(string $query[, string $separator = '&' [, int $enc_type = self::RFC3986_ENCODING]]): array
+function Uri\build_query(iterable $pairs, string $separator = '&', int $enc_type = PHP_QUERY_RFC3986): string
+function Uri\extract_query(string $query, string $separator = '&', int $enc_type = PHP_QUERY_RFC3986): array
+function Uri\parse_query(string $query, string $separator = '&', int $enc_type = PHP_QUERY_RFC3986): array
 ~~~
 
 ## Basic usage
@@ -50,14 +55,14 @@ function parse_query(string $query[, string $separator = '&' [, int $enc_type = 
 ~~~php
 <?php
 public Query::__construct(?string $content = null, string $separator = '&'): void
-public Query::getSeparator(string $separator): self
-public Query::withSeparator(string $separator): self
-public Query::merge(string $query): self
 public Query::append(string $query): self
+public Query::getSeparator(string $separator): self
 public Query::ksort(mixed $sort): self
+public Query::merge(string $query): self
+public Query::withSeparator(string $separator): self
 ~~~
 
-### The default constructor
+### Query::__construct
 
 ~~~php
 <?php
@@ -70,17 +75,20 @@ public Query::__construct(?string $content = null, string $separator = '&'): voi
 
 The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentException`.
 
-### Query::withSeparator
 
-`Query::withSeparator` returns a new `Query` object with an alternate string separator.
+### Query::getSeparator and Query::withSeparator
+
+<p class="message-info"><code>Query::getSeparator</code> and <code>Query::withSeparator</code> are available since version <code>1.3.0</code></p>
 
 ~~~php
 <?php
-
-public Query::withSeparator(string $separator): Query
+public Query::getSeparator(string $separator): self
+public Query::withSeparator(void): string
 ~~~
 
-This method expects a single argument which is a string separator. If the separator is equal to `=` an exception will be thrown.
+`Query::getSeparator` returns the current separator attached to the `Query` object` while `Query::withSeparator` returns a new `Query` object with an alternate string separator.
+
+`Query::withSeparator` expects a single argument which is a string separator. If the separator is equal to `=` an exception will be thrown.
 
 ~~~php
 <?php
@@ -187,54 +195,15 @@ $newQuery->__toString(); //return baz=toto&foo=bar
 
 ## Query as a PHP data transport layer
 
-### Query::extract
-
 ~~~php
 <?php
 
-public static Query::extract(string $query[, string $separator = '&' [, int $enc_type = ComponentInterface::RFC3986_ENCODING]]): array
-~~~
-
-This method deserializes the query string parameters into an associative `array` similar to PHP's `parse_str` when used with its optional second argument. This static public method expects the following arguments:
-
-- The query string **required**;
-- The query string separator **optional**, by default it is set to `&`;
-- The query string encoding. One of the `ComponentInterface` encoding type constant.
-
-The main differences are with `parse_str` usage are the following:
-
-- `Query::extract` accepts a parameter which describes the query string separator
-- `Query::extract` does not mangle the query string data.
-- `Query::extract` is not affected by PHP `max_input_vars`.
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query_string = 'foo.bar=bar&foo_bar=baz';
-parse_str($query_string, $out);
-var_export($out);
-// $out = ["foo_bar" => 'baz'];
-
-$arr = Query::extract($query_string);
-// $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
-~~~
-
-<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\extract_query</code> is available</p>
-
-~~~php
-<?php
-
-use League\Uri;
-
-$query_string = 'foo.bar=bar&foo_bar=baz';
-parse_str($query_string, $out);
-var_export($out);
-// $out = ["foo_bar" => 'baz'];
-
-$arr = Uri\extract_query($query_string);
-// $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
+public static Query::extract(string $query, string $separator = '&', int $enc_type = self::RFC3986_ENCODING): array
+public static Query::createFromParams(array $params, string $separator = '&'): self
+public Query::getParams(): array
+public Query::getParam(string $name, $default = null): mixed
+public Query::withoutNumericIndices(): self
+public Query::withoutParams(string[] $offsets): self
 ~~~
 
 ### Query::createFromParams
@@ -327,6 +296,56 @@ $query->getParams(); //return ['foo' => ['bar', 'baz']]
 $new_query->getParams(); //return ['foo' => ['bar', 'baz']]
 ~~~
 
+### Query::extract
+
+~~~php
+<?php
+
+public static Query::extract(string $query[, string $separator = '&' [, int $enc_type = ComponentInterface::RFC3986_ENCODING]]): array
+~~~
+
+This method deserializes the query string parameters into an associative `array` similar to PHP's `parse_str` when used with its optional second argument. This static public method expects the following arguments:
+
+- The query string **required**;
+- The query string separator **optional**, by default it is set to `&`;
+- The query string encoding. One of the `ComponentInterface` encoding type constant.
+
+The main differences are with `parse_str` usage are the following:
+
+- `Query::extract` accepts a parameter which describes the query string separator
+- `Query::extract` does not mangle the query string data.
+- `Query::extract` is not affected by PHP `max_input_vars`.
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query_string = 'foo.bar=bar&foo_bar=baz';
+parse_str($query_string, $out);
+var_export($out);
+// $out = ["foo_bar" => 'baz'];
+
+$arr = Query::extract($query_string);
+// $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
+~~~
+
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\extract_query</code> is available</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'foo.bar=bar&foo_bar=baz';
+parse_str($query_string, $out);
+var_export($out);
+// $out = ["foo_bar" => 'baz'];
+
+$arr = Uri\extract_query($query_string);
+// $arr = ['foo.bar' => 'bar', 'foo_bar' => baz'];
+~~~
+
 ## Query as a collection of key/value pairs
 
 ~~~php
@@ -341,101 +360,11 @@ public Query::getPairs(): array
 public Query::getPair(string $offset, $default = null): mixed
 public Query::hasPair(string $offset): bool
 public Query::keys([mixed $value = null]): array
+public Query::withoutEmptyPairs(): self
 public Query::withoutPairs(array $offsets): self
 ~~~
 
 This class mainly represents the query string as a collection of key/value pairs.
-
-### Query::parse
-
-This method parse the query string into an associative `array` of key/values pairs. The method expects three (3) arguments:
-
-- The query string **required**;
-- The query string separator **optional**, by default it is set to `&`;
-- The query string encoding. One of the `ComponentInterface` encoding type constant.
-
-The value returned for each pair can be:
-
-- `null`,
-- a `string`
-- an array of `string` and/or `null` values.
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
-$arr = Query::parse($query_string, '&');
-// [
-//     "toto.foo" => ["bar", "baz"],
-//     "foo" => null,
-//     "baz" => "",
-// ]
-~~~
-
-
-<p class="message-warning"><code>Query::parse</code> is not simlar to <code>parse_str</code>, <code>Query::extract</code> is.</p>
-
-<p class="message-warning"><code>Query::parse</code> and <code>Query::extract</code> both convert the query string into an array but <code>Query::parse</code> logic don't result in data loss.</p>
-
-<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\parse_query</code> is available</p>
-
-~~~php
-<?php
-
-use League\Uri;
-
-$query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
-$arr = Uri\parse_query($query_string, '&');
-// [
-//     "toto.foo" => ["bar", "baz"],
-//     "foo" => null,
-//     "baz" => "",
-// ]
-~~~
-
-### Query::build
-
-The `Query::build` restore the query string from the result of the `Query::parse` method. The method expects at most 3 arguments:
-
-- A valid `array` of key/value pairs to convert;
-- The query string separator, by default it is set to `&`;
-- The query string encoding using one of the `ComponentInterface` constant
-
-<p class="message-info">By default the encoding is set to <code>ComponentInterface::RFC3986_ENCODING</code></p>
-
-~~~php
-<?php
-
-use League\Uri\Components\Query;
-
-$query_string = 'foo[]=bar&foo[]=baz';
-$arr = Query::parse($query_string, '&', Query::RFC3986_ENCODING);
-var_export($arr);
-// $arr include the following data ["foo[]" => ['bar', 'baz']];
-
-$res = Query::build($arr, '&', false);
-// $res = 'foo[]=bar&foo[]=baz'
-~~~
-
-<p class="message-warning"><code>Query::build</code> is not similar to <code>http_build_query</code>.</p>
-
-<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\build_query</code> is available</p>
-
-~~~php
-<?php
-
-use League\Uri;
-
-$query_string = 'foo[]=bar&foo[]=baz';
-$arr = Query::parse($query_string, '&', Query::RFC3986_ENCODING);
-var_export($arr);
-// $arr include the following data ["foo[]" => ['bar', 'baz']];
-
-$res = Uri\build_query($arr, '&', false);
-// $res = 'foo[]=bar&foo[]=baz'
-~~~
 
 ### Query::createFromPairs
 
@@ -575,4 +504,111 @@ use League\Uri\Components\Query;
 $query    = new Query('foo=bar&p=y+olo&z=');
 $newQuery = $query->withoutPairs(['foo', 'p']);
 echo $newQuery; //displays 'z='
+~~~
+
+### Query::withoutEmptyPairs
+
+`Query::withoutEmptyPairs` returns a new `Query` object with deleted empty pairs. A pair is considered empty if its key equals the empty string and its value is `null`.
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query    = new Query('&&=toto&&&&=&');
+$newQuery = $query->withoutEmptyPairs();
+echo $query; //displays '&&=toto&&&&=&'
+echo $newQuery; //displays '=toto&='
+~~~
+
+### Query::parse
+
+This method parse the query string into an associative `array` of key/values pairs. The method expects three (3) arguments:
+
+- The query string **required**;
+- The query string separator **optional**, by default it is set to `&`;
+- The query string encoding. One of the `ComponentInterface` encoding type constant.
+
+The value returned for each pair can be:
+
+- `null`,
+- a `string`
+- an array of `string` and/or `null` values.
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
+$arr = Query::parse($query_string, '&');
+// [
+//     "toto.foo" => ["bar", "baz"],
+//     "foo" => null,
+//     "baz" => "",
+// ]
+~~~
+
+
+<p class="message-warning"><code>Query::parse</code> is not simlar to <code>parse_str</code>, <code>Query::extract</code> is.</p>
+
+<p class="message-warning"><code>Query::parse</code> and <code>Query::extract</code> both convert the query string into an array but <code>Query::parse</code> logic don't result in data loss.</p>
+
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\parse_query</code> is available</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'toto.foo=bar&toto.foo=baz&foo&baz=';
+$arr = Uri\parse_query($query_string, '&');
+// [
+//     "toto.foo" => ["bar", "baz"],
+//     "foo" => null,
+//     "baz" => "",
+// ]
+~~~
+
+### Query::build
+
+The `Query::build` restore the query string from the result of the `Query::parse` method. The method expects at most 3 arguments:
+
+- A valid `iterable` of key/value pairs to convert;
+- The query string separator, by default it is set to `&`;
+- The query string encoding using one of the `ComponentInterface` constant
+
+<p class="message-info">By default the encoding is set to <code>ComponentInterface::RFC3986_ENCODING</code></p>
+<p class="message-info">Since version <code>1.3.0</code> The method accepts any iterable construct.</p>
+
+~~~php
+<?php
+
+use League\Uri\Components\Query;
+
+$query_string = 'foo[]=bar&foo[]=baz';
+$arr = Query::parse($query_string, '&', Query::RFC3986_ENCODING);
+var_export($arr);
+// $arr include the following data ["foo[]" => ['bar', 'baz']];
+
+$res = Query::build($arr, '&', false);
+// $res = 'foo[]=bar&foo[]=baz'
+~~~
+
+<p class="message-warning"><code>Query::build</code> is not similar to <code>http_build_query</code>.</p>
+<p class="message-info">Since version <code>1.2.0</code> The alias function <code>Uri\build_query</code> is available</p>
+<p class="message-info">Since version <code>1.3.0</code> The function accepts any iterable construct.</p>
+
+~~~php
+<?php
+
+use League\Uri;
+
+$query_string = 'foo[]=bar&foo[]=baz';
+$arr = Query::parse($query_string, '&', Query::RFC3986_ENCODING);
+var_export($arr);
+// $arr include the following data ["foo[]" => ['bar', 'baz']];
+
+$res = Uri\build_query($arr, '&', false);
+// $res = 'foo[]=bar&foo[]=baz'
 ~~~

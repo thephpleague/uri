@@ -15,7 +15,11 @@
         "ftp",
         "data-uri",
         "file-uri",
-        "middleware"
+        "middleware",
+        "parse_str",
+        "query-string",
+        "querystring",
+        "hostname"
     ],
     "license": "MIT",
     "homepage": "http://uri.thephpleague.com",
@@ -36,7 +40,7 @@
         "ext-fileinfo": "*",
         "jeremykendall/php-domain-parser": "4.0.3-alpha",
         "league/uri-interfaces": "^1.0",
-        "league/uri-components": "^1.2",
+        "league/uri-components": "^1.3",
         "league/uri-manipulations": "^1.1",
         "league/uri-parser": "^1.2",
         "league/uri-schemes": "^1.1",

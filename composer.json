@@ -39,7 +39,7 @@
         "ext-intl" : "*",
         "ext-fileinfo": "*",
         "league/uri-components": "^1.4",
-        "league/uri-hostname-parser": "^1.0",
+        "league/uri-hostname-parser": "^1.0.2",
         "league/uri-interfaces": "^1.0",
         "league/uri-manipulations": "^1.2",
         "league/uri-parser": "^1.2",
@@ -54,5 +54,9 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": "\\League\\Uri\\Installer\\ICANNSection::update",
+        "post-update-cmd": "\\League\\Uri\\Installer\\ICANNSection::update" 
     }
 }

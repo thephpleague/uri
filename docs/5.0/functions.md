@@ -48,6 +48,7 @@ Because these functions require different URI packages. Some of them may be miss
 	<li><a href="/5.0/manipulations/middlewares/#append-data-to-the-query-string">append_query</a></li>
 	<li><a href="/5.0/manipulations/middlewares/#sorting-the-query-keys">sort_query</a></li>
 	<li><a href="/5.0/manipulations/middlewares/#removing-query-pairs">remove_pairs</a></li>
+	<li><a href="/5.0/manipulations/middlewares/#removing-query-params">remove_params</a></li>
 </ul>
 
 ### Manipulating the URI host
@@ -99,4 +100,5 @@ Because these functions require different URI packages. Some of them may be miss
 	<li><a href="/5.0/parser/parser/#scheme-validation">is_scheme</a></li>
 	<li><a href="/5.0/parser/parser/#host-validation">is_host</a></li>
 	<li><a href="/5.0/parser/parser/#port-validation">is_port</a></li>
+	<li><a href="/5.0/publicsuffix/rules/#helper-function">resolve_domain</a></li>
 </ul>

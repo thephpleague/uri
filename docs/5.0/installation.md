@@ -7,7 +7,7 @@ title: Installation
 
 ## System Requirements
 
-* **PHP >= 7.0** but the latest stable version of PHP is recommended;
+* **PHP >= 7.0.13** but the latest stable version of PHP is recommended;
 * `mbstring` extension;
 * `intl` extension;
 
@@ -34,7 +34,7 @@ The URI meta package contains:
 
 the following **fully** decoupled libraries:
 
-- [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser)
+- [League Uri Hostname Parser](https://github.com/thephpleague/uri-hostname-parser)
 - [League Uri Interfaces](https://github.com/thephpleague/uri-interfaces)
 - [League Uri Parser](https://github.com/thephpleague/uri-parser)
 

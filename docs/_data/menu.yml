@@ -41,6 +41,11 @@ version:
             DataPath: '/5.0/components/data-path/'
             Query: '/5.0/components/query/'
             Fragment: '/5.0/components/fragment/'
+        Uri Domain Parser:
+            Overview: '/5.0/publicsuffix/'
+            Installation: '/5.0/publicsuffix/installation/'
+            Manage List: '/5.0/publicsuffix/manager/'
+            Resolve Domain: '/5.0/publicsuffix/rules/'
     '4.0':
         Getting Started:
             Overview: '/4.0/'

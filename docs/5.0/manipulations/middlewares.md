@@ -420,6 +420,36 @@ $newUri = Uri\remove_pairs($uri, ['foo']);
 echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
 ~~~
 
+### Removing query params
+
+<p class="message-info">Since version <code>1.3.0</code></p>
+
+Removes query params from the current URI query string by providing the param name. The removal preserves mangled key params.
+
+~~~php
+<?php
+
+use League\Uri\Schemes\Http;
+use League\Uri\Modifiers\RemoveQueryParams;
+
+$uri = Http::createFromString("http://example.com/test.php?kingkong=toto&fo.o=bar&fo_o=bar");
+$modifier = new RemoveQueryParams(["fo.o"]);
+$newUri = $modifier->process($uri);
+echo $newUri; //display "http://example.com/test.php?fo_o=bar"
+~~~
+
+The `Uri\remove_params` functions also exists.
+
+~~~php
+<?php
+
+use League\Uri;
+
+$uri = Uri\create("http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3");
+$newUri = Uri\remove_pairs($uri, ['foo']);
+echo $newUri; //display "http://example.com/test.php?kingkong=toto#doc3"
+~~~
+
 ## Path specific URI Middlewares
 
 In addition to modifiying the URI path component, the middleware normalizes the path encoding to RFC3986.

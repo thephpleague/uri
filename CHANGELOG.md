@@ -4,21 +4,10 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ## 5.2.0 - 2017-11-17
 
-### Added
-
 - [URI hostname parser](https://github.com/thephpleague/uri-hostname-parser/releases/tag/1.0.0)
 
-### Fixed
-
-- Issue [#109](https://github.com/thephpleague/uri/issues/109) dependency on a unstable package
-
-### Deprecated
-
-- Nothing
-
-### Remove
-
-- Nothing
+- See [URI Manipulations 1.3.0 Changelog](https://github.com/thephpleague/uri-manipulations/blob/master/CHANGELOG.md#130---2017-11-24)
+- See [URI Components 1.3.0 Changelog](https://github.com/thephpleague/uri-components/blob/master/CHANGELOG.md#130---2017-11-24)
 
 ## 5.1.0 - 2017-11-17
 

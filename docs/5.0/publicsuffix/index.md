@@ -9,7 +9,7 @@ URI Hostname Parser
 [![Build Status](https://img.shields.io/travis/thephpleague/uri-hostname-parser/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri-hostname-parser)
 [![Latest Version](https://img.shields.io/github/release/thephpleague/uri-hostname-parser.svg?style=flat-square)](https://github.com/thephpleague/uri-hostname-parser/releases)
 
-<p class="message-info">This library replaces <a href="https://github.com/jeremykendall/php-domain-parser/">PHP Domain Parser</a> since with version <code>5.2</code> no enable correct support of <code>PHP 7.2+</code></p>
+<p class="message-info">This library replaces <a href="https://github.com/jeremykendall/php-domain-parser/">PHP Domain Parser</a> starting with version <code>5.2.0</code></p>
 
 This library contains
 

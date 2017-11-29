@@ -13,8 +13,9 @@ The library provides a `UserInfo` class to ease user information creation and ma
 
 class UserInfo implements ComponentInterface
 {
-	public getUser(int $enc_type = self::RFC3986_ENCODING): ?string
-	public getPass(int $enc_type = self::RFC3986_ENCODING): ?string
+	public function getUser(int $enc_type = self::RFC3986_ENCODING): ?string
+	public function getPass(int $enc_type = self::RFC3986_ENCODING): ?string
+	public function withUserInfo(string $user, ?string $password = null): self
 }
 ~~~
 

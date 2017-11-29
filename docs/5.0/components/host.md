@@ -37,12 +37,12 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function keys([string $label]): array
 	public function prepend(string $host): self
 	public function replaceLabel(int $offset, string $host): self
+	public function withoutLabels(array $offsets): self
+	public function withoutRootLabel(void): self
 	public function withoutZoneIdentifier(void): self
 	public function withRegisterableDomain(string $host): self
-	public function withSubDomain(string $host): self
 	public function withRootLabel(void): self
-	public function withoutRootLabel(void): self
-	public function withoutLabels(array $offsets): self
+	public function withSubDomain(string $host): self
 }
 ~~~
 

@@ -15,11 +15,11 @@ class Path implements ComponentInterface
 {
 	public function isAbsolute(void): bool
 	public function withLeadingSlash(void): self
-	public function withoutLeadingSlash(void): self
 	public function withoutDotSegments(void): self
-	public function withTrailingSlash(void): self
+	public function withoutLeadingSlash(void): self
 	public function withoutTrailingSlash(void): self
 	public function withoutEmptySegments(void): self
+	public function withTrailingSlash(void): self
 }
 ~~~
 

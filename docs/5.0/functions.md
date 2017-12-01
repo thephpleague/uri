@@ -94,10 +94,10 @@ Because these functions require different URI packages. Some of them may be miss
 ### URI components
 
 <ul class="item-list">
-	<li><a href="/5.0/components/query-parsers/#queryparserparse">parse_query</a></li>
-	<li><a href="/5.0/components/query-parsers/#queryparserextract">extract_query</a></li>
-	<li><a href="/5.0/components/query-parsers/#querybuilderbuild">build_query</a></li>
-	<li><a href="/5.0/components/query-parsers/#queryparserconvert">pairs_to_params</a></li>
+	<li><a href="/5.0/components/parsers/#queryparserparse">parse_query</a></li>
+	<li><a href="/5.0/components/parsers/#queryparserextract">extract_query</a></li>
+	<li><a href="/5.0/components/parsers/#querybuilderbuild">build_query</a></li>
+	<li><a href="/5.0/components/parsers/#queryparserconvert">pairs_to_params</a></li>
 	<li><a href="/5.0/parser/parser/#scheme-validation">is_scheme</a></li>
 	<li><a href="/5.0/parser/parser/#host-validation">is_host</a></li>
 	<li><a href="/5.0/parser/parser/#port-validation">is_port</a></li>

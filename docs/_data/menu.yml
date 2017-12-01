@@ -31,6 +31,7 @@ version:
         Uri components:
             Overview: '/5.0/components/'
             Installation: '/5.0/components/installation/'
+            Parsers: '/5.0/components/parsers/'
             API: '/5.0/components/api/'
             Scheme: '/5.0/components/scheme/'
             UserInfo: '/5.0/components/userinfo/'

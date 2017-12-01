@@ -51,15 +51,13 @@
       <div class="version next">
         <h2>Upcoming</h2>
         <div class="content">
-          <p><code>{{ site.data.project.title }} {{ site.data.project.releases.next.version }}</code></p>
+          <p><code>league/{{ site.data.project.title | downcase }}:^{{ site.data.project.releases.next.version }}</code></p>
           <ul>
             <li>Requires: <strong>{{ site.data.project.releases.next.requires }}</strong></li>
             <li>Latest: <strong>{{ site.data.project.releases.next.latest }}</strong></li>
             <li>Supported Until: <strong>{{ site.data.project.releases.next.supported_until }}</strong></li>
           </ul>
-{% if site.data.project.releases.next.documentation_link %}
           <p><a href="{{ site.data.project.releases.next.documentation_link }}">Full Documentation</a></p>
-{% endif %}
         </div>
       </div>
 {% endif %}
@@ -67,15 +65,13 @@
       <div class="version current">
         <h2>Current Stable</h2>
         <div class="content">
-          <p><code>{{ site.data.project.title }} {{ site.data.project.releases.current.version }}</code></p>
+          <p><code>league/{{ site.data.project.title | downcase }}:^{{ site.data.project.releases.current.version }}</code></p>
           <ul>
             <li>Requires: <strong>{{ site.data.project.releases.current.requires }}</strong></li>
             <li>Latest: <strong>{{ site.data.project.releases.current.latest }}</strong></li>
             <li>Supported Until: <strong>{{ site.data.project.releases.current.supported_until }}</strong></li>
           </ul>
-{% if site.data.project.releases.current.documentation_link %}
           <p><a href="{{ site.data.project.releases.current.documentation_link }}">Full Documentation</a></p>
-{% endif %}
         </div>
       </div>
 {% endif %}
@@ -83,15 +79,13 @@
       <div class="version previous">
         <h2>Old Stable Release</h2>
         <div class="content">
-          <p><code>{{ site.data.project.title }} {{ site.data.project.releases.previous.version }}</code></p>
+          <p><code>league/{{ site.data.project.title | downcase }}:^{{ site.data.project.releases.previous.version }}</code></p>
           <ul>
             <li>Requires: <strong>{{ site.data.project.releases.previous.requires }}</strong></li>
             <li>Latest: <strong>{{ site.data.project.releases.previous.latest }}</strong></li>
             <li>Supported Until: <strong>{{ site.data.project.releases.previous.supported_until }}</strong></li>
           </ul>
-{% if site.data.project.releases.previous.documentation_link %}
           <p><a href="{{ site.data.project.releases.previous.documentation_link }}">Full Documentation</a></p>
-{% endif %}
         </div>
       </div>
 {% endif %}
@@ -99,15 +93,13 @@
       <div class="version legacy">
         <h2>Unsupported</h2>
         <div class="content">
-          <p><code>{{ site.data.project.title }} {{ site.data.project.releases.legacy.version }}</code></p>
+          <p><code>league/{{ site.data.project.title | downcase }}:^{{ site.data.project.releases.legacy.version }}</code></p>
           <ul>
             <li>Requires: <strong>{{ site.data.project.releases.legacy.requires }}</strong></li>
             <li>Latest: <strong>{{ site.data.project.releases.legacy.latest }}</strong></li>
             <li>Supported Until: <strong>{{ site.data.project.releases.legacy.supported_until }}</strong></li>
           </ul>
-{% if site.data.project.releases.legacy.documentation_link %}
           <p><a href="{{ site.data.project.releases.legacy.documentation_link }}">Full Documentation</a></p>
-{% endif %}
         </div>
       </div>
 {% endif %}

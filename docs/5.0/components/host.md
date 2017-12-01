@@ -26,7 +26,7 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function getLabel(int $offset, $default = null): mixed
 	public function getLabels(void): array
 	public function getPublicSuffix(void): string
-	public function getRegisterableDomain(void): string
+	public function getRegistrableDomain(void): string
 	public function getSubDomain(void): string
 	public function hasZoneIdentifier(void): bool
 	public function isIp(void): bool
@@ -40,7 +40,7 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function withoutLabels(array $offsets): self
 	public function withoutRootLabel(void): self
 	public function withoutZoneIdentifier(void): self
-	public function withRegisterableDomain(string $host): self
+	public function withRegistrableDomain(string $host): self
 	public function withRootLabel(void): self
 	public function withSubDomain(string $host): self
 }
@@ -184,24 +184,26 @@ $newHost->getIp(); //returns null
 
 ## Host represented by a registered name
 
+<p class="message-warning"><code>Host::getRegisterableDomain</code> and <code>Host::withRegisterableDomain</code> are deprecated and replaced by <code>Host::getRegistrableDomain</code> and <code>Host::withRegistrableDomain</code> starting with version <code>1.5.0</code>.</p>
+
 If you don't have a IP then you are dealing with a registered name. A registered name is a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1). As such a registered name can not, for example, contain an `_`.
 
 ~~~php
 <?php
 public Host::getPublicSuffix(void): string
 public Host::isPublicSuffixValid(void): bool
-public Host::getRegisterableDomain(void): string
+public Host::getRegistrableDomain(void): string
 public Host::getSubDomain(void): string
-public Host::withRegisterableDomain(string $host): self
+public Host::withRegistrableDomain(string $host): self
 public Host::withSubDomain(string $host): self
 ~~~
 
 ### Host public informations
 
-Using data from [the public suffix list](http://publicsuffix.org/) and the [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser) library every `Host` object can:
+Using data from [the public suffix list](http://publicsuffix.org/) every `Host` object can:
 
-- return the subdomain using the `Host::getSubdomain` method;
-- return the registerable domain using the `Host::getRegisterableDomain` method;
+- return the subdomain using the `Host::getSubDomain` method;
+- return the registerable domain using the `Host::getRegistrableDomain` method;
 - return the public suffix using the `Host::getPublicSuffix` method;
 - tell you if the found public suffix is valid using the `Host::isPublicSuffixValid` method;
 
@@ -212,8 +214,8 @@ use League\Uri\Components\Host;
 
 $host = new Host('www.example.co.uk');
 echo $host->getPublicSuffix();        //display 'co.uk'
-echo $host->getRegisterableDomain();  //display 'example.co.uk'
-echo $host->getSubdomain();           //display 'www'
+echo $host->getRegistrableDomain();  //display 'example.co.uk'
+echo $host->getSubDomain();           //display 'www'
 $host->isPublicSuffixValid();         //return a boolean 'true' in this example
 ~~~
 
@@ -226,14 +228,14 @@ use League\Uri\Components\Host;
 
 $host = new Host('192.158.26.30');
 echo $host->getPublicSuffix();        //return ''
-echo $host->getRegisterableDomain();  //return ''
-echo $host->getSubdomain();           //return ''
+echo $host->getRegistrableDomain();  //return ''
+echo $host->getSubDomain();           //return ''
 $host->isPublicSuffixValid();         //return false
 ~~~
 
-### Updating the Registerable domain part
+### Updating the Registrable domain part
 
-You can update the registerable domain part of the host.
+You can update the registrable domain part of the host.
 
 ~~~php
 <?php
@@ -241,7 +243,7 @@ You can update the registerable domain part of the host.
 use League\Uri\Components\Host;
 
 $host    = new Host('www.11.be');
-$newHost = $host->withRegisterableDomain('co.uk');
+$newHost = $host->withRegistrableDomain('co.uk');
 echo $newHost; //displays 'www.11.co.uk'
 ~~~
 
@@ -257,7 +259,7 @@ You can update the subdomain part of the host.
 use League\Uri\Components\Host;
 
 $host    = new Host('www.11.be');
-$newHost = $host->withSubdomain('shop');
+$newHost = $host->withSubDomain('shop');
 echo $newHost; //displays 'shop.11.be'
 ~~~
 

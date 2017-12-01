@@ -2,12 +2,17 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## 5.2.0 - 2017-11-17
+## 5.2.0 - 2017-12-01
 
-- [URI hostname parser](https://github.com/thephpleague/uri-hostname-parser/releases/tag/1.0.0)
+- [URI Parser](https://github.com/thephpleague/uri-parser/releases/tag/1.3.0)
+- [URI Hostname parser](https://github.com/thephpleague/uri-hostname-parser/releases/tag/1.0.4)
+- [URI Manipulations 1.3.0 Changelog](https://github.com/thephpleague/uri-manipulations/releases/tag/1.3.0)
+- [URI Components 1.5.0 Changelog](https://github.com/thephpleague/uri-components/releases/tag/1.5.0)
+- [URI Schemes 1.1.1 Changelog](https://github.com/thephpleague/uri-schemes/releases/tag/1.1.1)
 
-- See [URI Manipulations 1.3.0 Changelog](https://github.com/thephpleague/uri-manipulations/blob/master/CHANGELOG.md#130---2017-11-24)
-- See [URI Components 1.3.0 Changelog](https://github.com/thephpleague/uri-components/blob/master/CHANGELOG.md#130---2017-11-24)
+### Fixed
+
+- Support for PHP7.2
 
 ## 5.1.0 - 2017-11-17
 

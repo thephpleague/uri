@@ -17,6 +17,7 @@ class Parser
 	public function isHost(string $host): bool
 	public function isScheme(string $scheme): bool
 	public function isPort(mixed $port): bool
+	public function parse(string $uri): array
 }
 
 //function aliases
@@ -28,6 +29,8 @@ function is_port(mixed $port): bool
 ~~~
 
 ## URI parsing
+
+<p class="message-info">available since version <code>1.3.0</code> <code>Parser::parse</code> is an alias of <code>Parser::__invoke</code>.</p>
 
 The `Parser::__invoke` method is a drop-in replacement to PHP's `parse_url` function, with the following differences:
 

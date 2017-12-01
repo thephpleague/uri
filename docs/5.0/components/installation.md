@@ -25,4 +25,12 @@ $ composer require league/uri-components
 Dependencies
 -------
 
+Prior to version 1.4.0
+
 - [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser)
+
+Starting with version 1.4.0
+
+- [Uri Hostname parser](/5.0/publicsuffix/)
+
+The changes between dependencies was done to support `PHP7.2+`

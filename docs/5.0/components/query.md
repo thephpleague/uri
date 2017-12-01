@@ -46,7 +46,7 @@ Since version <code>1.5.0</code>:<br>
 <code>Query::parse</code> is deprecated and replaced by <code>QueryParser::parse</code><br>
 <code>Query::extract</code> is deprecated and replaced by <code>QueryParser::extract</code><br>
 <code>Query::build</code> is deprecated and replaced by <code>QueryBuilder::build</code><br>
-Please refers to the <a href="/5.0/components/query-parsers">Query Parsers</a> documentation page for more informations.
+Please refers to the <a href="/5.0/components/parsers">Query Parsers</a> documentation page for more informations.
 </p>
 
 

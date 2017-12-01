@@ -3,10 +3,15 @@ layout: default
 title: The Query component
 ---
 
-Query Parsers
+Parsers
 =======
 
-The library provides two classes `QueryParser` and `QueryBuilder` to ease query string creation and conversion.
+The library provides the following classes to ease components parsing:
+
+- `QueryParser` to parse and deserialize a query string.
+- `QueryBuilder` to build a query string from a collection of key/value pairs.
+
+<p class="message-notice">The parsers and their functions alias are defined in the <code>League\Uri</code> namespace.</p>
 
 ~~~php
 <?php

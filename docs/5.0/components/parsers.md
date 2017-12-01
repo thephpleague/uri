@@ -6,6 +6,8 @@ title: The Query component
 Parsers
 =======
 
+<p class="message-info">Since <code>version 1.5.0</code></p>
+
 The library provides the following classes to ease components parsing:
 
 - `QueryParser` to parse and deserialize a query string.

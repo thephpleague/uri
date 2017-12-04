@@ -186,7 +186,9 @@ $newHost->getIp(); //returns null
 
 <p class="message-warning"><code>Host::getRegisterableDomain</code> and <code>Host::withRegisterableDomain</code> are deprecated and replaced by <code>Host::getRegistrableDomain</code> and <code>Host::withRegistrableDomain</code> starting with version <code>1.5.0</code>.</p>
 
-If you don't have a IP then you are dealing with a registered name. A registered name is a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1). As such a registered name can not, for example, contain an `_`.
+If you don't have a IP then you are dealing with a registered name. A registered name **should** be a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) bot better interoperability but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
+
+> (...) URI producers should use names that conform to the DNS syntax, even when use of DNS is not immediately apparent, and should limit these names to no more than 255 characters in length.
 
 ~~~php
 <?php

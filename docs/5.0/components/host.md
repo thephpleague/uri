@@ -182,11 +182,11 @@ $newHost = $host->withContent('uri.thephpleague.com');
 $newHost->getIp(); //returns null
 ~~~
 
-## Host represented by a registered name
+## Host represented by a domain name
 
 <p class="message-warning"><code>Host::getRegisterableDomain</code> and <code>Host::withRegisterableDomain</code> are deprecated and replaced by <code>Host::getRegistrableDomain</code> and <code>Host::withRegistrableDomain</code> starting with version <code>1.5.0</code>.</p>
 
-If you don't have a IP then you are dealing with a registered name. A registered name **should** be a [domain name](http://tools.ietf.org/html/rfc1034) subset according to [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) bot better interoperability but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
+If you don't have a IP then you are dealing with a registered name. A registered name can be a [domain name](http://tools.ietf.org/html/rfc1034) subset if it follows [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
 
 > (...) URI producers should use names that conform to the DNS syntax, even when use of DNS is not immediately apparent, and should limit these names to no more than 255 characters in length.
 
@@ -205,7 +205,7 @@ public Host::withSubDomain(string $host): self
 Using data from [the public suffix list](http://publicsuffix.org/) every `Host` object can:
 
 - return the subdomain using the `Host::getSubDomain` method;
-- return the registerable domain using the `Host::getRegistrableDomain` method;
+- return the registrable domain using the `Host::getRegistrableDomain` method;
 - return the public suffix using the `Host::getPublicSuffix` method;
 - tell you if the found public suffix is valid using the `Host::isPublicSuffixValid` method;
 
@@ -267,7 +267,7 @@ echo $newHost; //displays 'shop.11.be'
 
 <p class="message-warning">This method throws an <code>League\Uri\Components\Exception</code> if you submit a FQDN.</p>
 
-## Host as a Hierarchical Collection
+## Host as a general registered name
 
 ~~~php
 <?php
@@ -322,7 +322,7 @@ Host::createFromLabels(['0.1', '127.0'], Host::IS_ABSOLUTE);
 //throws League\Uri\Components\Exception
 ~~~
 
-### Partial or fully qualified domain name
+### Partial or fully qualified registered name
 
 A host is considered absolute or as being a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
 
@@ -469,7 +469,7 @@ $host->getLabel(23, 'now'); //return 'now'
 
 If the offset does not exists it will return the value specified by the optional second argument or default to `null`.
 
-<p class="message-info">`<code>Host::getLabel</code> supports negative offsets</p>
+<p class="message-info"><code>Host::getLabel</code> supports negative offsets</p>
 
 ~~~php
 <?php

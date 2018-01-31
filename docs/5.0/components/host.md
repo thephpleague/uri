@@ -14,13 +14,16 @@ The library provides a `Host` class to ease host creation and manipulation. This
 
 ~~~php
 <?php
+
+use League\Uri\PublicSuffix\Rules;
+
 class Host implements ComponentInterface, Countable, IteratorAggregate
 {
 	const IS_ABSOLUTE = 1;
 	const IS_RELATIVE = 0;
-	public static function createFromIp(string $ip): self
-	public static function createFromLabels(iterable $data, int $type = self::IS_RELATIVE): self
-	public function __construct(?string $content = null): void
+	public static function createFromIp(string $ip, Rules $resolver = null): self
+	public static function createFromLabels(iterable $data, int $type = self::IS_RELATIVE, Rules $resolver = null): self
+	public function __construct(?string $content = null, Rules $resolver = null): void
 	public function append(string $host): self
 	public function getIp(void): string
 	public function getLabel(int $offset, $default = null): mixed
@@ -43,15 +46,19 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function withRegistrableDomain(string $host): self
 	public function withRootLabel(void): self
 	public function withSubDomain(string $host): self
+	public function withResolver(Rules $resolver): self
 }
 ~~~
+
 
 ## Creating a new object using the default constructor
 
 ~~~php
 <?php
-public Host::__construct(?string $content = null): void
+public Host::__construct(?string $content = null, Rules $resolver = null): void
 ~~~
+
+<p class="message-info">since version <code>1.7.0</code> you can inject a <a href="/5.0/publicsuffix/rules/#rules-and-domain">Rules</a> object on instantiation.</p>
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
 
@@ -64,7 +71,7 @@ The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentExceptio
 ~~~php
 <?php
 
-public static Host::createFromIp(string $ip): self
+public static Host::createFromIp(string $ip, Rules $resolver = null): self
 public Host::isIp(void): bool
 public Host::isIpv4(void): bool
 public Host::isIpv6(void): bool
@@ -76,6 +83,8 @@ public Host::withoutZoneIdentifier(void): self
 ### Host::createFromIp
 
 This method allow creating an Host object from an IP. If the submitted IP is invalid a `League\Uri\Components\Exception` exception is thrown.
+
+<p class="message-info">since version <code>1.7.0</code> you can inject a <a href="/5.0/publicsuffix/rules/#rules-and-domain">Rules</a> object on instantiation. The parameter is optional</p>
 
 ~~~php
 <?php
@@ -292,7 +301,9 @@ public Host::withoutLabels(array $offsets): self
 
 A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Host::createFromLabels` method.
 
-The method expects at most 2 arguments:
+<p class="message-info">since version <code>1.7.0</code> you can inject a <a href="/5.0/publicsuffix/rules/#rules-and-domain">Rules</a> object on instantiation. The parameter is optional</p>
+
+The method expects at most 3 arguments:
 
 - The first required argument must be a collection of label (an `array` or a `Traversable` object). **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
 
@@ -301,6 +312,8 @@ The method expects at most 2 arguments:
     - `Host::IS_RELATIVE` creates an a partially qualified domain name `Host` object;
 
 By default this optional argument equals to `Host::IS_RELATIVE`.
+
+- The third optional argument is a `League\Uri\PublicSuffix\Rules` object which will be used to resolved the host public suffix. If none is provided the Host will try to generate one using the defaut value from the [Hostname Parser component](/5.0/publicsuffix/).
 
 <p class="message-warning">Since an IP is not a hostname, the class will throw an <code>League\Uri\Components\Exception</code> if you try to create an fully qualified domain name with a valid IP address.</p>
 
@@ -550,3 +563,16 @@ $newHost->__toString(); //return toto.com
 <p class="message-info">Just like the <code>Host::getLabel</code> this method supports negative offset.</p>
 
 <p class="message-warning">if the specified offsets do not exist, no modification is performed and the current object is returned.</p>
+
+
+#### Modifying the Resolver object
+
+At any given time you may change the `League\Uri\PublicSuffix\Rules` used to resolve the host public suffix using the following method
+
+~~~php
+<?php
+
+public function withResolver(Rules $resolver): self
+~~~
+
+The method retains the state of the current instance, and returns an instance that contains a different domain resolver, and automatically updates the host domain information.

@@ -20,7 +20,7 @@ The library provides the following classes to ease components parsing:
 
 use League\Uri;
 
-class QueryParser
+class QueryParser implements EncodingInterface
 {
 	public function convert(iterable $pairs): array
 	public function extract(string $query, string $separator = '&', int $enc_type = PHP_QUERY_RFC3986): array
@@ -28,7 +28,7 @@ class QueryParser
 }
 
 
-class QueryBuilder
+class QueryBuilder implements EncodingInterface
 {
 	public function build(iterable $pairs, string $separator = '&' , int $enc_type = PHP_QUERY_RFC3986): string
 }

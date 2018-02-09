@@ -12,7 +12,7 @@ title: Uri
 [![Build Status](//img.shields.io/travis/thephpleague/uri/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri)
 [![Total Downloads](//img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The library is a **meta package** which provides simple and intuitive classes to [parse](/5.0/parser/), [validate](/5.0/uri/) and [manipulate](/5.0/manipulations/) URIs and their [components](/5.0/components/) in PHP. Out of the box the library validate the following URI specific schemes:
+The library is a **meta package** which provides simple and intuitive classes to [parse](/5.0/parser/), [validate](/5.0/uri/) and [manipulate](/5.0/manipulations/) URIs and their [components](/5.0/components/) in PHP. Out of the box the library validates the following URI specific schemes:
 
 - HTTP/HTTPS;
 - Websockets;

@@ -150,7 +150,7 @@ class Mailto extends AbstractUri
 
         $path = implode(',', array_map('rawurlencode', $emails));
 
-        return new static('mailto:'.$path);
+        return new static::createFromComponents(['scheme' => mailto', 'path' => $path]);
     }
 }
 ~~~

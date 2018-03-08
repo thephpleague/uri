@@ -106,7 +106,6 @@ $path = new Path('path/to/./the/../the/sky%7bfoo%7d');
 $newPath = $raw_path->withoutDotSegments();
 echo $path;                   //displays 'path/to/./the/../the/sky%7bfoo%7d'
 echo $newPath;                //displays 'path/to/the/sky%7Bfoo%7D'
-$newPath->sameValueAs($path); //returns false;
 ~~~
 
 ### Removing empty segments
@@ -122,7 +121,6 @@ $path    = new Path("path////to/the/sky//");
 $newPath = $path->withoutEmptySegments();
 echo $path;                   //displays 'path////to/the/sky//'
 echo $newPath;                //displays 'path/to/the/sky/'
-$newPath->sameValueAs($path); //returns false;
 ~~~
 
 ### Manipulating the trailing slash

@@ -9,7 +9,7 @@ releases:
   current:
     version: '5.0'
     requires: 'PHP >= 7.0.0'
-    latest: '5.2.0 - 2017-12-01'
+    latest: '5.3.0 - 2018-03-14'
     supported_until: 'TBD'
     documentation_link: '/5.0/'
   legacy:

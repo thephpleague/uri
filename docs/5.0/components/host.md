@@ -26,6 +26,7 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function __construct(?string $content = null, Rules $resolver = null): void
 	public function append(string $host): self
 	public function getIp(void): string
+	public function getIpVersion(void): string|null
 	public function getLabel(int $offset, $default = null): mixed
 	public function getLabels(void): array
 	public function getPublicSuffix(void): string
@@ -35,6 +36,8 @@ class Host implements ComponentInterface, Countable, IteratorAggregate
 	public function isIp(void): bool
 	public function isIpv4(void): bool
 	public function isIpv6(void): bool
+	public function isIpFuture(void): bool
+	public function isDomain(void): bool
 	public function isPublicSuffixValid(void): bool
 	public function isAbsolute(void): bool
 	public function keys([string $label]): array
@@ -72,11 +75,13 @@ The `League\Uri\Components\Exception` extends PHP's SPL `InvalidArgumentExceptio
 <?php
 
 public static Host::createFromIp(string $ip, Rules $resolver = null): self
+public Host::getIp(void): string
+public Host::getIpVersion(void): string|null
 public Host::isIp(void): bool
 public Host::isIpv4(void): bool
 public Host::isIpv6(void): bool
+public Host::isIpFuture(void): bool
 public Host::hasZoneIdentifier(void): bool
-public Host::getIp(void): string
 public Host::withoutZoneIdentifier(void): self
 ~~~
 
@@ -103,7 +108,7 @@ Host::createFromIp('uri.thephpleague.com');
 
 ### IPv4 or IPv6
 
-There are two type of host:
+There are two (2) types of host:
 
 - Hosts represented by an IP;
 - Hosts represented by a registered name;
@@ -121,7 +126,7 @@ $ip_host = $host->withContent('127.0.0.1');
 $ip_host->isIp(); //return true;
 ~~~
 
-Knowing that you are dealing with an IP is good, knowing that its an IPv4 or an IPv6 is better.
+Knowing that you are dealing with an IP is good, knowing its version is better.
 
 ~~~php
 <?php
@@ -129,14 +134,32 @@ Knowing that you are dealing with an IP is good, knowing that its an IPv4 or an 
 use League\Uri\Components\Host;
 
 $ipv6 = Host::createFromIp('::1');
-$ipv6->isIp();   //return true
-$ipv6->isIpv4(); //return false
-$ipv6->isIpv6(); //return true
+$ipv6->isIp();       //return true
+$ipv6->isIpv4();     //return false
+$ipv6->isIpv6();     //return true
+$ipv6->isIpFuture(); //return false
+$ipv6->getIpVersion(); //return '6'
 
 $ipv4 = new Host('127.0.0.1');
-$ipv4->isIp();   //return true
-$ipv4->isIpv4(); //return true
-$ipv4->isIpv6(); //return false
+$ipv4->isIp();       //return true
+$ipv4->isIpv4();     //return true
+$ipv4->isIpv6();     //return false
+$ipv4->isIpFuture(); //return false
+$ipv4->getIpVersion(); //return '4'
+
+$ipfuture = new Host('v32.1.2.3.4');
+$ipfuture->isIp();       //return true
+$ipfuture->isIpv4();     //return false
+$ipfuture->isIpv6();     //return false
+$ipfuture->isIpFuture(); //return true
+$ipfuture->getIpVersion(); //return '32'
+
+$domain = new Host('thephpleague.com'):
+$domain->isIp();       //return false
+$domain->isIpv4();     //return false
+$domain->isIpv6();     //return false
+$domain->isIpFuture(); //return false
+$domain->getIpVersion(); //return null
 ~~~
 
 ### Zone Identifier
@@ -188,19 +211,60 @@ $host = new Host('[fe80::1%25eth0-1]');
 $host->getIp(); //returns 'fe80::1%eth0-1'
 
 $newHost = $host->withContent('uri.thephpleague.com');
-$newHost->getIp(); //returns null
+$newHost->getIp();        //returns null
+$newHost->getIpVersion(); //returns null
+~~~
+
+## Host represented by a registered name
+
+If you don't have a IP then you are dealing with a registered name. A registered name can be a [domain name](http://tools.ietf.org/html/rfc1034) subset if it follows [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
+
+> (...) URI producers should use names that conform to the DNS syntax, even when use of DNS is not immediately apparent, and should limit these names to no more than 255 characters in length.
+
+<p class="message-info"><code>Host::isDomain</code> is available since version <code>1.8.0</code>.</p>
+
+~~~php
+<?php
+public Host::isDomain(void): bool
+~~~
+
+To determine if a host is a domain name or a general registered name you just need to use the newly added method `Host::isDomain`
+
+~~~php
+<?php
+
+use League\Uri\Components\Host;
+
+$domain = new Host('www.example.co.uk');
+$domain->isDomain();  //return true
+
+$reg_name = new Host('...test.com');
+$reg_name->isDomain();  //return false
 ~~~
 
 ## Host represented by a domain name
 
 <p class="message-warning"><code>Host::getRegisterableDomain</code> and <code>Host::withRegisterableDomain</code> are deprecated and replaced by <code>Host::getRegistrableDomain</code> and <code>Host::withRegistrableDomain</code> starting with version <code>1.5.0</code>.</p>
 
-If you don't have a IP then you are dealing with a registered name. A registered name can be a [domain name](http://tools.ietf.org/html/rfc1034) subset if it follows [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
-
-> (...) URI producers should use names that conform to the DNS syntax, even when use of DNS is not immediately apparent, and should limit these names to no more than 255 characters in length.
+If you don't have an IP or a general registered name it means you are using a domain name. As such the following method can be used to further caracterize your host.
 
 ~~~php
 <?php
+const Host::IS_RELATIVE = 0;
+const Host::IS_ABSOLUTE = 1;
+public static Host::createFromLabels(iterable $data, int $type = self::IS_RELATIVE): self
+public Host::isAbsolute(void): bool
+public Host::getLabels(void): array
+public Host::getLabel(int $offset, $default = null): mixed
+public Host::keys([string $label]): array
+public Host::count(void): int
+public Host::getIterator(void): ArrayIterator
+public Host::withRootLabel(void): self
+public Host::withoutRootLabel(void): self
+public Host::prepend(string $host): self
+public Host::append(string $host): self
+public Host::replaceLabel(int $offset, string $host): self
+public Host::withoutLabels(array $offsets): self
 public Host::getPublicSuffix(void): string
 public Host::isPublicSuffixValid(void): bool
 public Host::getRegistrableDomain(void): string
@@ -224,10 +288,10 @@ Using data from [the public suffix list](http://publicsuffix.org/) every `Host` 
 use League\Uri\Components\Host;
 
 $host = new Host('www.example.co.uk');
-echo $host->getPublicSuffix();        //display 'co.uk'
-echo $host->getRegistrableDomain();  //display 'example.co.uk'
-echo $host->getSubDomain();           //display 'www'
-$host->isPublicSuffixValid();         //return a boolean 'true' in this example
+echo $host->getPublicSuffix();      //display 'co.uk'
+echo $host->getRegistrableDomain(); //display 'example.co.uk'
+echo $host->getSubDomain();         //display 'www'
+$host->isPublicSuffixValid();       //return a boolean 'true' in this example
 ~~~
 
 If the data is not found the methods listed above will all return an **empty string** except for the `Host::isPublicSuffixValid` method which will return `false`.
@@ -238,10 +302,10 @@ If the data is not found the methods listed above will all return an **empty str
 use League\Uri\Components\Host;
 
 $host = new Host('192.158.26.30');
-echo $host->getPublicSuffix();        //return ''
-echo $host->getRegistrableDomain();  //return ''
-echo $host->getSubDomain();           //return ''
-$host->isPublicSuffixValid();         //return false
+echo $host->getPublicSuffix();      //return ''
+echo $host->getRegistrableDomain(); //return ''
+echo $host->getSubDomain();         //return ''
+$host->isPublicSuffixValid();       //return false
 ~~~
 
 ### Updating the Registrable domain part
@@ -276,26 +340,6 @@ echo $newHost; //displays 'shop.11.be'
 
 <p class="message-warning">This method throws an <code>League\Uri\Components\Exception</code> if you submit a FQDN.</p>
 
-## Host as a general registered name
-
-~~~php
-<?php
-const Host::IS_RELATIVE = 0;
-const Host::IS_ABSOLUTE = 1;
-public static Host::createFromLabels(iterable $data, int $type = self::IS_RELATIVE): self
-public Host::isAbsolute(void): bool
-public Host::getLabels(void): array
-public Host::getLabel(int $offset, $default = null): mixed
-public Host::keys([string $label]): array
-public Host::count(void): int
-public Host::getIterator(void): ArrayIterator
-public Host::withRootLabel(void): self
-public Host::withoutRootLabel(void): self
-public Host::prepend(string $host): self
-public Host::append(string $host): self
-public Host::replaceLabel(int $offset, string $host): self
-public Host::withoutLabels(array $offsets): self
-~~~
 
 ### Host::createFromLabels
 

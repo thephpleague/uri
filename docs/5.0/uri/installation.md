@@ -12,8 +12,8 @@ System Requirements
 You need:
 
 - **PHP >= 7.0.13** but the latest stable version of PHP is recommended
-- the `mbstring` extension
-- the `intl` extension
+
+While the library no longer requires out of the box the `intl` extension starting with version `1.2.0`, you should still require it if you are dealing with URIs containing non-ASCII host. Without it, URI creation or manipulation action will throw an exception if such hosts are used.
 
 Installation
 --------

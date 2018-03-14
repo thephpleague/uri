@@ -2,6 +2,30 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 5.3.0 - 2018-03-14
+
+See packages release notes for more informations
+
+- [URI Parser](https://github.com/thephpleague/uri-parser/releases/tag/1.4.0)
+- [URI Components](https://github.com/thephpleague/uri-components/releases/tag/1.8.0)
+- [URI Hostname Parser](https://github.com/thephpleague/uri-hostname-parser/releases/tag/1.1.0)
+- [URI Manipulations](https://github.com/thephpleague/uri-manipulations/releases/tag/1.5.0)
+- [URI Schemes](https://github.com/thephpleague/uri-schemes/releases/tag/1.2.0)
+
+### Added
+
+- IPvFuture support
+
+### Fixed
+
+- Adding PHPStan
+- Improve RFC3986 compliance
+- Improve performance
+
+### Remove
+
+- remove `mbstring` extension requirement
+
 ## 5.2.0 - 2017-12-01
 
 - [URI Parser](https://github.com/thephpleague/uri-parser/releases/tag/1.3.0)

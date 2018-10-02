@@ -69,7 +69,7 @@ Each component exposes its own specific properties. Please refer to the document
 
 ### Using URI Middlewares
 
-The package comes bundle with [URI middlewares](/uri/manipulations/) which enable modifying any URI object in a simple and intuitive way.
+The package comes bundled with [URI middlewares](/uri/manipulations/) which enable modifying any URI object in a simple and intuitive way.
 
 Let's say you have a document that can be downloaded in different formats (CSV, XML, JSON) and you want to quickly generate a URI for each format. This example illustrates how easy it is to generate these different URIs from an original URI.
 

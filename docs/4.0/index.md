@@ -33,7 +33,7 @@ The library ships with:
 
 ### Getting information from a URI
 
-Appart from being able to get all the URI component string using their respective getter method. the URI object also exposed all component as object throught PHP's magic `__get` method. You can use this ability to get even more informations about the URI objects.
+Apart from being able to get all the URI component strings using their respective getter methods, the URI object also exposes all component as objects throught PHP's magic `__get` method. You can use this ability to get even more information about the URI objects.
 
 ~~~php
 <?php

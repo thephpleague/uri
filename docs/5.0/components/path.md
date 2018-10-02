@@ -103,7 +103,7 @@ To remove dot segment as per [RFC3986](https://tools.ietf.org/html/rfc3986#secti
 use League\Uri\Components\Path;
 
 $path = new Path('path/to/./the/../the/sky%7bfoo%7d');
-$newPath = $raw_path->withoutDotSegments();
+$newPath = $path->withoutDotSegments();
 echo $path;                   //displays 'path/to/./the/../the/sky%7bfoo%7d'
 echo $newPath;                //displays 'path/to/the/sky%7Bfoo%7D'
 ~~~

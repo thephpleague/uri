@@ -3,6 +3,7 @@ version:
         Getting Started:
             Overview: '/5.0/'
             Installation: '/5.0/installation/'
+            From 4.x to 5.x: '/5.0/upgrading/'
         Uri functions:
             Cheat Sheet:  '/5.0/functions/'
         Uri parser:
@@ -85,7 +86,6 @@ version:
             Query Parser: '/4.0/services/parser-query/'
             Formatter: '/4.0/services/formatter/'
 upgrading:
-    'Upgrading Guide':
-        Introduction: '/upgrading/'
-        Changelog: '/upgrading/changelog/'
-        4.x to 5.x: '/upgrading/5.0/'
+    'Upgrading guide':
+        Release Notes: '/releases/'
+        From 4.x to 5.x: '/5.0/upgrading/'

@@ -1,21 +1,5 @@
-menu .versions {
-    margin: 15px 0 0 50px;
-}
-
-@media screen and (max-width: 549px) {
-    menu {
-        text-align: center;
-    }
-    menu .versions {
-        margin: 15px 0 0 0;
-        display: inline-block;
-    }
-}
-
-@media screen and (min-width: 550px) and (max-width: 849px) {
-    menu .versions {
-        margin: 15px 0 0 30px;
-    }
+html {
+    background:#f2f7fc;
 }
 
 blockquote {
@@ -28,16 +12,128 @@ blockquote {
     padding:0 10px;
 }
 
-/** --------------- select menu --------- */
+header {
+    position:fixed;
+    height:4.5em;
+    z-index: 1;
+    border-bottom:1px solid #cfe4f9;
+    max-width: none;
+    width: 100%;
+    padding:0;
+    margin:0;
+    background:#fff;
+}
 
-.tool {
-    margin:15px 0 0 0;
-    padding:0 45px;
+header nav {
+    display:none;
+    font-family: "Museo Sans 500";
+    font-weight: normal;
+}
+
+header nav h2 {
+    font-family: "Museo Sans 500";
+    font-weight: normal;
+    font-size: 16px;
+    background:#1672ce;
+    color:#fff;
+    margin:0;
+    width: 75px;
+    text-align: center;
+    border-radius: .3em;
+    margin-bottom:.4em;
+    padding:.5em .3em;
+    cursor: pointer;
+}
+
+header nav ul {
+    display:none;
+    z-index: 5;
+    margin:0;
+    padding:0;
+    list-style:none;
+    width: 75px;
+}
+
+header nav .show {
+    display:block;
+}
+
+header nav li {
+    margin:0;
+    padding:0;
+    text-align: center;
+}
+
+header nav a {
+    display:block;
+    margin:0;
+    padding:.5em .3em;
+    text-decoration:none;
+    color:#1672ce;
+    background: #fff;
+    border:solid #c7c7c7;
+    border-width:0 1px 1px;
+}
+
+header nav a:hover {
+    background:#f1f1f1;
+}
+
+header nav li:first-of-type a {
+    border-top-width: 1px;
+    border-radius:.3em .3em 0 0;
+}
+
+header nav li:last-of-type a {
+    border-radius:0 0 .3em .3em;
+}
+
+header .logo {
+    text-align:left;
+}
+
+header .logo .name {
+    font-size:38px;
+}
+
+header .logo em {
+    color:#777;
+    font-style:normal;
+}
+
+label[for=menu] {
+    position:fixed;
+    z-index: 2;
+    top:20px;
+    right:0;
+    display:inline-block;
+    box-sizing: border-box;
+    background:transparent;
+    color:#1672ce;
+    width:50px;
+    font-size:30px;
+    line-height: 1;
+    padding:0;
+    margin:0;
+}
+
+label[for=menu]:hover {
+    background:transparent;
+    color:#1672ce;
+}
+
+main {
+    padding-top:4em;
+    background:none;
+}
+
+pre {
+    background:#fff;
+    border-radius:.3em .3em 0 0;
 }
 
 /* ---------- header automatic permalink -----------*/
 
-.example .header-permalink,
 .header-permalink {
     text-decoration: none;
     color:transparent;
@@ -55,410 +151,158 @@ h5:hover .header-permalink {
     color:#777;
 }
 
-
-/* -------- homepage css -----------------*/
-
-.homepage header {
-    margin:0 auto;
-    padding:3em 0;
-    box-sizing: border-box;
-    background:#19242F url(//thephpleague.com/img/header_bg.png) no-repeat top center;
-    background-size: cover;
-    max-width: none;
-}
-
-.homepage header h1 {
-    margin:.3em auto;
-    font-family: "Museo 300";
-    font-size:96px;
-    font-weight: normal;
-}
-
-.homepage header h2 {
-    margin:0 auto;
-    font-family: "Museo 300";
-    color:#ff4043;
-    font-size:36px;
-    line-height:1.33;
-    font-weight:normal;
-}
-
-.homepage .composer span {
-    padding:.3em 1em;
-    background-color:rgba(0, 0, 0, .3);
-    color:#fff;
-    font-family: Consolas, Monaco ,'Andale Mono', monospace;
-    line-height: 140%;
-    text-align: left;
-    white-space: pre;
-    word-wrap: normal;
-    word-spacing: normal;
-    hyphens: none;
-    display:inline-block;
-    border-radius: .3em;
-}
-
-.homepage main {
-    color: #2b3d50;
-    font-family: "Museo 300";
-    line-height: 160%;
-    font-weight: normal;
-    background:#19242f;
-    width:auto;
-    right:auto;
-}
-
-.homepage main > div {
-    margin:0 auto;
-    padding:3em 0;
-    box-sizing: border-box;
-}
-
-.inner-content {
-    margin:0 auto;
-    padding:1em;
-    box-sizing: border-box;
-    text-align:center;
-}
-
-.inner-content h1 {
-    color:#fff;
-    font-size:50px;
-    line-height:100%;
-    font-weight:normal;
-    font-family: "Museo Sans 300";
-    text-transform:uppercase;
-    margin:0;
-}
-
-.inner-content:after {
-    content: '';
-    display:table;
-    clear:both;
-}
-
-.example {
-    background:#fff;
-    color:#666;
-    font:normal 18px/1.5 "Museo 300";
-}
-
-.example h1 {
-    color:#ffb554;
-}
-
-.example h2 {
-    color:#ffb554;
-    font-weight: normal;
-}
-
-.example p {
-    text-align: left;
-}
-
-.example a {
-    color:#6abcdd;
-}
-
-.highlights {
-    background:#eff0f1;
-}
-
-.highlights .description {
-    color:#666;
-    font:normal 18px/1.5 "Museo 300";
-    text-align: left;
-}
-
-.highlights h1 {
-    color:#ff4043;
-    font-size: 36px;
-    line-height:115%;
-}
-
-.highlights ol {
-    margin:0;
-    text-align:left;
-}
-
-.highlights li {
-    margin:0 0 15px 0;
-    color:#666;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.highlights li p {
-    margin:0;
-    font:normal 18px/1.4 "Museo 300";
-    color:#ff4043;
-}
-
-.highlights li code {
-    padding: .3em;
-    color: #c33637;
-    background: white;
-    border-radius: 2px;
-}
-
-.highlights li a {
-    color:#ff4043;
-}
-
-.highlights li a:hover {
-    color:#800;
-}
-
-.documentation {
-    background: #6abcdd;
-}
-
-.documentation h1 {
-    margin-bottom:.5em;
-    font-size:36px;
-}
-
-.documentation .footnote {
-    clear:both;
-}
-
-.documentation .version {
-    margin:.3em auto;
-    padding:0;
-    border:1px solid #0491a0;
-    max-width:289px;
-}
-
-.documentation .version h2 {
-    margin:0;
-    padding:.3em;
-    text-transform: uppercase;
-    font-size:18px;
-    color:#fff;
-    background:#0491a0;
-}
-
-.documentation .version a {
+main article div>code {
     display: inline-block;
-    padding: 13px 15px;
-    color: white;
-    -webkit-font-smoothing: antialiased;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 3px 5px;
+    font-family: Consolas,Monaco,'Andale Mono',monospace;
+    font-size: 17px;
     line-height: 100%;
-    text-transform: uppercase;
-    text-decoration: none;
-    background: #ff5759;
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 #d42f30;
+    border-radius: 2px;
+    background: #f5f6f7;
+    border: solid #dcdddd 1px;
 }
 
-.documentation .version a:hover {
-    background: #e75557;
+footer {
+    border-top:1px solid #cfe4f9;
+    background:#fff;
+    max-width: none;
+    text-align:center;
+    color:#a1a1a1;
 }
 
-.documentation .version ul {
-    list-style:none;
-    text-align:left;
+footer span a {
+    color:#007ec6;
 }
 
-.documentation .version .content {
-    padding:1em 0;
-    background: #fff;
+main menu .menu-section {
+    border-bottom:1px dashed #cfe4f9;
+    padding-bottom:1em;
 }
 
-.documentation .next {
-    border-color:#0491a0;
+main menu .menu-section:last-of-type {
+    border-bottom:none;
 }
 
-.documentation .next h2 {
-    background:#0491a0;
+main menu h2 {
+    margin-top:1.5em;
+    padding-left:.7em;
+    color:#2b3d50;
+    font-size:1em;
+    font-weight: bold;
+    text-transform: none;
+    box-shadow: none;
 }
 
-.documentation .next a {
-    background: #0491a0;
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 #03565e;
+main menu ul li a {
+    border-radius:.1em;
+    font-size:1em;
+    margin:.2em;
+    padding:.6em;
+    color:#1672ce;
 }
 
-.documentation .next a:hover {
-    background: #0a7c87;
-}
-
-.documentation .current {
-    border-color:#2db56a;
-}
-
-.documentation .current h2 {
-    background:#2db56a;
-}
-
-.documentation .current a {
-    background: #2db56a;
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 #1a7742;
-}
-
-.documentation .current a:hover {
-    background: #259b58;
-}
-
-.documentation .previous {
-    border-color:#ff8300;
-}
-
-.documentation .previous h2 {
-    background:#ff8300;
-}
-
-.documentation .previous a {
-    background: #ff8300;
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 #a85401;
-}
-
-.documentation .previous a:hover {
-    background: #e56b00;
-}
-
-.documentation .legacy {
-    border-color:#e74c3c;
-}
-
-.documentation .legacy h2 {
-    background:#e74c3c;
-}
-
-.documentation .legacy a {
-    background: #e74c3c;
-    border-radius: 4px;
-    box-shadow: 3px 3px 0 #a3342a;
-}
-
-.documentation .legacy a:hover {
-    background: #c94034;
-}
-
-.questions {
-    padding:0;
-    background:#283b4f;
-    color:#fff;
-}
-
-.questions h1 {
-    font-size:36px;
-    color:#6abcdd;
-}
-
-.questions a {
-    color:#6abcdd;
-}
-
-.questions a:hover {
-    text-decoration: none;
-}
-
-@media screen and (min-width: 549px) {
-    .homepage header h1 {
-        margin:0 auto;
-    }
-
-    .inner-content {
-        max-width:1000px;
-    }
-
-    .homepage main {
-        width:initial;
-        right:initial;
-    }
-
-    .highlights h1 {
-        font-size: 50px;
-    }
-
-    .highlights li {
-        font-size:24px;
-    }
-
-    .highlights li p {
-        font-size:20px;
-    }
-
-    .highlights .column {
-        float:left;
-        width:45%;
-    }
-
-    .highlights .one {
-        margin:0 10% 0 0;
-    }
-
-    .documentation h1 {
-        font-size:50px;
-    }
-}
-@media screen and (min-width:700px) {
-    .documentation .version {
-        float:left;
-        margin:5%;
-        width:289px;
-    }
-
-    .documentation .previous {
-        float:right;
-    }
-
-    .documentation .legacy {
-        float:right;
-    }
-}
-
-/*
-@media screen and (min-width: 910px) {
-
-    .documentation .version {
-        float:left;
-        width:30%;
-        margin:1%;
-    }
-}*/
-
-.item-list {
-    -webkit-column-gap:1em;
-       -moz-column-gap:1em;
-            column-gap:1em;
-}
-
-.item-list li a {
-    color:#ff4043;
-    text-decoration: none;
-}
-
-.item-list a:hover {
-    color:#800;
+main menu ul li a:hover {
+    color:#1672ce;
+    padding:.6em;
+    background:transparent;
     text-decoration: underline;
 }
 
-@media screen and (min-width: 480px) and (max-width: 550px) {
-    .item-list {
-        -webkit-column-count:2;
-           -moz-column-count:2;
-                column-count:2;
+main menu ul li.selected {
+    background: none;
+}
+
+main menu ul li.selected a {
+    color:#fff;
+    background:#1672ce;
+    padding:.6em;
+}
+
+main menu ul li.selected a:hover {
+    text-decoration: none;
+}
+
+@media screen and (max-width: 549px) {
+    header {
+        padding: 20px 0 25px 10px;
+    }
+
+    menu {
+        text-align: center;
     }
 }
 
-@media screen and (min-width: 710px) {
-    .item-list {
-        -webkit-column-count:2;
-           -moz-column-count:2;
-                column-count:2;
+@media screen and (min-width: 404px) {
+    header nav {
+        display:block;
+        position:fixed;
+        z-index: 2;
+        top:20px;
+        right:50px;
+        padding:0;
+        margin:0;
+    }
+
+    main menu .versions-small {
+        display:none;
     }
 }
 
-@media screen and (min-width: 1160px) {
-    .item-list {
-        -webkit-column-count:3;
-           -moz-column-count:3;
-                column-count:3;
+@media screen and (min-width: 550px) {
+    header {
+        background:#fff;
+    }
+
+    header .header-content {
+        box-sizing: border-box;
+        max-width:1192px;
+        margin:0 auto;
+        padding:1em;
+    }
+
+    header .header-content:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    header .logo {
+        float:left;
+        text-align:right;
+    }
+
+    header nav {
+        position: static;
+        float:right;
+        margin:0;
+        padding:0;
+    }
+
+    label[for=menu] {
+        display:none;
+    }
+
+    main {
+        background: none;
+    }
+
+    main menu {
+        border-right: 1px dashed #cfe4f9;
+    }
+
+    main article p,
+    main article li {
+        font-size:.9em;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    header .header-content {
+        width:1192px;
+    }
+    main {
+        margin-left:auto;
+        margin-right:auto;
+        width:1192px;
     }
 }

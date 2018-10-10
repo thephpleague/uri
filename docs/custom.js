@@ -1,20 +1,18 @@
-$(function() {
-    $('.versions').change(function (e) {
-        location.href = $(this).find('option:selected').data('url');
-    });
-});
+(() => {
 
-(function (w) {
-  var d = w.document,
-      headerList = d.querySelector('main').querySelectorAll("h2[id]"),
-      uri = location.href.split('#', 2).pop();
+  const uri = new URL(location.href);
 
-  for (var i = 0, header, link; header = headerList[i]; ++i) {
-    link = d.createElement("a");
+  document.querySelector('header nav h2').addEventListener('click', function () {
+    this.parentNode.querySelector('ul').classList.toggle('show');
+  }, false);
+
+  document.querySelectorAll("main h2[id]").forEach((header) => {
+    uri.hash = header.id;
+    let link = document.createElement("a");
     link.className = "header-permalink";
     link.title = "Permalink";
-    link.href = uri + "#" + header.id;
+    link.href = uri.toString();
     link.innerHTML = "&#182;";
     header.appendChild(link);
-  }
-})(window);
+  });
+})();

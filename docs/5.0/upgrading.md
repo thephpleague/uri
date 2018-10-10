@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Upgrading from 4.x to 5.x
+redirect_from:
+    - /upgrading/5.0/
 ---
 
 # Upgrading from 4.x to 5.x

@@ -152,6 +152,10 @@ pre {
     font-weight:bold;
 }
 
+.highlights a {
+    color:#ff4043;
+}
+
 .highlights li p {
     margin:0;
     font:normal 18px/1.4 "Museo 300";

@@ -1,91 +1,95 @@
-version:
-    '5.0':
-        Getting Started:
-            Overview: '/5.0/'
-            Installation: '/5.0/installation/'
-            From 4.x to 5.x: '/5.0/upgrading/'
-        Uri functions:
-            Cheat Sheet:  '/5.0/functions/'
-        Uri parser:
-            Overview: '/5.0/parser/'
-            Installation: '/5.0/parser/installation/'
-            URI Parser: '/5.0/parser/parser/'
-            URI Builder: '/5.0/parser/builder/'
-        Uri schemes:
-            Overview: '/5.0/uri/'
-            Installation: '/5.0/uri/installation/'
-            API: '/5.0/uri/api/'
-            Factory: '/5.0/uri/factory/'
-            Http(s): '/5.0/uri/schemes/http/'
-            Websocket(s): '/5.0/uri/schemes/ws/'
-            FTP: '/5.0/uri/schemes/ftp/'
-            Data: '/5.0/uri/schemes/data/'
-            File: '/5.0/uri/schemes/file/'
-            Generic URI: '/5.0/uri/schemes/uri/'
-            Extension Guide: '/5.0/uri/extension/'
-        Uri manipulations:
-            Overview: '/5.0/manipulations/'
-            Installation: '/5.0/manipulations/installation/'
-            URI References: '/5.0/manipulations/references/'
-            URI Formatter: '/5.0/manipulations/formatter/'
-            URI Middlewares: '/5.0/manipulations/middlewares/'
-        Uri components:
-            Overview: '/5.0/components/'
-            Installation: '/5.0/components/installation/'
-            Parsers: '/5.0/components/parsers/'
-            API: '/5.0/components/api/'
-            Scheme: '/5.0/components/scheme/'
-            UserInfo: '/5.0/components/userinfo/'
-            Host: '/5.0/components/host/'
-            Port: '/5.0/components/port/'
-            Path: '/5.0/components/path/'
-            HierarchicalPath: '/5.0/components/hierarchical-path/'
-            DataPath: '/5.0/components/data-path/'
-            Query: '/5.0/components/query/'
-            Fragment: '/5.0/components/fragment/'
-        Uri Domain Parser:
-            Overview: '/5.0/publicsuffix/'
-            Installation: '/5.0/publicsuffix/installation/'
-            Manage List: '/5.0/publicsuffix/manager/'
-            Resolve Domain: '/5.0/publicsuffix/rules/'
-    '4.0':
-        Getting Started:
-            Overview: '/4.0/'
-            Installation: '/4.0/installation/'
-            Terminology: '/4.0/definitions/'
-        Uri:
-            Instantiation: '/4.0/uri/instantiation/'
-            Properties: '/4.0/uri/properties/'
-        Uri Schemes:
-            Http URIs: '/4.0/uri/schemes/http/'
-            Websocket URIs: '/4.0/uri/schemes/ws/'
-            FTP URI: '/4.0/uri/schemes/ftp/'
-            Data URI: '/4.0/uri/schemes/data-uri/'
-            Extension Guide: '/4.0/uri/extension/'
-        Uri manipulation:
-            Overview: '/4.0/uri/manipulation/'
-            Uri Modifiers: '/4.0/uri/manipulation/generic/'
-            Host Modifiers: '/4.0/uri/manipulation/host/'
-            Path Modifiers: '/4.0/uri/manipulation/path/'
-            Query Modifiers: '/4.0/uri/manipulation/query/'
-        Uri Parts API:
-            Overview: '/4.0/components/overview/'
-            Scheme: '/4.0/components/scheme/'
-            User: '/4.0/components/user/'
-            Pass: '/4.0/components/pass/'
-            User Information: '/4.0/components/userinfo/'
-            Host: '/4.0/components/host/'
-            Port: '/4.0/components/port/'
-            Path: '/4.0/components/path/'
-            Hierarchical Path: '/4.0/components/hierarchical-path/'
-            Data Path: '/4.0/components/datauri-path/'
-            Query: '/4.0/components/query/'
-            Fragment: '/4.0/components/fragment/'
-        Services:
-            Uri Parser: '/4.0/services/parser-uri/'
-            Query Parser: '/4.0/services/parser-query/'
-            Formatter: '/4.0/services/formatter/'
-upgrading:
-    'Upgrading guide':
-        Release Notes: '/releases/'
-        From 4.x to 5.x: '/5.0/upgrading/'
+packages:
+    'parser':
+        '1.0':
+            Documentation:
+                Getting Started: '/parser/1.0/'
+                Usage: '/parser/1.0/api/'
+    'schemes':
+        '1.0':
+            Documentation:
+                Getting Started: '/schemes/1.0/'
+                API: '/schemes/1.0/api/'
+                Factory: '/schemes/1.0/factory/'
+                Http(s): '/schemes/1.0/schemes/http/'
+                Websocket(s): '/schemes/1.0/schemes/ws/'
+                FTP: '/schemes/1.0/schemes/ftp/'
+                Data: '/schemes/1.0/schemes/data/'
+                File: '/schemes/1.0/schemes/file/'
+                Generic URI: '/schemes/1.0/schemes/uri/'
+                Extension Guide: '/schemes/1.0/extension/'
+    'query-parser':
+        '1.0':
+            Documentation:
+                Getting Started: '/query-parser/1.0/'
+                Usage: '/query-parser/1.0/api/'
+    'components':
+        '1.0':
+            Documentation:
+                Getting Started: '/components/1.0/'
+                Parsers: '/components/1.0/parsers/'
+                API: '/components/1.0/api/'
+                Scheme: '/components/1.0/scheme/'
+                UserInfo: '/components/1.0/userinfo/'
+                Host: '/components/1.0/host/'
+                Port: '/components/1.0/port/'
+                Path: '/components/1.0/path/'
+                HierarchicalPath: '/components/1.0/hierarchical-path/'
+                DataPath: '/components/1.0/data-path/'
+                Query: '/components/1.0/query/'
+                Fragment: '/components/1.0/fragment/'
+
+    'manipulations':
+        '1.0':
+            Documentation:
+                Getting Started: '/manipulations/1.0/'
+                URI References: '/manipulations/1.0/references/'
+                URI Formatter: '/manipulations/1.0/formatter/'
+                URI Middlewares: '/manipulations/1.0/middlewares/'
+    'domain-parser':
+        '1.0':
+            Documentation:
+                Getting Started: '/domain-parser/1.0/'
+                Rules: '/domain-parser/1.0/rules/'
+                Manager: '/domain-parser/1.0/manager/'
+    'uri':
+        '5.0':
+            Documentation:
+                Getting Started: '/uri/5.0/'
+                From 4.x to 5.x: '/uri/5.0/upgrading/'
+        '4.0':
+            Getting Started:
+                Overview: '/uri/4.0/'
+                Installation: '/uri/4.0/installation/'
+                Terminology: '/uri/4.0/definitions/'
+            Uri:
+                Instantiation: '/uri/4.0/uri/instantiation/'
+                Properties: '/uri/4.0/uri/properties/'
+            Uri Schemes:
+                Http URIs: '/uri/4.0/uri/schemes/http/'
+                Websocket URIs: '/uri/4.0/uri/schemes/ws/'
+                FTP URI: '/uri/4.0/uri/schemes/ftp/'
+                Data URI: '/uri/4.0/uri/schemes/data-uri/'
+                Extension Guide: '/uri/4.0/uri/extension/'
+            Uri manipulation:
+                Overview: '/uri/4.0/uri/manipulation/'
+                Uri Modifiers: '/uri/4.0/uri/manipulation/generic/'
+                Host Modifiers: '/uri/4.0/uri/manipulation/host/'
+                Path Modifiers: '/uri/4.0/uri/manipulation/path/'
+                Query Modifiers: '/uri/4.0/uri/manipulation/query/'
+            Uri Parts API:
+                Overview: '/uri/4.0/components/overview/'
+                Scheme: '/uri/4.0/components/scheme/'
+                User: '/uri/4.0/components/user/'
+                Pass: '/uri/4.0/components/pass/'
+                User Information: '/uri/4.0/components/userinfo/'
+                Host: '/uri/4.0/components/host/'
+                Port: '/uri/4.0/components/port/'
+                Path: '/uri/4.0/components/path/'
+                Hierarchical Path: '/uri/4.0/components/hierarchical-path/'
+                Data Path: '/uri/4.0/components/datauri-path/'
+                Query: '/uri/4.0/components/query/'
+                Fragment: '/uri/4.0/components/fragment/'
+            Services:
+                Uri Parser: '/uri/4.0/services/parser-uri/'
+                Query Parser: '/uri/4.0/services/parser-query/'
+                Formatter: '/uri/4.0/services/formatter/'

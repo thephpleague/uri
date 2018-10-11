@@ -1,0 +1,44 @@
+package:
+    'uri':
+        name: 'uri'
+        version: '5.0'
+        latest: '5.3.0'
+        documentation:
+            - '5.0'
+            - '4.0'
+    'components':
+        name: 'uri-components'
+        version: '1.0'
+        latest: '1.2.0'
+        documentation:
+            - '1.0'
+    'schemes':
+        name: 'uri-schemes'
+        version: '1.0'
+        latest: '1.2.0'
+        documentation:
+            - '1.0'
+    'parser':
+        name: 'uri-parser'
+        version: '1.0'
+        latest: '1.4.0'
+        documentation:
+            - '1.0'
+    'query-parser':
+        name: 'uri-query-parser'
+        version: 'TBD'
+        latest: 'TBD'
+        documentation:
+            - '1.0'
+    'manipulations':
+        name: 'uri-manipulations'
+        version: '1.0'
+        latest: '1.5.0'
+        documentation:
+            - '1.0'
+    'domain-parser':
+        name: 'uri-hostname-parser'
+        version: '1.0'
+        latest: '1.2.0'
+        documentation:
+            - '1.0'

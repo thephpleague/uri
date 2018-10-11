@@ -37,12 +37,17 @@ header nav h2 {
     background:#1672ce;
     color:#fff;
     margin:0;
-    width: 75px;
-    text-align: center;
+    width:169px;
+    text-align: left;
     border-radius: .3em;
     margin-bottom:.4em;
     padding:.5em .3em;
     cursor: pointer;
+}
+
+header nav h2:after {
+    content:'\25BE';
+    padding-left:80px;
 }
 
 header nav ul {
@@ -51,7 +56,7 @@ header nav ul {
     margin:0;
     padding:0;
     list-style:none;
-    width: 75px;
+    text-align:left;
 }
 
 header nav .show {
@@ -61,7 +66,7 @@ header nav .show {
 header nav li {
     margin:0;
     padding:0;
-    text-align: center;
+    text-align: left;
 }
 
 header nav a {
@@ -87,6 +92,12 @@ header nav li:first-of-type a {
 header nav li:last-of-type a {
     border-radius:0 0 .3em .3em;
 }
+
+header nav li.selected a {
+    background:#1672ce;
+    color:#fff;
+}
+
 
 header .logo {
     text-align:left;
@@ -232,7 +243,7 @@ main menu ul li.selected a:hover {
     }
 }
 
-@media screen and (min-width: 404px) {
+@media screen and (min-width: 460px) {
     header nav {
         display:block;
         position:fixed;

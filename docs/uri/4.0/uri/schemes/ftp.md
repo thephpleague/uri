@@ -26,11 +26,11 @@ $uri->withQuery('p=1'); //throw an InvalidArgumentException - a query component 
 
 <p class="message-notice">Starting with version <code>4.2</code> schemeless FTP Uri will no longer trigger an <code>InvalidArgumentException</code> exception</p>
 
-Apart from the fragment and the query components, the Ftp URIs share the same [host validation limitation](/4.0/uri/schemes/http/#validation) as Http URIs.
+Apart from the fragment and the query components, the Ftp URIs share the same [host validation limitation](/uri/4.0/uri/schemes/http/#validation) as Http URIs.
 
 ## Properties
 
-The FTP URI class uses the specialized [HierarchicalPath](/4.0/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
+The FTP URI class uses the specialized [HierarchicalPath](/uri/4.0/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
 <?php

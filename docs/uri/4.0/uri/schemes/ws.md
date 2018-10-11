@@ -25,13 +25,13 @@ $uri = WsUri::createFromString('wss://thephpleague.com/path/to?here#content');
 //throw an InvalidArgumentException - a fragment component was given
 ~~~
 
-Apart from the fragment, the websockets URIs share the same [host validation limitation](/4.0/uri/schemes/http/#validation) as Http URIs.
+Apart from the fragment, the websockets URIs share the same [host validation limitation](/uri/4.0/uri/schemes/http/#validation) as Http URIs.
 
 <p class="message-notice">Starting with version <code>4.2</code> schemeless FTP Uri will no longer trigger an <code>InvalidArgumentException</code> exception</p>
 
 ## Properties
 
-Websockets URIs objects uses the specialized [HierarchicalPath](/4.0/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
+Websockets URIs objects uses the specialized [HierarchicalPath](/uri/4.0/components/hierarchical-path/) class to represents its path. using PHP's magic `__get` method you can access the object path and get more informations about the underlying path.
 
 ~~~php
 <?php

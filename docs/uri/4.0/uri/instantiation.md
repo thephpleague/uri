@@ -21,7 +21,7 @@ To ease URI instantiation, and because URIs come in different forms we used name
 public static Uri::createFromString(string $uri = ''): Uri
 ~~~
 
-Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parsed using the library [internal URI parser](/4.0/services/parser-uri/).
+Using the `createFromString` static method you can instantiate a new URI object from a string or from any object that implements the `__toString` method. Internally, the string will be parsed using the library [internal URI parser](/uri/4.0/services/parser-uri/).
 
 ~~~php
 <?php
@@ -39,7 +39,7 @@ $uri = FtpUri::createFromString('ftp://host.example.com/path/to/image.png;type=i
 public static Uri::createFromComponents(array $components = []): Uri
 ~~~
 
-You can also instantiate a new URI object using the `createFromComponents` named constructor by giving it the result of PHP's function `parse_url` or the library [internal URI parser](/4.0/services/parser-uri/).
+You can also instantiate a new URI object using the `createFromComponents` named constructor by giving it the result of PHP's function `parse_url` or the library [internal URI parser](/uri/4.0/services/parser-uri/).
 
 ~~~php
 <?php
@@ -59,12 +59,12 @@ It is not recommend to instantiate an URI object using the default constructor. 
 
 Out of the box the library provides the following specialized classes:
 
-- `League\Uri\Schemes\Data` which deals with [Data URIs](/4.0/uri/schemes/data-uri/);
-- `League\Uri\Schemes\Ftp` which deals with the [FTP URIs](/4.0/uri/schemes/ftp/);
-- `League\Uri\Schemes\Http` which deals with [HTTP and HTTPS URIs](/4.0/uri/schemes/http/);
-- `League\Uri\Schemes\Ws` which deals with [WS and WSS (websocket) URIs](/4.0/uri/schemes/ws/);
+- `League\Uri\Schemes\Data` which deals with [Data URIs](/uri/4.0/uri/schemes/data-uri/);
+- `League\Uri\Schemes\Ftp` which deals with the [FTP URIs](/uri/4.0/uri/schemes/ftp/);
+- `League\Uri\Schemes\Http` which deals with [HTTP and HTTPS URIs](/uri/4.0/uri/schemes/http/);
+- `League\Uri\Schemes\Ws` which deals with [WS and WSS (websocket) URIs](/uri/4.0/uri/schemes/ws/);
 
-<p class="message-info">But you can easily <a href="/4.0/uri/extension/">create your own class</a> to manage others scheme specific URI.</p>
+<p class="message-info">But you can easily <a href="/uri/4.0/uri/extension/">create your own class</a> to manage others scheme specific URI.</p>
 
 ## URI normalization
 

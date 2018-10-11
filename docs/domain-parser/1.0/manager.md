@@ -70,7 +70,7 @@ By default and out of the box, the package uses:
 public function getRules(string $source_url = self::PSL_URL): Rules
 ~~~
 
-This method returns a [Rules](/5.0/publicsuffix/rules/) object which is instantiated with the PSL ICANN Section rules.
+This method returns a [Rules](/domain-parser/1.0/rules/) object which is instantiated with the PSL ICANN Section rules.
 
 The method takes an optional `$source_url` argument which specifies the PSL ICANN Section source URL. If no local cache exists for the submitted source URL, the method will:
 

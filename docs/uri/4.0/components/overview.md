@@ -296,13 +296,13 @@ $host->__toString() == $newHost->__toString();
 
 ### Component implementing classes
 
-* The `League\Uri\Components\Scheme` handles [the scheme component](/4.0/components/scheme/);
-* The `League\Uri\Components\User` handles [the user component](/4.0/components/user/);
-* The `League\Uri\Components\Pass` handles [the pass component](/4.0/components/pass/);
-* The `League\Uri\Components\Host` handles [the host component](/4.0/components/host/);
-* The `League\Uri\Components\Port` handles [the port component](/4.0/components/port/);
-* The `League\Uri\Components\Path` handles [the generic path component](/4.0/components/path/);
-* The `League\Uri\Components\HierarchicalPath` handles [the hierarchical path component](/4.0/components/hierarchical-path/);
-* The `League\Uri\Components\DataPath` handles [the data path component](/4.0/components/datauri-path/);
-* The `League\Uri\Components\Query` handles [the query component](/4.0/components/query/);
-* The `League\Uri\Components\Fragment` handles [the fragment component](/4.0/components/fragment/);
+* The `League\Uri\Components\Scheme` handles [the scheme component](/uri/4.0/components/scheme/);
+* The `League\Uri\Components\User` handles [the user component](/uri/4.0/components/user/);
+* The `League\Uri\Components\Pass` handles [the pass component](/uri/4.0/components/pass/);
+* The `League\Uri\Components\Host` handles [the host component](/uri/4.0/components/host/);
+* The `League\Uri\Components\Port` handles [the port component](/uri/4.0/components/port/);
+* The `League\Uri\Components\Path` handles [the generic path component](/uri/4.0/components/path/);
+* The `League\Uri\Components\HierarchicalPath` handles [the hierarchical path component](/uri/4.0/components/hierarchical-path/);
+* The `League\Uri\Components\DataPath` handles [the data path component](/uri/4.0/components/datauri-path/);
+* The `League\Uri\Components\Query` handles [the query component](/uri/4.0/components/query/);
+* The `League\Uri\Components\Fragment` handles [the fragment component](/uri/4.0/components/fragment/);

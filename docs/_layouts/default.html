@@ -1,10 +1,6 @@
-{% assign version = page.url | remove_first: "/" | split: "/" | first %}
-{% assign upgrading = false %}
-{% if version == '' or version == 'releases' or version == 'upgrading' %}
-    {% assign version = site.data.project.releases.current.version %}
-    {% assign upgrading = true %}
-{% endif %}
-{% capture version_home %}/{{ version }}/{% endcapture %}
+{% assign uriPackage = page.url | remove_first: "/" | split: "/" %}
+{% assign package = uriPackage[0] %}
+{% assign version = uriPackage[1] %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,16 +8,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="docsearch:version" content="4.0">
-{% if page.url == '/'  or page.url == version_home %}
-    <title>{{ site.data.project.title }} - {{ site.data.project.tagline }}</title>
-{% else %}
     <title>{{ page.title }} - {{ site.data.project.title }}</title>
-{% endif %}
     <meta name="description" content="{{ site.data.project.description }}">
     <link rel="icon" type="image/x-icon" href="//theme.thephpleague.com/img/favicon.ico" />
     <link rel="apple-touch-icon-precomposed" href="//theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     <link rel="stylesheet" href="//theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/custom.css?20">
+    <link rel="stylesheet" href="/custom.css?22">
 </head>
 <body>
 <header>
@@ -31,12 +23,11 @@
         </a>
 
         <nav>
-            <h2>{% if upgrading == true %}Notes{% else %}v{{ version }}{% endif %} &#9662;</h2>
+            <h2>Packages</h2>
             <ul>
-            {% for v in site.data.menu.version %}
-                <li {% if version == v[0] and upgrading == false %}class="selected"{% endif %}><a href="/{{ v[0] }}/">v{{ v[0] }}</a></li>
-            {% endfor %}
-                <li {% if upgrading == true %}class="selected"{% endif %}><a href="/releases/">Notes</a></li>
+{% for v in site.data.packages.package %}
+                <li{% if package == v[0] %} class="selected"{% endif %}><a href="/{{ v[0] }}/{{ v[1].documentation[0]}}/">{{ v[1].name }}</a></li>
+{% endfor %}
             </ul>
         </nav>
     </div>
@@ -51,42 +42,38 @@
 <main>
     <menu>
         <div class="versions-small">
-        <h2>Versions</h2>
+        <h2>Packages</h2>
             <ul>
-        {% for v in site.data.menu.version %}
-                <li {% if version == v[0] and upgrading == false %}class="selected"{% endif %}>
-                    <a href="/{{ v[0] }}/">{{ v[0] }}</a>
-                </li>
-        {% endfor %}
-                <li {% if upgrading == true %}class="selected"{% endif %}><a href="/releases/">Notes</a></li>
+{% for v in site.data.packages.package %}
+                <li{% if package == v[0] %} class="selected"{% endif %}><a href="/{{ v[0] }}/">{{ v[1].name }}</a></li>
+{% endfor %}
             </ul>
         </div>
 
-        {% if upgrading == false %}
-            {% for section in site.data.menu.version[version] %}
-            <div class="menu-section">
-                <h2>{{ section[0] }}</h2>
-                <ul>
-                    {% for link in section[1] %}
-                        <li {% if page.url == link[1] %}class="selected"{% endif %}>
-                            <a href="{{ link[1] }}">{{ link[0] }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endfor %}
-        {% else %}
-            {% for section in site.data.menu.upgrading %}
-                <h2>{{ section[0] }}</h2>
-                <ul>
-                    {% for link in section[1] %}
-                        <li {% if page.url == link[1] %}class="selected"{% endif %}>
-                            <a href="{{ link[1] }}">{{ link[0] }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        {% endif %}
+        <div class="menu-section">
+            <h2>Versions</h2>
+            <ul>
+                {% for link in site.data.packages.package[package].documentation %}
+                    <li {% if version == link %}class="selected"{% endif %}>
+                        <a href="/{{ package}}/{{ link }}/">v{{ link }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% for section in site.data.menu.packages[package][version] %}
+        <div class="menu-section">
+            <h2>{{ section[0] }}</h2>
+            <ul>
+                {% for link in section[1] %}
+                    <li {% if page.url == link[1] %}class="selected"{% endif %}>
+                        <a href="{{ link[1] }}">{{ link[0] }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+
     </menu>
     <article>
     {% if version == site.data.project.releases.next.version %}

@@ -17,7 +17,7 @@ URI Hostname Parser
 This library contains
 
 - a ICANN Section [Public Suffix List](https://publicsuffix.org/) Manager.
-- a [Public Suffix Finder](/5.0/publicsuffix/rules) class to resolve domain names.
+- a [Public Suffix Finder](/domain-parser/1.0/rules/) class to resolve domain names.
 - a helper function to ease resolving domain names with default options.
 
 This library contains a lightweight domain parser using the [Public Suffix List (PSL) ICANN section](http://publicsuffix.org/) based on the excellent [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser/) by [Jeremy Kendall](https://github.com/jeremykendall).

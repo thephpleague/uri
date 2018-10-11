@@ -198,7 +198,7 @@ echo $newPath;  //displays '/path/to/the/sky/'
 
 What makes an URI specific apart from the scheme is how the path is parse and manipulated. This simple path class although functional will not ease parsing a Data URI path or a FTP Uri path. That's why the library comes bundles with two specialized Path objects that extend the current object by adding more specific methods in accordance to the path usage:
 
-- the [HierarchicalPath](/4.0/components/hierarchical-path/) object to work with Hierarchical paths component
-- the [DataPath](/4.0/components/datauri-path/) object to work with the Data URIs path
+- the [HierarchicalPath](/uri/4.0/components/hierarchical-path/) object to work with Hierarchical paths component
+- the [DataPath](/uri/4.0/components/datauri-path/) object to work with the Data URIs path
 
 The [Extension Guide](/uri/extension/#mailto-interfaces) also provides an example on how to extend the `Path` object to make it meets you specific URI parsing and manipulation methods.

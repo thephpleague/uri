@@ -64,7 +64,7 @@ $fragment = $uri->fragment; // $fragment is a League\Uri\Components\Fragment obj
 
 ## Properties
 
-The component representation, comparison and manipulation is done using the package [UriPart](/4.0/components/overview/#uri-part-interface) and the [Component](/4.0/components/overview/#uri-component-interface) interfaces.
+The component representation, comparison and manipulation is done using the package [UriPart](/uri/4.0/components/overview/#uri-part-interface) and the [Component](/uri/4.0/components/overview/#uri-component-interface) interfaces.
 
 ### Fragment::getDecoded
 

@@ -9,7 +9,7 @@
     <link rel="icon" type="image/x-icon" href="http://theme.thephpleague.com/img/favicon.ico" />
     <link rel="apple-touch-icon-precomposed" href="http://theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     <link rel="stylesheet" href="//theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/homepage.css?2">
+    <link rel="stylesheet" href="/homepage.css?3">
     <script async src="https://www.googletagmanager.com/gtag/js?id={{  site.data.project.google_analytics_tracking_id }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -32,73 +32,37 @@
   <div class="documentation">
     <div class="inner-content">
       <h1>Packages</h1>
-
-      <h2>coming soon</h2>
-
-      <div class="version next">
-        <h2>uri-query-parser</h2>
-        <div class="content">
-          <p>modern URI query string parser and builder</p>
-          <p><a href="/query-parser/1.0/">documentation</a></p>
-        </div>
+      <div class="packages-list">
+        <dl>
+          <dt><a href="/uri/5.0/">uri</a></dt>
+          <dd>A meta package to ease URI manipulation.</dd>
+        </dl>
+        <dl>
+          <dt><a href="/schemes/1.0/">uri-schemes</a></dt>
+          <dd>Collection of URI objects.</dd>
+        </dl>
+        <dl>
+          <dt><a href="/components/1.0/">uri-components</a></dt>
+          <dd>Collection of URI components objects.</dd>
+        </dl>
+         <dl>
+          <dt><a href="/query-parser/1.0/">uri-query-parser</a></dt>
+          <dd>modern URI query string parser and builder based on RFC3986 and the URL
+  Living Standard.</dd>
+        </dl>
+        <dl>
+          <dt><a href="/parser/1.0/">uri-parser</a></dt>
+          <dd>RFC3986 compliant parser and builder.</dd>
+        </dl>
+       <dl>
+          <dt><a href="/manipulations/1.0/">uri-manipulations</a></dt>
+          <dd>Functions and Middleware to ease URI Objects manipulations.</dd>
+        </dl>
+        <dl>
+          <dt><a href="/domain-parser/1.0/">uri-hostname-parser</a></dt>
+          <dd>A lightweight public suffix list ICANN section parser.</dd>
+        </dl>
       </div>
-    </div>
-
-    <div class="inner-content">
-      <h2>stable releases</h2>
-
-      <div class="version current">
-        <h2>uri-parser</h2>
-        <div class="content">
-          <p>RFC3986/RFC3987 compliant parser and builder</p>
-          <p><a href="/parser/1.0/">documentation</a></p>
-        </div>
-      </div>
-
-      <div class="version current">
-        <h2>uri-components</h2>
-        <div class="content">
-          <p>Collection of URI components immutable value objects</p>
-          <p><a href="/components/1.0/">documentation</a></p>
-        </div>
-      </div>
-
-      <div class="version current">
-        <h2>uri-schemes</h2>
-        <div class="content">
-          <p>Collection of URI immutable value objects</p>
-          <p><a href="/schemes/1.0/">documentation</a></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="inner-content">
-      <h2>to be deprecated</h2>
-
-      <div class="version legacy">
-        <h2>uri</h2>
-        <div class="content">
-          <p>A meta package to ease URI manipulation</p>
-          <p><a href="/uri/5.0/">documentation</a></p>
-        </div>
-      </div>
-
-      <div class="version legacy">
-        <h2>uri-manipulations</h2>
-        <div class="content">
-          <p>Functions and Middleware to ease URI Objects manipulations.</p>
-          <p><a href="/manipulations/">documentation</a></p>
-        </div>
-      </div>
-
-      <div class="version legacy">
-        <h2>uri-hostname-parser</h2>
-        <div class="content">
-          <p>A lightweight public suffix list ICANN section parser</p>
-          <p><a href="/domain-parser/">documentation</a></p>
-        </div>
-      </div>
-
       <p class="footnote">{{ site.data.project.support }}</p>
     </div>
 

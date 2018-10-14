@@ -99,6 +99,36 @@ pre {
     clear:both;
 }
 
+.packages-list {
+    display:flex;
+    align-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1000px;
+}
+
+.packages-list dl {
+    flex-grow: 1;
+    width:100%;
+    text-align: left;
+    padding-left:.3rem;
+}
+
+.packages-list dd {
+    margin:0;
+}
+
+.inner-content .packages-list a {
+    color:#1672CE;
+    text-decoration: none;
+    font-size:1.5em;
+}
+
+.inner-content .packages-list a:hover {
+    text-decoration: underline;
+}
+
 .features {
     background: #F2F7FC;
     border-bottom:1px solid #CFE4F9;
@@ -314,6 +344,33 @@ pre {
     text-decoration: none;
 }
 
+@media screen and (min-width: 450px) {
+    .packages-list dl {
+        flex-grow: 1;
+        width:49%;
+        text-align: left;
+        padding-left:.3rem;
+        margin-right:1%;
+    }
+
+    .packages-list dd {
+        margin-left:2em;
+    }
+
+    .inner-content .packages-list a:before {
+        content:'\1F517  ';
+        color:transparent;
+    }
+
+    .inner-content .packages-list a:hover {
+        text-decoration: none;
+    }
+
+    .inner-content .packages-list a:hover::before {
+        color:#1672CE;
+    }
+}
+
 @media screen and (min-width: 549px) {
     .homepage header h1 {
         margin:0 auto;
@@ -353,6 +410,17 @@ pre {
         font-size:50px;
     }
 }
+
+@media screen and (min-width: 600px) {
+    .packages-list dl {
+        flex-grow: 1;
+        width:32%;
+        text-align: left;
+        padding-left:.3rem;
+        margin-right:1%;
+    }
+}
+
 
 @media screen and (min-width:700px) {
     .documentation .version {

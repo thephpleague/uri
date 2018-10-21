@@ -38,11 +38,25 @@ To use the library.
 Install
 -------
 
-Install `Uri` using Composer.
+**We no longer recommend installing this package directly.**
 
-```
+The package is a metapackage that aggregates all components related to processing and manipulating URI in PHP; in most cases, you will want a subset, and these may be installed separately.
+
+The following components are part of the metapackage:
+
+- [League Uri Parser](https://github.com/thephpleague/uri-parser/)
+- [League Uri Schemes](https://github.com/thephpleague/uri-schemes/)
+- [League Uri Components](https://github.com/thephpleague/uri-components/)
+- [League Uri Manipulations](https://github.com/thephpleague/uri-manipulations/)
+- [League Uri Hostname Parser](https://github.com/thephpleague/uri-hostname-parser) *since version 5.2 in replacement of PHP Domain Parser version 3.0*
+
+The primary use case for installing the entire suite is when upgrading from a version 4 release.
+
+If you decide you still want to install the entire suite use Composer and run the following command on a composer installed box:
+
+~~~bash
 $ composer require league/uri
-```
+~~~
 
 Contributing
 -------

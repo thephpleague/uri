@@ -3,7 +3,6 @@ packages:
         '1.0':
             Documentation:
                 Getting Started: '/parser/1.0/'
-                Usage: '/parser/1.0/api/'
     'schemes':
         '1.0':
             Documentation:
@@ -21,7 +20,6 @@ packages:
         '1.0':
             Documentation:
                 Getting Started: '/query-parser/1.0/'
-                Usage: '/query-parser/1.0/api/'
     'components':
         '1.0':
             Documentation:

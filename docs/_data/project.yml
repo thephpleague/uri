@@ -10,7 +10,7 @@ author:
     twitter_account: 'nyamsprod'
 # Homepage specific
 highlights:
-  description: 'The library provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
+  description: 'This suite of packages provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
         any kind of RFC3986 compliant URI through extensions and middlewares.'
   features:
       - 'Simple and extensible API'

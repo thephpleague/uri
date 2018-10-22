@@ -4,7 +4,6 @@ tagline: "Modern API to process URI in PHP."
 description: "Modern API to process URI in PHP"
 google_analytics_tracking_id: UA-46050814-14
 # Github repository
-repository: 'uri'
 author:
     name: 'Ignace Nyamagana Butera'
     twitter_account: 'nyamsprod'

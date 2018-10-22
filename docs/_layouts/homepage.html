@@ -29,6 +29,26 @@
 
 <main>
 
+  <div class="highlights">
+    <div class="inner-content">
+      <div class="column one">
+        <h1>Highlights</h1>
+        <div class="description">
+        <p>This suite of packages provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
+        any kind of RFC3986 compliant URI through extensions and middlewares.</p>
+        </div>
+      </div>
+      <div class="column two">
+        <ol>
+          <li><p>Simple and extensible API</p></li>
+          <li><p><a href="http://tools.ietf.org/html/rfc3986">RFC3986</a> compliant</p></li>
+          <li><p>Implements <a href="http://www.php-fig.org/psr/psr-7/">PSR-7</a> <code>UriInterface</code> interface</p></li>
+          <li><p>Framework-agnostic</p></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
   <div class="documentation">
     <div class="inner-content">
       <h1>Packages</h1>
@@ -38,23 +58,23 @@
           <dd>A meta package to ease URI manipulation.</dd>
         </dl>
         <dl>
-          <dt><a href="/schemes/1.0/">uri-schemes</a></dt>
-          <dd>Collection of URI objects.</dd>
+          <dt><a href="/parser/1.0/">uri-parser</a></dt>
+          <dd>RFC3986 compliant parser and builder.</dd>
         </dl>
         <dl>
-          <dt><a href="/components/1.0/">uri-components</a></dt>
-          <dd>Collection of URI components objects.</dd>
-        </dl>
-         <dl>
           <dt><a href="/query-parser/1.0/">uri-query-parser</a></dt>
           <dd>modern URI query string parser and builder based on RFC3986 and the URL
   Living Standard.</dd>
         </dl>
         <dl>
-          <dt><a href="/parser/1.0/">uri-parser</a></dt>
-          <dd>RFC3986 compliant parser and builder.</dd>
+          <dt><a href="/components/1.0/">uri-components</a></dt>
+          <dd>Collection of URI components objects.</dd>
         </dl>
-       <dl>
+        <dl>
+          <dt><a href="/schemes/1.0/">uri-schemes</a></dt>
+          <dd>Collection of URI objects.</dd>
+        </dl>
+        <dl>
           <dt><a href="/manipulations/1.0/">uri-manipulations</a></dt>
           <dd>Functions and Middleware to ease URI Objects manipulations.</dd>
         </dl>
@@ -65,38 +85,18 @@
       </div>
       <p class="footnote">{{ site.data.project.support }}</p>
     </div>
-
-
   </div>
 
-  <div class="highlights">
-    <div class="inner-content">
-      <div class="column one">
-        <h1>Highlights</h1>
-        <div class="description">
-        <p>{{ site.data.project.highlights.description }}</p>
-        </div>
-      </div>
-      <div class="column two">
-        <ol>
-          {% for feature in site.data.project.highlights.features %}
-          <li><p>{{ feature }}</p></li>
-          {% endfor %}
-        </ol>
-      </div>
-    </div>
-  </div>
-
-  <div class="features">
+  <!--div class="highlights">
     <div class="inner-content">
 {{ content }}
     </div>
-  </div>
+  </div-->
 
   <div class="questions">
     <div class="inner-content">
       <h1>Questions?</h1>
-      <p><a href="https://github.com/thephpleague/{{ site.data.project.repository }}">{{ site.data.project.title }}</a> was created by {{ site.data.project.author.name }}. Find him on Twitter at <a href="https://twitter.com/{{ site.data.project.author.twitter_account }}">@{{ site.data.project.author.twitter_account }}</a>.</p>
+      <p><code>{{ site.data.project.title }}</code> was created by {{ site.data.project.author.name }}. Find him on Twitter at <a href="https://twitter.com/{{ site.data.project.author.twitter_account }}">@{{ site.data.project.author.twitter_account }}</a>.</p>
     </div>
   </div>
 </main>

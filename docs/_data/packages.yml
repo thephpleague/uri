@@ -26,8 +26,8 @@ package:
             - '1.0'
     'query-parser':
         name: 'uri-query-parser'
-        version: 'TBD'
-        latest: 'TBD'
+        version: '1.0'
+        latest: '1.0'
         documentation:
             - '1.0'
     'manipulations':

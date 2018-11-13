@@ -85,7 +85,7 @@ echo $new_path; // display /foo/sky.csv;foo=bar
 
 $alt_path = $path
     ->withBasename('paradise.html');
-echo $alt_path; // display /foo/paradise.html
+echo $alt_path; // display /path/to/the/paradise.html
 ~~~
 
 ## The path as a collection of segments

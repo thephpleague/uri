@@ -247,7 +247,7 @@ To prepend segments to the current path you need to use the `HierarchicalPath::p
 use League\Uri\Components\HierarchicalPath;
 
 $path    = new HierarchicalPath();
-$newPath = $path->prepend('sky')->prepend(path/to/the');
+$newPath = $path->prepend('sky')->prepend('path/to/the');
 $newPath->__toString(); //return path/to/the/sky
 ~~~
 

@@ -5,7 +5,7 @@ redirect_from:
     - /query-parser/
 ---
 
-Uri Query Parser
+Uri Query String Parser and Builder
 =======
 
 [![Build Status](https://img.shields.io/travis/thephpleague/uri-query-parser/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri-query-parser)

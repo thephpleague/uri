@@ -6,7 +6,7 @@ redirect_from:
     - /parser/
 ---
 
-URI Parser
+URI String parser and builder
 =======
 
 [![Build Status](https://img.shields.io/travis/thephpleague/uri-parser/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri-parser)

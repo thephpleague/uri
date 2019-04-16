@@ -21,9 +21,10 @@ package:
     'parser':
         name: 'uri-parser'
         version: '1.0'
-        latest: '1.4.0'
+        latest: '1.4.1'
         documentation:
             - '1.0'
+            - '2.0'
     'query-parser':
         name: 'uri-query-parser'
         version: '1.0'

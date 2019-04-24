@@ -3,10 +3,6 @@ packages:
         '1.0':
             Documentation:
                 Getting Started: '/parser/1.0/'
-        '2.0':
-            Documentation:
-                Getting Started: '/parser/2.0/'
-                From 1.x to 2.x: '/parser/2.0/upgrading/'
     'schemes':
         '1.0':
             Documentation:

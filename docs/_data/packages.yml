@@ -18,6 +18,7 @@ package:
         latest: '1.2.1'
         documentation:
             - '1.0'
+            - '2.0'
     'parser':
         name: 'uri-parser'
         version: '1.0'

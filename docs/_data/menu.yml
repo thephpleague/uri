@@ -16,6 +16,14 @@ packages:
                 File: '/schemes/1.0/schemes/file/'
                 Generic URI: '/schemes/1.0/schemes/uri/'
                 Extension Guide: '/schemes/1.0/extension/'
+        '2.0':
+            Documentation:
+                Getting Started: '/schemes/2.0/'
+                Parser & builder: '/schemes/2.0/parser-builder/'
+                RFC3986 URI: '/schemes/2.0/rfc3986/'
+                PSR-7 URI: '/schemes/2.0/psr7/'
+                URI info: '/schemes/2.0/info/'
+                Resolve & Relativize: '/schemes/2.0/resolver-relativizer/'
     'query-parser':
         '1.0':
             Documentation:

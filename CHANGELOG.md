@@ -2,6 +2,36 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next - TBD
+
+### Added
+
+- `League\Uri\UriInfo`: to get RFC3986 information from an URI object
+- `League\Uri\UriResolver`: to resolve or relativize an URI object
+- `League\Uri\UriString`: to parse or build an URL into or from its component
+
+### Fixed
+
+- Improve parsing and building URI
+- All URI object are now finals and supports parameter type widening
+
+### Deprecated
+
+- None
+
+### Remove
+
+- `League\Uri\Factory` replaced by `League\Uri\Uri`
+- `League\Uri\Data` replaced by `League\Uri\Uri`
+- `League\Uri\File` replaced by `League\Uri\Uri`
+- `League\Uri\Ftp` replaced by `League\Uri\Uri`
+- `League\Uri\Ws` replaced by `League\Uri\Uri`
+- `League\Uri\UriException` replaced by `League\Uri\Contract\UriException`
+- `League\Uri\AbstractUri` internal, replaced by `League\Uri\Uri`
+- `League\Uri\Schemes` namespace and all classes inside
+- all functions defined in the  `League\Uri` namespace replaced by `League\Uri\Uri::create` public static method
+- support for PHP7.1 and PHP7.0
+
 ## 5.3.0 - 2018-03-14
 
 See packages release notes for more informations

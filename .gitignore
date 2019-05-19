@@ -1,6 +1,6 @@
 vendor
 build
-docs
+docs/_site
 composer.lock
 .idea
 .php_cs.cache

@@ -39,7 +39,7 @@ The `League\Uri\Http` class no longer implements the `League\Uri` specific inter
 
 Prior to this version, you could extends the URI objects or use an `AbstractUri` object to create your own URI object. In this new version all classes are finals and you should use the decorator pattern or implement your own objects if you want to support other specific schemes.
 
-## Schemes supprt
+## URI Schemes support
 
 The `League\Uri\Http` is no longer restricted to http(s) schemes it can be used for any schemes but differ to http(s) scheme validation if the URI has no scheme or if this scheme is special.
 
@@ -91,3 +91,43 @@ $uri = Ftp::createFromString('ftp://uri.thephpleague.com/upgrading/');
 ~~~
 
 The choice of class usage will depends on your business rules.
+
+## Parameter acceptance
+
+Prior to this release to undefined a component content you needed to set it with the empty string `''` starting with this version when using the `League\Uri\Uri` object, undefined component are defined with the `null` value except for the path component which can never be `null`.
+
+Before:
+
+~~~php
+<?php
+
+use League\Uri\Uri;
+
+$uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
+$uri->withScheme('');
+echo $uri; //displays '//uri.thephpleague.com/upgrading/'
+~~~
+
+After:
+
+~~~php
+<?php
+
+use League\Uri\Uri;
+
+$uri = Ftp::createFromString('ftp://uri.thephpleague.com/upgrading/');
+$uri->withScheme(null);
+echo $uri; //displays '//uri.thephpleague.com/upgrading/'
+~~~
+
+<p class="message-warning"><b>WARNING</b> for the scheme component this change will trigger an exception.</p>
+
+~~~php
+<?php
+
+use League\Uri\Uri;
+
+$uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
+$uri->withScheme('');
+echo $uri; // will trigger an exception
+~~~

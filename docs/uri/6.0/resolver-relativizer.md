@@ -25,7 +25,7 @@ $newUri = UriResolver::resolve($relativeUri, $baseUri);
 echo $newUri; //displays "http://www.example.com/path/to/the/sky/p#~toto"
 ~~~
 
-### Relativize an URI
+## Relativize an URI
 
 The `UriResolver::relativize` public static method provides the mean to construct a relative URI that when resolved against the same URI yields the same given URI. This modifier does the inverse of the Resolve modifier. The uri to relativize must be another Uri object.
 

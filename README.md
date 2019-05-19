@@ -21,8 +21,8 @@ You need:
 Dependencies
 -------
 
-- [PSR-7](https://www.php-fig.org/psr/psr-7/)
 - [League URI Interfaces](https://github.com/thephpleague/uri-interfaces)
+- [PSR-7](https://www.php-fig.org/psr/psr-7/)
 
 You should also require the **ext-intl** if you are dealing with i18n URI.
 

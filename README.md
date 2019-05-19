@@ -27,11 +27,7 @@ Full documentation can be found at [uri.thephpleague.com][].
 System Requirements
 -------
 
-You need:
-
-- **PHP >= 7.2** but the latest stable version of PHP is recommended
-- the `mbstring` extension
-- the `intl` extension
+You require **PHP >= 7.2** but the latest stable version of PHP is recommended.
 
 Dependencies
 -------

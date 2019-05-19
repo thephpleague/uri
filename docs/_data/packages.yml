@@ -4,6 +4,7 @@ package:
         version: '5.0'
         latest: '5.3.0'
         documentation:
+            - '6.0'
             - '5.0'
             - '4.0'
     'components':
@@ -18,7 +19,6 @@ package:
         latest: '1.2.1'
         documentation:
             - '1.0'
-            - '2.0'
     'parser':
         name: 'uri-parser'
         version: '1.0'

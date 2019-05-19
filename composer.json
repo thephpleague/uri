@@ -1,6 +1,6 @@
 {
     "name": "league/uri",
-    "type": "metapackage",
+    "type": "library",
     "description" : "URI manipulation library",
     "keywords": [
         "url",
@@ -35,28 +35,54 @@
         "issues": "https://github.com/thephpleague/uri/issues"
     },
     "require": {
-        "ext-mbstring" : "*",
-        "ext-intl" : "*",
+        "php": "^7.2",
         "ext-fileinfo": "*",
-        "league/uri-components": "^1.8",
-        "league/uri-hostname-parser": "^1.1",
-        "league/uri-interfaces": "^1.0",
-        "league/uri-manipulations": "^1.5",
-        "league/uri-parser": "^1.4",
-        "league/uri-schemes": "^1.2",
-        "php" : ">=7.0.13",
-        "psr/http-message": "^1.0"
+        "ext-mbstring": "*",
+        "psr/http-message": "^1.0",
+        "league/uri-interfaces": "dev-master"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpunit/phpunit" : "^7.0 | ^8.0",
+        "phpstan/phpstan": "^0.11",
+        "phpstan/phpstan-strict-rules": "^0.11",
+        "phpstan/phpstan-phpunit": "^0.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "League\\Uri\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LeagueTest\\Uri\\": "tests"
+        }
+    },
+    "scripts": {
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes;",
+        "phpstan-src": "phpstan analyse -l max -c phpstan.src.neon src",
+        "phpstan-tests": "phpstan analyse -l max -c phpstan.tests.neon tests",
+        "phpstan": [
+            "@phpstan-src",
+            "@phpstan-tests"
+        ],
+        "phpunit": "phpunit --coverage-text",
+        "test": [
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ]
+    },
+    "suggest": {
+        "league/uri-components" : "Needed to easily manipulate URI objects",
+        "ext-intl" : "*"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "5.x-dev"
+            "dev-master": "2.x-dev"
         }
     },
     "config": {
         "sort-packages": true
-    },
-    "scripts": {
-        "post-install-cmd": "\\League\\Uri\\Installer\\ICANNSection::update",
-        "post-update-cmd": "\\League\\Uri\\Installer\\ICANNSection::update"
     }
 }

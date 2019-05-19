@@ -1,13 +1,28 @@
-League Uri
+URI
 =======
 
 [![Build Status](https://img.shields.io/travis/thephpleague/uri/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/uri)
-[![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-This package contains concrete URI objects represented as immutable value object. 
+The `Uri` package provides simple and intuitive classes to create and manage URIs in PHP.
 
-- An URI object implementing the `League\Uri\Contract\UriInterface` interface as defined in the [uri-interfaces package](https://github.com/thephpleague/uri-interfaces)
-- An URI object implementing the `Psr\Http\Message\UriInterface` from [PSR-7](http://www.php-fig.org/psr/psr-7/).
+
+Highlights
+------
+
+- Simple API
+- [RFC3986][] and [RFC3987][] compliant
+- Implements the `UriInterface` from [PSR-7][]
+- Fully documented
+- Framework Agnostic
+- Composer ready, [PSR-2][] and [PSR-4][] compliant
+
+Documentation
+------
+
+Full documentation can be found at [uri.thephpleague.com][].
 
 System Requirements
 -------
@@ -22,7 +37,7 @@ Dependencies
 -------
 
 - [League URI Interfaces](https://github.com/thephpleague/uri-interfaces)
-- [PSR-7](https://www.php-fig.org/psr/psr-7/)
+- [PSR-7][]
 
 You should also require the **ext-intl** if you are dealing with i18n URI.
 
@@ -36,7 +51,7 @@ $ composer require league/uri
 Documentation
 --------
 
-Full documentation can be found at [uri.thephpleague.com](http://uri.thephpleague.com).
+Full documentation can be found at [uri.thephpleague.com][].
 
 
 Contributing
@@ -74,3 +89,10 @@ License
 -------
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+[PSR-2]: http://www.php-fig.org/psr/psr-2/
+[PSR-4]: http://www.php-fig.org/psr/psr-4/
+[PSR-7]: http://www.php-fig.org/psr/psr-7/
+[RFC3986]: http://tools.ietf.org/html/rfc3986
+[RFC3987]: http://tools.ietf.org/html/rfc3987
+[uri.thephpleague.com]: http://uri.thephpleague.com

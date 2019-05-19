@@ -56,8 +56,8 @@ packages:
                 RFC3986 URI: '/uri/6.0/rfc3986/'
                 PSR-7 URI: '/uri/6.0/psr7/'
                 URI info: '/uri/6.0/info/'
-                Parser & Builder: '/uri/6.0/parser-builder/'
-                Resolver & Relativizer: '/uri/6.0/resolver-relativizer/'
+                Parse & Build: '/uri/6.0/parser-builder/'
+                Resolve & Relativize: '/uri/6.0/resolver-relativizer/'
                 From 5.x to 6.x: '/uri/6.0/upgrading/'
         '5.0':
             Documentation:

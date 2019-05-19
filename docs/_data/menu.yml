@@ -50,6 +50,15 @@ packages:
                 Rules: '/domain-parser/1.0/rules/'
                 Manager: '/domain-parser/1.0/manager/'
     'uri':
+        '6.0':
+            Documentation:
+                Getting Started: '/uri/6.0/'
+                RFC3986 URI: '/uri/6.0/rfc3986/'
+                PSR-7 URI: '/uri/6.0/psr7/'
+                URI info: '/uri/6.0/info/'
+                Parser & Builder: '/uri/6.0/parser-builder/'
+                Resolver & Relativizer: '/uri/6.0/resolver-relativizer/'
+                From 5.x to 6.x: '/uri/6.0/upgrading/'
         '5.0':
             Documentation:
                 Getting Started: '/uri/5.0/'
@@ -91,12 +100,3 @@ packages:
                 Uri Parser: '/uri/4.0/services/parser-uri/'
                 Query Parser: '/uri/4.0/services/parser-query/'
                 Formatter: '/uri/4.0/services/formatter/'
-        '6.0':
-            Documentation:
-                Getting Started: '/uri/6.0/'
-                Parser & builder: '/uri/6.0/parser-builder/'
-                RFC3986 URI: '/uri/6.0/rfc3986/'
-                PSR-7 URI: '/uri/6.0/psr7/'
-                URI info: '/uri/6.0/info/'
-                Resolve & Relativize: '/uri/6.0/resolver-relativizer/'
-                From 5.x to 6.x: '/uri/6.0/upgrading/'

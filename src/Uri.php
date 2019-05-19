@@ -720,7 +720,7 @@ final class Uri implements UriInterface
         }
 
         $user_info = $uri->getUserInfo();
-        if (null !== $user_info) {
+        if ('' !== $user_info) {
             [$components['user'], $components['pass']] = explode(':', $user_info, 2) + [1 => null];
         }
 

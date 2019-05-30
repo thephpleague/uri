@@ -87,6 +87,14 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
+     * Create a new instance from the environment.
+     */
+    public static function createFromServer(array $server): self
+    {
+        return new self(Uri::createFromServer($server));
+    }
+
+    /**
      * Create a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.

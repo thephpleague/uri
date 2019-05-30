@@ -159,10 +159,14 @@ class FactoryTest extends TestCase
 
         $uri = Uri::createFromPsr7($psr7);
         self::assertSame((string) $psr7, (string) $uri);
+
+        $uribis = Http::createFromString();
+        self::assertSame((string) $uribis, Uri::createFromPsr7($uribis)->__toString());
     }
 
     /**
-     * @covers ::createFromEnvironment
+     * @covers ::createFromServer
+     * @covers League\Uri\Http::createFromServer
      * @covers ::fetchScheme
      * @covers ::fetchUserInfo
      * @covers ::fetchHostname
@@ -172,7 +176,8 @@ class FactoryTest extends TestCase
      */
     public function testCreateFromServer(string $expected, array $input): void
     {
-        self::assertSame($expected, (string) Uri::createFromEnvironment($input));
+        self::assertSame($expected, (string) Uri::createFromServer($input));
+        self::assertSame($expected, (string) Http::createFromServer($input));
     }
 
     public function validServerArray(): array
@@ -326,7 +331,7 @@ class FactoryTest extends TestCase
     public function testFailCreateFromServerWithoutHost(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromEnvironment([
+        Uri::createFromServer([
             'PHP_SELF' => '',
             'REQUEST_URI' => '',
             'HTTPS' => 'on',
@@ -340,7 +345,7 @@ class FactoryTest extends TestCase
     public function testFailCreateFromServerWithoutInvalidUserInfo(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromEnvironment([
+        Uri::createFromServer([
             'PHP_SELF' => '/toto',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',

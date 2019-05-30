@@ -688,49 +688,49 @@ final class Uri implements UriInterface
      */
     public static function createFromPsr7(Psr7UriInterface $uri): self
     {
-        $components = [
-            'scheme' => null,
-            'user' => null,
-            'pass' => null,
-            'host' => null,
-            'port' => $uri->getPort(),
-            'path' => $uri->getPath(),
-            'query' => null,
-            'fragment' => null,
-        ];
-
         $scheme = $uri->getScheme();
-        if ('' !== $scheme) {
-            $components['scheme'] = $scheme;
+        if ('' === $scheme) {
+            $scheme = null;
         }
 
         $fragment = $uri->getFragment();
-        if ('' !== $fragment) {
-            $components['fragment'] = $fragment;
+        if ('' === $fragment) {
+            $fragment = null;
         }
 
         $query = $uri->getQuery();
-        if ('' !== $query) {
-            $components['query'] = $query;
+        if ('' === $query) {
+            $query = null;
         }
 
         $host = $uri->getHost();
-        if ('' !== $host) {
-            $components['host'] = $host;
+        if ('' === $host) {
+            $host = null;
         }
 
         $user_info = $uri->getUserInfo();
+        $user = null;
+        $pass = null;
         if ('' !== $user_info) {
-            [$components['user'], $components['pass']] = explode(':', $user_info, 2) + [1 => null];
+            [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
         }
 
-        return Uri::createFromComponents($components);
+        return new self(
+            $scheme,
+            $user,
+            $pass,
+            $host,
+            $uri->getPort(),
+            $uri->getPath(),
+            $query,
+            $fragment
+        );
     }
 
     /**
      * Create a new instance from the environment.
      */
-    public static function createFromEnvironment(array $server): self
+    public static function createFromServer(array $server): self
     {
         [$user, $pass] = self::fetchUserInfo($server);
         [$host, $port] = self::fetchHostname($server);

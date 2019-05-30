@@ -19,7 +19,7 @@ use League\Uri\Http;
 use League\Uri\Uri;
 use League\Uri\UriInfo;
 
-UriInfo::isAbsolute(Uri::createFromEnvironment($_SERVER)); //returns true
+UriInfo::isAbsolute(Uri::createFromServer($_SERVER)); //returns true
 UriInfo::isAbsolute(Http::createFromString("/🍣🍺"));       //returns false
 ~~~
 
@@ -28,7 +28,7 @@ UriInfo::isAbsolute(Http::createFromString("/🍣🍺"));       //returns false
 This public static method tells whether the given URI object represents an absolute URI path.
 
 ~~~php
-UriInfo::isAbsolutePath(Uri::createFromEnvironment($_SERVER)); //returns false
+UriInfo::isAbsolutePath(Uri::createFromServer($_SERVER)); //returns false
 UriInfo::isAbsolutePath(Http::createFromString("/🍣🍺"));       //returns true
 ~~~
 

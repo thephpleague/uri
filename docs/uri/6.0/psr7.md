@@ -24,7 +24,7 @@ The `League\Uri\Http` class comes with the following named constructor to ease i
 use League\Uri\Http;
 
 //don't forget to provide the $_SERVER array
-$uri = Http::createFromEnvironment($_SERVER);
+$uri = Http::createFromServer($_SERVER);
 ~~~
 
 <p class="message-warning">The method only relies on the server's safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>

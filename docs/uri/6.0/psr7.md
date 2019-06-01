@@ -16,36 +16,43 @@ Following the PSR-7 interfaces the class handles all URI schemes but default to 
 
 The `League\Uri\Http` class comes with the following named constructor to ease instantiation.
 
-### Using the environment variables
+### Using a string
 
 ~~~php
 <?php
 
 use League\Uri\Http;
 
+$uri = Http::createFromString('http://example.com/path/to?q=foo%20bar#section-42');
+~~~
+
+<p class="message-info">The method supports parameter widening, scalar values and objects implementing the <code>__toString</code> are accepted.</p>
+
+### Using Uri components
+
+~~~php
+$uri = Http::createFromComponents(parse_url("http://uri.thephpleague/5.0/uri/api"));
+~~~
+
+<p class="message-warning">If you supply your own hash to <code>createFromComponents</code>, you are responsible for providing well parsed components without their URI delimiters.</p>
+
+### Using the environment variables
+
+~~~php
 //don't forget to provide the $_SERVER array
 $uri = Http::createFromServer($_SERVER);
 ~~~
 
 <p class="message-warning">The method only relies on the server's safe parameters to determine the current URI. If you are using the library behind a proxy the result may differ from your expectation as no <code>$_SERVER['HTTP_X_*']</code> header is taken into account for security reasons.</p>
 
-### Using a string
-
-~~~php
-//don't forget to provide the $_SERVER array
-$uri = Http::createFromString('http://example.com/path/to?q=foo%20bar#section-42');
-~~~
-
-<p class="message-info">The method supports parameter widening, scalar values and objects implementing the <code>__toString</code> are accepted.</p>
-
 ### Using a base URI
 
 ~~~php
-$uri = Http::create('./p#~toto', 'http://thephpleague.com/uri/5.0/uri/');
+$uri = Http::createFromBaseUri('./p#~toto', 'http://thephpleague.com/uri/5.0/uri/');
 echo $uri; //returns 'http://thephpleague.com/uri/5.0/uri/p#~toto'
 ~~~
 
-The `create` named constructor instantiates an absolute URI or resolves a relative URI against another absolute URI. If present the absolute URI can be:
+The `createFromBaseUri` named constructor instantiates an absolute URI or resolves a relative URI against another absolute URI. If present the absolute URI can be:
 
 - a League `UriInterface` object
 - a `PSR-7` `UriInterface` object

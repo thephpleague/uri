@@ -31,9 +31,9 @@ To ease URI objects creation and manipulation, the following helper classes are 
 System Requirements
 -------
 
-You need **PHP >= 7.2** but the latest stable version of PHP is recommended
+You need **PHP >= 7.2** but the latest stable version of PHP is recommended.
 
-While the library no longer requires out of the box the `intl` extension, you is still needed if you are dealing with URIs containing non-ASCII host. Without it, URI creation or manipulation action will throw an exception if such hosts are used.
+In order to handle IDN host you are required to install the `intl` extension otherwise an exception will be thrown when attempting to validate or format such host.
 
 Installation
 --------

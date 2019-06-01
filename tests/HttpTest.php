@@ -128,13 +128,13 @@ class HttpTest extends TestCase
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      */
-    public function testCreate(): void
+    public function testCreateFromBaseUri(): void
     {
         self::assertEquals(
             Http::createFromString('http://0:0@0/0?0#0'),
-            Http::create('0?0#0', 'http://0:0@0/')
+            Http::createFromBaseUri('0?0#0', 'http://0:0@0/')
         );
     }
 

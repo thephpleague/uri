@@ -3,5 +3,4 @@ includes:
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
     ignoreErrors:
-        - '#Method League\\Uri\\Uri::create\(\) should return League\\Uri\\Contract\\UriInterface but returns League\\Uri\\Contract\\UriInterface\|Psr\\Http\\Message\\UriInterface.#'
     reportUnmatchedIgnoredErrors: true

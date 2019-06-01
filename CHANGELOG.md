@@ -8,12 +8,20 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - `League\Uri\UriInfo`: to get RFC3986 information from an URI object
 - `League\Uri\UriResolver`: to resolve or relativize an URI object
-- `League\Uri\UriString`: to parse or build an URL into or from its component
+- `League\Uri\UriString`: to parse or build an URL into or from its components
+- `League\Uri\Uri::createFromBaseUri` named constructor
+- `League\Uri\Uri::createFromDataPath` named constructor
+- `League\Uri\Uri::createFromPsr7` named constructor
+- `League\Uri\Uri::createFromUnixPath` named constructor
+- `League\Uri\Uri::createFromWindowsPath` named constructor
+- `League\Uri\Http::createFromBaseUri` named constructor
 
 ### Fixed
 
 - Improve parsing and building URI
 - All URI object are now finals and supports parameter type widening
+- `League\Uri\Uri` implements the `JsonSerializable` interface
+- `League\Uri\Http` implements the `JsonSerializable` interface
 
 ### Deprecated
 
@@ -21,6 +29,8 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Remove
 
+- support for PHP7.1 and PHP7.0
+- `create` function defined in the  `League\Uri` namespace replaced by `League\Uri\Uri::createFromBaseUri`
 - `League\Uri\Factory` replaced by `League\Uri\Uri`
 - `League\Uri\Data` replaced by `League\Uri\Uri`
 - `League\Uri\File` replaced by `League\Uri\Uri`
@@ -29,8 +39,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\UriException` replaced by `League\Uri\Contract\UriException`
 - `League\Uri\AbstractUri` internal, replaced by `League\Uri\Uri`
 - `League\Uri\Schemes` namespace and all classes inside
-- all functions defined in the  `League\Uri` namespace replaced by `League\Uri\Uri::create` public static method
-- support for PHP7.1 and PHP7.0
+- `League\Uri\Uri` no longer implements `League\Uri\UriInterface`
 
 ## 5.3.0 - 2018-03-14
 

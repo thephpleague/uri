@@ -538,7 +538,7 @@ final class Uri implements UriInterface
      * @param mixed $uri      the input URI to create
      * @param mixed $base_uri the base URI used for reference
      */
-    public static function create($uri, $base_uri = null): UriInterface
+    public static function createFromBaseUri($uri, $base_uri = null): UriInterface
     {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
@@ -553,7 +553,10 @@ final class Uri implements UriInterface
                 return $uri;
             }
 
-            return UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
+            /** @var UriInterface $uri */
+            $uri = UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
+
+            return $uri;
         }
 
         if (!$base_uri instanceof UriInterface) {
@@ -564,7 +567,10 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('the base URI `%s` must be absolute', (string) $base_uri));
         }
 
-        return UriResolver::resolve($uri, $base_uri);
+        /** @var UriInterface $uri */
+        $uri = UriResolver::resolve($uri, $base_uri);
+
+        return $uri;
     }
 
     /**

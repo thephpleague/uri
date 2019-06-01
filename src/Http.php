@@ -102,9 +102,9 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * @param mixed $uri      the input URI to create
      * @param mixed $base_uri the base URI used for reference
      */
-    public static function create($uri, $base_uri = null): self
+    public static function createFromBaseUri($uri, $base_uri = null): self
     {
-        return new self(Uri::create($uri, $base_uri));
+        return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
     /**

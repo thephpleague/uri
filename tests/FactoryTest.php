@@ -356,13 +356,13 @@ class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      *
      * @dataProvider createProvider
      */
-    public function testCreate(string $base_uri, string $uri, string $expected): void
+    public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::create($uri, $base_uri));
+        self::assertSame($expected, (string) Uri::createFromBaseUri($uri, $base_uri));
     }
     public function createProvider(): array
     {
@@ -412,42 +412,42 @@ class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      */
     public function testCreateThrowExceptionWithBaseUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::create('/path/to/you', '//example.com');
+        Uri::createFromBaseUri('/path/to/you', '//example.com');
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      */
     public function testCreateThrowExceptionWithUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::create('/path/to/you');
+        Uri::createFromBaseUri('/path/to/you');
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      */
     public function testCreateWithUriWithoutAuthority(): void
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            (string) Uri::create('data:text/plain;charset=us-ascii,')
+            (string) Uri::createFromBaseUri('data:text/plain;charset=us-ascii,')
         );
     }
 
     /**
-     * @covers ::create
+     * @covers ::createFromBaseUri
      */
     public function testCreateWithAbasoluteUriWithoutBaseUri(): void
     {
         self::assertSame(
             'scheme://host/sky?q#f',
-            (string) Uri::create('scheme://host/path/../sky?q#f')
+            (string) Uri::createFromBaseUri('scheme://host/path/../sky?q#f')
         );
     }
 }

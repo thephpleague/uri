@@ -99,7 +99,7 @@ parse_url($uri, PHP_URL_PATH);  //returns null
 parse_url($uri); //returns false
 
 UriString::parse('//example.com:toto');
-//throw a League\Uri\Contract\UriException
+//throw a League\Uri\Contracts\UriException
 ~~~
 
 ### The parser is not a validator

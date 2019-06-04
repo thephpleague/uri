@@ -11,7 +11,7 @@
 
 namespace LeagueTest\Uri;
 
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UriString;
 use PHPUnit\Framework\TestCase;
 use TypeError;

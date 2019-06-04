@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use finfo;
-use League\Uri\Contract\UriInterface;
-use League\Uri\Exception\IdnSupportMissing;
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\IdnSupportMissing;
+use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
 use function array_filter;

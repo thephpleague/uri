@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use JsonSerializable;
-use League\Uri\Contract\UriInterface;
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use function is_scalar;
 use function method_exists;

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use League\Uri\Exception\IdnSupportMissing;
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Exceptions\IdnSupportMissing;
+use League\Uri\Exceptions\SyntaxError;
 use TypeError;
 use function array_merge;
 use function defined;

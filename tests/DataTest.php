@@ -11,7 +11,7 @@
 
 namespace LeagueTest\Uri;
 
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @group uri
  * @coversDefaultClass League\Uri\Uri
  */
-class DataTest extends TestCase
+class "DataTest extends TestCase
 {
     /**
 

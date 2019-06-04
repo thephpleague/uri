@@ -12,7 +12,7 @@
 namespace LeagueTest\Uri;
 
 use InvalidArgumentException;
-use League\Uri\Exception\SyntaxError;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 use TypeError;

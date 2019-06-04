@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use League\Uri\Contract\UriInterface;
+use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
 use function array_pop;

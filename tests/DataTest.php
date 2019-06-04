@@ -20,10 +20,9 @@ use PHPUnit\Framework\TestCase;
  * @group uri
  * @coversDefaultClass League\Uri\Uri
  */
-class "DataTest extends TestCase
+class DataTest extends TestCase
 {
     /**
-
      * @covers ::formatDataPath
      */
     public function testDefaultConstructor(): void
@@ -35,7 +34,6 @@ class "DataTest extends TestCase
     }
 
     /**
-
      * @covers ::formatPath
      * @covers ::formatDataPath
      * @covers ::assertValidPath

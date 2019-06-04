@@ -87,7 +87,7 @@ use League\Uri\Http;
 
 $uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
 //or
-$uri = Ftp::createFromString('ftp://uri.thephpleague.com/upgrading/');
+$uri = Http::createFromString('ftp://uri.thephpleague.com/upgrading/');
 ~~~
 
 The choice of class usage will depends on your business rules.
@@ -115,7 +115,7 @@ After:
 
 use League\Uri\Uri;
 
-$uri = Ftp::createFromString('ftp://uri.thephpleague.com/upgrading/');
+$uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
 $uri->withScheme(null);
 echo $uri; //displays '//uri.thephpleague.com/upgrading/'
 ~~~

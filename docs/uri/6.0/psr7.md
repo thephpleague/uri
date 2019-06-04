@@ -70,7 +70,7 @@ When a base URI is given the URI is resolved against that base URI just like a b
 
 ### Default constructor
 
-The `League\Uri\Http` class is build around the `League\Uri\Contract\UriInterface` interface. It's default constructor takes an `League\Uri\Contract\UriInterface` implementing object as its sole argument.
+The `League\Uri\Http` class is build around the `League\Uri\Contracts\UriInterface` interface. It's default constructor takes an `League\Uri\Contracts\UriInterface` implementing object as its sole argument.
 
 ~~~php
 <?php

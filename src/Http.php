@@ -114,6 +114,10 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public static function createFromUri($uri): self
     {
+        if ($uri instanceof UriInterface) {
+            return new self($uri);
+        }
+
         return new self(Uri::createFromUri($uri));
     }
 

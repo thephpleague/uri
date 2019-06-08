@@ -163,7 +163,7 @@ class FactoryTest extends TestCase
         $uriFromLeagueUri = Uri::createFromUri($leagueUri);
 
         self::assertSame((string) $psr7, (string) $uriFromPsr7);
-        self::assertSame((string) $uriFromLeagueUri, (string) $uriFromPsr7);
+        self::assertSame((string) $psr7, (string) $uriFromLeagueUri);
 
         $uribis = Http::createFromString();
         self::assertSame((string) $uribis, Uri::createFromUri($uribis)->__toString());
@@ -172,7 +172,7 @@ class FactoryTest extends TestCase
     public function testCreateFromUriFails(): void
     {
         self::expectException(TypeError::class);
-        Uri::createFromUri('http://example.com');
+        Http::createFromUri('http://example.com');
     }
 
     /**

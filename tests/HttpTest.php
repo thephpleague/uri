@@ -14,6 +14,7 @@ namespace LeagueTest\Uri;
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Http;
+use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -135,6 +136,17 @@ class HttpTest extends TestCase
         self::assertEquals(
             Http::createFromString('http://0:0@0/0?0#0'),
             Http::createFromBaseUri('0?0#0', 'http://0:0@0/')
+        );
+    }
+
+    /**
+     * @covers ::createFromUri
+     */
+    public function testCreateFromUri(): void
+    {
+        self::assertEquals(
+            Http::createFromString('http://0:0@0/0?0#0'),
+            Http::createFromUri(Uri::createFromString('http://0:0@0/0?0#0'))
         );
     }
 

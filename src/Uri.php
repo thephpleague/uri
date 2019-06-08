@@ -690,10 +690,36 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Create a new instance from a PSR7 UriInterface object.
+     * Create a new instance from a URI object.
+     *
+     * @param Psr7UriInterface|UriInterface $uri the input URI to create
      */
-    public static function createFromPsr7(Psr7UriInterface $uri): self
+    public static function createFromUri($uri): self
     {
+        if ($uri instanceof UriInterface) {
+            $user_info = $uri->getUserInfo();
+            $user = null;
+            $pass = null;
+            if (null !== $user_info) {
+                [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
+            }
+
+            return new self(
+                $uri->getScheme(),
+                $user,
+                $pass,
+                $uri->getHost(),
+                $uri->getPort(),
+                $uri->getPath(),
+                $uri->getQuery(),
+                $uri->getFragment()
+            );
+        }
+ 
+        if (!$uri instanceof Psr7UriInterface) {
+            throw new TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
+        }
+
         $scheme = $uri->getScheme();
         if ('' === $scheme) {
             $scheme = null;

@@ -14,6 +14,8 @@ Following the PSR-7 interfaces the class handles all URI schemes but default to 
 
 ## Instantiation
 
+<p class="message-warning">The default constructor is private and can not be accessed to instantiate a new object.</p>
+
 The `League\Uri\Http` class comes with the following named constructor to ease instantiation.
 
 ### Using a string
@@ -68,9 +70,9 @@ When a base URI is given the URI is resolved against that base URI just like a b
 
 <p class="message-info">The method supports parameter widening, scalar values and objects implementing the <code>__toString</code> or other URI objects are accepted.</p>
 
-### Default constructor
+### Using a URI object
 
-The `League\Uri\Http` class is build around the `League\Uri\Contracts\UriInterface` interface. It's default constructor takes an `League\Uri\Contracts\UriInterface` implementing object as its sole argument.
+The `createFromUri` named constructor instantiates an URI from a `League\Uri\Contracts\UriInterface` implementing object or another PSR-7 `UriInterface` implementing object
 
 ~~~php
 <?php
@@ -79,7 +81,7 @@ use League\Uri\Http;
 use League\Uri\Uri;
 
 $rfc3986Uri = Uri::createFromDataPath(__DIR__.'/data/logo.png');
-$uri = new Http($rfc3986Uri);
+$uri = Http::createFromUri($rfc3986Uri);
 ~~~
 
 ## Validation

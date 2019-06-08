@@ -15,6 +15,7 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Http;
 use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 /**
  * @group factory
@@ -152,16 +153,26 @@ class FactoryTest extends TestCase
         ];
     }
 
-    public function testCreateUri(): void
+    public function testCreateFromUri(): void
     {
         $expected = 'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';
         $psr7 = Http::createFromString($expected);
+        $leagueUri = Uri::createFromString($expected);
 
-        $uri = Uri::createFromPsr7($psr7);
-        self::assertSame((string) $psr7, (string) $uri);
+        $uriFromPsr7 = Uri::createFromUri($psr7);
+        $uriFromLeagueUri = Uri::createFromUri($leagueUri);
+
+        self::assertSame((string) $psr7, (string) $uriFromPsr7);
+        self::assertSame((string) $uriFromLeagueUri, (string) $uriFromPsr7);
 
         $uribis = Http::createFromString();
-        self::assertSame((string) $uribis, Uri::createFromPsr7($uribis)->__toString());
+        self::assertSame((string) $uribis, Uri::createFromUri($uribis)->__toString());
+    }
+
+    public function testCreateFromUriFails(): void
+    {
+        self::expectException(TypeError::class);
+        Uri::createFromUri('http://example.com');
     }
 
     /**

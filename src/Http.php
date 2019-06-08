@@ -31,7 +31,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * New instance.
      */
-    public function __construct(UriInterface $uri)
+    private function __construct(UriInterface $uri)
     {
         $this->validate($uri);
         $this->uri = $uri;
@@ -105,6 +105,16 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public static function createFromBaseUri($uri, $base_uri = null): self
     {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
+    }
+
+    /**
+     * Create a new instance from a URI object.
+     *
+     * @param Psr7UriInterface|UriInterface $uri the input URI to create
+     */
+    public static function createFromUri($uri): self
+    {
+        return new self(Uri::createFromUri($uri));
     }
 
     /**

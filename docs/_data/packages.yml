@@ -12,6 +12,7 @@ package:
         version: '1.0'
         latest: '1.8.2'
         documentation:
+            - '2.0'
             - '1.0'
     'schemes':
         name: 'uri-schemes'

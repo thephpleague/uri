@@ -13,9 +13,9 @@ This method accepts the League or the PSR-7 `UriInterface`.
 
 ~~~php
 use League\Uri\Components\Query;
-use function GuzzleHttp\uri_for;
+use League\Uri\Uri;
 
-$uri = uri_for('http://example.com?q=value#fragme`nt');
+$uri = Uri::createFromString('http://example.com?q=value#fragment');
 $query = Query::createFromUri($uri);
 $query->getContent(); //displays 'q=value';
 $query->get('q'); //returns 'value';

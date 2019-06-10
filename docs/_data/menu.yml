@@ -25,7 +25,7 @@ packages:
             Documentation:
                 Getting Started: '/components/2.0/'
                 API: '/components/2.0/api/'
-                From 1.x to 2.x: '/uri/6.0/upgrading/'
+                From 1.x to 2.x: '/components/2.0/upgrading/'
         '1.0':
             Documentation:
                 Getting Started: '/components/1.0/'

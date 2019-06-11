@@ -362,8 +362,9 @@ final class Uri implements UriInterface
         $idn_support = $idn_support ?? function_exists('idn_to_ascii') && defined('INTL_IDNA_VARIANT_UTS46');
         // @codeCoverageIgnoreEnd
 
-        $formatted_host = rawurldecode(strtolower($host));
+        $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
+            $formatted_host = strtolower($formatted_host);
             if (false === strpos($formatted_host, 'xn--')) {
                 return $formatted_host;
             }
@@ -715,7 +716,7 @@ final class Uri implements UriInterface
                 $uri->getFragment()
             );
         }
- 
+
         if (!$uri instanceof Psr7UriInterface) {
             throw new TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
         }

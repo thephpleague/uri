@@ -405,7 +405,7 @@ final class UriString
         $idn_support = $idn_support ?? function_exists('idn_to_ascii') && defined('INTL_IDNA_VARIANT_UTS46');
         // @codeCoverageIgnoreEnd
 
-        $formatted_host = rawurldecode(strtolower($host));
+        $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_REGISTERED_NAME, $formatted_host)) {
             if (false === strpos($formatted_host, 'xn--')) {
                 return $host;

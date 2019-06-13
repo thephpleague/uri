@@ -13,7 +13,7 @@ but also provide specific methods to work with the URI user information part.
 ## Creating a new object
 
 ~~~php
-public UserInfo::__construct(?string $content = null): void
+public UserInfo::__construct($user, $pass = null): void
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
@@ -38,9 +38,7 @@ $info->getPass(); //return 'bar'
 ## Modifying the user information
 
 ~~~php
-<?php
-
-public UserInfo::withUserInfo(string $user [, ?string $password = null]): self
+public UserInfo::withUserInfo($user, $password = null): self
 ~~~
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>

@@ -35,7 +35,12 @@ packages:
             URI components:
                 Overview: '/components/2.0/api/'
                 Scheme: '/components/2.0/scheme/'
+                Authority: '/components/2.0/authority/'
                 UserInfo: '/components/2.0/userinfo/'
+                Host: '/components/2.0/host/'
+                Domain: '/components/2.0/domain/'
+                Port: '/components/2.0/port/'
+                Fragment: '/components/2.0/fragment/'
         '1.0':
             Documentation:
                 Getting Started: '/components/1.0/'

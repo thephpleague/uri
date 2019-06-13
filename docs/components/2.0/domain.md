@@ -3,10 +3,15 @@ layout: default
 title: The Domain component
 ---
 
-The Host
+The Domain Host
 =======
 
-The library provides a `Domain` class to ease domain host creation and manipulation. This object exposes the [package common API](/components/1.0/api/), but also provide specific methods to work with the URI domain host component.
+The library provides a `Domain` class to ease domain host creation and manipulation. This object exposes:
+ 
+- the [package common API](/components/2.0/api/), 
+- the [Host common API](/components/2.0/host/),
+
+but also provide specific methods to work with a URI domain host component.
 
 <p class="message-notice">If the modifications do not change the current object, it is returned as is, otherwise, a new modified object is returned.</p>
 
@@ -16,95 +21,25 @@ The library provides a `Domain` class to ease domain host creation and manipulat
 
 ~~~php
 <?php
-public Domain::__construct(?string $content = null): void
+public Domain::__construct($host = null): void
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
 
-## Host default accessible methods
+## The Domain Host API
 
-~~~php
-<?php
-public Domain::getIp(void): ?string;
-public Domain::getIpVersion(void): ?string
-public Domain::isIp(void): bool
-public Domain::isDomain(void): bool
-public Domain::toAscii(): ?string;
-public Domain::toUnicode(): ?string;
-~~~
-
-### IP or registered name
-
-There are two (2) types of host:
-
-- Hosts represented by an IP;
-- Hosts represented by a registered name;
-
-To determine what type of host you are dealing with the `Host` class provides the `isIp` method:
-
-~~~php
-<?php
-
-use League\Uri\Components\Domain;
-
-$host = new Domain('example.com');
-$host->isIp(); //return false;
-$ip_host = $host->withContent('127.0.0.1');
-$ip_host->isIp(); //return true;
-~~~
-
-### Getting the IP string representation
-
-You can retrieve the IP string representation from the Host object using the `getIp` method. If the Host is not an IP `null` will be returned instead.
-
-~~~php
-$host = new Domain('[fe80::1%25eth0-1]');
-$host->getIp(); //returns 'fe80::1%eth0-1'
-
-$newHost = $host->withContent('uri.thephpleague.com');
-$newHost->getIp();        //returns null
-$newHost->getIpVersion(); //returns null
-~~~
-
-## Host represented by a registered name
-
-If you don't have a IP then you are dealing with a registered name. A registered name can be a [domain name](http://tools.ietf.org/html/rfc1034) subset if it follows [RFC1123](http://tools.ietf.org/html/rfc1123#section-2.1) but it is not a requirement as stated in [RFC3986](https://tools.ietf.org/html/rfc3986#section-3.2.2)
-
-> (...) URI producers should use names that conform to the DNS syntax, even when use of DNS is not immediately apparent, and should limit these names to no more than 255 characters in length.
-
-<p class="message-info"><code>Domain::isDomain</code> is available since version <code>1.8.0</code>.</p>
-
-~~~php
-<?php
-public Domain::isDomain(void): bool
-~~~
-
-To determine if a host is a domain name or a general registered name you just need to use the newly added method `Domain::isDomain`
-
-~~~php
-$domain = new Domain('www.example.co.uk');
-$domain->isDomain();  //return true
-
-$reg_name = new Domain('...test.com');
-$reg_name->isDomain();  //return false
-~~~
-
-## Host represented by a domain name
-
-<p class="message-warning"><code>Domain::getRegisterableDomain</code> and <code>Domain::withRegisterableDomain</code> are deprecated and replaced by <code>Domain::getRegistrableDomain</code> and <code>Domain::withRegistrableDomain</code> starting with version <code>1.5.0</code>.</p>
-
-If you don't have an IP or a general registered name it means you are using a domain name. As such the following method can be used to further caracterize your host.
+The following methods can be used to further characterize your domain host.
 
 ~~~php
 public static Domain::createFromLabels(iterable $data): self
-public Domain::isAbsolute(void): bool
-public Domain::labels(void): array
+public Domain::isAbsolute(): bool
+public Domain::labels(): array
 public Domain::get(int $offset): ?string
 public Domain::keys(?string $label = null): array
-public Domain::count(void): int
-public Domain::getIterator(void): iterator
-public Domain::withRootLabel(void): self
-public Domain::withoutRootLabel(void): self
+public Domain::count(): int
+public Domain::getIterator(): iterator
+public Domain::withRootLabel(): self
+public Domain::withoutRootLabel(): self
 public Domain::prepend(string $host): self
 public Domain::append(string $host): self
 public Domain::replaceLabel(int $offset, string $host): self
@@ -116,7 +51,7 @@ public Domain::withoutLabels(array $offsets): self
 A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Domain::createFromLabels` method.
 The method expects a single arguments, a collection of label. **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
 
-<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>League\Uri\Components\Exception</code> if you try to create an fully qualified domain name with a valid IP address.</p>
+<p class="message-warning">Since an IP is not a hostname, the class will throw an <code>League\Uri\Exceptions\SyntaxError</code> if you try to create an fully qualified domain name with a valid IP address.</p>
 
 ~~~php
 $host = Domain::createFromLabels(['com', 'example', 'shop']);
@@ -129,7 +64,7 @@ Domain::createFromLabels(['0.1', '127.0']);
 //throws League\Uri\Exceptions\SyntaxError
 ~~~
 
-### Partial or fully qualified registered name
+### Partial or fully qualified domain name
 
 A host is considered absolute or as being a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
 
@@ -145,7 +80,7 @@ $fqdn->isAbsolute(); //return true
 
 #### Updating the host status
 
-To update the host state from FDQN to a PQDN and vice-versa you can use 2 methods
+To update the host state from FQDN to a PQDN and vice-versa you can use 2 methods
 
 - `withRootLabel`
 - `withoutRootLabel`
@@ -172,6 +107,8 @@ echo $host; //display 'shop.example.com'
 $host = Domain::createFromLabels(['be', 'bébé']);
 echo $host; //display 'xn--bb-bjab.be'
 ~~~
+
+<p class="message-warning">The last example depends on the presence of the <code>ext-intl</code> extension. Otherwise the code will trigger a <code>IdnSupportMissing</code> exception</p>
 
 ### Accessing the Host labels
 

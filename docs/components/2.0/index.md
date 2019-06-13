@@ -11,37 +11,30 @@ Uri Components
 
 This package contains classes to help parsing and modifying URI components.
 
-List of URI component objects
---------
+- Simple interface for building and parsing URI components;
+- Interact with implementing PSR-7 `UriInterface` objects;
 
-All URI components objects are located under the following namespace : `League\Uri\Components`
+~~~php
+use League\Uri\Components\Query;
+use League\Uri\Uri;
+use League\Uri\UriModifier;
 
-The following URI related classes are defined (order alphabetically):
+$uri = Uri::createFromString('http://example.com?q=value#fragment');
+$newUri = UriModifier::appendQuery($uri, 'q=newValue');
+echo $newUri; // 'http://example.com?q=value&q=value&q=newValue#fragment';
 
-- [Authority](/components/2.0/authority/) : the URI Authority part
-- [DataPath](/components/2.0/path/data/) : the Data Path component
-- [Domain](/components/2.0/host/domain/) : the Host component
-- [Fragment](/components/2.0/fragment/) : the Fragment component
-- [HierarchicalPath](/components/2.0/path/segmented/) : the Segmented Path component
-- [Host](/components/2.0/host/) : the generic Host component
-- [Path](/components/2.0/path/) : the generic Path component
-- [Port](/components/2.0/port/) : the Port component
-- [Query](/components/2.0/query/) : the Query component
-- [Scheme](/components/2.0/scheme/) : the Scheme component
-- [UserInfo](/components/2.0/userinfo/) : the User Information component
-
-List of URI helper class
---------
-
-- [QueryString](/components/2.0/querystring/) : Query string parser and builder
-- [UriModifier](/components/2.0/modifiers/) : Partial URI modifier
+$query = Query::createFromUri($newUri);
+$newQuery->get('q');        // returns 'value'
+$newQuery->getAll('q');     // returns ['value', 'anotherValue']
+$newQuery->toParams()['q']; // returns 'anotherValue'
+~~~
 
 System Requirements
 -------
 
 You need **PHP >= 7.2** but the latest stable version of PHP is recommended
 
-In order to handle IDN host you are required to also install the `intl` extension otherwise an exception will be thrown when attempting to validate such host.
+<p class="message-warning">In order to handle IDN host you are required to also install the <code>intl</code> extension otherwise an exception will be thrown when attempting to validate such host.</p>
 
 Installation
 --------
@@ -55,3 +48,10 @@ Dependencies
 
 - [League Uri Interfaces](https://github.com/thephpleague/uri-interfaces)
 - [PSR-7](http://www.php-fig.org/psr/psr-7/)
+
+What you will be able to do
+--------
+
+- Build and parse query with [QueryString](/components/2.0/querystring/)
+- Partially modify URI with [URI Modifiers](/components/2.0/modifiers/)
+- Create and Manipulate URI components objects with a [Common API](/components/2.0/api/)

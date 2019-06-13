@@ -24,8 +24,18 @@ packages:
         '2.0':
             Documentation:
                 Getting Started: '/components/2.0/'
-                API: '/components/2.0/api/'
                 From 1.x to 2.x: '/components/2.0/upgrading/'
+            URI Modifiers:
+                Overview: '/components/2.0/modifiers/'
+                Query Modifiers: '/components/2.0/modifiers/query/'
+                Path Modifiers: '/components/2.0/modifiers/path/'
+                Host Modifiers: '/components/2.0/modifiers/host/'
+            Parser & Builder:
+                QueryString: '/components/2.0/query-parser-builder/'
+            URI components:
+                Overview: '/components/2.0/api/'
+                Scheme: '/components/2.0/scheme/'
+                UserInfo: '/components/2.0/userinfo/'
         '1.0':
             Documentation:
                 Getting Started: '/components/1.0/'
@@ -61,7 +71,7 @@ packages:
                 RFC3986 URI: '/uri/6.0/rfc3986/'
                 PSR-7 URI: '/uri/6.0/psr7/'
                 URI info: '/uri/6.0/info/'
-                Parse & Build: '/uri/6.0/parser-builder/'
+                Parse & Build URI: '/uri/6.0/parser-builder/'
                 Resolve & Relativize: '/uri/6.0/resolver-relativizer/'
                 From 5.x to 6.x: '/uri/6.0/upgrading/'
         '5.0':

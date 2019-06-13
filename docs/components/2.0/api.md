@@ -9,36 +9,41 @@ Components common API
 ## Instantiation
 
 Each URI component objects can be instantiated from a URI object using the `createFromUri` named constructor.
-This method accepts the League or the PSR-7 `UriInterface`.
 
 ~~~php
+public static function UriComponent::createFromUri($uri): UriComponentInterface;
+~~~
+
+This method accepts a single `$uri` parameter which can be an object implementing a:
+
+- League `League\Uri\Contracts\UriInterface` or
+- PSR-7 `Psr\Http\Message\UriInterface`
+
+~~~php
+use League\Uri\Components\Host;
+use League\Uri\Components\Path;
+use League\Uri\Components\Port;
 use League\Uri\Components\Query;
 use League\Uri\Uri;
 
 $uri = Uri::createFromString('http://example.com?q=value#fragment');
-$query = Query::createFromUri($uri);
-$query->getContent(); //displays 'q=value';
-$query->get('q'); //returns 'value';
+$host = Host::createFromUri($uri)->getContent();   //displays 'example.com'
+$query = Query::createFromUri($uri)->getContent(); //displays 'q=value'
+$port = Port::createFromUri($uri)->getContent();   //displays null
+$path = Path::createFromUri($uri)->getContent();   //displays ''
 ~~~
 
-Of course depending on the URI components the defautl constructor or other named constructor can be used to instantiate  the object. 
+<p class="message-info">Depending on the URI component the default constructor and other named constructors can be use for instantiation.</p> 
 
 ## Accessing URI component representation
 
-Once instantiated, all URI component objects expose the methods and constants defined in the `UriComponentInterface` interface.
-
-This interface is used to normalized URI component representation while taking into account each component specificity.
+Once instantiated, all URI component objects expose the following methods.
 
 ~~~php
-<?php
-
-interface UriComponentInterface
-{
-	public function __toString(void): string;
-	public function getContent(void): ?string;
-	public function getUriComponent(void): string;
-	public function withContent(?string $content): static;
-}
+public function UriComponent::__toString(): string;
+public function UriComponent::jsonSerialize(): ?string;
+public function UriComponent::getContent(): ?string;
+public function UriComponent::getUriComponent(): string;
 ~~~
 
 Which will lead to the following results:
@@ -56,7 +61,7 @@ $host = new Host('bébé.be');
 echo $host; //displays 'xn--bb-bjab.be'
 echo $host->getContent(); //displays 'xn--bb-bjab.be'
 
-$query = new Query();
+$query = Query::createFromRFC6986();
 echo $query; //displays ''
 echo $query->getContent(); //displays null
 
@@ -64,34 +69,35 @@ $port = new Port(23);
 echo $port->getContent(); //displays '23';
 ~~~
 
-- `ComponentInterface::__toString` returns the normalized and RFC3986 encoded string version of the component.
-- `ComponentInterface::getUriComponent` returns the same output as `ComponentInterface::__toString` with the component optional delimiter.
+- `__toString` returns the normalized and RFC3986 encoded string version of the component.
+- `getUriComponent` returns the same output as `__toString` with the component optional delimiter.
+- `jsonSerialiaze` returns the normalized and RFC1738 encoded string version of the component for better interoperability with JavaScript URL standard.
 
-For a more generalized representation you must use the `ComponentInterface::getContent` method. This method returns type can be `null` or  `string`.
+<p class="message-info">For a more generalized representation you must use the <code>getContent</code> method. If the component is undefined, the method returns <code>null</code>.</p>
 
-<p class="message-info">Normalization and encoding are component specific.</p>
+<p class="message-notice">Normalization and encoding are component specific.</p>
 
 ## Modifying URI component object
 
-All URI component objects can be modified with the `ComponentInterface::withContent` method. This method returns a new instance with the modified content.
+
+All URI component objects can be modified with the `withContent` method. This method returns a new instance with the modified content.
+
+~~~php
+public function UriComponent::withContent(?string $content): static;
+~~~
 
 <p class="message-info">submitted input is normalized to be RFC3986 compliant.</p>
 
 ~~~php
-<?php
-
-use League\Uri\Components\Host;
-use League\Uri\Components\Query;
-
-$query = new Query();
-$new_query = $query->withContent('');
+$query = Query::createFromRFC3986();
+$newQuery = $query->withContent('');
 echo $query->getContent(); //returns null
-echo $new_query->getContent(); //returns ''
+echo $newQuery->getContent(); //returns ''
 
 $host = new Host('thephpleague.com');
-$new_host = $host->withContent('bébé.be');
-echo $new_host->getContent(); //displays 'xn--bb-bjab.be';
-echo $new_host->toUnicode(); //displays 'bébé.be';
+$newHost = $host->withContent('bébé.be');
+echo $newHost->getContent(); //displays 'xn--bb-bjab.be';
+echo $newHost->toUnicode(); //displays 'bébé.be';
 ~~~
 
 <p class="message-warning">If the submitted value is not valid an <code>League\Uri\Exceptions\UriException</code> exception is thrown.</p>
@@ -112,3 +118,5 @@ The following URI component objects are defined (order alphabetically):
 - [Query](/components/2.0/query/) : the Query component
 - [Scheme](/components/2.0/scheme/) : the Scheme component
 - [UserInfo](/components/2.0/userinfo/) : the User Info component
+
+<p class="message-info">In addition to the common API, the classes expose specific methods to improve URI component manipulation.</p>

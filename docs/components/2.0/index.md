@@ -20,13 +20,13 @@ use League\Uri\Uri;
 use League\Uri\UriModifier;
 
 $uri = Uri::createFromString('http://example.com?q=value#fragment');
-$newUri = UriModifier::appendQuery($uri, 'q=newValue');
-echo $newUri; // 'http://example.com?q=value&q=value&q=newValue#fragment';
+$newUri = UriModifier::appendQuery($uri, 'q=new.Value');
+echo $newUri; // 'http://example.com?q=value&q=new.Value#fragment';
 
 $query = Query::createFromUri($newUri);
-$newQuery->get('q');        // returns 'value'
-$newQuery->getAll('q');     // returns ['value', 'anotherValue']
-$newQuery->toParams()['q']; // returns 'anotherValue'
+$newQuery->get('q');    // returns 'value'
+$newQuery->getAll('q'); // returns ['value', 'new.Value']
+$newQuery->params('q'); // returns 'new.Value'
 ~~~
 
 System Requirements

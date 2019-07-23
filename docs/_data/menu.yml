@@ -40,6 +40,7 @@ packages:
                 Host: '/components/2.0/host/'
                 Domain: '/components/2.0/domain/'
                 Port: '/components/2.0/port/'
+                Query: '/components/2.0/query/'
                 Fragment: '/components/2.0/fragment/'
         '1.0':
             Documentation:

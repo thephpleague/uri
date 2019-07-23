@@ -79,7 +79,7 @@
     },
     "suggest": {
         "league/uri-components" : "Needed to easily manipulate URI objects",
-        "ext-intl" : "*"
+        "ext-intl" : "Needed to improve host validation"
     },
     "extra": {
         "branch-alias": {

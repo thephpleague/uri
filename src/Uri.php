@@ -1212,34 +1212,6 @@ final class Uri implements UriInterface
     /**
      * {@inheritDoc}.
      */
-    public function getUser(): ?string
-    {
-        if (null === $this->user_info) {
-            return null;
-        }
-
-        [$user, ] = explode(':', $this->user_info, 2);
-
-        return $user;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    public function getPass(): ?string
-    {
-        if (null === $this->user_info) {
-            return null;
-        }
-
-        [$user, $pass] = explode(':', $this->user_info, 2) + [1 => null];
-
-        return $pass;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
     public function getHost(): ?string
     {
         return $this->host;

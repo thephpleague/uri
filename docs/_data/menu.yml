@@ -30,8 +30,9 @@ packages:
                 Query Modifiers: '/components/2.0/modifiers/query/'
                 Path Modifiers: '/components/2.0/modifiers/path/'
                 Host Modifiers: '/components/2.0/modifiers/host/'
-            Parser & Builder:
+            Utility classes:
                 QueryString: '/components/2.0/query-parser-builder/'
+                Ipv4Normalizer: '/components/2.0/ipv4-normalizer/'
             URI components:
                 Overview: '/components/2.0/api/'
                 Scheme: '/components/2.0/scheme/'

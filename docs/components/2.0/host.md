@@ -91,7 +91,7 @@ echo $host->toAscii();  //displays 'xn--bb-bjab.be'
 ## Host represented by an IP
 
 ~~~php
-public static Host::createFromIp(string $ip, string $version = ''): self
+public static Host::createFromIp(string $ip, string $version = '', Math $math = null): self
 public Host::isIpv4(): bool
 public Host::isIpv6(): bool
 public Host::isIpFuture(): bool
@@ -101,7 +101,7 @@ public Host::withoutZoneIdentifier(): self
 
 ### Host::createFromIp
 
-This method allow creating an Host object from an IP.
+This method allows creating an Host object from an IP.
 
 ~~~php
 $ipv4 = Host::createFromIp('127.0.0.1');
@@ -113,6 +113,36 @@ echo $ipv6; //display '[::1]'
 Host::createFromIp('uri.thephpleague.com');
 //throws League\Uri\Exceptions\SyntaxError
 ~~~
+
+The method can also infer the IPv4 from its hexadecimal or octal representation. 
+
+~~~php
+use League\Uri\Components\Host;
+use League\Uri\Maths\GMPMath;
+
+$ipv4 = Host::createFromIp('999999999', '', new GMPMath());
+echo $ipv4; //display '59.154.201.255'
+~~~
+
+This normalization works using:
+ 
+- a `League\Uri\Maths\Math` implementing object to calculate the IP address like shown below;
+- WHATWG IPv4 host parsing rules;
+
+You can skip providing such object if:
+
+- **the GMP extension is installed and configured** or
+- **you are using a x.64 build of PHP**
+
+<p class="message-warning">A <code>RuntimeException</code> will be trigger if no <code>League\Uri\Maths\Math</code> is provided or can not be detected</p>.
+
+~~~php
+$ipv4 = Host::createFromIp('999999999');
+echo $ipv4; //display '59.154.201.255'
+//will work on supported platform 
+~~~
+
+<p class="message-warning">This normalization is destructive and thus is never apply internally on a instantiated <code>Host</code> object.</p>
 
 ### IPv4 or IPv6
 

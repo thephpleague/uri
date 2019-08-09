@@ -71,7 +71,7 @@ echo $port->getContent(); //displays '23';
 
 - `__toString` returns the normalized and RFC3986 encoded string version of the component.
 - `getUriComponent` returns the same output as `__toString` with the component optional delimiter.
-- `jsonSerialiaze` returns the normalized and RFC1738 encoded string version of the component for better interoperability with JavaScript URL standard.
+- `jsonSerialize` returns the normalized and RFC1738 encoded string version of the component for better interoperability with JavaScript URL standard.
 
 <p class="message-info">For a more generalized representation you must use the <code>getContent</code> method. If the component is undefined, the method returns <code>null</code>.</p>
 

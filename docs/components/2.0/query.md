@@ -89,7 +89,7 @@ $query->jsonSerialize(); //returns 'foo=bar&bar=baz+bar'
 
 If the query is undefined, this method returns `null`.
 
-<p class="message-info"><code>Query::jsonSerialize()</code> is a alias of <code>Query::toRFC3986()</code> to improve interoperability with JavaScript.</p>
+<p class="message-info"><code>Query::jsonSerialize()</code> is a alias of <code>Query::toRFC1738()</code> to improve interoperability with JavaScript.</p>
 
 ## Modifying the query
 
@@ -245,7 +245,6 @@ public Query::has(string $key): bool
 public Query::get(string $key): ?string
 public Query::getAll(string $key): array
 public Query::withPair(string $key, $value): QueryInterface
-public Query::removePairs(...string $offsets): self
 public Query::withoutDuplicates(): self
 public Query::withoutEmptyPairs(): self
 public Query::withoutPair(string ...$keys): QueryInterface

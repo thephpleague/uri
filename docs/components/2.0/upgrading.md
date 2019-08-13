@@ -30,7 +30,9 @@ This package:
 - replaces and deprecates without conflicting the `uri-query-parser` package.
 - partially replaces and deprecates without conflicting the `uri-manipulation` package.
 
+## Removed features
 
-## Removed functionalities
+### Host Public Suffix Resolution
 
 This package no longer expose API to resolve Public Suffix List in Host. We recommend using a dedicated package for that like [PHP Domain Parser](https://github.com/jeremykendall/php-domain-parser).
+

@@ -104,8 +104,8 @@ Before:
 use League\Uri\Uri;
 
 $uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
-$uri->withScheme('');
-echo $uri; //displays '//uri.thephpleague.com/upgrading/'
+$newUri = $uri->withScheme('');
+echo $newUri; //displays '//uri.thephpleague.com/upgrading/'
 ~~~
 
 After:
@@ -116,8 +116,8 @@ After:
 use League\Uri\Uri;
 
 $uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
-$uri->withScheme(null);
-echo $uri; //displays '//uri.thephpleague.com/upgrading/'
+$newUri = $uri->withScheme(null);
+echo $newUri; //displays '//uri.thephpleague.com/upgrading/'
 ~~~
 
 <p class="message-warning"><b>WARNING</b> for the scheme component this change will trigger an exception.</p>
@@ -128,6 +128,5 @@ echo $uri; //displays '//uri.thephpleague.com/upgrading/'
 use League\Uri\Uri;
 
 $uri = Uri::createFromString('ftp://uri.thephpleague.com/upgrading/');
-$uri->withScheme('');
-echo $uri; // will trigger an exception
+$uri->withScheme(''); // will trigger an League\Uri\Exceptions\SyntaxError exception
 ~~~

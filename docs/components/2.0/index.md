@@ -34,7 +34,15 @@ System Requirements
 
 You need **PHP >= 7.2** but the latest stable version of PHP is recommended
 
-<p class="message-warning">In order to handle IDN host you are required to also install the <code>intl</code> extension otherwise an exception will be thrown when attempting to validate such host.</p>
+In order to handle:
+
+- IDN host you are required to also install the `intl` extension;
+- IPv4 host in octal or hexadecimal form, out of the box, you are required to:
+    - install the `GMP` extension **and/or**
+    - install the `BCMath` extension **and/or**
+    - use a `64-bits` PHP version
+
+otherwise an exception will be thrown when attempting to validate or process such hosts.
 
 Installation
 --------

@@ -47,41 +47,6 @@ echo $newUri; //display "http://스타벅스코리아.com/to/the/sky/"
 
 <p class="message-warning">This method will have no effect on <strong>League URI objects</strong> because the object always transcode the host component into its RFC3986/ascii representation.</p>
 
-## UriModifier::normalizeHost
-
-Further normalizes the host value according to [WHATWG standard](https://url.spec.whatwg.org/#concept-ipv4-parser) on supporting multiple IPv4 string representation.
-
-~~~php
-$uri = Http::createFromString("http://030052000001/path/to/the/sky");
-$newUri = UriModifier::normalizeHost($uri);
-
-echo $newUri; //display "http://192.168.0.1/path/to/the/sky"
-~~~
-
-<p class="message-info">If no normalization can be done the URI object is returned as is.</p>
-
-This modifier works using a `League\Uri\Maths\Math` implementing object to calculate the IP address like shown below.
-
-~~~php
-<?php
-
-use League\Uri\Http;
-use League\Uri\UriModifier;
-use League\Uri\Maths\GMPMath;
-
-$uri = Http::createFromString("http://030052000001/path/to/the/sky");
-$newUri = UriModifier::normalizeHost($uri, new GMPMath());
-
-echo $newUri; //display "http://192.168.0.1/path/to/the/sky"
-~~~
-
-You can skip providing such object if:
-
-- **the GMP extension is installed and configured** or
-- **you are using a x.64 build of PHP**
-
-<p class="message-warning">A <code>RuntimeException</code> will be trigger if no <code>League\Uri\Maths\Math</code> is provided or can not be detected</p>.
-
 ## UriModifier::removeZoneIdentifier
 
 Removes the host zone identifier if present

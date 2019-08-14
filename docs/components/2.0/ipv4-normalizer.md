@@ -61,9 +61,9 @@ The methods always returns a instance of the same type as the submitted one with
 ```php
 <?php
 
-use League\Uri\IPv4Normalizer;
-use League\Uri\Components\Host;
+use League\Uri\Components\Authority;
 use League\Uri\IPv4Calculators\NativeCalculator;
+use League\Uri\IPv4Normalizer;
 
 $authority = new Authority('hello:world@0300.0250.0000.0001:442');
 $normalizer = new IPv4Normalizer(new NativeCalculator());
@@ -71,6 +71,4 @@ $normalizedAuthority = $normalizer->normalizeAuthority($authority);
 
 echo $authority->getHost(); // returns '0300.0250.0000.0001'
 echo $normalizedAuthority->getHost(); // returns '192.168.0.1'
-
-//will throw a League\Uri\Exceptions\Ipv4CalculatorMissing on a x.32 PHP build
 ```

@@ -249,6 +249,10 @@ table th {
     background: #1672ce;
 }
 
+p strong {
+    font-weight:bold;
+}
+
 @media screen and (max-width: 549px) {
     header {
         padding: 20px 0 25px 10px;

@@ -32,7 +32,7 @@ packages:
                 Host Modifiers: '/components/2.0/modifiers/host/'
             Utility classes:
                 QueryString: '/components/2.0/query-parser-builder/'
-                Ipv4 Host Normalizer: '/components/2.0/ipv4-normalizer/'
+                IPv4 Normalizer: '/components/2.0/ipv4-normalizer/'
             URI components:
                 Overview: '/components/2.0/api/'
                 Scheme: '/components/2.0/scheme/'

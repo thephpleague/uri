@@ -831,7 +831,7 @@ final class Uri implements UriInterface
         }
 
         if (isset($server['HTTP_HOST'])) {
-            preg_match(',^(?<host>(\[.*\]|[^:])*)(\:(?<port>[^/?\#]*))?$,x', $server['HTTP_HOST'], $matches);
+            preg_match(',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x', $server['HTTP_HOST'], $matches);
 
             return [
                 $matches['host'],
@@ -1176,7 +1176,7 @@ final class Uri implements UriInterface
     {
         return [
             'scheme' => $this->scheme,
-            'user_info' => isset($this->user_info) ? preg_replace(',\:(.*).?$,', ':***', $this->user_info) : null,
+            'user_info' => isset($this->user_info) ? preg_replace(',:(.*).?$,', ':***', $this->user_info) : null,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,

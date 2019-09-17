@@ -60,15 +60,21 @@ use const INTL_IDNA_VARIANT_UTS46;
 final class UriString
 {
     /**
-     * default URI component values.
+     * Default URI component values.
      */
     private const URI_COMPONENTS = [
-        'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
-        'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
+        'scheme' => null,
+        'user' => null,
+        'pass' => null,
+        'host' => null,
+        'port' => null,
+        'path' => '',
+        'query' => null,
+        'fragment' => null,
     ];
 
     /**
-     * simple URI which do not need any parsing.
+     * sSimple URI which do not need any parsing.
      */
     private const URI_SCHORTCUTS = [
         '' => [],
@@ -80,7 +86,7 @@ final class UriString
     ];
 
     /**
-     * range of invalid characters in URI string.
+     * Range of invalid characters in URI string.
      */
     private const REGEXP_INVALID_URI_CHARS = '/[\x00-\x1f\x7f]/';
 
@@ -175,6 +181,7 @@ final class UriString
     public static function build(array $components): string
     {
         $result = $components['path'] ?? '';
+
         if (isset($components['query'])) {
             $result .= '?'.$components['query'];
         }
@@ -184,6 +191,7 @@ final class UriString
         }
 
         $scheme = null;
+
         if (isset($components['scheme'])) {
             $scheme = $components['scheme'].':';
         }
@@ -194,6 +202,7 @@ final class UriString
 
         $scheme .= '//';
         $authority = $components['host'];
+
         if (isset($components['port'])) {
             $authority .= ':'.$components['port'];
         }
@@ -203,6 +212,7 @@ final class UriString
         }
 
         $authority = '@'.$authority;
+
         if (!isset($components['pass'])) {
             return $scheme.$components['user'].$authority.$result;
         }
@@ -325,11 +335,13 @@ final class UriString
     private static function parseAuthority(string $authority): array
     {
         $components = ['user' => null, 'pass' => null, 'host' => '', 'port' => null];
+
         if ('' === $authority) {
             return $components;
         }
 
         $parts = explode('@', $authority, 2);
+
         if (isset($parts[1])) {
             [$components['user'], $components['pass']] = explode(':', $parts[0], 2) + [1 => null];
         }
@@ -406,6 +418,7 @@ final class UriString
         // @codeCoverageIgnoreEnd
 
         $formatted_host = rawurldecode($host);
+
         if (1 === preg_match(self::REGEXP_REGISTERED_NAME, $formatted_host)) {
             if (false === strpos($formatted_host, 'xn--')) {
                 return $host;
@@ -418,6 +431,7 @@ final class UriString
             // @codeCoverageIgnoreEnd
 
             $unicode = idn_to_utf8($host, 0, INTL_IDNA_VARIANT_UTS46, $arr);
+
             if (0 !== $arr['errors']) {
                 throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, self::getIDNAErrors($arr['errors'])));
             }
@@ -443,6 +457,7 @@ final class UriString
         // @codeCoverageIgnoreEnd
 
         $retval = idn_to_ascii($formatted_host, 0, INTL_IDNA_VARIANT_UTS46, $arr);
+
         if (0 !== $arr['errors']) {
             throw new SyntaxError(sprintf('Host `%s` is not a valid IDN host : %s', $host, self::getIDNAErrors($arr['errors'])));
         }
@@ -487,6 +502,7 @@ final class UriString
         ];
 
         $res = [];
+
         foreach ($idn_errors as $error => $reason) {
             if ($error === ($error_byte & $error)) {
                 $res[] = $reason;
@@ -514,6 +530,7 @@ final class UriString
         }
 
         $pos = strpos($ip_host, '%');
+
         if (false === $pos || 1 === preg_match(
             self::REGEXP_INVALID_HOST_CHARS,
             rawurldecode(substr($ip_host, $pos))

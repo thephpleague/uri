@@ -50,11 +50,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     private function validate(UriInterface $uri): void
     {
         $scheme = $uri->getScheme();
+
         if (null === $scheme && '' === $uri->getHost()) {
             throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', (string) $uri));
         }
 
         $port = $uri->getPort();
+
         if (null !== $port && ($port < 0 || $port > 65535)) {
             throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %s', (string) $uri->getPort()));
         }
@@ -196,11 +198,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withScheme($scheme): self
     {
         $scheme = $this->filterInput($scheme);
+
         if ('' === $scheme) {
             $scheme = null;
         }
 
         $uri = $this->uri->withScheme($scheme);
+
         if ($uri->getScheme() === $this->uri->getScheme()) {
             return $this;
         }
@@ -232,11 +236,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withUserInfo($user, $password = null): self
     {
         $user = $this->filterInput($user);
+
         if ('' === $user) {
             $user = null;
         }
 
         $uri = $this->uri->withUserInfo($user, $password);
+
         if ($uri->getUserInfo() === $this->uri->getUserInfo()) {
             return $this;
         }
@@ -250,11 +256,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withHost($host): self
     {
         $host = $this->filterInput($host);
+
         if ('' === $host) {
             $host = null;
         }
 
         $uri = $this->uri->withHost($host);
+
         if ($uri->getHost() === $this->uri->getHost()) {
             return $this;
         }
@@ -268,6 +276,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withPort($port): self
     {
         $uri = $this->uri->withPort($port);
+
         if ($uri->getPort() === $this->uri->getPort()) {
             return $this;
         }
@@ -281,6 +290,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withPath($path): self
     {
         $uri = $this->uri->withPath($path);
+
         if ($uri->getPath() === $this->uri->getPath()) {
             return $this;
         }
@@ -294,11 +304,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withQuery($query): self
     {
         $query = $this->filterInput($query);
+
         if ('' === $query) {
             $query = null;
         }
 
         $uri = $this->uri->withQuery($query);
+
         if ($uri->getQuery() === $this->uri->getQuery()) {
             return $this;
         }
@@ -312,11 +324,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     public function withFragment($fragment): self
     {
         $fragment = $this->filterInput($fragment);
+
         if ('' === $fragment) {
             $fragment = null;
         }
 
         $uri = $this->uri->withFragment($fragment);
+
         if ($uri->getFragment() === $this->uri->getFragment()) {
             return $this;
         }

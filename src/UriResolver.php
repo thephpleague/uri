@@ -79,6 +79,7 @@ final class UriResolver
         $user = $null;
         $pass = null;
         $userInfo = $base_uri->getUserInfo();
+
         if (null !== $userInfo) {
             [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
         }
@@ -120,6 +121,7 @@ final class UriResolver
 
         $old_segments = explode('/', $path);
         $new_path = implode('/', array_reduce($old_segments, [UriResolver::class, 'reducer'], []));
+
         if (isset(self::DOT_SEGMENTS[end($old_segments)])) {
             $new_path .= '/';
         }
@@ -175,6 +177,7 @@ final class UriResolver
             }
 
             $target_path = $base_uri->getPath();
+
             //@codeCoverageIgnoreStart
             //because some PSR-7 Uri implementations allow this RFC3986 forbidden construction
             if ($baseNull !== $base_uri->getAuthority() && 0 !== strpos($target_path, '/')) {
@@ -186,6 +189,7 @@ final class UriResolver
         }
 
         $base_path = $base_uri->getPath();
+
         if ($baseNull !== $base_uri->getAuthority() && '' === $base_path) {
             $target_path = '/'.$target_path;
         }
@@ -221,6 +225,7 @@ final class UriResolver
         self::filterUri($base_uri);
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
+
         if (!self::isRelativizable($uri, $base_uri)) {
             return $uri;
         }
@@ -228,6 +233,7 @@ final class UriResolver
         $null = $uri instanceof Psr7UriInterface ? '' : null;
         $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
         $target_path = $uri->getPath();
+
         if ($target_path !== $base_uri->getPath()) {
             return $uri->withPath(self::relativizePath($target_path, $base_uri->getPath()));
         }
@@ -262,6 +268,7 @@ final class UriResolver
     private static function getComponent(string $method, $uri): ?string
     {
         $component = $uri->$method();
+
         if ($uri instanceof Psr7UriInterface && '' === $component) {
             return null;
         }
@@ -285,6 +292,7 @@ final class UriResolver
         }
 
         $host = $uri->getHost();
+
         if ('' === $host) {
             return $uri;
         }
@@ -314,12 +322,14 @@ final class UriResolver
         $target_segments = self::getSegments($path);
         $target_basename = array_pop($target_segments);
         array_pop($base_segments);
+
         foreach ($base_segments as $offset => $segment) {
             if (!isset($target_segments[$offset]) || $segment !== $target_segments[$offset]) {
                 break;
             }
             unset($base_segments[$offset], $target_segments[$offset]);
         }
+
         $target_segments[] = $target_basename;
 
         return self::formatPath(
@@ -354,6 +364,7 @@ final class UriResolver
         }
 
         $slash_pos = strpos($path, '/');
+
         if (false === $slash_pos || $colon_pos < $slash_pos) {
             return "./$path";
         }

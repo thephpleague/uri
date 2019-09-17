@@ -76,6 +76,7 @@ final class UriInfo
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         $path = $uri->getPath();
+
         if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
             $path = UriResolver::resolve($uri, $uri->withPath('')->withQuery($null))->getPath();
         }
@@ -91,6 +92,7 @@ final class UriInfo
         };
 
         $retval = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
+
         if (null !== $retval) {
             [$path, $query, $fragment] = $retval + ['', $null, $null];
         }

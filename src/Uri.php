@@ -324,6 +324,7 @@ final class Uri implements UriInterface
         }
 
         $formatted_scheme = strtolower($scheme);
+
         if (1 === preg_match(self::REGEXP_SCHEME, $formatted_scheme)) {
             return $formatted_scheme;
         }
@@ -345,6 +346,7 @@ final class Uri implements UriInterface
 
         static $user_pattern = '/(?:[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
         $user = preg_replace_callback($user_pattern, [Uri::class, 'urlEncodeMatch'], $user);
+
         if (null === $password) {
             return $user;
         }
@@ -400,6 +402,7 @@ final class Uri implements UriInterface
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
             $formatted_host = strtolower($formatted_host);
+
             if (false === strpos($formatted_host, 'xn--')) {
                 return $formatted_host;
             }
@@ -446,6 +449,7 @@ final class Uri implements UriInterface
             INTL_IDNA_VARIANT_UTS46,
             $arr
         );
+
         if (0 !== $arr['errors']) {
             throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
         }
@@ -484,6 +488,7 @@ final class Uri implements UriInterface
     private function formatIp(string $host): string
     {
         $ip = substr($host, 1, -1);
+
         if (false !== filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             return $host;
         }
@@ -493,6 +498,7 @@ final class Uri implements UriInterface
         }
 
         $pos = strpos($ip, '%');
+
         if (false === $pos) {
             throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
         }
@@ -502,6 +508,7 @@ final class Uri implements UriInterface
         }
 
         $ip = substr($ip, 0, $pos);
+
         if (false === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
         }
@@ -533,11 +540,13 @@ final class Uri implements UriInterface
         }
 
         $port = (int) $port;
+
         if (0 > $port) {
             throw new SyntaxError(sprintf('The port `%s` is invalid', $port));
         }
 
         $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme] ?? null;
+
         if ($defaultPort === $port) {
             return null;
         }
@@ -552,6 +561,7 @@ final class Uri implements UriInterface
     {
         $components['user'] = null;
         $components['pass'] = null;
+
         if (null !== $components['user_info']) {
             [$components['user'], $components['pass']] = explode(':', $components['user_info'], 2) + [1 => null];
         }
@@ -667,12 +677,14 @@ final class Uri implements UriInterface
     {
         $file_args = [$path, false];
         $mime_args = [$path, FILEINFO_MIME];
+
         if (null !== $context) {
             $file_args[] = $context;
             $mime_args[] = $context;
         }
 
         $raw = @file_get_contents(...$file_args);
+
         if (false === $raw) {
             throw new SyntaxError(sprintf('The file `%s` does not exist or is not readable', $path));
         }
@@ -704,6 +716,7 @@ final class Uri implements UriInterface
     public static function createFromWindowsPath(string $uri = ''): self
     {
         $root = '';
+
         if (1 === preg_match(self::REGEXP_WINDOW_PATH, $uri, $matches)) {
             $root = substr($matches['root'], 0, -1).':';
             $uri = substr($uri, strlen($root));
@@ -737,6 +750,7 @@ final class Uri implements UriInterface
             $user_info = $uri->getUserInfo();
             $user = null;
             $pass = null;
+
             if (null !== $user_info) {
                 [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
             }
@@ -758,21 +772,25 @@ final class Uri implements UriInterface
         }
 
         $scheme = $uri->getScheme();
+
         if ('' === $scheme) {
             $scheme = null;
         }
 
         $fragment = $uri->getFragment();
+
         if ('' === $fragment) {
             $fragment = null;
         }
 
         $query = $uri->getQuery();
+
         if ('' === $query) {
             $query = null;
         }
 
         $host = $uri->getHost();
+
         if ('' === $host) {
             $host = null;
         }
@@ -780,6 +798,7 @@ final class Uri implements UriInterface
         $user_info = $uri->getUserInfo();
         $user = null;
         $pass = null;
+
         if ('' !== $user_info) {
             [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
         }
@@ -835,8 +854,10 @@ final class Uri implements UriInterface
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => ''];
         $user = $server['PHP_AUTH_USER'];
         $pass = $server['PHP_AUTH_PW'];
+
         if (0 === strpos(strtolower($server['HTTP_AUTHORIZATION']), 'basic')) {
             $userinfo = base64_decode(substr($server['HTTP_AUTHORIZATION'], 6), true);
+
             if (false === $userinfo) {
                 throw new SyntaxError('The user info could not be detected');
             }
@@ -862,6 +883,7 @@ final class Uri implements UriInterface
     private static function fetchHostname(array $server): array
     {
         $server += ['SERVER_PORT' => null];
+
         if (null !== $server['SERVER_PORT']) {
             $server['SERVER_PORT'] = (int) $server['SERVER_PORT'];
         }
@@ -892,6 +914,7 @@ final class Uri implements UriInterface
     private static function fetchRequestUri(array $server): array
     {
         $server += ['IIS_WasUrlRewritten' => null, 'UNENCODED_URL' => '', 'PHP_SELF' => '', 'QUERY_STRING' => null];
+
         if ('1' === $server['IIS_WasUrlRewritten'] && '' !== $server['UNENCODED_URL']) {
             return explode('?', $server['UNENCODED_URL'], 2) + [1 => null];
         }
@@ -912,6 +935,7 @@ final class Uri implements UriInterface
     private function setAuthority(): ?string
     {
         $authority = null;
+
         if (null !== $this->user_info) {
             $authority = $this->user_info.'@';
         }
@@ -966,11 +990,13 @@ final class Uri implements UriInterface
         $mediatype = explode(';', (string) $parts[0], 2) + [1 => null];
         $data = (string) $parts[1];
         $mimetype = $mediatype[0];
+
         if (null === $mimetype || '' === $mimetype) {
             $mimetype = 'text/plain';
         }
 
         $parameters = $mediatype[1];
+
         if (null === $parameters || '' === $parameters) {
             $parameters = 'charset=us-ascii';
         }
@@ -994,11 +1020,13 @@ final class Uri implements UriInterface
         }
 
         $is_binary = 1 === preg_match(self::REGEXP_BINARY, $parameters, $matches);
+
         if ($is_binary) {
             $parameters = substr($parameters, 0, - strlen($matches[0]));
         }
 
         $res = array_filter(array_filter(explode(';', $parameters), [$this, 'validateParameter']));
+
         if ([] !== $res) {
             throw new SyntaxError(sprintf('The path paremeters `%s` is invalid', $parameters));
         }
@@ -1008,6 +1036,7 @@ final class Uri implements UriInterface
         }
 
         $res = base64_decode($data, true);
+
         if (false === $res || $data !== base64_encode($res)) {
             throw new SyntaxError(sprintf('The path data `%s` is invalid', $data));
         }
@@ -1081,6 +1110,7 @@ final class Uri implements UriInterface
         }
 
         $pos = strpos($this->path, ':');
+
         if (null === $this->authority
             && null === $this->scheme
             && false !== $pos
@@ -1090,6 +1120,7 @@ final class Uri implements UriInterface
         }
 
         $validationMethod = self::SCHEME_VALIDATION_METHOD[$this->scheme] ?? null;
+
         if (null === $validationMethod || true === $this->$validationMethod()) {
             $this->uri = null;
 
@@ -1294,6 +1325,7 @@ final class Uri implements UriInterface
     public function withScheme($scheme): UriInterface
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
+
         if ($scheme === $this->scheme) {
             return $this;
         }
@@ -1325,6 +1357,7 @@ final class Uri implements UriInterface
         }
 
         $str = (string) $str;
+
         if (1 !== preg_match(self::REGEXP_INVALID_CHARS, $str)) {
             return $str;
         }
@@ -1339,6 +1372,7 @@ final class Uri implements UriInterface
     {
         $user_info = null;
         $user = $this->filterString($user);
+
         if (null !== $password) {
             $password = $this->filterString($password);
         }
@@ -1365,6 +1399,7 @@ final class Uri implements UriInterface
     public function withHost($host): UriInterface
     {
         $host = $this->formatHost($this->filterString($host));
+
         if ($host === $this->host) {
             return $this;
         }
@@ -1383,6 +1418,7 @@ final class Uri implements UriInterface
     public function withPort($port): UriInterface
     {
         $port = $this->formatPort($port);
+
         if ($port === $this->port) {
             return $this;
         }
@@ -1401,11 +1437,13 @@ final class Uri implements UriInterface
     public function withPath($path): UriInterface
     {
         $path = $this->filterString($path);
+
         if (null === $path) {
             throw new TypeError('A path must be a string NULL given');
         }
 
         $path = $this->formatPath($path);
+
         if ($path === $this->path) {
             return $this;
         }
@@ -1423,6 +1461,7 @@ final class Uri implements UriInterface
     public function withQuery($query): UriInterface
     {
         $query = $this->formatQueryAndFragment($this->filterString($query));
+
         if ($query === $this->query) {
             return $this;
         }
@@ -1440,6 +1479,7 @@ final class Uri implements UriInterface
     public function withFragment($fragment): UriInterface
     {
         $fragment = $this->formatQueryAndFragment($this->filterString($fragment));
+
         if ($fragment === $this->fragment) {
             return $this;
         }

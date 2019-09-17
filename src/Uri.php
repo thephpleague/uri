@@ -509,7 +509,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function __set_state(array $components): self
     {
@@ -600,6 +600,8 @@ final class Uri implements UriInterface
      *
      * Create an new instance from a hash representation of the URI similar
      * to PHP parse_url function result
+     *
+     * @param array<string, mixed> $components
      */
     public static function createFromComponents(array $components = []): self
     {
@@ -793,6 +795,8 @@ final class Uri implements UriInterface
 
     /**
      * Returns the environment user info.
+     *
+     * @return array{0:?string, 1:?string}
      */
     private static function fetchUserInfo(array $server): array
     {
@@ -822,6 +826,8 @@ final class Uri implements UriInterface
      * Returns the environment host.
      *
      * @throws SyntaxError If the host can not be detected
+     *
+     * @return array{0:?string, 1:?string}
      */
     private static function fetchHostname(array $server): array
     {
@@ -852,12 +858,17 @@ final class Uri implements UriInterface
 
     /**
      * Returns the environment path.
+     *
+     * @return array{0:?string, 1:?string}
      */
     private static function fetchRequestUri(array $server): array
     {
         $server += ['IIS_WasUrlRewritten' => null, 'UNENCODED_URL' => '', 'PHP_SELF' => '', 'QUERY_STRING' => null];
         if ('1' === $server['IIS_WasUrlRewritten'] && '' !== $server['UNENCODED_URL']) {
-            return explode('?', $server['UNENCODED_URL'], 2) + [1 => null];
+            /** @var array{0:?string, 1:?string} $retval */
+            $retval = explode('?', $server['UNENCODED_URL'], 2) + [1 => null];
+
+            return $retval;
         }
 
         if (isset($server['REQUEST_URI'])) {
@@ -872,7 +883,6 @@ final class Uri implements UriInterface
 
     /**
      * Generate the URI authority part.
-     *
      */
     private function setAuthority(): ?string
     {
@@ -1114,6 +1124,7 @@ final class Uri implements UriInterface
      * Generate the URI string representation from its components.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-5.3
+     *
      * @param ?string $scheme
      * @param ?string $authority
      * @param ?string $query
@@ -1146,7 +1157,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function __toString(): string
     {
@@ -1162,7 +1173,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function jsonSerialize(): string
     {
@@ -1170,7 +1181,9 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     *
+     * @return array{scheme:?string, user_info:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
      */
     public function __debugInfo(): array
     {
@@ -1186,7 +1199,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getScheme(): ?string
     {
@@ -1194,7 +1207,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getAuthority(): ?string
     {
@@ -1202,7 +1215,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getUserInfo(): ?string
     {
@@ -1210,7 +1223,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getHost(): ?string
     {
@@ -1218,7 +1231,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getPort(): ?int
     {
@@ -1226,7 +1239,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getPath(): string
     {
@@ -1234,7 +1247,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getQuery(): ?string
     {
@@ -1242,7 +1255,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getFragment(): ?string
     {
@@ -1250,7 +1263,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withScheme($scheme): UriInterface
     {
@@ -1294,7 +1307,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      * @param null|mixed $password
      */
     public function withUserInfo($user, $password = null): UriInterface
@@ -1322,7 +1335,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withHost($host): UriInterface
     {
@@ -1340,7 +1353,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withPort($port): UriInterface
     {
@@ -1358,7 +1371,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withPath($path): UriInterface
     {
@@ -1380,7 +1393,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withQuery($query): UriInterface
     {
@@ -1397,7 +1410,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withFragment($fragment): UriInterface
     {

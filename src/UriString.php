@@ -251,6 +251,8 @@ final class UriString
      * @throws SyntaxError if the URI contains invalid characters
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
+     *
+     * @return array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
      */
     public static function parse($uri): array
     {
@@ -261,7 +263,10 @@ final class UriString
         $uri = (string) $uri;
 
         if (isset(self::URI_SCHORTCUTS[$uri])) {
-            return array_merge(self::URI_COMPONENTS, self::URI_SCHORTCUTS[$uri]);
+            /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+            $components = array_merge(self::URI_COMPONENTS, self::URI_SCHORTCUTS[$uri]);
+
+            return $components;
         }
 
         if (1 === preg_match(self::REGEXP_INVALID_URI_CHARS, $uri)) {
@@ -303,7 +308,8 @@ final class UriString
             throw new SyntaxError(sprintf('The uri `%s` contains an invalid path.', $uri));
         }
 
-        return array_merge(
+        /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+        $components = array_merge(
             self::URI_COMPONENTS,
             '' === $parts['authority'] ? [] : self::parseAuthority($parts['acontent']),
             [
@@ -313,6 +319,8 @@ final class UriString
                 'fragment' => '' === $parts['fragment'] ? null : $parts['fcontent'],
             ]
         );
+
+        return $components;
     }
 
     /**
@@ -321,6 +329,8 @@ final class UriString
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      *
      * @throws SyntaxError If the port component is invalid
+     *
+     * @return array{user:?string, pass:?string, host:?string, port:?int}
      */
     private static function parseAuthority(string $authority): array
     {
@@ -349,7 +359,6 @@ final class UriString
      * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @throws SyntaxError if the registered name is invalid
-     *
      */
     private static function filterPort(string $port): ?int
     {

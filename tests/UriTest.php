@@ -118,8 +118,6 @@ class UriTest extends TestCase
 
     /**
      * @covers ::getUserInfo
-     * @covers ::getUser
-     * @covers ::getPass
      * @covers ::withUserInfo
      * @covers ::formatUserInfo
      */

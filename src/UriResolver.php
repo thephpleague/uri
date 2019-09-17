@@ -29,10 +29,15 @@ use function str_repeat;
 use function strpos;
 use function substr;
 
+/**
+ * Class UriResolver.
+ *
+ * @package League\Uri
+ */
 final class UriResolver
 {
     /**
-     * @var array
+     * Array of segments with dot(s).
      */
     const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 

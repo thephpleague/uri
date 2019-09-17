@@ -85,9 +85,9 @@ final class UriString
     private const REGEXP_INVALID_URI_CHARS = '/[\x00-\x1f\x7f]/';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#appendix-B
+     * RFC3986 regular expression URI splitter.
      *
-     * RFC3986 regular expression URI splitter
+     * @see https://tools.ietf.org/html/rfc3986#appendix-B
      */
     private const REGEXP_URI_PARTS = ',^
         (?<scheme>(?<scontent>[^:/?\#]+):)?    # URI scheme component
@@ -98,16 +98,16 @@ final class UriString
     ,x';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     * URI scheme regular expresssion.
      *
-     * URI scheme regular expresssion
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
      */
     private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d\+\.\-]*)?$/i';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * IPvFuture regular expression.
      *
-     * IPvFuture regular expression
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_IP_FUTURE = '/^
         v(?<version>[A-F0-9])+\.
@@ -118,9 +118,9 @@ final class UriString
     $/ix';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * General registered name regular expression.
      *
-     * General registered name regular expression
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_REGISTERED_NAME = '/(?(DEFINE)
         (?<unreserved>[a-z0-9_~\-])   # . is missing as it is used to separate labels
@@ -131,18 +131,18 @@ final class UriString
     ^(?:(?&reg_name)\.)*(?&reg_name)\.?$/ix';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * Invalid characters in host regular expression.
      *
-     * invalid characters in host regular expression
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_INVALID_HOST_CHARS = '/
         [:\/?#\[\]@ ]  # gen-delims characters as well as the space character
     /ix';
 
     /**
-     * @see https://tools.ietf.org/html/rfc3986#section-3.3
+     * Invalid path for URI without scheme and authority regular expression.
      *
-     * invalid path for URI without scheme and authority regular expression
+     * @see https://tools.ietf.org/html/rfc3986#section-3.3
      */
     private const REGEXP_INVALID_PATH = ',^(([^/]*):)(.*)?/,';
 
@@ -391,7 +391,7 @@ final class UriString
     /**
      * Returns whether the host is an IPv4 or a registered named.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @throws SyntaxError       if the registered name is invalid
      * @throws IdnSupportMissing if IDN support or ICU requirement are not available or met.
@@ -499,9 +499,9 @@ final class UriString
     /**
      * Validates a IPv6/IPvfuture host.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
-     * @see http://tools.ietf.org/html/rfc6874#section-2
-     * @see http://tools.ietf.org/html/rfc6874#section-4
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @see https://tools.ietf.org/html/rfc6874#section-2
+     * @see https://tools.ietf.org/html/rfc6874#section-4
      */
     private static function isIpHost(string $ip_host): bool
     {

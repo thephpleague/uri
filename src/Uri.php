@@ -15,7 +15,6 @@ namespace League\Uri;
 
 use finfo;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
@@ -24,12 +23,9 @@ use function array_map;
 use function base64_decode;
 use function base64_encode;
 use function count;
-use function defined;
 use function explode;
 use function file_get_contents;
 use function filter_var;
-use function function_exists;
-use function idn_to_ascii;
 use function implode;
 use function in_array;
 use function inet_pton;
@@ -52,24 +48,6 @@ use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
-use const IDNA_CHECK_BIDI;
-use const IDNA_CHECK_CONTEXTJ;
-use const IDNA_ERROR_BIDI;
-use const IDNA_ERROR_CONTEXTJ;
-use const IDNA_ERROR_DISALLOWED;
-use const IDNA_ERROR_DOMAIN_NAME_TOO_LONG;
-use const IDNA_ERROR_EMPTY_LABEL;
-use const IDNA_ERROR_HYPHEN_3_4;
-use const IDNA_ERROR_INVALID_ACE_LABEL;
-use const IDNA_ERROR_LABEL_HAS_DOT;
-use const IDNA_ERROR_LABEL_TOO_LONG;
-use const IDNA_ERROR_LEADING_COMBINING_MARK;
-use const IDNA_ERROR_LEADING_HYPHEN;
-use const IDNA_ERROR_PUNYCODE;
-use const IDNA_ERROR_TRAILING_HYPHEN;
-use const IDNA_NONTRANSITIONAL_TO_ASCII;
-use const IDNA_NONTRANSITIONAL_TO_UNICODE;
-use const INTL_IDNA_VARIANT_UTS46;
 
 /**
  * Class Uri.
@@ -78,15 +56,6 @@ use const INTL_IDNA_VARIANT_UTS46;
  */
 final class Uri implements UriInterface
 {
-    /**
-     * RFC3986 invalid characters.
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.2
-     *
-     * @var string
-     */
-    private const REGEXP_INVALID_CHARS = '/[\x00-\x1f\x7f]/';
-
     /**
      * RFC3986 Sub delimiter characters regular expression pattern.
      *
@@ -109,47 +78,15 @@ final class Uri implements UriInterface
      * RFC3986 schema regular expression pattern.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     *
+     * @var string
      */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
     /**
-     * RFC3986 host identified by a registered name regular expression pattern.
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
-     */
-    private const REGEXP_HOST_REGNAME = '/^(
-        (?<unreserved>[a-z0-9_~\-\.])|
-        (?<sub_delims>[!$&\'()*+,;=])|
-        (?<encoded>%[A-F0-9]{2})
-    )+$/x';
-
-    /**
-     * RFC3986 delimiters of the generic URI components regular expression pattern.
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.2
-     */
-    private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
-
-    /**
-     * RFC3986 IPvFuture regular expression pattern.
-     *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
-     */
-    private const REGEXP_HOST_IPFUTURE = '/^
-        v(?<version>[A-F0-9])+\.
-        (?:
-            (?<unreserved>[a-z0-9_~\-\.])|
-            (?<sub_delims>[!$&\'()*+,;=:])  # also include the : character
-        )+
-    $/ix';
-
-    /**
-     * Significant 10 bits of IP to detect Zone ID regular expression pattern.
-     */
-    private const HOST_ADDRESS_BLOCK = "\xfe\x80";
-
-    /**
      * Regular expression pattern to for file URI.
+     *
+     * @var string
      */
     private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<root>[a-zA-Z][:|\|])(?<rest>.*)?,';
 
@@ -157,6 +94,8 @@ final class Uri implements UriInterface
      * Mimetype retular expression pattern.
      *
      * @see https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
@@ -164,6 +103,8 @@ final class Uri implements UriInterface
      * Base64 content regular expression pattern.
      *
      * @see https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_BINARY = ',(;|^)base64$,';
 
@@ -171,25 +112,6 @@ final class Uri implements UriInterface
      * Windows path string regular expression pattern.
      */
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
-
-    /**
-     * IDNA errors.
-     */
-    private const IDNA_ERRORS = [
-        IDNA_ERROR_EMPTY_LABEL => 'a non-final domain name label (or the whole domain name) is empty',
-        IDNA_ERROR_LABEL_TOO_LONG => 'a domain name label is longer than 63 bytes',
-        IDNA_ERROR_DOMAIN_NAME_TOO_LONG => 'a domain name is longer than 255 bytes in its storage form',
-        IDNA_ERROR_LEADING_HYPHEN => 'a label starts with a hyphen-minus ("-")',
-        IDNA_ERROR_TRAILING_HYPHEN => 'a label ends with a hyphen-minus ("-")',
-        IDNA_ERROR_HYPHEN_3_4 => 'a label contains hyphen-minus ("-") in the third and fourth positions',
-        IDNA_ERROR_LEADING_COMBINING_MARK => 'a label starts with a combining mark',
-        IDNA_ERROR_DISALLOWED => 'a label or domain name contains disallowed characters',
-        IDNA_ERROR_PUNYCODE => 'a label starts with "xn--" but does not contain valid Punycode',
-        IDNA_ERROR_LABEL_HAS_DOT => 'a label contains a dot=full stop',
-        IDNA_ERROR_INVALID_ACE_LABEL => 'An ACE label does not contain a valid label string',
-        IDNA_ERROR_BIDI => 'a label does not meet the IDNA BiDi requirements (for right-to-left characters)',
-        IDNA_ERROR_CONTEXTJ => 'a label does not meet the IDNA CONTEXTJ requirements',
-    ];
 
     /**
      * Supported schemes and corresponding default port.
@@ -376,108 +298,10 @@ final class Uri implements UriInterface
         }
 
         if ('[' !== $host[0]) {
-            return $this->formatRegisteredName($host);
+            return Common::filterRegisteredName($host);
         }
 
         return $this->formatIp($host);
-    }
-
-    /**
-     * Validate and format a registered name.
-     *
-     * The host is converted to its ascii representation if needed
-     *
-     * @throws IdnSupportMissing if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError       if the submitted host is not a valid registered name
-     */
-    private function formatRegisteredName(string $host): string
-    {
-        // @codeCoverageIgnoreStart
-        // added because it is not possible in travis to disabled the ext/intl extension
-        // see travis issue https://github.com/travis-ci/travis-ci/issues/4701
-        static $idn_support = null;
-        $idn_support = $idn_support ?? function_exists('idn_to_ascii') && defined('INTL_IDNA_VARIANT_UTS46');
-        // @codeCoverageIgnoreEnd
-
-        $formatted_host = rawurldecode($host);
-        if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
-            $formatted_host = strtolower($formatted_host);
-
-            if (false === strpos($formatted_host, 'xn--')) {
-                return $formatted_host;
-            }
-
-            // @codeCoverageIgnoreStart
-            if (!$idn_support) {
-                throw new IdnSupportMissing(sprintf('the host `%s` could not be processed for IDN. Verify that ext/intl is installed for IDN support and that ICU is at least version 4.6.', $host));
-            }
-            // @codeCoverageIgnoreEnd
-
-            $unicode = idn_to_utf8(
-                $host,
-                IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ | IDNA_NONTRANSITIONAL_TO_UNICODE,
-                INTL_IDNA_VARIANT_UTS46,
-                $arr
-            );
-
-            if (0 !== $arr['errors']) {
-                throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
-            }
-
-            // @codeCoverageIgnoreStart
-            if (false === $unicode) {
-                throw new IdnSupportMissing(sprintf('The Intl extension is misconfigured for %s, please correct this issue before proceeding.', PHP_OS));
-            }
-            // @codeCoverageIgnoreEnd
-
-            return $formatted_host;
-        }
-
-        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formatted_host)) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : a registered name can not contain URI delimiters or spaces', $host));
-        }
-
-        // @codeCoverageIgnoreStart
-        if (!$idn_support) {
-            throw new IdnSupportMissing(sprintf('the host `%s` could not be processed for IDN. Verify that ext/intl is installed for IDN support and that ICU is at least version 4.6.', $host));
-        }
-        // @codeCoverageIgnoreEnd
-
-        $formatted_host = idn_to_ascii(
-            $formatted_host,
-            IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ | IDNA_NONTRANSITIONAL_TO_ASCII,
-            INTL_IDNA_VARIANT_UTS46,
-            $arr
-        );
-
-        if (0 !== $arr['errors']) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
-        }
-
-        // @codeCoverageIgnoreStart
-        if (false === $formatted_host) {
-            throw new IdnSupportMissing(sprintf('The Intl extension is misconfigured for %s, please correct this issue before proceeding.', PHP_OS));
-        }
-        // @codeCoverageIgnoreEnd
-
-        return $arr['result'];
-    }
-
-    /**
-     * Retrieves and format IDNA conversion error message.
-     *
-     * @see http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
-     */
-    private function getIDNAErrors(int $error_byte): string
-    {
-        $res = [];
-        foreach (self::IDNA_ERRORS as $error => $reason) {
-            if ($error === ($error_byte & $error)) {
-                $res[] = $reason;
-            }
-        }
-
-        return [] === $res ? 'Unknown IDNA conversion error.' : implode(', ', $res).'.';
     }
 
     /**
@@ -493,7 +317,7 @@ final class Uri implements UriInterface
             return $host;
         }
 
-        if (1 === preg_match(self::REGEXP_HOST_IPFUTURE, $ip, $matches) && !in_array($matches['version'], ['4', '6'], true)) {
+        if (1 === preg_match(Common::REGEXP_HOST_IPFUTURE, $ip, $matches) && !in_array($matches['version'], ['4', '6'], true)) {
             return $host;
         }
 
@@ -503,7 +327,7 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
         }
 
-        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, rawurldecode(substr($ip, $pos)))) {
+        if (1 === preg_match(Common::REGEXP_INVALID_HOST_CHARS, rawurldecode(substr($ip, $pos)))) {
             throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
         }
 
@@ -515,7 +339,7 @@ final class Uri implements UriInterface
 
         //Only the address block fe80::/10 can have a Zone ID attach to
         //let's detect the link local significant 10 bits
-        if (0 === strpos((string) inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
+        if (0 === strpos((string) inet_pton($ip), Common::ZONE_ID_ADDRESS_BLOCK)) {
             return $host;
         }
 
@@ -1358,7 +1182,7 @@ final class Uri implements UriInterface
 
         $str = (string) $str;
 
-        if (1 !== preg_match(self::REGEXP_INVALID_CHARS, $str)) {
+        if (1 !== preg_match(Common::REGEXP_INVALID_URI_CHARS, $str)) {
             return $str;
         }
 

@@ -42,7 +42,7 @@ class UriTest extends TestCase
     /**
      * @covers ::__toString
      * @covers ::formatHost
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      * @covers ::formatQueryAndFragment
      * @covers ::formatPort
      * @covers ::formatUserInfo
@@ -140,7 +140,7 @@ class UriTest extends TestCase
      * @covers ::withHost
      * @covers ::formatHost
      * @covers ::formatIp
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      */
     public function testHost(): void
     {
@@ -235,7 +235,7 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::getIDNAErrors
+     * @covers \League\Uri\Common::getIDNAErrors
      * @covers ::formatHost
      */
     public function testCannotConvertInvalidHost(): void
@@ -278,7 +278,7 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      * @covers ::withHost
      */
     public function testModificationFailedWithInvalidHost(): void
@@ -314,7 +314,7 @@ class UriTest extends TestCase
     /**
      * @covers ::__toString
      * @covers ::formatHost
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      * @covers ::formatQueryAndFragment
      * @covers ::formatPort
      * @covers ::formatUserInfo
@@ -385,7 +385,7 @@ class UriTest extends TestCase
 
     /**
      * @covers ::createFromComponents
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      */
     public function testCreateFromComponents(): void
     {
@@ -496,8 +496,8 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::formatRegisteredName
-     * @covers ::getIDNAErrors
+     * @covers \League\Uri\Common::filterRegisteredName
+     * @covers \League\Uri\Common::getIDNAErrors
      */
     public function testCreateFromComponentsThrowsException5(): void
     {
@@ -506,8 +506,8 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::formatRegisteredName
-     * @covers ::getIDNAErrors
+     * @covers \League\Uri\Common::filterRegisteredName
+     * @covers \League\Uri\Common::getIDNAErrors
      */
     public function testCreateFromComponentsThrowsException6(): void
     {
@@ -516,7 +516,7 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::formatRegisteredName
+     * @covers \League\Uri\Common::filterRegisteredName
      */
     public function testCreateFromComponentsWorksWithPunycode(): void
     {

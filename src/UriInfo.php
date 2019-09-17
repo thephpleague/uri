@@ -22,8 +22,16 @@ use function preg_replace_callback;
 use function rawurldecode;
 use function sprintf;
 
+/**
+ * Class UriInfo.
+ *
+ * @package League\Uri
+ */
 final class UriInfo
 {
+    /**
+     * Regular expression pattern to find encoded chars.
+     */
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
 
     /**

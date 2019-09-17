@@ -21,6 +21,11 @@ use function is_scalar;
 use function method_exists;
 use function sprintf;
 
+/**
+ * Class Http.
+ *
+ * @package League\Uri
+ */
 final class Http implements Psr7UriInterface, JsonSerializable
 {
     /**

@@ -71,12 +71,17 @@ use const IDNA_NONTRANSITIONAL_TO_ASCII;
 use const IDNA_NONTRANSITIONAL_TO_UNICODE;
 use const INTL_IDNA_VARIANT_UTS46;
 
+/**
+ * Class Uri.
+ *
+ * @package League\Uri
+ */
 final class Uri implements UriInterface
 {
     /**
      * RFC3986 invalid characters.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.2
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -85,7 +90,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 Sub delimiter characters regular expression pattern.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.2
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -94,23 +99,42 @@ final class Uri implements UriInterface
     /**
      * RFC3986 unreserved characters regular expression pattern.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.3
+     * @see https://tools.ietf.org/html/rfc3986#section-2.3
      *
      * @var string
      */
     private const REGEXP_CHARS_UNRESERVED = 'A-Za-z0-9_\-\.~';
 
-
+    /**
+     * RFC3986 schema regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
+    /**
+     * RFC3986 host identified by a registered name regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     */
     private const REGEXP_HOST_REGNAME = '/^(
         (?<unreserved>[a-z0-9_~\-\.])|
         (?<sub_delims>[!$&\'()*+,;=])|
         (?<encoded>%[A-F0-9]{2})
     )+$/x';
 
+    /**
+     * RFC3986 delimiters of the generic URI components regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     */
     private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
 
+    /**
+     * RFC3986 IPvFuture regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     */
     private const REGEXP_HOST_IPFUTURE = '/^
         v(?<version>[A-F0-9])+\.
         (?:
@@ -119,13 +143,34 @@ final class Uri implements UriInterface
         )+
     $/ix';
 
+    /**
+     * Significant 10 bits of IP to detect Zone ID regular expression pattern.
+     */
     private const HOST_ADDRESS_BLOCK = "\xfe\x80";
 
+    /**
+     * Regular expression pattern to for file URI.
+     */
     private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<root>[a-zA-Z][:|\|])(?<rest>.*)?,';
 
+    /**
+     * Mimetype retular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc2397
+     */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
+    /**
+     * Base64 content regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc2397
+     */
     private const REGEXP_BINARY = ',(;|^)base64$,';
+
+    /**
+     * Windows path string regular expression pattern.
+     */
+    private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
      * IDNA errors.
@@ -145,8 +190,6 @@ final class Uri implements UriInterface
         IDNA_ERROR_BIDI => 'a label does not meet the IDNA BiDi requirements (for right-to-left characters)',
         IDNA_ERROR_CONTEXTJ => 'a label does not meet the IDNA CONTEXTJ requirements',
     ];
-
-    private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
      * Supported schemes and corresponding default port.
@@ -254,16 +297,8 @@ final class Uri implements UriInterface
      * @param ?string $query
      * @param ?string $fragment
      */
-    private function __construct(
-        ?string $scheme,
-        ?string $user,
-        ?string $pass,
-        ?string $host,
-        ?int $port,
-        string $path,
-        ?string $query,
-        ?string $fragment
-    ) {
+    private function __construct(?string $scheme, ?string $user, ?string $pass, ?string $host, ?int $port, string $path, ?string $query, ?string $fragment)
+    {
         $this->scheme = $this->formatScheme($scheme);
         $this->user_info = $this->formatUserInfo($user, $pass);
         $this->host = $this->formatHost($host);
@@ -484,6 +519,8 @@ final class Uri implements UriInterface
      * Format the Port component.
      *
      * @param null|mixed $port
+     *
+     * @throws SyntaxError
      */
     private function formatPort($port = null): ?int
     {
@@ -536,8 +573,7 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      *
-     * @param mixed $uri      the input URI to create
-     * @param mixed $base_uri the base URI used for reference
+     * @param null|mixed $base_uri
      */
     public static function createFromBaseUri($uri, $base_uri = null): UriInterface
     {
@@ -623,7 +659,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a data file path.
      *
-     * @param resource|null $context
+     * @param null|mixed $context
      *
      * @throws SyntaxError If the file does not exist or is not readable
      */
@@ -872,7 +908,6 @@ final class Uri implements UriInterface
 
     /**
      * Generate the URI authority part.
-     *
      */
     private function setAuthority(): ?string
     {
@@ -988,6 +1023,9 @@ final class Uri implements UriInterface
         return 2 != count($properties) || strtolower($properties[0]) === 'base64';
     }
 
+    /**
+     * Format path component for file scheme.
+     */
     private function formatFilePath(string $path): string
     {
         if ('file' !== $this->scheme) {
@@ -1114,6 +1152,7 @@ final class Uri implements UriInterface
      * Generate the URI string representation from its components.
      *
      * @see https://tools.ietf.org/html/rfc3986#section-5.3
+     *
      * @param ?string $scheme
      * @param ?string $authority
      * @param ?string $query
@@ -1146,7 +1185,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function __toString(): string
     {
@@ -1186,7 +1225,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getScheme(): ?string
     {
@@ -1194,7 +1233,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getAuthority(): ?string
     {
@@ -1202,7 +1241,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getUserInfo(): ?string
     {
@@ -1210,7 +1249,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getHost(): ?string
     {
@@ -1218,7 +1257,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getPort(): ?int
     {
@@ -1226,7 +1265,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getPath(): string
     {
@@ -1234,7 +1273,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getQuery(): ?string
     {
@@ -1242,7 +1281,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function getFragment(): ?string
     {
@@ -1250,7 +1289,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withScheme($scheme): UriInterface
     {
@@ -1294,8 +1333,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
-     * @param null|mixed $password
+     * {@inheritDoc}
      */
     public function withUserInfo($user, $password = null): UriInterface
     {
@@ -1322,7 +1360,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withHost($host): UriInterface
     {
@@ -1340,7 +1378,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withPort($port): UriInterface
     {
@@ -1358,7 +1396,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withPath($path): UriInterface
     {
@@ -1380,7 +1418,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withQuery($query): UriInterface
     {
@@ -1397,7 +1435,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     public function withFragment($fragment): UriInterface
     {

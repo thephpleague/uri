@@ -122,7 +122,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getScheme(): string
     {
@@ -130,7 +130,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getAuthority(): string
     {
@@ -138,7 +138,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getUserInfo(): string
     {
@@ -146,7 +146,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getHost(): string
     {
@@ -154,7 +154,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPort(): ?int
     {
@@ -162,7 +162,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPath(): string
     {
@@ -170,7 +170,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getQuery(): string
     {
@@ -178,7 +178,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFragment(): string
     {
@@ -186,7 +186,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withScheme($scheme): self
     {
@@ -222,7 +222,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withUserInfo($user, $password = null): self
     {
@@ -240,7 +240,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withHost($host): self
     {
@@ -258,7 +258,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withPort($port): self
     {
@@ -271,7 +271,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withPath($path): self
     {
@@ -284,7 +284,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withQuery($query): self
     {
@@ -302,7 +302,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function withFragment($fragment): self
     {
@@ -320,7 +320,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __toString(): string
     {
@@ -328,7 +328,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function jsonSerialize(): string
     {

@@ -131,6 +131,8 @@ final class UriResolver
 
     /**
      * Remove dot segments.
+     *
+     * @return array<int, string>
      */
     private static function reducer(array $carry, string $segment): array
     {
@@ -152,6 +154,8 @@ final class UriResolver
      *
      * @param Psr7UriInterface|UriInterface $uri
      * @param Psr7UriInterface|UriInterface $base_uri
+     *
+     * @return array{0:string, 1:string|null}
      */
     private static function resolvePathAndQuery($uri, $base_uri): array
     {
@@ -325,6 +329,8 @@ final class UriResolver
 
     /**
      * returns the path segments.
+     *
+     * @return string[]
      */
     private static function getSegments(string $path): array
     {
@@ -362,6 +368,7 @@ final class UriResolver
     private static function formatPathWithEmptyBaseQuery(string $path): string
     {
         $target_segments = self::getSegments($path);
+        /** @var string $basename */
         $basename = end($target_segments);
 
         return '' === $basename ? './' : $basename;

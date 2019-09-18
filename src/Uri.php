@@ -76,7 +76,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 invalid characters.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.2
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -85,7 +85,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 Sub delimiter characters regular expression pattern.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.2
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -94,23 +94,42 @@ final class Uri implements UriInterface
     /**
      * RFC3986 unreserved characters regular expression pattern.
      *
-     * @see http://tools.ietf.org/html/rfc3986#section-2.3
+     * @see https://tools.ietf.org/html/rfc3986#section-2.3
      *
      * @var string
      */
     private const REGEXP_CHARS_UNRESERVED = 'A-Za-z0-9_\-\.~';
 
-
+    /**
+     * RFC3986 schema regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
+    /**
+     * RFC3986 host identified by a registered name regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     */
     private const REGEXP_HOST_REGNAME = '/^(
         (?<unreserved>[a-z0-9_~\-\.])|
         (?<sub_delims>[!$&\'()*+,;=])|
         (?<encoded>%[A-F0-9]{2})
     )+$/x';
 
+    /**
+     * RFC3986 delimiters of the generic URI components regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     */
     private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
 
+    /**
+     * RFC3986 IPvFuture regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     */
     private const REGEXP_HOST_IPFUTURE = '/^
         v(?<version>[A-F0-9])+\.
         (?:
@@ -119,13 +138,34 @@ final class Uri implements UriInterface
         )+
     $/ix';
 
+    /**
+     * Significant 10 bits of IP to detect Zone ID regular expression pattern.
+     */
     private const HOST_ADDRESS_BLOCK = "\xfe\x80";
 
+    /**
+     * Regular expression pattern to for file URI.
+     */
     private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<root>[a-zA-Z][:|\|])(?<rest>.*)?,';
 
+    /**
+     * Mimetype regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc2397
+     */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
+    /**
+     * Base64 content regular expression pattern.
+     *
+     * @see https://tools.ietf.org/html/rfc2397
+     */
     private const REGEXP_BINARY = ',(;|^)base64$,';
+
+    /**
+     * Windows file path string regular expression pattern.
+     */
+    private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
      * IDNA errors.
@@ -145,8 +185,6 @@ final class Uri implements UriInterface
         IDNA_ERROR_BIDI => 'a label does not meet the IDNA BiDi requirements (for right-to-left characters)',
         IDNA_ERROR_CONTEXTJ => 'a label does not meet the IDNA CONTEXTJ requirements',
     ];
-
-    private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
      * Supported schemes and corresponding default port.
@@ -484,6 +522,8 @@ final class Uri implements UriInterface
      * Format the Port component.
      *
      * @param null|mixed $port
+     *
+     * @throws SyntaxError
      */
     private function formatPort($port = null): ?int
     {
@@ -536,8 +576,8 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      *
-     * @param mixed $uri      the input URI to create
-     * @param mixed $base_uri the base URI used for reference
+     * @param mixed      $uri      the input URI to create
+     * @param null|mixed $base_uri the base URI used for reference
      */
     public static function createFromBaseUri($uri, $base_uri = null): UriInterface
     {
@@ -837,7 +877,7 @@ final class Uri implements UriInterface
         }
 
         if (isset($server['HTTP_HOST'])) {
-            preg_match(',^(?<host>(\[.*\]|[^:])*)(\:(?<port>[^/?\#]*))?$,x', $server['HTTP_HOST'], $matches);
+            preg_match(',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x', $server['HTTP_HOST'], $matches);
 
             return [
                 $matches['host'],
@@ -998,6 +1038,9 @@ final class Uri implements UriInterface
         return 2 != count($properties) || strtolower($properties[0]) === 'base64';
     }
 
+    /**
+     * Format path component for file scheme.
+     */
     private function formatFilePath(string $path): string
     {
         if ('file' !== $this->scheme) {
@@ -1189,7 +1232,7 @@ final class Uri implements UriInterface
     {
         return [
             'scheme' => $this->scheme,
-            'user_info' => isset($this->user_info) ? preg_replace(',\:(.*).?$,', ':***', $this->user_info) : null,
+            'user_info' => isset($this->user_info) ? preg_replace(',:(.*).?$,', ':***', $this->user_info) : null,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,
@@ -1308,7 +1351,6 @@ final class Uri implements UriInterface
 
     /**
      * {@inheritDoc}
-     * @param null|mixed $password
      */
     public function withUserInfo($user, $password = null): UriInterface
     {

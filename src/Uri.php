@@ -1352,7 +1352,7 @@ final class Uri implements UriInterface
     /**
      * {@inheritDoc}
      */
-    public function withUserInfo($user, ?string $password = null): UriInterface
+    public function withUserInfo($user, $password = null): UriInterface
     {
         $user_info = null;
         $user = $this->filterString($user);

@@ -58,5 +58,7 @@ Also, the `UriComponentInterface::getContent()` method no longer takes any param
 The `Host` object no longer is iterable or exposes label related methods. To be able to access the host lables you need to instantiate a `Domain` object.
 All information regarding Public Suffix information has been removed from the package.
 
-
 ### Query
+
+The `Query` object public API has been updated to better match the [WHATWG URL living standard URLSearchParams class](https://url.spec.whatwg.org/#interface-urlsearchparams).
+You will need to upgrade your code to match this specification expected values.

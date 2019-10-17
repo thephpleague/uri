@@ -63,9 +63,9 @@
         "league/uri-schemes": "^1.0"
     },
     "scripts": {
-        "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes",
-        "phpstan-src": "phpstan analyse -l max -c phpstan.src.neon src",
-        "phpstan-tests": "phpstan analyse -l max -c phpstan.tests.neon tests",
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
+        "phpstan-src": "phpstan analyse -l max -c phpstan.src.neon src --ansi",
+        "phpstan-tests": "phpstan analyse -l max -c phpstan.tests.neon tests --ansi",
         "phpstan": [
             "@phpstan-src",
             "@phpstan-tests"
@@ -76,6 +76,14 @@
             "@phpstan",
             "@phpunit"
         ]
+    },
+    "scripts-descriptions": {
+        "phpcs": "Runs coding style test suite",
+        "phpstan": "Runs complete codebase static analysis",
+        "phpstan-src": "Runs source code static analysis",
+        "phpstan-test": "Runs test suite static analysis",
+        "phpunit": "Runs unit and functional testing",
+        "test": "Runs full test suite"
     },
     "suggest": {
         "league/uri-components" : "Needed to easily manipulate URI objects",

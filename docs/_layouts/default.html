@@ -79,6 +79,13 @@
     {% if version != site.data.packages.package[package].version %}
         <p class="message-notice">Please consider using the <a href="/{{ package}}/{{ site.data.packages.package[package].version }}/">the latest stable version</a> for any production code.</p>
     {% endif %}
+
+    {% for deprecated in site.data.project.deprecated %}
+{% if deprecated[0] == package %}
+        <p class="message-notice">This package is deprecated Please consider using an <a href="/{{ deprecated[1] }}">stable alternative</a> for any production code.</p>
+{% endif %}
+    {% endfor %}
+
         {{ content }}
     </article>
 </main>

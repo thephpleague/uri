@@ -1,6 +1,8 @@
 ---
 layout: default
 title: Uri Objects
+redirect_from:
+    - /uri/
 ---
 
 Overview

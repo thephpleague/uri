@@ -14,8 +14,8 @@ footer {
 }
 
 pre {
-    background:#fff;
-    border-radius:.3em .3em 0 0;
+    border-width:0 0 0 4px;
+    background: #fff;
 }
 
 /* -------- homepage css -----------------*/
@@ -27,6 +27,9 @@ pre {
     background:#19242F url(//thephpleague.com/img/header_bg.png) no-repeat top center;
     background-size: cover;
     max-width: none;
+    color:#fff;
+    font-family: "Museo 300";
+    text-align: center;
 }
 
 .homepage header h1 {
@@ -108,6 +111,46 @@ pre {
     max-width: 1000px;
 }
 
+.documentation .packages-list h1 {
+    flex-grow: 1;
+    width:100%;
+    font:normal 1.5em/1.5 "Museo 300";
+    text-align: center;
+    text-transform: lowercase;
+}
+
+.documentation .packages-list .message-notice {
+    flex-grow: 1;
+    width:100%;
+    text-align: center;
+}
+
+.documentation .packages-list .message-notice a {
+    color:#000;
+    font-size:1em;
+}
+
+.documentation .packages-list .message-notice a:hover {
+    text-decoration: underline;
+}
+
+.documentation .packages-list .message-notice a:before {
+    content:'';
+}
+
+.documentation .packages-list dd a {
+    font-size:1em;
+}
+
+.documentation .packages-list dd a:hover {
+    text-decoration: underline;
+}
+
+.documentation .packages-list dd a:before {
+    content:'';
+}
+
+
 .packages-list dl {
     flex-grow: 1;
     width:100%;
@@ -116,7 +159,7 @@ pre {
 }
 
 .packages-list dd {
-    margin:0;
+    margin:.5em 0 0 0;
 }
 
 .inner-content .packages-list a {
@@ -146,7 +189,7 @@ pre {
 }
 
 .features p {
-    text-align: left;
+    text-align: center;
 }
 
 .features a {

@@ -27,9 +27,13 @@ This will edit (or create) your `composer.json` file.
 
 This package is no longer a meta-package as such:
 
-- it replaces, deprectes and conflicts with the `uri-schemes` package.
+- it replaces, deprecates and conflicts with the `uri-schemes` package.
 - it replaces and deprecates without conflicting the `uri-parser` package.
 - it partially replaces and deprecates without conflicting the `uri-manipulation` package.
+
+You are required to be explicit about your dependencies and 
+require the `uri-components` v2.0 package separately to get access to 
+URI components objects and how to manipulate them with URI objects.
 
 ## Interfaces
 

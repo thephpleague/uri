@@ -1,16 +1,16 @@
 package:
     'uri':
         name: 'uri'
-        version: '5.0'
-        latest: '5.3.0'
+        version: '6.0'
+        latest: '6.0.0'
         documentation:
             - '6.0'
             - '5.0'
             - '4.0'
     'components':
         name: 'uri-components'
-        version: '1.0'
-        latest: '1.8.2'
+        version: '2.0'
+        latest: '2.0.0'
         documentation:
             - '2.0'
             - '1.0'

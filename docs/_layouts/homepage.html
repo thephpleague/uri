@@ -9,7 +9,7 @@
     <link rel="icon" type="image/x-icon" href="//theme.thephpleague.com/img/favicon.ico" />
     <link rel="apple-touch-icon-precomposed" href="//theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     <link rel="stylesheet" href="//theme.thephpleague.com/css/all.css?2">
-    <link rel="stylesheet" href="/homepage.css?3">
+    <link rel="stylesheet" href="/homepage.css?4">
     <script async src="https://www.googletagmanager.com/gtag/js?id={{  site.data.project.google_analytics_tracking_id }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -25,73 +25,83 @@
       <h1>{{ site.data.project.title }}</h1>
       <h2>{{ site.data.project.tagline }}</h2>
     </div>
+    <p class="footnote">{{ site.data.project.support }}</p>
 </header>
 
 <main>
 
-  <div class="highlights">
+  <div class="features">
     <div class="inner-content">
-      <div class="column one">
-        <h1>Highlights</h1>
-        <div class="description">
-        <p>This suite of packages provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
-        any kind of RFC3986 compliant URI through extensions and middlewares.</p>
+        <h1>Intuitive</h1>
+        {% include building-block.md %}
+    </div>
+  </div>
+
+    <div class="highlights">
+        <div class="inner-content">
+            <div class="column one">
+                <h1>Highlights</h1>
+                <div class="description">
+                    <p>This suite of packages provides simple and intuitive classes to parse, validate, format and manipulate URIs and their components. It is built to enable working with
+                        any kind of RFC3986 compliant URI and also follow closely the latest WHATG Living standard specification.</p>
+                </div>
+            </div>
+            <div class="column two">
+                <ol>
+                    <li><p>Simple and extensible API</p></li>
+                    <li><p><a href="http://tools.ietf.org/html/rfc3986">RFC3986</a> compliant</p></li>
+                    <li><p>follows <a href="https://url.spec.whatwg.org/">URL Living Standard</a> specifications</p></li>
+                    <li><p>Implements <a href="http://www.php-fig.org/psr/psr-7/">PSR-7</a> <code>UriInterface</code> interface</p></li>
+                    <li><p>Framework-agnostic</p></li>
+                </ol>
+            </div>
         </div>
-      </div>
-      <div class="column two">
-        <ol>
-          <li><p>Simple and extensible API</p></li>
-          <li><p><a href="http://tools.ietf.org/html/rfc3986">RFC3986</a> compliant</p></li>
-          <li><p>Implements <a href="http://www.php-fig.org/psr/psr-7/">PSR-7</a> <code>UriInterface</code> interface</p></li>
-          <li><p>Framework-agnostic</p></li>
-        </ol>
-      </div>
     </div>
-  </div>
 
-  <div class="documentation">
-    <div class="inner-content">
-      <h1>Packages</h1>
-      <div class="packages-list">
-        <dl>
-          <dt><a href="/uri/5.0/">uri</a></dt>
-          <dd>A meta package to ease URI manipulation.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/parser/1.0/">uri-parser</a></dt>
-          <dd>RFC3986 compliant parser and builder.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/query-parser/1.0/">uri-query-parser</a></dt>
-          <dd>modern URI query string parser and builder based on RFC3986 and the URL
-  Living Standard.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/components/1.0/">uri-components</a></dt>
-          <dd>Collection of URI components objects.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/schemes/1.0/">uri-schemes</a></dt>
-          <dd>Collection of URI objects.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/manipulations/1.0/">uri-manipulations</a></dt>
-          <dd>Functions and Middleware to ease URI Objects manipulations.</dd>
-        </dl>
-        <dl>
-          <dt><a href="/domain-parser/1.0/">uri-hostname-parser</a></dt>
-          <dd>A lightweight public suffix list ICANN section parser.</dd>
-        </dl>
-      </div>
-      <p class="footnote">{{ site.data.project.support }}</p>
+    <div class="documentation">
+        <div class="inner-content">
+            <h1>Packages</h1>
+            <div class="packages-list">
+                <h1>building blocks</h1>
+                <dl>
+                    <dt><a href="/uri/6.0/">uri</a></dt>
+                    <dd>This is the main package. It's goal is to ease generating and manipulation a full URI object independently from the URI schemes.</dd>
+                </dl>
+                <dl>
+                    <dt><a href="/components/2.0/">uri-components</a></dt>
+                    <dd>This package complement the URI package by providing a object oriented way to access and manipulate each URI components. It can be use to partially update such component in a full URI object context.</dd>
+                </dl>
+            </div>
+            <div class="packages-list">
+                <h1>Deprecated blocks</h1>
+                <dl>
+                    <dt><a href="/schemes/1.0/">uri-schemes</a></dt>
+                    <dd>Collection of URI objects. This package is deprecated because it conflicts and is superseded by the latest URI object package.</dd>
+                </dl>
+                <dl>
+                    <dt><a href="/manipulations/1.0/">uri-manipulations</a></dt>
+                    <dd>Functions and Middleware to ease URI Objects manipulations. This package is deprecated because it is superseded by the latest URI component object package.</dd>
+                </dl>
+                <dl>
+                    <dt><a href="/domain-parser/1.0/">uri-hostname-parser</a></dt>
+                    <dd>A lightweight public suffix list ICANN section parser. This package is deprecated as it was a temporary solution which is superseeded by other PHP packages dedicated to <a href="https://github.com/jeremykendall/php-domain-parser">domain host parsing</a>.</dd>
+                </dl>
+            </div>
+            <div class="packages-list">
+                <h1>Helpers blocks</h1>
+                <p class="message-notice">While no longer updated the following helper packages will continue to receive patch fixes <a href="https://www.php.net/supported-versions.php">as long as PHP7 is maintained</a>.
+                    Their features are back-ported into maintained packages without BC break. Avoid using them for new projects.</p>
+                <dl>
+                    <dt><a href="/parser/1.0/">uri-parser</a></dt>
+                    <dd>a PHP user land RFC3986 compliant parser and builder to turn any valid URI string into an array and to build an URI out of a given array.</dd>
+                </dl>
+                <dl>
+                    <dt><a href="/query-parser/1.0/">uri-query-parser</a></dt>
+                    <dd>modern URI query string parser and builder based on RFC3986 and the URL Living Standard.</dd>
+                </dl>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <!--div class="highlights">
-    <div class="inner-content">
-{* content *}
-    </div>
-  </div-->
 
   <div class="questions">
     <div class="inner-content">

@@ -3,7 +3,6 @@ layout: default
 title: Uri
 redirect_from:
     - /5.0/
-    - /uri/
 ---
 
 # Overview

@@ -26,9 +26,9 @@ $newUri = UriModifier::appendQuery($uri, 'q=new.Value');
 echo $newUri; // 'http://example.com?q=value&q=new.Value#fragment';
 
 $query = Query::createFromUri($newUri);
-$newQuery->get('q');    // returns 'value'
-$newQuery->getAll('q'); // returns ['value', 'new.Value']
-$newQuery->params('q'); // returns 'new.Value'
+$query->get('q');    // returns 'value'
+$query->getAll('q'); // returns ['value', 'new.Value']
+$query->params('q'); // returns 'new.Value'
 ~~~
 
 System Requirements

@@ -119,6 +119,10 @@ pre {
     text-transform: lowercase;
 }
 
+.documentation .packages-list strong {
+    color:#900;
+}
+
 .documentation .packages-list .message-notice {
     flex-grow: 1;
     width:100%;

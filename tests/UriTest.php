@@ -563,4 +563,11 @@ class UriTest extends TestCase
             'invalid-enc' => ['%ZZ', '%GG', '%25ZZ:%25GG'],
         ];
     }
+
+    public function testToStringShouldNotModifyInternalState(): void
+    {
+        $uri = Uri::createFromString('https://github.com/thephpleague/uri');
+        $uri->__toString();
+        self::assertEquals($uri, Uri::createFromString('https://github.com/thephpleague/uri'));
+    }
 }

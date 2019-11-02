@@ -277,9 +277,9 @@ final class Uri implements UriInterface
     /**
      * URI string representation.
      *
-     * @var string|null
+     * @var string
      */
-    private $uri;
+    private $uri = '';
 
     /**
      * Create a new instance.
@@ -1106,7 +1106,13 @@ final class Uri implements UriInterface
 
         $validationMethod = self::SCHEME_VALIDATION_METHOD[$this->scheme] ?? null;
         if (null === $validationMethod || true === $this->$validationMethod()) {
-            $this->uri = null;
+            $this->uri = $this->getUriString(
+                $this->scheme,
+                $this->authority,
+                $this->path,
+                $this->query,
+                $this->fragment
+            );
 
             return;
         }
@@ -1204,14 +1210,6 @@ final class Uri implements UriInterface
      */
     public function __toString(): string
     {
-        $this->uri = $this->uri ?? $this->getUriString(
-            $this->scheme,
-            $this->authority,
-            $this->path,
-            $this->query,
-            $this->fragment
-        );
-
         return $this->uri;
     }
 

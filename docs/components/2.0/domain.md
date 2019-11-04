@@ -21,7 +21,7 @@ but also provide specific methods to work with a URI domain host component.
 
 ~~~php
 <?php
-public Domain::__construct($host = null): void
+public Domain::__construct($host): void
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
@@ -184,9 +184,8 @@ $host->get(-23);        //return null
 To append labels to the current host you need to use the `Domain::append` method. This method accepts a single argument which represents the data to be appended. This data can be a string or `null`.
 
 ~~~php
-$host    = new Domain();
-$newHost = $host->append('toto')->append('example.com');
-echo $newHost; //return toto.example.com
+$host = (new Domain('toto'))->append('example.com');
+echo $host; //return toto.example.com
 ~~~
 
 #### Prepending labels
@@ -194,9 +193,8 @@ echo $newHost; //return toto.example.com
 To prepend labels to the current host you need to use the `Domain::prepend` method. This method accept a single argument which represents the data to be prepended. This data can be a string or `null`.
 
 ~~~php
-$host    = new Domain();
-$newHost = $host->prepend('example.com')->prepend('toto');
-echo $newHost; //return toto.example.com
+$host = (new Domain('example.com'))->prepend('toto');
+echo $host; //return toto.example.com
 ~~~
 
 #### Replacing labels
@@ -227,5 +225,4 @@ $newHost->__toString(); //return example
 ~~~
 
 <p class="message-info">Just like the <code>Domain::get</code> this method supports negative offset.</p>
-
 <p class="message-warning">if the specified offsets do not exist, no modification is performed and the current object is returned.</p>

@@ -6,7 +6,11 @@ title: The Domain component
 The Domain Host
 =======
 
-The library provides a `Domain` class to ease domain host creation and manipulation. This object exposes:
+The library provides a `Domain` class to ease domain host creation and manipulation.
+
+The class validates domain names according to [RFC952](https://tools.ietf.org/html/rfc952) and [RFC1123](https://tools.ietf.org/html/rfc1123#page-13)
+
+In addition it exposes:
  
 - the [package common API](/components/2.0/api/), 
 - the [Host common API](/components/2.0/host/),
@@ -25,6 +29,7 @@ public Domain::__construct($host): void
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+<p class="message-warning">The <code>$host</code> can not be <code>null</code> or the empty string as they represents an invalid domain name.</p>
 
 ## The Domain Host API
 

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next - TBD
+
+### Added 
+
+- Nothing
+
+### Fixed
+
+- `Uri` should not depend on `intl` extension if the host is in its ascii form [#141](https://github.com/thephpleague/uri/issues/141)
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 6.0.0 - 2019-10-18
 
 ### Added

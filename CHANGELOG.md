@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.0.1 - 2019-11-23
 
 ### Added 
 

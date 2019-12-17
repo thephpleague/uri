@@ -24,7 +24,7 @@ matrix:
         - IGNORE_PLATFORMS=true
         - RUN_PHPSTAN=true
         - VALIDATE_CODING_STYLE=true
-    - php: 7.4snapshot
+    - php: 7.4
       env:
         - COLLECT_COVERAGE=false
         - VALIDATE_CODING_STYLE=false

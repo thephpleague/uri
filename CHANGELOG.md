@@ -117,7 +117,7 @@ See packages release notes for more informations
 
 ### Added
 
-The library is now a metapackage, you can read the [migration guide](/docs/upgrading/5.0/) for upgrading or the complete [documentation for the new version](/docs/dev-master/).
+The library is now a metapackage, you can read the [migration guide](https://uri.thephpleague.com/uri/5.0/upgrading/) for upgrading or the complete [documentation for the new version](https://uri.thephpleague.com/uri/5.0/).
 
 ### Remove
 

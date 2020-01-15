@@ -452,6 +452,11 @@ final class UriString
         // @codeCoverageIgnoreEnd
 
         $retval = idn_to_ascii($formatted_host, 0, INTL_IDNA_VARIANT_UTS46, $arr);
+
+        if ($arr === []) {
+            throw new SyntaxError(sprintf('Host `%s` is not a valid IDN host', $host));
+        }
+
         if (0 !== $arr['errors']) {
             throw new SyntaxError(sprintf('Host `%s` is not a valid IDN host : %s', $host, self::getIDNAErrors($arr['errors'])));
         }

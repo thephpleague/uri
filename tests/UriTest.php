@@ -518,6 +518,15 @@ class UriTest extends TestCase
     /**
      * @covers ::formatRegisteredName
      */
+    public function testCreateFromComponentsThrowsException7(): void
+    {
+        self::expectException(SyntaxError::class);
+        Uri::createFromComponents(['host' => 'UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUffffffffffffffffffffffffffffffffffffffffffffffffffffffffU.']);
+    }
+
+    /**
+     * @covers ::formatRegisteredName
+     */
     public function testCreateFromComponentsWorksWithPunycode(): void
     {
         $uri = Uri::createFromComponents(['host' => 'xn--mgbh0fb.xn--kgbechtv']);

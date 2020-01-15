@@ -431,6 +431,11 @@ final class Uri implements UriInterface
             INTL_IDNA_VARIANT_UTS46,
             $arr
         );
+
+        if ($arr === []) {
+            throw new SyntaxError(sprintf('Host `%s` is invalid', $host));
+        }
+
         if (0 !== $arr['errors']) {
             throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
         }

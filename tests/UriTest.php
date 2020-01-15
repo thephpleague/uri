@@ -521,7 +521,7 @@ class UriTest extends TestCase
     public function testCreateFromComponentsThrowsException7(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromComponents(['host' => 'UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUffffffffffffffffffffffffffffffffffffffffffffffffffffffffU.']);
+        Uri::createFromComponents(['host' => str_repeat('A', 255)]);
     }
 
     /**

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## TBD - Next
+
+### Added 
+
+- Nothing
+
+### Fixed
+
+- improving `idn_to_ascii` usage see [#150](https://github.com/thephpleague/uri/issues/150) thanks to [ntzm](https://github.com/ntzm)
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 6.0.1 - 2019-11-23
 
 ### Added 

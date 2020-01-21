@@ -80,6 +80,7 @@ packages:
                 URI info: '/uri/6.0/info/'
                 Parse & Build URI: '/uri/6.0/parser-builder/'
                 Resolve & Relativize: '/uri/6.0/resolver-relativizer/'
+                URI template: '/uri/6.0/uri-template/'
                 From 5.x to 6.x: '/uri/6.0/upgrading/'
         '5.0':
             Documentation:

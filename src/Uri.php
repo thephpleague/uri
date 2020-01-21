@@ -836,7 +836,7 @@ final class Uri implements UriInterface
         $server += ['HTTPS' => ''];
         $res = filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return $res !== false ? 'https' : 'http';
+        return false !== $res ? 'https' : 'http';
     }
 
     /**
@@ -1041,7 +1041,7 @@ final class Uri implements UriInterface
     {
         $properties = explode('=', $parameter);
 
-        return 2 != count($properties) || strtolower($properties[0]) === 'base64';
+        return 2 != count($properties) || 'base64' === strtolower($properties[0]);
     }
 
     /**

@@ -43,7 +43,7 @@
         "league/uri-interfaces": "^2.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.0",
+        "friendsofphp/php-cs-fixer": "^2.16",
         "phpunit/phpunit" : "^7.0 | ^8.0",
         "phpstan/phpstan": "^0.11",
         "phpstan/phpstan-strict-rules": "^0.11",

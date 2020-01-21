@@ -121,7 +121,7 @@ final class UriResolver
 
         // @codeCoverageIgnoreStart
         // added because some PSR-7 implementations do not respect RFC3986
-        if (strpos($path, '/') === 0 && strpos($new_path, '/') !== 0) {
+        if (0 === strpos($path, '/') && 0 !== strpos($new_path, '/')) {
             return '/'.$new_path;
         }
         // @codeCoverageIgnoreEnd

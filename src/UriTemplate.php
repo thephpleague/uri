@@ -67,6 +67,11 @@ final class UriTemplate
     private $variables;
 
     /**
+     * @var UriInterface|null
+     */
+    private $uri;
+
+    /**
      * @throws \TypeError if the template is not a Stringable object or a string
      */
     public function __construct($uriTemplate, array $defaultVariables = [])
@@ -77,6 +82,19 @@ final class UriTemplate
 
         $this->uriTemplate = (string) $uriTemplate;
         $this->defaultVariables = $defaultVariables;
+        if (false === strpos($this->uriTemplate, '{')) {
+            $this->uri = Uri::createFromString($this->uriTemplate);
+        }
+    }
+
+    public function getUriTemplate(): string
+    {
+        return $this->uriTemplate;
+    }
+
+    public function getDefaultVariables(): array
+    {
+        return $this->defaultVariables;
     }
 
     /**
@@ -84,11 +102,11 @@ final class UriTemplate
      */
     public function expand(array $variables = []): UriInterface
     {
-        if (false === strpos($this->uriTemplate, '{')) {
-            return Uri::createFromString($this->uriTemplate);
+        if (null !== $this->uri) {
+            return $this->uri;
         }
 
-        $this->variables = array_merge($this->defaultVariables, $variables);
+        $this->variables = $variables + $this->defaultVariables;
 
         /** @var string $uri */
         $uri = preg_replace_callback(self::REGEXP_EXPAND_PLACEHOLDER, [$this, 'expandMatch'], $this->uriTemplate);

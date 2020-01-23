@@ -13,4 +13,5 @@ parameters:
         - '#Parameter \#1 \$fragment of method League\\Uri\\Http::withFragment\(\) expects string, array given\.#'
         - '#Variable static method call on League\\Uri\\UriInfo.#'
         - '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
+        - '#Parameter \#1 \$template of class League\\Uri\\UriTemplate constructor expects object\|string, int given\.#'
     reportUnmatchedIgnoredErrors: true

@@ -48,8 +48,8 @@ final class UriTemplate implements UriTemplateInterface
     \}/x';
 
     private const REGEXP_VARSPEC = "/^
-        (?<varname>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
-        (?<modifier>(\:\d+|\*))?
+        (?<name>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
+        (?<modifier>\:(?<position>\d+)|\*)?
     $/x";
 
     private const RESERVED_OPERATOR = '=,!@|';
@@ -215,15 +215,17 @@ final class UriTemplate implements UriTemplateInterface
         $result = [];
         foreach (explode(',', $expression) as $value) {
             preg_match(self::REGEXP_VARSPEC, $value, $varSpec);
-            $varSpec += ['varname' => '', 'modifier' => ''];
+            $varSpec += ['modifier' => '', 'position' => ''];
 
-            if ('' === $varSpec['modifier'] || '*' === $varSpec['modifier']) {
+            if ('' === $varSpec['position']) {
                 $result[] = $varSpec;
+
                 continue;
             }
 
-            $varSpec['position'] = (int) substr($varSpec['modifier'], 1);
+            $varSpec['position'] = (int) $varSpec['position'];
             $varSpec['modifier'] = ':';
+
             $result[] = $varSpec;
         }
 
@@ -238,12 +240,12 @@ final class UriTemplate implements UriTemplateInterface
      */
     private function expandExpression(array $value, string $operator, string $joiner, bool $useQuery): ?string
     {
-        if (!isset($this->variables[$value['varname']])) {
+        if (!isset($this->variables[$value['name']])) {
             return null;
         }
 
         $expanded = '';
-        $variable = $this->variables[$value['varname']];
+        $variable = $this->variables[$value['name']];
         $actualQuery = $useQuery;
 
         if (is_scalar($variable)) {
@@ -258,10 +260,10 @@ final class UriTemplate implements UriTemplateInterface
         }
 
         if ('&' !== $joiner && '' === $expanded) {
-            return $value['varname'];
+            return $value['name'];
         }
 
-        return $value['varname'].'='.$expanded;
+        return $value['name'].'='.$expanded;
     }
 
     /**
@@ -298,7 +300,7 @@ final class UriTemplate implements UriTemplateInterface
         $isAssoc = $this->isAssoc($variable);
         $pairs = [];
         if (':' === $value['modifier']) {
-            throw new SyntaxError(sprintf('The ":" modifier can not be applied on the "%s" variable which is a list.', $value['varname']));
+            throw new SyntaxError(sprintf('The ":" modifier can not be applied on the "%s" variable which is a list.', $value['name']));
         }
 
         foreach ($variable as $key => $var) {
@@ -319,7 +321,7 @@ final class UriTemplate implements UriTemplateInterface
                 if ($isAssoc) {
                     $var = $key.'='.$var;
                 } elseif ($key > 0 && $useQuery) {
-                    $var = $value['varname'].'='.$var;
+                    $var = $value['name'].'='.$var;
                 }
             }
 

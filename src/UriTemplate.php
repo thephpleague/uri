@@ -22,6 +22,8 @@ use function implode;
 use function is_array;
 use function is_string;
 use function method_exists;
+use function preg_match;
+use function preg_match_all;
 use function preg_replace_callback;
 use function rawurlencode;
 use function sprintf;
@@ -36,9 +38,21 @@ use function trim;
  *
  * Based on GuzzleHttp\UriTemplate class which is removed from Guzzle7.
  */
-final class UriTemplate
+final class UriTemplate implements UriTemplateInterface
 {
-    private const REGEXP_EXPAND_PLACEHOLDER = '/\{(?<placeholder>[^\}]+)\}/';
+    private const REGEXP_EXPRESSION_PLACEHOLDER = '/\{(?<expression>[^\}]+)\}/';
+
+    private const REGEXP_EXPRESSION = "/^
+        (?<operator>[\.\/;\?&\=,\!@\|\+#])?
+        (?<variablelist>.*)
+    $/x";
+
+    private const REGEXP_VARSPEC = "/^
+        (?<varname>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
+        (?<modifier>(\:\d+|\*))?
+    $/xi";
+
+    private const RESERVED_OPERATOR = '=,!@|';
 
     private const OPERATOR_HASH_LOOKUP = [
         ''  => ['prefix' => '',  'joiner' => ',', 'query' => false],
@@ -54,7 +68,7 @@ final class UriTemplate
     /**
      * @var string
      */
-    private $uriTemplate;
+    private $template;
 
     /**
      * @var array
@@ -72,26 +86,80 @@ final class UriTemplate
     private $uri;
 
     /**
-     * @throws \TypeError if the template is not a Stringable object or a string
+     * @param object|string $template a string or an object with the __toString method
+     *
+     * @throws \TypeError if the template is not a string or an object with the __toString method
+     * @throw SyntaxError if the template syntax is invalid
      */
-    public function __construct($uriTemplate, array $defaultVariables = [])
+    public function __construct($template, array $defaultVariables = [])
     {
-        if (!is_string($uriTemplate) && !method_exists($uriTemplate, '__toString')) {
-            throw new \TypeError(sprintf('The template must be a string or a stringable object %s given', gettype($uriTemplate)));
-        }
-
-        $this->uriTemplate = (string) $uriTemplate;
+        [$this->template, $this->uri] = $this->validateTemplate($template);
         $this->defaultVariables = $defaultVariables;
-        if (false === strpos($this->uriTemplate, '{')) {
-            $this->uri = Uri::createFromString($this->uriTemplate);
+    }
+
+    /**
+     * Checks the template conformance to RFC6570.
+     *
+     * @param object|string $template a string or an object with the __toString method
+     *
+     * @throws \TypeError if the template is not a string or an object with the __toString method
+     * @throw SyntaxError if the template syntax is invalid
+     *
+     * @return array{0:string, 1:UriInterface|null}
+     */
+    private function validateTemplate($template): array
+    {
+        if (!is_string($template) && !method_exists($template, '__toString')) {
+            throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
+        }
+
+        $template = (string) $template;
+        if (false === strpos($template, '{') && false === strpos($template, '}')) {
+            return [$template, Uri::createFromString($template)];
+        }
+
+        $res = preg_match_all(self::REGEXP_EXPRESSION_PLACEHOLDER, $template, $matches);
+        if (0 === $res) {
+            throw new SyntaxError(sprintf('The submitted template "%s" contains invalid or unsupported placeholders.', $template));
+        }
+
+        foreach ($matches['expression'] as $expression) {
+            $this->validateExpression($expression);
+        }
+
+        return [$template, null];
+    }
+
+    /**
+     * Checks the expression conformance to RFC6570.
+     *
+     * @throws SyntaxError if the expression does not conform to RFC6570
+     */
+    private function validateExpression(string $expression): void
+    {
+        preg_match(self::REGEXP_EXPRESSION, $expression, $parts);
+        if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
+            throw new SyntaxError(sprintf('The operator "%s" used in the expression "{%s}" is reserved.', $parts['operator'], $expression));
+        }
+
+        foreach (explode(',', $parts['variablelist']) as $varSpec) {
+            if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec)) {
+                throw new SyntaxError(sprintf('The variable included in the expression "{%s}" is invalid.', $expression));
+            }
         }
     }
 
-    public function getUriTemplate(): string
+    /**
+     * {@inheritDoc}
+     */
+    public function getTemplate(): string
     {
-        return $this->uriTemplate;
+        return $this->template;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDefaultVariables(): array
     {
         return $this->defaultVariables;
@@ -109,25 +177,26 @@ final class UriTemplate
         $this->variables = $variables + $this->defaultVariables;
 
         /** @var string $uri */
-        $uri = preg_replace_callback(self::REGEXP_EXPAND_PLACEHOLDER, [$this, 'expandMatch'], $this->uriTemplate);
+        $uri = preg_replace_callback(self::REGEXP_EXPRESSION_PLACEHOLDER, [$this, 'expandMatch'], $this->template);
 
         return Uri::createFromString($uri);
     }
 
     /**
-     * Process an expansion.
+     * Expands the found expressions.
      *
+     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
      * @throws SyntaxError if the variables contains nested array values
      */
     private function expandMatch(array $matches): string
     {
-        $parsed = $this->parseExpression($matches['placeholder']);
+        $parsed = $this->parseExpression($matches['expression']);
         $joiner = self::OPERATOR_HASH_LOOKUP[$parsed['operator']]['joiner'];
         $useQuery = self::OPERATOR_HASH_LOOKUP[$parsed['operator']]['query'];
 
         $parts = [];
         foreach ($parsed['values'] as $part) {
-            $parts[] = $this->expandPart($part, $parsed['operator'], $joiner, $useQuery);
+            $parts[] = $this->expandExpression($part, $parsed['operator'], $joiner, $useQuery);
         }
 
         $matchExpanded = implode($joiner, array_filter($parts));
@@ -140,7 +209,7 @@ final class UriTemplate
     }
 
     /**
-     * Parse an expression into parts.
+     * Parse a template expression.
      */
     private function parseExpression(string $expression): array
     {
@@ -170,7 +239,13 @@ final class UriTemplate
         return $result;
     }
 
-    private function expandPart(array $value, string $operator, string $joiner, bool $useQuery): ?string
+    /**
+     * Expands an expression.
+     *
+     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
+     * @throws SyntaxError if the variables contains nested array values
+     */
+    private function expandExpression(array $value, string $operator, string $joiner, bool $useQuery): ?string
     {
         if (!isset($this->variables[$value['value']])) {
             return null;
@@ -184,7 +259,7 @@ final class UriTemplate
             $variable = (string) $variable;
             $expanded = self::expandString($variable, $value, $operator);
         } elseif (is_array($variable)) {
-            $expanded = self::expandArray($variable, $value, $operator, $joiner, $actualQuery);
+            $expanded = self::expandList($variable, $value, $operator, $joiner, $actualQuery);
         }
 
         if (!$actualQuery) {
@@ -198,6 +273,9 @@ final class UriTemplate
         return $value['value'].'='.$expanded;
     }
 
+    /**
+     * Expands an expression using a string value.
+     */
     private function expandString(string $variable, array $value, string $operator): string
     {
         if (':' === $value['modifier']) {
@@ -212,7 +290,13 @@ final class UriTemplate
         return $expanded;
     }
 
-    private function expandArray(array $variable, array $value, string $operator, string $joiner, bool &$useQuery): string
+    /**
+     * Expands an expression using a list of values.
+     *
+     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
+     * @throws SyntaxError if the variables contains nested array values
+     */
+    private function expandList(array $variable, array $value, string $operator, string $joiner, bool &$useQuery): string
     {
         if ([] === $variable) {
             $useQuery = false;
@@ -222,6 +306,10 @@ final class UriTemplate
 
         $isAssoc = $this->isAssoc($variable);
         $pairs = [];
+        if (':' === $value['modifier']) {
+            throw new SyntaxError(sprintf('The ":" modifier can not be applied on the "%s" variable which is a list.', $value['value']));
+        }
+
         foreach ($variable as $key => $var) {
             if ($isAssoc) {
                 if (is_array($var)) {
@@ -286,8 +374,7 @@ final class UriTemplate
     }
 
     /**
-     * Removes percent encoding on reserved characters (used with + and #
-     * modifiers).
+     * Removes percent encoding on reserved characters (used with + and # modifiers).
      */
     private function decodeReserved(string $str): string
     {

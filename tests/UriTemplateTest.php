@@ -36,7 +36,7 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($templateUri, $variables);
 
-        self::assertSame($templateUri, $uriTemplate->getUriTemplate());
+        self::assertSame($templateUri, $uriTemplate->getTemplate());
     }
 
     public function testGetDefaultVariables(): void
@@ -265,5 +265,93 @@ final class UriTemplateTest extends TestCase
             'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
             $result->__toString()
         );
+    }
+
+    /**
+     * @dataProvider provideInvalidTemplate
+     */
+    public function testInvalidUriTemplate(string $template): void
+    {
+        self::expectException(SyntaxError::class);
+
+        new UriTemplate($template);
+    }
+
+    /**
+     * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
+     */
+    public function provideInvalidTemplate(): iterable
+    {
+        return [
+            'missing ending braces' => ['{/id*'],
+            'missing startig braces' => ['/id*}'],
+            'multiple starting operators' => ['{/?id}'],
+            'invalid prefix' => ['{var:prefix}'],
+            'multiple operator modifiers (1)' => ['{hello:2*}'] ,
+            'duplicate operator' => ['{??hello}'] ,
+            'reserved operator !' => ['{!hello}'] ,
+            'space inside variable name' => ['{with space}'],
+            'leading space in variable name (1)' => ['{ leading_space}'],
+            'trailing space in variable name' => ['{trailing_space }'],
+            'reserved operator =' => ['{=path}'] ,
+            'forbidden operator $' => ['{$var}'],
+            'reserved operator |' => ['{|var*}'],
+            'using an operator modifier as an operator' => ['{*keys?}'],
+            'variable name contains a reserved character (1)' => ['{?empty=default,var}'],
+            'variable name contains invalid character (1)' => ['{var}{-prefix|/-/|var}'],
+            'variable name contains invalid prefix' => ['?q={searchTerms}&amp;c={example:color?}'],
+            'variable name contains a reserved character (2)' => ['x{?empty|foo=none}'],
+            'variable name contains a reserved character (3)' => ['/h{#hello+}'],
+            'variable name contains a reserved character (4)' => ['/h#{hello+}'],
+            'multiple operator modifiers (2)' => ['{;keys:1*}'],
+            'variable name contains invalid character (2)' => ['?{-join|&|var,list}'],
+            'variable name contains invalid character (3)' => ['/people/{~thing}'],
+            'variable name contains invalid character (4)' => ['/{default-graph-uri}'],
+            'variable name contains invalid character (5)' => ['/sparql{?query,default-graph-uri}'],
+            'variable name contains invalid character (6)' => ['/sparql{?query){&default-graph-uri*}'],
+            'leading space in variable name (2)' => ['/resolution{?x, y}'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidModifierToApply
+     */
+    public function testExpanThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
+    {
+        self::expectException(SyntaxError::class);
+        $uriTemplate = new UriTemplate($template);
+
+        $uriTemplate->expand($variables);
+    }
+
+    /**
+     * Following negative tests with wrong variable can only be detected at runtime.
+     *
+     * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
+     */
+    public function invalidModifierToApply(): iterable
+    {
+        return [
+            'can not apply a modifier on a hash value (1)' => [
+                'template' => '{keys:1}',
+                'variables' => [
+                    'keys' => [
+                        'semi' => ';',
+                        'dot' => '.',
+                        'comma' => ',',
+                    ],
+                ],
+            ],
+            'can not apply a modifier on a hash value (2)' => [
+                'template' => '{+keys:1}',
+                'variables' => [
+                    'keys' => [
+                        'semi' => ';',
+                        'dot' => '.',
+                        'comma' => ',',
+                    ],
+                ],
+            ],
+        ];
     }
 }

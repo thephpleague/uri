@@ -23,6 +23,40 @@ use TypeError;
  */
 final class UriTemplateTest extends TestCase
 {
+    public function testGetUriTemplate(): void
+    {
+        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $variables = [
+            'path'     => '/foo/bar',
+            'segments' => ['one', 'two'],
+            'query'    => 'test',
+            'more'     => ['fun', 'ice cream'],
+            'foo[]' => ['fizz', 'buzz'],
+        ];
+
+        $uriTemplate = new UriTemplate($templateUri, $variables);
+
+        self::assertSame($templateUri, $uriTemplate->getUriTemplate());
+    }
+
+    public function testGetDefaultVariables(): void
+    {
+        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $variables = [
+            'path'     => '/foo/bar',
+            'segments' => ['one', 'two'],
+            'query'    => 'test',
+            'more'     => ['fun', 'ice cream'],
+            'foo[]' => ['fizz', 'buzz'],
+        ];
+
+        $uriTemplate = new UriTemplate($templateUri, $variables);
+        self::assertSame($variables, $uriTemplate->getDefaultVariables());
+
+        $uriTemplateEmpty = new UriTemplate($templateUri, []);
+        self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
+    }
+
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
         self::expectException(TypeError::class);
@@ -184,5 +218,52 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($templateUri);
         $uriTemplate->expand($variables);
+    }
+
+    public function testExpandWithDefaultVariables(): void
+    {
+        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $default = [
+            'path'     => '/foo/bar',
+            'segments' => ['one', 'two'],
+        ];
+
+        $inner = [
+            'query'    => 'test',
+            'more'     => ['fun', 'ice cream'],
+            'foo[]' => ['fizz', 'buzz'],
+        ];
+
+        $uriTemplate = new UriTemplate($templateUri, $default);
+        $result = $uriTemplate->expand($inner);
+
+        self::assertSame(
+            'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
+            $result->__toString()
+        );
+    }
+
+    public function testExpandWithDefaultVariablesWithOverride(): void
+    {
+        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $default = [
+            'path'     => '/foo/bar',
+            'segments' => ['one', 'two'],
+        ];
+
+        $inner = [
+            'path' => '/bar/baz',
+            'query'    => 'test',
+            'more'     => ['fun', 'ice cream'],
+            'foo[]' => ['fizz', 'buzz'],
+        ];
+
+        $uriTemplate = new UriTemplate($templateUri, $default);
+        $result = $uriTemplate->expand($inner);
+
+        self::assertSame(
+            'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
+            $result->__toString()
+        );
     }
 }

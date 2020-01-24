@@ -17,7 +17,6 @@ Highlights
 - Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic
-- Composer ready, [PSR-2][] and [PSR-4][] compliant
 
 Documentation
 ------
@@ -50,7 +49,6 @@ Documentation
 --------
 
 Full documentation can be found at [uri.thephpleague.com][].
-
 
 Contributing
 -------
@@ -91,33 +89,8 @@ The MIT License (MIT). Please see [License File](LICENSE) for more information.
 Attribution
 -------
 
-The `UriTemplate` class is adapted from [Guzzle 6][] project. 
-His MIT license and copyright notice are below.
+The `UriTemplate` class is adapted from the [Guzzle 6][] project. 
 
-```
-Copyright (c) 2011-2018 Michael Dowling, https://github.com/mtdowling <mtdowling@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
-
-[PSR-2]: http://www.php-fig.org/psr/psr-2/
-[PSR-4]: http://www.php-fig.org/psr/psr-4/
 [PSR-7]: http://www.php-fig.org/psr/psr-7/
 [RFC3986]: http://tools.ietf.org/html/rfc3986
 [RFC3987]: http://tools.ietf.org/html/rfc3987

@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Exceptions\UriTemplateException;
 use function array_filter;
 use function explode;
 use function gettype;
 use function implode;
 use function is_array;
+use function is_bool;
+use function is_scalar;
 use function is_string;
 use function method_exists;
 use function preg_match;
@@ -37,6 +39,7 @@ use const PREG_SET_ORDER;
  * @link http://tools.ietf.org/html/rfc6570
  *
  * Based on GuzzleHttp\UriTemplate class which is removed from Guzzle7.
+ * @see https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php
  */
 final class UriTemplate implements UriTemplateInterface
 {
@@ -47,10 +50,10 @@ final class UriTemplate implements UriTemplateInterface
         )
     \}/x';
 
-    private const REGEXP_VARSPEC = "/^
+    private const REGEXP_VARSPEC = '/^
         (?<name>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
         (?<modifier>\:(?<position>\d+)|\*)?
-    $/x";
+    $/x';
 
     private const RESERVED_OPERATOR = '=,!@|';
 
@@ -88,8 +91,8 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws \TypeError if the template is not a string or an object with the __toString method
-     * @throw SyntaxError if the template syntax is invalid
+     * @throws \TypeError           if the template is not a string or an object with the __toString method
+     * @throws UriTemplateException if the template syntax is invalid
      */
     public function __construct($template, array $defaultVariables = [])
     {
@@ -128,7 +131,7 @@ final class UriTemplate implements UriTemplateInterface
 
         $res = preg_match_all(self::REGEXP_EXPRESSION, $template, $matches, PREG_SET_ORDER);
         if (0 === $res) {
-            throw new SyntaxError(sprintf('The submitted template "%s" contains invalid expressions.', $template));
+            throw UriTemplateException::dueToInvalidTemplate($template);
         }
 
         foreach ($matches as $expression) {
@@ -141,17 +144,17 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Checks the expression conformance to RFC6570.
      *
-     * @throws SyntaxError if the expression does not conform to RFC6570
+     * @throws UriTemplateException if the expression does not conform to RFC6570
      */
     private function validateExpression(array $parts): void
     {
         if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
-            throw new SyntaxError(sprintf('The operator "%s" used in the expression "{%s}" is reserved.', $parts['operator'], $parts['expression']));
+            throw UriTemplateException::dueToUsingReservedOperator($parts['expression']);
         }
 
         foreach (explode(',', $parts['variables']) as $varSpec) {
             if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec)) {
-                throw new SyntaxError(sprintf('The variable "%s" included in the expression "{%s}" is invalid.', $varSpec, $parts['expression']));
+                throw UriTemplateException::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
             }
         }
     }
@@ -188,20 +191,20 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * {@inheritDoc}
      */
-    public function withDefaultVariables(array $defaultVariables): UriTemplateInterface
+    public function withDefaultVariables(array $defaultDefaultVariables): UriTemplateInterface
     {
-        if ($defaultVariables === $this->defaultVariables) {
+        if ($defaultDefaultVariables === $this->defaultVariables) {
             return $this;
         }
 
         $clone = clone $this;
-        $clone->defaultVariables = $defaultVariables;
+        $clone->defaultVariables = $defaultDefaultVariables;
 
         return $clone;
     }
 
     /**
-     * @throws SyntaxError if the variables contains nested array values
+     * @throws UriTemplateException if the variable contains nested array values
      */
     public function expand(array $variables = []): UriInterface
     {
@@ -220,8 +223,8 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands the found expressions.
      *
-     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
-     * @throws SyntaxError if the variables contains nested array values
+     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
+     * @throws UriTemplateException if the variables contains nested array values
      */
     private function expandMatch(array $matches): string
     {
@@ -271,20 +274,19 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression.
      *
-     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
-     * @throws SyntaxError if the variables contains nested array values
+     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
+     * @throws UriTemplateException if the variables contains nested array values
      */
-    private function expandExpression(array $value, string $operator, string $joiner, bool $useQuery): ?string
+    private function expandExpression(array $value, string $operator, string $joiner, bool $useQuery): string
     {
+        $expanded = '';
         if (!isset($this->variables[$value['name']])) {
-            return null;
+            return $expanded;
         }
 
-        $expanded = '';
-        $variable = $this->variables[$value['name']];
+        $variable = $this->normalizeVariable($this->variables[$value['name']]);
         $actualQuery = $useQuery;
-        if (is_scalar($variable)) {
-            $variable = (string) $variable;
+        if (is_string($variable)) {
             $expanded = self::expandString($variable, $value, $operator);
         } elseif (is_array($variable)) {
             [$expanded, $actualQuery] = self::expandList($variable, $value, $operator, $joiner, $useQuery);
@@ -299,6 +301,28 @@ final class UriTemplate implements UriTemplateInterface
         }
 
         return $value['name'].'='.$expanded;
+    }
+
+    /**
+     * @param mixed $var the value to be expanded
+     *
+     * @throws \TypeError if the type is not supported
+     */
+    private function normalizeVariable($var)
+    {
+        if (is_array($var)) {
+            return $var;
+        }
+
+        if (is_bool($var)) {
+            return true === $var ? '1' : '0';
+        }
+
+        if (is_scalar($var) || method_exists($var, '__toString')) {
+            return (string) $var;
+        }
+
+        throw new \TypeError(sprintf('The variables must be a scalar or a stringable object `%s` given', gettype($var)));
     }
 
     /**
@@ -321,8 +345,8 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression using a list of values.
      *
-     * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
-     * @throws SyntaxError if the variables contains nested array values
+     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
+     * @throws UriTemplateException if the variables contains nested array values
      *
      * @return array{0:string, 1:bool}
      */
@@ -335,13 +359,14 @@ final class UriTemplate implements UriTemplateInterface
         $isAssoc = $this->isAssoc($variable);
         $pairs = [];
         if (':' === $value['modifier']) {
-            throw new SyntaxError(sprintf('The ":" modifier can not be applied on the "%s" variable which is a list.', $value['name']));
+            throw UriTemplateException::dueToUnableToProcessValueListWithPrefix($value['name']);
         }
 
+        /** @var string $key */
         foreach ($variable as $key => $var) {
             if ($isAssoc) {
                 if (is_array($var)) {
-                    throw new SyntaxError(sprintf('The submitted value for `%s` can not be a nested array.', $key));
+                    throw UriTemplateException::dueToNestedListOfValue($key);
                 }
 
                 $key = rawurlencode((string) $key);

@@ -13,10 +13,9 @@ declare(strict_types=1);
 
 namespace LeagueTest\Uri;
 
-use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Exceptions\UriTemplateException;
 use League\Uri\UriTemplate;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @covers League\Uri\UriTemplate
@@ -25,7 +24,7 @@ final class UriTemplateTest extends TestCase
 {
     public function testGetTemplate(): void
     {
-        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
@@ -34,14 +33,14 @@ final class UriTemplateTest extends TestCase
             'foo[]' => ['fizz', 'buzz'],
         ];
 
-        $uriTemplate = new UriTemplate($templateUri, $variables);
+        $uriTemplate = new UriTemplate($template, $variables);
 
-        self::assertSame($templateUri, $uriTemplate->getTemplate());
+        self::assertSame($template, $uriTemplate->getTemplate());
     }
 
     public function testGetDefaultVariables(): void
     {
-        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
@@ -50,10 +49,10 @@ final class UriTemplateTest extends TestCase
             'foo[]' => ['fizz', 'buzz'],
         ];
 
-        $uriTemplate = new UriTemplate($templateUri, $variables);
+        $uriTemplate = new UriTemplate($template, $variables);
         self::assertSame($variables, $uriTemplate->getDefaultVariables());
 
-        $uriTemplateEmpty = new UriTemplate($templateUri, []);
+        $uriTemplateEmpty = new UriTemplate($template, []);
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
     }
 
@@ -92,7 +91,7 @@ final class UriTemplateTest extends TestCase
 
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
-        self::expectException(TypeError::class);
+        self::expectException(\TypeError::class);
 
         new UriTemplate(1);
     }
@@ -100,16 +99,14 @@ final class UriTemplateTest extends TestCase
     /**
      * @dataProvider templateProvider
      */
-    public function testExpandsUriTemplates(string $template, string $expansion, array $params): void
+    public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
-        $uriTemplate = new UriTemplate($template);
-
-        self::assertSame($expansion, $uriTemplate->expand($params)->__toString());
+        self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->__toString());
     }
 
     public function templateProvider(): iterable
     {
-        $params = [
+        $variables = [
             'var'   => 'value',
             'hello' => 'Hello World!',
             'empty' => '',
@@ -124,95 +121,114 @@ final class UriTemplateTest extends TestCase
                 'comma' => ',',
             ],
             'empty_keys' => [],
+            'bool' => true,
         ];
 
-        return array_map(function ($t) use ($params) {
-            $t[] = $params;
-            return $t;
-        }, [
-            ['foo',                 'foo'],
-            ['{var}',               'value'],
-            ['{hello}',             'Hello%20World%21'],
-            ['{+var}',              'value'],
-            ['{+hello}',            'Hello%20World!'],
-            ['{+path}/here',        '/foo/bar/here'],
-            ['here?ref={+path}',    'here?ref=/foo/bar'],
-            ['X{#var}',             'X#value'],
-            ['X{#hello}',           'X#Hello%20World!'],
-            ['map?{x,y}',           'map?1024,768'],
-            ['{x,hello,y}',         '1024,Hello%20World%21,768'],
-            ['{+x,hello,y}',        '1024,Hello%20World!,768'],
-            ['{+path,x}/here',      '/foo/bar,1024/here'],
-            ['{#x,hello,y}',        '#1024,Hello%20World!,768'],
-            ['{#path,x}/here',      '#/foo/bar,1024/here'],
-            ['X{.var}',             'X.value'],
-            ['X{.x,y}',             'X.1024.768'],
-            ['{/var}',              '/value'],
-            ['{/var,x}/here',       '/value/1024/here'],
-            ['{;x,y}',              ';x=1024;y=768'],
-            ['{;x,y,empty}',        ';x=1024;y=768;empty'],
-            ['{?x,y}',              '?x=1024&y=768'],
-            ['{?x,y,empty}',        '?x=1024&y=768&empty='],
-            ['?fixed=yes{&x}',      '?fixed=yes&x=1024'],
-            ['{&x,y,empty}',        '&x=1024&y=768&empty='],
-            ['{var:3}',             'val'],
-            ['{var:30}',            'value'],
-            ['{list}',              'red,green,blue'],
-            ['{list*}',             'red,green,blue'],
-            ['{keys}',              'semi,%3B,dot,.,comma,%2C'],
-            ['{keys*}',             'semi=%3B,dot=.,comma=%2C'],
-            ['{+path:6}/here',      '/foo/b/here'],
-            ['{+list}',             'red,green,blue'],
-            ['{+list*}',            'red,green,blue'],
-            ['{+keys}',             'semi,;,dot,.,comma,,'],
-            ['{+keys*}',            'semi=;,dot=.,comma=,'],
-            ['{#path:6}/here',      '#/foo/b/here'],
-            ['{#list}',             '#red,green,blue'],
-            ['{#list*}',            '#red,green,blue'],
-            ['{#keys}',             '#semi,;,dot,.,comma,,'],
-            ['{#keys*}',            '#semi=;,dot=.,comma=,'],
-            ['X{.var:3}',           'X.val'],
-            ['X{.list}',            'X.red,green,blue'],
-            ['X{.list*}',           'X.red.green.blue'],
-            ['X{.keys}',            'X.semi,%3B,dot,.,comma,%2C'],
-            ['X{.keys*}',           'X.semi=%3B.dot=..comma=%2C'],
-            ['{/var:1,var}',        '/v/value'],
-            ['{/list}',             '/red,green,blue'],
-            ['{/list*}',            '/red/green/blue'],
-            ['{/list*,path:4}',     '/red/green/blue/%2Ffoo'],
-            ['{/keys}',             '/semi,%3B,dot,.,comma,%2C'],
-            ['{/keys*}',            '/semi=%3B/dot=./comma=%2C'],
-            ['{;hello:5}',          ';hello=Hello'],
-            ['{;list}',             ';list=red,green,blue'],
-            ['{;list*}',            ';list=red;list=green;list=blue'],
-            ['{;keys}',             ';keys=semi,%3B,dot,.,comma,%2C'],
-            ['{;keys*}',            ';semi=%3B;dot=.;comma=%2C'],
-            ['{?var:3}',            '?var=val'],
-            ['{?list}',             '?list=red,green,blue'],
-            ['{?list*}',            '?list=red&list=green&list=blue'],
-            ['{?keys}',             '?keys=semi,%3B,dot,.,comma,%2C'],
-            ['{?keys*}',            '?semi=%3B&dot=.&comma=%2C'],
-            ['{&var:3}',            '&var=val'],
-            ['{&list}',             '&list=red,green,blue'],
-            ['{&list*}',            '&list=red&list=green&list=blue'],
-            ['{&keys}',             '&keys=semi,%3B,dot,.,comma,%2C'],
-            ['{&keys*}',            '&semi=%3B&dot=.&comma=%2C'],
-            ['{.null}',            ''],
-            ['{.null,var}',        '.value'],
-            ['X{.empty_keys*}',     'X'],
-            ['X{.empty_keys}',      'X'],
-            // Test that missing expansions are skipped
-            ['test{&missing*}',     'test'],
-            // Test that multiple expansions can be set
-            ['http://{var}/{var:2}{?keys*}', 'http://value/va?semi=%3B&dot=.&comma=%2C'],
-            // Test more complex query string stuff
-            ['http://www.test.com{+path}{?var,keys*}', 'http://www.test.com/foo/bar?var=value&semi=%3B&dot=.&comma=%2C'],
-        ]);
+        $templateAndExpansionData = [
+            'level 1' => [
+                ['foo',                 'foo'],
+                ['{var}',               'value'],
+                ['{hello}',             'Hello%20World%21'],
+                ['{bool}',              '1'],
+            ],
+            'level 2' => [
+                ['{+var}',              'value'],
+                ['{+hello}',            'Hello%20World!'],
+                ['{+path}/here',        '/foo/bar/here'],
+                ['here?ref={+path}',    'here?ref=/foo/bar'],
+            ],
+            'level 3' => [
+                ['X{#var}',             'X#value'],
+                ['X{#hello}',           'X#Hello%20World!'],
+                ['map?{x,y}',           'map?1024,768'],
+                ['{x,hello,y}',         '1024,Hello%20World%21,768'],
+                ['{+x,hello,y}',        '1024,Hello%20World!,768'],
+                ['{+path,x}/here',      '/foo/bar,1024/here'],
+                ['{#x,hello,y}',        '#1024,Hello%20World!,768'],
+                ['{#path,x}/here',      '#/foo/bar,1024/here'],
+                ['X{.var}',             'X.value'],
+                ['X{.x,y}',             'X.1024.768'],
+                ['{/var}',              '/value'],
+                ['{/var,x}/here',       '/value/1024/here'],
+                ['{;x,y}',              ';x=1024;y=768'],
+                ['{;x,y,empty}',        ';x=1024;y=768;empty'],
+                ['{?x,y}',              '?x=1024&y=768'],
+                ['{?x,y,empty}',        '?x=1024&y=768&empty='],
+                ['?fixed=yes{&x}',      '?fixed=yes&x=1024'],
+                ['{&x,y,empty}',        '&x=1024&y=768&empty='],
+            ],
+            'level 4' => [
+                ['{var:3}',             'val'],
+                ['{var:30}',            'value'],
+                ['{list}',              'red,green,blue'],
+                ['{list*}',             'red,green,blue'],
+                ['{keys}',              'semi,%3B,dot,.,comma,%2C'],
+                ['{keys*}',             'semi=%3B,dot=.,comma=%2C'],
+                ['{+path:6}/here',      '/foo/b/here'],
+                ['{+list}',             'red,green,blue'],
+                ['{+list*}',            'red,green,blue'],
+                ['{+keys}',             'semi,;,dot,.,comma,,'],
+                ['{+keys*}',            'semi=;,dot=.,comma=,'],
+                ['{#path:6}/here',      '#/foo/b/here'],
+                ['{#list}',             '#red,green,blue'],
+                ['{#list*}',            '#red,green,blue'],
+                ['{#keys}',             '#semi,;,dot,.,comma,,'],
+                ['{#keys*}',            '#semi=;,dot=.,comma=,'],
+                ['X{.var:3}',           'X.val'],
+                ['X{.list}',            'X.red,green,blue'],
+                ['X{.list*}',           'X.red.green.blue'],
+                ['X{.keys}',            'X.semi,%3B,dot,.,comma,%2C'],
+                ['X{.keys*}',           'X.semi=%3B.dot=..comma=%2C'],
+                ['{/var:1,var}',        '/v/value'],
+                ['{/list}',             '/red,green,blue'],
+                ['{/list*}',            '/red/green/blue'],
+                ['{/list*,path:4}',     '/red/green/blue/%2Ffoo'],
+                ['{/keys}',             '/semi,%3B,dot,.,comma,%2C'],
+                ['{/keys*}',            '/semi=%3B/dot=./comma=%2C'],
+                ['{;hello:5}',          ';hello=Hello'],
+                ['{;list}',             ';list=red,green,blue'],
+                ['{;list*}',            ';list=red;list=green;list=blue'],
+                ['{;keys}',             ';keys=semi,%3B,dot,.,comma,%2C'],
+                ['{;keys*}',            ';semi=%3B;dot=.;comma=%2C'],
+                ['{?var:3}',            '?var=val'],
+                ['{?list}',             '?list=red,green,blue'],
+                ['{?list*}',            '?list=red&list=green&list=blue'],
+                ['{?keys}',             '?keys=semi,%3B,dot,.,comma,%2C'],
+                ['{?keys*}',            '?semi=%3B&dot=.&comma=%2C'],
+                ['{&var:3}',            '&var=val'],
+                ['{&list}',             '&list=red,green,blue'],
+                ['{&list*}',            '&list=red&list=green&list=blue'],
+                ['{&keys}',             '&keys=semi,%3B,dot,.,comma,%2C'],
+                ['{&keys*}',            '&semi=%3B&dot=.&comma=%2C'],
+                ['{.null}',            ''],
+                ['{.null,var}',        '.value'],
+                ['X{.empty_keys*}',     'X'],
+                ['X{.empty_keys}',      'X'],
+            ],
+            'extra' => [
+                // Test that missing expansions are skipped
+                ['test{&missing*}',     'test'],
+                // Test that multiple expansions can be set
+                ['http://{var}/{var:2}{?keys*}', 'http://value/va?semi=%3B&dot=.&comma=%2C'],
+                // Test more complex query string stuff
+                ['http://www.test.com{+path}{?var,keys*}', 'http://www.test.com/foo/bar?var=value&semi=%3B&dot=.&comma=%2C'],
+            ],
+        ];
+
+        foreach ($templateAndExpansionData as $specification => $tests) {
+            foreach ($tests as $offset => $test) {
+                yield $specification.' test '.$offset => [
+                    'template' => $test[0],
+                    'expectedUriString' => $test[1],
+                    'variables' => $variables,
+                ];
+            }
+        }
     }
 
     public function testAllowsQueryValuePairsArrayExpansion(): void
     {
-        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
@@ -221,18 +237,18 @@ final class UriTemplateTest extends TestCase
             'foo[]' => ['fizz', 'buzz'],
         ];
 
-        $uriTemplate = new UriTemplate($templateUri);
-        $result = $uriTemplate->expand($variables);
-
         self::assertSame(
             'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            $result->__toString()
+            (new UriTemplate($template))->expand($variables)->__toString()
         );
     }
 
+    /**
+     * @covers \League\Uri\Exceptions\UriTemplateException
+     */
     public function testDisallowNestedArrayExpansion(): void
     {
-        $templateUri = 'http://example.com{?query,data*,foo*}';
+        $template = 'http://example.com{?query,data*,foo*}';
         $variables = [
             'query'    => 'test',
             'data'     => [
@@ -247,65 +263,68 @@ final class UriTemplateTest extends TestCase
             ],
         ];
 
-        self::expectException(SyntaxError::class);
+        self::expectException(UriTemplateException::class);
 
-        $uriTemplate = new UriTemplate($templateUri);
-        $uriTemplate->expand($variables);
+        (new UriTemplate($template))->expand($variables);
     }
 
     public function testExpandWithDefaultVariables(): void
     {
-        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
-        $default = [
-            'path'     => '/foo/bar',
+        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+
+        $defaultVariables = [
+            'path' => '/foo/bar',
             'segments' => ['one', 'two'],
         ];
 
-        $inner = [
-            'query'    => 'test',
-            'more'     => ['fun', 'ice cream'],
+        $variables = [
+            'query' => 'test',
+            'more' => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
         ];
 
-        $uriTemplate = new UriTemplate($templateUri, $default);
-        $result = $uriTemplate->expand($inner);
-
         self::assertSame(
             'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            $result->__toString()
+            (new UriTemplate($template, $defaultVariables))->expand($variables)->__toString()
         );
     }
 
     public function testExpandWithDefaultVariablesWithOverride(): void
     {
-        $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
-        $default = [
+        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+
+        $defaultVariables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
         ];
 
-        $inner = [
+        $variables = [
             'path' => '/bar/baz',
             'query'    => 'test',
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
         ];
 
-        $uriTemplate = new UriTemplate($templateUri, $default);
-        $result = $uriTemplate->expand($inner);
-
         self::assertSame(
             'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            $result->__toString()
+            (new UriTemplate($template, $defaultVariables))->expand($variables)->__toString()
         );
     }
 
+    public function testUnsupportedValueType(): void
+    {
+        self::expectException(\TypeError::class);
+
+        (new UriTemplate('{foo}'))->expand(['foo' => new \stdClass()]);
+    }
+
     /**
+     * @covers \League\Uri\Exceptions\UriTemplateException
      * @dataProvider provideInvalidTemplate
      */
     public function testInvalidUriTemplate(string $template): void
     {
-        self::expectException(SyntaxError::class);
+        self::expectException(UriTemplateException::class);
 
         new UriTemplate($template);
     }
@@ -347,19 +366,20 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
+     * @covers \League\Uri\Exceptions\UriTemplateException
      * @dataProvider invalidModifierToApply
      */
     public function testExpanThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
     {
-        self::expectException(SyntaxError::class);
-        $uriTemplate = new UriTemplate($template);
+        self::expectException(UriTemplateException::class);
 
-        $uriTemplate->expand($variables);
+        (new UriTemplate($template))->expand($variables);
     }
 
     /**
      * Following negative tests with wrong variable can only be detected at runtime.
      *
+     * @covers \League\Uri\Exceptions\UriTemplateException
      * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
      */
     public function invalidModifierToApply(): iterable

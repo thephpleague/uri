@@ -13,7 +13,12 @@ following [RFC 6570 URI Template](http://tools.ietf.org/html/rfc6570).
 
 ### The parser is RFC6570 compliant
 
-The `UriTemplate::expand` public method provides the mean for expanding a URI template to generate a valid URI conforming to RFC3986.
+Don't feel like reading RFC 6570? Here are a simple refresher to understand its rules:
+
+- template are made of expressions consisting of an **operator** and a **variable specification**;
+- a **variable specification** consists at least of one **variable name** and an optional **modifier**;
+
+The `UriTemplate::expand` public method provides the mean for expanding a URI template to generate a valid URI conforming to RFC3986 if given a supplied set of data.
 
 ~~~php
 <?php
@@ -25,30 +30,51 @@ $params = ['booking' => 42, 'hotel' => 'Rest & Relax'];
 
 $uriTemplate = new UriTemplate($template);
 $uri = $uriTemplate->expand($params);
-// $uri is an instance of League\Uri\Uri class.
+// $uri is an League\Uri\Uri instance.
 
 echo $uri, PHP_EOL;
 // https://example.com/hotels/Rest%20%26%20Relax/bookings/42
 ~~~
 
-### Missing parameters are skip/replace by the empty string
+### Default parameters can be set using the constructor
 
-If a parameter is missing it will be replaced by the empty string.
+The constructor takes a optional set of default variables that can be applied by default when expanding the URI template.
 
 ~~~php
 <?php
 
 use League\Uri\UriTemplate;
+$template = 'https://api.twitter.com/{version}/search/{term:1}/{term}/{?q*,limit}';
 
-$template = 'https://example.com/hotels/{hotel}/bookings/{booking}';
-$params = ['booking' => 42];
+$params = [
+    'term' => 'john',
+    'q' => ['a', 'b'],
+    'limit' => '10',
+];
 
-$uriTemplate = new UriTemplate($template);
-$uri = $uriTemplate->expand($params);
-// $uri is an instance of League\Uri\Uri class.
+$uriTemplate = new UriTemplate($template, ['version' => 1.1]);
+echo $uriTemplate->expand($params), PHP_EOL;
+// https://api.twitter.com/1.1/search/j/john/?q=a&q=b&limit=10
+~~~
 
-echo $uri, PHP_EOL;
-// https://example.com/hotels//bookings/42
+The default variables can be overwritten by those supplied to the `expand` methods.
+
+~~~php
+<?php
+
+use League\Uri\UriTemplate;
+$template = 'https://api.twitter.com/{version}/search/{term:1}/{term}/{?q*,limit}';
+
+$params = [
+    'term' => 'john',
+    'q' => ['a', 'b'],
+    'limit' => '10',
+    'version' => '2.0'
+];
+
+$uriTemplate = new UriTemplate($template, ['version' => 1.1]);
+echo $uriTemplate->expand($params), PHP_EOL;
+// https://api.twitter.com/2.0/search/j/john/?q=a&q=b&limit=10
 ~~~
 
 ### Nested array are disallowed
@@ -73,12 +99,15 @@ $params = [
 
 $uriTemplate = new UriTemplate($template);
 $uriTemplate->expand($params);
-// will throw a SyntaxError when trying to expand the `period` value.
+// will throw a UriTemplateException when trying to expand the `period` value.
 ~~~
 
-### Default parameters can be set using the constructor
+### Using the prefix modifier on a list will trigger an exception.
 
-The constructor takes a optional set of default variables that can be applied by default when expanding the URI template.
+While this is not forbidden by the RFC, the `UriTemplate` class will throw an exception 
+if an attempt is made to use the prefix modifier with a list of value. Other implementations
+will silently ignore the modifier **but** this package will trigger the exception to alert 
+the user that something might be wrong and that the generated URI might not be the one expected.
 
 ~~~php
 <?php
@@ -87,32 +116,13 @@ use League\Uri\UriTemplate;
 $template = 'https://api.twitter.com/{version}/search/{term:1}/{term}/{?q*,limit}';
 
 $params = [
-    'term' => 'john',
-    'q' => ['a', 'b'],
-    'limit' => '10',
-];
-
-$uriTemplate = new UriTemplate($template, ['version' => 1.1]);
-echo $uriTemplate->expand($params), PHP_EOL;
-// https://api.twitter.com/1.1/search/j/john/?q=a&q=b&limit=10
-~~~
-
-The variable are applied via a merge so they can be overwritten by the `expand` variables parameters.
-
-~~~php
-<?php
-
-use League\Uri\UriTemplate;
-$template = 'https://api.twitter.com/{version}/search/{term:1}/{term}/{?q*,limit}';
-
-$params = [
-    'term' => 'john',
+    'term' => ['john', 'doe'],
     'q' => ['a', 'b'],
     'limit' => '10',
     'version' => '2.0'
 ];
 
-$uriTemplate = new UriTemplate($template, ['version' => 1.1]);
+$uriTemplate = new UriTemplate($template);
 echo $uriTemplate->expand($params), PHP_EOL;
-// https://api.twitter.com/2.0/search/j/john/?q=a&q=b&limit=10
+// throw a UriTemplateException because the term variable is a list and not a string.
 ~~~

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\SyntaxError;
 
 /**
  * Expands URI templates.
@@ -38,20 +38,19 @@ interface UriTemplateInterface
     public function getDefaultVariables(): array;
 
     /**
-     * @throws SyntaxError if the variables contains nested array values
+     * @throws UriException if the expansion can not be done.
      */
     public function expand(array $variables = []): UriInterface;
 
     /**
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws \TypeError if the template is not a string or an object with the __toString method
-     * @throw SyntaxError if the template syntax is invalid
+     * @throw UriException if the template syntax is invalid
      */
-    public function withTemplate($template): UriTemplateInterface;
+    public function withTemplate($template): self;
 
     /**
-     * @param array<string,string|array> $variables
+     * @param array<string,string|array> $defaultVariables
      */
-    public function withDefaultVariables(array $variables): UriTemplateInterface;
+    public function withDefaultVariables(array $defaultVariables): self;
 }

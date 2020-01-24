@@ -23,7 +23,7 @@ use TypeError;
  */
 final class UriTemplateTest extends TestCase
 {
-    public function testGetUriTemplate(): void
+    public function testGetTemplate(): void
     {
         $templateUri = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
@@ -55,6 +55,39 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplateEmpty = new UriTemplate($templateUri, []);
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
+    }
+
+    public function testWithTemplate(): void
+    {
+        $template = '{foo}{bar}';
+        $uriTemplate = new UriTemplate($template);
+        $newTemplate = $uriTemplate->withTemplate('{bar}{baz}');
+        $altTemplate = $uriTemplate->withTemplate($template);
+
+        self::assertInstanceOf(UriTemplate::class, $newTemplate);
+        self::assertInstanceOf(UriTemplate::class, $altTemplate);
+        self::assertSame($altTemplate->getTemplate(), $uriTemplate->getTemplate());
+        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+
+        self::assertNotSame($newTemplate->getTemplate(), $uriTemplate->getTemplate());
+    }
+
+    public function testWithDefaultVariables(): void
+    {
+        $template = '{foo}{bar}';
+        $variables = ['foo' => 'foo', 'bar' => 'bar'];
+        $newVariables = ['foo' => 'bar', 'bar' => 'foo'];
+
+        $uriTemplate = new UriTemplate($template, $variables);
+        $newTemplate = $uriTemplate->withDefaultVariables($newVariables);
+        $altTemplate = $uriTemplate->withDefaultVariables($variables);
+
+        self::assertInstanceOf(UriTemplate::class, $newTemplate);
+        self::assertInstanceOf(UriTemplate::class, $altTemplate);
+        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+
+        self::assertNotSame($newTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
     }
 
     public function testExpandAcceptsOnlyStringAndStringableObject(): void

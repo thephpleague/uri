@@ -93,26 +93,34 @@ final class UriTemplate implements UriTemplateInterface
      */
     public function __construct($template, array $defaultVariables = [])
     {
+        $template = $this->filterTemplate($template);
         [$this->template, $this->uri] = $this->validateTemplate($template);
         $this->defaultVariables = $defaultVariables;
     }
 
     /**
-     * Checks the template conformance to RFC6570.
-     *
      * @param object|string $template a string or an object with the __toString method
      *
      * @throws \TypeError if the template is not a string or an object with the __toString method
-     * @throw SyntaxError if the template syntax is invalid
-     *
-     * @return array{0:string, 1:UriInterface|null}
      */
-    private function validateTemplate($template): array
+    private function filterTemplate($template): string
     {
         if (!is_string($template) && !method_exists($template, '__toString')) {
             throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
         }
 
+        return (string) $template;
+    }
+
+    /**
+     * Checks the template conformance to RFC6570.
+     *
+     * @throw SyntaxError if the template syntax is invalid
+     *
+     * @return array{0:string, 1:UriInterface|null}
+     */
+    private function validateTemplate(string $template): array
+    {
         $template = (string) $template;
         if (false === strpos($template, '{') && false === strpos($template, '}')) {
             return [$template, Uri::createFromString($template)];
@@ -159,9 +167,37 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * {@inheritDoc}
      */
+    public function withTemplate($template): UriTemplateInterface
+    {
+        $template = $this->filterTemplate($template);
+        if ($template === $this->template) {
+            return $this;
+        }
+
+        return new self($template, $this->defaultVariables);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getDefaultVariables(): array
     {
         return $this->defaultVariables;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function withDefaultVariables(array $defaultVariables): UriTemplateInterface
+    {
+        if ($defaultVariables === $this->defaultVariables) {
+            return $this;
+        }
+
+        $clone = clone $this;
+        $clone->defaultVariables = $defaultVariables;
+
+        return $clone;
     }
 
     /**
@@ -247,12 +283,11 @@ final class UriTemplate implements UriTemplateInterface
         $expanded = '';
         $variable = $this->variables[$value['name']];
         $actualQuery = $useQuery;
-
         if (is_scalar($variable)) {
             $variable = (string) $variable;
             $expanded = self::expandString($variable, $value, $operator);
         } elseif (is_array($variable)) {
-            $expanded = self::expandList($variable, $value, $operator, $joiner, $actualQuery);
+            [$expanded, $actualQuery] = self::expandList($variable, $value, $operator, $joiner, $useQuery);
         }
 
         if (!$actualQuery) {
@@ -288,13 +323,13 @@ final class UriTemplate implements UriTemplateInterface
      *
      * @throws SyntaxError if the variables is an array and a ":" modifier needs to be applied
      * @throws SyntaxError if the variables contains nested array values
+     *
+     * @return array{0:string, 1:bool}
      */
-    private function expandList(array $variable, array $value, string $operator, string $joiner, bool &$useQuery): string
+    private function expandList(array $variable, array $value, string $operator, string $joiner, bool $useQuery): array
     {
         if ([] === $variable) {
-            $useQuery = false;
-
-            return '';
+            return ['', false];
         }
 
         $isAssoc = $this->isAssoc($variable);
@@ -335,7 +370,7 @@ final class UriTemplate implements UriTemplateInterface
                 $useQuery = false;
             }
 
-            return implode($joiner, $pairs);
+            return [implode($joiner, $pairs), $useQuery];
         }
 
         if ($isAssoc) {
@@ -350,7 +385,7 @@ final class UriTemplate implements UriTemplateInterface
             unset($data);
         }
 
-        return implode(',', $pairs);
+        return [implode(',', $pairs), $useQuery];
     }
 
     /**

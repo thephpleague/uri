@@ -41,4 +41,17 @@ interface UriTemplateInterface
      * @throws SyntaxError if the variables contains nested array values
      */
     public function expand(array $variables = []): UriInterface;
+
+    /**
+     * @param object|string $template a string or an object with the __toString method
+     *
+     * @throws \TypeError if the template is not a string or an object with the __toString method
+     * @throw SyntaxError if the template syntax is invalid
+     */
+    public function withTemplate($template): UriTemplateInterface;
+
+    /**
+     * @param array<string,string|array> $variables
+     */
+    public function withDefaultVariables(array $variables): UriTemplateInterface;
 }

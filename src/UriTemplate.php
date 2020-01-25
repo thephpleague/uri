@@ -16,10 +16,10 @@ namespace League\Uri;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\UriTemplateException;
 use function array_filter;
+use function array_keys;
 use function explode;
 use function gettype;
 use function implode;
-use function in_array;
 use function is_array;
 use function is_bool;
 use function is_scalar;
@@ -85,6 +85,11 @@ final class UriTemplate implements UriTemplateInterface
     private $variablesNames;
 
     /**
+     * @var array
+     */
+    private $expressions;
+
+    /**
      * @var UriInterface|null
      */
     private $uri;
@@ -103,11 +108,8 @@ final class UriTemplate implements UriTemplateInterface
     public function __construct($template, array $defaultVariables = [])
     {
         $this->template = $this->filterTemplate($template);
-        $this->variablesNames = $this->extractVariables();
-        if ([] === $this->variablesNames) {
-            $this->uri = Uri::createFromString($template);
-        }
         $this->defaultVariables = $defaultVariables;
+        $this->parseExpressions();
     }
 
     /**
@@ -125,16 +127,18 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * Extracts the variable name from the template.
+     * Parse the template expressions.
      *
      * @throw SyntaxError if the template syntax is invalid
-     *
-     * @return string[]
      */
-    private function extractVariables(): array
+    private function parseExpressions(): void
     {
+        $this->expressions = [];
+        $this->variablesNames = [];
         if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
-            return [];
+            $this->uri = Uri::createFromString($this->template);
+
+            return;
         }
 
         $res = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
@@ -143,11 +147,19 @@ final class UriTemplate implements UriTemplateInterface
         }
 
         $variables = [];
-        foreach ($matches as $expression) {
-            $variables = $this->validateExpression($expression, $variables);
+        foreach ($matches as $found) {
+            $found = $found + ['operator' => ''];
+            [$variables, $parsedExpression] = $this->parseVariables($found, $variables);
+            $this->expressions[$found['expression']] = [
+                'operator' => $found['operator'],
+                'variables' => $parsedExpression,
+                'joiner' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['joiner'],
+                'prefix' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['prefix'],
+                'query' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['query'],
+            ];
         }
 
-        return $variables;
+        $this->variablesNames = array_keys($variables);
     }
 
     /**
@@ -155,23 +167,31 @@ final class UriTemplate implements UriTemplateInterface
      *
      * @throws UriTemplateException if the expression does not conform to RFC6570
      */
-    private function validateExpression(array $parts, array $variables): array
+    private function parseVariables(array $parts, array $variables): array
     {
         if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
             throw UriTemplateException::dueToUsingReservedOperator($parts['expression']);
         }
 
+        $parsed = [];
         foreach (explode(',', $parts['variables']) as $varSpec) {
             if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $matches)) {
                 throw UriTemplateException::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
             }
 
-            if (!in_array($matches['name'], $variables, true)) {
-                $variables[] = $matches['name'];
+            $matches += ['modifier' => '', 'position' => ''];
+
+            if ('' !== $matches['position']) {
+                $matches['position'] = (int) $matches['position'];
+                $matches['modifier'] = ':';
             }
+
+            $variables[$matches['name']] = 1;
+
+            $parsed[] = $matches;
         }
 
-        return $variables;
+        return [$variables, $parsed];
     }
 
     /**
@@ -200,7 +220,11 @@ final class UriTemplate implements UriTemplateInterface
             return $this;
         }
 
-        return new self($template, $this->defaultVariables);
+        $clone = clone $this;
+        $clone->template = $template;
+        $clone->parseExpressions();
+
+        return $clone;
     }
 
     /**
@@ -251,47 +275,23 @@ final class UriTemplate implements UriTemplateInterface
      */
     private function expandMatch(array $matches): string
     {
-        $parsed = $this->parseExpression($matches['variables']);
-        $joiner = self::OPERATOR_HASH_LOOKUP[$matches['operator']]['joiner'];
-        $useQuery = self::OPERATOR_HASH_LOOKUP[$matches['operator']]['query'];
+        $expression = $this->expressions[$matches['expression']];
+
+        $joiner = $expression['joiner'];
+        $useQuery = $expression['query'];
 
         $parts = [];
-        foreach ($parsed as $part) {
-            $parts[] = $this->expandExpression($part, $matches['operator'], $joiner, $useQuery);
+        foreach ($expression['variables'] as $part) {
+            $parts[] = $this->expandExpression($part, $expression['operator'], $joiner, $useQuery);
         }
 
-        $matchExpanded = implode($joiner, array_filter($parts));
-        $prefix = self::OPERATOR_HASH_LOOKUP[$matches['operator']]['prefix'];
-        if ('' !== $matchExpanded && '' !== $prefix) {
-            return $prefix.$matchExpanded;
+        $expanded = implode($joiner, array_filter($parts));
+        $prefix = $expression['prefix'];
+        if ('' !== $expanded && '' !== $prefix) {
+            return $prefix.$expanded;
         }
 
-        return $matchExpanded;
-    }
-
-    /**
-     * Parse a template expression.
-     */
-    private function parseExpression(string $expression): array
-    {
-        $result = [];
-        foreach (explode(',', $expression) as $value) {
-            preg_match(self::REGEXP_VARSPEC, $value, $varSpec);
-            $varSpec += ['modifier' => '', 'position' => ''];
-
-            if ('' === $varSpec['position']) {
-                $result[] = $varSpec;
-
-                continue;
-            }
-
-            $varSpec['position'] = (int) $varSpec['position'];
-            $varSpec['modifier'] = ':';
-
-            $result[] = $varSpec;
-        }
-
-        return $result;
+        return $expanded;
     }
 
     /**

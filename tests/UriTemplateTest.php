@@ -116,6 +116,18 @@ final class UriTemplateTest extends TestCase
                 'template' => '{bar}{foo}',
                 'expected' => ['bar', 'foo'],
             ],
+            [
+                'template' => '{/id*',
+                'expected' => [],
+            ],
+            [
+                'template' => '}{/id*',
+                'expected' => [],
+            ],
+            [
+                'template' => '/id*}',
+                'expected' => [],
+            ],
         ];
     }
 
@@ -365,8 +377,8 @@ final class UriTemplateTest extends TestCase
     public function provideInvalidTemplate(): iterable
     {
         return [
-            'missing ending braces' => ['{/id*'],
-            'missing startig braces' => ['/id*}'],
+            //'missing ending braces' => ['{/id*'], ignored so does not throw
+            //'missing startig braces' => ['/id*}'], ignored so does not throw
             'multiple starting operators' => ['{/?id}'],
             'invalid prefix' => ['{var:prefix}'],
             'multiple operator modifiers (1)' => ['{hello:2*}'] ,

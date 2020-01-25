@@ -140,8 +140,6 @@ final class UriTemplate implements UriTemplateInterface
         $this->variablesNames = [];
         $this->uri = null;
         if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
-            $this->uri = Uri::createFromString($this->template);
-
             return;
         }
 
@@ -254,11 +252,13 @@ final class UriTemplate implements UriTemplateInterface
 
     /**
      * @throws TemplateCanNotBeExpanded if the variable contains nested array values
-     * @throws UriException if the resulting expansion can not be converted to a UriInterface instance
+     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expand(array $variables = []): UriInterface
     {
-        if (null !== $this->uri) {
+        if ([] === $this->expressions) {
+            $this->uri = $this->uri ?? Uri::createFromString($this->template);
+
             return $this->uri;
         }
 

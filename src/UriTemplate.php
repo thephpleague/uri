@@ -313,9 +313,9 @@ final class UriTemplate implements UriTemplateInterface
         $variable = $this->normalizeVariable($this->variables[$value['name']]);
         $actualQuery = $useQuery;
         if (is_string($variable)) {
-            $expanded = self::expandString($variable, $value, $operator);
+            $expanded = $this->expandString($variable, $value, $operator);
         } elseif (is_array($variable)) {
-            [$expanded, $actualQuery] = self::expandList($variable, $value, $operator, $joiner, $useQuery);
+            [$expanded, $actualQuery] = $this->expandList($variable, $value, $operator, $joiner, $useQuery);
         }
 
         if (!$actualQuery) {

@@ -139,15 +139,12 @@ final class UriTemplate implements UriTemplateInterface
         $this->expressions = [];
         $this->variablesNames = [];
         $this->uri = null;
-        if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
+        $bracesOffset = strpos($this->template, '{');
+        if (false === $bracesOffset || false === strpos($this->template, '}', $bracesOffset)) {
             return;
         }
 
-        $res = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
-        if (0 === $res) {
-            throw TemplateCanNotBeExpanded::dueToInvalidTemplate($this->template);
-        }
-
+        preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
         $variables = [];
         foreach ($matches as $found) {
             $found = $found + ['operator' => ''];

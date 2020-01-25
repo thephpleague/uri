@@ -19,6 +19,7 @@ use function array_filter;
 use function explode;
 use function gettype;
 use function implode;
+use function in_array;
 use function is_array;
 use function is_bool;
 use function is_scalar;
@@ -79,14 +80,19 @@ final class UriTemplate implements UriTemplateInterface
     private $defaultVariables;
 
     /**
-     * @var array Variables to use in the template expansion
+     * @var array
      */
-    private $variables;
+    private $variablesNames;
 
     /**
      * @var UriInterface|null
      */
     private $uri;
+
+    /**
+     * @var array Variables to use in the template expansion
+     */
+    private $variables;
 
     /**
      * @param object|string $template a string or an object with the __toString method
@@ -96,8 +102,11 @@ final class UriTemplate implements UriTemplateInterface
      */
     public function __construct($template, array $defaultVariables = [])
     {
-        $template = $this->filterTemplate($template);
-        [$this->template, $this->uri] = $this->validateTemplate($template);
+        $this->template = $this->filterTemplate($template);
+        $this->variablesNames = $this->extractVariables();
+        if ([] === $this->variablesNames) {
+            $this->uri = Uri::createFromString($template);
+        }
         $this->defaultVariables = $defaultVariables;
     }
 
@@ -116,29 +125,29 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * Checks the template conformance to RFC6570.
+     * Extracts the variable name from the template.
      *
      * @throw SyntaxError if the template syntax is invalid
      *
-     * @return array{0:string, 1:UriInterface|null}
+     * @return string[]
      */
-    private function validateTemplate(string $template): array
+    private function extractVariables(): array
     {
-        $template = (string) $template;
-        if (false === strpos($template, '{') && false === strpos($template, '}')) {
-            return [$template, Uri::createFromString($template)];
+        if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
+            return [];
         }
 
-        $res = preg_match_all(self::REGEXP_EXPRESSION, $template, $matches, PREG_SET_ORDER);
+        $res = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
         if (0 === $res) {
-            throw UriTemplateException::dueToInvalidTemplate($template);
+            throw UriTemplateException::dueToInvalidTemplate($this->template);
         }
 
+        $variables = [];
         foreach ($matches as $expression) {
-            $this->validateExpression($expression);
+            $variables = $this->validateExpression($expression, $variables);
         }
 
-        return [$template, null];
+        return $variables;
     }
 
     /**
@@ -146,17 +155,23 @@ final class UriTemplate implements UriTemplateInterface
      *
      * @throws UriTemplateException if the expression does not conform to RFC6570
      */
-    private function validateExpression(array $parts): void
+    private function validateExpression(array $parts, array $variables): array
     {
         if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
             throw UriTemplateException::dueToUsingReservedOperator($parts['expression']);
         }
 
         foreach (explode(',', $parts['variables']) as $varSpec) {
-            if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec)) {
+            if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $matches)) {
                 throw UriTemplateException::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
             }
+
+            if (!in_array($matches['name'], $variables, true)) {
+                $variables[] = $matches['name'];
+            }
         }
+
+        return $variables;
     }
 
     /**
@@ -165,6 +180,14 @@ final class UriTemplate implements UriTemplateInterface
     public function getTemplate(): string
     {
         return $this->template;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getVariableNames(): array
+    {
+        return $this->variablesNames;
     }
 
     /**

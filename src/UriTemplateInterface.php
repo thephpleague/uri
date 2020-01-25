@@ -31,6 +31,13 @@ interface UriTemplateInterface
     public function getTemplate(): string;
 
     /**
+     * The distinct variable names used in the template.
+     *
+     * @return string[]
+     */
+    public function getVariableNames(): array;
+
+    /**
      * The default value used to expand the template.
      *
      * @return array<string,string|array>

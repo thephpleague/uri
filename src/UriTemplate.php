@@ -311,10 +311,10 @@ final class UriTemplate implements UriTemplateInterface
         }
 
         $variable = $this->normalizeVariable($this->variables[$value['name']]);
-        $actualQuery = $useQuery;
         if (is_string($variable)) {
             $expanded = $this->expandString($variable, $value, $operator);
-        } elseif (is_array($variable)) {
+            $actualQuery = $useQuery;
+        } else {
             [$expanded, $actualQuery] = $this->expandList($variable, $value, $operator, $joiner, $useQuery);
         }
 

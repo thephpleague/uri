@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace LeagueTest\Uri;
 
-use League\Uri\Exceptions\UriTemplateException;
+use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate;
 use PHPUnit\Framework\TestCase;
 
@@ -274,7 +274,7 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\Exceptions\UriTemplateException
+     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      */
     public function testDisallowNestedArrayExpansion(): void
     {
@@ -293,7 +293,7 @@ final class UriTemplateTest extends TestCase
             ],
         ];
 
-        self::expectException(UriTemplateException::class);
+        self::expectException(TemplateCanNotBeExpanded::class);
 
         (new UriTemplate($template))->expand($variables);
     }
@@ -349,12 +349,12 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\Exceptions\UriTemplateException
+     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      * @dataProvider provideInvalidTemplate
      */
     public function testInvalidUriTemplate(string $template): void
     {
-        self::expectException(UriTemplateException::class);
+        self::expectException(TemplateCanNotBeExpanded::class);
 
         new UriTemplate($template);
     }
@@ -396,12 +396,12 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\Exceptions\UriTemplateException
+     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      * @dataProvider invalidModifierToApply
      */
     public function testExpanThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
     {
-        self::expectException(UriTemplateException::class);
+        self::expectException(TemplateCanNotBeExpanded::class);
 
         (new UriTemplate($template))->expand($variables);
     }
@@ -409,7 +409,6 @@ final class UriTemplateTest extends TestCase
     /**
      * Following negative tests with wrong variable can only be detected at runtime.
      *
-     * @covers \League\Uri\Exceptions\UriTemplateException
      * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
      */
     public function invalidModifierToApply(): iterable

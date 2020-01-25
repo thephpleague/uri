@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\UriTemplateException;
+use League\Uri\Contracts\UriTemplateInterface;
+use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_filter;
 use function array_keys;
 use function explode;
@@ -95,20 +97,21 @@ final class UriTemplate implements UriTemplateInterface
     private $uri;
 
     /**
-     * @var array Variables to use in the template expansion
+     * @var array
      */
     private $variables;
 
     /**
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws \TypeError           if the template is not a string or an object with the __toString method
-     * @throws UriTemplateException if the template syntax is invalid
+     * @throws \TypeError               if the template is not a string or an object with the __toString method
+     * @throws TemplateCanNotBeExpanded if the template syntax is invalid
      */
     public function __construct($template, array $defaultVariables = [])
     {
         $this->template = $this->filterTemplate($template);
         $this->defaultVariables = $defaultVariables;
+
         $this->parseExpressions();
     }
 
@@ -129,12 +132,13 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Parse the template expressions.
      *
-     * @throw SyntaxError if the template syntax is invalid
+     * @throws TemplateCanNotBeExpanded if the template syntax is invalid
      */
     private function parseExpressions(): void
     {
         $this->expressions = [];
         $this->variablesNames = [];
+        $this->uri = null;
         if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
             $this->uri = Uri::createFromString($this->template);
 
@@ -143,7 +147,7 @@ final class UriTemplate implements UriTemplateInterface
 
         $res = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
         if (0 === $res) {
-            throw UriTemplateException::dueToInvalidTemplate($this->template);
+            throw TemplateCanNotBeExpanded::dueToInvalidTemplate($this->template);
         }
 
         $variables = [];
@@ -165,29 +169,27 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Checks the expression conformance to RFC6570.
      *
-     * @throws UriTemplateException if the expression does not conform to RFC6570
+     * @throws TemplateCanNotBeExpanded if the expression does not conform to RFC6570
      */
     private function parseVariables(array $parts, array $variables): array
     {
         if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
-            throw UriTemplateException::dueToUsingReservedOperator($parts['expression']);
+            throw TemplateCanNotBeExpanded::dueToUsingReservedOperator($parts['expression']);
         }
 
         $parsed = [];
         foreach (explode(',', $parts['variables']) as $varSpec) {
             if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $matches)) {
-                throw UriTemplateException::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
+                throw TemplateCanNotBeExpanded::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
             }
 
             $matches += ['modifier' => '', 'position' => ''];
-
             if ('' !== $matches['position']) {
                 $matches['position'] = (int) $matches['position'];
                 $matches['modifier'] = ':';
             }
 
             $variables[$matches['name']] = 1;
-
             $parsed[] = $matches;
         }
 
@@ -251,7 +253,8 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * @throws UriTemplateException if the variable contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
+     * @throws UriException if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expand(array $variables = []): UriInterface
     {
@@ -262,7 +265,7 @@ final class UriTemplate implements UriTemplateInterface
         $this->variables = $variables + $this->defaultVariables;
 
         /** @var string $uri */
-        $uri = preg_replace_callback(self::REGEXP_EXPRESSION, [$this, 'expandMatch'], $this->template);
+        $uri = preg_replace_callback(self::REGEXP_EXPRESSION, [$this, 'expandExpression'], $this->template);
 
         return Uri::createFromString($uri);
     }
@@ -270,10 +273,10 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands the found expressions.
      *
-     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
-     * @throws UriTemplateException if the variables contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
+     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
-    private function expandMatch(array $matches): string
+    private function expandExpression(array $matches): string
     {
         $expression = $this->expressions[$matches['expression']];
 
@@ -281,8 +284,8 @@ final class UriTemplate implements UriTemplateInterface
         $useQuery = $expression['query'];
 
         $parts = [];
-        foreach ($expression['variables'] as $part) {
-            $parts[] = $this->expandExpression($part, $expression['operator'], $joiner, $useQuery);
+        foreach ($expression['variables'] as $variable) {
+            $parts[] = $this->expandVariable($variable, $expression['operator'], $joiner, $useQuery);
         }
 
         $expanded = implode($joiner, array_filter($parts));
@@ -297,10 +300,10 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression.
      *
-     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
-     * @throws UriTemplateException if the variables contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
+     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
-    private function expandExpression(array $value, string $operator, string $joiner, bool $useQuery): string
+    private function expandVariable(array $value, string $operator, string $joiner, bool $useQuery): string
     {
         $expanded = '';
         if (!isset($this->variables[$value['name']])) {
@@ -368,8 +371,8 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression using a list of values.
      *
-     * @throws UriTemplateException if the variables is an array and a ":" modifier needs to be applied
-     * @throws UriTemplateException if the variables contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
+     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      *
      * @return array{0:string, 1:bool}
      */
@@ -382,14 +385,14 @@ final class UriTemplate implements UriTemplateInterface
         $isAssoc = $this->isAssoc($variable);
         $pairs = [];
         if (':' === $value['modifier']) {
-            throw UriTemplateException::dueToUnableToProcessValueListWithPrefix($value['name']);
+            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($value['name']);
         }
 
         /** @var string $key */
         foreach ($variable as $key => $var) {
             if ($isAssoc) {
                 if (is_array($var)) {
-                    throw UriTemplateException::dueToNestedListOfValue($key);
+                    throw TemplateCanNotBeExpanded::dueToNestedListOfValue($key);
                 }
 
                 $key = rawurlencode((string) $key);

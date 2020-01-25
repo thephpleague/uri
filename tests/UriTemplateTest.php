@@ -89,6 +89,36 @@ final class UriTemplateTest extends TestCase
         self::assertNotSame($newTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
     }
 
+    /**
+     * @dataProvider expectedVariableNames
+     */
+    public function testGetVariableNames(string $template, array $expected): void
+    {
+        self::assertSame($expected, (new UriTemplate($template))->getVariableNames());
+    }
+
+    public function expectedVariableNames(): iterable
+    {
+        return [
+            [
+                'template' => '',
+                'expected' => [],
+            ],
+            [
+                'template' => '{foo}{bar}',
+                'expected' => ['foo', 'bar'],
+            ],
+            [
+                'template' => '{foo}{foo:2}{+foo}',
+                'expected' => ['foo'],
+            ],
+            [
+                'template' => '{bar}{foo}',
+                'expected' => ['bar', 'foo'],
+            ],
+        ];
+    }
+
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
         self::expectException(\TypeError::class);

@@ -11,10 +11,7 @@
 
 declare(strict_types=1);
 
-namespace League\Uri;
-
-use League\Uri\Contracts\UriException;
-use League\Uri\Contracts\UriInterface;
+namespace League\Uri\Contracts;
 
 /**
  * Expands URI templates.

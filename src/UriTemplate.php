@@ -167,8 +167,8 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Parses a variable specification in conformance to RFC6570.
      *
-     * @param array{expression:string, operator: string, variables:string} $expression
-     * @param array<string,int>                                            $foundVariables
+     * @param array{expression:string, operator:string, variables:string} $expression
+     * @param array<string,int>                                           $foundVariables
      *
      * @throws TemplateCanNotBeExpanded if the expression does not conform to RFC6570
      *
@@ -352,6 +352,8 @@ final class UriTemplate implements UriTemplateInterface
      * @param mixed $var the value to be expanded
      *
      * @throws \TypeError if the type is not supported
+     *
+     * @return string|array
      */
     private function normalizeValue($var)
     {

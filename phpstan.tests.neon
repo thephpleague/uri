@@ -24,5 +24,5 @@ parameters:
           path: tests/UriTest.php
         - message: '#Parameter \#1 \$template of class League\\Uri\\UriTemplate constructor expects object\|string, int given\.#'
           path: tests/UriTemplateTest.php
-
     reportUnmatchedIgnoredErrors: true
+    checkMissingIterableValueType: false

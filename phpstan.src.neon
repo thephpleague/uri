@@ -3,4 +3,9 @@ includes:
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
     ignoreErrors:
+        - message: '#Method League\\Uri\\Uri::withPath\(\) has parameter \$path with no typehint specified\.#'
+          path: src/Uri.php
+        - message: '#Method League\\Uri\\Http::with([a-zA-Z]+)\(\) should return static\(League\\Uri\\Http\) but returns League\\Uri\\Http\.#'
+          path: src/Http
     reportUnmatchedIgnoredErrors: true
+    checkMissingIterableValueType: false

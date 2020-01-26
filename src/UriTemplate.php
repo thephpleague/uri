@@ -137,61 +137,60 @@ final class UriTemplate implements UriTemplateInterface
      */
     private function parseExpressions(): void
     {
-        $this->expressions = [];
-        $this->variableNames = [];
-        $this->uri = null;
-
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
         if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
-            throw TemplateCanNotBeExpanded::dueToInvalidTemplate($this->template);
+            throw TemplateCanNotBeExpanded::dueToMalformedExpression($this->template);
         }
 
-        preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
-        $variables = [];
-        foreach ($matches as $found) {
-            $found = $found + ['operator' => ''];
-            [$variables, $parsedExpression] = $this->parseVariables($found, $variables);
-            $this->expressions[$found['expression']] = [
-                'operator' => $found['operator'],
-                'variables' => $parsedExpression,
-                'joiner' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['joiner'],
-                'prefix' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['prefix'],
-                'query' => self::OPERATOR_HASH_LOOKUP[$found['operator']]['query'],
+        $this->uri = null;
+        $this->expressions = [];
+        preg_match_all(self::REGEXP_EXPRESSION, $this->template, $expressions, PREG_SET_ORDER);
+        $foundVariables = [];
+        foreach ($expressions as $expression) {
+            $expression = $expression + ['operator' => ''];
+            [$parsedVariables, $foundVariables] = $this->parseVariableSpecification($expression, $foundVariables);
+            $hashLookUp = self::OPERATOR_HASH_LOOKUP[$expression['operator']];
+            $this->expressions[$expression['expression']] = [
+                'operator' => $expression['operator'],
+                'variables' => $parsedVariables,
+                'joiner' => $hashLookUp['joiner'],
+                'prefix' => $hashLookUp['prefix'],
+                'query' => $hashLookUp['query'],
             ];
         }
 
-        $this->variableNames = array_keys($variables);
+        $this->variableNames = array_keys($foundVariables);
     }
 
     /**
-     * Checks the expression conformance to RFC6570.
+     * Parses a variable specification in conformance to RFC6570.
      *
      * @throws TemplateCanNotBeExpanded if the expression does not conform to RFC6570
      */
-    private function parseVariables(array $parts, array $variables): array
+    private function parseVariableSpecification(array $expression, array $foundVariables): array
     {
-        if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
-            throw TemplateCanNotBeExpanded::dueToUsingReservedOperator($parts['expression']);
+        $parsedVariableSpecification = [];
+        if ('' !== $expression['operator'] && false !== strpos(self::RESERVED_OPERATOR, $expression['operator'])) {
+            throw TemplateCanNotBeExpanded::dueToUsingReservedOperator($expression['expression']);
         }
 
-        $parsed = [];
-        foreach (explode(',', $parts['variables']) as $varSpec) {
-            if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $matches)) {
-                throw TemplateCanNotBeExpanded::dueToInvalidVariableSpecification($varSpec, $parts['expression']);
+        foreach (explode(',', $expression['variables']) as $varSpec) {
+            if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $parsed)) {
+                throw TemplateCanNotBeExpanded::dueToMalformedVariableSpecification($varSpec, $expression['expression']);
             }
 
-            $matches += ['modifier' => '', 'position' => ''];
-            if ('' !== $matches['position']) {
-                $matches['position'] = (int) $matches['position'];
-                $matches['modifier'] = ':';
+            $parsed += ['modifier' => '', 'position' => ''];
+            if ('' !== $parsed['position']) {
+                $parsed['position'] = (int) $parsed['position'];
+                $parsed['modifier'] = ':';
             }
 
-            $variables[$matches['name']] = 1;
-            $parsed[] = $matches;
+            $foundVariables[$parsed['name']] = 1;
+            $parsedVariableSpecification[] = $parsed;
         }
 
-        return [$variables, $parsed];
+        return [$parsedVariableSpecification, $foundVariables];
     }
 
     /**

@@ -367,7 +367,9 @@ final class UriTemplateTest extends TestCase
         return [
             'missing variables and operator' => ['{}'],
             'missing ending braces' => ['{/id*'],
-            'missing startig braces' => ['/id*}'],
+            'missing starting braces' => ['/id*}'],
+            'mismatch in at least one expression (1)' => ['http://example.com/}/{+foo}'],
+            'mismatch in at least one expression (2)' => ['http://example.com/{/{+foo}'],
             'multiple starting operators' => ['{/?id}'],
             'invalid prefix' => ['{var:prefix}'],
             'multiple operator modifiers (1)' => ['{hello:2*}'] ,
@@ -393,7 +395,6 @@ final class UriTemplateTest extends TestCase
             'variable name contains invalid character (5)' => ['/sparql{?query,default-graph-uri}'],
             'variable name contains invalid character (6)' => ['/sparql{?query){&default-graph-uri*}'],
             'leading space in variable name (2)' => ['/resolution{?x, y}'],
-            'mismatch in at least one expression' => ['http://example.com/}/{+foo}'],
         ];
     }
 

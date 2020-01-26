@@ -17,12 +17,12 @@ use League\Uri\Contracts\UriTemplateException;
 
 class TemplateCanNotBeExpanded extends \InvalidArgumentException implements UriTemplateException
 {
-    public static function dueToInvalidTemplate(string $template): self
+    public static function dueToMalformedExpression(string $template): self
     {
         return new self('The submitted template "'.$template.'" contains invalid expressions.');
     }
 
-    public static function dueToInvalidVariableSpecification(string $varSpec, string $expression): self
+    public static function dueToMalformedVariableSpecification(string $varSpec, string $expression): self
     {
         $message = 'The variable specification "'.$varSpec.'" included in the expression "{'.$expression.'}" is invalid.';
         if ('' === $varSpec) {

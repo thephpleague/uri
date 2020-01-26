@@ -78,17 +78,17 @@ final class UriTemplate implements UriTemplateInterface
     private $template;
 
     /**
-     * @var array
+     * @var array<string,string|array>
      */
     private $defaultVariables;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $variableNames;
 
     /**
-     * @var array
+     * @var array<string, array{operator: string, variables: array<array{name: string, modifier: string, position: string}>, joiner: string, prefix: string, query: bool}>
      */
     private $expressions;
 
@@ -98,7 +98,7 @@ final class UriTemplate implements UriTemplateInterface
     private $uri;
 
     /**
-     * @var array
+     * @var array<string,string|array>
      */
     private $variables;
 

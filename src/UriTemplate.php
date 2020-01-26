@@ -22,6 +22,7 @@ use function array_keys;
 use function explode;
 use function gettype;
 use function implode;
+use function in_array;
 use function is_array;
 use function is_bool;
 use function is_scalar;
@@ -35,6 +36,7 @@ use function rawurlencode;
 use function sprintf;
 use function strpos;
 use function substr;
+use const ARRAY_FILTER_USE_KEY;
 use const PREG_SET_ORDER;
 
 /**
@@ -111,9 +113,9 @@ final class UriTemplate implements UriTemplateInterface
     public function __construct($template, array $defaultVariables = [])
     {
         $this->template = $this->filterTemplate($template);
-        $this->defaultVariables = $defaultVariables;
-
         $this->parseExpressions();
+
+        $this->defaultVariables = $this->filterVariables($defaultVariables);
     }
 
     /**
@@ -203,6 +205,18 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
+     * Filter out the value whose key is not a valid variable name for the given template.
+     */
+    private function filterVariables(array $variables): array
+    {
+        $filter = function ($key): bool {
+            return in_array($key, $this->variableNames, true);
+        };
+
+        return array_filter($variables, $filter, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getTemplate(): string
@@ -248,6 +262,7 @@ final class UriTemplate implements UriTemplateInterface
      */
     public function withDefaultVariables(array $defaultDefaultVariables): UriTemplateInterface
     {
+        $defaultDefaultVariables = $this->filterVariables($defaultDefaultVariables);
         if ($defaultDefaultVariables === $this->defaultVariables) {
             return $this;
         }
@@ -270,7 +285,13 @@ final class UriTemplate implements UriTemplateInterface
             return $this->uri;
         }
 
-        $this->variables = $variables + $this->defaultVariables;
+        $this->variables = $this->filterVariables($variables + $this->defaultVariables);
+        if ([] === $this->variables) {
+            /** @var string $uri */
+            $uri = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
+
+            return Uri::createFromString($uri);
+        }
 
         /** @var string $uri */
         $uri = preg_replace_callback(self::REGEXP_EXPRESSION, [$this, 'expandExpression'], $this->template);

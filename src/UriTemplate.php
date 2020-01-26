@@ -131,7 +131,7 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * Parse the template expressions.
+     * Parses the template expressions.
      *
      * @throws TemplateCanNotBeExpanded if the template syntax is invalid
      */
@@ -148,6 +148,7 @@ final class UriTemplate implements UriTemplateInterface
         preg_match_all(self::REGEXP_EXPRESSION, $this->template, $expressions, PREG_SET_ORDER);
         $foundVariables = [];
         foreach ($expressions as $expression) {
+            /** @var array{expression:string, operator: string, variables:string} $expression */
             $expression = $expression + ['operator' => ''];
             [$parsedVariables, $foundVariables] = $this->parseVariableSpecification($expression, $foundVariables);
             $hashLookUp = self::OPERATOR_HASH_LOOKUP[$expression['operator']];
@@ -166,7 +167,12 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Parses a variable specification in conformance to RFC6570.
      *
+     * @param array{expression:string, operator: string, variables:string} $expression
+     * @param array<string,int>                                            $foundVariables
+     *
      * @throws TemplateCanNotBeExpanded if the expression does not conform to RFC6570
+     *
+     * @return array{0:array<array{name:string, modifier:string, position:string}>, 1:array<string,int>}
      */
     private function parseVariableSpecification(array $expression, array $foundVariables): array
     {
@@ -190,7 +196,10 @@ final class UriTemplate implements UriTemplateInterface
             $parsedVariableSpecification[] = $parsed;
         }
 
-        return [$parsedVariableSpecification, $foundVariables];
+        /** @var array{0:array<array{name:string, modifier:string, position:string}>, 1:array<string,int>} $result */
+        $result = [$parsedVariableSpecification, $foundVariables];
+
+        return $result;
     }
 
     /**
@@ -272,17 +281,19 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands the found expressions.
      *
+     * @param array{expression:string, operator: string, variables:string} $foundExpression
+     *
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
-    private function expandExpression(array $matches): string
+    private function expandExpression(array $foundExpression): string
     {
-        $expression = $this->expressions[$matches['expression']];
-
+        $expression = $this->expressions[$foundExpression['expression']];
         $joiner = $expression['joiner'];
         $useQuery = $expression['query'];
 
         $parts = [];
+        /** @var array{name:string, modifier:string, position:string} $variable */
         foreach ($expression['variables'] as $variable) {
             $parts[] = $this->expandVariable($variable, $expression['operator'], $joiner, $useQuery);
         }
@@ -299,21 +310,23 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression.
      *
+     * @param array{name:string, modifier:string, position:string} $variable
+     *
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
-    private function expandVariable(array $value, string $operator, string $joiner, bool $useQuery): string
+    private function expandVariable(array $variable, string $operator, string $joiner, bool $useQuery): string
     {
         $expanded = '';
-        if (!isset($this->variables[$value['name']])) {
+        if (!isset($this->variables[$variable['name']])) {
             return $expanded;
         }
 
-        $variable = $this->normalizeVariable($this->variables[$value['name']]);
-        $arguments = [$variable, $value, $operator];
+        $variableValue = $this->normalizeValue($this->variables[$variable['name']]);
+        $arguments = [$variableValue, $variable, $operator];
         $method = 'expandString';
         $actualQuery = $useQuery;
-        if (is_array($variable)) {
+        if (is_array($variableValue)) {
             $arguments[] = $joiner;
             $arguments[] = $useQuery;
             $method = 'expandList';
@@ -329,10 +342,10 @@ final class UriTemplate implements UriTemplateInterface
         }
 
         if ('&' !== $joiner && '' === $expanded) {
-            return $value['name'];
+            return $variable['name'];
         }
 
-        return $value['name'].'='.$expanded;
+        return $variable['name'].'='.$expanded;
     }
 
     /**
@@ -340,7 +353,7 @@ final class UriTemplate implements UriTemplateInterface
      *
      * @throws \TypeError if the type is not supported
      */
-    private function normalizeVariable($var)
+    private function normalizeValue($var)
     {
         if (is_array($var)) {
             return $var;
@@ -360,13 +373,13 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * Expands an expression using a string value.
      */
-    private function expandString(string $variable, array $value, string $operator): string
+    private function expandString(string $value, array $variable, string $operator): string
     {
-        if (':' === $value['modifier']) {
-            $variable = substr($variable, 0, $value['position']);
+        if (':' === $variable['modifier']) {
+            $value = substr($value, 0, $variable['position']);
         }
 
-        $expanded = rawurlencode($variable);
+        $expanded = rawurlencode($value);
         if ('+' === $operator || '#' === $operator) {
             return $this->decodeReserved($expanded);
         }
@@ -382,20 +395,20 @@ final class UriTemplate implements UriTemplateInterface
      *
      * @return array{0:string, 1:bool}
      */
-    private function expandList(array $variable, array $value, string $operator, string $joiner, bool $useQuery): array
+    private function expandList(array $value, array $variable, string $operator, string $joiner, bool $useQuery): array
     {
-        if ([] === $variable) {
+        if ([] === $value) {
             return ['', false];
         }
 
-        $isAssoc = $this->isAssoc($variable);
+        $isAssoc = $this->isAssoc($value);
         $pairs = [];
-        if (':' === $value['modifier']) {
-            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($value['name']);
+        if (':' === $variable['modifier']) {
+            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($variable['name']);
         }
 
         /** @var string $key */
-        foreach ($variable as $key => $var) {
+        foreach ($value as $key => $var) {
             if ($isAssoc) {
                 if (is_array($var)) {
                     throw TemplateCanNotBeExpanded::dueToNestedListOfValue($key);
@@ -409,18 +422,18 @@ final class UriTemplate implements UriTemplateInterface
                 $var = $this->decodeReserved($var);
             }
 
-            if ('*' === $value['modifier']) {
+            if ('*' === $variable['modifier']) {
                 if ($isAssoc) {
                     $var = $key.'='.$var;
                 } elseif ($key > 0 && $useQuery) {
-                    $var = $value['name'].'='.$var;
+                    $var = $variable['name'].'='.$var;
                 }
             }
 
             $pairs[$key] = $var;
         }
 
-        if ('*' === $value['modifier']) {
+        if ('*' === $variable['modifier']) {
             if ($isAssoc) {
                 // Don't prepend the value name when using the explode
                 // modifier with an associative array.

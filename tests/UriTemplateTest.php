@@ -451,4 +451,12 @@ final class UriTemplateTest extends TestCase
             ],
         ];
     }
+
+    public function testExpansionWithMultipleSameExpression(): void
+    {
+        $template = '{foo}/{foo}';
+        $data = ['foo' => 'foo'];
+
+        self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->__toString());
+    }
 }

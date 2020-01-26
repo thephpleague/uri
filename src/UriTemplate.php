@@ -139,28 +139,28 @@ final class UriTemplate implements UriTemplateInterface
      */
     private function parseExpressions(): void
     {
+        $this->uri = null;
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
         if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
             throw TemplateCanNotBeExpanded::dueToMalformedExpression($this->template);
         }
 
-        $this->uri = null;
-        $this->expressions = [];
         preg_match_all(self::REGEXP_EXPRESSION, $this->template, $expressions, PREG_SET_ORDER);
+        $this->expressions = [];
         $foundVariables = [];
         foreach ($expressions as $expression) {
-            /** @var array{expression:string, operator: string, variables:string} $expression */
+            if (isset($this->expressions[$expression['expression']])) {
+                continue;
+            }
+
+            /** @var array{expression:string, operator:string, variables:string} $expression */
             $expression = $expression + ['operator' => ''];
             [$parsedVariables, $foundVariables] = $this->parseVariableSpecification($expression, $foundVariables);
-            $hashLookUp = self::OPERATOR_HASH_LOOKUP[$expression['operator']];
             $this->expressions[$expression['expression']] = [
                 'operator' => $expression['operator'],
                 'variables' => $parsedVariables,
-                'joiner' => $hashLookUp['joiner'],
-                'prefix' => $hashLookUp['prefix'],
-                'query' => $hashLookUp['query'],
-            ];
+            ] + self::OPERATOR_HASH_LOOKUP[$expression['operator']];
         }
 
         $this->variableNames = array_keys($foundVariables);

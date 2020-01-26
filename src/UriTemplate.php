@@ -49,7 +49,7 @@ final class UriTemplate implements UriTemplateInterface
     private const REGEXP_EXPRESSION = '/\{
         (?<expression>
             (?<operator>[\.\/;\?&\=,\!@\|\+#])?
-            (?<variables>[^\}]+)
+            (?<variables>[^\}]*)
         )
     \}/x';
 
@@ -84,7 +84,7 @@ final class UriTemplate implements UriTemplateInterface
     /**
      * @var array
      */
-    private $variablesNames;
+    private $variableNames;
 
     /**
      * @var array
@@ -137,14 +137,17 @@ final class UriTemplate implements UriTemplateInterface
     private function parseExpressions(): void
     {
         $this->expressions = [];
-        $this->variablesNames = [];
+        $this->variableNames = [];
         $this->uri = null;
-        $bracesOffset = strpos($this->template, '{');
-        if (false === $bracesOffset || false === strpos($this->template, '}', $bracesOffset)) {
+        if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
             return;
         }
 
-        preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
+        $count = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
+        if (0 === $count) {
+            throw TemplateCanNotBeExpanded::dueToInvalidTemplate($this->template);
+        }
+
         $variables = [];
         foreach ($matches as $found) {
             $found = $found + ['operator' => ''];
@@ -158,7 +161,7 @@ final class UriTemplate implements UriTemplateInterface
             ];
         }
 
-        $this->variablesNames = array_keys($variables);
+        $this->variableNames = array_keys($variables);
     }
 
     /**
@@ -204,7 +207,7 @@ final class UriTemplate implements UriTemplateInterface
      */
     public function getVariableNames(): array
     {
-        return $this->variablesNames;
+        return $this->variableNames;
     }
 
     /**

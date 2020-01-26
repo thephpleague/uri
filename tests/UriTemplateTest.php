@@ -393,6 +393,7 @@ final class UriTemplateTest extends TestCase
             'variable name contains invalid character (5)' => ['/sparql{?query,default-graph-uri}'],
             'variable name contains invalid character (6)' => ['/sparql{?query){&default-graph-uri*}'],
             'leading space in variable name (2)' => ['/resolution{?x, y}'],
+            'mismatch in at least one expression' => ['http://example.com/}/{+foo}'],
         ];
     }
 
@@ -400,7 +401,7 @@ final class UriTemplateTest extends TestCase
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      * @dataProvider invalidModifierToApply
      */
-    public function testExpanThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
+    public function testExpandThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
     {
         self::expectException(TemplateCanNotBeExpanded::class);
 

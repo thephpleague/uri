@@ -47,10 +47,19 @@ final class UriTemplateTest extends TestCase
             'query'    => 'test',
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
+            'nonexistent' => ['random'],
+        ];
+
+        $expectedVariables = [
+            'path'     => '/foo/bar',
+            'segments' => ['one', 'two'],
+            'query'    => 'test',
+            'more'     => ['fun', 'ice cream'],
+            'foo[]' => ['fizz', 'buzz'],
         ];
 
         $uriTemplate = new UriTemplate($template, $variables);
-        self::assertSame($variables, $uriTemplate->getDefaultVariables());
+        self::assertSame($expectedVariables, $uriTemplate->getDefaultVariables());
 
         $uriTemplateEmpty = new UriTemplate($template, []);
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
@@ -76,16 +85,19 @@ final class UriTemplateTest extends TestCase
         $template = '{foo}{bar}';
         $variables = ['foo' => 'foo', 'bar' => 'bar'];
         $newVariables = ['foo' => 'bar', 'bar' => 'foo'];
+        $newAltVariables = ['foo' => 'foo', 'bar' => 'bar', 'filteredVariable' => 'random'];
 
         $uriTemplate = new UriTemplate($template, $variables);
         $newTemplate = $uriTemplate->withDefaultVariables($newVariables);
         $altTemplate = $uriTemplate->withDefaultVariables($variables);
+        $newAltTemplate = $uriTemplate->withDefaultVariables($newAltVariables);
 
         self::assertInstanceOf(UriTemplate::class, $newTemplate);
         self::assertInstanceOf(UriTemplate::class, $altTemplate);
-        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
-        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+        self::assertInstanceOf(UriTemplate::class, $newAltTemplate);
 
+        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+        self::assertSame($newAltTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
         self::assertNotSame($newTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
     }
 

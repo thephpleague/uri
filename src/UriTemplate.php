@@ -29,6 +29,7 @@ use function is_string;
 use function method_exists;
 use function preg_match;
 use function preg_match_all;
+use function preg_replace;
 use function preg_replace_callback;
 use function rawurlencode;
 use function sprintf;
@@ -139,15 +140,14 @@ final class UriTemplate implements UriTemplateInterface
         $this->expressions = [];
         $this->variableNames = [];
         $this->uri = null;
-        if (false === strpos($this->template, '{') && false === strpos($this->template, '}')) {
-            return;
-        }
 
-        $count = preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
-        if (0 === $count) {
+        /** @var string $remainder */
+        $remainder = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
+        if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
             throw TemplateCanNotBeExpanded::dueToInvalidTemplate($this->template);
         }
 
+        preg_match_all(self::REGEXP_EXPRESSION, $this->template, $matches, PREG_SET_ORDER);
         $variables = [];
         foreach ($matches as $found) {
             $found = $found + ['operator' => ''];

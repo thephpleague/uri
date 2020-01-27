@@ -14,14 +14,20 @@ declare(strict_types=1);
 namespace LeagueTest\Uri;
 
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use League\Uri\Uri;
 use League\Uri\UriTemplate;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers League\Uri\UriTemplate
+ * @coversDefaultClass League\Uri\UriTemplate
  */
 final class UriTemplateTest extends TestCase
 {
+    /**
+     * @covers ::__construct
+     * @covers ::filterTemplate
+     * @covers ::getTemplate
+     */
     public function testGetTemplate(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -38,6 +44,11 @@ final class UriTemplateTest extends TestCase
         self::assertSame($template, $uriTemplate->getTemplate());
     }
 
+    /**
+     * @covers ::__construct
+     * @covers ::filterVariables
+     * @covers ::getDefaultVariables
+     */
     public function testGetDefaultVariables(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -65,6 +76,9 @@ final class UriTemplateTest extends TestCase
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
     }
 
+    /**
+     * @covers ::withTemplate
+     */
     public function testWithTemplate(): void
     {
         $template = '{foo}{bar}';
@@ -80,6 +94,10 @@ final class UriTemplateTest extends TestCase
         self::assertNotSame($newTemplate->getTemplate(), $uriTemplate->getTemplate());
     }
 
+    /**
+     * @covers ::filterVariables
+     * @covers ::withDefaultVariables
+     */
     public function testWithDefaultVariables(): void
     {
         $template = '{foo}{bar}';
@@ -102,6 +120,23 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
+     * @covers ::__set_state
+     */
+    public function testSetState(): void
+    {
+        $template = '{foo}{bar}';
+        $variables = ['foo' => 'foo', 'bar' => 'bar'];
+
+        $uriTemplate = new UriTemplate($template, $variables);
+
+        self::assertEquals($uriTemplate, eval('return '.var_export($uriTemplate, true).';'));
+    }
+
+    /**
+     * @covers ::getVariableNames
+     * @covers ::parseExpressions
+     * @covers ::parseVariableSpecification
+     *
      * @dataProvider expectedVariableNames
      */
     public function testGetVariableNames(string $template, array $expected): void
@@ -131,6 +166,10 @@ final class UriTemplateTest extends TestCase
         ];
     }
 
+    /**
+     * @covers ::__construct
+     * @covers ::filterTemplate
+     */
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
         self::expectException(\TypeError::class);
@@ -139,14 +178,22 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @dataProvider templateProvider
+     * @covers ::expand
+     * @covers ::expandExpression
+     * @covers ::expandVariable
+     * @covers ::expandString
+     * @covers ::expandList
+     * @covers ::isAssoc
+     * @covers ::decodeReserved
+     *
+     * @dataProvider templateExpansionProvider
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
         self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->__toString());
     }
 
-    public function templateProvider(): iterable
+    public function templateExpansionProvider(): iterable
     {
         $variables = [
             'var'   => 'value',
@@ -268,6 +315,10 @@ final class UriTemplateTest extends TestCase
         }
     }
 
+    /**
+     * @covers ::expandList
+     * @covers ::normalizeValue
+     */
     public function testAllowsQueryValuePairsArrayExpansion(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -286,6 +337,8 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
+     * @covers ::expandList
+     * @covers ::normalizeValue
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      */
     public function testDisallowNestedArrayExpansion(): void
@@ -310,6 +363,10 @@ final class UriTemplateTest extends TestCase
         (new UriTemplate($template))->expand($variables);
     }
 
+    /**
+     * @covers ::expand
+     * @covers ::filterVariables
+     */
     public function testExpandWithDefaultVariables(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -331,6 +388,10 @@ final class UriTemplateTest extends TestCase
         );
     }
 
+    /**
+     * @covers ::expand
+     * @covers ::filterVariables
+     */
     public function testExpandWithDefaultVariablesWithOverride(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -353,6 +414,9 @@ final class UriTemplateTest extends TestCase
         );
     }
 
+    /**
+     * @covers ::normalizeValue
+     */
     public function testUnsupportedValueType(): void
     {
         self::expectException(\TypeError::class);
@@ -362,6 +426,9 @@ final class UriTemplateTest extends TestCase
 
     /**
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
+     * @covers ::parseExpressions
+     * @covers ::parseVariableSpecification
+     *
      * @dataProvider provideInvalidTemplate
      */
     public function testInvalidUriTemplate(string $template): void
@@ -412,6 +479,8 @@ final class UriTemplateTest extends TestCase
 
     /**
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
+     * @covers ::expandList
+     *
      * @dataProvider invalidModifierToApply
      */
     public function testExpandThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
@@ -452,11 +521,25 @@ final class UriTemplateTest extends TestCase
         ];
     }
 
+    /**
+     * @covers ::parseExpressions
+     */
     public function testExpansionWithMultipleSameExpression(): void
     {
         $template = '{foo}/{foo}';
         $data = ['foo' => 'foo'];
 
         self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->__toString());
+    }
+
+    /**
+     * @covers ::normalizeValue
+     */
+    public function testConvertBooleanValueToString(): void
+    {
+        $template = '{true}/{false}';
+        $data = ['true' => true, 'false' => false];
+
+        self::assertSame('1/0', (new UriTemplate($template, $data))->expand()->__toString());
     }
 }

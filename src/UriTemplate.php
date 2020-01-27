@@ -95,9 +95,9 @@ final class UriTemplate implements UriTemplateInterface
     private $expressions;
 
     /**
-     * @var UriInterface|null
+     * @var UriInterface[]
      */
-    private $uri;
+    private $cache;
 
     /**
      * @var array<string,string|array>
@@ -113,9 +113,18 @@ final class UriTemplate implements UriTemplateInterface
     public function __construct($template, array $defaultVariables = [])
     {
         $this->template = $this->filterTemplate($template);
+
         $this->parseExpressions();
 
         $this->defaultVariables = $this->filterVariables($defaultVariables);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function __set_state(array $properties): self
+    {
+        return new self($properties['template'], $properties['defaultVariables']);
     }
 
     /**
@@ -139,7 +148,7 @@ final class UriTemplate implements UriTemplateInterface
      */
     private function parseExpressions(): void
     {
-        $this->uri = null;
+        $this->cache = [];
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
         if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
@@ -280,17 +289,18 @@ final class UriTemplate implements UriTemplateInterface
     public function expand(array $variables = []): UriInterface
     {
         if ([] === $this->expressions) {
-            $this->uri = $this->uri ?? Uri::createFromString($this->template);
+            $this->cache['noExpression'] = $this->cache['noExpression'] ?? Uri::createFromString($this->template);
 
-            return $this->uri;
+            return $this->cache['noExpression'];
         }
 
-        $this->variables = $this->filterVariables($variables + $this->defaultVariables);
+        $this->variables = $this->filterVariables($variables) + $this->defaultVariables;
         if ([] === $this->variables) {
-            /** @var string $uri */
-            $uri = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
+            $this->cache['noVariables'] = $this->cache['noVariables'] ?? Uri::createFromString(
+                preg_replace(self::REGEXP_EXPRESSION, '', $this->template)
+            );
 
-            return Uri::createFromString($uri);
+            return $this->cache['noVariables'];
         }
 
         /** @var string $uri */
@@ -300,7 +310,7 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * Expands the found expressions.
+     * Expands a single expression.
      *
      * @param array{expression:string, operator: string, variables:string} $foundExpression
      *
@@ -319,7 +329,11 @@ final class UriTemplate implements UriTemplateInterface
             $parts[] = $this->expandVariable($variable, $expression['operator'], $joiner, $useQuery);
         }
 
-        $expanded = implode($joiner, array_filter($parts));
+        $nullFilter = static function ($value): bool {
+            return null !== $value && '' !== $value;
+        };
+
+        $expanded = implode($joiner, array_filter($parts, $nullFilter));
         $prefix = $expression['prefix'];
         if ('' !== $expanded && '' !== $prefix) {
             return $prefix.$expanded;

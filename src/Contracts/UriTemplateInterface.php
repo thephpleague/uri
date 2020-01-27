@@ -13,13 +13,6 @@ declare(strict_types=1);
 
 namespace League\Uri\Contracts;
 
-/**
- * Expands URI templates.
- *
- * @link http://tools.ietf.org/html/rfc6570
- *
- * Based on GuzzleHttp\UriTemplate class which is removed from Guzzle7.
- */
 interface UriTemplateInterface
 {
     /**
@@ -28,14 +21,14 @@ interface UriTemplateInterface
     public function getTemplate(): string;
 
     /**
-     * Return the names of the variables in the template, in order.
+     * Returns the names of the variables in the template, in order.
      *
      * @return string[]
      */
     public function getVariableNames(): array;
 
     /**
-     * The default value used to expand the template.
+     * Returns the default values used to expand the template.
      *
      * The returned list only contains variables whose name is part of the current template.
      *
@@ -46,8 +39,8 @@ interface UriTemplateInterface
     /**
      * @param array<string,string|array> $variables
      *
-     * @throws UriTemplateException if the expansion can not be done.
-     * @throws UriException         if the expansion can not be done.
+     * @throws UriTemplateException if the expansion can not be done
+     * @throws UriException         if the resulting expansion can not be converted into a valid UriInterface instance
      */
     public function expand(array $variables = []): UriInterface;
 
@@ -59,7 +52,7 @@ interface UriTemplateInterface
      *
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws UriTemplateException if the expansion can not be done.
+     * @throws UriTemplateException if the new template is invalid
      */
     public function withTemplate($template): self;
 

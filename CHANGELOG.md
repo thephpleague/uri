@@ -2,11 +2,11 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## TBD - Next
+## 6.1.0 - Next
 
 ### Added 
 
-- Nothing
+- `League\Uri\UriTemplate` a class to handle uri template expansion as described in RFC7560 see PR [#153](https://github.com/thephpleague/uri/pull/153)
 
 ### Fixed
 

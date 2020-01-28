@@ -90,7 +90,18 @@ final class UriTemplate
     private $variableNames;
 
     /**
-     * @var array<string, array{pattern:string, operator:string, variables:array<array{name: string, modifier: string, position: string}>, joiner:string, prefix:string, query:bool}>
+     * @var array<string, array{
+     *                    pattern:string,
+     *                    operator:string,
+     *                    variables:array<array{
+     *                    name: string,
+     *                    modifier: string,
+     *                    position: string
+     *                    }>,
+     *                    joiner:string,
+     *                    prefix:string,
+     *                    query:bool
+     *                    }>
      */
     private $expressions;
 
@@ -166,7 +177,9 @@ final class UriTemplate
             /** @var array{expression:string, operator:string, variables:string, pattern:string} $expression */
             $expression = $expression + ['operator' => '', 'pattern' => '{'.$expression['expression'].'}'];
             [$parsedVariables, $foundVariables] = $this->parseVariableSpecification($expression, $foundVariables);
-            $this->expressions[$expression['expression']] = ['variables' => $parsedVariables] + $expression + self::OPERATOR_HASH_LOOKUP[$expression['operator']];
+            $this->expressions[$expression['expression']] = ['variables' => $parsedVariables]
+                + $expression
+                + self::OPERATOR_HASH_LOOKUP[$expression['operator']];
         }
 
         $this->variableNames = array_keys($foundVariables);

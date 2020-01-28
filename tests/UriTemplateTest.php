@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace LeagueTest\Uri;
 
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
-use League\Uri\Uri;
 use League\Uri\UriTemplate;
 use PHPUnit\Framework\TestCase;
 
@@ -418,7 +418,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      * @covers ::parseExpressions
      * @covers ::parseVariableSpecification
      *
@@ -426,7 +425,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testInvalidUriTemplate(string $template): void
     {
-        self::expectException(TemplateCanNotBeExpanded::class);
+        self::expectException(SyntaxError::class);
 
         new UriTemplate($template);
     }

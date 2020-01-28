@@ -15,28 +15,8 @@ namespace League\Uri\Exceptions;
 
 use League\Uri\Contracts\UriException;
 
-class TemplateCanNotBeExpanded extends \RuntimeException implements UriException
+class TemplateCanNotBeExpanded extends \InvalidArgumentException implements UriException
 {
-    public static function dueToMalformedExpression(string $template): self
-    {
-        return new self('The submitted template "'.$template.'" contains invalid expressions.');
-    }
-
-    public static function dueToMalformedVariableSpecification(string $varSpec, string $expression): self
-    {
-        $message = 'The variable specification "'.$varSpec.'" included in the expression "{'.$expression.'}" is invalid.';
-        if ('' === $varSpec) {
-            $message = 'No variable specification was included in the expression "{'.$expression.'}".';
-        }
-
-        return new self($message);
-    }
-
-    public static function dueToUsingReservedOperator(string $expression): self
-    {
-        return new self('The operator used in the expression "{'.$expression.'}" is reserved.');
-    }
-
     public static function dueToUnableToProcessValueListWithPrefix(string $variableName): self
     {
         return new self('The ":" modifier can not be applied on "'.$variableName.'" since it is a list of values.');

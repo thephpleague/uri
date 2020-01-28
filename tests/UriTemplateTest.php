@@ -86,11 +86,8 @@ final class UriTemplateTest extends TestCase
         $newTemplate = $uriTemplate->withTemplate('{bar}{baz}');
         $altTemplate = $uriTemplate->withTemplate($template);
 
-        self::assertInstanceOf(UriTemplate::class, $newTemplate);
-        self::assertInstanceOf(UriTemplate::class, $altTemplate);
         self::assertSame($altTemplate->getTemplate(), $uriTemplate->getTemplate());
         self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
-
         self::assertNotSame($newTemplate->getTemplate(), $uriTemplate->getTemplate());
     }
 
@@ -109,10 +106,6 @@ final class UriTemplateTest extends TestCase
         $newTemplate = $uriTemplate->withDefaultVariables($newVariables);
         $altTemplate = $uriTemplate->withDefaultVariables($variables);
         $newAltTemplate = $uriTemplate->withDefaultVariables($newAltVariables);
-
-        self::assertInstanceOf(UriTemplate::class, $newTemplate);
-        self::assertInstanceOf(UriTemplate::class, $altTemplate);
-        self::assertInstanceOf(UriTemplate::class, $newAltTemplate);
 
         self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
         self::assertSame($newAltTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace League\Uri\Exceptions;
 
-use League\Uri\Contracts\UriTemplateException;
+use League\Uri\Contracts\UriException;
 
-class TemplateCanNotBeExpanded extends \InvalidArgumentException implements UriTemplateException
+class TemplateCanNotBeExpanded extends \RuntimeException implements UriException
 {
     public static function dueToMalformedExpression(string $template): self
     {

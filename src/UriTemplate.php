@@ -15,7 +15,7 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Contracts\UriTemplateInterface;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_filter;
 use function array_keys;
@@ -47,7 +47,7 @@ use const PREG_SET_ORDER;
  * Based on GuzzleHttp\UriTemplate class which is removed from Guzzle7.
  * @see https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php
  */
-final class UriTemplate implements UriTemplateInterface
+final class UriTemplate
 {
     private const REGEXP_EXPRESSION = '/\{
         (?<expression>
@@ -226,7 +226,7 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * {@inheritDoc}
+     * The template string.
      */
     public function getTemplate(): string
     {
@@ -234,7 +234,9 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the names of the variables in the template, in order.
+     *
+     * @return string[]
      */
     public function getVariableNames(): array
     {
@@ -242,9 +244,16 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a new instance with the updated template.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified template value.
+     *
+     * @param object|string $template a string or an object with the __toString method
+     *
+     * @throws SyntaxError if the new template is invalid
      */
-    public function withTemplate($template): UriTemplateInterface
+    public function withTemplate($template): self
     {
         $template = $this->filterTemplate($template);
         if ($template === $this->template) {
@@ -259,7 +268,11 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the default values used to expand the template.
+     *
+     * The returned list only contains variables whose name is part of the current template.
+     *
+     * @return array<string,string|array>
      */
     public function getDefaultVariables(): array
     {
@@ -267,9 +280,16 @@ final class UriTemplate implements UriTemplateInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a new instance with the updated default variables.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified default variables.
+     *
+     * If present, variables whose name is not part of the current template
+     * possible variable names are removed.
+     *
      */
-    public function withDefaultVariables(array $defaultDefaultVariables): UriTemplateInterface
+    public function withDefaultVariables(array $defaultDefaultVariables): self
     {
         $defaultDefaultVariables = $this->filterVariables($defaultDefaultVariables);
         if ($defaultDefaultVariables === $this->defaultVariables) {

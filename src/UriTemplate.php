@@ -90,12 +90,12 @@ final class UriTemplate
     private $variableNames;
 
     /**
-     * @var array<string, array{operator: string, variables: array<array{name: string, modifier: string, position: string}>, joiner: string, prefix: string, query: bool}>
+     * @var array<string, array{pattern:string, operator:string, variables:array<array{name: string, modifier: string, position: string}>, joiner:string, prefix:string, query:bool}>
      */
     private $expressions;
 
     /**
-     * @var UriInterface[]
+     * @var array{noExpression:UriInterface|null, noVariables:UriInterface|null}
      */
     private $cache;
 
@@ -144,15 +144,15 @@ final class UriTemplate
     /**
      * Parses the template expressions.
      *
-     * @throws TemplateCanNotBeExpanded if the template syntax is invalid
+     * @throws SyntaxError if the template syntax is invalid
      */
     private function parseExpressions(): void
     {
-        $this->cache = [];
+        $this->cache = ['noExpression' => null, 'noVariables' => null];
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION, '', $this->template);
         if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
-            throw TemplateCanNotBeExpanded::dueToMalformedExpression($this->template);
+            throw new SyntaxError('The submitted template "'.$this->template.'" contains invalid expressions.');
         }
 
         preg_match_all(self::REGEXP_EXPRESSION, $this->template, $expressions, PREG_SET_ORDER);
@@ -163,13 +163,10 @@ final class UriTemplate
                 continue;
             }
 
-            /** @var array{expression:string, operator:string, variables:string} $expression */
-            $expression = $expression + ['operator' => ''];
+            /** @var array{expression:string, operator:string, variables:string, pattern:string} $expression */
+            $expression = $expression + ['operator' => '', 'pattern' => '{'.$expression['expression'].'}'];
             [$parsedVariables, $foundVariables] = $this->parseVariableSpecification($expression, $foundVariables);
-            $this->expressions[$expression['expression']] = [
-                'operator' => $expression['operator'],
-                'variables' => $parsedVariables,
-            ] + self::OPERATOR_HASH_LOOKUP[$expression['operator']];
+            $this->expressions[$expression['expression']] = ['variables' => $parsedVariables] + $expression + self::OPERATOR_HASH_LOOKUP[$expression['operator']];
         }
 
         $this->variableNames = array_keys($foundVariables);
@@ -178,10 +175,10 @@ final class UriTemplate
     /**
      * Parses a variable specification in conformance to RFC6570.
      *
-     * @param array{expression:string, operator:string, variables:string} $expression
-     * @param array<string,int>                                           $foundVariables
+     * @param array{expression:string, operator:string, variables:string, pattern:string} $expression
+     * @param array<string,int>                                                           $foundVariables
      *
-     * @throws TemplateCanNotBeExpanded if the expression does not conform to RFC6570
+     * @throws SyntaxError if the expression does not conform to RFC6570
      *
      * @return array{0:array<array{name:string, modifier:string, position:string}>, 1:array<string,int>}
      */
@@ -189,12 +186,16 @@ final class UriTemplate
     {
         $parsedVariableSpecification = [];
         if ('' !== $expression['operator'] && false !== strpos(self::RESERVED_OPERATOR, $expression['operator'])) {
-            throw TemplateCanNotBeExpanded::dueToUsingReservedOperator($expression['expression']);
+            throw new SyntaxError('The operator used in the expression "'.$expression['pattern'].'" is reserved.');
         }
 
         foreach (explode(',', $expression['variables']) as $varSpec) {
+            if ('' === $varSpec) {
+                throw new SyntaxError('No variable specification was included in the expression "'.$expression['pattern'].'".');
+            }
+
             if (1 !== preg_match(self::REGEXP_VARSPEC, $varSpec, $parsed)) {
-                throw TemplateCanNotBeExpanded::dueToMalformedVariableSpecification($varSpec, $expression['expression']);
+                throw new SyntaxError('The variable specification "'.$varSpec.'" included in the expression "'.$expression['pattern'].'" is invalid.');
             }
 
             $parsed += ['modifier' => '', 'position' => ''];
@@ -377,11 +378,11 @@ final class UriTemplate
             return $expanded;
         }
 
-        $variableValue = $this->normalizeValue($this->variables[$variable['name']]);
-        $arguments = [$variableValue, $variable, $operator];
+        $value = $this->normalizeValue($this->variables[$variable['name']]);
+        $arguments = [$value, $variable, $operator];
         $method = 'expandString';
         $actualQuery = $useQuery;
-        if (is_array($variableValue)) {
+        if (is_array($value)) {
             $arguments[] = $joiner;
             $arguments[] = $useQuery;
             $method = 'expandList';
@@ -404,27 +405,27 @@ final class UriTemplate
     }
 
     /**
-     * @param mixed $var the value to be expanded
+     * @param mixed $value the value to be expanded
      *
      * @throws \TypeError if the type is not supported
      *
      * @return string|array
      */
-    private function normalizeValue($var)
+    private function normalizeValue($value)
     {
-        if (is_array($var)) {
-            return $var;
+        if (is_array($value)) {
+            return $value;
         }
 
-        if (is_bool($var)) {
-            return true === $var ? '1' : '0';
+        if (is_bool($value)) {
+            return true === $value ? '1' : '0';
         }
 
-        if (is_scalar($var) || method_exists($var, '__toString')) {
-            return (string) $var;
+        if (is_scalar($value) || method_exists($value, '__toString')) {
+            return (string) $value;
         }
 
-        throw new \TypeError(sprintf('The variables must be a scalar or a stringable object `%s` given', gettype($var)));
+        throw new \TypeError(sprintf('The variables must be a scalar or a stringable object `%s` given', gettype($value)));
     }
 
     /**
@@ -538,11 +539,11 @@ final class UriTemplate
             '&', '\'', '(', ')', '*', '+', ',', ';', '=',
         ];
 
-        static $delimiters_encoded = [
+        static $delimitersEncoded = [
             '%3A', '%2F', '%3F', '%23', '%5B', '%5D', '%40', '%21', '%24',
             '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D',
         ];
 
-        return str_replace($delimiters_encoded, $delimiters, $str);
+        return str_replace($delimitersEncoded, $delimiters, $str);
     }
 }

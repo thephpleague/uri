@@ -836,7 +836,7 @@ final class Uri implements UriInterface
         $server += ['HTTPS' => ''];
         $res = filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return $res !== false ? 'https' : 'http';
+        return false !== $res ? 'https' : 'http';
     }
 
     /**
@@ -1041,7 +1041,7 @@ final class Uri implements UriInterface
     {
         $properties = explode('=', $parameter);
 
-        return 2 != count($properties) || strtolower($properties[0]) === 'base64';
+        return 2 != count($properties) || 'base64' === strtolower($properties[0]);
     }
 
     /**
@@ -1123,7 +1123,7 @@ final class Uri implements UriInterface
     /**
      * URI validation for URI schemes which allows only scheme and path components.
      */
-    private function isUriWithSchemeAndPathOnly()
+    private function isUriWithSchemeAndPathOnly(): bool
     {
         return null === $this->authority
             && null === $this->query
@@ -1133,7 +1133,7 @@ final class Uri implements UriInterface
     /**
      * URI validation for URI schemes which allows only scheme, host and path components.
      */
-    private function isUriWithSchemeHostAndPathOnly()
+    private function isUriWithSchemeHostAndPathOnly(): bool
     {
         return null === $this->user_info
             && null === $this->port
@@ -1145,7 +1145,7 @@ final class Uri implements UriInterface
     /**
      * URI validation for URI schemes which disallow the empty '' host.
      */
-    private function isNonEmptyHostUri()
+    private function isNonEmptyHostUri(): bool
     {
         return '' !== $this->host
             && !(null !== $this->scheme && null === $this->host);
@@ -1155,7 +1155,7 @@ final class Uri implements UriInterface
      * URI validation for URIs schemes which disallow the empty '' host
      * and forbids the fragment component.
      */
-    private function isNonEmptyHostUriWithoutFragment()
+    private function isNonEmptyHostUriWithoutFragment(): bool
     {
         return $this->isNonEmptyHostUri() && null === $this->fragment;
     }
@@ -1164,7 +1164,7 @@ final class Uri implements UriInterface
      * URI validation for URIs schemes which disallow the empty '' host
      * and forbids fragment and query components.
      */
-    private function isNonEmptyHostUriWithoutFragmentAndQuery()
+    private function isNonEmptyHostUriWithoutFragmentAndQuery(): bool
     {
         return $this->isNonEmptyHostUri() && null === $this->fragment && null === $this->query;
     }

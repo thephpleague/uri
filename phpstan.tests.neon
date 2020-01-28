@@ -4,13 +4,25 @@ includes:
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
     ignoreErrors:
-        - '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-        - '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-        - '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-        - '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-        - '#Parameter \#1 \$uri of static method League\\Uri\\Http::createFromUri\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-        - '#Parameter \#[\d]+ \$[A-Za-z0-9]+ of static method PHPUnit\\Framework\\Assert::assertJsonStringEqualsJsonString\(\) expects string, string\|false given\.#'
-        - '#Parameter \#1 \$fragment of method League\\Uri\\Http::withFragment\(\) expects string, array given\.#'
-        - '#Variable static method call on League\\Uri\\UriInfo.#'
-        - '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
+        - message: '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
+          path: tests/ResolverTest.php
+        - message: '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
+          path: tests/ResolverTest.php
+        - message: '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
+          path: tests/RelativizerTest.php
+        - message: '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
+          path: tests/RelativizerTest.php
+        - message: '#Parameter \#1 \$uri of static method League\\Uri\\Http::createFromUri\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
+          path: tests/FactoryTest.php
+        - message: '#Parameter \#[\d]+ \$[A-Za-z0-9]+ of static method PHPUnit\\Framework\\Assert::assertJsonStringEqualsJsonString\(\) expects string, string\|false given\.#'
+          path: tests/UriTest.php
+        - message: '#Parameter \#1 \$fragment of method League\\Uri\\Http::withFragment\(\) expects string, array given\.#'
+          path: tests/HttpTest.php
+        - message: '#Variable static method call on League\\Uri\\UriInfo.#'
+          path: tests/UriInfoTest.php
+        - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
+          path: tests/UriTest.php
+        - message: '#Parameter \#1 \$template of class League\\Uri\\UriTemplate constructor expects object\|string, int given\.#'
+          path: tests/UriTemplateTest.php
     reportUnmatchedIgnoredErrors: true
+    checkMissingIterableValueType: false

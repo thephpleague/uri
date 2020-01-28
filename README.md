@@ -17,7 +17,6 @@ Highlights
 - Implements the `UriInterface` from [PSR-7][]
 - Fully documented
 - Framework Agnostic
-- Composer ready, [PSR-2][] and [PSR-4][] compliant
 
 Documentation
 ------
@@ -50,7 +49,6 @@ Documentation
 --------
 
 Full documentation can be found at [uri.thephpleague.com][].
-
 
 Contributing
 -------
@@ -88,9 +86,13 @@ License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
 
-[PSR-2]: http://www.php-fig.org/psr/psr-2/
-[PSR-4]: http://www.php-fig.org/psr/psr-4/
+Attribution
+-------
+
+The `UriTemplate` class is adapted from the [Guzzle 6][] project. 
+
 [PSR-7]: http://www.php-fig.org/psr/psr-7/
 [RFC3986]: http://tools.ietf.org/html/rfc3986
 [RFC3987]: http://tools.ietf.org/html/rfc3987
 [uri.thephpleague.com]: http://uri.thephpleague.com
+[Guzzle 6]: https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php

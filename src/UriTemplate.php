@@ -258,30 +258,6 @@ final class UriTemplate
     }
 
     /**
-     * Returns a new instance with the updated template.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the modified template value.
-     *
-     * @param object|string $template a string or an object with the __toString method
-     *
-     * @throws SyntaxError if the new template is invalid
-     */
-    public function withTemplate($template): self
-    {
-        $template = $this->filterTemplate($template);
-        if ($template === $this->template) {
-            return $this;
-        }
-
-        $clone = clone $this;
-        $clone->template = $template;
-        $clone->parseExpressions();
-
-        return $clone;
-    }
-
-    /**
      * Returns the default values used to expand the template.
      *
      * The returned list only contains variables whose name is part of the current template.

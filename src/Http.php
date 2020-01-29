@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -21,7 +20,7 @@ use function is_scalar;
 use function method_exists;
 use function sprintf;
 
-final class Http implements Psr7UriInterface, JsonSerializable
+final class Http implements Psr7UriInterface, \JsonSerializable
 {
     /**
      * @var UriInterface

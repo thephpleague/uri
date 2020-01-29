@@ -77,21 +77,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::withTemplate
-     */
-    public function testWithTemplate(): void
-    {
-        $template = '{foo}{bar}';
-        $uriTemplate = new UriTemplate($template);
-        $newTemplate = $uriTemplate->withTemplate('{bar}{baz}');
-        $altTemplate = $uriTemplate->withTemplate($template);
-
-        self::assertSame($altTemplate->getTemplate(), $uriTemplate->getTemplate());
-        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
-        self::assertNotSame($newTemplate->getTemplate(), $uriTemplate->getTemplate());
-    }
-
-    /**
      * @covers ::filterVariables
      * @covers ::withDefaultVariables
      */

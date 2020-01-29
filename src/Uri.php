@@ -13,12 +13,10 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use finfo;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use TypeError;
 use function array_filter;
 use function array_map;
 use function base64_decode;
@@ -76,7 +74,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 invalid characters.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -85,7 +83,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 Sub delimiter characters regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-2.2
      *
      * @var string
      */
@@ -94,7 +92,7 @@ final class Uri implements UriInterface
     /**
      * RFC3986 unreserved characters regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.3
+     * @link https://tools.ietf.org/html/rfc3986#section-2.3
      *
      * @var string
      */
@@ -103,14 +101,14 @@ final class Uri implements UriInterface
     /**
      * RFC3986 schema regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     * @link https://tools.ietf.org/html/rfc3986#section-3.1
      */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
     /**
      * RFC3986 host identified by a registered name regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_HOST_REGNAME = '/^(
         (?<unreserved>[a-z0-9_~\-\.])|
@@ -121,14 +119,14 @@ final class Uri implements UriInterface
     /**
      * RFC3986 delimiters of the generic URI components regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-2.2
      */
     private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
 
     /**
      * RFC3986 IPvFuture regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_HOST_IPFUTURE = '/^
         v(?<version>[A-F0-9])+\.
@@ -151,14 +149,14 @@ final class Uri implements UriInterface
     /**
      * Mimetype regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc2397
+     * @link https://tools.ietf.org/html/rfc2397
      */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
     /**
      * Base64 content regular expression pattern.
      *
-     * @see https://tools.ietf.org/html/rfc2397
+     * @link https://tools.ietf.org/html/rfc2397
      */
     private const REGEXP_BINARY = ',(;|^)base64$,';
 
@@ -452,7 +450,7 @@ final class Uri implements UriInterface
     /**
      * Retrieves and format IDNA conversion error message.
      *
-     * @see http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
+     * @link http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
      */
     private function getIDNAErrors(int $error_byte): string
     {
@@ -689,7 +687,7 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('The file `%s` does not exist or is not readable', $path));
         }
 
-        $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mime_args);
+        $mimetype = (string) (new \finfo(FILEINFO_MIME))->file(...$mime_args);
 
         return Uri::createFromComponents([
             'scheme' => 'data',
@@ -766,7 +764,7 @@ final class Uri implements UriInterface
         }
 
         if (!$uri instanceof Psr7UriInterface) {
-            throw new TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
+            throw new \TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
         }
 
         $scheme = $uri->getScheme();
@@ -965,7 +963,7 @@ final class Uri implements UriInterface
     /**
      * Filter the Path component.
      *
-     * @see https://tools.ietf.org/html/rfc2397
+     * @link https://tools.ietf.org/html/rfc2397
      *
      * @throws SyntaxError If the path is not compliant with RFC2397
      */
@@ -1004,7 +1002,7 @@ final class Uri implements UriInterface
     /**
      * Assert the path is a compliant with RFC2397.
      *
-     * @see https://tools.ietf.org/html/rfc2397
+     * @link https://tools.ietf.org/html/rfc2397
      *
      * @throws SyntaxError If the mediatype or the data are not compliant with the RFC2397
      */
@@ -1085,8 +1083,8 @@ final class Uri implements UriInterface
     /**
      * assert the URI internal state is valid.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3
-     * @see https://tools.ietf.org/html/rfc3986#section-3.3
+     * @link https://tools.ietf.org/html/rfc3986#section-3
+     * @link https://tools.ietf.org/html/rfc3986#section-3.3
      *
      * @throws SyntaxError if the URI is in an invalid state according to RFC3986
      * @throws SyntaxError if the URI is in an invalid state according to scheme specific rules
@@ -1172,7 +1170,7 @@ final class Uri implements UriInterface
     /**
      * Generate the URI string representation from its components.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-5.3
+     * @link https://tools.ietf.org/html/rfc3986#section-5.3
      *
      * @param ?string $scheme
      * @param ?string $authority
@@ -1344,7 +1342,7 @@ final class Uri implements UriInterface
         }
 
         if (!is_scalar($str) && !method_exists($str, '__toString')) {
-            throw new TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given', gettype($str)));
+            throw new \TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given', gettype($str)));
         }
 
         $str = (string) $str;
@@ -1425,7 +1423,7 @@ final class Uri implements UriInterface
     {
         $path = $this->filterString($path);
         if (null === $path) {
-            throw new TypeError('A path must be a string NULL given');
+            throw new \TypeError('A path must be a string NULL given');
         }
 
         $path = $this->formatPath($path);

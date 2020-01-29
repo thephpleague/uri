@@ -40,15 +40,23 @@ use const ARRAY_FILTER_USE_KEY;
 use const PREG_SET_ORDER;
 
 /**
- * Expands URI templates.
+ * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.
  *
- * @link http://tools.ietf.org/html/rfc6570
+ * @link    https://tools.ietf.org/html/rfc6570
+ * @package League\Uri
+ * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
+ * @since   6.1.0
  *
- * Based on GuzzleHttp\UriTemplate class which is removed from Guzzle7.
- * @see https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php
+ * Based on GuzzleHttp\UriTemplate class in Guzzle v6.5.
+ * @link https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php
  */
 final class UriTemplate
 {
+    /**
+     * Expression regular expression pattern.
+     *
+     * @link https://tools.ietf.org/html/rfc6570#section-2.2
+     */
     private const REGEXP_EXPRESSION = '/\{
         (?<expression>
             (?<operator>[\.\/;\?&\=,\!@\|\+#])?
@@ -56,13 +64,28 @@ final class UriTemplate
         )
     \}/x';
 
+    /**
+     * Variables specification regular expression pattern.
+     *
+     * @link https://tools.ietf.org/html/rfc6570#section-2.3
+     */
     private const REGEXP_VARSPEC = '/^
         (?<name>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
         (?<modifier>\:(?<position>\d+)|\*)?
     $/x';
 
+    /**
+     * Reserved Operator characters.
+     *
+     * @link https://tools.ietf.org/html/rfc6570#section-2.2
+     */
     private const RESERVED_OPERATOR = '=,!@|';
 
+    /**
+     * Processing behavior according to the expression type operator.
+     *
+     * @link https://tools.ietf.org/html/rfc6570#appendix-A
+     */
     private const OPERATOR_HASH_LOOKUP = [
         ''  => ['prefix' => '',  'joiner' => ',', 'query' => false],
         '+' => ['prefix' => '',  'joiner' => ',', 'query' => false],

@@ -15,7 +15,6 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
-use TypeError;
 use function array_merge;
 use function defined;
 use function explode;
@@ -52,10 +51,10 @@ use const INTL_IDNA_VARIANT_UTS46;
 /**
  * A class to parse a URI string according to RFC3986.
  *
- * @see     https://tools.ietf.org/html/rfc3986
+ * @link    https://tools.ietf.org/html/rfc3986
  * @package League\Uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
- * @since   0.1.0
+ * @since   6.0.0
  */
 final class UriString
 {
@@ -87,7 +86,7 @@ final class UriString
     /**
      * RFC3986 regular expression URI splitter.
      *
-     * @see https://tools.ietf.org/html/rfc3986#appendix-B
+     * @link https://tools.ietf.org/html/rfc3986#appendix-B
      */
     private const REGEXP_URI_PARTS = ',^
         (?<scheme>(?<scontent>[^:/?\#]+):)?    # URI scheme component
@@ -100,14 +99,14 @@ final class UriString
     /**
      * URI scheme regular expresssion.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.1
+     * @link https://tools.ietf.org/html/rfc3986#section-3.1
      */
     private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d\+\.\-]*)?$/i';
 
     /**
      * IPvFuture regular expression.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_IP_FUTURE = '/^
         v(?<version>[A-F0-9])+\.
@@ -120,7 +119,7 @@ final class UriString
     /**
      * General registered name regular expression.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_REGISTERED_NAME = '/(?(DEFINE)
         (?<unreserved>[a-z0-9_~\-])   # . is missing as it is used to separate labels
@@ -133,7 +132,7 @@ final class UriString
     /**
      * Invalid characters in host regular expression.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_INVALID_HOST_CHARS = '/
         [:\/?#\[\]@ ]  # gen-delims characters as well as the space character
@@ -142,7 +141,7 @@ final class UriString
     /**
      * Invalid path for URI without scheme and authority regular expression.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.3
+     * @link https://tools.ietf.org/html/rfc3986#section-3.3
      */
     private const REGEXP_INVALID_PATH = ',^(([^/]*):)(.*)?/,';
 
@@ -169,10 +168,19 @@ final class UriString
      * If you supply your own array, you are responsible for providing
      * valid components without their URI delimiters.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-5.3
-     * @see https://tools.ietf.org/html/rfc3986#section-7.5
+     * @link https://tools.ietf.org/html/rfc3986#section-5.3
+     * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
-     * @param array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components
+     * @param array{
+     *  scheme:?string,
+     *  user:?string,
+     *  pass:?string,
+     *  host:?string,
+     *  port:?int,
+     *  path:string,
+     *  query:?string,
+     *  fragment:?string
+     * } $components
      */
     public static function build(array $components): string
     {
@@ -246,7 +254,7 @@ final class UriString
      *   required to validate the returned components against its related scheme specific rules.</li>
      * </ul>
      *
-     * @see https://tools.ietf.org/html/rfc3986
+     * @link https://tools.ietf.org/html/rfc3986
      *
      * @param mixed $uri any scalar or stringable object
      *
@@ -254,12 +262,21 @@ final class UriString
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
      *
-     * @return array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
+     * @return array{
+     *                scheme:?string,
+     *                user:?string,
+     *                pass:?string,
+     *                host:?string,
+     *                port:?int,
+     *                path:string,
+     *                query:?string,
+     *                fragment:?string
+     *                }
      */
     public static function parse($uri): array
     {
         if (!is_scalar($uri) && !method_exists($uri, '__toString')) {
-            throw new TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
+            throw new \TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
         }
 
         $uri = (string) $uri;
@@ -328,7 +345,7 @@ final class UriString
     /**
      * Parses the URI authority part.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2
      *
      * @throws SyntaxError If the port component is invalid
      *
@@ -358,7 +375,7 @@ final class UriString
     /**
      * Filter and format the port component.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @throws SyntaxError if the registered name is invalid
      */
@@ -378,7 +395,7 @@ final class UriString
     /**
      * Returns whether a hostname is valid.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @throws SyntaxError if the registered name is invalid
      */
@@ -402,7 +419,7 @@ final class UriString
     /**
      * Returns whether the host is an IPv4 or a registered named.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      *
      * @throws SyntaxError       if the registered name is invalid
      * @throws IdnSupportMissing if IDN support or ICU requirement are not available or met.
@@ -479,7 +496,7 @@ final class UriString
     /**
      * Retrieves and format IDNA conversion error message.
      *
-     * @see http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
+     * @link http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
      */
     private static function getIDNAErrors(int $error_byte): string
     {
@@ -515,9 +532,9 @@ final class UriString
     /**
      * Validates a IPv6/IPvfuture host.
      *
-     * @see https://tools.ietf.org/html/rfc3986#section-3.2.2
-     * @see https://tools.ietf.org/html/rfc6874#section-2
-     * @see https://tools.ietf.org/html/rfc6874#section-4
+     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
+     * @link https://tools.ietf.org/html/rfc6874#section-2
+     * @link https://tools.ietf.org/html/rfc6874#section-4
      */
     private static function isIpHost(string $ip_host): bool
     {

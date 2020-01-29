@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## Next - TBD
+
+### Added 
+
+- Nothing
+
+### Fixed
+
+- Nothing
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Nothing
+
 ## 6.1.0 - 2020-01-29
 
 ### Added 

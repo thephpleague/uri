@@ -7,6 +7,7 @@
         "uri",
         "rfc3986",
         "rfc3987",
+        "rfc6570",
         "psr-7",
         "parse_url",
         "http",
@@ -19,7 +20,8 @@
         "parse_str",
         "query-string",
         "querystring",
-        "hostname"
+        "hostname",
+        "uri-template"
     ],
     "license": "MIT",
     "homepage": "http://uri.thephpleague.com",
@@ -91,7 +93,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "6.x-dev"
         }
     },
     "config": {

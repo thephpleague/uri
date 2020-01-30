@@ -47,6 +47,7 @@ final class UriTemplateTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::filterVariables
+     * @covers ::normalizeValue
      * @covers ::getDefaultVariables
      */
     public function testGetDefaultVariables(): void
@@ -54,7 +55,7 @@ final class UriTemplateTest extends TestCase
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
-            'segments' => ['one', 'two'],
+            'segments' => ['one', 'two', 3, true, 'false', false, null],
             'query'    => 'test',
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
@@ -63,7 +64,7 @@ final class UriTemplateTest extends TestCase
 
         $expectedVariables = [
             'path'     => '/foo/bar',
-            'segments' => ['one', 'two'],
+            'segments' => ['one', 'two', '3', '1', 'false', '0', ''],
             'query'    => 'test',
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
@@ -78,6 +79,7 @@ final class UriTemplateTest extends TestCase
 
     /**
      * @covers ::filterVariables
+     * @covers ::normalizeValue
      * @covers ::withDefaultVariables
      */
     public function testWithDefaultVariables(): void
@@ -163,6 +165,7 @@ final class UriTemplateTest extends TestCase
      * @covers ::expandList
      * @covers ::isAssoc
      * @covers ::decodeReserved
+     * @covers ::normalizeValue
      *
      * @dataProvider templateExpansionProvider
      */

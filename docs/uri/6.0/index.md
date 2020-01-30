@@ -29,6 +29,7 @@ To ease URI objects creation and manipulation, the following helper classes are 
 - the [UriInfo](/uri/6.0/info) : retrieves RFC3986 related info from an URI object;
 - the [UriResolver](/uri/6.0/resolver) : resolves or relativizes an URI against a base URI;
 - the [UriString](/uri/6.0/parser-builder) : parses or builds an URI string into or from its components;
+- the [UriTemplate](/uri/6.0/uri-template) : expands an URI template string into an URI object;
 
 System Requirements
 -------

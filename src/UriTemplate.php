@@ -251,7 +251,9 @@ final class UriTemplate
     }
 
     /**
-     * Filter out the value whose key is not a valid variable name for the given template.
+     * Filters out variables for the given template.
+     *
+     * @return array<string|array<string>>
      */
     private function filterVariables(array $variables): array
     {
@@ -259,7 +261,47 @@ final class UriTemplate
             return in_array($key, $this->variableNames, true);
         };
 
-        return array_filter($variables, $filter, ARRAY_FILTER_USE_KEY);
+        $result = array_filter($variables, $filter, ARRAY_FILTER_USE_KEY);
+        foreach ($result as $name => &$value) {
+            $value = $this->normalizeValue($name, $value, true);
+        }
+        unset($value);
+
+        return $result;
+    }
+
+    /**
+     * @param mixed $value the value to be expanded
+     *
+     * @throws \TypeError               if the type is not supported
+     * @throws TemplateCanNotBeExpanded if the value contains nested list
+     *
+     * @return string|array<string>
+     */
+    private function normalizeValue(string $name, $value, bool $isNestedListAllowed)
+    {
+        if (is_array($value)) {
+            if (!$isNestedListAllowed) {
+                throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name);
+            }
+
+            foreach ($value as &$var) {
+                $var = $this->normalizeValue($name, $var, false);
+            }
+            unset($var);
+
+            return $value;
+        }
+
+        if (is_bool($value)) {
+            return true === $value ? '1' : '0';
+        }
+
+        if (null === $value || is_scalar($value) || method_exists($value, '__toString')) {
+            return (string) $value;
+        }
+
+        throw new \TypeError(sprintf('The variable '.$name.' must be NULL, a scalar or a stringable object `%s` given', gettype($value)));
     }
 
     /**
@@ -385,12 +427,7 @@ final class UriTemplate
      */
     private function expandVariable(array $variable, string $operator, string $joiner, bool $useQuery): string
     {
-        $expanded = '';
-        if (!isset($this->variables[$variable['name']])) {
-            return $expanded;
-        }
-
-        $value = $this->normalizeValue($this->variables[$variable['name']]);
+        $value = $this->variables[$variable['name']] ?? '';
         $arguments = [$value, $variable, $operator];
         $method = 'expandString';
         $actualQuery = $useQuery;
@@ -414,30 +451,6 @@ final class UriTemplate
         }
 
         return $variable['name'].'='.$expanded;
-    }
-
-    /**
-     * @param mixed $value the value to be expanded
-     *
-     * @throws \TypeError if the type is not supported
-     *
-     * @return string|array
-     */
-    private function normalizeValue($value)
-    {
-        if (is_array($value)) {
-            return $value;
-        }
-
-        if (is_bool($value)) {
-            return true === $value ? '1' : '0';
-        }
-
-        if (is_scalar($value) || method_exists($value, '__toString')) {
-            return (string) $value;
-        }
-
-        throw new \TypeError(sprintf('The variables must be a scalar or a stringable object `%s` given', gettype($value)));
     }
 
     /**
@@ -480,10 +493,6 @@ final class UriTemplate
         /** @var string $key */
         foreach ($value as $key => $var) {
             if ($isAssoc) {
-                if (is_array($var)) {
-                    throw TemplateCanNotBeExpanded::dueToNestedListOfValue($key);
-                }
-
                 $key = rawurlencode((string) $key);
             }
 

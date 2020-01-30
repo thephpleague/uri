@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.1.1 - 2020-01-30
 
 ### Added 
 
@@ -10,7 +10,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- Nothing
+- `League\Uri\UriTemplate` variables validation and normalization improved
 
 ### Deprecated
 

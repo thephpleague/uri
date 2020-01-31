@@ -142,7 +142,8 @@ final class UriTemplate
      * @param object|string $template a string or an object with the __toString method
      *
      * @throws \TypeError               if the template is not a string or an object with the __toString method
-     * @throws TemplateCanNotBeExpanded if the template syntax is invalid
+     * @throws SyntaxError              if the template syntax is invalid
+     * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */
     public function __construct($template, array $defaultVariables = [])
     {
@@ -405,7 +406,7 @@ final class UriTemplate
         }
 
         $nullFilter = static function ($value): bool {
-            return null !== $value && '' !== $value;
+            return '' !== $value;
         };
 
         $expanded = implode($joiner, array_filter($parts, $nullFilter));
@@ -430,13 +431,13 @@ final class UriTemplate
         $value = $this->variables[$variable['name']] ?? '';
         $arguments = [$value, $variable, $operator];
         $method = 'expandString';
-        $actualQuery = $useQuery;
         if (is_array($value)) {
             $arguments[] = $joiner;
             $arguments[] = $useQuery;
             $method = 'expandList';
         }
 
+        $actualQuery = $useQuery;
         $expanded = $this->$method(...$arguments);
         if (is_array($expanded)) {
             [$expanded, $actualQuery] = $expanded;
@@ -474,7 +475,6 @@ final class UriTemplate
      * Expands an expression using a list of values.
      *
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
-     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      *
      * @return array{0:string, 1:bool}
      */
@@ -541,7 +541,7 @@ final class UriTemplate
      * Determines if an array is associative.
      *
      * This makes the assumption that input arrays are sequences or hashes.
-     * This assumption is a tradeoff for accuracy in favor of speed, but it
+     * This assumption is a trade-off for accuracy in favor of speed, but it
      * should work in almost every case where input is supplied for a URI
      * template.
      */

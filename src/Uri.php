@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -32,7 +33,6 @@ use function implode;
 use function in_array;
 use function inet_pton;
 use function is_scalar;
-use function mb_detect_encoding;
 use function method_exists;
 use function preg_match;
 use function preg_replace;
@@ -42,6 +42,7 @@ use function sprintf;
 use function str_replace;
 use function strlen;
 use function strpos;
+use function strspn;
 use function strtolower;
 use function substr;
 use const FILEINFO_MIME;
@@ -197,6 +198,13 @@ final class Uri implements UriInterface
         'ws' => 'isNonEmptyHostUriWithoutFragment',
         'wss' => 'isNonEmptyHostUriWithoutFragment',
     ];
+
+    /**
+     * All ASCII letters sorted by typical frequency of occurrence.
+     *
+     * @var string
+     */
+    private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
     /**
      * URI scheme component.
@@ -671,10 +679,18 @@ final class Uri implements UriInterface
      *
      * @param resource|null $context
      *
-     * @throws SyntaxError If the file does not exist or is not readable
+     * @throws FileinfoSupportMissing If ext/fileinfo is not installed
+     * @throws SyntaxError            If the file does not exist or is not readable
      */
     public static function createFromDataPath(string $path, $context = null): self
     {
+        static $finfo_support = null;
+        $finfo_support = $finfo_support ?? class_exists(\finfo::class);
+
+        if (!$finfo_support) {
+            throw new FileinfoSupportMissing(sprintf('Please install ext/fileinfo to use the %s() method.', __METHOD__));
+        }
+
         $file_args = [$path, false];
         $mime_args = [$path, FILEINFO_MIME];
         if (null !== $context) {
@@ -977,7 +993,7 @@ final class Uri implements UriInterface
             return 'text/plain;charset=us-ascii,';
         }
 
-        if (false === mb_detect_encoding($path, 'US-ASCII', true) || false === strpos($path, ',')) {
+        if (strlen($path) !== strspn($path, self::ASCII) || false === strpos($path, ',')) {
             throw new SyntaxError(sprintf('The path `%s` is invalid according to RFC2937', $path));
         }
 

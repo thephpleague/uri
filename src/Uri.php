@@ -687,9 +687,11 @@ final class Uri implements UriInterface
         static $finfo_support = null;
         $finfo_support = $finfo_support ?? class_exists(\finfo::class);
 
+        // @codeCoverageIgnoreStart
         if (!$finfo_support) {
             throw new FileinfoSupportMissing(sprintf('Please install ext/fileinfo to use the %s() method.', __METHOD__));
         }
+        // @codeCoverageIgnoreEnd
 
         $file_args = [$path, false];
         $mime_args = [$path, FILEINFO_MIME];

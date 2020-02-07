@@ -55,6 +55,7 @@ System Requirements
 
 - You require **PHP >= 7.2** but the latest stable version of PHP is recommended
 - You will need the **ext-intl** to handle i18n URI.
+- Since version 6.2.0 you will need the **ext-fileinfo** to handle Data URI creation from a filepath.
 
 Dependencies
 -------
@@ -63,6 +64,8 @@ Dependencies
 - [PSR-7][]
 
 In order to handle IDN host you are required to also install the `intl` extension otherwise an exception will be thrown when attempting to validate such host.
+
+In order to create Data URI from a filepath, since version `6.2`, you are required to also install the `fileinfo` extension otherwise an exception will be thrown.
 
 Installation
 --------

@@ -38,8 +38,6 @@
     },
     "require": {
         "php": "^7.2",
-        "ext-fileinfo": "*",
-        "ext-mbstring": "*",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "league/uri-interfaces": "^2.0"

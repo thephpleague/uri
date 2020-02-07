@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 6.2.0 - TBD
+
+### Added 
+
+- `League\Uri\Exceptions\FileinfoSupportMissing` exception [#154](https://github.com/thephpleague/uri/pull/154)
+
+### Fixed
+
+- `League\Uri\UriTemplate` variables validation and normalization improved
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- Hard dependencies on the `ext-mbstring` and the `ext-fileinfo` PHP extensions [#154](https://github.com/thephpleague/uri/pull/154) thanks [Nicolas Grekas](https://github.com/nicolas-grekas)
+
 ## 6.1.1 - 2020-01-30
 
 ### Added 

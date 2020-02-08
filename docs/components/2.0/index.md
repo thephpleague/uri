@@ -49,6 +49,7 @@ If you want to handle:
     - a `64-bits` PHP version
 
 Trying to process such hosts without meeting those minimal requirements will trigger a `RuntimeException`.
+- Data URI creation from a filepath, Since version `2.2.0`, the `fileinfo` extension is **required**.
 
 Installation
 --------

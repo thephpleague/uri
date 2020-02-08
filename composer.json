@@ -87,7 +87,8 @@
     },
     "suggest": {
         "league/uri-components" : "Needed to easily manipulate URI objects",
-        "ext-intl" : "Needed to improve host validation"
+        "ext-intl" : "Needed to improve host validation",
+        "ext-fileinfo": "Needed to create Data URI from a filepath"
     },
     "extra": {
         "branch-alias": {

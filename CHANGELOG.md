@@ -6,11 +6,11 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added 
 
-- `League\Uri\Exceptions\FileinfoSupportMissing` exception [#154](https://github.com/thephpleague/uri/pull/154)
+- None
 
 ### Fixed
 
-- `League\Uri\UriTemplate` variables validation and normalization improved
+- None
 
 ### Deprecated
 

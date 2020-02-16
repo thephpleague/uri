@@ -67,6 +67,6 @@ Dependencies
 What you will be able to do
 --------
 
-- Build and parse query with [QueryString](/components/2.0/querystring/)
+- Build and parse query with [QueryString](/components/2.0/query-parser-builder/)
 - Partially modify URI with [URI Modifiers](/components/2.0/modifiers/)
 - Create and Manipulate URI components objects with a [Common API](/components/2.0/api/)

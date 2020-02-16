@@ -27,8 +27,7 @@ echo $newUri->getQuery(); //display "kingkong=toto&kingkong=ape&foo=bar%20baz"
 
 ## UriModifier::mergeQuery
 
-Merges a submitted query string to the URI object to be modified. When merging two query strings with the same key value. 
-The submitted query string value takes precedence over the URI query string value.
+Merges a submitted query string to the URI object to be modified. When merging two query strings with the same key value the submitted query string value takes precedence over the URI query string value.
 
 ~~~php
 $uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";
@@ -41,8 +40,7 @@ echo $newUri->getQuery(); //display "kingkong=godzilla&foo=bar%20baz&toto"
 
 ## UriModifier::appendQuery
 
-Appends a submitted query string to the URI object to be modified. When appending two query strings with the same key value.
-The submitted query string value is added to the return query string without modifying the URI query string value.
+Appends a submitted query string to the URI object to be modified. When appending two query strings with the same key value the submitted query string value is added to the return query string without modifying the URI query string value.
 
 ~~~php
 $uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";

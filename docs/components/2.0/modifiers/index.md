@@ -13,12 +13,12 @@ For instance here's how you would update the query string from a given URI objec
 ~~~php
 <?php
 
-use Slim\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 
 $uriString = "http://www.example.com?fo.o=toto#~typo";
 $queryToMerge = 'fo.o=bar&taz=';
 
-$uri = Uri::createFromString($uriString);
+$uri = new Uri($uriString);
 parse_str($uri->getQuery(), $params);
 parse_str($queryToMerge, $paramsToMerge);
 $query = http_build_query(
@@ -37,16 +37,16 @@ Using the provided `League\Uri\UriModifier::mergeQuery` modifier the code become
 ~~~php
 <?php
 
+use GuzzleHttp\Psr7\Uri;
 use League\Uri\UriModifier;
-use Slim\Http\Uri;
 
 $uriString = "http://www.example.com?fo.o=toto#~typo";
 $queryToMerge = 'fo.o=bar&taz=';
 
-$uri = Uri::createFromString($uriString);
+$uri = new Uri($uriString);
 $newUri = UriModifier::mergeQuery($uri, $queryToMerge);
 
-echo get_class($newUri); // returns \Slim\Http\Uri
+echo get_class($newUri); // returns \GuzzleHttp\Psr7\Uri
 echo $newUri; // display http://www.example.com?fo.o=bar&taz=#~typo
 ~~~
 

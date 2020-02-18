@@ -10,7 +10,7 @@
 /.github            export-ignore
 /benchmark          export-ignore
 /docs               export-ignore
-/test               export-ignore
+/tests              export-ignore
 /README.md          export-ignore
 /CHANGELOG.md       export-ignore
 /CONDUCT.md         export-ignore

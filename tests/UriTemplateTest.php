@@ -224,6 +224,7 @@ final class UriTemplateTest extends TestCase
                 ['{;x,y,empty}',        ';x=1024;y=768;empty'],
                 ['{?x,y}',              '?x=1024&y=768'],
                 ['{?x,y,empty}',        '?x=1024&y=768&empty='],
+                ['{?x,y,undef}',        '?x=1024&y=768'],
                 ['?fixed=yes{&x}',      '?fixed=yes&x=1024'],
                 ['{&x,y,empty}',        '&x=1024&y=768&empty='],
             ],

@@ -402,7 +402,9 @@ final class UriTemplate
         $parts = [];
         /** @var array{name:string, modifier:string, position:string} $variable */
         foreach ($expression['variables'] as $variable) {
-            $parts[] = $this->expandVariable($variable, $expression['operator'], $joiner, $useQuery);
+            if (isset($this->variables[$variable['name']])) {
+                $parts[] = $this->expandVariable($variable, $expression['operator'], $joiner, $useQuery);
+            }
         }
 
         $nullFilter = static function ($value): bool {

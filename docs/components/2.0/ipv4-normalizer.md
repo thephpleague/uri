@@ -44,19 +44,19 @@ public function IPv4Normalizer::normalizeAuthority(AuthorityInterface $host): Au
 public function IPv4Normalizer::normalizeHost(HostInterface $host): HostInterface;
 ```
 
-The `IPv4Normalizer::normalize*` methods single parameters are object that contains or is a host component.
+The `IPv4Normalizer::normalize*` methods only parameters are objects that contain or are a host component.
 
 The `League\Uri\IPv4Calculators\IPv4Calculator` is responsible for making all the calculation needed to perform the conversion between IPv4 string representation.
-The package comes bundle with two implementation:
+The package comes bundled with three implementations:
 
 - `League\Uri\IPv4Calculators\GMPCalculator` which relies on GMP extension;
 - `League\Uri\IPv4Calculators\BCMathCalculator` which relies on BCMath extension;
 - `League\Uri\IPv4Calculators\NativeCalculator` which relies on PHP build against a x.64 architecture;
 
-If not `League\Uri\IPv4Calculators\IPv4Calculator` implementing object is provided the class will try to load one of it's these implementations.
-If it can not a `League\Uri\Exceptions\Ipv4CalculatorMissing` exception will be thrown.
+If no `League\Uri\IPv4Calculators\IPv4Calculator` implementing object is provided the class will try to load one of these implementations.
+If it can not, a `League\Uri\Exceptions\Ipv4CalculatorMissing` exception will be thrown.
 
-The methods always returns a instance of the same type as the submitted one with the host changed if the normalization is applicable or unchanged otherwise.
+The methods always return an instance of the same type as the submitted one with the host changed if the normalization is applicable or unchanged otherwise.
 
 ```php
 <?php

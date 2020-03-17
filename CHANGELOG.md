@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.2.1 - 2020-03-17
 
 ### Added 
 
@@ -11,6 +11,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - Bugfix `UriTemplate::expand` to comply with expansion rules for undefined variables [#161](https://github.com/thephpleague/uri/pull/161) thanks [Gabe Sullice](https://github.com/gabesullice)
+- Improve package testing settings and environment.
 
 ### Deprecated
 
@@ -18,7 +19,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Remove
 
-- Hard dependencies on the `ext-mbstring` and the `ext-fileinfo` PHP extensions [#154](https://github.com/thephpleague/uri/pull/154) thanks [Nicolas Grekas](https://github.com/nicolas-grekas)
+- None
 
 ## 6.2.0 - 2020-02-08
 

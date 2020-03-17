@@ -33,9 +33,16 @@
         }
     ],
     "support": {
-        "forum": "https://groups.google.com/forum/#!forum/thephpleague",
+        "forum": "https://thephpleague.slack.com",
+        "docs": "https://uri.thephpleague.com",
         "issues": "https://github.com/thephpleague/uri/issues"
     },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/nyamsprod"
+        }
+    ],
     "require": {
         "php": "^7.2",
         "ext-json": "*",

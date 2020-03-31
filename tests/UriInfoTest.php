@@ -222,13 +222,17 @@ class UriInfoTest extends TestCase
                 'uri' => Uri::createFromString('https://example.com:81/path?query#fragment'),
                 'expectedOrigin' => 'https://example.com:81',
             ],
-            'uri without a scheme' => [
+            'relative uri' => [
                 'uri' => Uri::createFromString('//example.com:81/path?query#fragment'),
                 'expectedOrigin' => null,
             ],
+            'absolute uri with user info' => [
+                'uri' => Uri::createFromString('https://user:pass@example.com:81/path?query#fragment'),
+                'expectedOrigin' => 'https://example.com:81',
+            ],
             'opaque URI' => [
                 'uri' => Uri::createFromString('mailto:info@thephpleague.com'),
-                'expectedOrigin' => 'info@thephpleague.com',
+                'expectedOrigin' => null,
             ],
             'file URI' => [
                 'uri' => Uri::createFromString('file:///usr/bin/test'),

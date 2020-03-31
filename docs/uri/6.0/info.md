@@ -82,7 +82,6 @@ UriInfo::getOrigin(Http::createFromString('file///usr/bin/php')); //returns null
 Because the origin property does not exists in the RFC3986 specification the following steps are implemented:
 
 - For non absolute URI the method will return `null`
-- For absolute URI without a defined host the opaque URI without the scheme is returned
 
 ~~~php
 <?php
@@ -92,5 +91,5 @@ use League\Uri\Uri;
 use League\Uri\UriInfo;
 
 UriInfo::getOrigin(Http::createFromString('/path/to/endpoint')); //returns null
-UriInfo::getOrigin(Uri::createFromString('data:text/plain,Bonjour%20le%20monde%21')); //returns 'text/plain,Bonjour%20le%20monde%21'
+UriInfo::getOrigin(Uri::createFromString('data:text/plain,Bonjour%20le%20monde%21')); //returns null
 ~~~

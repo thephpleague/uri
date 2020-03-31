@@ -6,7 +6,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added 
 
-- None
+- `UriInfo::getOrigin` to returns the URI origin as descrined in the WHATWG URL Living standard specification
 
 ### Fixed
 

@@ -25,10 +25,6 @@ final class UriInfo
 {
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
 
-    private const SCHEME_BLOB = 'blob';
-
-    private const SCHEME_FILE = 'file';
-
     /**
      * @codeCoverageIgnore
      */
@@ -182,10 +178,10 @@ final class UriInfo
      *
      * {@see https://url.spec.whatwg.org/#origin}
      *
-     * For non absolute URI the method will return null
-     * For absolute URI without a defined host the opaque URI without the scheme is returned
+     * For non absolute URI the method returns null
+     * For absolute URI without a special scheme the method returns null
      * For absolute URI with the file scheme the method will return null (as this is left to the implementation decision)
-     * For absolute URI with a defined host it will return the scheme followed by the authority
+     * For absolute URI with a special scheme the method returns the scheme followed by the authority (without the userinfo)
      *
      * @param Psr7UriInterface|UriInterface $uri
      */
@@ -195,20 +191,19 @@ final class UriInfo
             return null;
         }
 
-        if (self::SCHEME_FILE === $uri->getScheme()) {
-            return null;
-        }
+        $scheme = $uri->getScheme();
+        if ('blob' === $scheme) {
+            $newUri = Uri::createFromString($uri->getPath())->withQuery($uri->getQuery())->withFragment($uri->getFragment());
 
-        $null = self::emptyComponentValue($uri);
-        if ($null !== $uri->getHost()) {
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('');
-        }
-
-        $newUri = Uri::createFromString($uri->getPath())->withQuery($uri->getQuery())->withFragment($uri->getFragment());
-        if (self::SCHEME_BLOB === $uri->getScheme()) {
             return self::getOrigin($newUri);
         }
 
-        return (string) $newUri;
+        if (in_array($scheme, ['ftp', 'http', 'https', 'ws', 'wss'], true)) {
+            $null = self::emptyComponentValue($uri);
+
+            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+        }
+
+        return null;
     }
 }

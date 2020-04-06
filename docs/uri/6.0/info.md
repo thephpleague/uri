@@ -74,12 +74,13 @@ use League\Uri\UriInfo;
 
 UriInfo::getOrigin(Http::createFromString('https://uri.thephpleague.com/uri/6.0/info/')); //returns 'https://uri.thephpleague.com'
 UriInfo::getOrigin(Uri::createFromString('blob:https://mozilla.org:443')); //returns 'https://mozilla.org'
-UriInfo::getOrigin(Http::createFromString('file///usr/bin/php')); //returns null
+UriInfo::getOrigin(Http::createFromString('file:///usr/bin/php')); //returns null
+UriInfo::getOrigin(Uri::createFromString('data:text/plain,Bonjour%20le%20monde%21')); //returns null
 ~~~
 
 <p class="message-info">For absolute URI with the `file` scheme the method will return <code>null</code> (as this is left to the implementation decision)</p>
 
-Because the origin property does not exists in the RFC3986 specification the following steps are implemented:
+Because the origin property does not exists in the RFC3986 specification this additional steps is implemented:
 
 - For non absolute URI the method will return `null`
 
@@ -87,9 +88,7 @@ Because the origin property does not exists in the RFC3986 specification the fol
 <?php
 
 use League\Uri\Http;
-use League\Uri\Uri;
 use League\Uri\UriInfo;
 
 UriInfo::getOrigin(Http::createFromString('/path/to/endpoint')); //returns null
-UriInfo::getOrigin(Uri::createFromString('data:text/plain,Bonjour%20le%20monde%21')); //returns null
 ~~~

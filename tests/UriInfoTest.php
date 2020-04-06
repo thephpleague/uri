@@ -199,4 +199,49 @@ class UriInfoTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getOriginProvider
+     *
+     * @param Psr7UriInterface|Uri $uri
+     * @param ?string              $expectedOrigin
+     */
+    public function testGetOrigin($uri, ?string $expectedOrigin): void
+    {
+        self::assertSame($expectedOrigin, UriInfo::getOrigin($uri));
+    }
+
+    public function getOriginProvider(): array
+    {
+        return [
+            'http uri' => [
+                'uri' => Uri::createFromString('https://example.com/path?query#fragment'),
+                'expectedOrigin' => 'https://example.com',
+            ],
+            'http uri with non standard port' => [
+                'uri' => Uri::createFromString('https://example.com:81/path?query#fragment'),
+                'expectedOrigin' => 'https://example.com:81',
+            ],
+            'relative uri' => [
+                'uri' => Uri::createFromString('//example.com:81/path?query#fragment'),
+                'expectedOrigin' => null,
+            ],
+            'absolute uri with user info' => [
+                'uri' => Uri::createFromString('https://user:pass@example.com:81/path?query#fragment'),
+                'expectedOrigin' => 'https://example.com:81',
+            ],
+            'opaque URI' => [
+                'uri' => Uri::createFromString('mailto:info@thephpleague.com'),
+                'expectedOrigin' => null,
+            ],
+            'file URI' => [
+                'uri' => Uri::createFromString('file:///usr/bin/test'),
+                'expectedOrigin' => null,
+            ],
+            'blob' => [
+                'uri' => Uri::createFromString('blob:https://mozilla.org:443/'),
+                'expectedOrigin' => 'https://mozilla.org',
+            ],
+        ];
+    }
 }

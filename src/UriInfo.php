@@ -25,11 +25,21 @@ final class UriInfo
 {
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
 
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
+
     /**
      * @codeCoverageIgnore
      */
     private function __construct()
     {
+    }
+
+    /**
+     * @param Psr7UriInterface|UriInterface $uri
+     */
+    private static function emptyComponentValue($uri): ?string
+    {
+        return $uri instanceof Psr7UriInterface ? '' : null;
     }
 
     /**
@@ -64,7 +74,7 @@ final class UriInfo
     private static function normalize($uri)
     {
         $uri = self::filterUri($uri);
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
+        $null = self::emptyComponentValue($uri);
 
         $path = $uri->getPath();
         if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
@@ -104,9 +114,7 @@ final class UriInfo
      */
     public static function isAbsolute($uri): bool
     {
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
-
-        return $null !== self::filterUri($uri)->getScheme();
+        return self::emptyComponentValue($uri) !== self::filterUri($uri)->getScheme();
     }
 
     /**
@@ -117,7 +125,7 @@ final class UriInfo
     public static function isNetworkPath($uri): bool
     {
         $uri = self::filterUri($uri);
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
+        $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme() && $null !== $uri->getAuthority();
     }
@@ -130,7 +138,7 @@ final class UriInfo
     public static function isAbsolutePath($uri): bool
     {
         $uri = self::filterUri($uri);
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
+        $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme()
             && $null === $uri->getAuthority()
@@ -145,7 +153,7 @@ final class UriInfo
     public static function isRelativePath($uri): bool
     {
         $uri = self::filterUri($uri);
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
+        $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme()
             && $null === $uri->getAuthority()
@@ -165,5 +173,33 @@ final class UriInfo
 
         return (string) $uri->withFragment($uri instanceof Psr7UriInterface ? '' : null)
             === (string) $base_uri->withFragment($base_uri instanceof Psr7UriInterface ? '' : null);
+    }
+
+    /**
+     * Returns the URI origin property as defined by WHATWG URL living standard.
+     *
+     * {@see https://url.spec.whatwg.org/#origin}
+     *
+     * For URI without a special scheme the method returns null
+     * For URI with the file scheme the method will return null (as this is left to the implementation decision)
+     * For URI with a special scheme the method returns the scheme followed by its authority (without the userinfo part)
+     *
+     * @param Psr7UriInterface|UriInterface $uri
+     */
+    public static function getOrigin($uri): ?string
+    {
+        $scheme = self::filterUri($uri)->getScheme();
+        if ('blob' === $scheme) {
+            $uri = Uri::createFromString($uri->getPath());
+            $scheme = $uri->getScheme();
+        }
+
+        if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
+            $null = self::emptyComponentValue($uri);
+
+            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+        }
+
+        return null;
     }
 }

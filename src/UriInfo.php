@@ -25,6 +25,8 @@ final class UriInfo
 {
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
 
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
+
     /**
      * @codeCoverageIgnore
      */
@@ -178,27 +180,21 @@ final class UriInfo
      *
      * {@see https://url.spec.whatwg.org/#origin}
      *
-     * For non absolute URI the method returns null
-     * For absolute URI without a special scheme the method returns null
-     * For absolute URI with the file scheme the method will return null (as this is left to the implementation decision)
-     * For absolute URI with a special scheme the method returns the scheme followed by the authority (without the userinfo)
+     * For URI without a special scheme the method returns null
+     * For URI with the file scheme the method will return null (as this is left to the implementation decision)
+     * For URI with a special scheme the method returns the scheme followed by its authority (without the userinfo part)
      *
      * @param Psr7UriInterface|UriInterface $uri
      */
     public static function getOrigin($uri): ?string
     {
-        if (!self::isAbsolute($uri)) {
-            return null;
-        }
-
-        $scheme = $uri->getScheme();
+        $scheme = self::filterUri($uri)->getScheme();
         if ('blob' === $scheme) {
-            $newUri = Uri::createFromString($uri->getPath())->withQuery($uri->getQuery())->withFragment($uri->getFragment());
-
-            return self::getOrigin($newUri);
+            $uri = Uri::createFromString($uri->getPath());
+            $scheme = $uri->getScheme();
         }
 
-        if (in_array($scheme, ['ftp', 'http', 'https', 'ws', 'wss'], true)) {
+        if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
             $null = self::emptyComponentValue($uri);
 
             return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);

@@ -19,13 +19,12 @@ use League\Uri\UriTemplate;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass League\Uri\UriTemplate
+ * @coversDefaultClass \League\Uri\UriTemplate
  */
 final class UriTemplateTest extends TestCase
 {
     /**
      * @covers ::__construct
-     * @covers ::filterTemplate
      * @covers ::getTemplate
      */
     public function testGetTemplate(): void
@@ -47,7 +46,6 @@ final class UriTemplateTest extends TestCase
     /**
      * @covers ::__construct
      * @covers ::filterVariables
-     * @covers ::normalizeValue
      * @covers ::getDefaultVariables
      */
     public function testGetDefaultVariables(): void
@@ -79,7 +77,6 @@ final class UriTemplateTest extends TestCase
 
     /**
      * @covers ::filterVariables
-     * @covers ::normalizeValue
      * @covers ::withDefaultVariables
      */
     public function testWithDefaultVariables(): void
@@ -114,8 +111,6 @@ final class UriTemplateTest extends TestCase
 
     /**
      * @covers ::getVariableNames
-     * @covers ::parseExpressions
-     * @covers ::parseVariableSpecification
      *
      * @dataProvider expectedVariableNames
      */
@@ -147,25 +142,7 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::__construct
-     * @covers ::filterTemplate
-     */
-    public function testExpandAcceptsOnlyStringAndStringableObject(): void
-    {
-        self::expectException(\TypeError::class);
-
-        new UriTemplate(1);
-    }
-
-    /**
      * @covers ::expand
-     * @covers ::expandExpression
-     * @covers ::expandVariable
-     * @covers ::expandString
-     * @covers ::expandList
-     * @covers ::isAssoc
-     * @covers ::decodeReserved
-     * @covers ::normalizeValue
      *
      * @dataProvider templateExpansionProvider
      */
@@ -297,10 +274,6 @@ final class UriTemplateTest extends TestCase
         }
     }
 
-    /**
-     * @covers ::expandList
-     * @covers ::normalizeValue
-     */
     public function testAllowsQueryValuePairsArrayExpansion(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -319,9 +292,8 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::expandList
-     * @covers ::normalizeValue
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
+     * @covers \League\Uri\UriTemplate\Template
      */
     public function testDisallowNestedArrayExpansion(): void
     {
@@ -348,6 +320,7 @@ final class UriTemplateTest extends TestCase
     /**
      * @covers ::expand
      * @covers ::filterVariables
+     * @covers \League\Uri\UriTemplate\Template
      */
     public function testExpandWithDefaultVariables(): void
     {
@@ -373,6 +346,7 @@ final class UriTemplateTest extends TestCase
     /**
      * @covers ::expand
      * @covers ::filterVariables
+     * @covers \League\Uri\UriTemplate\Template
      */
     public function testExpandWithDefaultVariablesWithOverride(): void
     {
@@ -397,18 +371,7 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::normalizeValue
-     */
-    public function testUnsupportedValueType(): void
-    {
-        self::expectException(\TypeError::class);
-
-        (new UriTemplate('{foo}'))->expand(['foo' => new \stdClass()]);
-    }
-
-    /**
-     * @covers ::parseExpressions
-     * @covers ::parseVariableSpecification
+     * @covers \League\Uri\UriTemplate\Template
      *
      * @dataProvider provideInvalidTemplate
      */
@@ -425,85 +388,13 @@ final class UriTemplateTest extends TestCase
     public function provideInvalidTemplate(): iterable
     {
         return [
-            'missing variables and operator' => ['{}'],
-            'missing ending braces' => ['{/id*'],
-            'missing starting braces' => ['/id*}'],
             'mismatch in at least one expression (1)' => ['http://example.com/}/{+foo}'],
             'mismatch in at least one expression (2)' => ['http://example.com/{/{+foo}'],
-            'multiple starting operators' => ['{/?id}'],
-            'invalid prefix' => ['{var:prefix}'],
-            'multiple operator modifiers (1)' => ['{hello:2*}'] ,
-            'duplicate operator' => ['{??hello}'] ,
-            'reserved operator !' => ['{!hello}'] ,
-            'space inside variable name' => ['{with space}'],
-            'leading space in variable name (1)' => ['{ leading_space}'],
-            'trailing space in variable name' => ['{trailing_space }'],
-            'reserved operator =' => ['{=path}'] ,
-            'forbidden operator $' => ['{$var}'],
-            'reserved operator |' => ['{|var*}'],
-            'using an operator modifier as an operator' => ['{*keys?}'],
-            'variable name contains a reserved character (1)' => ['{?empty=default,var}'],
-            'variable name contains invalid character (1)' => ['{var}{-prefix|/-/|var}'],
-            'variable name contains invalid prefix' => ['?q={searchTerms}&amp;c={example:color?}'],
-            'variable name contains a reserved character (2)' => ['x{?empty|foo=none}'],
-            'variable name contains a reserved character (3)' => ['/h{#hello+}'],
-            'variable name contains a reserved character (4)' => ['/h#{hello+}'],
-            'multiple operator modifiers (2)' => ['{;keys:1*}'],
-            'variable name contains invalid character (2)' => ['?{-join|&|var,list}'],
-            'variable name contains invalid character (3)' => ['/people/{~thing}'],
-            'variable name contains invalid character (4)' => ['/{default-graph-uri}'],
-            'variable name contains invalid character (5)' => ['/sparql{?query,default-graph-uri}'],
-            'variable name contains invalid character (6)' => ['/sparql{?query){&default-graph-uri*}'],
-            'leading space in variable name (2)' => ['/resolution{?x, y}'],
         ];
     }
 
     /**
-     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
-     * @covers ::expandList
-     *
-     * @dataProvider invalidModifierToApply
-     */
-    public function testExpandThrowsExceptionIfTheModifierCanNotBeApplied(string $template, array $variables): void
-    {
-        self::expectException(TemplateCanNotBeExpanded::class);
-
-        (new UriTemplate($template))->expand($variables);
-    }
-
-    /**
-     * Following negative tests with wrong variable can only be detected at runtime.
-     *
-     * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
-     */
-    public function invalidModifierToApply(): iterable
-    {
-        return [
-            'can not apply a modifier on a hash value (1)' => [
-                'template' => '{keys:1}',
-                'variables' => [
-                    'keys' => [
-                        'semi' => ';',
-                        'dot' => '.',
-                        'comma' => ',',
-                    ],
-                ],
-            ],
-            'can not apply a modifier on a hash value (2)' => [
-                'template' => '{+keys:1}',
-                'variables' => [
-                    'keys' => [
-                        'semi' => ';',
-                        'dot' => '.',
-                        'comma' => ',',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @covers ::parseExpressions
+     * @covers \League\Uri\UriTemplate\Template
      */
     public function testExpansionWithMultipleSameExpression(): void
     {
@@ -511,16 +402,5 @@ final class UriTemplateTest extends TestCase
         $data = ['foo' => 'foo'];
 
         self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->__toString());
-    }
-
-    /**
-     * @covers ::normalizeValue
-     */
-    public function testConvertBooleanValueToString(): void
-    {
-        $template = '{true}/{false}';
-        $data = ['true' => true, 'false' => false];
-
-        self::assertSame('1/0', (new UriTemplate($template, $data))->expand()->__toString());
     }
 }

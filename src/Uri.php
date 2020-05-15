@@ -1110,11 +1110,11 @@ final class Uri implements UriInterface
     private function assertValidState(): void
     {
         if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
-            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`');
+            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
         }
 
         if (null === $this->authority && 0 === strpos($this->path, '//')) {
-            throw new SyntaxError(sprintf('If there is no authority the path `%s` can not start with a `//`', $this->path));
+            throw new SyntaxError(sprintf('If there is no authority the path `%s` can not start with a `//`.', $this->path));
         }
 
         $pos = strpos($this->path, ':');
@@ -1133,7 +1133,7 @@ final class Uri implements UriInterface
             return;
         }
 
-        throw new SyntaxError(sprintf('The uri `%s` is invalid for the data scheme', (string) $this));
+        throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', (string) $this, $this->scheme));
     }
 
     /**
@@ -1360,7 +1360,7 @@ final class Uri implements UriInterface
         }
 
         if (!is_scalar($str) && !method_exists($str, '__toString')) {
-            throw new \TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given', gettype($str)));
+            throw new \TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given.', gettype($str)));
         }
 
         $str = (string) $str;
@@ -1368,7 +1368,7 @@ final class Uri implements UriInterface
             return $str;
         }
 
-        throw new SyntaxError(sprintf('The component `%s` contains invalid characters', $str));
+        throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
     }
 
     /**
@@ -1441,7 +1441,7 @@ final class Uri implements UriInterface
     {
         $path = $this->filterString($path);
         if (null === $path) {
-            throw new \TypeError('A path must be a string NULL given');
+            throw new \TypeError('A path must be a string NULL given.');
         }
 
         $path = $this->formatPath($path);

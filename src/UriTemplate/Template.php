@@ -56,7 +56,7 @@ final class Template
             $this->expressions[$expression->toString()] = $expression;
             $variableNames[] = $expression->variableNames();
         }
-        $this->variableNames = array_unique(array_merge(...$variableNames));
+        $this->variableNames = array_unique(array_merge([], ...$variableNames));
     }
 
     /**

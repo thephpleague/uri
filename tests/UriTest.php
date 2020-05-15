@@ -576,7 +576,7 @@ class UriTest extends TestCase
     public function testIssue167ExceptionReasonMisleadingMessage(): void
     {
         self::expectException(SyntaxError::class);
-        self::expectExceptionMessage('The uri `file://example.org:80/home/jsmith/foo.txt` is invalid for the `file` scheme');
+        self::expectExceptionMessage('The uri `file://example.org:80/home/jsmith/foo.txt` is invalid for the `file` scheme.');
 
         Uri::createFromString('file://example.org:80/home/jsmith/foo.txt');
     }

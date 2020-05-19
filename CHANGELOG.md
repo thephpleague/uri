@@ -7,10 +7,13 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added 
 
 - `UriInfo::getOrigin` to returns the URI origin as described in the WHATWG URL Living standard specification
+- `UriTemplate\Template`, `UriTemplate\Expression`, `UriTemplate\VarSpecifier`, `UriTemplate\VariableBag` to 
+imporove `UriTemplate` implementation.
 
 ### Fixed
 
-- None
+- `UriTemplate` complete rewrite by reducing deep nested array usage.
+- Exception misleading message see issue [#167](https://github.com/thephpleague/uri/issues/167)
 
 ### Deprecated
 

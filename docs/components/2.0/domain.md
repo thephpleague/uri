@@ -75,27 +75,7 @@ $domain = Domain::createFromUri($psr7Uri);
 $domain->getContent(); //return 'www.example.com';
 ~~~
 
-## The Domain Host API
-
-The following methods can be used to further characterize your domain host.
-
-~~~php
-public static Domain::createFromLabels(iterable $data): self
-public Domain::isAbsolute(): bool
-public Domain::labels(): array
-public Domain::get(int $offset): ?string
-public Domain::keys(?string $label = null): array
-public Domain::count(): int
-public Domain::getIterator(): iterator
-public Domain::withRootLabel(): self
-public Domain::withoutRootLabel(): self
-public Domain::prepend(string $host): self
-public Domain::append(string $host): self
-public Domain::replaceLabel(int $offset, string $host): self
-public Domain::withoutLabels(array $offsets): self
-~~~
-
-### Domain::createFromLabels
+### Using a collection of domain labels.
 
 A host is a collection of labels delimited by the host separator `.`. So it is possible to create a `Host` object using a collection of labels with the `Domain::createFromLabels` method.
 The method expects a single arguments, a collection of label. **The labels must be ordered hierarchically, this mean that the array should have the top-level domain in its first entry**.
@@ -113,9 +93,28 @@ Domain::createFromLabels(['0.1', '127.0']);
 //throws League\Uri\Exceptions\SyntaxError
 ~~~
 
+## The Domain Host API
+
+The following methods can be used to further characterize your domain host.
+
+~~~php
+public Domain::isAbsolute(): bool
+public Domain::labels(): array
+public Domain::get(int $offset): ?string
+public Domain::keys(?string $label = null): array
+public Domain::count(): int
+public Domain::getIterator(): iterator
+public Domain::withRootLabel(): self
+public Domain::withoutRootLabel(): self
+public Domain::prepend(string $host): self
+public Domain::append(string $host): self
+public Domain::replaceLabel(int $offset, string $host): self
+public Domain::withoutLabels(array $offsets): self
+~~~
+
 ### Partial or fully qualified domain name
 
-A host is considered absolute or as being a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
+A host is absolute or a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
 
 ~~~php
 $host = new Domain('example.com');

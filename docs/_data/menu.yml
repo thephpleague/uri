@@ -41,6 +41,9 @@ packages:
                 Host: '/components/2.0/host/'
                 Domain: '/components/2.0/domain/'
                 Port: '/components/2.0/port/'
+                Path: '/components/2.0/path/'
+                DataPath: '/components/2.0/data-path/'
+                HierarchicalPath: '/components/2.0/hierarchical-path/'
                 Query: '/components/2.0/query/'
                 Fragment: '/components/2.0/fragment/'
         '1.0':

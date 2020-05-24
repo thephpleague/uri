@@ -117,11 +117,11 @@ public Domain::withoutLabels(array $offsets): self
 A host is absolute or a fully qualified domain name (FQDN) if it contains a <strong>root label</strong>, its string representation ends with a `.`, otherwise it is known as being a relative or a partially qualified domain name (PQDN).
 
 ~~~php
-$host = new Domain('example.com');
+$host = Domain::createFromString('example.com');
 $host->isIp();       //return false
 $host->isAbsolute(); //return false
 
-$fqdn = new Domain('example.com.');
+$fqdn = Domain::createFromString('example.com.');
 $fqdn->isIp();       //return false
 $fqdn->isAbsolute(); //return true
 ~~~
@@ -136,7 +136,7 @@ To update the host state from FQDN to a PQDN and vice-versa you can use 2 method
 These methods which takes not argument add or remove the root empty label from the host as see below:
 
 ~~~php
-$host = new Domain('www.11.be');
+$host = Domain::createFromString('www.11.be');
 echo $host->withRootLabel() //display 'www.11.be.'
 echo $host->withoutRootLabel() //display 'www.11.be'
 ~~~
@@ -169,7 +169,7 @@ A host can be splitted into its different labels. The class provides an array re
 <p class="message-notice">The class uses a hierarchical representation of the Hostname. This mean that the host top-level domain is the array first item.</p>
 
 ~~~php
-$host = new Domain('secure.example.com');
+$host = Domain::createFromString('secure.example.com');
 $host->labels(); //return  ['com', 'example', 'secure'];
 
 $fqdn = new Domain('secure.example.com.');
@@ -179,7 +179,7 @@ $fqdn->labels(); //return ['', 'com', 'example', 'secure'];
 The class also implements PHP's `Countable` and `IteratorAggregate` interfaces. This means that you can count the number of labels and use the `foreach` construct to iterate over them.
 
 ~~~php
-$host = new Domain('secure.example.com');
+$host = Domain::createFromString('secure.example.com');
 count($host); //return 3
 foreach ($host as $offset => $label) {
     echo $labels; //will display "com", then "example" and last "secure"
@@ -193,7 +193,7 @@ foreach ($host as $offset => $label) {
 If you are interested in getting the label offsets you can do so using the `Domain::keys` method.
 
 ~~~php
-$host = new Domain('uk.example.co.uk');
+$host = Domain::createFromString('uk.example.co.uk');
 $host->keys();        //return [0, 1, 2, 3];
 $host->keys('uk');    //return [0, 3];
 $host->keys('gweta'); //return [];
@@ -208,7 +208,7 @@ The method returns all the label keys, but if you supply an argument, only the k
 If you are only interested in a given label you can access it directly using the `Domain::get` method as show below:
 
 ~~~php
-$host = new Domain('example.co.uk');
+$host = Domain::createFromString('example.co.uk');
 $host->get(0);  //return 'uk'
 $host->get(23); //return null
 ~~~
@@ -220,7 +220,7 @@ If the offset does not exists it will return `null`.
 <p class="message-info"><code>Domain::get</code> supports negative offsets</p>
 
 ~~~php
-$host = new Domain('example.co.uk');
+$host = Domain::createFromString('example.co.uk');
 $host->get(-1);         //return 'uk'
 $host->get(-23);        //return null
 ~~~
@@ -232,7 +232,7 @@ $host->get(-23);        //return null
 To append labels to the current host you need to use the `Domain::append` method. This method accepts a single argument which represents the data to be appended. This data can be a string or `null`.
 
 ~~~php
-$host = (new Domain('toto'))->append('example.com');
+$host = Domain::createFromString('toto')->append('example.com');
 echo $host; //return toto.example.com
 ~~~
 
@@ -241,7 +241,7 @@ echo $host; //return toto.example.com
 To prepend labels to the current host you need to use the `Domain::prepend` method. This method accept a single argument which represents the data to be prepended. This data can be a string or `null`.
 
 ~~~php
-$host = (new Domain('example.com'))->prepend('toto');
+$host = Domain::createFromString('example.com')->prepend('toto');
 echo $host; //return toto.example.com
 ~~~
 
@@ -253,7 +253,7 @@ To replace a label you must use the `Domain::replaceLabel` method with two argum
 - The data to replace the key with. This data must be a string or `null`.
 
 ~~~php
-$host    = new Domain('foo.example.com');
+$host    = Domain::createFromString('foo.example.com');
 $newHost = $host->replaceLabel(2, 'bar.baz');
 echo $newHost; //return bar.baz.example.com
 ~~~
@@ -267,7 +267,7 @@ echo $newHost; //return bar.baz.example.com
 To remove labels from the current object you can use the `Domain::withoutLabels` method. This method expects variadic integer offset representing the labals offset to remove and will returns a new `Host` object without the selected labels.
 
 ~~~php
-$host    = new Domain('toto.example.com');
+$host    = Domain::createFromString('toto.example.com');
 $newHost = $host->withoutLabels(0, 2);
 $newHost->__toString(); //return example
 ~~~

@@ -21,15 +21,59 @@ but also provide specific methods to work with a URI domain host component.
 
 <p class="message-warning">If the submitted value is not valid a <code>League\Uri\Exceptions\SyntaxError</code> exception is thrown.</p>
 
-## Creating a new object using the default constructor
+## Creating a new object
+
+### Using the default constructor
+
+<p class="message-warning">The default constructor is deprecated starting with version <code>2.3.0</code>. It should be replaced by one of the several new named constructors.</p>
 
 ~~~php
 <?php
-public Domain::__construct($host): void
+public Domain::__construct($host)
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
 <p class="message-warning">The <code>$host</code> can not be <code>null</code> or the empty string as they represents an invalid domain name.</p>
+
+### Using a string
+
+~~~php
+<?php
+
+use League\Uri\Components\Domain;
+
+$authority = Domain::createFromString('example.com');
+$authority->getContent(); //returns 'example.com'
+~~~
+
+### Using a Host object
+
+~~~php
+<?php
+
+use League\Uri\Components\Domain;
+use League\Uri\Components\Host;
+
+$host = new Host('bébé.be');
+$domain = Domain::createFromHost($host);
+$domain->getContent(); //returns 'xn--bb-bjab.be'
+~~~
+
+### Using a Uri object
+
+The URI must implements League `UriInterface` or PSR-7  `UriInterface`.
+
+~~~php
+<?php
+
+use Laminas\Diactoros\Uri as LaminasUri;
+use League\Uri\Components\Domain;
+
+$psr7Uri = new LaminasUri("http://www.example.com/path/to/the/sky");
+
+$domain = Domain::createFromUri($psr7Uri);
+$domain->getContent(); //return 'www.example.com';
+~~~
 
 ## The Domain Host API
 

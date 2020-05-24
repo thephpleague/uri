@@ -18,12 +18,72 @@ but also provide specific methods to work with a URI authority part.
 
 ## Instantiation
 
+### Using the default constructor
+
+<p class="message-warning">The default constructor is deprecated starting with version <code>2.3.0</code>. It should be replaced by one of the several new named constructors.</p>
+
 ~~~php
 <?php
-public Authority::__construct($host = null): void
+public Authority::__construct($authority = null): void
 ~~~
 
 <p class="message-notice">submitted string is normalized to be <code>RFC3986</code> compliant.</p>
+
+### Using a string
+
+~~~php
+<?php
+
+use League\Uri\Components\Authority;
+
+$authority = Authority::createFromString('user:pass@example.com:42');
+$authority->getContent(); //returns 'user:pass@example.com:42'
+~~~
+
+<p class="message-notice">if no string is given a instance is returns using the empty string.</p>
+
+### Using Uri components
+ 
+~~~php
+<?php
+
+use League\Uri\Components\Authority;
+use League\Uri\UriString;
+
+$authority = Authority::createFromComponents(
+	UriString::parse("http://user:pass@example.com:42/5.0/uri/api")
+);
+$authority->getContent(); //returns 'user:pass@example.com:42'
+~~~
+
+<p class="message-warning">If you supply your own hash to <code>createFromComponents</code>, you are responsible for providing well parsed components without their URI delimiters.</p>
+
+### Using an URI object
+
+The URI must implements League `UriInterface` or PSR-7  `UriInterface`.
+
+~~~php
+<?php
+
+use Laminas\Diactoros\Uri as LaminasUri;
+use League\Uri\Components\Authority;
+
+$psr7Uri = new LaminasUri("http://www.example.com/path/to/the/sky");
+
+$authority = Authority::createFromUri($psr7Uri);
+$authority->getPort(); //return null;
+~~~
+
+### Using null
+
+~~~php
+<?php
+
+use League\Uri\Components\Authority;
+
+$authority = Authority::createFromNull();
+$authority->getContent(); //return null;
+~~~
 
 Authority validation
 -------

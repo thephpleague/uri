@@ -7,6 +7,7 @@ google_analytics_tracking_id: UA-46050814-14
 author:
     name: 'Ignace Nyamagana Butera'
     twitter_account: 'nyamsprod'
+    github_account: 'nyamsprod'
 support: 'Once a new major version is released, the previous stable release remains supported for six more months through patches and security fixes.'
 deprecated:
     'schemes': 'uri'

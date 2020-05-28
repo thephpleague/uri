@@ -74,7 +74,7 @@ final class Template
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
-    public static function fromString($template): self
+    public static function createFromString($template): self
     {
         if (!is_string($template) && !method_exists($template, '__toString')) {
             throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
@@ -93,7 +93,7 @@ final class Template
         $arguments = [];
         foreach ($findings as $finding) {
             if (!isset($names[$finding[0]])) {
-                $arguments[] = Expression::fromString($finding[0]);
+                $arguments[] = Expression::createFromString($finding[0]);
                 $names[$finding[0]] = 1;
             }
         }

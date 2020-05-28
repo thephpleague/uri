@@ -58,7 +58,7 @@ final class VarSpecifier
         return new self($properties['name'], $properties['modifier'], $properties['position']);
     }
 
-    public static function fromString(string $specification): self
+    public static function createFromString(string $specification): self
     {
         if (1 !== preg_match(self::REGEXP_VARSPEC, $specification, $parsed)) {
             throw new SyntaxError('The variable specification "'.$specification.'" is invalid.');

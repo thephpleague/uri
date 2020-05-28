@@ -24,7 +24,7 @@ use function var_export;
 final class VarSpecifierTest extends TestCase
 {
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      * @covers ::toString
      * @covers ::__construct
      *
@@ -32,7 +32,7 @@ final class VarSpecifierTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
-        self::assertSame($notation, VarSpecifier::fromString($notation)->toString());
+        self::assertSame($notation, VarSpecifier::createFromString($notation)->toString());
     }
 
     public function providesValidNotation(): iterable
@@ -50,7 +50,7 @@ final class VarSpecifierTest extends TestCase
     }
 
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      *
      * @dataProvider providesInvalidNotation
      */
@@ -58,7 +58,7 @@ final class VarSpecifierTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        VarSpecifier::fromString($notation);
+        VarSpecifier::createFromString($notation);
     }
 
     public function providesInvalidNotation(): iterable
@@ -78,13 +78,13 @@ final class VarSpecifierTest extends TestCase
      */
     public function testItCanReturnsTheVarSpecifierProperties(): void
     {
-        $varSpecifier = VarSpecifier::fromString('und.er_sc0re%3B:5');
+        $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B:5');
 
         self::assertSame('und.er_sc0re%3B', $varSpecifier->name());
         self::assertSame(':', $varSpecifier->modifier());
         self::assertSame(5, $varSpecifier->position());
 
-        $varSpecifier = VarSpecifier::fromString('und.er_sc0re%3B*');
+        $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B*');
 
         self::assertSame('und.er_sc0re%3B', $varSpecifier->name());
         self::assertSame('*', $varSpecifier->modifier());
@@ -96,7 +96,7 @@ final class VarSpecifierTest extends TestCase
      */
     public function testSetState(): void
     {
-        $varSpecifier = VarSpecifier::fromString('und.er_sc0re%3B*');
+        $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B*');
 
         self::assertEquals($varSpecifier, eval('return '.var_export($varSpecifier, true).';'));
     }

@@ -26,7 +26,7 @@ use function var_export;
 final class ExpressionTest extends TestCase
 {
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      * @covers ::__construct
      * @covers ::toString
      * @covers ::variableNames
@@ -37,7 +37,7 @@ final class ExpressionTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation, array $variableNames): void
     {
-        $expression = Expression::fromString($notation);
+        $expression = Expression::createFromString($notation);
         self::assertSame($notation, $expression->toString());
         self::assertSame($variableNames, $expression->variableNames());
     }
@@ -74,13 +74,13 @@ final class ExpressionTest extends TestCase
     {
         $expressionString = '{;keys*}';
 
-        $expression = Expression::fromString($expressionString);
+        $expression = Expression::createFromString($expressionString);
 
         self::assertEquals($expression, eval('return '.var_export($expression, true).';'));
     }
 
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      *
      * @dataProvider providesInvalidExpression
      */
@@ -88,7 +88,7 @@ final class ExpressionTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Expression::fromString($expression);
+        Expression::createFromString($expression);
     }
 
     public function providesInvalidExpression(): iterable
@@ -140,7 +140,7 @@ final class ExpressionTest extends TestCase
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
-        self::assertSame($expectedUriString, Expression::fromString($template)->expand(new VariableBag($variables)));
+        self::assertSame($expectedUriString, Expression::createFromString($template)->expand(new VariableBag($variables)));
     }
 
     public function templateExpansionProvider(): iterable
@@ -270,7 +270,7 @@ final class ExpressionTest extends TestCase
     {
         self::expectException(TemplateCanNotBeExpanded::class);
 
-        Expression::fromString($expression)->expand(new VariableBag($variables));
+        Expression::createFromString($expression)->expand(new VariableBag($variables));
     }
 
     /**

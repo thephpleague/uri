@@ -52,7 +52,7 @@ final class UriTemplate
      */
     public function __construct($template, array $defaultVariables = [])
     {
-        $this->template = Template::fromString($template);
+        $this->template = Template::createFromString($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
     }
 

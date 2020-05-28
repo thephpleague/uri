@@ -134,7 +134,7 @@ final class Expression
      * @throws SyntaxError if the operator used in the expression is invalid
      * @throws SyntaxError if the variable specifiers is invalid
      */
-    public static function fromString(string $expression): self
+    public static function createFromString(string $expression): self
     {
         if (1 !== preg_match(self::REGEXP_EXPRESSION, $expression, $parts)) {
             throw new SyntaxError('The expression "'.$expression.'" is invalid.');
@@ -147,7 +147,7 @@ final class Expression
         }
 
         $mapper = static function (string $varSpec): VarSpecifier {
-            return VarSpecifier::fromString($varSpec);
+            return VarSpecifier::createFromString($varSpec);
         };
 
         return new Expression($parts['operator'], ...array_map($mapper, explode(',', $parts['variables'])));
@@ -279,7 +279,7 @@ final class Expression
                 $key = rawurlencode((string) $key);
             }
 
-            $var = rawurlencode((string) $var);
+            $var = rawurlencode($var);
             if ('+' === $this->operator || '#' === $this->operator) {
                 $var = $this->decodeReserved($var);
             }

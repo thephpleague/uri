@@ -25,7 +25,7 @@ use function var_export;
 final class TemplateTest extends TestCase
 {
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      * @covers ::__construct
      * @covers ::toString
      *
@@ -33,7 +33,7 @@ final class TemplateTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
-        $template = Template::fromString($notation);
+        $template = Template::createFromString($notation);
         self::assertSame($notation, $template->toString());
     }
 
@@ -47,7 +47,7 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      *
      * @dataProvider providesInvalidNotation
      */
@@ -55,7 +55,7 @@ final class TemplateTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Template::fromString($notation);
+        Template::createFromString($notation);
     }
 
     public function providesInvalidNotation(): iterable
@@ -76,7 +76,7 @@ final class TemplateTest extends TestCase
     {
         $notation = '{foo}{bar}';
 
-        $template = Template::fromString($notation);
+        $template = Template::createFromString($notation);
 
         self::assertEquals($template, eval('return '.var_export($template, true).';'));
     }
@@ -88,7 +88,7 @@ final class TemplateTest extends TestCase
      */
     public function testGetVariableNames(string $template, array $expected): void
     {
-        self::assertSame($expected, Template::fromString($template)->variableNames());
+        self::assertSame($expected, Template::createFromString($template)->variableNames());
     }
 
     public function expectedVariableNames(): iterable
@@ -114,13 +114,13 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::fromString
+     * @covers ::createFromString
      */
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
         self::expectException(\TypeError::class);
 
-        Template::fromString(1);
+        Template::createFromString(new \stdClass());
     }
 
     /**
@@ -128,7 +128,7 @@ final class TemplateTest extends TestCase
      */
     public function testItCanExpandVariables(string $notation, array $variables, string $expected): void
     {
-        self::assertSame($expected, Template::fromString($notation)->expand(new VariableBag($variables)));
+        self::assertSame($expected, Template::createFromString($notation)->expand(new VariableBag($variables)));
     }
 
     public function providesExpansion(): iterable

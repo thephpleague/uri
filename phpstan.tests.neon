@@ -22,7 +22,5 @@ parameters:
           path: tests/UriInfoTest.php
         - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
           path: tests/UriTest.php
-        - message: '#Parameter \#1 \$template of static method League\\Uri\\UriTemplate\\Template::fromString\(\) expects object\|string, int given\.#'
-          path: tests/UriTemplate/TemplateTest.php
     reportUnmatchedIgnoredErrors: true
     checkMissingIterableValueType: false

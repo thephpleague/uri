@@ -1,9 +1,14 @@
 includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
     ignoreErrors:
         - message: '#Method League\\Uri\\Uri::withPath\(\) has parameter \$path with no typehint specified\.#'
           path: src/Uri.php
+        - message: '#Variable method call on \$this\(League\\Uri\\Uri\)\.#'
+          path: src/Uri.php
+        - message: '#Instanceof between Psr\\Http\\Message\\UriInterface and Psr\\Http\\Message\\UriInterface will always evaluate to true\.#'
+          path: src/Uri.php
+        - message: '#Variable method call on League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface\.#'
+          path: src/UriResolver.php
     reportUnmatchedIgnoredErrors: true
     checkMissingIterableValueType: false

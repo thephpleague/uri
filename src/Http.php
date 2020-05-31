@@ -185,7 +185,7 @@ final class Http implements Psr7UriInterface, \JsonSerializable
     /**
      * {@inheritDoc}
      */
-    public function withScheme($scheme)
+    public function withScheme($scheme): self
     {
         $scheme = $this->filterInput($scheme);
         if ('' === $scheme) {
@@ -197,7 +197,7 @@ final class Http implements Psr7UriInterface, \JsonSerializable
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
@@ -221,7 +221,7 @@ final class Http implements Psr7UriInterface, \JsonSerializable
     /**
      * {@inheritDoc}
      */
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): self
     {
         $user = $this->filterInput($user);
         if ('' === $user) {
@@ -233,13 +233,13 @@ final class Http implements Psr7UriInterface, \JsonSerializable
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function withHost($host)
+    public function withHost($host): self
     {
         $host = $this->filterInput($host);
         if ('' === $host) {
@@ -251,39 +251,39 @@ final class Http implements Psr7UriInterface, \JsonSerializable
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function withPort($port)
+    public function withPort($port): self
     {
         $uri = $this->uri->withPort($port);
         if ($uri->getPort() === $this->uri->getPort()) {
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function withPath($path)
+    public function withPath($path): self
     {
         $uri = $this->uri->withPath($path);
         if ($uri->getPath() === $this->uri->getPath()) {
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function withQuery($query)
+    public function withQuery($query): self
     {
         $query = $this->filterInput($query);
         if ('' === $query) {
@@ -295,13 +295,13 @@ final class Http implements Psr7UriInterface, \JsonSerializable
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function withFragment($fragment)
+    public function withFragment($fragment): self
     {
         $fragment = $this->filterInput($fragment);
         if ('' === $fragment) {
@@ -313,7 +313,7 @@ final class Http implements Psr7UriInterface, \JsonSerializable
             return $this;
         }
 
-        return new static($uri);
+        return new self($uri);
     }
 
     /**

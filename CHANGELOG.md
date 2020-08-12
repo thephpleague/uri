@@ -14,7 +14,7 @@ imporove `UriTemplate` implementation.
 
 - `UriTemplate` complete rewrite by reducing deep nested array usage.
 - Exception misleading message see issue [#167](https://github.com/thephpleague/uri/issues/167)
-- `Uri::withScheme` Uri validation failed to catch the empty string as an invalid scheme.
+- `Uri::withScheme` Uri validation failed to catch the empty string as an invalid scheme. [#171](https://github.com/thephpleague/uri/issues/171)
 
 ### Deprecated
 

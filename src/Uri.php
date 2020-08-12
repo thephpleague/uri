@@ -310,7 +310,7 @@ final class Uri implements UriInterface
      */
     private function formatScheme(?string $scheme): ?string
     {
-        if ('' === $scheme || null === $scheme) {
+        if (null === $scheme) {
             return $scheme;
         }
 
@@ -319,7 +319,7 @@ final class Uri implements UriInterface
             return $formatted_scheme;
         }
 
-        throw new SyntaxError(sprintf('The scheme `%s` is invalid', $scheme));
+        throw new SyntaxError(sprintf('The scheme `%s` is invalid.', $scheme));
     }
 
     /**
@@ -438,7 +438,7 @@ final class Uri implements UriInterface
             $arr
         );
 
-        if ($arr === []) {
+        if ([] === $arr) {
             throw new SyntaxError(sprintf('Host `%s` is invalid', $host));
         }
 

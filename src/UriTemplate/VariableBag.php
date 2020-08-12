@@ -17,6 +17,7 @@ use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function gettype;
 use function is_array;
 use function is_bool;
+use function is_object;
 use function is_scalar;
 use function method_exists;
 use function sprintf;
@@ -82,7 +83,7 @@ final class VariableBag
             return true === $value ? '1' : '0';
         }
 
-        if (null === $value || is_scalar($value) || method_exists($value, '__toString')) {
+        if (null === $value || is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
             return (string) $value;
         }
 

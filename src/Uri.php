@@ -32,6 +32,7 @@ use function idn_to_ascii;
 use function implode;
 use function in_array;
 use function inet_pton;
+use function is_object;
 use function is_scalar;
 use function method_exists;
 use function preg_match;
@@ -1359,7 +1360,11 @@ final class Uri implements UriInterface
             return $str;
         }
 
-        if (!is_scalar($str) && !method_exists($str, '__toString')) {
+        if (is_object($str) && method_exists($str, '__toString')) {
+            $str = (string) $str;
+        }
+
+        if (!is_scalar($str)) {
             throw new \TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given.', gettype($str)));
         }
 

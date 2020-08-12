@@ -18,6 +18,7 @@ use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_merge;
 use function array_unique;
 use function gettype;
+use function is_object;
 use function is_string;
 use function method_exists;
 use function preg_match_all;
@@ -76,11 +77,13 @@ final class Template
      */
     public static function createFromString($template): self
     {
-        if (!is_string($template) && !method_exists($template, '__toString')) {
-            throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
+        if (is_object($template) && method_exists($template, '__toString')) {
+            $template = (string) $template;
         }
 
-        $template = (string) $template;
+        if (!is_string($template)) {
+            throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
+        }
 
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION_DETECTOR, '', $template);

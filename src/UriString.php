@@ -472,7 +472,7 @@ final class UriString
 
         $retval = idn_to_ascii($formatted_host, 0, INTL_IDNA_VARIANT_UTS46, $arr);
 
-        if ($arr === []) {
+        if ([] === $arr) {
             throw new SyntaxError(sprintf('Host `%s` is not a valid IDN host', $host));
         }
 

@@ -580,4 +580,12 @@ class UriTest extends TestCase
 
         Uri::createFromString('file://example.org:80/home/jsmith/foo.txt');
     }
+
+    public function testIssue171TheEmptySchemeShouldThrow(): void
+    {
+        self::expectException(SyntaxError::class);
+        self::expectExceptionMessage('The scheme `` is invalid.');
+
+        Uri::createFromString('domain.com')->withScheme('');
+    }
 }

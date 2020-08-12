@@ -24,6 +24,7 @@ use function gettype;
 use function idn_to_ascii;
 use function implode;
 use function inet_pton;
+use function is_object;
 use function is_scalar;
 use function method_exists;
 use function preg_match;
@@ -275,7 +276,11 @@ final class UriString
      */
     public static function parse($uri): array
     {
-        if (!is_scalar($uri) && !method_exists($uri, '__toString')) {
+        if (is_object($uri) && method_exists($uri, '__toString')) {
+            $uri = (string) $uri;
+        }
+
+        if (!is_scalar($uri)) {
             throw new \TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
         }
 

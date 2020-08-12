@@ -16,6 +16,7 @@ namespace League\Uri;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use function is_object;
 use function is_scalar;
 use function method_exists;
 use function sprintf;
@@ -211,7 +212,7 @@ final class Http implements Psr7UriInterface, \JsonSerializable
      */
     private function filterInput($str)
     {
-        if (is_scalar($str) || method_exists($str, '__toString')) {
+        if (is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
             return (string) $str;
         }
 

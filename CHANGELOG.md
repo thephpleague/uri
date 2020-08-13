@@ -2,13 +2,14 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.3.0 - 2020-08-13
 
 ### Added 
 
 - `UriInfo::getOrigin` to returns the URI origin as described in the WHATWG URL Living standard specification
 - `UriTemplate\Template`, `UriTemplate\Expression`, `UriTemplate\VarSpecifier`, `UriTemplate\VariableBag` to 
-imporove `UriTemplate` implementation.
+improve `UriTemplate` implementation.
+- Added early support for PHP8
 
 ### Fixed
 

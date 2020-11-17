@@ -972,7 +972,7 @@ final class Uri implements UriInterface
     {
         $path = $this->formatDataPath($path);
 
-        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++\|%(?![A-Fa-f0-9]{2}))/';
+        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++|%(?![A-Fa-f0-9]{2}))/';
 
         $path = (string) preg_replace_callback($pattern, [Uri::class, 'urlEncodeMatch'], $path);
 

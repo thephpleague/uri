@@ -550,6 +550,20 @@ class UriTest extends TestCase
     }
 
     /**
+     * @covers ::formatPath
+     */
+    public function testUnreservedCharsInPathUnencoded(): void
+    {
+        $uri = Uri::createFromString('http://www.example.com/')
+            ->withPath('/h"ell\'o/./wor ld<i>/%25abc%xyz');
+
+        self::assertSame(
+            "/h%22ell'o/./wor%20ld%3Ci%3E/%25abc%25xyz",
+            $uri->getPath()
+        );
+    }
+
+    /**
      * @dataProvider userInfoProvider
      * @param ?string $credential
      */

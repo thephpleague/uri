@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## 6.3.1 - 2020-11-23
+
+### Added
+
+- None
+
+### Fixed
+
+- Bugfix `Uri::formatPath` to improve URL encoding in the path component [#180](https://github.com/thephpleague/uri/pull/180) thanks [mdawaffe](https://github.com/mdawaffe).
+
+### Deprecated
+
+- Nothing
+
+### Remove
+
+- None
+
 ## 6.3.0 - 2020-08-13
 
 ### Added 

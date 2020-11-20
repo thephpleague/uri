@@ -145,8 +145,11 @@ final class Uri implements UriInterface
 
     /**
      * Regular expression pattern to for file URI.
+     * <volume> contains the volume but not the volume separator.
+     * The volume separator may be URL-encoded (`|` as `%7C`) by ::formatPath(),
+     * so we account for that here.
      */
-    private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<root>[a-zA-Z][:|\|])(?<rest>.*)?,';
+    private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<volume>[a-zA-Z])(?:[:|\|]|%7C)(?<rest>.*)?,';
 
     /**
      * Mimetype regular expression pattern.
@@ -164,6 +167,7 @@ final class Uri implements UriInterface
 
     /**
      * Windows file path string regular expression pattern.
+     * <root> contains both the volume and volume separator.
      */
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
@@ -972,7 +976,7 @@ final class Uri implements UriInterface
     {
         $path = $this->formatDataPath($path);
 
-        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++\|%(?![A-Fa-f0-9]{2}))/';
+        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++|%(?![A-Fa-f0-9]{2}))/';
 
         $path = (string) preg_replace_callback($pattern, [Uri::class, 'urlEncodeMatch'], $path);
 
@@ -1071,7 +1075,7 @@ final class Uri implements UriInterface
         }
 
         $replace = static function (array $matches): string {
-            return $matches['delim'].str_replace('|', ':', $matches['root']).$matches['rest'];
+            return $matches['delim'].$matches['volume'].':'.$matches['rest'];
         };
 
         return (string) preg_replace_callback(self::REGEXP_FILE_PATH, $replace, $path);

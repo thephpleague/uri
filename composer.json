@@ -44,7 +44,7 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": ">=7.2",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "league/uri-interfaces": "^2.1"
@@ -54,7 +54,8 @@
         "phpunit/phpunit" : "^8.0 || ^9.0",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-strict-rules": "^0.12",
-        "phpstan/phpstan-phpunit": "^0.12"
+        "phpstan/phpstan-phpunit": "^0.12",
+        "psr/http-factory": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -95,7 +96,8 @@
     "suggest": {
         "league/uri-components" : "Needed to easily manipulate URI objects",
         "ext-intl" : "Needed to improve host validation",
-        "ext-fileinfo": "Needed to create Data URI from a filepath"
+        "ext-fileinfo": "Needed to create Data URI from a filepath",
+        "psr/http-factory": "Needed to use the URI factory"
     },
     "extra": {
         "branch-alias": {

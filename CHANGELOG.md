@@ -2,11 +2,11 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## 6.3.1 - 2020-11-23
+## 6.4.0 - 2020-11-23
 
 ### Added
 
-- None
+- `HttpFactory` a class that implements PSR-17 UriFactoryInterface. The package needs to be present for the class to work.
 
 ### Fixed
 

@@ -11,11 +11,9 @@
 
 declare(strict_types=1);
 
-namespace LeagueTest\Uri\UriTemplate;
+namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\UriTemplate\Template;
-use League\Uri\UriTemplate\VariableBag;
 use PHPUnit\Framework\TestCase;
 use function var_export;
 

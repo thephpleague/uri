@@ -9,20 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
-use League\Uri\Http;
-use League\Uri\Uri;
-use League\Uri\UriInfo;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
 
 /**
  * @group modifier
- * @coversDefaultClass League\Uri\UriInfo
+ * @coversDefaultClass \League\Uri\UriInfo
  */
-class UriInfoTest extends TestCase
+final class UriInfoTest extends TestCase
 {
     /**
      * @dataProvider uriProvider

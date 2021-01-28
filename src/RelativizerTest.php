@@ -9,21 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
-use League\Uri\Http;
-use League\Uri\Uri;
-use League\Uri\UriResolver;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
 /**
  * @group modifier
- * @coversDefaultClass League\Uri\UriResolver
+ * @coversDefaultClass \League\Uri\UriResolver
  */
-class RelativizerTest extends TestCase
+final class RelativizerTest extends TestCase
 {
-    const BASE_URI = 'http://a/b/c/d;p?q';
+    private const BASE_URI = 'http://a/b/c/d;p?q';
 
     public function testRelativizeIsNotMade(): void
     {

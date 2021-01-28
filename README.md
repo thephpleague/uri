@@ -1,7 +1,7 @@
 URI
 =======
 
-[![Quality Assurance](https://github.com/thephpleague/uri/workflows/Quality%20Assurance/badge.svg)](https://github.com/thephpleague/uri/actions?query=workflow%3A%22Quality+Assurance%22)
+[![Build](https://github.com/thephpleague/uri/workflows/build/badge.svg)](https://github.com/thephpleague/uri/actions?query=workflow%3A%22build%22)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)

@@ -9,11 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
-use League\Uri\Http;
-use League\Uri\Uri;
-use League\Uri\UriResolver;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -21,7 +18,7 @@ use TypeError;
  * @group modifer
  * @coversDefaultClass \League\Uri\UriResolver
  */
-class ResolverTest extends TestCase
+final class ResolverTest extends TestCase
 {
     public function testResolveLetThrowResolvedInvalidUri(): void
     {

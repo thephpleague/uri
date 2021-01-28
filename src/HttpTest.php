@@ -9,20 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Http;
-use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
 /**
  * @group http
- * @coversDefaultClass League\Uri\Http
+ * @coversDefaultClass \League\Uri\Http
  */
-class HttpTest extends TestCase
+final class HttpTest extends TestCase
 {
     /**
      * @var Http

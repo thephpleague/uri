@@ -9,18 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group file
  * @group uri
- * @coversDefaultClass League\Uri\Uri
+ * @coversDefaultClass \League\Uri\Uri
  */
-class FileTest extends TestCase
+final class FileTest extends TestCase
 {
     /**
      * @covers ::formatHost

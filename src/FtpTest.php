@@ -9,42 +9,40 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group ws
+ * @group ftp
  * @group uri
- * @coversDefaultClass League\Uri\Uri
+ * @coversDefaultClass \League\Uri\Uri
  */
-class WsTest extends TestCase
+final class FtpTest extends TestCase
 {
     /**
-     *
      * @dataProvider validUrlProvider
      */
-    public function testCreateFromString(string $input, string $expected): void
+    public function testCreateFromString(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromString($input));
+        self::assertSame($expected, (string) Uri::createFromString($uri));
     }
 
     public function validUrlProvider(): array
     {
         return [
             'with default port' => [
-                'Ws://ExAmpLe.CoM:80/foo/bar?foo=bar',
-                'ws://example.com/foo/bar?foo=bar',
+                'FtP://ExAmpLe.CoM:21/foo/bar',
+                'ftp://example.com/foo/bar',
             ],
             'with user info' => [
-                'wss://login:pass@example.com/',
-                'wss://login:pass@example.com/',
+                'ftp://login:pass@example.com/',
+                'ftp://login:pass@example.com/',
             ],
-            'network path' => [
-                '//ExAmpLe.CoM:21',
-                '//example.com:21',
+            'with network path' => [
+                '//ExAmpLe.CoM:80',
+                '//example.com:80',
             ],
             'absolute path' => [
                 '/path/to/my/file',
@@ -62,6 +60,8 @@ class WsTest extends TestCase
     }
 
     /**
+
+     *
      * @dataProvider invalidUrlProvider
      */
     public function testConstructorThrowInvalidArgumentException(string $uri): void
@@ -73,16 +73,17 @@ class WsTest extends TestCase
     public function invalidUrlProvider(): array
     {
         return [
-            ['wss:example.com'],
-            ['wss:/example.com'],
-            ['wss://example.com:80/foo/bar?foo=bar#content'],
+            //['http://example.com'],
+            ['ftp:/example.com'],
+            ['ftp:example.com'],
+            ['ftp://example.com?query#fragment'],
         ];
     }
 
     public function testModificationFailedWithEmptyAuthority(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('wss://example.com/path')
+        Uri::createFromString('ftp://example.com/path')
             ->withScheme(null)
             ->withHost(null)
             ->withPath('//toto');
@@ -100,10 +101,10 @@ class WsTest extends TestCase
     public function portProvider(): array
     {
         return [
-            ['ws://www.example.com:443/', 443],
-            ['ws://www.example.com:80/', null],
-            ['ws://www.example.com', null],
-            ['//www.example.com:80/', 80],
+            ['ftp://www.example.com:443/', 443],
+            ['ftp://www.example.com:21/', null],
+            ['ftp://www.example.com', null],
+            ['//www.example.com:21/', 21],
         ];
     }
 }

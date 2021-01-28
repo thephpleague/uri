@@ -11,10 +11,8 @@
 
 declare(strict_types=1);
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
-use League\Uri\Http;
-use League\Uri\HttpFactory;
 use PHPUnit\Framework\TestCase;
 
 final class HttpFactoryTest extends TestCase

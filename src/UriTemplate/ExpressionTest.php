@@ -11,12 +11,10 @@
 
 declare(strict_types=1);
 
-namespace LeagueTest\Uri\UriTemplate;
+namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
-use League\Uri\UriTemplate\Expression;
-use League\Uri\UriTemplate\VariableBag;
 use PHPUnit\Framework\TestCase;
 use function var_export;
 

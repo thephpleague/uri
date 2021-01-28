@@ -9,14 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\UriString;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class UriStringTest extends TestCase
+final class UriStringTest extends TestCase
 {
     public function testParserFailedWithWrongArgumentType(): void
     {

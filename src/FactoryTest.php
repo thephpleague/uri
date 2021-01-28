@@ -9,19 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace LeagueTest\Uri;
+namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Http;
-use League\Uri\Uri;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
 /**
  * @group factory
- * @coversDefaultClass League\Uri\Uri
+ * @coversDefaultClass \League\Uri\Uri
  */
-class FactoryTest extends TestCase
+final class FactoryTest extends TestCase
 {
     /**
      * @covers ::createFromDataPath
@@ -57,7 +55,7 @@ class FactoryTest extends TestCase
             ],
         ]);
 
-        $uri = Uri::createFromDataPath(__DIR__.'/data/'.$path, $context);
+        $uri = Uri::createFromDataPath(dirname(__DIR__).'/test_files/'.$path, $context);
         self::assertStringContainsString($expected, $uri->getPath());
     }
 

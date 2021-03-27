@@ -139,6 +139,11 @@ final class Uri implements UriInterface
     $/ix';
 
     /**
+     * RFC3986 IPvFuture host and port component.
+     */
+    private const REGEXP_HOST_PORT = ',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x';
+
+    /**
      * Significant 10 bits of IP to detect Zone ID regular expression pattern.
      */
     private const HOST_ADDRESS_BLOCK = "\xfe\x80";
@@ -903,9 +908,7 @@ final class Uri implements UriInterface
             $server['SERVER_PORT'] = (int) $server['SERVER_PORT'];
         }
 
-        if (isset($server['HTTP_HOST'])) {
-            preg_match(',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x', $server['HTTP_HOST'], $matches);
-
+        if (isset($server['HTTP_HOST']) && 1 === preg_match(self::REGEXP_HOST_PORT, $server['HTTP_HOST'], $matches)) {
             return [
                 $matches['host'],
                 isset($matches['port']) ? (int) $matches['port'] : $server['SERVER_PORT'],

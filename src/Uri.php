@@ -1229,10 +1229,7 @@ final class Uri implements UriInterface
         return $scheme.$authority.$path.$query.$fragment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function __toString(): string
+    public function toString(): string
     {
         $this->uri = $this->uri ?? $this->getUriString(
             $this->scheme,
@@ -1248,9 +1245,17 @@ final class Uri implements UriInterface
     /**
      * {@inheritDoc}
      */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function jsonSerialize(): string
     {
-        return $this->__toString();
+        return $this->toString();
     }
 
     /**

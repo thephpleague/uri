@@ -45,7 +45,7 @@ Appends a submitted query string to the URI object to be modified. When appendin
 ~~~php
 $uriString = "http://example.com/test.php?kingkong=toto&foo=bar+baz#doc3";
 $uri = Http::createFromString($uriString);
-$newUri = UriModifier::mergeQuery($uri, 'kingkong=godzilla&toto');
+$newUri = UriModifier::appendQuery($uri, 'kingkong=godzilla&toto');
 
 echo $uri->getQuery();    //display "kingkong=toto&foo=bar+baz"
 echo $newUri->getQuery(); //display "kingkong=toto&kingkong=godzilla&foo=bar%20baz&toto"

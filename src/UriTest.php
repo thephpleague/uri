@@ -234,7 +234,6 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::getIDNAErrors
      * @covers ::formatHost
      */
     public function testCannotConvertInvalidHost(): void
@@ -496,7 +495,6 @@ class UriTest extends TestCase
 
     /**
      * @covers ::formatRegisteredName
-     * @covers ::getIDNAErrors
      */
     public function testCreateFromComponentsThrowsException5(): void
     {
@@ -506,7 +504,6 @@ class UriTest extends TestCase
 
     /**
      * @covers ::formatRegisteredName
-     * @covers ::getIDNAErrors
      */
     public function testCreateFromComponentsThrowsException6(): void
     {

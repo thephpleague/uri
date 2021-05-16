@@ -23,12 +23,9 @@ use function array_map;
 use function base64_decode;
 use function base64_encode;
 use function count;
-use function defined;
 use function explode;
 use function file_get_contents;
 use function filter_var;
-use function function_exists;
-use function idn_to_ascii;
 use function implode;
 use function in_array;
 use function inet_pton;
@@ -52,24 +49,6 @@ use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
-use const IDNA_CHECK_BIDI;
-use const IDNA_CHECK_CONTEXTJ;
-use const IDNA_ERROR_BIDI;
-use const IDNA_ERROR_CONTEXTJ;
-use const IDNA_ERROR_DISALLOWED;
-use const IDNA_ERROR_DOMAIN_NAME_TOO_LONG;
-use const IDNA_ERROR_EMPTY_LABEL;
-use const IDNA_ERROR_HYPHEN_3_4;
-use const IDNA_ERROR_INVALID_ACE_LABEL;
-use const IDNA_ERROR_LABEL_HAS_DOT;
-use const IDNA_ERROR_LABEL_TOO_LONG;
-use const IDNA_ERROR_LEADING_COMBINING_MARK;
-use const IDNA_ERROR_LEADING_HYPHEN;
-use const IDNA_ERROR_PUNYCODE;
-use const IDNA_ERROR_TRAILING_HYPHEN;
-use const IDNA_NONTRANSITIONAL_TO_ASCII;
-use const IDNA_NONTRANSITIONAL_TO_UNICODE;
-use const INTL_IDNA_VARIANT_UTS46;
 
 final class Uri implements UriInterface
 {
@@ -391,42 +370,10 @@ final class Uri implements UriInterface
      */
     private function formatRegisteredName(string $host): string
     {
-        // @codeCoverageIgnoreStart
-        // added because it is not possible in travis to disabled the ext/intl extension
-        // see travis issue https://github.com/travis-ci/travis-ci/issues/4701
-        static $idn_support = null;
-        $idn_support = $idn_support ?? function_exists('idn_to_ascii') && defined('INTL_IDNA_VARIANT_UTS46');
-        // @codeCoverageIgnoreEnd
-
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
-            $formatted_host = strtolower($formatted_host);
-            if (false === strpos($formatted_host, 'xn--')) {
-                return $formatted_host;
-            }
 
-            // @codeCoverageIgnoreStart
-            if (!$idn_support) {
-                throw new IdnSupportMissing(sprintf('the host `%s` could not be processed for IDN. Verify that ext/intl is installed for IDN support and that ICU is at least version 4.6.', $host));
-            }
-            // @codeCoverageIgnoreEnd
-
-            $unicode = idn_to_utf8(
-                $host,
-                IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ | IDNA_NONTRANSITIONAL_TO_UNICODE,
-                INTL_IDNA_VARIANT_UTS46,
-                $arr
-            );
-
-            if (0 !== $arr['errors']) {
-                throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
-            }
-
-            // @codeCoverageIgnoreStart
-            if (false === $unicode) {
-                throw new IdnSupportMissing(sprintf('The Intl extension is misconfigured for %s, please correct this issue before proceeding.', PHP_OS));
-            }
-            // @codeCoverageIgnoreEnd
+            Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
 
             return $formatted_host;
         }
@@ -435,70 +382,7 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('The host `%s` is invalid : a registered name can not contain URI delimiters or spaces', $host));
         }
 
-        // @codeCoverageIgnoreStart
-        if (!$idn_support) {
-            throw new IdnSupportMissing(sprintf('the host `%s` could not be processed for IDN. Verify that ext/intl is installed for IDN support and that ICU is at least version 4.6.', $host));
-        }
-        // @codeCoverageIgnoreEnd
-
-        $formatted_host = idn_to_ascii(
-            $formatted_host,
-            IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ | IDNA_NONTRANSITIONAL_TO_ASCII,
-            INTL_IDNA_VARIANT_UTS46,
-            $arr
-        );
-
-        if ([] === $arr) {
-            throw new SyntaxError(sprintf('Host `%s` is invalid', $host));
-        }
-
-        if (0 !== $arr['errors']) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : %s', $host, $this->getIDNAErrors($arr['errors'])));
-        }
-
-        // @codeCoverageIgnoreStart
-        if (false === $formatted_host) {
-            throw new IdnSupportMissing(sprintf('The Intl extension is misconfigured for %s, please correct this issue before proceeding.', PHP_OS));
-        }
-        // @codeCoverageIgnoreEnd
-
-        return $arr['result'];
-    }
-
-    /**
-     * Retrieves and format IDNA conversion error message.
-     *
-     * @link http://icu-project.org/apiref/icu4j/com/ibm/icu/text/IDNA.Error.html
-     */
-    private function getIDNAErrors(int $error_byte): string
-    {
-        /**
-         * IDNA errors.
-         */
-        static $idnErrors = [
-            IDNA_ERROR_EMPTY_LABEL => 'a non-final domain name label (or the whole domain name) is empty',
-            IDNA_ERROR_LABEL_TOO_LONG => 'a domain name label is longer than 63 bytes',
-            IDNA_ERROR_DOMAIN_NAME_TOO_LONG => 'a domain name is longer than 255 bytes in its storage form',
-            IDNA_ERROR_LEADING_HYPHEN => 'a label starts with a hyphen-minus ("-")',
-            IDNA_ERROR_TRAILING_HYPHEN => 'a label ends with a hyphen-minus ("-")',
-            IDNA_ERROR_HYPHEN_3_4 => 'a label contains hyphen-minus ("-") in the third and fourth positions',
-            IDNA_ERROR_LEADING_COMBINING_MARK => 'a label starts with a combining mark',
-            IDNA_ERROR_DISALLOWED => 'a label or domain name contains disallowed characters',
-            IDNA_ERROR_PUNYCODE => 'a label starts with "xn--" but does not contain valid Punycode',
-            IDNA_ERROR_LABEL_HAS_DOT => 'a label contains a dot=full stop',
-            IDNA_ERROR_INVALID_ACE_LABEL => 'An ACE label does not contain a valid label string',
-            IDNA_ERROR_BIDI => 'a label does not meet the IDNA BiDi requirements (for right-to-left characters)',
-            IDNA_ERROR_CONTEXTJ => 'a label does not meet the IDNA CONTEXTJ requirements',
-        ];
-
-        $res = [];
-        foreach ($idnErrors as $error => $reason) {
-            if ($error === ($error_byte & $error)) {
-                $res[] = $reason;
-            }
-        }
-
-        return [] === $res ? 'Unknown IDNA conversion error.' : implode(', ', $res).'.';
+        return Idna::toAscii($host, Idna::IDNA2008_ASCII)->result();
     }
 
     /**

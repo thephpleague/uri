@@ -29,9 +29,9 @@ final class IdnaConversionFailed extends SyntaxError
     public static function dueToIDNAError(string $domain, IdnaInfo $idnaInfo): self
     {
         return new self(sprintf(
-            'The host `%s` is invalid : %s',
+            'The host `%s` is invalid : %s .',
             $domain,
-            implode('; ', $idnaInfo->errorList())
+            implode(', ', $idnaInfo->errorList())
         ), $idnaInfo);
     }
 

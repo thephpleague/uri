@@ -28,6 +28,9 @@ use const INTL_IDNA_VARIANT_UTS46;
  */
 final class Idna
 {
+    private const REGEXP_IDNA_PATTERN = '/[^\x20-\x7f]/';
+    private const MAX_DOMAIN_LENGTH = 255;
+
     /**
      * IDNA options.
      */
@@ -97,12 +100,26 @@ final class Idna
     {
         $domain = rawurldecode($domain);
 
+        if (1 !== preg_match(self::REGEXP_IDNA_PATTERN, $domain)) {
+            $errors = 0;
+            if (strlen($domain) >= self::MAX_DOMAIN_LENGTH) {
+                $errors = self::ERROR_DOMAIN_NAME_TOO_LONG;
+            }
+
+            $info = IdnaInfo::fromIntl(['result' => strtolower($domain), 'isTransitionalDifferent' => false, 'errors' => $errors]);
+            if (0 !== $info->errors()) {
+                throw IdnaConversionFailed::dueToIDNAError($domain, $info);
+            }
+
+            return $info;
+        }
+
         self::supportsIdna();
 
         /* @param-out array{errors: int, isTransitionalDifferent: bool, result: string} $idnaInfo */
         idn_to_ascii($domain, $options, INTL_IDNA_VARIANT_UTS46, $idnaInfo);
         if ([] === $idnaInfo) {
-            throw new SyntaxError(sprintf('Host `%s` is not a valid IDN host', $domain));
+            throw  IdnaConversionFailed::dueToInvalidHost($domain);
         }
 
         /* @var array{errors: int, isTransitionalDifferent: bool, result: string} $idnaInfo */
@@ -118,6 +135,10 @@ final class Idna
      */
     public static function toUnicode(string $domain, int $options): IdnaInfo
     {
+        if (false === stripos($domain, 'xn--')) {
+            return IdnaInfo::fromIntl(['result' => $domain, 'isTransitionalDifferent' => false, 'errors' => 0]);
+        }
+
         self::supportsIdna();
 
         /* @param-out array{errors: int, isTransitionalDifferent: bool, result: string} $idnaInfo */

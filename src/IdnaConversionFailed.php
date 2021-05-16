@@ -35,6 +35,11 @@ final class IdnaConversionFailed extends SyntaxError
         ), $idnaInfo);
     }
 
+    public static function dueToInvalidHost(string $domain): self
+    {
+        return new self(sprintf('Host `%s` is not a valid IDN host', $domain));
+    }
+
     public function idnaInfo(): ?IdnaInfo
     {
         return $this->idnaInfo;

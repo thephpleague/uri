@@ -15,7 +15,6 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
-use UnexpectedValueException;
 use function defined;
 use function function_exists;
 use function idn_to_ascii;

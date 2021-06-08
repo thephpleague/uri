@@ -52,7 +52,7 @@ final class IdnaInfo
     /**
      * @var array<int, string>
      */
-    private array $errorList;
+    private $errorList;
 
     private function __construct(string $result, bool $isTransitionalDifferent, int $errors)
     {

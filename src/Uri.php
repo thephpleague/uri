@@ -372,7 +372,7 @@ final class Uri implements UriInterface
     {
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
-            Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
+            //Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
 
             return $formatted_host;
         }

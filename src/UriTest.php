@@ -505,11 +505,11 @@ class UriTest extends TestCase
     /**
      * @covers ::formatRegisteredName
      */
-    public function testCreateFromComponentsThrowsException6(): void
+    /*public function testCreateFromComponentsThrowsException6(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => 'xn--3']);
-    }
+    }*/
 
     /**
      * @covers ::formatRegisteredName

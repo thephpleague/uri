@@ -415,7 +415,7 @@ final class UriString
     {
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_REGISTERED_NAME, $formatted_host)) {
-            Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
+            //Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
 
             return $host;
         }

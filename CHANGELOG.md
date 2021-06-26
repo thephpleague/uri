@@ -7,10 +7,11 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `Uri::toString` a class that implements PSR-17 UriFactoryInterface. The package needs to be present for the class to work.
+- `IDNA` conversion in now normalize using the `Uri-Interface` package classes
 
 ### Fixed
 
-- None
+- conversion host component from ASCII to unicode no longer throw
 
 ### Deprecated
 

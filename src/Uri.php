@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
+use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -372,8 +373,6 @@ final class Uri implements UriInterface
     {
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
-            //Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
-
             return $formatted_host;
         }
 
@@ -381,7 +380,12 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('The host `%s` is invalid : a registered name can not contain URI delimiters or spaces', $host));
         }
 
-        return Idna::toAscii($host, Idna::IDNA2008_ASCII)->result();
+        $info = Idna::toAscii($host, Idna::IDNA2008_ASCII);
+        if (0 !== $info->errors()) {
+            throw IdnaConversionFailed::dueToIDNAError($host, $info);
+        }
+
+        return $info->result();
     }
 
     /**

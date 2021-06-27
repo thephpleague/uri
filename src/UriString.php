@@ -16,6 +16,7 @@ namespace League\Uri;
 use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Idna\Idna;
 use function array_merge;
 use function explode;
 use function filter_var;

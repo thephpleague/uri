@@ -18,6 +18,7 @@ use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use function array_filter;
 use function array_map;

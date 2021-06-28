@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Idna\Idna;
 use function array_merge;
 use function explode;
 use function filter_var;
@@ -415,8 +417,6 @@ final class UriString
     {
         $formatted_host = rawurldecode($host);
         if (1 === preg_match(self::REGEXP_REGISTERED_NAME, $formatted_host)) {
-            Idna::toUnicode($host, Idna::IDNA2008_UNICODE);
-
             return $host;
         }
 
@@ -425,7 +425,10 @@ final class UriString
             throw new SyntaxError(sprintf('Host `%s` is invalid : the host is not a valid registered name', $host));
         }
 
-        Idna::toAscii($host, Idna::IDNA2008_ASCII);
+        $info = Idna::toAscii($host, Idna::IDNA2008_ASCII);
+        if (0 !== $info->errors()) {
+            throw IdnaConversionFailed::dueToIDNAError($host, $info);
+        }
 
         return $host;
     }

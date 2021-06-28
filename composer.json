@@ -47,14 +47,14 @@
         "php": "^7.3 || ^8.0",
         "ext-json": "*",
         "psr/http-message": "^1.0",
-        "league/uri-interfaces": "^2.1"
+        "league/uri-interfaces": "^2.3"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
+        "friendsofphp/php-cs-fixer": "^2.19",
         "phpunit/phpunit" : "^8.0 || ^9.0",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-strict-rules": "^0.12",
-        "phpstan/phpstan-phpunit": "^0.12",
+        "phpstan/phpstan": "^0.12.90",
+        "phpstan/phpstan-strict-rules": "^0.12.9",
+        "phpstan/phpstan-phpunit": "^0.12.20",
         "psr/http-factory": "^1.0"
     },
     "autoload": {

@@ -5,24 +5,39 @@ on:
     pull_request: ~
 
 jobs:
-    phpunit:
-        name: PHPUnit tests on ${{ matrix.php }} ${{ matrix.composer-flags }}
-        runs-on: ubuntu-18.04
+    linux_tests:
+        name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+        runs-on: ubuntu-20.04
         strategy:
             matrix:
                 php: ['7.3', '7.4', '8.0']
-                composer-flags: [ '' ]
+                stability: [prefer-lowest, prefer-stable]
+                include:
+                    -   php: '8.1'
+                        flags: "--ignore-platform-req=php"
+                        stability: prefer-stable
                 phpunit-flags: [ '--coverage-text' ]
         steps:
-            - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v2
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
                   coverage: xdebug
                   tools: composer:v2
-            - run: composer update --no-progress ${{ matrix.composer-flags }}
-            - run: composer phpunit
-            - run: composer phpstan
+
+            - name: Install dependencies
+              run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress ${{ matrix.flags }}
+
+            - name: Run Unit tests
+              run: composer phpunit
+
+            - name: Run static analysis
+              run: composer phpstan
               if: ${{ matrix.php == '8.0' }}
-            - run: composer phpcs
+
+            - name: Run coding style check
+              run: composer phpcs
               if: ${{ matrix.php == '8.0' }}

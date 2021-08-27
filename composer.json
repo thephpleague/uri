@@ -50,11 +50,11 @@
         "league/uri-interfaces": "^2.3"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.19",
+        "friendsofphp/php-cs-fixer": "^2.19 || ^3.0",
         "phpunit/phpunit" : "^8.0 || ^9.0",
         "phpstan/phpstan": "^0.12.90",
-        "phpstan/phpstan-strict-rules": "^0.12.9",
-        "phpstan/phpstan-phpunit": "^0.12.20",
+        "phpstan/phpstan-strict-rules": "^0.12.11",
+        "phpstan/phpstan-phpunit": "^0.12.22",
         "psr/http-factory": "^1.0"
     },
     "autoload": {

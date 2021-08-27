@@ -2,11 +2,11 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.5.0 - 2021-08-27
 
 ### Added
 
-- `Uri::toString` a class that implements PSR-17 UriFactoryInterface. The package needs to be present for the class to work.
+- `Uri::toString` as a clean method to return URI string representation.
 - `IDNA` conversion in now normalize using the `Uri-Interface` package classes
 
 ### Fixed

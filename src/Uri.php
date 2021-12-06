@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use finfo;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\IdnaConversionFailed;
@@ -20,6 +21,7 @@ use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use TypeError;
 use function array_filter;
 use function array_map;
 use function base64_decode;
@@ -583,7 +585,7 @@ final class Uri implements UriInterface
     public static function createFromDataPath(string $path, $context = null): self
     {
         static $finfo_support = null;
-        $finfo_support = $finfo_support ?? class_exists(\finfo::class);
+        $finfo_support = $finfo_support ?? class_exists(finfo::class);
 
         // @codeCoverageIgnoreStart
         if (!$finfo_support) {
@@ -603,7 +605,7 @@ final class Uri implements UriInterface
             throw new SyntaxError(sprintf('The file `%s` does not exist or is not readable', $path));
         }
 
-        $mimetype = (string) (new \finfo(FILEINFO_MIME))->file(...$mime_args);
+        $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mime_args);
 
         return Uri::createFromComponents([
             'scheme' => 'data',
@@ -680,7 +682,7 @@ final class Uri implements UriInterface
         }
 
         if (!$uri instanceof Psr7UriInterface) {
-            throw new \TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
+            throw new TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
         }
 
         $scheme = $uri->getScheme();
@@ -1265,7 +1267,7 @@ final class Uri implements UriInterface
         }
 
         if (!is_scalar($str)) {
-            throw new \TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given.', gettype($str)));
+            throw new TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given.', gettype($str)));
         }
 
         $str = (string) $str;
@@ -1346,7 +1348,7 @@ final class Uri implements UriInterface
     {
         $path = $this->filterString($path);
         if (null === $path) {
-            throw new \TypeError('A path must be a string NULL given.');
+            throw new TypeError('A path must be a string NULL given.');
         }
 
         $path = $this->formatPath($path);

@@ -15,6 +15,7 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use TypeError;
 use function array_merge;
 use function array_unique;
 use function gettype;
@@ -71,7 +72,7 @@ final class Template
     /**
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws \TypeError  if the template is not a string or an object with the __toString method
+     * @throws TypeError   if the template is not a string or an object with the __toString method
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
@@ -82,7 +83,7 @@ final class Template
         }
 
         if (!is_string($template)) {
-            throw new \TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
+            throw new TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
         }
 
         /** @var string $remainder */

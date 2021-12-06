@@ -15,6 +15,8 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use TypeError;
 use function var_export;
 
 /**
@@ -116,9 +118,9 @@ final class TemplateTest extends TestCase
      */
     public function testExpandAcceptsOnlyStringAndStringableObject(): void
     {
-        self::expectException(\TypeError::class);
+        self::expectException(TypeError::class);
 
-        Template::createFromString(new \stdClass());
+        Template::createFromString(new stdClass());
     }
 
     /**

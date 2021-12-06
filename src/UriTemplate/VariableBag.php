@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use TypeError;
 use function gettype;
 use function is_array;
 use function is_bool;
@@ -88,7 +89,7 @@ final class VariableBag
         }
 
         if (!is_array($value)) {
-            throw new \TypeError(sprintf('The variable '.$name.' must be NULL, a scalar or a stringable object `%s` given', gettype($value)));
+            throw new TypeError(sprintf('The variable '.$name.' must be NULL, a scalar or a stringable object `%s` given', gettype($value)));
         }
 
         if (!$isNestedListAllowed) {

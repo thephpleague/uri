@@ -19,6 +19,7 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\VariableBag;
+use TypeError;
 
 /**
  * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.
@@ -46,7 +47,7 @@ final class UriTemplate
     /**
      * @param object|string $template a string or an object with the __toString method
      *
-     * @throws \TypeError               if the template is not a string or an object with the __toString method
+     * @throws TypeError                if the template is not a string or an object with the __toString method
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */

@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use TypeError;
 use function explode;
 use function implode;
 use function preg_replace_callback;
@@ -51,7 +52,7 @@ final class UriInfo
      *
      * @param mixed $uri the URI to validate
      *
-     * @throws \TypeError if the URI object does not implements the supported interfaces.
+     * @throws TypeError if the URI object does not implements the supported interfaces.
      *
      * @return Psr7UriInterface|UriInterface
      */
@@ -61,7 +62,7 @@ final class UriInfo
             return $uri;
         }
 
-        throw new \TypeError(sprintf('The uri must be a valid URI object received `%s`', is_object($uri) ? get_class($uri) : gettype($uri)));
+        throw new TypeError(sprintf('The uri must be a valid URI object received `%s`', is_object($uri) ? get_class($uri) : gettype($uri)));
     }
 
     /**

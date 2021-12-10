@@ -17,6 +17,7 @@ use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
+use TypeError;
 use function array_merge;
 use function explode;
 use function filter_var;
@@ -162,7 +163,7 @@ final class UriString
      *  pass:?string,
      *  host:?string,
      *  port:?int,
-     *  path:string,
+     *  path:?string,
      *  query:?string,
      *  fragment:?string
      * } $components
@@ -265,7 +266,7 @@ final class UriString
         }
 
         if (!is_scalar($uri)) {
-            throw new \TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
+            throw new TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
         }
 
         $uri = (string) $uri;

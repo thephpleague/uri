@@ -44,17 +44,18 @@
         }
     ],
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "league/uri-interfaces": "^2.3"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.19 || ^3.0",
-        "phpunit/phpunit" : "^8.0 || ^9.0",
-        "phpstan/phpstan": "^0.12.90",
-        "phpstan/phpstan-strict-rules": "^0.12.11",
-        "phpstan/phpstan-phpunit": "^0.12.22",
+        "friendsofphp/php-cs-fixer": "^v3.3.2",
+        "phpunit/phpunit" : "^9.5.10",
+        "phpstan/phpstan": "^1.2.0",
+        "phpstan/phpstan-strict-rules": "^1.1.0",
+        "phpstan/phpstan-phpunit": "^1.0.0",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
         "psr/http-factory": "^1.0"
     },
     "autoload": {

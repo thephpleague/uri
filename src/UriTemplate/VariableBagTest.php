@@ -16,6 +16,8 @@ namespace League\Uri\UriTemplate;
 use ArrayIterator;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use TypeError;
 use function var_export;
 
 /**
@@ -63,8 +65,8 @@ final class VariableBagTest extends TestCase
      * @covers ::normalizeValue
      * @covers ::fetch
      *
-     * @param mixed                $value    the value to be assign to the name
-     * @param string|array<string> $expected
+     * @param int|float|string|bool|array<string|bool|string|float> $value    the value to be assigned to the name
+     * @param string|array<string>                                  $expected
      *
      * @dataProvider provideValidAssignParameters
      */
@@ -114,9 +116,9 @@ final class VariableBagTest extends TestCase
      */
     public function testItWillFailToAssignUnsupportedType(): void
     {
-        self::expectException(\TypeError::class);
+        self::expectException(TypeError::class);
 
-        new VariableBag(['name' => new \stdClass()]);
+        new VariableBag(['name' => new stdClass()]);
     }
 
     /**

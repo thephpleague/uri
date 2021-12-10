@@ -28,10 +28,10 @@ final class VariableBag
     /**
      * @var array<string,string|array<string>>
      */
-    private $variables = [];
+    private array $variables = [];
 
     /**
-     * @param iterable<string,mixed> $variables
+     * @param iterable<string,string|bool|int|float|array<string|bool|int|float>> $variables
      */
     public function __construct(iterable $variables = [])
     {
@@ -64,7 +64,7 @@ final class VariableBag
     }
 
     /**
-     * @param string|array<string> $value
+     * @param string|bool|int|float|array<string|bool|int|float> $value
      */
     public function assign(string $name, $value): void
     {
@@ -109,9 +109,6 @@ final class VariableBag
      */
     public function replace(VariableBag $variables): self
     {
-        $instance = clone $this;
-        $instance->variables += $variables->variables;
-
-        return $instance;
+        return new self($this->variables + $variables->variables);
     }
 }

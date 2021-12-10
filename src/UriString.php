@@ -163,7 +163,7 @@ final class UriString
      *  pass:?string,
      *  host:?string,
      *  port:?int,
-     *  path:string,
+     *  path:?string,
      *  query:?string,
      *  fragment:?string
      * } $components

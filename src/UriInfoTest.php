@@ -90,32 +90,6 @@ final class UriInfoTest extends TestCase
     }
 
     /**
-     * @dataProvider failedUriProvider
-     *
-     * @param null|mixed $uri
-     * @param null|mixed $base_uri
-     */
-    public function testStatThrowsInvalidArgumentException($uri, $base_uri): void
-    {
-        self::expectException(TypeError::class);
-        UriInfo::isSameDocument($uri, $base_uri);
-    }
-
-    public function failedUriProvider(): array
-    {
-        return [
-            'invalid uri' => [
-                'uri' => Http::createFromString('http://a/p?q#f'),
-                'base_uri' => 'http://example.com',
-            ],
-            'invalid base uri' => [
-                'uri' => 'http://example.com',
-                'base_uri' => Http::createFromString('//a/p?q#f'),
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider functionProvider
      */
     public function testIsFunctionsThrowsTypeError(string $function): void

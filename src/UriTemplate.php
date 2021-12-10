@@ -34,15 +34,8 @@ use TypeError;
  */
 final class UriTemplate
 {
-    /**
-     * @var Template
-     */
-    private $template;
-
-    /**
-     * @var VariableBag
-     */
-    private $defaultVariables;
+    private Template $template;
+    private VariableBag $defaultVariables;
 
     /**
      * @param object|string $template a string or an object with the __toString method
@@ -120,10 +113,10 @@ final class UriTemplate
      */
     public function withDefaultVariables(array $defaultDefaultVariables): self
     {
-        $clone = clone $this;
-        $clone->defaultVariables = $this->filterVariables($defaultDefaultVariables);
-
-        return $clone;
+        return new self(
+            $this->template->toString(),
+            $this->filterVariables($defaultDefaultVariables)->all()
+        );
     }
 
     /**
@@ -132,10 +125,10 @@ final class UriTemplate
      */
     public function expand(array $variables = []): UriInterface
     {
-        $uriString = $this->template->expand(
-            $this->filterVariables($variables)->replace($this->defaultVariables)
+        return Uri::createFromString(
+            $this->template->expand(
+                $this->filterVariables($variables)->replace($this->defaultVariables)
+            )
         );
-
-        return Uri::createFromString($uriString);
     }
 }

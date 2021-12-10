@@ -6,17 +6,12 @@ on:
 
 jobs:
     linux_tests:
-        name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+        name: PHP on ${{ matrix.php }} - ${{ matrix.stability }} - ${{ matrix.composer-flags }}
         runs-on: ubuntu-20.04
         strategy:
             matrix:
-                php: ['7.3', '7.4', '8.0']
+                php: ['7.4', '8.0', '8.1']
                 stability: [prefer-lowest, prefer-stable]
-                include:
-                    -   php: '8.1'
-                        flags: "--ignore-platform-req=php"
-                        stability: prefer-stable
-                phpunit-flags: [ '--coverage-text' ]
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
@@ -43,6 +38,6 @@ jobs:
               run: composer phpstan
               if: ${{ matrix.php == '8.0' }}
 
-            - name: Run coding style check
+            - name: Run Coding style rules
               run: composer phpcs
-              if: ${{ matrix.php == '8.0' }}
+              if: ${{ matrix.php == '8.0' && matrix.prefer-stable}}

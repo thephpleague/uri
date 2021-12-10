@@ -86,13 +86,18 @@ final class Expression
      */
     private function setVariableNames(): array
     {
-        return array_unique(array_map(static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name(), $this->varSpecifiers));
+        return array_unique(array_map(
+            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name(),
+            $this->varSpecifiers
+        ));
     }
 
     private function setExpressionString(): string
     {
-        $mapper = static fn (VarSpecifier $variable): string => $variable->toString();
-        $varSpecifierString = implode(',', array_map($mapper, $this->varSpecifiers));
+        $varSpecifierString = implode(',', array_map(
+            static fn (VarSpecifier $variable): string => $variable->toString(),
+            $this->varSpecifiers
+        ));
 
         return '{'.$this->operator.$varSpecifierString.'}';
     }
@@ -122,9 +127,10 @@ final class Expression
             throw new SyntaxError('The operator used in the expression "'.$expression.'" is reserved.');
         }
 
-        $mapper = static fn (string $varSpec): VarSpecifier => VarSpecifier::createFromString($varSpec);
-
-        return new Expression($parts['operator'], ...array_map($mapper, explode(',', $parts['variables'])));
+        return new Expression($parts['operator'], ...array_map(
+            static fn (string $varSpec): VarSpecifier => VarSpecifier::createFromString($varSpec),
+            explode(',', $parts['variables'])
+        ));
     }
 
     /**

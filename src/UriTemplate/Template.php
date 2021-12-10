@@ -35,20 +35,11 @@ final class Template
      */
     private const REGEXP_EXPRESSION_DETECTOR = '/\{[^\}]*\}/x';
 
-    /**
-     * @var string
-     */
-    private $template;
-
-    /**
-     * @var array<string, Expression>
-     */
-    private $expressions = [];
-
-    /**
-     * @var array<string>
-     */
-    private $variableNames;
+    private string $template;
+    /** @var array<string, Expression> */
+    private array $expressions = [];
+    /** @var array<string> */
+    private array $variableNames;
 
     private function __construct(string $template, Expression ...$expressions)
     {

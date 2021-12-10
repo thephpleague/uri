@@ -22,23 +22,6 @@ use TypeError;
  */
 final class HttpTest extends TestCase
 {
-    /**
-     * @var Http
-     */
-    private $uri;
-
-    protected function setUp(): void
-    {
-        $this->uri = Http::createFromString(
-            'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
-        );
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->uri);
-    }
-
     public function testDefaultConstructor(): void
     {
         self::assertSame('', (string) Http::createFromString());

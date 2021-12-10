@@ -271,7 +271,7 @@ final class UriResolver
     /**
      * Filter the URI object.
      *
-     * @param null|mixed $uri
+     * @param Psr7UriInterface|UriInterface $uri
      *
      * @throws TypeError if the URI object does not implements the supported interfaces.
      *

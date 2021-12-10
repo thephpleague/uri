@@ -2,12 +2,9 @@ includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
     ignoreErrors:
-        - message: '#Method League\\Uri\\Uri::fetchHostname\(\) should return array\(string\|null, string\|null\) but returns array\(mixed, int\|null\).#'
-          path: src/Uri.php
-        - message: '#Method League\\Uri\\Uri::withPath\(\) has parameter \$path with no typehint specified\.#'
-          path: src/Uri.php
         - message: '#Variable method call on \$this\(League\\Uri\\Uri\)\.#'
           path: src/Uri.php
         - message: '#Instanceof between Psr\\Http\\Message\\UriInterface and Psr\\Http\\Message\\UriInterface will always evaluate to true\.#'
@@ -32,5 +29,11 @@ parameters:
           path: src/UriInfoTest.php
         - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
           path: src/UriTest.php
+        - message: '#Parameter \#1 \$path of method League\\Uri\\Uri::withPath\(\) expects object\|string, DateTime\|false given\.#'
+          path: src/UriTest.php
+        - message: '#Parameter \#1 \$path of method League\\Uri\\Uri::withPath\(\) expects object\|string, null given\.#'
+          path: src/UriTest.php
+        - message: '#Parameter \#1 \$variables of class League\\Uri\\UriTemplate\\VariableBag constructor expects(.*)#'
+          path: src/UriTemplate/VariableBagTest.php
     reportUnmatchedIgnoredErrors: true
     checkMissingIterableValueType: false

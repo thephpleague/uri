@@ -50,14 +50,14 @@
         "league/uri-interfaces": "^2.3"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^v3.3.2",
+        "friendsofphp/php-cs-fixer": "^v3.6.0",
         "nyholm/psr7": "^1.5",
-        "phpstan/phpstan": "^1.2.0",
+        "phpstan/phpstan": "^1.4.6",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0.0",
         "phpstan/phpstan-strict-rules": "^1.1.0",
-        "phpunit/phpunit": "^9.5.10",
-        "psr/http-factory": "^1.0"
+        "phpunit/phpunit": "^9.5.16",
+        "psr/http-factory": "^1.0.1"
     },
     "autoload": {
         "psr-4": {
@@ -73,7 +73,7 @@
     "scripts": {
         "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
         "phpcs:fix": "php-cs-fixer fix -vvv --allow-risky=yes --ansi",
-        "phpstan": "phpstan analyse -l max -c phpstan.neon src --ansi --memory-limit=256M",
+        "phpstan": "phpstan analyse -c phpstan.neon --ansi --memory-limit=256M",
         "phpunit": "phpunit --coverage-text",
         "test": [
             "@phpunit",

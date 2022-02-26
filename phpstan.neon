@@ -4,6 +4,9 @@ includes:
     - vendor/phpstan/phpstan-phpunit/rules.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
+    level: max
+    paths:
+        - src
     ignoreErrors:
         - message: '#Variable method call on League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface\.#'
           path: src/UriResolver.php

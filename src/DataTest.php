@@ -15,8 +15,6 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group data
- * @group uri
  * @coversDefaultClass \League\Uri\Uri
  */
 final class DataTest extends TestCase

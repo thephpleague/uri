@@ -61,12 +61,10 @@
     "autoload": {
         "psr-4": {
             "League\\Uri\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "LeagueTest\\Uri\\": "tests"
-        }
+        },
+        "exclude-from-classmap": [
+            "src/**Test.php"
+        ]
     },
     "conflict": {
         "league/uri-schemes": "^1.0"

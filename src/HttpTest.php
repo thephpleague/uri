@@ -16,7 +16,6 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group http
  * @coversDefaultClass \League\Uri\Http
  */
 final class HttpTest extends TestCase

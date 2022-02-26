@@ -15,6 +15,9 @@ namespace League\Uri;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass \League\Uri\HttpFactory
+ */
 final class HttpFactoryTest extends TestCase
 {
     public function testCreateUri(): void

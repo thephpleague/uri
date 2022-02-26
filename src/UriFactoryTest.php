@@ -15,10 +15,9 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group factory
  * @coversDefaultClass \League\Uri\Uri
  */
-final class FactoryTest extends TestCase
+final class UriFactoryTest extends TestCase
 {
     /**
      * @covers ::createFromDataPath

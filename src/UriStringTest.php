@@ -16,6 +16,9 @@ use PHPUnit\Framework\TestCase;
 use Stringable;
 use function rawurlencode;
 
+/**
+ * @coversDefaultClass \League\Uri\UriString
+ */
 final class UriStringTest extends TestCase
 {
     /**

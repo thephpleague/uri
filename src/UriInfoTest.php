@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
 /**
- * @group modifier
  * @coversDefaultClass \League\Uri\UriInfo
  */
 final class UriInfoTest extends TestCase

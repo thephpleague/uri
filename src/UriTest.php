@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 /**
- * @group uri
  * @coversDefaultClass \League\Uri\Uri
  */
 class UriTest extends TestCase

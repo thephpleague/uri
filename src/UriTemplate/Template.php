@@ -15,17 +15,12 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use Stringable;
 use TypeError;
 use function array_merge;
 use function array_unique;
-use function gettype;
-use function is_object;
-use function is_string;
-use function method_exists;
 use function preg_match_all;
 use function preg_replace;
-use function sprintf;
-use function strpos;
 use const PREG_SET_ORDER;
 
 final class Template
@@ -35,15 +30,13 @@ final class Template
      */
     private const REGEXP_EXPRESSION_DETECTOR = '/\{[^\}]*\}/x';
 
-    private string $template;
     /** @var array<string, Expression> */
     private array $expressions = [];
     /** @var array<string> */
     private array $variableNames;
 
-    private function __construct(string $template, Expression ...$expressions)
+    private function __construct(private string $template, Expression ...$expressions)
     {
-        $this->template = $template;
         $variableNames = [];
         foreach ($expressions as $expression) {
             $this->expressions[$expression->toString()] = $expression;
@@ -61,25 +54,19 @@ final class Template
     }
 
     /**
-     * @param object|string $template a string or an object with the __toString method
-     *
      * @throws TypeError   if the template is not a string or an object with the __toString method
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
-    public static function createFromString($template): self
+    public static function createFromString(Stringable|string $template): self
     {
-        if (is_object($template) && method_exists($template, '__toString')) {
+        if ($template instanceof Stringable) {
             $template = (string) $template;
-        }
-
-        if (!is_string($template)) {
-            throw new TypeError(sprintf('The template must be a string or a stringable object %s given.', gettype($template)));
         }
 
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION_DETECTOR, '', $template);
-        if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
+        if (str_contains($remainder, '{') || str_contains($remainder, '}')) {
             throw new SyntaxError('The template "'.$template.'" contains invalid expressions.');
         }
 

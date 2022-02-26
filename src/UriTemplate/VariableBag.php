@@ -72,13 +72,11 @@ final class VariableBag
     }
 
     /**
-     * @param mixed $value the value to be expanded
-     *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
      *
      * @return string|array<string>
      */
-    private function normalizeValue($value, string $name, bool $isNestedListAllowed)
+    private function normalizeValue(mixed $value, string $name, bool $isNestedListAllowed)
     {
         if (is_bool($value)) {
             return true === $value ? '1' : '0';

@@ -85,6 +85,8 @@ final class Uri implements UriInterface
      * RFC3986 schema regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
+     *
+     * @var string
      */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
 
@@ -92,6 +94,8 @@ final class Uri implements UriInterface
      * RFC3986 host identified by a registered name regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_REGNAME = '/^(
         (?<unreserved>[a-z0-9_~\-\.])|
@@ -103,6 +107,8 @@ final class Uri implements UriInterface
      * RFC3986 delimiters of the generic URI components regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
 
@@ -110,6 +116,8 @@ final class Uri implements UriInterface
      * RFC3986 IPvFuture regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_IPFUTURE = '/^
         v(?<version>[A-F0-9])+\.
@@ -121,11 +129,15 @@ final class Uri implements UriInterface
 
     /**
      * RFC3986 IPvFuture host and port component.
+     *
+     * @var string
      */
     private const REGEXP_HOST_PORT = ',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x';
 
     /**
      * Significant 10 bits of IP to detect Zone ID regular expression pattern.
+     *
+     * @var string
      */
     private const HOST_ADDRESS_BLOCK = "\xfe\x80";
 
@@ -134,6 +146,8 @@ final class Uri implements UriInterface
      * <volume> contains the volume but not the volume separator.
      * The volume separator may be URL-encoded (`|` as `%7C`) by ::formatPath(),
      * so we account for that here.
+     *
+     * @var string
      */
     private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<volume>[a-zA-Z])(?:[:|\|]|%7C)(?<rest>.*)?,';
 
@@ -141,6 +155,8 @@ final class Uri implements UriInterface
      * Mimetype regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
@@ -148,12 +164,16 @@ final class Uri implements UriInterface
      * Base64 content regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_BINARY = ',(;|^)base64$,';
 
     /**
      * Windows file path string regular expression pattern.
      * <root> contains both the volume and volume separator.
+     *
+     * @var string
      */
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
@@ -171,22 +191,6 @@ final class Uri implements UriInterface
         'https' => 443,
         'ws' => 80,
         'wss' => 443,
-    ];
-
-    /**
-     * URI validation methods per scheme.
-     *
-     * @var array<string>
-     */
-    private const SCHEME_VALIDATION_METHOD = [
-        'data' => 'isUriWithSchemeAndPathOnly',
-        'file' => 'isUriWithSchemeHostAndPathOnly',
-        'ftp' => 'isNonEmptyHostUriWithoutFragmentAndQuery',
-        'gopher' => 'isNonEmptyHostUriWithoutFragmentAndQuery',
-        'http' => 'isNonEmptyHostUri',
-        'https' => 'isNonEmptyHostUri',
-        'ws' => 'isNonEmptyHostUriWithoutFragment',
-        'wss' => 'isNonEmptyHostUriWithoutFragment',
     ];
 
     /**
@@ -224,6 +228,7 @@ final class Uri implements UriInterface
         $this->path = $this->formatPath($path);
         $this->query = $this->formatQueryAndFragment($query);
         $this->fragment = $this->formatQueryAndFragment($fragment);
+
         $this->assertValidState();
     }
 
@@ -349,7 +354,7 @@ final class Uri implements UriInterface
 
         //Only the address block fe80::/10 can have a Zone ID attach to
         //let's detect the link local significant 10 bits
-        if (0 === strpos((string) inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
+        if (str_starts_with((string) inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
             return $host;
         }
 
@@ -361,12 +366,8 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError
      */
-    private function formatPort(Stringable|string|int|null $port = null): int|null
+    private function formatPort(string|int|null $port = null): int|null
     {
-        if ($port instanceof Stringable) {
-            $port = (string) $port;
-        }
-
         if (null === $port || '' === $port) {
             return null;
         }
@@ -416,8 +417,10 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function createFromBaseUri(Stringable|int|float|string $uri, Stringable|int|float|string|null $base_uri = null): UriInterface
-    {
+    public static function createFromBaseUri(
+        Stringable|int|float|string $uri,
+        Stringable|int|float|string|null $base_uri = null
+    ): UriInterface {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
         }
@@ -937,14 +940,20 @@ final class Uri implements UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
-        $validationMethod = self::SCHEME_VALIDATION_METHOD[$this->scheme] ?? null;
-        if (null === $validationMethod || true === $this->$validationMethod()) {
-            $this->uri = null;
+        $isValid = match ($this->scheme) {
+            'data' => $this->isUriWithSchemeAndPathOnly(),
+            'file' => $this->isUriWithSchemeHostAndPathOnly(),
+            'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
+            'http', 'https' => $this->isNonEmptyHostUri(),
+            'we', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
+            default => true,
+        };
 
-            return;
+        if (!$isValid) {
+            throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', (string) $this, $this->scheme));
         }
 
-        throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', (string) $this, $this->scheme));
+        $this->uri = null;
     }
 
     /**
@@ -1164,10 +1173,6 @@ final class Uri implements UriInterface
     {
         if (null === $str) {
             return $str;
-        }
-
-        if ($str instanceof Stringable) {
-            $str = (string) $str;
         }
 
         $str = (string) $str;

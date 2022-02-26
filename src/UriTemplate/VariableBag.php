@@ -14,14 +14,9 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
-use TypeError;
-use function gettype;
-use function is_array;
+use Stringable;
 use function is_bool;
-use function is_object;
 use function is_scalar;
-use function method_exists;
-use function sprintf;
 
 final class VariableBag
 {
@@ -66,7 +61,7 @@ final class VariableBag
     /**
      * @param string|bool|int|float|array<string|bool|int|float>|null $value
      */
-    public function assign(string $name, array|bool|int|float|string|null $value): void
+    public function assign(string $name, Stringable|array|bool|int|float|string|null $value): void
     {
         $this->variables[$name] = $this->normalizeValue($value, $name, true);
     }
@@ -76,18 +71,14 @@ final class VariableBag
      *
      * @return string|array<string>
      */
-    private function normalizeValue(mixed $value, string $name, bool $isNestedListAllowed)
+    private function normalizeValue(Stringable|array|bool|int|float|string|null $value, string $name, bool $isNestedListAllowed)
     {
         if (is_bool($value)) {
             return true === $value ? '1' : '0';
         }
 
-        if (null === $value || is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
+        if (null === $value || is_scalar($value) || $value instanceof Stringable) {
             return (string) $value;
-        }
-
-        if (!is_array($value)) {
-            throw new TypeError(sprintf('The variable '.$name.' must be NULL, a scalar or a stringable object `%s` given', gettype($value)));
         }
 
         if (!$isNestedListAllowed) {

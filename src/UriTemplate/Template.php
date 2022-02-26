@@ -60,10 +60,7 @@ final class Template
      */
     public static function createFromString(Stringable|string $template): self
     {
-        if ($template instanceof Stringable) {
-            $template = (string) $template;
-        }
-
+        $template = (string) $template;
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION_DETECTOR, '', $template);
         if (str_contains($remainder, '{') || str_contains($remainder, '}')) {

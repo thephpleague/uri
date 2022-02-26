@@ -13,6 +13,7 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
+use Nyholm\Psr7\Uri as Psr7Uri;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -117,6 +118,11 @@ final class HttpTest extends TestCase
         self::assertEquals(
             Http::createFromString('http://0:0@0/0?0#0'),
             Http::createFromUri(Uri::createFromString('http://0:0@0/0?0#0'))
+        );
+
+        self::assertEquals(
+            Http::createFromUri(Uri::createFromString('http://0:0@0/0?0#0')),
+            Http::createFromUri(new Psr7Uri('http://0:0@0/0?0#0'))
         );
     }
 

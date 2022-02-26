@@ -257,10 +257,6 @@ final class UriString
      */
     public static function parse(Stringable|int|float|string $uri): array
     {
-        if ($uri instanceof Stringable) {
-            $uri = (string) $uri;
-        }
-
         $uri = (string) $uri;
 
         if (isset(self::URI_SCHORTCUTS[$uri])) {

@@ -5,8 +5,6 @@ includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
     ignoreErrors:
-        - message: '#Variable method call on \$this\(League\\Uri\\Uri\)\.#'
-          path: src/Uri.php
         - message: '#Variable method call on League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface\.#'
           path: src/UriResolver.php
         - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'

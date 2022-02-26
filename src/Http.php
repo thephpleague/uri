@@ -194,13 +194,9 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * @throws SyntaxError if the submitted data can not be converted to string
      *
      */
-    private function filterInput(Stringable|string $str): string
+    private function filterInput(Stringable|float|int|string $str): string
     {
-        if ($str instanceof Stringable) {
-            return (string) $str;
-        }
-
-        return $str;
+        return (string) $str;
     }
 
     /**

@@ -15,16 +15,13 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use TypeError;
 use function array_pop;
 use function array_reduce;
 use function count;
 use function end;
 use function explode;
-use function gettype;
 use function implode;
 use function in_array;
-use function sprintf;
 use function str_repeat;
 use function strpos;
 use function substr;
@@ -49,15 +46,10 @@ final class UriResolver
      * If the first argument is a UriInterface the method returns a UriInterface object
      * If the first argument is a Psr7UriInterface the method returns a Psr7UriInterface object
      *
-     * @param Psr7UriInterface|UriInterface $uri
-     * @param Psr7UriInterface|UriInterface $base_uri
      *
-     * @return Psr7UriInterface|UriInterface
      */
-    public static function resolve($uri, $base_uri)
+    public static function resolve(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
     {
-        self::filterUri($uri);
-        self::filterUri($base_uri);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -91,25 +83,11 @@ final class UriResolver
     }
 
     /**
-     * Filter the URI object.
-     *
-     * @param mixed $uri an URI object
-     *
-     * @throws TypeError if the URI object does not implements the supported interfaces.
-     */
-    private static function filterUri($uri): void
-    {
-        if (!$uri instanceof UriInterface && !$uri instanceof Psr7UriInterface) {
-            throw new TypeError(sprintf('The uri must be a valid URI object received `%s`', gettype($uri)));
-        }
-    }
-
-    /**
      * Remove dot segments from the URI path.
      */
     private static function removeDotSegments(string $path): string
     {
-        if (false === strpos($path, '.')) {
+        if (!str_contains($path, '.')) {
             return $path;
         }
 
@@ -121,7 +99,7 @@ final class UriResolver
 
         // @codeCoverageIgnoreStart
         // added because some PSR-7 implementations do not respect RFC3986
-        if (0 === strpos($path, '/') && 0 !== strpos($new_path, '/')) {
+        if (str_starts_with($path, '/') && !str_starts_with($new_path, '/')) {
             return '/'.$new_path;
         }
         // @codeCoverageIgnoreEnd
@@ -152,19 +130,16 @@ final class UriResolver
     /**
      * Resolve an URI path and query component.
      *
-     * @param Psr7UriInterface|UriInterface $uri
-     * @param Psr7UriInterface|UriInterface $base_uri
-     *
      * @return array{0:string, 1:string|null}
      */
-    private static function resolvePathAndQuery($uri, $base_uri): array
+    private static function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): array
     {
         $target_path = $uri->getPath();
         $target_query = $uri->getQuery();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
         $baseNull = $base_uri instanceof Psr7UriInterface ? '' : null;
 
-        if (0 === strpos($target_path, '/')) {
+        if (str_starts_with($target_path, '/')) {
             return [$target_path, $target_query];
         }
 
@@ -208,16 +183,9 @@ final class UriResolver
      *
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
-     *
-     * @param Psr7UriInterface|UriInterface $uri
-     * @param Psr7UriInterface|UriInterface $base_uri
-     *
-     * @return Psr7UriInterface|UriInterface
      */
-    public static function relativize($uri, $base_uri)
+    public static function relativize(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
     {
-        self::filterUri($uri);
-        self::filterUri($base_uri);
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
         if (!self::isRelativizable($uri, $base_uri)) {
@@ -244,21 +212,16 @@ final class UriResolver
 
     /**
      * Tells whether the component value from both URI object equals.
-     *
-     * @param Psr7UriInterface|UriInterface $uri
-     * @param Psr7UriInterface|UriInterface $base_uri
      */
-    private static function componentEquals(string $method, $uri, $base_uri): bool
+    private static function componentEquals(string $method, Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
     {
         return self::getComponent($method, $uri) === self::getComponent($method, $base_uri);
     }
 
     /**
      * Returns the component value from the submitted URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri
      */
-    private static function getComponent(string $method, $uri): string|null
+    private static function getComponent(string $method, Psr7UriInterface|UriInterface $uri): string|null
     {
         $component = $uri->$method();
         if ($uri instanceof Psr7UriInterface && '' === $component) {
@@ -270,14 +233,8 @@ final class UriResolver
 
     /**
      * Filter the URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri
-     *
-     * @throws TypeError if the URI object does not implements the supported interfaces.
-     *
-     * @return Psr7UriInterface|UriInterface
      */
-    private static function formatHost($uri)
+    private static function formatHost(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
         if (!$uri instanceof Psr7UriInterface) {
             return $uri;
@@ -293,11 +250,8 @@ final class UriResolver
 
     /**
      * Tell whether the submitted URI object can be relativize.
-     *
-     * @param Psr7UriInterface|UriInterface $uri
-     * @param Psr7UriInterface|UriInterface $base_uri
      */
-    private static function isRelativizable($uri, $base_uri): bool
+    private static function isRelativizable(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
     {
         return !UriInfo::isRelativePath($uri)
             && self::componentEquals('getScheme', $uri, $base_uri)

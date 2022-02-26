@@ -387,7 +387,7 @@ final class UriString
             return $host;
         }
 
-        if ('[' !== $host[0] || ']' !== substr($host, -1)) {
+        if ('[' !== $host[0] || !str_ends_with($host, ']')) {
             return self::filterRegisteredName($host);
         }
 
@@ -454,6 +454,6 @@ final class UriString
         $ip_host = substr($ip_host, 0, $pos);
 
         return false !== filter_var($ip_host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-            && 0 === strpos((string) inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
+            && str_starts_with((string)inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
     }
 }

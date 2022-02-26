@@ -25,12 +25,9 @@ use function sprintf;
 
 final class Http implements Psr7UriInterface, JsonSerializable
 {
-    private UriInterface $uri;
-
-    private function __construct(UriInterface $uri)
+    private function __construct(private UriInterface $uri)
     {
-        $this->validate($uri);
-        $this->uri = $uri;
+        $this->validate($this->uri);
     }
 
     /**

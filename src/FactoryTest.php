@@ -13,7 +13,6 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group factory
@@ -25,10 +24,8 @@ final class FactoryTest extends TestCase
      * @covers ::createFromDataPath
      *
      * @dataProvider invalidDataPath
-     *
-     * @param string $path
      */
-    public function testCreateFromPathFailed($path): void
+    public function testCreateFromPathFailed(string $path): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromDataPath($path);
@@ -165,12 +162,6 @@ final class FactoryTest extends TestCase
 
         $uribis = Http::createFromString();
         self::assertSame((string) $uribis, Uri::createFromUri($uribis)->__toString());
-    }
-
-    public function testCreateFromUriFails(): void
-    {
-        self::expectException(TypeError::class);
-        Http::createFromUri('http://example.com');
     }
 
     /**

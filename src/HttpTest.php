@@ -14,7 +14,6 @@ namespace League\Uri;
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group http
@@ -45,15 +44,6 @@ final class HttpTest extends TestCase
     {
         self::expectException(InvalidArgumentException::class);
         Http::createFromString('https://example.com:-1');
-    }
-
-    /**
-     * @covers ::filterInput
-     */
-    public function testThrowTypeErrorOnWrongType(): void
-    {
-        self::expectException(TypeError::class);
-        Http::createFromString('https://example.com')->withFragment([]);
     }
 
     /**

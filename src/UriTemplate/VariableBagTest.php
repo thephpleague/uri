@@ -70,8 +70,11 @@ final class VariableBagTest extends TestCase
      *
      * @dataProvider provideValidAssignParameters
      */
-    public function testItCanAssignNameAndValuesToTheBag(string $name, $value, $expected): void
-    {
+    public function testItCanAssignNameAndValuesToTheBag(
+        string $name,
+        int|float|string|bool|array $value,
+        string|array $expected
+    ): void {
         $bag = new VariableBag();
         $bag->assign($name, $value);
 

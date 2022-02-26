@@ -20,10 +20,8 @@ final class UriStringTest extends TestCase
 {
     /**
      * @dataProvider validUriProvider
-     *
-     * @param Stringable|int|float|string $uri a scalar or an object
      */
-    public function testParseSucced($uri, array $expected): void
+    public function testParseSucced(Stringable|int|float|string $uri, array $expected): void
     {
         self::assertSame($expected, UriString::parse($uri));
     }

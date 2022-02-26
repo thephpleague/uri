@@ -12,7 +12,6 @@
 namespace League\Uri;
 
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group modifier
@@ -81,12 +80,6 @@ final class RelativizerTest extends TestCase
             'same document'           => ['/',                  '/',                     ''],
             'same URI normalized'     => ['http://a',           'http://a/',             ''],
         ];
-    }
-
-    public function testUriResolverThrowExceptionOnConstructor(): void
-    {
-        self::expectException(TypeError::class);
-        UriResolver::relativize('ftp//a/b/c/d;p', 'toto');
     }
 
     /**

@@ -64,9 +64,9 @@ final class VariableBag
     }
 
     /**
-     * @param string|bool|int|float|array<string|bool|int|float> $value
+     * @param string|bool|int|float|array<string|bool|int|float>|null $value
      */
-    public function assign(string $name, $value): void
+    public function assign(string $name, array|bool|int|float|string|null $value): void
     {
         $this->variables[$name] = $this->normalizeValue($value, $name, true);
     }

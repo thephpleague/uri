@@ -369,7 +369,12 @@ class UriTest extends TestCase
     public function testJsonSerialize(): void
     {
         $uri = Uri::createFromString('https://a:b@c:442/d?q=r#f');
-        self::assertJsonStringEqualsJsonString(json_encode($uri->__toString()), json_encode($uri));
+        /** @var string $uriString */
+        $uriString = json_encode($uri->__toString());
+        /** @var string $uriJson */
+        $uriJson = json_encode($uri);
+
+        self::assertJsonStringEqualsJsonString($uriString, $uriJson);
     }
 
     /**

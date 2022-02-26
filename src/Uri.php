@@ -238,16 +238,11 @@ final class Uri implements UriInterface
      */
     private function formatScheme(string|null $scheme): string|null
     {
-        if (null === $scheme) {
-            return $scheme;
-        }
-
-        $formatted_scheme = strtolower($scheme);
-        if (1 === preg_match(self::REGEXP_SCHEME, $formatted_scheme)) {
-            return $formatted_scheme;
-        }
-
-        throw new SyntaxError(sprintf('The scheme `%s` is invalid.', $scheme));
+        return match (true) {
+            null === $scheme => $scheme,
+            1 === preg_match(self::REGEXP_SCHEME, $scheme) => strtolower($scheme),
+            default => throw new SyntaxError(sprintf('The scheme `%s` is invalid.', $scheme)),
+        };
     }
 
     /**
@@ -255,19 +250,15 @@ final class Uri implements UriInterface
      */
     private function formatUserInfo(string|null $user, string|null $password): string|null
     {
-        if (null === $user) {
-            return $user;
-        }
-
         static $user_pattern = '/(?:[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
-        $user = preg_replace_callback($user_pattern, [Uri::class, 'urlEncodeMatch'], $user);
-        if (null === $password) {
-            return $user;
-        }
-
         static $password_pattern = '/(?:[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
 
-        return $user.':'.preg_replace_callback($password_pattern, [Uri::class, 'urlEncodeMatch'], $password);
+        return match (true) {
+            null === $user => null,
+            null === $password => preg_replace_callback($user_pattern, [Uri::class, 'urlEncodeMatch'], $user),
+            default => preg_replace_callback($user_pattern, [Uri::class, 'urlEncodeMatch'], $user).':'
+                .preg_replace_callback($password_pattern, [Uri::class, 'urlEncodeMatch'], $password),
+        };
     }
 
     /**
@@ -372,14 +363,9 @@ final class Uri implements UriInterface
         };
     }
 
-
     public static function __set_state(array $components): self
     {
-        $components['user'] = null;
-        $components['pass'] = null;
-        if (null !== $components['user_info']) {
-            [$components['user'], $components['pass']] = explode(':', $components['user_info'], 2) + [1 => null];
-        }
+        [$components['user'], $components['pass']] = self::explodeUserInfo($components['user_info']);
 
         return new self(
             $components['scheme'],
@@ -399,8 +385,8 @@ final class Uri implements UriInterface
      * The returned URI must be absolute.
      */
     public static function createFromBaseUri(
-        UriInterface|Stringable|string $uri,
-        UriInterface|Stringable|string|null $base_uri = null
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string|null $base_uri = null
     ): UriInterface {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
@@ -1102,14 +1088,33 @@ final class Uri implements UriInterface
         if ($scheme === $this->scheme) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->scheme = $scheme;
-        $clone->port = $clone->formatPort($clone->port);
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
+        return new self(
+            $scheme,
+            $user,
+            $password,
+            $this->host,
+            $this->port,
+            $this->path,
+            $this->query,
+            $this->fragment
+        );
+    }
 
-        return $clone;
+    /**
+     * @return array{0:string|null, 1:string|null}
+     */
+    private static function explodeUserInfo(string|null $user_info): array
+    {
+        /** @var array{0:string|null, 1:string|null} $res */
+        $res = match (true) {
+            null === $user_info || '' === $user_info => [0 => null, 1 => null],
+            !str_contains($user_info, ':') => [$user_info, null],
+            default => explode(':', $user_info, 2),
+        };
+
+        return $res;
     }
 
     /**
@@ -1131,7 +1136,6 @@ final class Uri implements UriInterface
         throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
     }
 
-
     public function withUserInfo(
         Stringable|string|null $user,
         Stringable|string|null $password = null
@@ -1150,12 +1154,7 @@ final class Uri implements UriInterface
             return $this;
         }
 
-        $clone = clone $this;
-        $clone->user_info = $user_info;
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $this->host, $this->port, $this->path, $this->query, $this->fragment);
     }
 
     public function withHost(Stringable|string|null $host): UriInterface
@@ -1164,13 +1163,9 @@ final class Uri implements UriInterface
         if ($host === $this->host) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->host = $host;
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $host, $this->port, $this->path, $this->query, $this->fragment);
     }
 
     public function withPort(int|null $port): UriInterface
@@ -1179,13 +1174,9 @@ final class Uri implements UriInterface
         if ($port === $this->port) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->port = $port;
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $this->host, $port, $this->path, $this->query, $this->fragment);
     }
 
     public function withPath(Stringable|string $path): UriInterface
@@ -1197,12 +1188,9 @@ final class Uri implements UriInterface
         if ($path === $this->path) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->path = $path;
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $this->host, $this->port, $path, $this->query, $this->fragment);
     }
 
     public function withQuery(Stringable|string|null $query): UriInterface
@@ -1211,12 +1199,9 @@ final class Uri implements UriInterface
         if ($query === $this->query) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->query = $query;
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $this->host, $this->port, $this->path, $query, $this->fragment);
     }
 
     public function withFragment(Stringable|string|null $fragment): UriInterface
@@ -1225,11 +1210,8 @@ final class Uri implements UriInterface
         if ($fragment === $this->fragment) {
             return $this;
         }
+        [$user, $password] = self::explodeUserInfo($this->user_info);
 
-        $clone = clone $this;
-        $clone->fragment = $fragment;
-        $clone->assertValidState();
-
-        return $clone;
+        return new self($this->scheme, $user, $password, $this->host, $this->port, $this->path, $this->query, $fragment);
     }
 }

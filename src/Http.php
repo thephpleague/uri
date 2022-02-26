@@ -36,12 +36,12 @@ final class Http implements Psr7UriInterface, JsonSerializable
     {
         $scheme = $uri->getScheme();
         if (null === $scheme && '' === $uri->getHost()) {
-            throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', (string) $uri));
+            throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', $uri->__toString()));
         }
 
         $port = $uri->getPort();
         if (null !== $port && ($port < 0 || $port > 65535)) {
-            throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %s', (string) $uri->getPort()));
+            throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %d', $uri->getPort()));
         }
     }
 
@@ -87,8 +87,8 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * The returned URI must be absolute.
      */
     public static function createFromBaseUri(
-        Stringable|string $uri,
-        Stringable|string|null $base_uri = null
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string|null $base_uri = null
     ): self {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }

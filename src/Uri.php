@@ -199,34 +199,28 @@ final class Uri implements UriInterface
      */
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
-    private string|null $scheme;
     private string|null $user_info;
-    private string|null $host;
-    private int|null $port;
     private string|null $authority;
-    private string $path = '';
-    private string|null $query;
-    private string|null $fragment;
     private string|null $uri;
 
     private function __construct(
-        string|null $scheme,
+        private string|null $scheme,
         string|null $user,
         string|null $pass,
-        string|null $host,
-        int|null $port,
-        string $path,
-        string|null $query,
-        string|null $fragment
+        private string|null $host,
+        private int|null $port,
+        private string $path,
+        private string|null $query,
+        private string|null $fragment
     ) {
-        $this->scheme = $this->formatScheme($scheme);
+        $this->scheme = $this->formatScheme($this->scheme);
         $this->user_info = $this->formatUserInfo($user, $pass);
-        $this->host = $this->formatHost($host);
-        $this->port = $this->formatPort($port);
+        $this->host = $this->formatHost($this->host);
+        $this->port = $this->formatPort($this->port);
         $this->authority = $this->setAuthority();
-        $this->path = $this->formatPath($path);
-        $this->query = $this->formatQueryAndFragment($query);
-        $this->fragment = $this->formatQueryAndFragment($fragment);
+        $this->path = $this->formatPath($this->path);
+        $this->query = $this->formatQueryAndFragment($this->query);
+        $this->fragment = $this->formatQueryAndFragment($this->fragment);
 
         $this->assertValidState();
     }
@@ -377,6 +371,21 @@ final class Uri implements UriInterface
             $components['query'],
             $components['fragment']
         );
+    }
+
+    /**
+     * @return array{0:string|null, 1:string|null}
+     */
+    private static function explodeUserInfo(string|null $user_info): array
+    {
+        /** @var array{0:string|null, 1:string|null} $res */
+        $res = match (true) {
+            null === $user_info || '' === $user_info => [0 => null, 1 => null],
+            !str_contains($user_info, ':') => [$user_info, null],
+            default => explode(':', $user_info, 2),
+        };
+
+        return $res;
     }
 
     /**
@@ -1039,7 +1048,6 @@ final class Uri implements UriInterface
         ];
     }
 
-
     public function getScheme(): string|null
     {
         return $this->scheme;
@@ -1103,21 +1111,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * @return array{0:string|null, 1:string|null}
-     */
-    private static function explodeUserInfo(string|null $user_info): array
-    {
-        /** @var array{0:string|null, 1:string|null} $res */
-        $res = match (true) {
-            null === $user_info || '' === $user_info => [0 => null, 1 => null],
-            !str_contains($user_info, ':') => [$user_info, null],
-            default => explode(':', $user_info, 2),
-        };
-
-        return $res;
-    }
-
-    /**
      * Filter a string.
      *
      * @throws SyntaxError if the submitted data can not be converted to string
@@ -1129,11 +1122,11 @@ final class Uri implements UriInterface
         }
 
         $str = (string) $str;
-        if (1 !== preg_match(self::REGEXP_INVALID_CHARS, $str)) {
-            return $str;
+        if (1 === preg_match(self::REGEXP_INVALID_CHARS, $str)) {
+            throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
         }
 
-        throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
+        return $str;
     }
 
     public function withUserInfo(
@@ -1181,13 +1174,16 @@ final class Uri implements UriInterface
 
     public function withPath(Stringable|string $path): UriInterface
     {
-        /** @var string $path */
-        $path = $this->filterString($path);
+        $path = (string) $path;
+        if (1 === preg_match(self::REGEXP_INVALID_CHARS, $path)) {
+            throw new SyntaxError('The component `path` contains invalid characters.');
+        }
 
         $path = $this->formatPath($path);
         if ($path === $this->path) {
             return $this;
         }
+
         [$user, $password] = self::explodeUserInfo($this->user_info);
 
         return new self($this->scheme, $user, $password, $this->host, $this->port, $path, $this->query, $this->fragment);

@@ -253,7 +253,7 @@ final class UriString
      *                fragment:string|null
      *                }
      */
-    public static function parse(Stringable|int|float|string $uri): array
+    public static function parse(Stringable|int|string $uri): array
     {
         $uri = (string) $uri;
 

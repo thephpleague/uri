@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## 6.6.0 - TBD
 
 ### Added
 
@@ -18,7 +18,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Remove
 
-- None
+- Support for PHP7
 
 ## 6.5.0 - 2021-08-27
 

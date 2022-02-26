@@ -13,7 +13,6 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @coversDefaultClass \League\Uri\Uri
@@ -320,16 +319,6 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::filterString
-     * @covers ::withPath
-     */
-    public function testWithPathThrowTypeErrorOnWrongType(): void
-    {
-        self::expectException(TypeError::class);
-        Uri::createFromString('https://example.com')->withPath(null);
-    }
-
-    /**
      * @dataProvider setStateDataProvider
      *
      * @covers ::__set_state
@@ -397,16 +386,6 @@ class UriTest extends TestCase
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('http://example.com/path')->withPort(-1);
-    }
-
-    /**
-     * @covers ::formatPort
-     * @covers ::withPort
-     */
-    public function testModificationFailedWithInvalidPort2(): void
-    {
-        self::expectException(SyntaxError::class);
-        Uri::createFromString('http://example.com/path')->withPort('-1');
     }
 
     /**

@@ -16,8 +16,6 @@ namespace League\Uri\UriTemplate;
 use ArrayIterator;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
-use stdClass;
-use TypeError;
 use function var_export;
 
 /**
@@ -110,18 +108,6 @@ final class VariableBagTest extends TestCase
                 'expected' => '',
             ],
         ];
-    }
-
-    /**
-     * @covers ::assign
-     * @covers ::normalizeValue
-     * @covers ::__construct
-     */
-    public function testItWillFailToAssignUnsupportedType(): void
-    {
-        self::expectException(TypeError::class);
-
-        new VariableBag(['name' => new stdClass()]);
     }
 
     /**

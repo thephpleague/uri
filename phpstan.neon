@@ -8,10 +8,6 @@ parameters:
     paths:
         - src
     ignoreErrors:
-        - message: '#Variable method call on League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface\.#'
-          path: src/UriResolver.php
-        - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
-          path: src/UriTest.php
         - message: '#Parameter \#1 \$variables of class League\\Uri\\UriTemplate\\VariableBag constructor expects(.*)#'
           path: src/UriTemplate/VariableBagTest.php
     reportUnmatchedIgnoredErrors: true

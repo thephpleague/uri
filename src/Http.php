@@ -57,7 +57,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * Create a new instance from a string.
      *
      */
-    public static function createFromString(Stringable|int|float|string $uri = ''): self
+    public static function createFromString(Stringable|string $uri = ''): self
     {
         return new self(Uri::createFromString($uri));
     }
@@ -87,8 +87,8 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * The returned URI must be absolute.
      */
     public static function createFromBaseUri(
-        Stringable|int|float|string $uri,
-        Stringable|int|float|string|null $base_uri = null
+        Stringable|string $uri,
+        Stringable|string|null $base_uri = null
     ): self {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
@@ -105,73 +105,55 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self(Uri::createFromUri($uri));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getScheme(): string
     {
         return (string) $this->uri->getScheme();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getAuthority(): string
     {
         return (string) $this->uri->getAuthority();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getUserInfo(): string
     {
         return (string) $this->uri->getUserInfo();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getHost(): string
     {
         return (string) $this->uri->getHost();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPort(): int|null
     {
         return $this->uri->getPort();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPath(): string
     {
         return $this->uri->getPath();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getQuery(): string
     {
         return (string) $this->uri->getQuery();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getFragment(): string
     {
         return (string) $this->uri->getFragment();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withScheme($scheme): self
     {
         /** @var string $scheme */
@@ -194,14 +176,12 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * @throws SyntaxError if the submitted data can not be converted to string
      *
      */
-    private function filterInput(Stringable|float|int|string $str): string
+    private function filterInput(Stringable|int|string $str): string
     {
         return (string) $str;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withUserInfo($user, $password = null): self
     {
         $user = $this->filterInput($user);
@@ -217,9 +197,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withHost($host): self
     {
         $host = $this->filterInput($host);
@@ -235,9 +213,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withPort($port): self
     {
         $uri = $this->uri->withPort($port);
@@ -248,9 +224,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withPath($path): self
     {
         $uri = $this->uri->withPath($path);
@@ -261,9 +235,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withQuery($query): self
     {
         $query = $this->filterInput($query);
@@ -279,9 +251,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function withFragment($fragment): self
     {
         $fragment = $this->filterInput($fragment);
@@ -297,17 +267,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self($uri);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function __toString(): string
     {
         return $this->uri->__toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function jsonSerialize(): string
     {
         return $this->uri->__toString();

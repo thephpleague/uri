@@ -22,7 +22,6 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
-use TypeError;
 use function array_filter;
 use function array_map;
 use function base64_decode;
@@ -284,15 +283,11 @@ final class Uri implements UriInterface
      */
     private function formatHost(string|null $host): string|null
     {
-        if (null === $host || '' === $host) {
-            return $host;
-        }
-
-        if ('[' !== $host[0]) {
-            return $this->formatRegisteredName($host);
-        }
-
-        return $this->formatIp($host);
+        return match (true) {
+            null === $host || '' === $host => $host,
+            '[' !== $host[0] => $this->formatRegisteredName($host),
+            default => $this->formatIp($host),
+        };
     }
 
     /**
@@ -366,32 +361,18 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError
      */
-    private function formatPort(string|int|null $port = null): int|null
+    private function formatPort(int|null $port = null): int|null
     {
-        if (null === $port || '' === $port) {
-            return null;
-        }
-
-        if (!is_int($port) && 1 !== preg_match('/^\d*$/', $port)) {
-            throw new SyntaxError('The port is expected to be an integer or a string representing an integer; '.gettype($port).' given.');
-        }
-
-        $port = (int) $port;
-        if (0 > $port) {
-            throw new SyntaxError(sprintf('The port `%s` is invalid', $port));
-        }
-
         $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme] ?? null;
-        if ($defaultPort === $port) {
-            return null;
-        }
 
-        return $port;
+        return match (true) {
+            null === $port, $defaultPort === $port => null,
+            0 > $port => throw new SyntaxError(sprintf('The port `%s` is invalid', $port)),
+            default => $port,
+        };
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public static function __set_state(array $components): self
     {
         $components['user'] = null;
@@ -418,24 +399,20 @@ final class Uri implements UriInterface
      * The returned URI must be absolute.
      */
     public static function createFromBaseUri(
-        Stringable|int|float|string $uri,
-        Stringable|int|float|string|null $base_uri = null
+        UriInterface|Stringable|string $uri,
+        UriInterface|Stringable|string|null $base_uri = null
     ): UriInterface {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
         }
 
         if (null === $base_uri) {
-            if (null === $uri->getScheme()) {
-                throw new SyntaxError(sprintf('the URI `%s` must be absolute', (string) $uri));
-            }
-
-            if (null === $uri->getAuthority()) {
-                return $uri;
-            }
-
             /** @var UriInterface $uri */
-            $uri = UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
+            $uri = match (true) {
+                null === $uri->getScheme() => throw new SyntaxError(sprintf('the URI `%s` must be absolute', (string) $uri)),
+                null === $uri->getAuthority() => $uri,
+                default => UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath('')),
+            };
 
             return $uri;
         }
@@ -444,12 +421,11 @@ final class Uri implements UriInterface
             $base_uri = self::createFromString($base_uri);
         }
 
-        if (null === $base_uri->getScheme()) {
-            throw new SyntaxError(sprintf('the base URI `%s` must be absolute', (string) $base_uri));
-        }
-
         /** @var UriInterface $uri */
-        $uri = UriResolver::resolve($uri, $base_uri);
+        $uri = match (true) {
+            null === $base_uri->getScheme() => throw new SyntaxError(sprintf('the base URI `%s` must be absolute', (string) $base_uri)),
+            default => UriResolver::resolve($uri, $base_uri),
+        };
 
         return $uri;
     }
@@ -457,7 +433,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function createFromString(Stringable|int|float|string $uri = ''): self
+    public static function createFromString(Stringable|string $uri = ''): self
     {
         $components = UriString::parse($uri);
 
@@ -887,9 +863,11 @@ final class Uri implements UriInterface
             return $path;
         }
 
-        $replace = fn (array $matches): string => $matches['delim'].$matches['volume'].':'.$matches['rest'];
-
-        return (string) preg_replace_callback(self::REGEXP_FILE_PATH, $replace, $path);
+        return (string) preg_replace_callback(
+            self::REGEXP_FILE_PATH,
+            fn (array $matches): string => $matches['delim'].$matches['volume'].':'.$matches['rest'],
+            $path
+        );
     }
 
     /**
@@ -940,16 +918,14 @@ final class Uri implements UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
-        $isValid = match ($this->scheme) {
+        if (! match ($this->scheme) {
             'data' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
             'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
             'http', 'https' => $this->isNonEmptyHostUri(),
             'we', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             default => true,
-        };
-
-        if (!$isValid) {
+        }) {
             throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', (string) $this, $this->scheme));
         }
 
@@ -1049,17 +1025,13 @@ final class Uri implements UriInterface
         return $this->uri;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function __toString(): string
     {
         return $this->toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function jsonSerialize(): string
     {
         return $this->toString();
@@ -1081,74 +1053,50 @@ final class Uri implements UriInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getScheme(): string|null
     {
         return $this->scheme;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getAuthority(): string|null
     {
         return $this->authority;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getUserInfo(): string|null
     {
         return $this->user_info;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getHost(): string|null
     {
         return $this->host;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPort(): int|null
     {
         return $this->port;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getQuery(): string|null
     {
         return $this->query;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFragment(): string|null
     {
         return $this->fragment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withScheme($scheme): UriInterface
+    public function withScheme(Stringable|string|null $scheme): UriInterface
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
         if ($scheme === $this->scheme) {
@@ -1169,7 +1117,7 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError if the submitted data can not be converted to string
      */
-    private function filterString(Stringable|int|float|string|null $str): string|null
+    private function filterString(Stringable|string|null $str): string|null
     {
         if (null === $str) {
             return $str;
@@ -1183,11 +1131,11 @@ final class Uri implements UriInterface
         throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withUserInfo($user, $password = null): UriInterface
-    {
+
+    public function withUserInfo(
+        Stringable|string|null $user,
+        Stringable|string|null $password = null
+    ): UriInterface {
         $user_info = null;
         $user = $this->filterString($user);
         if (null !== $password) {
@@ -1210,10 +1158,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withHost($host): UriInterface
+    public function withHost(Stringable|string|null $host): UriInterface
     {
         $host = $this->formatHost($this->filterString($host));
         if ($host === $this->host) {
@@ -1228,10 +1173,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withPort($port): UriInterface
+    public function withPort(int|null $port): UriInterface
     {
         $port = $this->formatPort($port);
         if ($port === $this->port) {
@@ -1246,17 +1188,10 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param Stringable|int|float|string|null $path
-     */
-    public function withPath($path): UriInterface
+    public function withPath(Stringable|string $path): UriInterface
     {
+        /** @var string $path */
         $path = $this->filterString($path);
-        if (null === $path) {
-            throw new TypeError('A path must be a string NULL given.');
-        }
 
         $path = $this->formatPath($path);
         if ($path === $this->path) {
@@ -1270,10 +1205,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withQuery($query): UriInterface
+    public function withQuery(Stringable|string|null $query): UriInterface
     {
         $query = $this->formatQueryAndFragment($this->filterString($query));
         if ($query === $this->query) {
@@ -1287,10 +1219,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withFragment($fragment): UriInterface
+    public function withFragment(Stringable|string|null $fragment): UriInterface
     {
         $fragment = $this->formatQueryAndFragment($this->filterString($fragment));
         if ($fragment === $this->fragment) {

@@ -238,8 +238,6 @@ final class UriString
      *
      * @link https://tools.ietf.org/html/rfc3986
      *
-     * @param Stringable|int|float|string $uri any scalar or stringable object
-     *
      * @throws SyntaxError if the URI contains invalid characters
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path

@@ -59,7 +59,7 @@ final class VariableBag
     }
 
     /**
-     * @param string|bool|int|float|array<string|bool|int|float>|null $value
+     * @param Stringable|array<string|bool|int|float>|bool|int|float|string|null $value
      */
     public function assign(string $name, Stringable|array|bool|int|float|string|null $value): void
     {
@@ -71,24 +71,19 @@ final class VariableBag
      *
      * @return string|array<string>
      */
-    private function normalizeValue(Stringable|array|bool|int|float|string|null $value, string $name, bool $isNestedListAllowed)
-    {
-        if (is_bool($value)) {
-            return true === $value ? '1' : '0';
-        }
+    private function normalizeValue(
+        Stringable|array|bool|int|float|string|null $value,
+        string $name,
+        bool $isNestedListAllowed
+    ): string|array {
 
-        if (null === $value || is_scalar($value) || $value instanceof Stringable) {
-            return (string) $value;
-        }
-
-        if (!$isNestedListAllowed) {
-            throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name);
-        }
-
-        foreach ($value as &$var) {
-            $var = self::normalizeValue($var, $name, false);
-        }
-        unset($var);
+        /** @var string|array<string> $value */
+        $value = match (true) {
+            is_bool($value) => true === $value ? '1' : '0',
+            null === $value || is_scalar($value) || $value instanceof Stringable => (string) $value,
+            !$isNestedListAllowed => throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name),
+            default => array_map(fn ($var) => self::normalizeValue($var, $name, false), $value),
+        };
 
         return $value;
     }

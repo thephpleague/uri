@@ -100,9 +100,7 @@ final class Expression
         return '{'.$this->operator.$varSpecifierString.'}';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public static function __set_state(array $properties): self
     {
         return new self($properties['operator'], ...$properties['varSpecifiers']);

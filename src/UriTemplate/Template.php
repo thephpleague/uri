@@ -16,7 +16,6 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
-use TypeError;
 use function array_merge;
 use function array_unique;
 use function preg_match_all;
@@ -42,19 +41,16 @@ final class Template
             $this->expressions[$expression->toString()] = $expression;
             $variableNames[] = $expression->variableNames();
         }
-        $this->variableNames = array_unique(array_merge([], ...$variableNames));
+        $this->variableNames = array_unique(array_merge(...$variableNames));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public static function __set_state(array $properties): self
     {
         return new self($properties['template'], ...array_values($properties['expressions']));
     }
 
     /**
-     * @throws TypeError   if the template is not a string or an object with the __toString method
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */

@@ -28,9 +28,7 @@ use function substr;
 
 final class UriResolver
 {
-    /**
-     * @var array<string,int>
-     */
+    /** @var array<string,int> */
     const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
     /**
@@ -45,11 +43,11 @@ final class UriResolver
      *
      * If the first argument is a UriInterface the method returns a UriInterface object
      * If the first argument is a Psr7UriInterface the method returns a Psr7UriInterface object
-     *
-     *
      */
-    public static function resolve(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
-    {
+    public static function resolve(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): Psr7UriInterface|UriInterface {
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -132,8 +130,10 @@ final class UriResolver
      *
      * @return array{0:string, 1:string|null}
      */
-    private static function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): array
-    {
+    private static function resolvePathAndQuery(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): array {
         $target_path = $uri->getPath();
         $target_query = $uri->getQuery();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -184,8 +184,10 @@ final class UriResolver
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public static function relativize(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
-    {
+    public static function relativize(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): Psr7UriInterface|UriInterface {
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
         if (!self::isRelativizable($uri, $base_uri)) {
@@ -213,22 +215,30 @@ final class UriResolver
     /**
      * Tells whether the component value from both URI object equals.
      */
-    private static function componentEquals(string $method, Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
-        return self::getComponent($method, $uri) === self::getComponent($method, $base_uri);
+    private static function componentEquals(
+        string $method,
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): bool {
+        [$uriComponentValue, $baseUriComponentValue] = match ($method) {
+            'getScheme' => [$uri->getScheme(), $base_uri->getScheme()],
+            'getQuery' => [$uri->getQuery(), $base_uri->getQuery()],
+             default => [$uri->getAuthority(), $base_uri->getAuthority()],
+        };
+
+        return self::getComponent($uri, $uriComponentValue) === self::getComponent($base_uri, $baseUriComponentValue);
     }
 
     /**
      * Returns the component value from the submitted URI object.
      */
-    private static function getComponent(string $method, Psr7UriInterface|UriInterface $uri): string|null
+    private static function getComponent(Psr7UriInterface|UriInterface $uri, string|null $value): string|null
     {
-        $component = $uri->$method();
-        if ($uri instanceof Psr7UriInterface && '' === $component) {
+        if ($uri instanceof Psr7UriInterface && '' === $value) {
             return null;
         }
 
-        return $component;
+        return $value;
     }
 
     /**
@@ -251,8 +261,10 @@ final class UriResolver
     /**
      * Tell whether the submitted URI object can be relativize.
      */
-    private static function isRelativizable(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
+    private static function isRelativizable(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): bool {
         return !UriInfo::isRelativePath($uri)
             && self::componentEquals('getScheme', $uri, $base_uri)
             &&  self::componentEquals('getAuthority', $uri, $base_uri);

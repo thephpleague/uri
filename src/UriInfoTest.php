@@ -175,9 +175,8 @@ final class UriInfoTest extends TestCase
      * @dataProvider getOriginProvider
      *
      * @param Psr7UriInterface|Uri $uri
-     * @param ?string              $expectedOrigin
      */
-    public function testGetOrigin($uri, ?string $expectedOrigin): void
+    public function testGetOrigin($uri, string|null $expectedOrigin): void
     {
         self::assertSame($expectedOrigin, UriInfo::getOrigin($uri));
     }

@@ -17,6 +17,7 @@ use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use Stringable;
 use function is_object;
 use function is_scalar;
 use function method_exists;
@@ -61,9 +62,8 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * Create a new instance from a string.
      *
-     * @param string|mixed $uri
      */
-    public static function createFromString($uri = ''): self
+    public static function createFromString(Stringable|int|float|string $uri = ''): self
     {
         return new self(Uri::createFromString($uri));
     }
@@ -91,21 +91,16 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * Create a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
-     *
-     * @param mixed $uri      the input URI to create
-     * @param mixed $base_uri the base URI used for reference
      */
-    public static function createFromBaseUri($uri, $base_uri = null): self
+    public static function createFromBaseUri(Stringable|int|float|string $uri, Stringable|int|float|string|null $base_uri = null): self
     {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
     /**
      * Create a new instance from a URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri the input URI to create
      */
-    public static function createFromUri($uri): self
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         if ($uri instanceof UriInterface) {
             return new self($uri);
@@ -149,7 +144,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * {@inheritDoc}
      */
-    public function getPort(): ?int
+    public function getPort(): int|null
     {
         return $this->uri->getPort();
     }

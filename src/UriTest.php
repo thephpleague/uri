@@ -249,15 +249,6 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::filterString
-     */
-    public function testWithInvalidCharacters(): void
-    {
-        self::expectException(TypeError::class);
-        Uri::createFromString('')->withPath(date_create());
-    }
-
-    /**
      * @covers ::assertValidState
      */
     public function testWithPathFailedWithInvalidChars(): void
@@ -563,9 +554,8 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider userInfoProvider
-     * @param ?string $credential
      */
-    public function testWithUserInfoEncodesUsernameAndPassword(string $user, ?string $credential, string $expected): void
+    public function testWithUserInfoEncodesUsernameAndPassword(string $user, string|null $credential, string $expected): void
     {
         $uri = Uri::createFromString('https://user:pass@local.example.com:3001/foo?bar=baz#quz');
         $new = $uri->withUserInfo($user, $credential);

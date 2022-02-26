@@ -258,7 +258,7 @@ final class UriResolver
      *
      * @param Psr7UriInterface|UriInterface $uri
      */
-    private static function getComponent(string $method, $uri): ?string
+    private static function getComponent(string $method, $uri): string|null
     {
         $component = $uri->$method();
         if ($uri instanceof Psr7UriInterface && '' === $component) {

@@ -17,15 +17,11 @@ use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
-use TypeError;
+use Stringable;
 use function array_merge;
 use function explode;
 use function filter_var;
-use function gettype;
 use function inet_pton;
-use function is_object;
-use function is_scalar;
-use function method_exists;
 use function preg_match;
 use function rawurldecode;
 use function sprintf;
@@ -158,14 +154,14 @@ final class UriString
      * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
      * @param array{
-     *  scheme:?string,
-     *  user:?string,
-     *  pass:?string,
-     *  host:?string,
-     *  port:?int,
-     *  path:?string,
-     *  query:?string,
-     *  fragment:?string
+     *  scheme:string|null,
+     *  user:string|null,
+     *  pass:string|null,
+     *  host:string|null,
+     *  port:int|null,
+     *  path:string|null,
+     *  query:string|null,
+     *  fragment:string|null
      * } $components
      */
     public static function build(array $components): string
@@ -242,37 +238,33 @@ final class UriString
      *
      * @link https://tools.ietf.org/html/rfc3986
      *
-     * @param mixed $uri any scalar or stringable object
+     * @param Stringable|int|float|string $uri any scalar or stringable object
      *
      * @throws SyntaxError if the URI contains invalid characters
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
      *
      * @return array{
-     *                scheme:?string,
-     *                user:?string,
-     *                pass:?string,
-     *                host:?string,
-     *                port:?int,
+     *                scheme:string|null,
+     *                user:string|null,
+     *                pass:string|null,
+     *                host:string|null,
+     *                port:int|null,
      *                path:string,
-     *                query:?string,
-     *                fragment:?string
+     *                query:string|null,
+     *                fragment:string|null
      *                }
      */
-    public static function parse($uri): array
+    public static function parse(Stringable|int|float|string $uri): array
     {
-        if (is_object($uri) && method_exists($uri, '__toString')) {
+        if ($uri instanceof Stringable) {
             $uri = (string) $uri;
-        }
-
-        if (!is_scalar($uri)) {
-            throw new TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
         }
 
         $uri = (string) $uri;
 
         if (isset(self::URI_SCHORTCUTS[$uri])) {
-            /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+            /** @var array{scheme:string|null, user:string|null, pass:string|null, host:string|null, port:int|null, path:string, query:string|null, fragment:string|null} $components */
             $components = array_merge(self::URI_COMPONENTS, self::URI_SCHORTCUTS[$uri]);
 
             return $components;
@@ -317,7 +309,7 @@ final class UriString
             throw new SyntaxError(sprintf('The uri `%s` contains an invalid path.', $uri));
         }
 
-        /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+        /** @var array{scheme:string|null, user:string|null, pass:string|null, host:string|null, port:int|null, path:string, query:string|null, fragment:string|null} $components */
         $components = array_merge(
             self::URI_COMPONENTS,
             '' === $parts['authority'] ? [] : self::parseAuthority($parts['acontent']),
@@ -339,7 +331,7 @@ final class UriString
      *
      * @throws SyntaxError If the port component is invalid
      *
-     * @return array{user:?string, pass:?string, host:?string, port:?int}
+     * @return array{user:string|null, pass:string|null, host:string|null, port:int|null}
      */
     private static function parseAuthority(string $authority): array
     {
@@ -369,7 +361,7 @@ final class UriString
      *
      * @throws SyntaxError if the registered name is invalid
      */
-    private static function filterPort(string $port): ?int
+    private static function filterPort(string $port): int|null
     {
         if ('' === $port) {
             return null;

@@ -89,9 +89,8 @@ class WsTest extends TestCase
 
     /**
      * @dataProvider portProvider
-     * @param ?int $port
      */
-    public function testPort(string $uri, ?int $port): void
+    public function testPort(string $uri, int|null $port): void
     {
         self::assertSame($port, Uri::createFromString($uri)->getPort());
     }

@@ -218,9 +218,8 @@ final class HttpTest extends TestCase
      * @dataProvider portProvider
      *
      * @covers \League\Uri\Uri::formatPort
-     * @param ?int $port
      */
-    public function testPort(string $uri, ?int $port): void
+    public function testPort(string $uri, int|null $port): void
     {
         self::assertSame($port, Http::createFromString($uri)->getPort());
     }

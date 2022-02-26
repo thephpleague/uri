@@ -38,7 +38,7 @@ final class UriInfo
     /**
      * @param Psr7UriInterface|UriInterface $uri
      */
-    private static function emptyComponentValue($uri): ?string
+    private static function emptyComponentValue($uri): string|null
     {
         return $uri instanceof Psr7UriInterface ? '' : null;
     }
@@ -187,7 +187,7 @@ final class UriInfo
      *
      * @param Psr7UriInterface|UriInterface $uri
      */
-    public static function getOrigin($uri): ?string
+    public static function getOrigin($uri): string|null
     {
         $scheme = self::filterUri($uri)->getScheme();
         if ('blob' === $scheme) {

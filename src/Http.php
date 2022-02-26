@@ -18,9 +18,6 @@ use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
-use function is_object;
-use function is_scalar;
-use function method_exists;
 use function sprintf;
 
 final class Http implements Psr7UriInterface, JsonSerializable
@@ -89,8 +86,10 @@ final class Http implements Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
-    public static function createFromBaseUri(Stringable|int|float|string $uri, Stringable|int|float|string|null $base_uri = null): self
-    {
+    public static function createFromBaseUri(
+        Stringable|int|float|string $uri,
+        Stringable|int|float|string|null $base_uri = null
+    ): self {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
@@ -192,15 +191,12 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * Safely stringify input when possible.
      *
-     * @param mixed $str the value to evaluate as a string
-     *
      * @throws SyntaxError if the submitted data can not be converted to string
      *
-     * @return string|mixed
      */
-    private function filterInput($str)
+    private function filterInput(Stringable|string $str): string
     {
-        if (is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
+        if ($str instanceof Stringable) {
             return (string) $str;
         }
 
@@ -212,7 +208,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withUserInfo($user, $password = null): self
     {
-        /** @var string $user */
         $user = $this->filterInput($user);
         if ('' === $user) {
             $user = null;
@@ -231,7 +226,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withHost($host): self
     {
-        /** @var string $host */
         $host = $this->filterInput($host);
         if ('' === $host) {
             $host = null;
@@ -276,7 +270,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withQuery($query): self
     {
-        /** @var string $query */
         $query = $this->filterInput($query);
         if ('' === $query) {
             $query = null;
@@ -295,7 +288,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withFragment($fragment): self
     {
-        /** @var string $fragment */
         $fragment = $this->filterInput($fragment);
         if ('' === $fragment) {
             $fragment = null;

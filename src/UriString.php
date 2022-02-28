@@ -149,7 +149,7 @@ final class UriString
 
     /**
      * Generate an URI string representation from its parsed representation
-     * returned by League\Uri\parse() or PHP's parse_url.
+     * returned by League\UriString::parse() or PHP's parse_url.
      *
      * If you supply your own array, you are responsible for providing
      * valid components without their URI delimiters.

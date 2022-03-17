@@ -155,3 +155,5 @@ $uri = UriString::build($components);
 
 echo $uri; //displays http://hello:world@foo.com?@bar.com/
 ~~~
+
+The `build` method provides similar functionality to the `http_build_url()` function from v1.x of the [`pecl_http`](https://pecl.php.net/package/pecl_http) PECL extension.

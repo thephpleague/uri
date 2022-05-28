@@ -44,7 +44,7 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "league/uri-interfaces": "^2.3"

@@ -40,6 +40,7 @@ use function preg_replace;
 use function preg_replace_callback;
 use function rawurlencode;
 use function sprintf;
+use function str_contains;
 use function str_replace;
 use function strlen;
 use function strpos;
@@ -354,7 +355,7 @@ final class Uri implements UriInterface
 
         //Only the address block fe80::/10 can have a Zone ID attach to
         //let's detect the link local significant 10 bits
-        if (0 === strpos((string) inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
+        if (str_starts_with((string)inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
             return $host;
         }
 
@@ -685,7 +686,7 @@ final class Uri implements UriInterface
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => ''];
         $user = $server['PHP_AUTH_USER'];
         $pass = $server['PHP_AUTH_PW'];
-        if (0 === strpos(strtolower($server['HTTP_AUTHORIZATION']), 'basic')) {
+        if (str_starts_with(strtolower($server['HTTP_AUTHORIZATION']), 'basic')) {
             $userinfo = base64_decode(substr($server['HTTP_AUTHORIZATION'], 6), true);
             if (false === $userinfo) {
                 throw new SyntaxError('The user info could not be detected');
@@ -817,7 +818,7 @@ final class Uri implements UriInterface
             return 'text/plain;charset=us-ascii,';
         }
 
-        if (strlen($path) !== strspn($path, self::ASCII) || false === strpos($path, ',')) {
+        if (strlen($path) !== strspn($path, self::ASCII) || !str_contains($path, ',')) {
             throw new SyntaxError(sprintf('The path `%s` is invalid according to RFC2937', $path));
         }
 
@@ -935,7 +936,7 @@ final class Uri implements UriInterface
             throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
         }
 
-        if (null === $this->authority && 0 === strpos($this->path, '//')) {
+        if (null === $this->authority && str_starts_with($this->path, '//')) {
             throw new SyntaxError(sprintf('If there is no authority the path `%s` can not start with a `//`.', $this->path));
         }
 

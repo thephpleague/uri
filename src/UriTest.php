@@ -22,10 +22,7 @@ use TypeError;
  */
 class UriTest extends TestCase
 {
-    /**
-     * @var Uri
-     */
-    private $uri;
+    private Uri $uri;
 
     protected function setUp(): void
     {
@@ -126,7 +123,7 @@ class UriTest extends TestCase
         self::assertSame('login:pass', $this->uri->getUserInfo());
         self::assertSame($this->uri, $this->uri->withUserInfo('login', 'pass'));
 
-        $newUri = $this->uri->withUserInfo('login', null);
+        $newUri = $this->uri->withUserInfo('login');
         self::assertNotEquals($this->uri, $newUri);
 
         $altUri = $this->uri->withUserInfo(null);
@@ -255,7 +252,7 @@ class UriTest extends TestCase
     public function testWithInvalidCharacters(): void
     {
         self::expectException(InvalidArgumentException::class);
-        Uri::createFromString('')->withPath(date_create());
+        Uri::createFromString()->withPath(date_create());
     }
 
     /**
@@ -564,7 +561,6 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider userInfoProvider
-     * @param ?string $credential
      */
     public function testWithUserInfoEncodesUsernameAndPassword(string $user, ?string $credential, string $expected): void
     {

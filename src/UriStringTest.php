@@ -20,8 +20,6 @@ final class UriStringTest extends TestCase
 {
     /**
      * @dataProvider validUriProvider
-     *
-     * @param Stringable|string $uri a scalar or an object
      */
     public function testParseSucced(Stringable|string|int $uri, array $expected): void
     {

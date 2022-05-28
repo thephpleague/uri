@@ -41,7 +41,7 @@ final class UriResolver
     }
 
     /**
-     * Resolve an URI against a base URI using RFC3986 rules.
+     * Resolves an URI against a base URI using RFC3986 rules.
      *
      * If the first argument is a UriInterface the method returns a UriInterface object
      * If the first argument is a Psr7UriInterface the method returns a Psr7UriInterface object
@@ -85,7 +85,7 @@ final class UriResolver
      */
     private static function removeDotSegments(string $path): string
     {
-        if (false === strpos($path, '.')) {
+        if (!str_contains($path, '.')) {
             return $path;
         }
 
@@ -97,7 +97,7 @@ final class UriResolver
 
         // @codeCoverageIgnoreStart
         // added because some PSR-7 implementations do not respect RFC3986
-        if (0 === strpos($path, '/') && 0 !== strpos($new_path, '/')) {
+        if (str_starts_with($path, '/') && !str_starts_with($new_path, '/')) {
             return '/'.$new_path;
         }
         // @codeCoverageIgnoreEnd
@@ -130,8 +130,10 @@ final class UriResolver
      *
      * @return array{0:string, 1:string|null}
      */
-    private static function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): array
-    {
+    private static function resolvePathAndQuery(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): array {
         $target_path = $uri->getPath();
         $target_query = $uri->getQuery();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -149,7 +151,7 @@ final class UriResolver
             $target_path = $base_uri->getPath();
             //@codeCoverageIgnoreStart
             //because some PSR-7 Uri implementations allow this RFC3986 forbidden construction
-            if ($baseNull !== $base_uri->getAuthority() && 0 !== strpos($target_path, '/')) {
+            if ($baseNull !== $base_uri->getAuthority() && !str_starts_with($target_path, '/')) {
                 $target_path = '/'.$target_path;
             }
             //@codeCoverageIgnoreEnd
@@ -174,7 +176,7 @@ final class UriResolver
     }
 
     /**
-     * Relativize an URI according to a base URI.
+     * Relativizes an URI according to a base URI.
      *
      * This method MUST retain the state of the submitted URI instance, and return
      * an URI instance of the same type that contains the applied modifications.
@@ -182,8 +184,10 @@ final class UriResolver
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public static function relativize(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
-    {
+    public static function relativize(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): Psr7UriInterface|UriInterface {
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
         if (!self::isRelativizable($uri, $base_uri)) {
@@ -211,8 +215,11 @@ final class UriResolver
     /**
      * Tells whether the component value from both URI object equals.
      */
-    private static function componentEquals(string $method, Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
+    private static function componentEquals(
+        string $method,
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): bool {
         return self::getComponent($method, $uri) === self::getComponent($method, $base_uri);
     }
 
@@ -249,15 +256,17 @@ final class UriResolver
     /**
      * Tells whether the submitted URI object can be relativize.
      */
-    private static function isRelativizable(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
+    private static function isRelativizable(
+        Psr7UriInterface|UriInterface $uri,
+        Psr7UriInterface|UriInterface $base_uri
+    ): bool {
         return !UriInfo::isRelativePath($uri)
             && self::componentEquals('getScheme', $uri, $base_uri)
             &&  self::componentEquals('getAuthority', $uri, $base_uri);
     }
 
     /**
-     * Relative the URI for a authority-less target URI.
+     * Relatives the URI for an authority-less target URI.
      */
     private static function relativizePath(string $path, string $basepath): string
     {

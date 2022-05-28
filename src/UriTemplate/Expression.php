@@ -16,7 +16,6 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_filter;
-use function array_keys;
 use function array_map;
 use function array_unique;
 use function explode;
@@ -24,7 +23,6 @@ use function implode;
 use function preg_match;
 use function rawurlencode;
 use function str_replace;
-use function strpos;
 use function substr;
 
 final class Expression
@@ -101,7 +99,7 @@ final class Expression
     }
 
     /**
-     * {@inheritDoc}
+     * @param array{operator:string, varSpecifiers:array<VarSpecifier>} $properties
      */
     public static function __set_state(array $properties): self
     {
@@ -121,7 +119,7 @@ final class Expression
 
         /** @var array{operator:string, variables:string} $parts */
         $parts = $parts + ['operator' => ''];
-        if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
+        if ('' !== $parts['operator'] && str_contains(self::RESERVED_OPERATOR, $parts['operator'])) {
             throw new SyntaxError('The operator used in the expression "'.$expression.'" is reserved.');
         }
 
@@ -247,9 +245,9 @@ final class Expression
         }
 
         $pairs = [];
-        $isAssoc = $this->isAssoc($value);
+        $isList = self::arrayIsList($value);
         foreach ($value as $key => $var) {
-            if ($isAssoc) {
+            if (!$isList) {
                 $key = rawurlencode((string) $key);
             }
 
@@ -259,7 +257,7 @@ final class Expression
             }
 
             if ('*' === $varSpec->modifier()) {
-                if ($isAssoc) {
+                if (!$isList) {
                     $var = $key.'='.$var;
                 } elseif ($key > 0 && $useQuery) {
                     $var = $varSpec->name().'='.$var;
@@ -270,20 +268,17 @@ final class Expression
         }
 
         if ('*' === $varSpec->modifier()) {
-            if ($isAssoc) {
-                // Don't prepend the value name when using the explode
-                // modifier with an associative array.
+            if (!$isList) {
+                // Don't prepend the value name when using the `explode` modifier with an associative array.
                 $useQuery = false;
             }
 
             return [implode($this->joiner, $pairs), $useQuery];
         }
 
-        if ($isAssoc) {
-            // When an associative array is encountered and the
-            // explode modifier is not set, then the result must be
-            // a comma separated list of keys followed by their
-            // respective values.
+        if (!$isList) {
+            // When an associative array is encountered and the `explode` modifier is not set, then
+            // the result must be a comma separated list of keys followed by their respective values.
             foreach ($pairs as $offset => &$data) {
                 $data = $offset.','.$data;
             }
@@ -295,16 +290,25 @@ final class Expression
     }
 
     /**
-     * Determines if an array is associative.
+     * PolyFill for PHP8.1 array_is_list.
      *
-     * This makes the assumption that input arrays are sequences or hashes.
-     * This assumption is a trade-off for accuracy in favor of speed, but it
-     * should work in almost every case where input is supplied for a URI
-     * template.
+     * @see https://github.com/symfony/polyfill-php81/blob/main/Php81.php
      */
-    private function isAssoc(array $array): bool
+    private static function arrayIsList(array $array): bool
     {
-        return [] !== $array && 0 !== array_keys($array)[0];
+        if ([] === $array || $array === array_values($array)) {
+            return true;
+        }
+
+        $nextKey = -1;
+
+        foreach ($array as $k => $v) {
+            if ($k !== ++$nextKey) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

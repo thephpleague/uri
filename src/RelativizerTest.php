@@ -12,7 +12,6 @@
 namespace League\Uri;
 
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group modifier
@@ -25,7 +24,7 @@ final class RelativizerTest extends TestCase
     public function testRelativizeIsNotMade(): void
     {
         $uri = Uri::createFromString('//path#fragment');
-        $base_uri = Http::createFromString('http://example.com/path');
+        $base_uri = Http::createFromString('https://example.com/path');
         $result = UriResolver::relativize($uri, $base_uri);
         self::assertEquals($result, $uri);
     }
@@ -83,20 +82,13 @@ final class RelativizerTest extends TestCase
         ];
     }
 
-    public function testUriResolverThrowExceptionOnConstructor(): void
-    {
-        self::expectException(TypeError::class);
-        UriResolver::relativize('ftp//a/b/c/d;p', 'toto');
-    }
-
     /**
      * @dataProvider relativizeAndResolveProvider
      */
     public function testRelativizeAndResolve(
         string $baseUri,
         string $uri,
-        string $expectedRelativize,
-        string $expectedResolved
+        string $expectedRelativize
     ): void {
         $baseUri = Uri::createFromString($baseUri);
         $uri = Http::createFromString($uri);

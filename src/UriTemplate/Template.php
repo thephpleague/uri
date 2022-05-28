@@ -16,12 +16,11 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
-use TypeError;
 use function array_merge;
 use function array_unique;
 use function preg_match_all;
 use function preg_replace;
-use function strpos;
+use function str_contains;
 use const PREG_SET_ORDER;
 
 final class Template
@@ -29,7 +28,7 @@ final class Template
     /**
      * Expression regular expression pattern.
      */
-    private const REGEXP_EXPRESSION_DETECTOR = '/\{[^\}]*\}/x';
+    private const REGEXP_EXPRESSION_DETECTOR = '/\{[^}]*}/x';
 
     /** @var array<string, Expression> */
     private array $expressions = [];
@@ -47,7 +46,7 @@ final class Template
     }
 
     /**
-     * {@inheritDoc}
+     * @param array{template:string, expressions:array<string, Expression>} $properties
      */
     public static function __set_state(array $properties): self
     {
@@ -55,9 +54,6 @@ final class Template
     }
 
     /**
-     * @param Stringable|string $template a string or an object with the __toString method
-     *
-     * @throws TypeError   if the template is not a string or an object with the __toString method
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
@@ -66,7 +62,7 @@ final class Template
         $template = (string) $template;
         /** @var string $remainder */
         $remainder = preg_replace(self::REGEXP_EXPRESSION_DETECTOR, '', $template);
-        if (false !== strpos($remainder, '{') || false !== strpos($remainder, '}')) {
+        if (str_contains($remainder, '{') || str_contains($remainder, '}')) {
             throw new SyntaxError('The template "'.$template.'" contains invalid expressions.');
         }
 

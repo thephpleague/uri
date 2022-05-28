@@ -36,7 +36,7 @@ final class VarSpecifier
     }
 
     /**
-     * {@inheritDoc}
+     * @param array{name: string, modifier:string, position:int} $properties
      */
     public static function __set_state(array $properties): self
     {

@@ -1199,7 +1199,7 @@ final class Uri implements UriInterface
         }
 
         if (!is_scalar($str)) {
-            throw new TypeError(sprintf('The component must be a string, a scalar or a stringable object %s given.', gettype($str)));
+            throw new SyntaxError(sprintf('The component must be a string, a scalar or a stringable object; `%s` given.', gettype($str)));
         }
 
         $str = (string) $str;

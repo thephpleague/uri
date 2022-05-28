@@ -13,23 +13,17 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use TypeError;
+use Stringable;
 use function rawurlencode;
 
 final class UriStringTest extends TestCase
 {
-    public function testParserFailedWithWrongArgumentType(): void
-    {
-        self::expectException(TypeError::class);
-        UriString::parse(['scheme://user:pass@host:81/path?query#fragment']);
-    }
-
     /**
      * @dataProvider validUriProvider
      *
-     * @param mixed $uri a scalar or an object
+     * @param Stringable|string $uri a scalar or an object
      */
-    public function testParseSucced($uri, array $expected): void
+    public function testParseSucced(Stringable|string|int $uri, array $expected): void
     {
         self::assertSame($expected, UriString::parse($uri));
     }

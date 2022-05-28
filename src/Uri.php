@@ -21,6 +21,7 @@ use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use Stringable;
 use TypeError;
 use function array_filter;
 use function array_map;
@@ -33,9 +34,7 @@ use function filter_var;
 use function implode;
 use function in_array;
 use function inet_pton;
-use function is_object;
 use function is_scalar;
-use function method_exists;
 use function preg_match;
 use function preg_replace;
 use function preg_replace_callback;
@@ -365,11 +364,9 @@ final class Uri implements UriInterface
     /**
      * Format the Port component.
      *
-     * @param object|null|int|string $port
-     *
      * @throws SyntaxError
      */
-    private function formatPort($port = null): ?int
+    private function formatPort(Stringable|string|int|null $port = null): ?int
     {
         if (null === $port || '' === $port) {
             return null;
@@ -416,15 +413,14 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Create a new instance from a URI and a Base URI.
+     * Creates a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
-     *
-     * @param mixed      $uri      the input URI to create
-     * @param null|mixed $base_uri the base URI used for reference
      */
-    public static function createFromBaseUri($uri, $base_uri = null): UriInterface
-    {
+    public static function createFromBaseUri(
+        Stringable|UriInterface|String $uri,
+        Stringable|UriInterface|String|null $base_uri = null
+    ): UriInterface {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
         }
@@ -460,10 +456,8 @@ final class Uri implements UriInterface
 
     /**
      * Create a new instance from a string.
-     *
-     * @param string|mixed $uri
      */
-    public static function createFromString($uri = ''): self
+    public static function createFromString(Stringable|string $uri = ''): self
     {
         $components = UriString::parse($uri);
 
@@ -584,10 +578,8 @@ final class Uri implements UriInterface
 
     /**
      * Create a new instance from a URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri the input URI to create
      */
-    public static function createFromUri($uri): self
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         if ($uri instanceof UriInterface) {
             $user_info = $uri->getUserInfo();
@@ -951,7 +943,7 @@ final class Uri implements UriInterface
         if (null === $this->authority
             && null === $this->scheme
             && false !== $pos
-            && false === strpos(substr($this->path, 0, $pos), '/')
+            && !str_contains(substr($this->path, 0, $pos), '/')
         ) {
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
@@ -1194,11 +1186,7 @@ final class Uri implements UriInterface
             return $str;
         }
 
-        if (is_object($str) && method_exists($str, '__toString')) {
-            $str = (string) $str;
-        }
-
-        if (!is_scalar($str)) {
+        if (!is_scalar($str) && !$str instanceof Stringable) {
             throw new SyntaxError(sprintf('The component must be a string, a scalar or a stringable object; `%s` given.', gettype($str)));
         }
 

@@ -17,19 +17,15 @@ use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use function is_object;
+use Stringable;
 use function is_scalar;
-use function method_exists;
 use function sprintf;
 
 final class Http implements Psr7UriInterface, JsonSerializable
 {
-    private UriInterface $uri;
-
-    private function __construct(UriInterface $uri)
+    private function __construct(private UriInterface $uri)
     {
-        $this->validate($uri);
-        $this->uri = $uri;
+        $this->validate($this->uri);
     }
 
     /**
@@ -60,10 +56,8 @@ final class Http implements Psr7UriInterface, JsonSerializable
 
     /**
      * Create a new instance from a string.
-     *
-     * @param string|mixed $uri
      */
-    public static function createFromString($uri = ''): self
+    public static function createFromString(Stringable|UriInterface|String $uri = ''): self
     {
         return new self(Uri::createFromString($uri));
     }
@@ -91,21 +85,18 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * Create a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
-     *
-     * @param mixed $uri      the input URI to create
-     * @param mixed $base_uri the base URI used for reference
      */
-    public static function createFromBaseUri($uri, $base_uri = null): self
-    {
+    public static function createFromBaseUri(
+        Stringable|UriInterface|String $uri,
+        Stringable|UriInterface|String|null $base_uri = null
+    ): self {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
     /**
      * Create a new instance from a URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri the input URI to create
      */
-    public static function createFromUri($uri): self
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         if ($uri instanceof UriInterface) {
             return new self($uri);
@@ -206,9 +197,9 @@ final class Http implements Psr7UriInterface, JsonSerializable
      *
      * @return string|mixed
      */
-    private function filterInput($str)
+    private function filterInput(mixed $str): mixed
     {
-        if (is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
+        if (is_scalar($str) || $str instanceof Stringable) {
             return (string) $str;
         }
 

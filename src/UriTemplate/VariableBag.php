@@ -14,14 +14,10 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
-use TypeError;
-use function gettype;
-use function is_array;
+use Stringable;
 use function is_bool;
 use function is_object;
 use function is_scalar;
-use function method_exists;
-use function sprintf;
 
 final class VariableBag
 {
@@ -58,38 +54,34 @@ final class VariableBag
      *
      * @return null|string|array<string>
      */
-    public function fetch(string $name)
+    public function fetch(string $name): null|string|array
     {
         return $this->variables[$name] ?? null;
     }
 
     /**
-     * @param string|bool|int|float|array<string|bool|int|float> $value
+     * @param string|bool|int|float|null|array<string|bool|int|float> $value
      */
-    public function assign(string $name, $value): void
+    public function assign(string $name, string|bool|int|float|array|null $value): void
     {
         $this->variables[$name] = $this->normalizeValue($value, $name, true);
     }
 
     /**
-     * @param mixed $value the value to be expanded
+     * @param Stringable|string|float|int|bool|null $value the value to be expanded
      *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
      *
      * @return string|array<string>
      */
-    private function normalizeValue($value, string $name, bool $isNestedListAllowed)
+    private function normalizeValue(Stringable|array|string|float|int|bool|null $value, string $name, bool $isNestedListAllowed): array|string
     {
         if (is_bool($value)) {
             return true === $value ? '1' : '0';
         }
 
-        if (null === $value || is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
+        if (null === $value || is_scalar($value) || is_object($value)) {
             return (string) $value;
-        }
-
-        if (!is_array($value)) {
-            throw new TypeError(sprintf('The variable '.$name.' must be NULL, a scalar or a stringable object `%s` given', gettype($value)));
         }
 
         if (!$isNestedListAllowed) {

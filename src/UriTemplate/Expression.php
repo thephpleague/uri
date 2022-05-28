@@ -64,7 +64,6 @@ final class Expression
         '&' => ['prefix' => '&', 'joiner' => '&', 'query' => true],
     ];
 
-    private string $operator;
     /** @var array<VarSpecifier> */
     private array $varSpecifiers;
     private string $joiner;
@@ -72,9 +71,8 @@ final class Expression
     private array $variableNames;
     private string $expressionString;
 
-    private function __construct(string $operator, VarSpecifier ...$varSpecifiers)
+    private function __construct(private string $operator, VarSpecifier ...$varSpecifiers)
     {
-        $this->operator = $operator;
         $this->varSpecifiers = $varSpecifiers;
         $this->joiner = self::OPERATOR_HASH_LOOKUP[$operator]['joiner'];
         $this->variableNames = $this->setVariableNames();
@@ -201,7 +199,7 @@ final class Expression
      *
      * @return array{0:string, 1:bool}
      */
-    private function inject($value, VarSpecifier $varSpec, bool $useQuery): array
+    private function inject(array|string $value, VarSpecifier $varSpec, bool $useQuery): array
     {
         if (is_string($value)) {
             return $this->replaceString($value, $varSpec, $useQuery);

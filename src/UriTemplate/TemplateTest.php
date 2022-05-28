@@ -120,7 +120,7 @@ final class TemplateTest extends TestCase
     {
         self::expectException(TypeError::class);
 
-        Template::createFromString(new stdClass());
+        Template::createFromString(new stdClass()); /* @phpstan-ignore-line */
     }
 
     /**

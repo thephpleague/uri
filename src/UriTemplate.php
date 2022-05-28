@@ -19,6 +19,7 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\VariableBag;
+use Stringable;
 use TypeError;
 
 /**
@@ -38,13 +39,13 @@ final class UriTemplate
     private VariableBag $defaultVariables;
 
     /**
-     * @param object|string $template a string or an object with the __toString method
+     * @param Stringable|string $template a string or an object with the __toString method
      *
      * @throws TypeError                if the template is not a string or an object with the __toString method
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */
-    public function __construct($template, array $defaultVariables = [])
+    public function __construct(Stringable|string $template, array $defaultVariables = [])
     {
         $this->template = Template::createFromString($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);

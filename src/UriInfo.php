@@ -22,7 +22,7 @@ use function rawurldecode;
 
 final class UriInfo
 {
-    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
+    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|A|F]|6[1-9|A-F]|7[\d|E]),i';
 
     private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
 
@@ -33,14 +33,14 @@ final class UriInfo
     {
     }
 
-    
+
     private static function emptyComponentValue(Psr7UriInterface|UriInterface $uri): ?string
     {
         return $uri instanceof Psr7UriInterface ? '' : null;
     }
 
     /**
-     * Normalize an URI for comparison.
+     * Normalizes an URI for comparison.
      *
      *
      */
@@ -59,9 +59,7 @@ final class UriInfo
         $pairs = null === $query ? [] : explode('&', $query);
         sort($pairs, SORT_REGULAR);
 
-        $replace = static function (array $matches): string {
-            return rawurldecode($matches[0]);
-        };
+        $replace = static fn (array $matches): string => rawurldecode($matches[0]);
 
         $retval = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
         if (null !== $retval) {
@@ -155,7 +153,7 @@ final class UriInfo
         if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
             $null = self::emptyComponentValue($uri);
 
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
         }
 
         return null;

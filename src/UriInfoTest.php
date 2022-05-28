@@ -24,12 +24,13 @@ final class UriInfoTest extends TestCase
     /**
      * @dataProvider uriProvider
      *
-     * @param Psr7UriInterface|Uri      $uri
-     * @param null|Psr7UriInterface|Uri $base_uri
-     * @param bool[]                    $infos
+     * @param bool[] $infos
      */
-    public function testInfo($uri, $base_uri, array $infos): void
-    {
+    public function testInfo(
+        Psr7UriInterface|Uri $uri,
+        Psr7UriInterface|Uri|null $base_uri,
+        array $infos
+    ): void {
         if (null !== $base_uri) {
             self::assertSame($infos['same_document'], UriInfo::isSameDocument($uri, $base_uri));
         }
@@ -111,11 +112,8 @@ final class UriInfoTest extends TestCase
 
     /**
      * @dataProvider sameValueAsProvider
-     *
-     * @param Psr7UriInterface|Uri $uri1
-     * @param Psr7UriInterface|Uri $uri2
      */
-    public function testSameValueAs($uri1, $uri2, bool $expected): void
+    public function testSameValueAs(Psr7UriInterface|Uri $uri1, Psr7UriInterface|Uri $uri2, bool $expected): void
     {
         self::assertSame($expected, UriInfo::isSameDocument($uri1, $uri2));
     }
@@ -173,11 +171,8 @@ final class UriInfoTest extends TestCase
 
     /**
      * @dataProvider getOriginProvider
-     *
-     * @param Psr7UriInterface|Uri $uri
-     * @param ?string              $expectedOrigin
      */
-    public function testGetOrigin($uri, ?string $expectedOrigin): void
+    public function testGetOrigin(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
         self::assertSame($expectedOrigin, UriInfo::getOrigin($uri));
     }

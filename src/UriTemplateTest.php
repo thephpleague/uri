@@ -28,7 +28,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testGetTemplate(): void
     {
-        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
@@ -49,7 +49,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testGetDefaultVariables(): void
     {
-        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two', 3, true, 'false', false, null],

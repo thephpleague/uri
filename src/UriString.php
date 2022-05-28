@@ -83,7 +83,7 @@ final class UriString
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
      */
-    private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d\+\.\-]*)?$/i';
+    private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d+.-]*)?$/i';
 
     /**
      * IPvFuture regular expression.
@@ -153,16 +153,7 @@ final class UriString
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
-     * @param array{
-     *  scheme:?string,
-     *  user:?string,
-     *  pass:?string,
-     *  host:?string,
-     *  port:?int,
-     *  path:?string,
-     *  query:?string,
-     *  fragment:?string
-     * } $components
+     * @param array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:?string, query:?string, fragment:?string} $components
      */
     public static function build(array $components): string
     {
@@ -244,16 +235,7 @@ final class UriString
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
      *
-     * @return array{
-     *                scheme:?string,
-     *                user:?string,
-     *                pass:?string,
-     *                host:?string,
-     *                port:?int,
-     *                path:string,
-     *                query:?string,
-     *                fragment:?string
-     *                }
+     * @return array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
      */
     public static function parse(Stringable|string|int|float $uri): array
     {
@@ -382,7 +364,7 @@ final class UriString
             return $host;
         }
 
-        if ('[' !== $host[0] || ']' !== substr($host, -1)) {
+        if ('[' !== $host[0] || !str_ends_with($host, ']')) {
             return self::filterRegisteredName($host);
         }
 
@@ -449,6 +431,6 @@ final class UriString
         $ip_host = substr($ip_host, 0, $pos);
 
         return false !== filter_var($ip_host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-            && 0 === strpos((string) inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
+            && str_starts_with((string)inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
     }
 }

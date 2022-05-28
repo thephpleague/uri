@@ -12,7 +12,6 @@
 namespace League\Uri;
 
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group modifer
@@ -22,16 +21,10 @@ final class ResolverTest extends TestCase
 {
     public function testResolveLetThrowResolvedInvalidUri(): void
     {
-        $http = Uri::createFromString('http://example.com/path/to/file');
+        $http = Uri::createFromString('https://example.com/path/to/file');
         $ftp = Http::createFromString('ftp://a/b/c/d;p');
         $res = UriResolver::resolve($ftp, $http);
         self::assertEquals($res, $ftp);
-    }
-
-    public function testResolveThrowExceptionOnConstructor(): void
-    {
-        self::expectException(TypeError::class);
-        UriResolver::resolve('ftp//a/b/c/d;p', 'toto');
     }
 
     /**

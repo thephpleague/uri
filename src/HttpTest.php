@@ -89,7 +89,7 @@ final class HttpTest extends TestCase
         $uri = Http::createFromString('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
         self::assertSame('login:pass', $uri->getUserInfo());
         self::assertSame($uri, $uri->withUserInfo('login', 'pass'));
-        self::assertNotEquals($uri, $uri->withUserInfo('login', null));
+        self::assertNotEquals($uri, $uri->withUserInfo('login'));
         self::assertSame(
             'http://secure.example.com:443/test/query.php?kingkong=toto#doc3',
             (string) $uri->withUserInfo('')
@@ -240,7 +240,7 @@ final class HttpTest extends TestCase
     public function testPathIsInvalid(string $path): void
     {
         self::expectException(SyntaxError::class);
-        Http::createFromString('')->withPath($path);
+        Http::createFromString()->withPath($path);
     }
 
     public function invalidPathProvider(): array

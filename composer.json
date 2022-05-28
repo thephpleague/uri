@@ -51,11 +51,12 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^v3.3.2",
-        "phpunit/phpunit" : "^9.5.10",
+        "php-http/psr7-integration-tests": "^1.1",
         "phpstan/phpstan": "^1.2.0",
-        "phpstan/phpstan-strict-rules": "^1.1.0",
-        "phpstan/phpstan-phpunit": "^1.0.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0.0",
+        "phpstan/phpstan-strict-rules": "^1.1.0",
+        "phpunit/phpunit": "^9.5.10",
         "psr/http-factory": "^1.0"
     },
     "autoload": {

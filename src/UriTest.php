@@ -11,6 +11,7 @@
 
 namespace League\Uri;
 
+use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -253,7 +254,7 @@ class UriTest extends TestCase
      */
     public function testWithInvalidCharacters(): void
     {
-        self::expectException(TypeError::class);
+        self::expectException(InvalidArgumentException::class);
         Uri::createFromString('')->withPath(date_create());
     }
 

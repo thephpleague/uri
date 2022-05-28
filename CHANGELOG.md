@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## Next - TBD
+## [6.6.0](https://github.com/thephpleague/uri-components/compare/6.5.0...6.6.0) - 2022-05-28
 
 ### Added
 
@@ -10,7 +10,9 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- None
+- Some errors are moved from `TypeError` to `InvalidArgumentException` to align with other `UriInterface` PSR-7 implementations.
+- Improved documentation by [@GwendolenLynch](https://github.com/GwendolenLynch)
+- Added PSR7 compliance tests from [the PHP-HTTP group](https://github.com/php-http/psr7-integration-tests)
 
 ### Deprecated
 
@@ -18,7 +20,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Remove
 
-- None
+- Support for PHP7.3
 
 ## 6.5.0 - 2021-08-27
 

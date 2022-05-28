@@ -2,7 +2,25 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## [6.6.0](https://github.com/thephpleague/uri-components/compare/6.5.0...6.6.0) - 2022-05-28
+## [Next](https://github.com/thephpleague/uri/compare/6.6.0...master) - TBD
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Remove
+
+- None
+
+## [6.6.0](https://github.com/thephpleague/uri/compare/6.5.0...6.6.0) - 2022-05-28
 
 ### Added
 

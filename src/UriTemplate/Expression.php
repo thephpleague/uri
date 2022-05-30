@@ -73,29 +73,14 @@ final class Expression
     {
         $this->varSpecifiers = $varSpecifiers;
         $this->joiner = self::OPERATOR_HASH_LOOKUP[$operator]['joiner'];
-        $this->variableNames = $this->setVariableNames();
-        $this->value = $this->setExpressionString();
-    }
-
-    /**
-     * @return array<string>
-     */
-    private function setVariableNames(): array
-    {
-        return array_unique(array_map(
+        $this->variableNames = array_unique(array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
-            $this->varSpecifiers
+            $varSpecifiers
         ));
-    }
-
-    private function setExpressionString(): string
-    {
-        $varSpecifierString = implode(',', array_map(
+        $this->value = '{'.$operator.implode(',', array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),
-            $this->varSpecifiers
-        ));
-
-        return '{'.$this->operator.$varSpecifierString.'}';
+            $varSpecifiers
+        )).'}';
     }
 
     /**
@@ -222,12 +207,11 @@ final class Expression
             $value = substr($value, 0, $varSpec->position);
         }
 
-        $expanded = rawurlencode($value);
-        if ('+' === $this->operator || '#' === $this->operator) {
-            return [$this->decodeReserved($expanded), $useQuery];
+        if (in_array($this->operator, ['+', '#'], true)) {
+            return [$this->decodeReserved(rawurlencode($value)), $useQuery];
         }
 
-        return [$expanded, $useQuery];
+        return [rawurlencode($value), $useQuery];
     }
 
     /**
@@ -257,7 +241,7 @@ final class Expression
             }
 
             $var = rawurlencode($var);
-            if ('+' === $this->operator || '#' === $this->operator) {
+            if (in_array($this->operator, ['+', '#'], true)) {
                 $var = $this->decodeReserved($var);
             }
 

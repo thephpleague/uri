@@ -81,14 +81,14 @@ final class Uri implements UriInterface
      *
      * @var string
      */
-    private const REGEXP_CHARS_UNRESERVED = 'A-Za-z0-9_\-\.~';
+    private const REGEXP_CHARS_UNRESERVED = 'A-Za-z\d_\-\.~';
 
     /**
      * RFC3986 schema regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
      */
-    private const REGEXP_SCHEME = ',^[a-z]([-a-z0-9+.]+)?$,i';
+    private const REGEXP_SCHEME = ',^[a-z]([-a-z\d+.]+)?$,i';
 
     /**
      * RFC3986 host identified by a registered name regular expression pattern.
@@ -96,9 +96,9 @@ final class Uri implements UriInterface
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_HOST_REGNAME = '/^(
-        (?<unreserved>[a-z0-9_~\-\.])|
+        (?<unreserved>[a-z\d_~\-\.])|
         (?<sub_delims>[!$&\'()*+,;=])|
-        (?<encoded>%[A-F0-9]{2})
+        (?<encoded>%[A-F\d]{2})
     )+$/x';
 
     /**
@@ -114,9 +114,9 @@ final class Uri implements UriInterface
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      */
     private const REGEXP_HOST_IPFUTURE = '/^
-        v(?<version>[A-F0-9])+\.
+        v(?<version>[A-F\d])+\.
         (?:
-            (?<unreserved>[a-z0-9_~\-\.])|
+            (?<unreserved>[a-z\d_~\-\.])|
             (?<sub_delims>[!$&\'()*+,;=:])  # also include the : character
         )+
     $/ix';
@@ -187,7 +187,7 @@ final class Uri implements UriInterface
     private ?string $host;
     private ?int $port;
     private ?string $authority;
-    private string $path = '';
+    private string $path;
     private ?string $query;
     private ?string $fragment;
     private ?string $uri;
@@ -241,13 +241,13 @@ final class Uri implements UriInterface
             return $user;
         }
 
-        static $user_pattern = '/(?:[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
+        static $user_pattern = '/[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
         $user = preg_replace_callback($user_pattern, Uri::urlEncodeMatch(...), $user);
         if (null === $password) {
             return $user;
         }
 
-        static $password_pattern = '/(?:[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
+        static $password_pattern = '/[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
 
         return $user.':'.preg_replace_callback($password_pattern, Uri::urlEncodeMatch(...), $password);
     }
@@ -366,9 +366,6 @@ final class Uri implements UriInterface
         return $port;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public static function __set_state(array $components): self
     {
         $components['user'] = null;
@@ -396,7 +393,7 @@ final class Uri implements UriInterface
      */
     public static function createFromBaseUri(
         Stringable|UriInterface|String $uri,
-        Stringable|UriInterface|String|null $base_uri = null
+        Stringable|UriInterface|String $base_uri = null
     ): UriInterface {
         if (!$uri instanceof UriInterface) {
             $uri = self::createFromString($uri);
@@ -404,7 +401,7 @@ final class Uri implements UriInterface
 
         if (null === $base_uri) {
             if (null === $uri->getScheme()) {
-                throw new SyntaxError(sprintf('the URI `%s` must be absolute', (string) $uri));
+                throw new SyntaxError(sprintf('the URI `%s` must be absolute', $uri));
             }
 
             if (null === $uri->getAuthority()) {
@@ -422,7 +419,7 @@ final class Uri implements UriInterface
         }
 
         if (null === $base_uri->getScheme()) {
-            throw new SyntaxError(sprintf('the base URI `%s` must be absolute', (string) $base_uri));
+            throw new SyntaxError(sprintf('the base URI `%s` must be absolute', $base_uri));
         }
 
         /** @var UriInterface $uri */
@@ -547,7 +544,7 @@ final class Uri implements UriInterface
         }
 
         //UNC Windows Path
-        if ('//' !== substr($uri, 0, 2)) {
+        if (!str_starts_with($uri, '//')) {
             return Uri::createFromComponents(['path' => $uri]);
         }
 
@@ -769,7 +766,7 @@ final class Uri implements UriInterface
     {
         $path = $this->formatDataPath($path);
 
-        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++|%(?![A-Fa-f0-9]{2}))/';
+        static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/}{]++|%(?![A-Fa-f\d]{2})/';
 
         $path = (string) preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $path);
 
@@ -883,8 +880,6 @@ final class Uri implements UriInterface
      * <li> a boolean flag telling wether the delimiter is to be added to the component
      * when building the URI string representation</li>
      * </ul>
-     *
-     * @param ?string $component
      */
     private function formatQueryAndFragment(?string $component): ?string
     {
@@ -892,7 +887,7 @@ final class Uri implements UriInterface
             return $component;
         }
 
-        static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
+        static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
         return preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $component);
     }
 
@@ -989,11 +984,6 @@ final class Uri implements UriInterface
      * Generate the URI string representation from its components.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
-     *
-     * @param ?string $scheme
-     * @param ?string $authority
-     * @param ?string $query
-     * @param ?string $fragment
      */
     private function getUriString(
         ?string $scheme,
@@ -1051,8 +1041,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @return array{scheme:?string, user_info:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
      */
     public function __debugInfo(): array

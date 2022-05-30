@@ -26,8 +26,6 @@ final class ExpressionTest extends TestCase
     /**
      * @covers ::createFromString
      * @covers ::__construct
-     * @covers ::setExpressionString
-     * @covers ::setVariableNames
      *
      * @dataProvider providesValidNotation
      */

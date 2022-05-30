@@ -49,11 +49,11 @@ final class Template
     }
 
     /**
-     * @param array{value?:string, template:string, expressions:array<string, Expression>} $properties
+     * @param array{value:string, template?:string, expressions:array<string, Expression>} $properties
      */
     public static function __set_state(array $properties): self
     {
-        return new self($properties['value'] ?? $properties['template'], ...array_values($properties['expressions']));
+        return new self($properties['template'] ?? $properties['value'], ...array_values($properties['expressions']));
     }
 
     /**

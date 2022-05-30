@@ -29,17 +29,19 @@ final class VariableBagTest extends TestCase
      * @covers ::assign
      * @covers ::__construct
      * @covers ::all
+     * @covers ::isEmpty
      * @covers ::normalizeValue
      *
      * @param array<string, string|array<string>> $expected
      *
      * @dataProvider provideValidIterable
      */
-    public function testItCanBeInstantiatedWithAnIterable(iterable $iterable, array $expected): void
+    public function testItCanBeInstantiatedWithAnIterable(iterable $iterable, array $expected, bool $isEmpty): void
     {
         $bag = new VariableBag($iterable);
 
         self::assertEquals($expected, $bag->all());
+        self::assertSame($isEmpty, $bag->isEmpty());
     }
 
     public function provideValidIterable(): iterable
@@ -48,14 +50,17 @@ final class VariableBagTest extends TestCase
             'array' => [
                 'iterable' => ['name' => 'value'],
                 'expected' => ['name' => 'value'],
+                'isEmpty' => false,
             ],
             'iterable' => [
                 'iterable' => new ArrayIterator(['name' => 'value']),
                 'expected' => ['name' => 'value'],
+                'isEmpty' => false,
             ],
             'empty array' =>  [
                 'iterable' => [],
                 'expected' => [],
+                'isEmpty' => true,
             ],
         ];
     }
@@ -135,12 +140,14 @@ final class VariableBagTest extends TestCase
 
     /**
      * @covers ::__set_state
+     * @covers ::isEmpty
      */
     public function testSetState(): void
     {
         $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
 
         self::assertEquals($bag, eval('return '.var_export($bag, true).';'));
+        self::assertFalse($bag->isEmpty());
     }
 
     public function testArrayAccess(): void

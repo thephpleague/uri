@@ -90,7 +90,7 @@ final class UriResolver
         }
 
         $old_segments = explode('/', $path);
-        $new_path = implode('/', array_reduce($old_segments, [UriResolver::class, 'reducer'], []));
+        $new_path = implode('/', array_reduce($old_segments, UriResolver::reducer(...), []));
         if (isset(self::DOT_SEGMENTS[end($old_segments)])) {
             $new_path .= '/';
         }
@@ -201,7 +201,7 @@ final class UriResolver
             return $uri->withPath(self::relativizePath($target_path, $base_uri->getPath()));
         }
 
-        if (self::componentEquals('getQuery', $uri, $base_uri)) {
+        if (self::componentEquals('query', $uri, $base_uri)) {
             return $uri->withPath('')->withQuery($null);
         }
 
@@ -216,19 +216,24 @@ final class UriResolver
      * Tells whether the component value from both URI object equals.
      */
     private static function componentEquals(
-        string $method,
+        string                        $property,
         Psr7UriInterface|UriInterface $uri,
         Psr7UriInterface|UriInterface $base_uri
     ): bool {
-        return self::getComponent($method, $uri) === self::getComponent($method, $base_uri);
+        return self::getComponent($property, $uri) === self::getComponent($property, $base_uri);
     }
 
     /**
      * Returns the component value from the submitted URI object.
      */
-    private static function getComponent(string $method, Psr7UriInterface|UriInterface $uri): ?string
+    private static function getComponent(string $property, Psr7UriInterface|UriInterface $uri): ?string
     {
-        $component = $uri->$method();
+        $component = match ($property) {
+            'query' => $uri->getQuery(),
+            'authority' => $uri->getAuthority(),
+            default => $uri->getScheme(), //scheme
+        };
+
         if ($uri instanceof Psr7UriInterface && '' === $component) {
             return null;
         }
@@ -261,8 +266,8 @@ final class UriResolver
         Psr7UriInterface|UriInterface $base_uri
     ): bool {
         return !UriInfo::isRelativePath($uri)
-            && self::componentEquals('getScheme', $uri, $base_uri)
-            &&  self::componentEquals('getAuthority', $uri, $base_uri);
+            && self::componentEquals('scheme', $uri, $base_uri)
+            && self::componentEquals('authority', $uri, $base_uri);
     }
 
     /**

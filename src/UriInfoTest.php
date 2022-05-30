@@ -97,7 +97,7 @@ final class UriInfoTest extends TestCase
     {
         self::expectException(TypeError::class);
 
-        UriInfo::$function('http://example.com');
+        UriInfo::$function('http://example.com'); /* @phpstan-ignore-line */
     }
 
     public function functionProvider(): array

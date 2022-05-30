@@ -29,9 +29,9 @@ final class VarSpecifier
     $/x';
 
     private function __construct(
-        private string $name,
-        private string $modifier,
-        private int $position
+        public readonly string $name,
+        public readonly string $modifier,
+        public readonly int $position
     ) {
     }
 
@@ -75,16 +75,28 @@ final class VarSpecifier
         return $this->name.$this->modifier;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function name(): string
     {
         return $this->name;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function modifier(): string
     {
         return $this->modifier;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function position(): int
     {
         return $this->position;

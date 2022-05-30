@@ -66,15 +66,15 @@ final class Expression
     private array $varSpecifiers;
     private string $joiner;
     /** @var array<string> */
-    private array $variableNames;
-    private string $expressionString;
+    public readonly array $variableNames;
+    public readonly string $value;
 
     private function __construct(private string $operator, VarSpecifier ...$varSpecifiers)
     {
         $this->varSpecifiers = $varSpecifiers;
         $this->joiner = self::OPERATOR_HASH_LOOKUP[$operator]['joiner'];
         $this->variableNames = $this->setVariableNames();
-        $this->expressionString = $this->setExpressionString();
+        $this->value = $this->setExpressionString();
     }
 
     /**
@@ -83,7 +83,7 @@ final class Expression
     private function setVariableNames(): array
     {
         return array_unique(array_map(
-            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name(),
+            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
             $this->varSpecifiers
         ));
     }
@@ -91,7 +91,7 @@ final class Expression
     private function setExpressionString(): string
     {
         $varSpecifierString = implode(',', array_map(
-            static fn (VarSpecifier $variable): string => $variable->toString(),
+            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),
             $this->varSpecifiers
         ));
 
@@ -132,13 +132,18 @@ final class Expression
     /**
      * Returns the expression string representation.
      *
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
      */
     public function toString(): string
     {
-        return $this->expressionString;
+        return $this->value;
     }
 
     /**
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
+     *
      * @return array<string>
      */
     public function variableNames(): array
@@ -174,7 +179,7 @@ final class Expression
      */
     private function replace(VarSpecifier $varSpec, VariableBag $variables): string
     {
-        $value = $variables->fetch($varSpec->name());
+        $value = $variables->fetch($varSpec->name);
         if (null === $value) {
             return '';
         }
@@ -186,10 +191,10 @@ final class Expression
         }
 
         if ('&' !== $this->joiner && '' === $expanded) {
-            return $varSpec->name();
+            return $varSpec->name;
         }
 
-        return $varSpec->name().'='.$expanded;
+        return $varSpec->name.'='.$expanded;
     }
 
     /**
@@ -213,8 +218,8 @@ final class Expression
      */
     private function replaceString(string $value, VarSpecifier $varSpec, bool $useQuery): array
     {
-        if (':' === $varSpec->modifier()) {
-            $value = substr($value, 0, $varSpec->position());
+        if (':' === $varSpec->modifier) {
+            $value = substr($value, 0, $varSpec->position);
         }
 
         $expanded = rawurlencode($value);
@@ -240,12 +245,12 @@ final class Expression
             return ['', false];
         }
 
-        if (':' === $varSpec->modifier()) {
-            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name());
+        if (':' === $varSpec->modifier) {
+            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
         }
 
         $pairs = [];
-        $isList = self::arrayIsList($value);
+        $isList = array_is_list($value);
         foreach ($value as $key => $var) {
             if (!$isList) {
                 $key = rawurlencode((string) $key);
@@ -256,18 +261,18 @@ final class Expression
                 $var = $this->decodeReserved($var);
             }
 
-            if ('*' === $varSpec->modifier()) {
+            if ('*' === $varSpec->modifier) {
                 if (!$isList) {
                     $var = $key.'='.$var;
                 } elseif ($key > 0 && $useQuery) {
-                    $var = $varSpec->name().'='.$var;
+                    $var = $varSpec->name.'='.$var;
                 }
             }
 
             $pairs[$key] = $var;
         }
 
-        if ('*' === $varSpec->modifier()) {
+        if ('*' === $varSpec->modifier) {
             if (!$isList) {
                 // Don't prepend the value name when using the `explode` modifier with an associative array.
                 $useQuery = false;
@@ -287,28 +292,6 @@ final class Expression
         }
 
         return [implode(',', $pairs), $useQuery];
-    }
-
-    /**
-     * PolyFill for PHP8.1 array_is_list.
-     *
-     * @see https://github.com/symfony/polyfill-php81/blob/main/Php81.php
-     */
-    private static function arrayIsList(array $array): bool
-    {
-        if ([] === $array || $array === array_values($array)) {
-            return true;
-        }
-
-        $nextKey = -1;
-
-        foreach ($array as $k => $v) {
-            if ($k !== ++$nextKey) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**

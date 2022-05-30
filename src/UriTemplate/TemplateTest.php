@@ -25,14 +25,13 @@ final class TemplateTest extends TestCase
     /**
      * @covers ::createFromString
      * @covers ::__construct
-     * @covers ::toString
      *
      * @dataProvider providesValidNotation
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
         $template = Template::createFromString($notation);
-        self::assertSame($notation, $template->toString());
+        self::assertSame($notation, $template->value);
     }
 
     public function providesValidNotation(): iterable
@@ -80,13 +79,11 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::variableNames
-     *
      * @dataProvider expectedVariableNames
      */
     public function testGetVariableNames(string $template, array $expected): void
     {
-        self::assertSame($expected, Template::createFromString($template)->variableNames());
+        self::assertSame($expected, Template::createFromString($template)->variableNames);
     }
 
     public function expectedVariableNames(): iterable

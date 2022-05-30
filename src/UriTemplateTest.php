@@ -40,6 +40,7 @@ final class UriTemplateTest extends TestCase
         $uriTemplate = new UriTemplate($template, $variables);
 
         self::assertSame($template, $uriTemplate->getTemplate());
+        self::assertSame($template, $uriTemplate->template->value);
     }
 
     /**
@@ -69,9 +70,13 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($template, $variables);
         self::assertSame($expectedVariables, $uriTemplate->getDefaultVariables());
+        self::assertSame($expectedVariables, $uriTemplate->defaultVariables->all());
+        self::assertFalse($uriTemplate->defaultVariables->isEmpty());
 
         $uriTemplateEmpty = new UriTemplate($template, []);
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
+        self::assertSame([], $uriTemplateEmpty->defaultVariables->all());
+        self::assertTrue($uriTemplateEmpty->defaultVariables->isEmpty());
     }
 
     /**

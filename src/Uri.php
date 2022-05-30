@@ -176,22 +176,6 @@ final class Uri implements UriInterface
     ];
 
     /**
-     * URI validation methods per scheme.
-     *
-     * @var array<string>
-     */
-    private const SCHEME_VALIDATION_METHOD = [
-        'data' => 'isUriWithSchemeAndPathOnly',
-        'file' => 'isUriWithSchemeHostAndPathOnly',
-        'ftp' => 'isNonEmptyHostUriWithoutFragmentAndQuery',
-        'gopher' => 'isNonEmptyHostUriWithoutFragmentAndQuery',
-        'http' => 'isNonEmptyHostUri',
-        'https' => 'isNonEmptyHostUri',
-        'ws' => 'isNonEmptyHostUriWithoutFragment',
-        'wss' => 'isNonEmptyHostUriWithoutFragment',
-    ];
-
-    /**
      * All ASCII letters sorted by typical frequency of occurrence.
      *
      * @var string
@@ -232,7 +216,6 @@ final class Uri implements UriInterface
     /**
      * Format the Scheme and Host component.
      *
-     * @param  ?string     $scheme
      * @throws SyntaxError if the scheme is invalid
      */
     private function formatScheme(?string $scheme): ?string
@@ -251,8 +234,6 @@ final class Uri implements UriInterface
 
     /**
      * Set the UserInfo component.
-     * @param ?string $user
-     * @param ?string $password
      */
     private function formatUserInfo(?string $user, ?string $password): ?string
     {
@@ -261,14 +242,14 @@ final class Uri implements UriInterface
         }
 
         static $user_pattern = '/(?:[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
-        $user = preg_replace_callback($user_pattern, [Uri::class, 'urlEncodeMatch'], $user);
+        $user = preg_replace_callback($user_pattern, Uri::urlEncodeMatch(...), $user);
         if (null === $password) {
             return $user;
         }
 
         static $password_pattern = '/(?:[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f0-9]{2}))/';
 
-        return $user.':'.preg_replace_callback($password_pattern, [Uri::class, 'urlEncodeMatch'], $password);
+        return $user.':'.preg_replace_callback($password_pattern, Uri::urlEncodeMatch(...), $password);
     }
 
     /**
@@ -281,19 +262,14 @@ final class Uri implements UriInterface
 
     /**
      * Validate and Format the Host component.
-     * @param ?string $host
      */
     private function formatHost(?string $host): ?string
     {
-        if (null === $host || '' === $host) {
-            return $host;
-        }
-
-        if ('[' !== $host[0]) {
-            return $this->formatRegisteredName($host);
-        }
-
-        return $this->formatIp($host);
+        return match (true) {
+            null === $host || '' === $host => $host,
+            '[' !== $host[0] => $this->formatRegisteredName($host),
+            default => $this->formatIp($host),
+        };
     }
 
     /**
@@ -523,7 +499,10 @@ final class Uri implements UriInterface
             $mime_args[] = $context;
         }
 
-        $raw = @file_get_contents(...$file_args);
+        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+        $raw = file_get_contents(...$file_args);
+        restore_error_handler();
+
         if (false === $raw) {
             throw new SyntaxError(sprintf('The file `%s` does not exist or is not readable', $path));
         }
@@ -541,7 +520,7 @@ final class Uri implements UriInterface
      */
     public static function createFromUnixPath(string $uri = ''): self
     {
-        $uri = implode('/', array_map('rawurlencode', explode('/', $uri)));
+        $uri = implode('/', array_map(rawurlencode(...), explode('/', $uri)));
         if ('/' !== ($uri[0] ?? '')) {
             return Uri::createFromComponents(['path' => $uri]);
         }
@@ -560,7 +539,7 @@ final class Uri implements UriInterface
             $uri = substr($uri, strlen($root));
         }
         $uri = str_replace('\\', '/', $uri);
-        $uri = implode('/', array_map('rawurlencode', explode('/', $uri)));
+        $uri = implode('/', array_map(rawurlencode(...), explode('/', $uri)));
 
         //Local Windows absolute path
         if ('' !== $root) {
@@ -600,10 +579,6 @@ final class Uri implements UriInterface
                 $uri->getQuery(),
                 $uri->getFragment()
             );
-        }
-
-        if (!$uri instanceof Psr7UriInterface) {
-            throw new TypeError(sprintf('The object must implement the `%s` or the `%s`', Psr7UriInterface::class, UriInterface::class));
         }
 
         $scheme = $uri->getScheme();
@@ -796,7 +771,7 @@ final class Uri implements UriInterface
 
         static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/}{]++|%(?![A-Fa-f0-9]{2}))/';
 
-        $path = (string) preg_replace_callback($pattern, [Uri::class, 'urlEncodeMatch'], $path);
+        $path = (string) preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $path);
 
         return $this->formatFilePath($path);
     }
@@ -858,7 +833,7 @@ final class Uri implements UriInterface
             $parameters = substr($parameters, 0, - strlen($matches[0]));
         }
 
-        $res = array_filter(array_filter(explode(';', $parameters), [$this, 'validateParameter']));
+        $res = array_filter(array_filter(explode(';', $parameters), $this->validateParameter(...)));
         if ([] !== $res) {
             throw new SyntaxError(sprintf('The path paremeters `%s` is invalid', $parameters));
         }
@@ -918,7 +893,7 @@ final class Uri implements UriInterface
         }
 
         static $pattern = '/(?:[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.'%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
-        return preg_replace_callback($pattern, [Uri::class, 'urlEncodeMatch'], $component);
+        return preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $component);
     }
 
     /**
@@ -949,14 +924,16 @@ final class Uri implements UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
-        $validationMethod = self::SCHEME_VALIDATION_METHOD[$this->scheme] ?? null;
-        if (null === $validationMethod || true === $this->$validationMethod()) {
-            $this->uri = null;
-
-            return;
+        if (! match ($this->scheme) {
+            'data' => $this->isUriWithSchemeAndPathOnly(),
+            'file' => $this->isUriWithSchemeHostAndPathOnly(),
+            'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
+            'http', 'https' => $this->isNonEmptyHostUri(),
+            'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
+            default => true,
+        }) {
+            throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', $this, $this->scheme));
         }
-
-        throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', (string) $this, $this->scheme));
     }
 
     /**

@@ -33,24 +33,27 @@ final class Template
     /** @var array<string, Expression> */
     private array $expressions = [];
     /** @var array<string> */
-    private array $variableNames;
+    public readonly array $variableNames;
+    public readonly string $value;
 
-    private function __construct(private string $template, Expression ...$expressions)
+    private function __construct(string $template, Expression ...$expressions)
     {
         $variableNames = [];
         foreach ($expressions as $expression) {
-            $this->expressions[$expression->toString()] = $expression;
-            $variableNames[] = $expression->variableNames();
+            $this->expressions[$expression->value] = $expression;
+            $variableNames[] = $expression->variableNames;
         }
+
         $this->variableNames = array_unique(array_merge([], ...$variableNames));
+        $this->value = $template;
     }
 
     /**
-     * @param array{template:string, expressions:array<string, Expression>} $properties
+     * @param array{value?:string, template:string, expressions:array<string, Expression>} $properties
      */
     public static function __set_state(array $properties): self
     {
-        return new self($properties['template'], ...array_values($properties['expressions']));
+        return new self($properties['value'] ?? $properties['template'], ...array_values($properties['expressions']));
     }
 
     /**
@@ -79,12 +82,19 @@ final class Template
         return new self($template, ...$arguments);
     }
 
+    /**
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
+     */
     public function toString(): string
     {
-        return $this->template;
+        return $this->value;
     }
 
     /**
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
+     *
      * @return array<string>
      */
     public function variableNames(): array
@@ -98,7 +108,7 @@ final class Template
      */
     public function expand(VariableBag $variables): string
     {
-        $uriString = $this->template;
+        $uriString = $this->value;
         /** @var Expression $expression */
         foreach ($this->expressions as $pattern => $expression) {
             $uriString = str_replace($pattern, $expression->expand($variables), $uriString);

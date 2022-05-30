@@ -118,7 +118,7 @@ final class VariableBagTest extends TestCase
     {
         self::expectException(TypeError::class);
 
-        new VariableBag(['name' => new stdClass()]);
+        new VariableBag(['name' => new stdClass()]); /* @phpstan-ignore-line */
     }
 
     /**
@@ -130,7 +130,7 @@ final class VariableBagTest extends TestCase
     {
         self::expectException(TemplateCanNotBeExpanded::class);
 
-        new VariableBag(['name' => ['foo' => ['bar' => 'baz']]]);
+        new VariableBag(['name' => ['foo' => ['bar' => 'baz']]]); /* @phpstan-ignore-line */
     }
 
     /**
@@ -141,6 +141,30 @@ final class VariableBagTest extends TestCase
         $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
 
         self::assertEquals($bag, eval('return '.var_export($bag, true).';'));
+    }
+
+    public function testArrayAccess(): void
+    {
+        $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
+
+        self::assertSame('bar', $bag['foo']);
+        self::assertFalse(isset($bag['foobar']));
+        self::assertTrue(isset($bag['list']));
+
+        $bag['foobar'] = ['I am added'];
+
+        self::assertTrue(isset($bag['foobar']));
+
+        unset($bag['yolo']);
+        self::assertFalse(isset($bag['yolo']));
+    }
+
+    public function testAssigningANullOffsetWillThrow(): void
+    {
+        $this->expectException(TypeError::class);
+
+        $bag = new VariableBag();
+        $bag[] = 'yolo';
     }
 
     public function testItCanReplaceItsValueWithThatOfAnotherInstance(): void

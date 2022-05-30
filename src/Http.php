@@ -47,7 +47,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * Static method called by PHP's var export.
+     * @param array{uri:UriInterface} $components
      */
     public static function __set_state(array $components): self
     {

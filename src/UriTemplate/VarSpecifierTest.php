@@ -79,15 +79,15 @@ final class VarSpecifierTest extends TestCase
     {
         $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B:5');
 
-        self::assertSame('und.er_sc0re%3B', $varSpecifier->name());
-        self::assertSame(':', $varSpecifier->modifier());
-        self::assertSame(5, $varSpecifier->position());
+        self::assertSame('und.er_sc0re%3B', $varSpecifier->name);
+        self::assertSame(':', $varSpecifier->modifier);
+        self::assertSame(5, $varSpecifier->position);
 
         $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B*');
 
-        self::assertSame('und.er_sc0re%3B', $varSpecifier->name());
-        self::assertSame('*', $varSpecifier->modifier());
-        self::assertSame(0, $varSpecifier->position());
+        self::assertSame('und.er_sc0re%3B', $varSpecifier->name);
+        self::assertSame('*', $varSpecifier->modifier);
+        self::assertSame(0, $varSpecifier->position);
     }
 
     /**

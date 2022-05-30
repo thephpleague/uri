@@ -13,13 +13,17 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use ArrayAccess;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
 use function is_bool;
 use function is_object;
 use function is_scalar;
 
-final class VariableBag
+/**
+ * @implements ArrayAccess<string, string|bool|int|float|array<string|bool|int|float>>
+ */
+final class VariableBag implements ArrayAccess
 {
     /**
      * @var array<string,string|array<string>>
@@ -36,9 +40,32 @@ final class VariableBag
         }
     }
 
+    /**
+     * @param array{variables: array<string,string|array<string>>} $properties
+     */
     public static function __set_state(array $properties): self
     {
         return new self($properties['variables']);
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return array_key_exists($offset, $this->variables);
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->variables[$offset]);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->assign($offset, $value); /* @phpstan-ignore-line */
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->fetch($offset);
     }
 
     /**
@@ -47,6 +74,14 @@ final class VariableBag
     public function all(): array
     {
         return $this->variables;
+    }
+
+    /**
+     * Tells whether the bag is empty or not.
+     */
+    public function isEmpty(): bool
+    {
+        return [] === $this->variables;
     }
 
     /**
@@ -71,29 +106,15 @@ final class VariableBag
      * @param Stringable|string|float|int|bool|null $value the value to be expanded
      *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
-     *
-     * @return string|array<string>
      */
     private function normalizeValue(Stringable|array|string|float|int|bool|null $value, string $name, bool $isNestedListAllowed): array|string
     {
-        if (is_bool($value)) {
-            return true === $value ? '1' : '0';
-        }
-
-        if (null === $value || is_scalar($value) || is_object($value)) {
-            return (string) $value;
-        }
-
-        if (!$isNestedListAllowed) {
-            throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name);
-        }
-
-        foreach ($value as &$var) {
-            $var = self::normalizeValue($var, $name, false);
-        }
-        unset($var);
-
-        return $value;
+        return match (true) {
+            is_bool($value) => true === $value ? '1' : '0',
+            (null === $value || is_scalar($value) || is_object($value)) => (string) $value,
+            !$isNestedListAllowed => throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name),
+            default => array_map(fn ($var): array|string => self::normalizeValue($var, $name, false), $value),
+        };
     }
 
     /**

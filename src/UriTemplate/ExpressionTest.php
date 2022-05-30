@@ -26,8 +26,6 @@ final class ExpressionTest extends TestCase
     /**
      * @covers ::createFromString
      * @covers ::__construct
-     * @covers ::toString
-     * @covers ::variableNames
      * @covers ::setExpressionString
      * @covers ::setVariableNames
      *
@@ -36,8 +34,8 @@ final class ExpressionTest extends TestCase
     public function testItCanBeInstantiatedWithAValidNotation(string $notation, array $variableNames): void
     {
         $expression = Expression::createFromString($notation);
-        self::assertSame($notation, $expression->toString());
-        self::assertSame($variableNames, $expression->variableNames());
+        self::assertSame($notation, $expression->value);
+        self::assertSame($variableNames, $expression->variableNames);
     }
 
     public function providesValidNotation(): iterable
@@ -132,7 +130,6 @@ final class ExpressionTest extends TestCase
      * @covers ::replaceString
      * @covers ::replaceList
      * @covers ::decodeReserved
-     * @covers ::isAssoc
      *
      * @dataProvider templateExpansionProvider
      */

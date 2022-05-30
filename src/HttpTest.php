@@ -11,16 +11,22 @@
 
 namespace League\Uri;
 
+use Http\Psr7Test\UriIntegrationTest;
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
-use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @group http
  * @coversDefaultClass \League\Uri\Http
  */
-final class HttpTest extends TestCase
+final class HttpTest extends UriIntegrationTest
 {
+    public function createUri($uri): UriInterface
+    {
+        return (new HttpFactory())->createUri($uri);
+    }
+
     public function testDefaultConstructor(): void
     {
         self::assertSame('', (string) Http::createFromString());
@@ -52,7 +58,8 @@ final class HttpTest extends TestCase
     public function testThrowTypeErrorOnWrongType(): void
     {
         self::expectException(InvalidArgumentException::class);
-        Http::createFromString('https://example.com')->withFragment([]);
+
+        Http::createFromString('https://example.com')->withFragment([]); /* @phpstan-ignore-line */
     }
 
     /**
@@ -127,6 +134,11 @@ final class HttpTest extends TestCase
         self::assertEquals(
             Http::createFromString('http://0:0@0/0?0#0'),
             Http::createFromUri(Uri::createFromString('http://0:0@0/0?0#0'))
+        );
+
+        self::assertEquals(
+            Http::createFromString('http://0:0@0/0?0#0'),
+            Http::createFromUri(Http::createFromString('http://0:0@0/0?0#0'))
         );
     }
 
@@ -217,9 +229,8 @@ final class HttpTest extends TestCase
      * @dataProvider portProvider
      *
      * @covers \League\Uri\Uri::formatPort
-     * @param ?int $port
      */
-    public function testPort(string $uri, ?int $port): void
+    public function testValidPort(string $uri, ?int $port): void
     {
         self::assertSame($port, Http::createFromString($uri)->getPort());
     }
@@ -276,6 +287,7 @@ final class HttpTest extends TestCase
     public function testModificationFailedWithEmptyAuthority(): void
     {
         self::expectException(SyntaxError::class);
+
         Http::createFromString('http://example.com/path')
             ->withScheme('')
             ->withHost('')

@@ -215,4 +215,35 @@ final class UriInfoTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getCrossOriginExamples
+     */
+    public function testIsCrossOrigin(string $original, string $modified, bool $expected): void
+    {
+        self::assertSame($expected, UriInfo::isCrossOrigin(Uri::createFromString($original), Http::createFromString($modified)));
+    }
+
+    public function getCrossOriginExamples(): array
+    {
+        return [
+            ['http://example.com/123', 'http://example.com/', false],
+            ['http://example.com/123', 'http://example.com:80/', false],
+            ['http://example.com:80/123', 'http://example.com/', false],
+            ['http://example.com:80/123', 'http://example.com:80/', false],
+            ['http://example.com/123', 'https://example.com/', true],
+            ['http://example.com/123', 'http://www.example.com/', true],
+            ['http://example.com/123', 'http://example.com:81/', true],
+            ['http://example.com:80/123', 'http://example.com:81/', true],
+            ['https://example.com/123', 'https://example.com/', false],
+            ['https://example.com/123', 'https://example.com:443/', false],
+            ['https://example.com:443/123', 'https://example.com/', false],
+            ['https://example.com:443/123', 'https://example.com:443/', false],
+            ['https://example.com/123', 'http://example.com/', true],
+            ['https://example.com/123', 'https://www.example.com/', true],
+            ['https://example.com/123', 'https://example.com:444/', true],
+            ['https://example.com:443/123', 'https://example.com:444/', true],
+            ['https://xn--bb-bjab.be./path', 'https://Bébé.BE./path', false],
+        ];
+    }
 }

@@ -198,9 +198,36 @@ final class UriInfo
         if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
             $null = self::emptyComponentValue($uri);
 
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
         }
 
         return null;
+    }
+
+    /**
+     * @param Psr7UriInterface|UriInterface $uri
+     * @param Psr7UriInterface|UriInterface $base_uri
+     */
+    public static function isCrossOrigin($uri, $base_uri): bool
+    {
+        $uri = Uri::createFromUri($uri);
+        $base_uri = Uri::createFromUri($base_uri);
+
+        static $defaultPorts = [
+            'data' => null,
+            'file' => null,
+            'ftp' => 21,
+            'gopher' => 70,
+            'http' => 80,
+            'https' => 443,
+            'ws' => 80,
+            'wss' => 443,
+        ];
+
+        $computePort = fn (Uri $uri): ?int => $uri->getPort() ?? $defaultPorts[$uri->getScheme()] ?? null;
+
+        return $uri->getHost() !== $base_uri->getHost()
+            || $uri->getScheme() !== $base_uri->getScheme()
+            || $computePort($uri) !== $computePort($base_uri);
     }
 }

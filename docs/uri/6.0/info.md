@@ -78,7 +78,7 @@ UriInfo::getOrigin(Http::createFromString('file:///usr/bin/php')); //returns nul
 UriInfo::getOrigin(Uri::createFromString('data:text/plain,Bonjour%20le%20monde%21')); //returns null
 ~~~
 
-<p class="message-info">For absolute URI with the `file` scheme the method will return <code>null</code> (as this is left to the implementation decision)</p>
+<p class="message-info">For absolute URI with the <code>file</code> scheme the method will return <code>null</code> (as this is left to the implementation decision)</p>
 
 Because the origin property does not exists in the RFC3986 specification this additional steps is implemented:
 
@@ -92,3 +92,25 @@ use League\Uri\UriInfo;
 
 UriInfo::getOrigin(Http::createFromString('/path/to/endpoint')); //returns null
 ~~~
+
+## UriInfo::isCrossOrigin
+
+This public static method tells whether the given URI object represents different origins. 
+According to [RFC9110](https://www.rfc-editor.org/rfc/rfc9110#section-4.3.1) The "origin" for a given URI is the triple of scheme, host, and port 
+after normalizing the scheme and host to lowercase and normalizing the port to remove any leading 
+zeros.
+
+~~~php
+<?php
+
+use League\Uri\Http;
+use League\Uri\Uri;
+use League\Uri\UriInfo;
+
+UriInfo::isCrossOrigin('http://example.com:80/123', 'http://example.com/'); //returns false
+UriInfo::isCrossOrigin('https://xn--bb-bjab.be./path', 'https://Bébé.BE./path'); //returns false
+UriInfo::isCrossOrigin(Http::createFromString('https://example.com/123'), Uri::createFromString('https://www.example.com/')); //returns true
+~~~
+
+The method expects URI objects (implementing the League or PSR  `UriInterface`). 
+The method takes into account i18n while comparing both URI.

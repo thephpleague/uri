@@ -76,7 +76,7 @@
         "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
         "phpcs:fix": "php-cs-fixer fix -vvv --allow-risky=yes --ansi",
         "phpstan": "phpstan analyse -l max -c phpstan.neon src --ansi --memory-limit=256M",
-        "phpunit": "phpunit --coverage-text",
+        "phpunit": "XDEBUG_MODE=coverage phpunit --coverage-text",
         "test": [
             "@phpunit",
             "@phpstan",

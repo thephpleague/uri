@@ -24,9 +24,9 @@ use function sprintf;
 
 final class UriInfo
 {
-    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|A|F]|6[1-9|A-F]|7[0-9|E]),i';
+    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3[0-9]|4[1-9|A-F]|5[0-9|AF]|6[1-9|A-F]|7[0-9|E]),i';
 
-    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 21, 'http' => 80, 'https' => 443, 'ws' => 80, 'wss' => 443];
 
     /**
      * @codeCoverageIgnore
@@ -88,9 +88,7 @@ final class UriInfo
         $pairs = null === $query ? [] : explode('&', $query);
         sort($pairs, SORT_REGULAR);
 
-        $replace = static function (array $matches): string {
-            return rawurldecode($matches[0]);
-        };
+        $replace = static fn (array $matches): string => rawurldecode($matches[0]);
 
         $retval = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
         if (null !== $retval) {
@@ -195,12 +193,23 @@ final class UriInfo
             $scheme = $uri->getScheme();
         }
 
-        if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
-            $null = self::emptyComponentValue($uri);
-
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+        if (null === $scheme || !array_key_exists($scheme, self::WHATWG_SPECIAL_SCHEMES)) {
+            return null;
         }
 
-        return null;
+        $null = self::emptyComponentValue($uri);
+
+        return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
+    }
+
+    /**
+     * @param Psr7UriInterface|UriInterface $uri
+     * @param Psr7UriInterface|UriInterface $base_uri
+     */
+    public static function isCrossOrigin($uri, $base_uri): bool
+    {
+        return null === ($uriString = self::getOrigin($uri))
+            || null === ($baseUriString = self::getOrigin($base_uri))
+            || $uriString !== $baseUriString;
     }
 }

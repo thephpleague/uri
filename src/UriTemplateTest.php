@@ -28,7 +28,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testGetTemplate(): void
     {
-        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two'],
@@ -40,6 +40,7 @@ final class UriTemplateTest extends TestCase
         $uriTemplate = new UriTemplate($template, $variables);
 
         self::assertSame($template, $uriTemplate->getTemplate());
+        self::assertSame($template, $uriTemplate->template->value);
     }
 
     /**
@@ -49,7 +50,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testGetDefaultVariables(): void
     {
-        $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
+        $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
             'path'     => '/foo/bar',
             'segments' => ['one', 'two', 3, true, 'false', false, null],
@@ -69,9 +70,13 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($template, $variables);
         self::assertSame($expectedVariables, $uriTemplate->getDefaultVariables());
+        self::assertSame($expectedVariables, $uriTemplate->defaultVariables->all());
+        self::assertFalse($uriTemplate->defaultVariables->isEmpty());
 
         $uriTemplateEmpty = new UriTemplate($template, []);
         self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
+        self::assertSame([], $uriTemplateEmpty->defaultVariables->all());
+        self::assertTrue($uriTemplateEmpty->defaultVariables->isEmpty());
     }
 
     /**

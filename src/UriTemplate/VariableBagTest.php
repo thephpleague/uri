@@ -29,17 +29,19 @@ final class VariableBagTest extends TestCase
      * @covers ::assign
      * @covers ::__construct
      * @covers ::all
+     * @covers ::isEmpty
      * @covers ::normalizeValue
      *
      * @param array<string, string|array<string>> $expected
      *
      * @dataProvider provideValidIterable
      */
-    public function testItCanBeInstantiatedWithAnIterable(iterable $iterable, array $expected): void
+    public function testItCanBeInstantiatedWithAnIterable(iterable $iterable, array $expected, bool $isEmpty): void
     {
         $bag = new VariableBag($iterable);
 
         self::assertEquals($expected, $bag->all());
+        self::assertSame($isEmpty, $bag->isEmpty());
     }
 
     public function provideValidIterable(): iterable
@@ -48,14 +50,17 @@ final class VariableBagTest extends TestCase
             'array' => [
                 'iterable' => ['name' => 'value'],
                 'expected' => ['name' => 'value'],
+                'isEmpty' => false,
             ],
             'iterable' => [
                 'iterable' => new ArrayIterator(['name' => 'value']),
                 'expected' => ['name' => 'value'],
+                'isEmpty' => false,
             ],
             'empty array' =>  [
                 'iterable' => [],
                 'expected' => [],
+                'isEmpty' => true,
             ],
         ];
     }
@@ -118,7 +123,7 @@ final class VariableBagTest extends TestCase
     {
         self::expectException(TypeError::class);
 
-        new VariableBag(['name' => new stdClass()]);
+        new VariableBag(['name' => new stdClass()]); /* @phpstan-ignore-line */
     }
 
     /**
@@ -130,17 +135,43 @@ final class VariableBagTest extends TestCase
     {
         self::expectException(TemplateCanNotBeExpanded::class);
 
-        new VariableBag(['name' => ['foo' => ['bar' => 'baz']]]);
+        new VariableBag(['name' => ['foo' => ['bar' => 'baz']]]); /* @phpstan-ignore-line */
     }
 
     /**
      * @covers ::__set_state
+     * @covers ::isEmpty
      */
     public function testSetState(): void
     {
         $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
 
         self::assertEquals($bag, eval('return '.var_export($bag, true).';'));
+        self::assertFalse($bag->isEmpty());
+    }
+
+    public function testArrayAccess(): void
+    {
+        $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
+
+        self::assertSame('bar', $bag['foo']);
+        self::assertFalse(isset($bag['foobar']));
+        self::assertTrue(isset($bag['list']));
+
+        $bag['foobar'] = ['I am added'];
+
+        self::assertTrue(isset($bag['foobar']));
+
+        unset($bag['yolo']);
+        self::assertFalse(isset($bag['yolo']));
+    }
+
+    public function testAssigningANullOffsetWillThrow(): void
+    {
+        $this->expectException(TypeError::class);
+
+        $bag = new VariableBag();
+        $bag[] = 'yolo';
     }
 
     public function testItCanReplaceItsValueWithThatOfAnotherInstance(): void

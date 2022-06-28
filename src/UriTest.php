@@ -22,10 +22,7 @@ use TypeError;
  */
 class UriTest extends TestCase
 {
-    /**
-     * @var Uri
-     */
-    private $uri;
+    private Uri $uri;
 
     protected function setUp(): void
     {
@@ -126,7 +123,7 @@ class UriTest extends TestCase
         self::assertSame('login:pass', $this->uri->getUserInfo());
         self::assertSame($this->uri, $this->uri->withUserInfo('login', 'pass'));
 
-        $newUri = $this->uri->withUserInfo('login', null);
+        $newUri = $this->uri->withUserInfo('login');
         self::assertNotEquals($this->uri, $newUri);
 
         $altUri = $this->uri->withUserInfo(null);
@@ -255,7 +252,8 @@ class UriTest extends TestCase
     public function testWithInvalidCharacters(): void
     {
         self::expectException(InvalidArgumentException::class);
-        Uri::createFromString('')->withPath(date_create());
+
+        Uri::createFromString()->withPath(date_create()); /* @phpstan-ignore-line */
     }
 
     /**
@@ -337,7 +335,8 @@ class UriTest extends TestCase
     public function testWithPathThrowTypeErrorOnWrongType(): void
     {
         self::expectException(TypeError::class);
-        Uri::createFromString('https://example.com')->withPath(null);
+
+        Uri::createFromString('https://example.com')->withPath(null); /* @phpstan-ignore-line */
     }
 
     /**
@@ -379,7 +378,13 @@ class UriTest extends TestCase
     public function testJsonSerialize(): void
     {
         $uri = Uri::createFromString('https://a:b@c:442/d?q=r#f');
-        self::assertJsonStringEqualsJsonString(json_encode($uri->__toString()), json_encode($uri));
+
+        /** @var string $uriString */
+        $uriString = json_encode((string) $uri);
+        /** @var string $uriJsonString */
+        $uriJsonString = json_encode($uri);
+
+        self::assertJsonStringEqualsJsonString($uriString, $uriJsonString);
     }
 
     /**
@@ -412,7 +417,7 @@ class UriTest extends TestCase
     public function testModificationFailedWithInvalidPort2(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('http://example.com/path')->withPort('-1');
+        Uri::createFromString('http://example.com/path')->withPort('-1'); /* @phpstan-ignore-line */
     }
 
     /**
@@ -564,7 +569,6 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider userInfoProvider
-     * @param ?string $credential
      */
     public function testWithUserInfoEncodesUsernameAndPassword(string $user, ?string $credential, string $expected): void
     {

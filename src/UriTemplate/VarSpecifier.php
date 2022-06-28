@@ -28,19 +28,15 @@ final class VarSpecifier
         (?<modifier>\:(?<position>\d+)|\*)?
     $/x';
 
-    private string $name;
-    private string $modifier;
-    private int $position;
-
-    private function __construct(string $name, string $modifier, int $position)
-    {
-        $this->name = $name;
-        $this->modifier = $modifier;
-        $this->position = $position;
+    private function __construct(
+        public readonly string $name,
+        public readonly string $modifier,
+        public readonly int $position
+    ) {
     }
 
     /**
-     * {@inheritDoc}
+     * @param array{name: string, modifier:string, position:int} $properties
      */
     public static function __set_state(array $properties): self
     {
@@ -79,16 +75,28 @@ final class VarSpecifier
         return $this->name.$this->modifier;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function name(): string
     {
         return $this->name;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function modifier(): string
     {
         return $this->modifier;
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @deprecated since version 6.6.0 use the readonly property instead
+     */
     public function position(): int
     {
         return $this->position;

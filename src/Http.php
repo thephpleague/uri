@@ -17,19 +17,15 @@ use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use function is_object;
+use Stringable;
 use function is_scalar;
-use function method_exists;
 use function sprintf;
 
 final class Http implements Psr7UriInterface, JsonSerializable
 {
-    private UriInterface $uri;
-
-    private function __construct(UriInterface $uri)
+    private function __construct(private UriInterface $uri)
     {
-        $this->validate($uri);
-        $this->uri = $uri;
+        $this->validate($this->uri);
     }
 
     /**
@@ -39,19 +35,18 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     private function validate(UriInterface $uri): void
     {
-        $scheme = $uri->getScheme();
-        if (null === $scheme && '' === $uri->getHost()) {
-            throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', (string) $uri));
+        if (null === $uri->getScheme() && '' === $uri->getHost()) {
+            throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', $uri));
         }
 
         $port = $uri->getPort();
         if (null !== $port && ($port < 0 || $port > 65535)) {
-            throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %s', (string) $uri->getPort()));
+            throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %s', $uri));
         }
     }
 
     /**
-     * Static method called by PHP's var export.
+     * @param array{uri:UriInterface} $components
      */
     public static function __set_state(array $components): self
     {
@@ -60,10 +55,8 @@ final class Http implements Psr7UriInterface, JsonSerializable
 
     /**
      * Create a new instance from a string.
-     *
-     * @param string|mixed $uri
      */
-    public static function createFromString($uri = ''): self
+    public static function createFromString(Stringable|UriInterface|String $uri = ''): self
     {
         return new self(Uri::createFromString($uri));
     }
@@ -91,21 +84,18 @@ final class Http implements Psr7UriInterface, JsonSerializable
      * Create a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
-     *
-     * @param mixed $uri      the input URI to create
-     * @param mixed $base_uri the base URI used for reference
      */
-    public static function createFromBaseUri($uri, $base_uri = null): self
-    {
+    public static function createFromBaseUri(
+        Stringable|UriInterface|String $uri,
+        Stringable|UriInterface|String $base_uri = null
+    ): self {
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
     /**
      * Create a new instance from a URI object.
-     *
-     * @param Psr7UriInterface|UriInterface $uri the input URI to create
      */
-    public static function createFromUri($uri): self
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         if ($uri instanceof UriInterface) {
             return new self($uri);
@@ -200,15 +190,13 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * Safely stringify input when possible.
      *
-     * @param mixed $str the value to evaluate as a string
-     *
      * @throws SyntaxError if the submitted data can not be converted to string
      *
      * @return string|mixed
      */
-    private function filterInput($str)
+    private function filterInput(mixed $str): mixed
     {
-        if (is_scalar($str) || (is_object($str) && method_exists($str, '__toString'))) {
+        if (is_scalar($str) || $str instanceof Stringable) {
             return (string) $str;
         }
 

@@ -5,35 +5,5 @@ includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
 parameters:
     ignoreErrors:
-        - message: '#Variable method call on \$this\(League\\Uri\\Uri\)\.#'
-          path: src/Uri.php
-        - message: '#Instanceof between Psr\\Http\\Message\\UriInterface and Psr\\Http\\Message\\UriInterface will always evaluate to true\.#'
-          path: src/Uri.php
-        - message: '#Variable method call on League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface\.#'
-          path: src/UriResolver.php
-        - message: '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-          path: src/ResolverTest.php
-        - message: '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::resolve\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-          path: src/ResolverTest.php
-        - message: '#Parameter \#1 \$uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-          path: src/RelativizerTest.php
-        - message: '#Parameter \#2 \$base_uri of static method League\\Uri\\UriResolver::relativize\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-          path: src/RelativizerTest.php
-        - message: '#Parameter \#1 \$uri of static method League\\Uri\\Http::createFromUri\(\) expects League\\Uri\\Contracts\\UriInterface\|Psr\\Http\\Message\\UriInterface, string given\.#'
-          path: src/FactoryTest.php
-        - message: '#Parameter \#[\d]+ \$[A-Za-z0-9]+ of static method PHPUnit\\Framework\\Assert::assertJsonStringEqualsJsonString\(\) expects string, string\|false given\.#'
-          path: src/UriTest.php
-        - message: '#Parameter \#1 \$fragment of method League\\Uri\\Http::withFragment\(\) expects string, array given\.#'
-          path: src/HttpTest.php
-        - message: '#Variable static method call on League\\Uri\\UriInfo.#'
-          path: src/UriInfoTest.php
-        - message: '#Parameter \#1 \$port of method League\\Uri\\Uri::withPort\(\) expects int\|null, string given\.#'
-          path: src/UriTest.php
-        - message: '#Parameter \#1 \$path of method League\\Uri\\Uri::withPath\(\) expects object\|string, DateTime\|false given\.#'
-          path: src/UriTest.php
-        - message: '#Parameter \#1 \$path of method League\\Uri\\Uri::withPath\(\) expects object\|string, null given\.#'
-          path: src/UriTest.php
-        - message: '#Parameter \#1 \$variables of class League\\Uri\\UriTemplate\\VariableBag constructor expects(.*)#'
-          path: src/UriTemplate/VariableBagTest.php
     reportUnmatchedIgnoredErrors: true
     checkMissingIterableValueType: false

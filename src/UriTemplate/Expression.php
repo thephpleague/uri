@@ -16,7 +16,6 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_filter;
-use function array_keys;
 use function array_map;
 use function array_unique;
 use function explode;
@@ -24,7 +23,6 @@ use function implode;
 use function preg_match;
 use function rawurlencode;
 use function str_replace;
-use function strpos;
 use function substr;
 
 final class Expression
@@ -64,46 +62,29 @@ final class Expression
         '&' => ['prefix' => '&', 'joiner' => '&', 'query' => true],
     ];
 
-    private string $operator;
     /** @var array<VarSpecifier> */
     private array $varSpecifiers;
     private string $joiner;
     /** @var array<string> */
-    private array $variableNames;
-    private string $expressionString;
+    public readonly array $variableNames;
+    public readonly string $value;
 
-    private function __construct(string $operator, VarSpecifier ...$varSpecifiers)
+    private function __construct(private string $operator, VarSpecifier ...$varSpecifiers)
     {
-        $this->operator = $operator;
         $this->varSpecifiers = $varSpecifiers;
         $this->joiner = self::OPERATOR_HASH_LOOKUP[$operator]['joiner'];
-        $this->variableNames = $this->setVariableNames();
-        $this->expressionString = $this->setExpressionString();
+        $this->variableNames = array_unique(array_map(
+            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
+            $varSpecifiers
+        ));
+        $this->value = '{'.$operator.implode(',', array_map(
+            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),
+            $varSpecifiers
+        )).'}';
     }
 
     /**
-     * @return array<string>
-     */
-    private function setVariableNames(): array
-    {
-        return array_unique(array_map(
-            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name(),
-            $this->varSpecifiers
-        ));
-    }
-
-    private function setExpressionString(): string
-    {
-        $varSpecifierString = implode(',', array_map(
-            static fn (VarSpecifier $variable): string => $variable->toString(),
-            $this->varSpecifiers
-        ));
-
-        return '{'.$this->operator.$varSpecifierString.'}';
-    }
-
-    /**
-     * {@inheritDoc}
+     * @param array{operator:string, varSpecifiers:array<VarSpecifier>} $properties
      */
     public static function __set_state(array $properties): self
     {
@@ -123,7 +104,7 @@ final class Expression
 
         /** @var array{operator:string, variables:string} $parts */
         $parts = $parts + ['operator' => ''];
-        if ('' !== $parts['operator'] && false !== strpos(self::RESERVED_OPERATOR, $parts['operator'])) {
+        if ('' !== $parts['operator'] && str_contains(self::RESERVED_OPERATOR, $parts['operator'])) {
             throw new SyntaxError('The operator used in the expression "'.$expression.'" is reserved.');
         }
 
@@ -136,13 +117,18 @@ final class Expression
     /**
      * Returns the expression string representation.
      *
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
      */
     public function toString(): string
     {
-        return $this->expressionString;
+        return $this->value;
     }
 
     /**
+     * @deprecated since version 6.6.0 use the readonly property instead
+     * @codeCoverageIgnore
+     *
      * @return array<string>
      */
     public function variableNames(): array
@@ -178,7 +164,7 @@ final class Expression
      */
     private function replace(VarSpecifier $varSpec, VariableBag $variables): string
     {
-        $value = $variables->fetch($varSpec->name());
+        $value = $variables->fetch($varSpec->name);
         if (null === $value) {
             return '';
         }
@@ -190,10 +176,10 @@ final class Expression
         }
 
         if ('&' !== $this->joiner && '' === $expanded) {
-            return $varSpec->name();
+            return $varSpec->name;
         }
 
-        return $varSpec->name().'='.$expanded;
+        return $varSpec->name.'='.$expanded;
     }
 
     /**
@@ -201,7 +187,7 @@ final class Expression
      *
      * @return array{0:string, 1:bool}
      */
-    private function inject($value, VarSpecifier $varSpec, bool $useQuery): array
+    private function inject(array|string $value, VarSpecifier $varSpec, bool $useQuery): array
     {
         if (is_string($value)) {
             return $this->replaceString($value, $varSpec, $useQuery);
@@ -217,16 +203,15 @@ final class Expression
      */
     private function replaceString(string $value, VarSpecifier $varSpec, bool $useQuery): array
     {
-        if (':' === $varSpec->modifier()) {
-            $value = substr($value, 0, $varSpec->position());
+        if (':' === $varSpec->modifier) {
+            $value = substr($value, 0, $varSpec->position);
         }
 
-        $expanded = rawurlencode($value);
-        if ('+' === $this->operator || '#' === $this->operator) {
-            return [$this->decodeReserved($expanded), $useQuery];
+        if (in_array($this->operator, ['+', '#'], true)) {
+            return [$this->decodeReserved(rawurlencode($value)), $useQuery];
         }
 
-        return [$expanded, $useQuery];
+        return [rawurlencode($value), $useQuery];
     }
 
     /**
@@ -244,48 +229,45 @@ final class Expression
             return ['', false];
         }
 
-        if (':' === $varSpec->modifier()) {
-            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name());
+        if (':' === $varSpec->modifier) {
+            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
         }
 
         $pairs = [];
-        $isAssoc = $this->isAssoc($value);
+        $isList = array_is_list($value);
         foreach ($value as $key => $var) {
-            if ($isAssoc) {
+            if (!$isList) {
                 $key = rawurlencode((string) $key);
             }
 
             $var = rawurlencode($var);
-            if ('+' === $this->operator || '#' === $this->operator) {
+            if (in_array($this->operator, ['+', '#'], true)) {
                 $var = $this->decodeReserved($var);
             }
 
-            if ('*' === $varSpec->modifier()) {
-                if ($isAssoc) {
+            if ('*' === $varSpec->modifier) {
+                if (!$isList) {
                     $var = $key.'='.$var;
                 } elseif ($key > 0 && $useQuery) {
-                    $var = $varSpec->name().'='.$var;
+                    $var = $varSpec->name.'='.$var;
                 }
             }
 
             $pairs[$key] = $var;
         }
 
-        if ('*' === $varSpec->modifier()) {
-            if ($isAssoc) {
-                // Don't prepend the value name when using the explode
-                // modifier with an associative array.
+        if ('*' === $varSpec->modifier) {
+            if (!$isList) {
+                // Don't prepend the value name when using the `explode` modifier with an associative array.
                 $useQuery = false;
             }
 
             return [implode($this->joiner, $pairs), $useQuery];
         }
 
-        if ($isAssoc) {
-            // When an associative array is encountered and the
-            // explode modifier is not set, then the result must be
-            // a comma separated list of keys followed by their
-            // respective values.
+        if (!$isList) {
+            // When an associative array is encountered and the `explode` modifier is not set, then
+            // the result must be a comma separated list of keys followed by their respective values.
             foreach ($pairs as $offset => &$data) {
                 $data = $offset.','.$data;
             }
@@ -294,19 +276,6 @@ final class Expression
         }
 
         return [implode(',', $pairs), $useQuery];
-    }
-
-    /**
-     * Determines if an array is associative.
-     *
-     * This makes the assumption that input arrays are sequences or hashes.
-     * This assumption is a trade-off for accuracy in favor of speed, but it
-     * should work in almost every case where input is supplied for a URI
-     * template.
-     */
-    private function isAssoc(array $array): bool
-    {
-        return [] !== $array && 0 !== array_keys($array)[0];
     }
 
     /**

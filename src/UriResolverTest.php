@@ -12,22 +12,84 @@
 namespace League\Uri;
 
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 /**
  * @group modifier
  * @coversDefaultClass \League\Uri\UriResolver
  */
-final class RelativizerTest extends TestCase
+final class UriResolverTest extends TestCase
 {
     private const BASE_URI = 'http://a/b/c/d;p?q';
+
+    public function testResolveLetThrowResolvedInvalidUri(): void
+    {
+        $http = Uri::createFromString('https://example.com/path/to/file');
+        $ftp = Http::createFromString('ftp://a/b/c/d;p');
+
+        self::assertEquals(UriResolver::resolve($ftp, $http), $ftp);
+    }
+
+    /**
+     * @dataProvider resolveProvider
+     */
+    public function testCreateResolve(string $base_uri, string $uri, string $expected): void
+    {
+        self::assertSame($expected, (string) UriResolver::resolve(
+            Uri::createFromString($uri),
+            Http::createFromString($base_uri)
+        ));
+    }
+
+    public function resolveProvider(): array
+    {
+        return [
+            'base uri'                => [self::BASE_URI, '',              self::BASE_URI],
+            'scheme'                  => [self::BASE_URI, 'http://d/e/f',  'http://d/e/f'],
+            'path 1'                  => [self::BASE_URI, 'g',             'http://a/b/c/g'],
+            'path 2'                  => [self::BASE_URI, './g',           'http://a/b/c/g'],
+            'path 3'                  => [self::BASE_URI, 'g/',            'http://a/b/c/g/'],
+            'path 4'                  => [self::BASE_URI, '/g',            'http://a/g'],
+            'authority'               => [self::BASE_URI, '//g',           'http://g'],
+            'query'                   => [self::BASE_URI, '?y',            'http://a/b/c/d;p?y'],
+            'path + query'            => [self::BASE_URI, 'g?y',           'http://a/b/c/g?y'],
+            'fragment'                => [self::BASE_URI, '#s',            'http://a/b/c/d;p?q#s'],
+            'path + fragment'         => [self::BASE_URI, 'g#s',           'http://a/b/c/g#s'],
+            'path + query + fragment' => [self::BASE_URI, 'g?y#s',         'http://a/b/c/g?y#s'],
+            'single dot 1'            => [self::BASE_URI, '.',             'http://a/b/c/'],
+            'single dot 2'            => [self::BASE_URI, './',            'http://a/b/c/'],
+            'single dot 3'            => [self::BASE_URI, './g/.',         'http://a/b/c/g/'],
+            'single dot 4'            => [self::BASE_URI, 'g/./h',         'http://a/b/c/g/h'],
+            'double dot 1'            => [self::BASE_URI, '..',            'http://a/b/'],
+            'double dot 2'            => [self::BASE_URI, '../',           'http://a/b/'],
+            'double dot 3'            => [self::BASE_URI, '../g',          'http://a/b/g'],
+            'double dot 4'            => [self::BASE_URI, '../..',         'http://a/'],
+            'double dot 5'            => [self::BASE_URI, '../../',        'http://a/'],
+            'double dot 6'            => [self::BASE_URI, '../../g',       'http://a/g'],
+            'double dot 7'            => [self::BASE_URI, '../../../g',    'http://a/g'],
+            'double dot 8'            => [self::BASE_URI, '../../../../g', 'http://a/g'],
+            'double dot 9'            => [self::BASE_URI, 'g/../h' ,       'http://a/b/c/h'],
+            'mulitple slashes'        => [self::BASE_URI, 'foo////g',      'http://a/b/c/foo////g'],
+            'complex path 1'          => [self::BASE_URI, ';x',            'http://a/b/c/;x'],
+            'complex path 2'          => [self::BASE_URI, 'g;x',           'http://a/b/c/g;x'],
+            'complex path 3'          => [self::BASE_URI, 'g;x?y#s',       'http://a/b/c/g;x?y#s'],
+            'complex path 4'          => [self::BASE_URI, 'g;x=1/./y',     'http://a/b/c/g;x=1/y'],
+            'complex path 5'          => [self::BASE_URI, 'g;x=1/../y',    'http://a/b/c/y'],
+            'dot segments presence 1' => [self::BASE_URI, '/./g',          'http://a/g'],
+            'dot segments presence 2' => [self::BASE_URI, '/../g',         'http://a/g'],
+            'dot segments presence 3' => [self::BASE_URI, 'g.',            'http://a/b/c/g.'],
+            'dot segments presence 4' => [self::BASE_URI, '.g',            'http://a/b/c/.g'],
+            'dot segments presence 5' => [self::BASE_URI, 'g..',           'http://a/b/c/g..'],
+            'dot segments presence 6' => [self::BASE_URI, '..g',           'http://a/b/c/..g'],
+            'origin uri without path' => ['http://h:b@a', 'b/../y',   'http://h:b@a/y'],
+        ];
+    }
 
     public function testRelativizeIsNotMade(): void
     {
         $uri = Uri::createFromString('//path#fragment');
-        $base_uri = Http::createFromString('http://example.com/path');
-        $result = UriResolver::relativize($uri, $base_uri);
-        self::assertEquals($result, $uri);
+        $base_uri = Http::createFromString('https://example.com/path');
+
+        self::assertEquals($uri, UriResolver::relativize($uri, $base_uri));
     }
 
     /**
@@ -35,9 +97,10 @@ final class RelativizerTest extends TestCase
      */
     public function testRelativize(string $uri, string $resolved, string $expected): void
     {
-        $uri   = Http::createFromString($uri);
-        $resolved = Uri::createFromString($resolved);
-        self::assertSame($expected, (string) UriResolver::relativize($resolved, $uri));
+        self::assertSame(
+            $expected,
+            (string) UriResolver::relativize(Uri::createFromString($resolved), Http::createFromString($uri))
+        );
     }
 
     public function relativizeProvider(): array
@@ -83,26 +146,18 @@ final class RelativizerTest extends TestCase
         ];
     }
 
-    public function testUriResolverThrowExceptionOnConstructor(): void
-    {
-        self::expectException(TypeError::class);
-        UriResolver::relativize('ftp//a/b/c/d;p', 'toto');
-    }
-
     /**
      * @dataProvider relativizeAndResolveProvider
      */
     public function testRelativizeAndResolve(
         string $baseUri,
         string $uri,
-        string $expectedRelativize,
-        string $expectedResolved
+        string $expectedRelativize
     ): void {
-        $baseUri = Uri::createFromString($baseUri);
-        $uri = Http::createFromString($uri);
-
-        $relativeUri = UriResolver::relativize($uri, $baseUri);
-        self::assertSame($expectedRelativize, (string) $relativeUri);
+        self::assertSame(
+            $expectedRelativize,
+            (string) UriResolver::relativize(Http::createFromString($uri), Uri::createFromString($baseUri))
+        );
     }
 
     public function relativizeAndResolveProvider(): array

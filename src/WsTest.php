@@ -89,7 +89,6 @@ class WsTest extends TestCase
 
     /**
      * @dataProvider portProvider
-     * @param ?int $port
      */
     public function testPort(string $uri, ?int $port): void
     {

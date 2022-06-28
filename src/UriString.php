@@ -17,15 +17,11 @@ use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
-use TypeError;
+use Stringable;
 use function array_merge;
 use function explode;
 use function filter_var;
-use function gettype;
 use function inet_pton;
-use function is_object;
-use function is_scalar;
-use function method_exists;
 use function preg_match;
 use function rawurldecode;
 use function sprintf;
@@ -87,7 +83,7 @@ final class UriString
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
      */
-    private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d\+\.\-]*)?$/i';
+    private const REGEXP_URI_SCHEME = '/^([a-z][a-z\d+.-]*)?$/i';
 
     /**
      * IPvFuture regular expression.
@@ -157,16 +153,7 @@ final class UriString
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
-     * @param array{
-     *  scheme:?string,
-     *  user:?string,
-     *  pass:?string,
-     *  host:?string,
-     *  port:?int,
-     *  path:?string,
-     *  query:?string,
-     *  fragment:?string
-     * } $components
+     * @param array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:?string, query:?string, fragment:?string} $components
      */
     public static function build(array $components): string
     {
@@ -242,35 +229,17 @@ final class UriString
      *
      * @link https://tools.ietf.org/html/rfc3986
      *
-     * @param mixed $uri any scalar or stringable object
+     * @param Stringable|string|int|float $uri any scalar or stringable object
      *
      * @throws SyntaxError if the URI contains invalid characters
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
      *
-     * @return array{
-     *                scheme:?string,
-     *                user:?string,
-     *                pass:?string,
-     *                host:?string,
-     *                port:?int,
-     *                path:string,
-     *                query:?string,
-     *                fragment:?string
-     *                }
+     * @return array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
      */
-    public static function parse($uri): array
+    public static function parse(Stringable|string|int|float $uri): array
     {
-        if (is_object($uri) && method_exists($uri, '__toString')) {
-            $uri = (string) $uri;
-        }
-
-        if (!is_scalar($uri)) {
-            throw new TypeError(sprintf('The uri must be a scalar or a stringable object `%s` given', gettype($uri)));
-        }
-
         $uri = (string) $uri;
-
         if (isset(self::URI_SCHORTCUTS[$uri])) {
             /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
             $components = array_merge(self::URI_COMPONENTS, self::URI_SCHORTCUTS[$uri]);
@@ -395,7 +364,7 @@ final class UriString
             return $host;
         }
 
-        if ('[' !== $host[0] || ']' !== substr($host, -1)) {
+        if ('[' !== $host[0] || !str_ends_with($host, ']')) {
             return self::filterRegisteredName($host);
         }
 
@@ -462,6 +431,6 @@ final class UriString
         $ip_host = substr($ip_host, 0, $pos);
 
         return false !== filter_var($ip_host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-            && 0 === strpos((string) inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
+            && str_starts_with((string)inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
     }
 }

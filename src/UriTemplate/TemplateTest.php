@@ -15,8 +15,6 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use stdClass;
-use TypeError;
 use function var_export;
 
 /**
@@ -27,14 +25,13 @@ final class TemplateTest extends TestCase
     /**
      * @covers ::createFromString
      * @covers ::__construct
-     * @covers ::toString
      *
      * @dataProvider providesValidNotation
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
         $template = Template::createFromString($notation);
-        self::assertSame($notation, $template->toString());
+        self::assertSame($notation, $template->value);
     }
 
     public function providesValidNotation(): iterable
@@ -82,13 +79,11 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::variableNames
-     *
      * @dataProvider expectedVariableNames
      */
     public function testGetVariableNames(string $template, array $expected): void
     {
-        self::assertSame($expected, Template::createFromString($template)->variableNames());
+        self::assertSame($expected, Template::createFromString($template)->variableNames);
     }
 
     public function expectedVariableNames(): iterable
@@ -111,16 +106,6 @@ final class TemplateTest extends TestCase
                 'expected' => ['bar', 'foo'],
             ],
         ];
-    }
-
-    /**
-     * @covers ::createFromString
-     */
-    public function testExpandAcceptsOnlyStringAndStringableObject(): void
-    {
-        self::expectException(TypeError::class);
-
-        Template::createFromString(new stdClass());
     }
 
     /**

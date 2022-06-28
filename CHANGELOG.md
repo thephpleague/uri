@@ -2,11 +2,11 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## [Next](https://github.com/thephpleague/uri/compare/6.6.0...master) - TBD
+## [6.7.0](https://github.com/thephpleague/uri/compare/6.6.0...6.7.0) - 2022-06-28
 
 ### Added
 
-- None
+- `UriInfo::isCrossOrigin` method
 
 ### Fixed
 

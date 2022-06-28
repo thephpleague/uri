@@ -23,7 +23,6 @@ use function rawurldecode;
 final class UriInfo
 {
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|A|F]|6[1-9|A-F]|7[\d|E]),i';
-
     private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
 
     /**
@@ -41,8 +40,6 @@ final class UriInfo
 
     /**
      * Normalizes an URI for comparison.
-     *
-     *
      */
     private static function normalize(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
@@ -87,7 +84,6 @@ final class UriInfo
 
     /**
      * Tell whether the URI represents a network path.
-     *
      */
     public static function isNetworkPath(Psr7UriInterface|UriInterface $uri): bool
     {
@@ -153,9 +149,21 @@ final class UriInfo
         if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
             $null = self::emptyComponentValue($uri);
 
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
+            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
         }
 
         return null;
+    }
+
+    /**
+     * Tells whether two URI do not share the same origin.
+     *
+     * @see UriInfo::getOrigin()
+     */
+    public static function isCrossOrigin(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
+    {
+        return null === ($uriString = self::getOrigin($uri))
+            || null === ($baseUriString = self::getOrigin($base_uri))
+            || $uriString !== $baseUriString;
     }
 }

@@ -51,6 +51,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^v3.3.2",
+        "nyholm/psr7": "^1.5",
         "php-http/psr7-integration-tests": "^1.1",
         "phpstan/phpstan": "^1.2.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",

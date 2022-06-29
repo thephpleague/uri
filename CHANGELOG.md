@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [6.7.1](https://github.com/thephpleague/uri/compare/6.7.0...6.7.1) - 2022-06-29
+
+### Added
+
+- None
+
+### Fixed
+
+- `UriInfo::isCrossOrigin` method is fix to make it work with any PSR-7 compliant object [205](https://github.com/thephpleague/uri/pull/205)
+
+### Deprecated
+
+- None
+
+### Remove
+
+- None
+
 ## [6.7.0](https://github.com/thephpleague/uri/compare/6.6.0...6.7.0) - 2022-06-28
 
 ### Added

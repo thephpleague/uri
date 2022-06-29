@@ -103,14 +103,22 @@ zeros.
 ~~~php
 <?php
 
+use GuzzleHttp\Psr7\Utils;
 use League\Uri\Http;
 use League\Uri\Uri;
 use League\Uri\UriInfo;
+use Nyholm\Psr7\Uri;
 
-UriInfo::isCrossOrigin('http://example.com:80/123', 'http://example.com/'); //returns false
-UriInfo::isCrossOrigin('https://xn--bb-bjab.be./path', 'https://Bébé.BE./path'); //returns false
-UriInfo::isCrossOrigin(Http::createFromString('https://example.com/123'), Uri::createFromString('https://www.example.com/')); //returns true
+UriInfo::isCrossOrigin(
+    Utils::uriFor('blob:http://xn--bb-bjab.be./path'),
+    new Uri('http://Bébé.BE./path'),
+); // returns false
+
+UriInfo::isCrossOrigin(
+    Http::createFromString('https://example.com/123'), 
+    Uri::createFromString('https://www.example.com/')
+); // returns true
 ~~~
 
-The method expects URI objects (implementing the League or PSR  `UriInterface`). 
-The method takes into account i18n while comparing both URI.
+The method expects URI objects (implementing the League or PSR-7  `UriInterface`). 
+The method takes into account i18n while comparing both URI id the `intl-extension` is installed.

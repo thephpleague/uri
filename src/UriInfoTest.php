@@ -11,6 +11,7 @@
 
 namespace League\Uri;
 
+use Nyholm\Psr7\Uri as Psr7Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
@@ -217,6 +218,7 @@ final class UriInfoTest extends TestCase
     public function testIsCrossOrigin(string $original, string $modified, bool $expected): void
     {
         self::assertSame($expected, UriInfo::isCrossOrigin(Uri::createFromString($original), Http::createFromString($modified)));
+        self::assertSame($expected, UriInfo::isCrossOrigin(new Psr7Uri($original), new Psr7Uri($modified)));
     }
 
     /**

@@ -187,8 +187,7 @@ final class UriResolver
     public static function relativize(
         Psr7UriInterface|UriInterface $uri,
         Psr7UriInterface|UriInterface $base_uri
-    ): Psr7UriInterface|UriInterface
-    {
+    ): Psr7UriInterface|UriInterface {
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
         if (!self::isRelativizable($uri, $base_uri)) {

@@ -21,6 +21,7 @@ use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use SensitiveParameter;
 use Stringable;
 use TypeError;
 use function array_filter;
@@ -195,7 +196,7 @@ final class Uri implements UriInterface
     private function __construct(
         ?string $scheme,
         ?string $user,
-        ?string $pass,
+        #[SensitiveParameter] ?string $pass,
         ?string $host,
         ?int $port,
         string $path,
@@ -1167,8 +1168,10 @@ final class Uri implements UriInterface
     /**
      * {@inheritDoc}
      */
-    public function withUserInfo($user, $password = null): UriInterface
-    {
+    public function withUserInfo(
+        $user,
+        #[SensitiveParameter] $password = null
+    ): UriInterface {
         $user_info = null;
         $user = $this->filterString($user);
         if (null !== $password) {

@@ -6,7 +6,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- None
+- Added PHP8.2+ `SensitiveParameter` attributes to user information component
 
 ### Fixed
 

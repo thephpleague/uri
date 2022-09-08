@@ -1035,7 +1035,7 @@ final class Uri implements UriInterface
 
     public function toString(): string
     {
-        $this->uri = $this->uri ?? $this->getUriString(
+        $this->uri ??= $this->getUriString(
             $this->scheme,
             $this->authority,
             $this->path,

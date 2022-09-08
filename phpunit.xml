@@ -17,6 +17,7 @@
             <directory suffix=".php">src</directory>
         </include>
         <exclude>
+            <directory suffix="Bench.php">src</directory>
             <directory suffix="Test.php">src</directory>
         </exclude>
         <report>

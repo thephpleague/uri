@@ -33,7 +33,7 @@ final class HttpBench
         ];
 
         for ($i = 0; $i < 100_000; $i++) {
-            $uri = Http::createFromComponents($components);
+            Http::createFromComponents($components);
         }
     }
 }

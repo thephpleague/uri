@@ -75,6 +75,7 @@
         "league/uri-schemes": "^1.0"
     },
     "scripts": {
+        "benchmark": "phpbench run src --report=default",
         "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
         "phpcs:fix": "php-cs-fixer fix -vvv --allow-risky=yes --ansi",
         "phpstan": "phpstan analyse -l max -c phpstan.neon src --ansi --memory-limit=256M",

@@ -19,7 +19,7 @@ final class HttpBench
 {
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
-    public function testBuildingAnUriFromAUriComponent(): void
+    public function benchBuildingAnUriFromUriComponents(): void
     {
         $components = [
             'scheme' => 'https',
@@ -32,8 +32,8 @@ final class HttpBench
             'fragment' => 'foobar',
         ];
 
-        for ($i = 0; $i < 1_000_000; $i++) {
-            Http::createFromComponents($components);
+        for ($i = 0; $i < 100_000; $i++) {
+            $uri = Http::createFromComponents($components);
         }
     }
 }

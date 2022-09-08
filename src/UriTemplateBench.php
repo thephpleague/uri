@@ -19,7 +19,7 @@ final class UriTemplateBench
 {
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
-    public function testBuildingAnUriFromAUriTemplate(): void
+    public function benchBuildingAnUriFromAnUriTemplate(): void
     {
         $template = 'https://uri.thephpleague.com/{foo}{?query,limit}';
         $uriTemplate = new UriTemplate($template);
@@ -29,7 +29,7 @@ final class UriTemplateBench
             'limit' => 10,
         ];
 
-        for ($i = 0; $i < 1_000_000; $i++) {
+        for ($i = 0; $i < 100_000; $i++) {
             $uriTemplate->expand($data);
         }
     }

@@ -11,7 +11,6 @@ EOF;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__.'/src')
-    ->in(__DIR__.'/benchmark')
 ;
 
 $config = new PhpCsFixer\Config();

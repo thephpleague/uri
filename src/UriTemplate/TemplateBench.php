@@ -11,23 +11,23 @@
 
 declare(strict_types=1);
 
-namespace League\Uri;
+namespace League\Uri\UriTemplate;
 
 use PhpBench\Attributes as Bench;
 
-final class UriTemplateBench
+final class TemplateBench
 {
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
-    public function benchBuildingAnUriFromAnUriTemplate(): void
+    public function benchBuildingAnUriStringFromATemplateAndAVariableBag(): void
     {
         $template = 'https://uri.thephpleague.com/{foo}{?query,limit}';
-        $uriTemplate = new UriTemplate($template);
-        $data = [
+        $uriTemplate = Template::createFromString($template);
+        $data = new VariableBag([
             'foo' => 'foo',
             'query' => ['foo', 'bar', 'baz'],
             'limit' => 10,
-        ];
+        ]);
 
         for ($i = 0; $i < 100_000; $i++) {
             $uriTemplate->expand($data);

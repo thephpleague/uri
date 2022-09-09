@@ -16,7 +16,6 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
-use function array_merge;
 use function array_unique;
 use function preg_match_all;
 use function preg_replace;
@@ -34,18 +33,16 @@ final class Template
     private array $expressions = [];
     /** @var array<string> */
     public readonly array $variableNames;
-    public readonly string $value;
 
-    private function __construct(string $template, Expression ...$expressions)
+    private function __construct(public readonly string $value, Expression ...$expressions)
     {
         $variableNames = [];
         foreach ($expressions as $expression) {
             $this->expressions[$expression->value] = $expression;
-            $variableNames[] = $expression->variableNames;
+            $variableNames = [...$variableNames, ...$expression->variableNames];
         }
 
-        $this->variableNames = array_unique(array_merge([], ...$variableNames));
-        $this->value = $template;
+        $this->variableNames = array_unique($variableNames);
     }
 
     /**

@@ -171,6 +171,22 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * {@inheritDoc}
      */
+    public function __toString(): string
+    {
+        return $this->uri->__toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->uri->__toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function withScheme($scheme): self
     {
         /** @var string $scheme */
@@ -179,8 +195,12 @@ final class Http implements Psr7UriInterface, JsonSerializable
             $scheme = null;
         }
 
-        $uri = $this->uri->withScheme($scheme);
-        if ($uri->getScheme() === $this->uri->getScheme()) {
+        return $this->newInstance($this->uri->withScheme($scheme));
+    }
+
+    private function newInstance(UriInterface $uri): self
+    {
+        if ((string) $uri === (string) $this->uri) {
             return $this;
         }
 
@@ -214,12 +234,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
             $user = null;
         }
 
-        $uri = $this->uri->withUserInfo($user, $password);
-        if ($uri->getUserInfo() === $this->uri->getUserInfo()) {
-            return $this;
-        }
-
-        return new self($uri);
+        return $this->newInstance($this->uri->withUserInfo($user, $password));
     }
 
     /**
@@ -233,12 +248,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
             $host = null;
         }
 
-        $uri = $this->uri->withHost($host);
-        if ($uri->getHost() === $this->uri->getHost()) {
-            return $this;
-        }
-
-        return new self($uri);
+        return $this->newInstance($this->uri->withHost($host));
     }
 
     /**
@@ -246,12 +256,9 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withPort($port): self
     {
-        $uri = $this->uri->withPort($port);
-        if ($uri->getPort() === $this->uri->getPort()) {
-            return $this;
-        }
-
-        return new self($uri);
+        return $this->newInstance(
+            $this->uri->withPort($port)
+        );
     }
 
     /**
@@ -259,12 +266,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withPath($path): self
     {
-        $uri = $this->uri->withPath($path);
-        if ($uri->getPath() === $this->uri->getPath()) {
-            return $this;
-        }
-
-        return new self($uri);
+        return $this->newInstance($this->uri->withPath($path));
     }
 
     /**
@@ -278,12 +280,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
             $query = null;
         }
 
-        $uri = $this->uri->withQuery($query);
-        if ($uri->getQuery() === $this->uri->getQuery()) {
-            return $this;
-        }
-
-        return new self($uri);
+        return $this->newInstance($this->uri->withQuery($query));
     }
 
     /**
@@ -297,27 +294,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
             $fragment = null;
         }
 
-        $uri = $this->uri->withFragment($fragment);
-        if ($uri->getFragment() === $this->uri->getFragment()) {
-            return $this;
-        }
-
-        return new self($uri);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function __toString(): string
-    {
-        return $this->uri->__toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function jsonSerialize(): string
-    {
-        return $this->uri->__toString();
+        return $this->newInstance($this->uri->withFragment($fragment));
     }
 }

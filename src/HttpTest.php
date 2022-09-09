@@ -293,4 +293,36 @@ final class HttpTest extends UriIntegrationTest
             ->withHost('')
             ->withPath('//toto');
     }
+
+    public function testItStripMultipleLeadingSlashOnGetPath(): void
+    {
+        $uri = Http::createFromString('https://example.com///miscillaneous.tld');
+
+        self::assertSame('https://example.com///miscillaneous.tld', (string) $uri);
+        self::assertSame('/miscillaneous.tld', $uri->getPath());
+
+        $modifiedUri = $uri->withPath('///foobar');
+
+        self::assertSame('https://example.com///foobar', (string) $modifiedUri);
+        self::assertSame('/foobar', $modifiedUri->getPath());
+        self::assertSame('//example.com///foobar', (string) $modifiedUri->withScheme(''));
+
+        $this->expectException(SyntaxError::class);
+        $modifiedUri->withScheme('')->withHost('');
+    }
+
+    public function testItPreservesMultipleLeadingSlashesOnMutation(): void
+    {
+        $uri = Http::createFromString('https://www.example.com///google.com');
+        self::assertSame('https://www.example.com///google.com', (string) $uri);
+        self::assertSame('/google.com', $uri->getPath());
+
+        $modifiedUri =  $uri->withPath('/google.com');
+        self::assertSame('https://www.example.com/google.com', (string) $modifiedUri);
+        self::assertSame('/google.com', $modifiedUri->getPath());
+
+        $modifiedUri2 =  $uri->withPath('///google.com');
+        self::assertSame('https://www.example.com///google.com', (string) $modifiedUri2);
+        self::assertSame('/google.com', $modifiedUri2->getPath());
+    }
 }

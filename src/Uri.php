@@ -221,6 +221,7 @@ final class Uri implements UriInterface
         $this->path = $this->formatPath($path);
         $this->query = $this->formatQueryAndFragment($query);
         $this->fragment = $this->formatQueryAndFragment($fragment);
+
         $this->assertValidState();
     }
 
@@ -675,7 +676,7 @@ final class Uri implements UriInterface
     /**
      * Returns the environment user info.
      *
-     * @return array{0:?string, 1:?string}
+     * @return non-empty-array{0:?string, 1:?string}
      */
     private static function fetchUserInfo(array $server): array
     {
@@ -740,16 +741,13 @@ final class Uri implements UriInterface
     /**
      * Returns the environment path.
      *
-     * @return array{0:?string, 1:?string}
+     * @return non-empty-array{0:?string, 1:?string}
      */
     private static function fetchRequestUri(array $server): array
     {
         $server += ['IIS_WasUrlRewritten' => null, 'UNENCODED_URL' => '', 'PHP_SELF' => '', 'QUERY_STRING' => null];
         if ('1' === $server['IIS_WasUrlRewritten'] && '' !== $server['UNENCODED_URL']) {
-            /** @var array{0:?string, 1:?string} $retval */
-            $retval = explode('?', $server['UNENCODED_URL'], 2) + [1 => null];
-
-            return $retval;
+            return explode('?', $server['UNENCODED_URL'], 2) + [1 => null];
         }
 
         if (isset($server['REQUEST_URI'])) {
@@ -953,6 +951,8 @@ final class Uri implements UriInterface
         }) {
             throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', $this, $this->scheme));
         }
+
+        $this->uri = null;
     }
 
     /**
@@ -1065,7 +1065,15 @@ final class Uri implements UriInterface
     }
 
     /**
-     * @return array{scheme:?string, user_info:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
+     * @return array{
+     *     scheme:?string,
+     *     user_info:?string,
+     *     host:?string,
+     *     port:?int,
+     *     path:string,
+     *     query:?string,
+     *     fragment:?string
+     * }
      */
     public function __debugInfo(): array
     {
@@ -1125,6 +1133,10 @@ final class Uri implements UriInterface
      */
     public function getPath(): string
     {
+        if (str_starts_with($this->path, '//')) {
+            return '/'.ltrim($this->path, '/');
+        }
+
         return $this->path;
     }
 
@@ -1170,10 +1182,10 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError if the submitted data can not be converted to string
      */
-    private function filterString($str): ?string
+    private function filterString(mixed $str): ?string
     {
         if (null === $str) {
-            return $str;
+            return null;
         }
 
         if (!is_scalar($str) && !$str instanceof Stringable) {

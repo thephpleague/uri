@@ -13,6 +13,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - Optimize URI performance for server intensive usage [206](https://github.com/thephpleague/uri/pull/206) by [@kelunik](https://github.com/kelunik)
 - Improve `Template` resolution
 - Added PHPBench to benchmark the package main functionnalities.
+- Normalize `UriInterface::getPath` value in the context of multiple leading slash characters.
 
 ### Deprecated
 

@@ -180,6 +180,13 @@ final class Uri implements UriInterface
     ];
 
     /**
+     * Maximum number of formatted host cached.
+     *
+     * @var int
+     */
+    private const MAXIMUM_FORMATTED_HOST_CACHED = 100;
+
+    /**
      * All ASCII letters sorted by typical frequency of occurrence.
      *
      * @var string
@@ -224,12 +231,12 @@ final class Uri implements UriInterface
      */
     private function formatScheme(?string $scheme): ?string
     {
-        if (null === $scheme || isset(self::SCHEME_DEFAULT_PORT[$scheme])) {
+        if (null === $scheme || array_key_exists($scheme, self::SCHEME_DEFAULT_PORT)) {
             return $scheme;
         }
 
         $formatted_scheme = strtolower($scheme);
-        if (1 === preg_match(self::REGEXP_SCHEME, $formatted_scheme)) {
+        if (array_key_exists($formatted_scheme, self::SCHEME_DEFAULT_PORT) || 1 === preg_match(self::REGEXP_SCHEME, $formatted_scheme)) {
             return $formatted_scheme;
         }
 
@@ -275,20 +282,15 @@ final class Uri implements UriInterface
             return $host;
         }
 
-        if ('[' === $host[0]) {
-            return $this->formatIp($host);
+        static $formattedHostCache = [];
+        if (isset($formattedHostCache[$host])) {
+            return $formattedHostCache[$host];
         }
 
-        static $formatRegisteredNameCache = [];
-        if (isset($formatRegisteredNameCache[$host])) {
-            return $formatRegisteredNameCache[$host];
-        }
-
-        $formattedHost = $this->formatRegisteredName($host);
-        $formatRegisteredNameCache[$host] = $formattedHost;
-
-        if (count($formatRegisteredNameCache) > 100) {
-            unset($formatRegisteredNameCache[array_key_first($formatRegisteredNameCache)]);
+        $formattedHost = '[' === $host[0] ? $this->formatIp($host) : $this->formatRegisteredName($host);
+        $formattedHostCache[$host] = $formattedHost;
+        if (self::MAXIMUM_FORMATTED_HOST_CACHED < count($formattedHostCache)) {
+            unset($formattedHostCache[array_key_first($formattedHostCache)]);
         }
 
         return $formattedHost;
@@ -751,7 +753,7 @@ final class Uri implements UriInterface
         }
 
         if (isset($server['REQUEST_URI'])) {
-            [$path, ] = explode('?', $server['REQUEST_URI'], 2);
+            [$path] = explode('?', $server['REQUEST_URI'], 2);
             $query = ('' !== $server['QUERY_STRING']) ? $server['QUERY_STRING'] : null;
 
             return [$path, $query];

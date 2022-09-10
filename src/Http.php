@@ -19,7 +19,6 @@ use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 use function is_scalar;
-use function sprintf;
 
 final class Http implements Psr7UriInterface, JsonSerializable
 {
@@ -36,12 +35,12 @@ final class Http implements Psr7UriInterface, JsonSerializable
     private function validate(UriInterface $uri): void
     {
         if (null === $uri->getScheme() && '' === $uri->getHost()) {
-            throw new SyntaxError(sprintf('an URI without scheme can not contains a empty host string according to PSR-7: %s', $uri));
+            throw new SyntaxError('An URI without scheme can not contains a empty host string according to PSR-7: '.$uri);
         }
 
         $port = $uri->getPort();
         if (null !== $port && ($port < 0 || $port > 65535)) {
-            throw new SyntaxError(sprintf('The URI port is outside the established TCP and UDP port ranges: %s', $uri));
+            throw new SyntaxError('The URI port is outside the established TCP and UDP port ranges: '.$uri);
         }
     }
 
@@ -185,17 +184,22 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * {@inheritDoc}
+     * Safely stringify input when possible for League UriInterface compatibility.
+     *
+     * @throws SyntaxError
      */
-    public function withScheme($scheme): self
+    private function filterInput(mixed $str): string|null
     {
-        /** @var string $scheme */
-        $scheme = $this->filterInput($scheme);
-        if ('' === $scheme) {
-            $scheme = null;
+        if (!is_scalar($str) && !$str instanceof Stringable) {
+            throw new SyntaxError('The component must be a string, a scalar or a Stringable object; `'.gettype($str).'` given.');
         }
 
-        return $this->newInstance($this->uri->withScheme($scheme));
+        $str = (string) $str;
+        if ('' === $str) {
+            return null;
+        }
+
+        return $str;
     }
 
     private function newInstance(UriInterface $uri): self
@@ -208,19 +212,11 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * Safely stringify input when possible.
-     *
-     * @throws SyntaxError if the submitted data can not be converted to string
-     *
-     * @return string|mixed
+     * {@inheritDoc}
      */
-    private function filterInput(mixed $str): mixed
+    public function withScheme($scheme): self
     {
-        if (is_scalar($str) || $str instanceof Stringable) {
-            return (string) $str;
-        }
-
-        return $str;
+        return $this->newInstance($this->uri->withScheme($this->filterInput($scheme)));
     }
 
     /**
@@ -228,13 +224,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withUserInfo($user, $password = null): self
     {
-        /** @var string $user */
-        $user = $this->filterInput($user);
-        if ('' === $user) {
-            $user = null;
-        }
-
-        return $this->newInstance($this->uri->withUserInfo($user, $password));
+        return $this->newInstance($this->uri->withUserInfo($this->filterInput($user), $password));
     }
 
     /**
@@ -242,13 +232,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withHost($host): self
     {
-        /** @var string $host */
-        $host = $this->filterInput($host);
-        if ('' === $host) {
-            $host = null;
-        }
-
-        return $this->newInstance($this->uri->withHost($host));
+        return $this->newInstance($this->uri->withHost($this->filterInput($host)));
     }
 
     /**
@@ -256,9 +240,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withPort($port): self
     {
-        return $this->newInstance(
-            $this->uri->withPort($port)
-        );
+        return $this->newInstance($this->uri->withPort($port));
     }
 
     /**
@@ -274,13 +256,7 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withQuery($query): self
     {
-        /** @var string $query */
-        $query = $this->filterInput($query);
-        if ('' === $query) {
-            $query = null;
-        }
-
-        return $this->newInstance($this->uri->withQuery($query));
+        return $this->newInstance($this->uri->withQuery($this->filterInput($query)));
     }
 
     /**
@@ -288,12 +264,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     public function withFragment($fragment): self
     {
-        /** @var string $fragment */
-        $fragment = $this->filterInput($fragment);
-        if ('' === $fragment) {
-            $fragment = null;
-        }
-
-        return $this->newInstance($this->uri->withFragment($fragment));
+        return $this->newInstance($this->uri->withFragment($this->filterInput($fragment)));
     }
 }

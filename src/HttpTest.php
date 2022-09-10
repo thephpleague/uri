@@ -49,6 +49,7 @@ final class HttpTest extends UriIntegrationTest
     public function testInvalidPort(): void
     {
         self::expectException(InvalidArgumentException::class);
+
         Http::createFromString('https://example.com:-1');
     }
 
@@ -215,11 +216,10 @@ final class HttpTest extends UriIntegrationTest
     public function invalidUrlProvider(): array
     {
         return [
-            //['wss://example.com'],
             ['http:example.com'],
             ['https:/example.com'],
             ['http://user@:80'],
-            //['//user@:80'],
+            ['//user@:80'],
             ['http:///path'],
             ['http:path'],
         ];
@@ -251,6 +251,7 @@ final class HttpTest extends UriIntegrationTest
     public function testPathIsInvalid(string $path): void
     {
         self::expectException(SyntaxError::class);
+
         Http::createFromString()->withPath($path);
     }
 
@@ -271,6 +272,7 @@ final class HttpTest extends UriIntegrationTest
     public function testCreateFromInvalidUrlKO(string $uri): void
     {
         self::expectException(SyntaxError::class);
+
         Http::createFromString($uri);
     }
 
@@ -308,20 +310,24 @@ final class HttpTest extends UriIntegrationTest
         self::assertSame('//example.com///foobar', (string) $modifiedUri->withScheme(''));
 
         $this->expectException(SyntaxError::class);
+
         $modifiedUri->withScheme('')->withHost('');
     }
 
     public function testItPreservesMultipleLeadingSlashesOnMutation(): void
     {
         $uri = Http::createFromString('https://www.example.com///google.com');
+
         self::assertSame('https://www.example.com///google.com', (string) $uri);
         self::assertSame('/google.com', $uri->getPath());
 
         $modifiedUri =  $uri->withPath('/google.com');
+
         self::assertSame('https://www.example.com/google.com', (string) $modifiedUri);
         self::assertSame('/google.com', $modifiedUri->getPath());
 
         $modifiedUri2 =  $uri->withPath('///google.com');
+
         self::assertSame('https://www.example.com///google.com', (string) $modifiedUri2);
         self::assertSame('/google.com', $modifiedUri2->getPath());
     }

@@ -39,11 +39,11 @@ use function inet_pton;
 use function is_int;
 use function is_scalar;
 use function is_string;
+use function ltrim;
 use function preg_match;
 use function preg_replace;
 use function preg_replace_callback;
 use function rawurlencode;
-use function sprintf;
 use function str_contains;
 use function str_replace;
 use function strlen;
@@ -241,7 +241,7 @@ final class Uri implements UriInterface
             return $formatted_scheme;
         }
 
-        throw new SyntaxError(sprintf('The scheme `%s` is invalid.', $scheme));
+        throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
     }
 
     /**
@@ -313,7 +313,7 @@ final class Uri implements UriInterface
         }
 
         if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formatted_host)) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : a registered name can not contain URI delimiters or spaces', $host));
+            throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.');
         }
 
         $info = Idna::toAscii($host, Idna::IDNA2008_ASCII);
@@ -342,16 +342,16 @@ final class Uri implements UriInterface
 
         $pos = strpos($ip, '%');
         if (false === $pos) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
+            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
         }
 
         if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, rawurldecode(substr($ip, $pos)))) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
+            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
         }
 
         $ip = substr($ip, 0, $pos);
         if (false === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
+            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
         }
 
         //Only the address block fe80::/10 can have a Zone ID attach to
@@ -360,7 +360,7 @@ final class Uri implements UriInterface
             return $host;
         }
 
-        throw new SyntaxError(sprintf('The host `%s` is invalid : the IP host is malformed', $host));
+        throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
     }
 
     /**
@@ -380,7 +380,7 @@ final class Uri implements UriInterface
 
         $port = (int) $port;
         if (0 > $port) {
-            throw new SyntaxError(sprintf('The port `%s` is invalid', $port));
+            throw new SyntaxError('The port `'.$port.'` is invalid.');
         }
 
         $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme] ?? null;
@@ -426,7 +426,7 @@ final class Uri implements UriInterface
 
         if (null === $base_uri) {
             if (null === $uri->getScheme()) {
-                throw new SyntaxError(sprintf('the URI `%s` must be absolute', $uri));
+                throw new SyntaxError('the URI `'.$uri.'` must be absolute.');
             }
 
             if (null === $uri->getAuthority()) {
@@ -444,7 +444,7 @@ final class Uri implements UriInterface
         }
 
         if (null === $base_uri->getScheme()) {
-            throw new SyntaxError(sprintf('the base URI `%s` must be absolute', $base_uri));
+            throw new SyntaxError('the base URI `'.$base_uri.'` must be absolute.');
         }
 
         /** @var UriInterface $uri */
@@ -510,7 +510,7 @@ final class Uri implements UriInterface
 
         // @codeCoverageIgnoreStart
         if (!$finfo_support) {
-            throw new FileinfoSupportMissing(sprintf('Please install ext/fileinfo to use the %s() method.', __METHOD__));
+            throw new FileinfoSupportMissing('Please install ext/fileinfo to use the '.__METHOD__.'() method.');
         }
         // @codeCoverageIgnoreEnd
 
@@ -526,7 +526,7 @@ final class Uri implements UriInterface
         restore_error_handler();
 
         if (false === $raw) {
-            throw new SyntaxError(sprintf('The file `%s` does not exist or is not readable', $path));
+            throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
         }
 
         $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mime_args);
@@ -817,7 +817,7 @@ final class Uri implements UriInterface
         }
 
         if (strlen($path) !== strspn($path, self::ASCII) || !str_contains($path, ',')) {
-            throw new SyntaxError(sprintf('The path `%s` is invalid according to RFC2937', $path));
+            throw new SyntaxError('The path `'.$path.'` is invalid according to RFC2937.');
         }
 
         $parts = explode(',', $path, 2) + [1 => null];
@@ -848,7 +848,7 @@ final class Uri implements UriInterface
     private function assertValidPath(string $mimetype, string $parameters, string $data): void
     {
         if (1 !== preg_match(self::REGEXP_MIMETYPE, $mimetype)) {
-            throw new SyntaxError(sprintf('The path mimetype `%s` is invalid', $mimetype));
+            throw new SyntaxError('The path mimetype `'.$mimetype.'` is invalid.');
         }
 
         $is_binary = 1 === preg_match(self::REGEXP_BINARY, $parameters, $matches);
@@ -858,7 +858,7 @@ final class Uri implements UriInterface
 
         $res = array_filter(array_filter(explode(';', $parameters), $this->validateParameter(...)));
         if ([] !== $res) {
-            throw new SyntaxError(sprintf('The path paremeters `%s` is invalid', $parameters));
+            throw new SyntaxError('The path paremeters `'.$parameters.'` is invalid.');
         }
 
         if (!$is_binary) {
@@ -867,7 +867,7 @@ final class Uri implements UriInterface
 
         $res = base64_decode($data, true);
         if (false === $res || $data !== base64_encode($res)) {
-            throw new SyntaxError(sprintf('The path data `%s` is invalid', $data));
+            throw new SyntaxError('The path data `'.$data.'` is invalid.');
         }
     }
 
@@ -929,7 +929,7 @@ final class Uri implements UriInterface
         }
 
         if (null === $this->authority && str_starts_with($this->path, '//')) {
-            throw new SyntaxError(sprintf('If there is no authority the path `%s` can not start with a `//`.', $this->path));
+            throw new SyntaxError('If there is no authority the path `'.$this->path.'` can not start with a `//`.');
         }
 
         $pos = strpos($this->path, ':');
@@ -949,7 +949,7 @@ final class Uri implements UriInterface
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             default => true,
         }) {
-            throw new SyntaxError(sprintf('The uri `%s` is invalid for the `%s` scheme.', $this, $this->scheme));
+            throw new SyntaxError('The uri `'.$this->toString().'` is invalid for the `'.$this->scheme.'` scheme.');
         }
 
         $this->uri = null;
@@ -1189,7 +1189,7 @@ final class Uri implements UriInterface
         }
 
         if (!is_scalar($str) && !$str instanceof Stringable) {
-            throw new SyntaxError(sprintf('The component must be a string, a scalar or a stringable object; `%s` given.', gettype($str)));
+            throw new SyntaxError('The component must be a string, a scalar or a Stringable object; `'.gettype($str).'` given.');
         }
 
         $str = (string) $str;
@@ -1197,7 +1197,7 @@ final class Uri implements UriInterface
             return $str;
         }
 
-        throw new SyntaxError(sprintf('The component `%s` contains invalid characters.', $str));
+        throw new SyntaxError('The component `'.$str.'` contains invalid characters.');
     }
 
     /**

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use ArrayAccess;
+use Countable;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
 use function is_bool;
@@ -23,7 +24,7 @@ use function is_scalar;
 /**
  * @implements ArrayAccess<string, string|bool|int|float|array<string|bool|int|float>>
  */
-final class VariableBag implements ArrayAccess
+final class VariableBag implements ArrayAccess, Countable
 {
     /**
      * @var array<string,string|array<string>>
@@ -38,6 +39,11 @@ final class VariableBag implements ArrayAccess
         foreach ($variables as $name => $value) {
             $this->assign($name, $value);
         }
+    }
+
+    public function count(): int
+    {
+        return count($this->variables);
     }
 
     /**

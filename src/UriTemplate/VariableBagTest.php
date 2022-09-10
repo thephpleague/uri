@@ -36,12 +36,17 @@ final class VariableBagTest extends TestCase
      *
      * @dataProvider provideValidIterable
      */
-    public function testItCanBeInstantiatedWithAnIterable(iterable $iterable, array $expected, bool $isEmpty): void
-    {
+    public function testItCanBeInstantiatedWithAnIterable(
+        iterable $iterable,
+        array $expected,
+        bool $isEmpty,
+        int $count
+    ): void {
         $bag = new VariableBag($iterable);
 
         self::assertEquals($expected, $bag->all());
         self::assertSame($isEmpty, $bag->isEmpty());
+        self::assertCount($count, $bag);
     }
 
     public function provideValidIterable(): iterable
@@ -51,16 +56,19 @@ final class VariableBagTest extends TestCase
                 'iterable' => ['name' => 'value'],
                 'expected' => ['name' => 'value'],
                 'isEmpty' => false,
+                'count' => 1,
             ],
             'iterable' => [
                 'iterable' => new ArrayIterator(['name' => 'value']),
                 'expected' => ['name' => 'value'],
                 'isEmpty' => false,
+                'count' => 1,
             ],
             'empty array' =>  [
                 'iterable' => [],
                 'expected' => [],
                 'isEmpty' => true,
+                'count' => 0,
             ],
         ];
     }

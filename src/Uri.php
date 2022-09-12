@@ -1143,6 +1143,10 @@ final class Uri implements UriInterface
      */
     public function getPath(): string
     {
+        if (0 === strpos($this->path, '//')) {
+            return '/'.ltrim($this->path, '/');
+        }
+
         return $this->path;
     }
 

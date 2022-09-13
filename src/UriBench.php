@@ -15,7 +15,7 @@ namespace League\Uri;
 
 use PhpBench\Attributes as Bench;
 
-final class HttpBench
+final class UriBench
 {
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
@@ -33,7 +33,7 @@ final class HttpBench
         ];
 
         for ($i = 0; $i < 100_000; $i++) {
-            Http::createFromComponents($components);
+            Uri::createFromComponents($components);
         }
     }
 
@@ -42,7 +42,7 @@ final class HttpBench
     public function benchBuildingAnUriFromUriComponentsMutation(): void
     {
         for ($i = 0; $i < 100_000; $i++) {
-            Http::createFromString()
+            Uri::createFromString()
                 ->withPath('/5.0')
                 ->withQuery('q=val1&q=val2&query[3]=val3')
                 ->withFragment('foobar')

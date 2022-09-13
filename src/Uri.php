@@ -647,19 +647,12 @@ final class Uri implements UriInterface
      */
     public static function createFromServer(array $server): self
     {
-        [$user, $pass] = self::fetchUserInfo($server);
-        [$host, $port] = self::fetchHostname($server);
-        [$path, $query] = self::fetchRequestUri($server);
+        $components = ['scheme' => self::fetchScheme($server)];
+        [$components['user'], $components['pass']] = self::fetchUserInfo($server);
+        [$components['host'], $components['port']] = self::fetchHostname($server);
+        [$components['path'], $components['query']] = self::fetchRequestUri($server);
 
-        return Uri::createFromComponents([
-            'scheme' => self::fetchScheme($server),
-            'user' => $user,
-            'pass' => $pass,
-            'host' => $host,
-            'port' => $port,
-            'path' => $path,
-            'query' => $query,
-        ]);
+        return Uri::createFromComponents($components);
     }
 
     /**
@@ -941,6 +934,8 @@ final class Uri implements UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
+        $this->uri = null;
+
         if (! match ($this->scheme) {
             'data' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
@@ -949,10 +944,8 @@ final class Uri implements UriInterface
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             default => true,
         }) {
-            throw new SyntaxError('The uri `'.$this->toString().'` is invalid for the `'.$this->scheme.'` scheme.');
+            throw new SyntaxError('The uri `'.$this.'` is invalid for the `'.$this->scheme.'` scheme.');
         }
-
-        $this->uri = null;
     }
 
     /**
@@ -1037,15 +1030,13 @@ final class Uri implements UriInterface
 
     public function toString(): string
     {
-        $this->uri ??= $this->getUriString(
+        return $this->uri ??= $this->getUriString(
             $this->scheme,
             $this->authority,
             $this->path,
             $this->query,
             $this->fragment
         );
-
-        return $this->uri;
     }
 
     /**

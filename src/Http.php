@@ -22,7 +22,7 @@ use function is_scalar;
 
 final class Http implements Psr7UriInterface, JsonSerializable
 {
-    private function __construct(private UriInterface $uri)
+    private function __construct(private readonly UriInterface $uri)
     {
         $this->validate($this->uri);
     }

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [6.7.2](https://github.com/thephpleague/uri/compare/6.7.1...6.7.2) - 2022-09-12
+
+### Added
+
+- None
+
+### Fixed
+
+- `Http::getPath` and `Uri::getPath` methods returned values are normalized to prevent potential XSS and open redirect vectors.
+
+### Deprecated
+
+- None
+
+### Remove
+
+- None
+
 ## [6.7.1](https://github.com/thephpleague/uri/compare/6.7.0...6.7.1) - 2022-06-29
 
 ### Added

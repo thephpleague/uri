@@ -73,6 +73,17 @@ final class HttpTest extends UriIntegrationTest
     }
 
     /**
+     * @covers ::filterInput
+     */
+    public function testAcceptsNullQuery(): void
+    {
+        self::assertSame(
+            'https://example.com',
+            (string)Http::createFromString('https://example.com')->withQuery(null) /* @phpstan-ignore-line */
+        );
+    }
+
+    /**
      * @covers ::getPort
      * @covers ::withPort
      */

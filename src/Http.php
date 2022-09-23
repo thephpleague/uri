@@ -190,6 +190,10 @@ final class Http implements Psr7UriInterface, JsonSerializable
      */
     private function filterInput(mixed $str): string|null
     {
+        if (null === $str) {
+            return null;
+        }
+
         if (!is_scalar($str) && !$str instanceof Stringable) {
             throw new SyntaxError('The component must be a string, a scalar or a Stringable object; `'.gettype($str).'` given.');
         }

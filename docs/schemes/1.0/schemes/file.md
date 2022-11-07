@@ -23,7 +23,7 @@ In addition to the defined named constructors, because file path depends on the 
 
 use League\Uri;
 
-$uri = Uri\File::createFromWidowsPath('c:\windows\My Documents\my word.docx');
+$uri = Uri\File::createFromWindowsPath('c:\windows\My Documents\my word.docx');
 echo $uri; //returns 'file://localhost/c:My%20Documents/my%20word.docx'
 ~~~
 

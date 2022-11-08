@@ -53,12 +53,12 @@
         "friendsofphp/php-cs-fixer": "^v3.9.5",
         "nyholm/psr7": "^1.5.1",
         "php-http/psr7-integration-tests": "^1.1.1",
-        "phpbench/phpbench": "^1.2.6",
-        "phpstan/phpstan": "^1.8.5",
+        "phpbench/phpbench": "^1.2.7",
+        "phpstan/phpstan": "^1.9.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.1.1",
-        "phpstan/phpstan-strict-rules": "^1.4.3",
-        "phpunit/phpunit": "^9.5.24",
+        "phpstan/phpstan-phpunit": "^1.2.2",
+        "phpstan/phpstan-strict-rules": "^1.4.4",
+        "phpunit/phpunit": "^9.5.26",
         "psr/http-factory": "^1.0.1"
     },
     "autoload": {
@@ -78,7 +78,7 @@
         "benchmark": "phpbench run src --report=default",
         "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
         "phpcs:fix": "php-cs-fixer fix -vvv --allow-risky=yes --ansi",
-        "phpstan": "phpstan analyse -l max -c phpstan.neon src --ansi --memory-limit=256M",
+        "phpstan": "phpstan analyse -l max -c phpstan.neon src --xdebug --ansi --memory-limit=256M",
         "phpunit": "XDEBUG_MODE=coverage phpunit --coverage-text",
         "test": [
             "@phpunit",

@@ -710,8 +710,13 @@ final class Uri implements UriInterface
         }
 
         if (isset($server['HTTP_HOST']) && 1 === preg_match(self::REGEXP_HOST_PORT, $server['HTTP_HOST'], $matches)) {
-            if (isset($matches['port'])) {
+            $matches += ['host' => null, 'port' => null];
+            if (null !== $matches['port']) {
                 $matches['port'] = (int) $matches['port'];
+            }
+
+            if (null !== $matches['host']) {
+                $matches['host'] = (string) $matches['host'];
             }
 
             return [

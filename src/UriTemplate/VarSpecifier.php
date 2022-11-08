@@ -49,21 +49,22 @@ final class VarSpecifier
             throw new SyntaxError('The variable specification "'.$specification.'" is invalid.');
         }
 
-        $parsed += ['modifier' => '', 'position' => ''];
-        if ('' !== $parsed['position']) {
-            $parsed['position'] = (int) $parsed['position'];
-            $parsed['modifier'] = ':';
+        $properties = ['name' => $parsed['name'], 'modifier' => $parsed['modifier'] ?? '', 'position' => $parsed['position'] ?? ''];
+
+        if ('' !== $properties['position']) {
+            $properties['position'] = (int) $properties['position'];
+            $properties['modifier'] = ':';
         }
 
-        if ('' === $parsed['position']) {
-            $parsed['position'] = 0;
+        if ('' === $properties['position']) {
+            $properties['position'] = 0;
         }
 
-        if (10000 <= $parsed['position']) {
+        if (10000 <= $properties['position']) {
             throw new SyntaxError('The variable specification "'.$specification.'" is invalid the position modifier must be lower than 10000.');
         }
 
-        return new self($parsed['name'], $parsed['modifier'], $parsed['position']);
+        return new self($properties['name'], $properties['modifier'], $properties['position']);
     }
 
     public function toString(): string

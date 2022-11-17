@@ -1,18 +1,10 @@
 * text=auto
 
-/.editorconfig      export-ignore
-/.gitattributes     export-ignore
-/.github            export-ignore
-/.gitignore         export-ignore
-/.php-cs-fixer.php  export-ignore
-/.github            export-ignore
-/docs               export-ignore
-/README.md          export-ignore
-/CHANGELOG.md       export-ignore
-/CONDUCT.md         export-ignore
-/phpbench.json      export-ignore
-/phpstan.neon       export-ignore
-/phpunit.xml        export-ignore
-/**/*Bench.php      export-ignore
-/**/*Test.php       export-ignore
-/test_files         export-ignore
+/.gitattributes export-ignore
+/.github        export-ignore
+/docs           export-ignore
+/test_files     export-ignore
+/README.md      export-ignore
+/CHANGELOG.md   export-ignore
+/**/*Bench.php  export-ignore
+/**/*Test.php   export-ignore

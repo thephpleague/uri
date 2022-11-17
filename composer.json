@@ -35,7 +35,7 @@
     "support": {
         "forum": "https://thephpleague.slack.com",
         "docs": "https://uri.thephpleague.com",
-        "issues": "https://github.com/thephpleague/uri/issues"
+        "issues": "https://github.com/thephpleague/uri-src/issues"
     },
     "funding": [
         {

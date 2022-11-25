@@ -52,7 +52,7 @@ final class FactoryTest extends TestCase
             ],
         ]);
 
-        $uri = Uri::createFromDataPath(dirname(__DIR__).'/../test_files/'.$path, $context);
+        $uri = Uri::createFromDataPath(dirname(__DIR__).'/test_files/'.$path, $context);
         self::assertStringContainsString($expected, $uri->getPath());
     }
 

@@ -2,7 +2,6 @@
 
 /.gitattributes export-ignore
 /.github        export-ignore
-/docs           export-ignore
 /README.md      export-ignore
 /CHANGELOG.md   export-ignore
 /**/*Bench.php  export-ignore

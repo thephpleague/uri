@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use Stringable;
 use function array_pop;
 use function array_reduce;
 use function count;
@@ -41,13 +42,29 @@ final class UriResolver
     }
 
     /**
-     * Resolves an URI against a base URI using RFC3986 rules.
+     * Input URI normalization to allow Stringable and string URI.
+     */
+    private static function filterUri(Psr7UriInterface|UriInterface|Stringable|string $uri): Psr7UriInterface|UriInterface
+    {
+        return match (true) {
+            $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
+            default => Uri::createFromString((string) $uri),
+        };
+    }
+
+    /**
+     * Resolves a URI against a base URI using RFC3986 rules.
      *
      * If the first argument is a UriInterface the method returns a UriInterface object
      * If the first argument is a Psr7UriInterface the method returns a Psr7UriInterface object
      */
-    public static function resolve(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): Psr7UriInterface|UriInterface
-    {
+    public static function resolve(
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+    ): Psr7UriInterface|UriInterface {
+        $uri = self::filterUri($uri);
+        $base_uri = self::filterUri($base_uri);
+
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -185,9 +202,12 @@ final class UriResolver
      * It MUST not alter of silence them apart from validating its own parameters.
      */
     public static function relativize(
-        Psr7UriInterface|UriInterface $uri,
-        Psr7UriInterface|UriInterface $base_uri
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string $base_uri
     ): Psr7UriInterface|UriInterface {
+        $uri = self::filterUri($uri);
+        $base_uri = self::filterUri($base_uri);
+
         $uri = self::formatHost($uri);
         $base_uri = self::formatHost($base_uri);
         if (!self::isRelativizable($uri, $base_uri)) {

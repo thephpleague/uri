@@ -36,7 +36,7 @@ final class UriResolverTest extends TestCase
     {
         self::assertSame($expected, (string) UriResolver::resolve(
             Uri::createFromString($uri),
-            Http::createFromString($base_uri)
+            $base_uri
         ));
     }
 
@@ -156,7 +156,7 @@ final class UriResolverTest extends TestCase
     ): void {
         self::assertSame(
             $expectedRelativize,
-            (string) UriResolver::relativize(Http::createFromString($uri), Uri::createFromString($baseUri))
+            (string) UriResolver::relativize($uri, Uri::createFromString($baseUri))
         );
     }
 

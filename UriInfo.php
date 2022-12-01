@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use Stringable;
 use function explode;
 use function implode;
 use function preg_replace_callback;
@@ -32,6 +33,16 @@ final class UriInfo
     {
     }
 
+    /**
+     * Input URI normalization to allow Stringable and string URI.
+     */
+    private static function filterUri(Psr7UriInterface|UriInterface|Stringable|string $uri): Psr7UriInterface|UriInterface
+    {
+        return match (true) {
+            $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
+            default => Uri::createFromString((string) $uri),
+        };
+    }
 
     private static function emptyComponentValue(Psr7UriInterface|UriInterface $uri): ?string
     {
@@ -77,16 +88,19 @@ final class UriInfo
     /**
      * Tells whether the URI represents an absolute URI.
      */
-    public static function isAbsolute(Psr7UriInterface|UriInterface $uri): bool
+    public static function isAbsolute(Psr7UriInterface|UriInterface|Stringable|string $uri): bool
     {
+        $uri = self::filterUri($uri);
+
         return self::emptyComponentValue($uri) !== $uri->getScheme();
     }
 
     /**
      * Tell whether the URI represents a network path.
      */
-    public static function isNetworkPath(Psr7UriInterface|UriInterface $uri): bool
+    public static function isNetworkPath(Psr7UriInterface|UriInterface|Stringable|string $uri): bool
     {
+        $uri = self::filterUri($uri);
         $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme() && $null !== $uri->getAuthority();
@@ -95,8 +109,9 @@ final class UriInfo
     /**
      * Tells whether the URI represents an absolute path.
      */
-    public static function isAbsolutePath(Psr7UriInterface|UriInterface $uri): bool
+    public static function isAbsolutePath(Psr7UriInterface|UriInterface|Stringable|string $uri): bool
     {
+        $uri = self::filterUri($uri);
         $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme()
@@ -108,8 +123,9 @@ final class UriInfo
      * Tell whether the URI represents a relative path.
      *
      */
-    public static function isRelativePath(Psr7UriInterface|UriInterface $uri): bool
+    public static function isRelativePath(Psr7UriInterface|UriInterface|Stringable|string $uri): bool
     {
+        $uri = self::filterUri($uri);
         $null = self::emptyComponentValue($uri);
 
         return $null === $uri->getScheme()
@@ -120,10 +136,12 @@ final class UriInfo
     /**
      * Tells whether both URI refers to the same document.
      */
-    public static function isSameDocument(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
-        $uri = self::normalize($uri);
-        $base_uri = self::normalize($base_uri);
+    public static function isSameDocument(
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+    ): bool {
+        $uri = self::normalize(self::filterUri($uri));
+        $base_uri = self::normalize(self::filterUri($base_uri));
 
         return (string) $uri->withFragment($uri instanceof Psr7UriInterface ? '' : null)
             === (string) $base_uri->withFragment($base_uri instanceof Psr7UriInterface ? '' : null);
@@ -138,8 +156,9 @@ final class UriInfo
      * For URI with the file scheme the method will return null (as this is left to the implementation decision)
      * For URI with a special scheme the method returns the scheme followed by its authority (without the userinfo part)
      */
-    public static function getOrigin(Psr7UriInterface|UriInterface $uri): ?string
+    public static function getOrigin(Psr7UriInterface|UriInterface|Stringable|string $uri): ?string
     {
+        $uri = self::filterUri($uri);
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
             $uri = Uri::createFromString($uri->getPath());
@@ -160,8 +179,13 @@ final class UriInfo
      *
      * @see UriInfo::getOrigin()
      */
-    public static function isCrossOrigin(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $base_uri): bool
-    {
+    public static function isCrossOrigin(
+        Psr7UriInterface|UriInterface|Stringable|string $uri,
+        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+    ): bool {
+        $uri = self::filterUri($uri);
+        $base_uri = self::filterUri($base_uri);
+
         return null === ($uriString = self::getOrigin(Uri::createFromUri($uri)))
             || null === ($baseUriString = self::getOrigin(Uri::createFromUri($base_uri)))
             || $uriString !== $baseUriString;

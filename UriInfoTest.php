@@ -14,7 +14,6 @@ namespace League\Uri;
 use Nyholm\Psr7\Uri as Psr7Uri;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use TypeError;
 
 /**
  * @group modifier
@@ -91,24 +90,12 @@ final class UriInfoTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider functionProvider
-     */
-    public function testIsFunctionsThrowsTypeError(string $function): void
+    public function testIsFunctionsThrowsTypeError(): void
     {
-        self::expectException(TypeError::class);
-
-        UriInfo::$function('http://example.com'); /* @phpstan-ignore-line */
-    }
-
-    public function functionProvider(): array
-    {
-        return [
-            ['isAbsolute'],
-            ['isNetworkPath'],
-            ['isAbsolutePath'],
-            ['isRelativePath'],
-        ];
+        self::assertTrue(UriInfo::isAbsolute('http://example.com'));
+        self::assertFalse(UriInfo::isNetworkPath('http://example.com'));
+        self::assertTrue(UriInfo::isAbsolutePath('/example.com'));
+        self::assertTrue(UriInfo::isRelativePath('example.com#foobar'));
     }
 
     /**

@@ -31,6 +31,7 @@ final class VariableBagTest extends TestCase
      * @covers ::all
      * @covers ::isEmpty
      * @covers ::normalizeValue
+     * @covers ::count
      *
      * @param array<string, string|array<string>> $expected
      *

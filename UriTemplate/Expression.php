@@ -20,74 +20,39 @@ use function array_map;
 use function array_unique;
 use function explode;
 use function implode;
-use function preg_match;
 use function rawurlencode;
-use function str_replace;
 use function substr;
 
 final class Expression
 {
-    /**
-     * Expression regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc6570#section-2.2
-     */
-    private const REGEXP_EXPRESSION = '/^\{
-        (?:
-            (?<operator>[\.\/;\?&\=,\!@\|\+#])?
-            (?<variables>[^\}]*)
-        )
-    \}$/x';
-
-    /**
-     * Reserved Operator characters.
-     *
-     * @link https://tools.ietf.org/html/rfc6570#section-2.2
-     */
-    private const RESERVED_OPERATOR = '=,!@|';
-
-    /**
-     * Processing behavior according to the expression type operator.
-     *
-     * @link https://tools.ietf.org/html/rfc6570#appendix-A
-     */
-    private const OPERATOR_HASH_LOOKUP = [
-        ''  => ['prefix' => '',  'joiner' => ',', 'query' => false],
-        '+' => ['prefix' => '',  'joiner' => ',', 'query' => false],
-        '#' => ['prefix' => '#', 'joiner' => ',', 'query' => false],
-        '.' => ['prefix' => '.', 'joiner' => '.', 'query' => false],
-        '/' => ['prefix' => '/', 'joiner' => '/', 'query' => false],
-        ';' => ['prefix' => ';', 'joiner' => ';', 'query' => true],
-        '?' => ['prefix' => '?', 'joiner' => '&', 'query' => true],
-        '&' => ['prefix' => '&', 'joiner' => '&', 'query' => true],
-    ];
-
     /** @var array<VarSpecifier> */
     private readonly array $varSpecifiers;
-    private readonly string $joiner;
     /** @var array<string> */
     public readonly array $variableNames;
     public readonly string $value;
 
-    private function __construct(private string $operator, VarSpecifier ...$varSpecifiers)
+    private function __construct(private readonly Operator $operator, VarSpecifier ...$varSpecifiers)
     {
         $this->varSpecifiers = $varSpecifiers;
-        $this->joiner = self::OPERATOR_HASH_LOOKUP[$operator]['joiner'];
         $this->variableNames = array_unique(array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
             $varSpecifiers
         ));
-        $this->value = '{'.$operator.implode(',', array_map(
+        $this->value = '{'.$operator->value.implode(',', array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),
             $varSpecifiers
         )).'}';
     }
 
     /**
-     * @param array{operator:string, varSpecifiers:array<VarSpecifier>} $properties
+     * @param array{operator:string|Operator, varSpecifiers:array<VarSpecifier>} $properties
      */
     public static function __set_state(array $properties): self
     {
+        if (is_string($properties['operator'])) {
+            $properties['operator'] = Operator::from($properties['operator']);
+        }
+
         return new self($properties['operator'], ...$properties['varSpecifiers']);
     }
 
@@ -98,15 +63,7 @@ final class Expression
      */
     public static function createFromString(string $expression): self
     {
-        if (1 !== preg_match(self::REGEXP_EXPRESSION, $expression, $parts)) {
-            throw new SyntaxError('The expression "'.$expression.'" is invalid.');
-        }
-
-        /** @var array{operator:string, variables:string} $parts */
-        $parts = $parts + ['operator' => ''];
-        if ('' !== $parts['operator'] && str_contains(self::RESERVED_OPERATOR, $parts['operator'])) {
-            throw new SyntaxError('The operator used in the expression "'.$expression.'" is reserved.');
-        }
+        $parts = Operator::parseExpression($expression);
 
         return new Expression($parts['operator'], ...array_map(
             static fn (string $varSpec): VarSpecifier => VarSpecifier::createFromString($varSpec),
@@ -143,17 +100,12 @@ final class Expression
             $parts[] = $this->replace($varSpecifier, $variables);
         }
 
-        $expanded = implode($this->joiner, array_filter($parts, static fn ($value): bool => '' !== $value));
+        $expanded = implode($this->operator->separator(), array_filter($parts, static fn ($value): bool => '' !== $value));
         if ('' === $expanded) {
             return $expanded;
         }
 
-        $prefix = self::OPERATOR_HASH_LOOKUP[$this->operator]['prefix'];
-        if ('' === $prefix) {
-            return $expanded;
-        }
-
-        return $prefix.$expanded;
+        return $this->operator->first().$expanded;
     }
 
     /**
@@ -169,13 +121,12 @@ final class Expression
             return '';
         }
 
-        $useQuery = self::OPERATOR_HASH_LOOKUP[$this->operator]['query'];
-        [$expanded, $actualQuery] = $this->inject($value, $varSpec, $useQuery);
+        [$expanded, $actualQuery] = $this->inject($value, $varSpec);
         if (!$actualQuery) {
             return $expanded;
         }
 
-        if ('&' !== $this->joiner && '' === $expanded) {
+        if ('&' !== $this->operator->separator() && '' === $expanded) {
             return $varSpec->name;
         }
 
@@ -187,31 +138,17 @@ final class Expression
      *
      * @return array{0:string, 1:bool}
      */
-    private function inject(array|string $value, VarSpecifier $varSpec, bool $useQuery): array
+    private function inject(array|string $value, VarSpecifier $varSpec): array
     {
-        if (is_string($value)) {
-            return $this->replaceString($value, $varSpec, $useQuery);
+        if (is_array($value)) {
+            return $this->replaceList($value, $varSpec);
         }
 
-        return $this->replaceList($value, $varSpec, $useQuery);
-    }
-
-    /**
-     * Expands an expression using a string value.
-     *
-     * @return array{0:string, 1:bool}
-     */
-    private function replaceString(string $value, VarSpecifier $varSpec, bool $useQuery): array
-    {
         if (':' === $varSpec->modifier) {
             $value = substr($value, 0, $varSpec->position);
         }
 
-        if (in_array($this->operator, ['+', '#'], true)) {
-            return [$this->decodeReserved(rawurlencode($value)), $useQuery];
-        }
-
-        return [rawurlencode($value), $useQuery];
+        return [$this->operator->decode($value), $this->operator->isNamed()];
     }
 
     /**
@@ -223,28 +160,25 @@ final class Expression
      *
      * @return array{0:string, 1:bool}
      */
-    private function replaceList(array $value, VarSpecifier $varSpec, bool $useQuery): array
+    private function replaceList(array $value, VarSpecifier $varSpec): array
     {
-        if ([] === $value) {
-            return ['', false];
-        }
-
         if (':' === $varSpec->modifier) {
             throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
         }
 
+        if ([] === $value) {
+            return ['', false];
+        }
+
         $pairs = [];
         $isList = array_is_list($value);
+        $useQuery = $this->operator->isNamed();
         foreach ($value as $key => $var) {
             if (!$isList) {
                 $key = rawurlencode((string) $key);
             }
 
-            $var = rawurlencode($var);
-            if (in_array($this->operator, ['+', '#'], true)) {
-                $var = $this->decodeReserved($var);
-            }
-
+            $var = $this->operator->decode($var);
             if ('*' === $varSpec->modifier) {
                 if (!$isList) {
                     $var = $key.'='.$var;
@@ -262,7 +196,7 @@ final class Expression
                 $useQuery = false;
             }
 
-            return [implode($this->joiner, $pairs), $useQuery];
+            return [implode($this->operator->separator(), $pairs), $useQuery];
         }
 
         if (!$isList) {
@@ -276,23 +210,5 @@ final class Expression
         }
 
         return [implode(',', $pairs), $useQuery];
-    }
-
-    /**
-     * Removes percent encoding on reserved characters (used with + and # modifiers).
-     */
-    private function decodeReserved(string $str): string
-    {
-        static $delimiters = [
-            ':', '/', '?', '#', '[', ']', '@', '!', '$',
-            '&', '\'', '(', ')', '*', '+', ',', ';', '=',
-        ];
-
-        static $delimitersEncoded = [
-            '%3A', '%2F', '%3F', '%23', '%5B', '%5D', '%40', '%21', '%24',
-            '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D',
-        ];
-
-        return str_replace($delimitersEncoded, $delimiters, $str);
     }
 }

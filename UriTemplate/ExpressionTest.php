@@ -75,6 +75,7 @@ final class ExpressionTest extends TestCase
 
     /**
      * @covers ::createFromString
+     * @covers \League\Uri\UriTemplate\Operator::parseExpression
      *
      * @dataProvider providesInvalidExpression
      */
@@ -125,9 +126,8 @@ final class ExpressionTest extends TestCase
      * @covers ::expand
      * @covers ::replace
      * @covers ::inject
-     * @covers ::replaceString
      * @covers ::replaceList
-     * @covers ::decodeReserved
+     * @covers \League\Uri\UriTemplate\Operator::decode
      *
      * @dataProvider templateExpansionProvider
      */

@@ -23,10 +23,7 @@ final class VarSpecifier
      *
      * @link https://tools.ietf.org/html/rfc6570#section-2.3
      */
-    private const REGEXP_VARSPEC = '/^
-        (?<name>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)
-        (?<modifier>\:(?<position>\d+)|\*)?
-    $/x';
+    private const REGEXP_VARSPEC = '/^(?<name>(?:[A-z0-9_\.]|%[0-9a-fA-F]{2})+)(?<modifier>\:(?<position>\d+)|\*)?$/';
 
     private function __construct(
         public readonly string $name,

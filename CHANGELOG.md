@@ -2,7 +2,25 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...master) - 2022-09-13
+## [Next](https://github.com/thephpleague/uri/compare/6.8.0...master) - 2022-09-13
+
+### Added
+
+- None
+
+### Fixed
+
+- `UriResolver` and `UriInfo` uri input now supports `Stringable` and `string` type.
+
+### Deprecated
+
+- None
+
+### Remove
+
+- None
+
+## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...6.8.0) - 2022-09-13
 
 ### Added
 

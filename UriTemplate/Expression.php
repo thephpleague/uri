@@ -63,8 +63,8 @@ final class Expression
     ];
 
     /** @var array<VarSpecifier> */
-    private array $varSpecifiers;
-    private string $joiner;
+    private readonly array $varSpecifiers;
+    private readonly string $joiner;
     /** @var array<string> */
     public readonly array $variableNames;
     public readonly string $value;

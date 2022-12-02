@@ -16,7 +16,8 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
-use function array_unique;
+use function array_keys;
+use function array_reduce;
 use function preg_match_all;
 use function preg_replace;
 use function str_contains;
@@ -29,20 +30,21 @@ final class Template
      */
     private const REGEXP_EXPRESSION_DETECTOR = '/\{[^}]*}/x';
 
-    /** @var array<string, Expression> */
-    private array $expressions = [];
+    /** @var array<Expression> */
+    private readonly array $expressions;
     /** @var array<string> */
     public readonly array $variableNames;
 
     private function __construct(public readonly string $value, Expression ...$expressions)
     {
-        $variableNames = [];
-        foreach ($expressions as $expression) {
-            $this->expressions[$expression->value] = $expression;
-            $variableNames = [...$variableNames, ...$expression->variableNames];
-        }
-
-        $this->variableNames = array_unique($variableNames);
+        $this->expressions = $expressions;
+        $this->variableNames = array_keys(
+            array_reduce(
+                $expressions,
+                fn (array $curry, Expression $expression): array => [...$curry, ...array_fill_keys($expression->variableNames, 1)],
+                []
+            )
+        );
     }
 
     /**
@@ -105,12 +107,10 @@ final class Template
      */
     public function expand(VariableBag $variables): string
     {
-        $uriString = $this->value;
-        /** @var Expression $expression */
-        foreach ($this->expressions as $pattern => $expression) {
-            $uriString = str_replace($pattern, $expression->expand($variables), $uriString);
-        }
-
-        return $uriString;
+        return array_reduce(
+            $this->expressions,
+            fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),
+            $this->value
+        );
     }
 }

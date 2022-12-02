@@ -54,22 +54,17 @@ final class UriTemplate
 
     /**
      * Filters out variables for the given template.
-     *
-     * @param array<string,string|array<string>> $variables
      */
-    private function filterVariables(VariableBag|array $variables): VariableBag
+    private function filterVariables(VariableBag|array $inputVariables): VariableBag
     {
-        return array_reduce(
-            $this->template->variableNames,
-            function (VariableBag $curry, string $name) use ($variables): VariableBag {
-                if (isset($variables[$name])) {
-                    $curry[$name] = $variables[$name];
-                }
+        $variableBag = new VariableBag();
+        foreach ($this->template->variableNames as $name) {
+            if (isset($inputVariables[$name])) {
+                $variableBag[$name] = $inputVariables[$name];
+            }
+        }
 
-                return $curry;
-            },
-            new VariableBag()
-        );
+        return $variableBag;
     }
 
     /**

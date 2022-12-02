@@ -52,11 +52,11 @@ final class UriTemplateTest extends TestCase
     {
         $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
         $variables = [
-            'path'     => '/foo/bar',
-            'segments' => ['one', 'two', 3, true, 'false', false, null],
-            'query'    => 'test',
-            'more'     => ['fun', 'ice cream'],
-            'foo[]' => ['fizz', 'buzz'],
+            'path'        => '/foo/bar',
+            'segments'    => ['one', 'two', 3, true, 'false', false, null],
+            'query'       => 'test',
+            'more'        => ['fun', 'ice cream'],
+            'foo[]'       => ['fizz', 'buzz'],
             'nonexistent' => ['random'],
         ];
 
@@ -65,7 +65,7 @@ final class UriTemplateTest extends TestCase
             'segments' => ['one', 'two', '3', '1', 'false', '0', ''],
             'query'    => 'test',
             'more'     => ['fun', 'ice cream'],
-            'foo[]' => ['fizz', 'buzz'],
+            'foo[]'    => ['fizz', 'buzz'],
         ];
 
         $uriTemplate = new UriTemplate($template, $variables);

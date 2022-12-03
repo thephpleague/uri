@@ -6,11 +6,12 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- None
+- `League\Uri\UriTemplate\Operator` to improve internal representation when using UriTemplate features.
 
 ### Fixed
 
 - `UriResolver` and `UriInfo` uri input now supports `Stringable` and `string` type.
+- `League\Uri\UriTemplate`, `League\Uri\UriTemplate\Template`, `League\Uri\UriTemplate\VariableBag` are the only classes that are part of the public API. All the other classes are internal by default.
 
 ### Deprecated
 

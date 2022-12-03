@@ -16,6 +16,10 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use function preg_match;
 
+/**
+ * @internal The class exposes the internal representation of an Var Specifier
+ * @link https://www.rfc-editor.org/rfc/rfc6570#section-2.3
+ */
 final class VarSpecifier
 {
     /**

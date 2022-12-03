@@ -15,14 +15,19 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use function array_fill_keys;
 use function array_filter;
+use function array_keys;
 use function array_map;
-use function array_unique;
 use function explode;
 use function implode;
 use function rawurlencode;
 use function substr;
 
+/**
+ * @internal The class exposes the internal representation of an Exression and its usage
+ * @link https://www.rfc-editor.org/rfc/rfc6570#section-2.2
+ */
 final class Expression
 {
     /** @var array<VarSpecifier> */
@@ -34,9 +39,9 @@ final class Expression
     private function __construct(private readonly Operator $operator, VarSpecifier ...$varSpecifiers)
     {
         $this->varSpecifiers = $varSpecifiers;
-        $this->variableNames = array_unique(array_map(
-            static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
-            $varSpecifiers
+        $this->variableNames = array_keys(array_fill_keys(
+            array_map(fn (VarSpecifier $varSpecifier): string => $varSpecifier->name, $varSpecifiers),
+            1
         ));
         $this->value = '{'.$operator->value.implode(',', array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),

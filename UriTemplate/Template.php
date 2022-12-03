@@ -28,7 +28,7 @@ final class Template
     /**
      * Expression regular expression pattern.
      */
-    private const REGEXP_EXPRESSION_DETECTOR = '/\{[^}]*}/x';
+    private const REGEXP_EXPRESSION_DETECTOR = '/(?<expression>\{[^}]*})/x';
 
     /** @var array<Expression> */
     private readonly array $expressions;
@@ -69,16 +69,16 @@ final class Template
         }
 
         $names = [];
-        preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $findings, PREG_SET_ORDER);
-        $arguments = [];
-        foreach ($findings as $finding) {
-            if (!isset($names[$finding[0]])) {
-                $arguments[] = Expression::createFromString($finding[0]);
-                $names[$finding[0]] = 1;
+        preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $founds, PREG_SET_ORDER);
+        $expressions = [];
+        foreach ($founds as $found) {
+            if (!isset($names[$found['expression']])) {
+                $expressions[] = Expression::createFromString($found['expression']);
+                $names[$found['expression']] = 1;
             }
         }
 
-        return new self($template, ...$arguments);
+        return new self($template, ...$expressions);
     }
 
     /**

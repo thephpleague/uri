@@ -22,6 +22,7 @@ use function str_replace;
 /**
  * Processing behavior according to the expression type operator.
  *
+ * @internal The class exposes the internal representation of an Operator and its usage
  * @link https://tools.ietf.org/html/rfc6570#appendix-A
  */
 enum Operator: string

@@ -40,7 +40,7 @@ final class Expression
     {
         $this->varSpecifiers = $varSpecifiers;
         $this->variableNames = array_keys(array_fill_keys(
-            array_map(fn (VarSpecifier $varSpecifier): string => $varSpecifier->name, $varSpecifiers),
+            array_map(static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name, $varSpecifiers),
             1
         ));
         $this->value = '{'.$operator->value.implode(',', array_map(
@@ -63,8 +63,6 @@ final class Expression
 
     /**
      * @throws SyntaxError if the expression is invalid
-     * @throws SyntaxError if the operator used in the expression is invalid
-     * @throws SyntaxError if the variable specifiers is invalid
      */
     public static function createFromString(string $expression): self
     {
@@ -207,11 +205,11 @@ final class Expression
         if (!$isList) {
             // When an associative array is encountered and the `explode` modifier is not set, then
             // the result must be a comma separated list of keys followed by their respective values.
-            foreach ($pairs as $offset => &$data) {
-                $data = $offset.','.$data;
+            $retVal = [];
+            foreach ($pairs as $offset => $data) {
+                $retVal[$offset] = $offset.','.$data;
             }
-
-            unset($data);
+            $pairs = $retVal;
         }
 
         return [implode(',', $pairs), $useQuery];

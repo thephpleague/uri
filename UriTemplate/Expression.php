@@ -14,15 +14,12 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use function array_fill_keys;
 use function array_filter;
 use function array_keys;
 use function array_map;
 use function explode;
 use function implode;
-use function rawurlencode;
-use function substr;
 
 /**
  * @internal The class exposes the internal representation of an Exression and its usage
@@ -36,7 +33,7 @@ final class Expression
     public readonly array $variableNames;
     public readonly string $value;
 
-    private function __construct(private readonly Operator $operator, VarSpecifier ...$varSpecifiers)
+    private function __construct(public readonly Operator $operator, VarSpecifier ...$varSpecifiers)
     {
         $this->varSpecifiers = $varSpecifiers;
         $this->variableNames = array_keys(array_fill_keys(
@@ -98,120 +95,27 @@ final class Expression
 
     public function expand(VariableBag $variables): string
     {
-        $parts = [];
-        foreach ($this->varSpecifiers as $varSpecifier) {
-            $parts[] = $this->replace($varSpecifier, $variables);
-        }
+        $expanded = implode(
+            $this->operator->separator(),
+            array_filter(
+                array_map(
+                    fn (VarSpecifier $varSpecifier): string => $this->operator->expand($varSpecifier, $variables),
+                    $this->varSpecifiers
+                ),
+                static fn ($value): bool => '' !== $value
+            )
+        );
 
-        $expanded = implode($this->operator->separator(), array_filter($parts, static fn ($value): bool => '' !== $value));
         if ('' === $expanded) {
-            return $expanded;
+            return '';
         }
 
         return $this->operator->first().$expanded;
     }
 
-    /**
-     * Replaces an expression with the given variables.
-     *
-     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
-     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
-     */
-    private function replace(VarSpecifier $varSpec, VariableBag $variables): string
+    public function extract(string $uri): VariableBag
     {
-        $value = $variables->fetch($varSpec->name);
-        if (null === $value) {
-            return '';
-        }
-
-        [$expanded, $actualQuery] = $this->inject($value, $varSpec);
-        if (!$actualQuery) {
-            return $expanded;
-        }
-
-        if ('&' !== $this->operator->separator() && '' === $expanded) {
-            return $varSpec->name;
-        }
-
-        return $varSpec->name.'='.$expanded;
-    }
-
-    /**
-     * @param string|array<string> $value
-     *
-     * @return array{0:string, 1:bool}
-     */
-    private function inject(array|string $value, VarSpecifier $varSpec): array
-    {
-        if (is_array($value)) {
-            return $this->replaceList($value, $varSpec);
-        }
-
-        if (':' === $varSpec->modifier) {
-            $value = substr($value, 0, $varSpec->position);
-        }
-
-        return [$this->operator->decode($value), $this->operator->isNamed()];
-    }
-
-    /**
-     * Expands an expression using a list of values.
-     *
-     * @param array<string> $value
-     *
-     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
-     *
-     * @return array{0:string, 1:bool}
-     */
-    private function replaceList(array $value, VarSpecifier $varSpec): array
-    {
-        if (':' === $varSpec->modifier) {
-            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
-        }
-
-        if ([] === $value) {
-            return ['', false];
-        }
-
-        $pairs = [];
-        $isList = array_is_list($value);
-        $useQuery = $this->operator->isNamed();
-        foreach ($value as $key => $var) {
-            if (!$isList) {
-                $key = rawurlencode((string) $key);
-            }
-
-            $var = $this->operator->decode($var);
-            if ('*' === $varSpec->modifier) {
-                if (!$isList) {
-                    $var = $key.'='.$var;
-                } elseif ($key > 0 && $useQuery) {
-                    $var = $varSpec->name.'='.$var;
-                }
-            }
-
-            $pairs[$key] = $var;
-        }
-
-        if ('*' === $varSpec->modifier) {
-            if (!$isList) {
-                // Don't prepend the value name when using the `explode` modifier with an associative array.
-                $useQuery = false;
-            }
-
-            return [implode($this->operator->separator(), $pairs), $useQuery];
-        }
-
-        if (!$isList) {
-            // When an associative array is encountered and the `explode` modifier is not set, then
-            // the result must be a comma separated list of keys followed by their respective values.
-            $retVal = [];
-            foreach ($pairs as $offset => $data) {
-                $retVal[$offset] = $offset.','.$data;
-            }
-            $pairs = $retVal;
-        }
-
-        return [implode(',', $pairs), $useQuery];
+        // @todo implementation
+        return new VariableBag();
     }
 }

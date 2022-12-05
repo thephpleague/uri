@@ -124,9 +124,9 @@ final class ExpressionTest extends TestCase
 
     /**
      * @covers ::expand
-     * @covers ::replace
-     * @covers ::inject
-     * @covers ::replaceList
+     * @covers \League\Uri\UriTemplate\Operator::expand
+     * @covers \League\Uri\UriTemplate\Operator::inject
+     * @covers \League\Uri\UriTemplate\Operator::replaceList
      * @covers \League\Uri\UriTemplate\Operator::decode
      *
      * @dataProvider templateExpansionProvider
@@ -254,7 +254,7 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @covers ::replaceList
+     * @covers \League\Uri\UriTemplate\Operator::replaceList
      * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
      *
      * @dataProvider invalidModifierToApply

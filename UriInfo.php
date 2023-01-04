@@ -23,7 +23,7 @@ use function rawurldecode;
 
 final class UriInfo
 {
-    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|A|F]|6[1-9|A-F]|7[\d|E]),i';
+    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
     private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
 
     /**
@@ -50,7 +50,7 @@ final class UriInfo
     }
 
     /**
-     * Normalizes an URI for comparison.
+     * Normalizes a URI for comparison.
      */
     private static function normalize(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
@@ -65,13 +65,13 @@ final class UriInfo
         $fragment = $uri->getFragment();
         $fragmentOrig = $fragment;
         $pairs = null === $query ? [] : explode('&', $query);
-        sort($pairs, SORT_REGULAR);
+        sort($pairs);
 
         $replace = static fn (array $matches): string => rawurldecode($matches[0]);
 
-        $retval = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
-        if (null !== $retval) {
-            [$path, $query, $fragment] = $retval + ['', $null, $null];
+        $value = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
+        if (null !== $value) {
+            [$path, $query, $fragment] = $value + ['', $null, $null];
         }
 
         if ($null !== $uri->getAuthority() && '' === $path) {
@@ -165,13 +165,13 @@ final class UriInfo
             $scheme = $uri->getScheme();
         }
 
-        if (in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
-            $null = self::emptyComponentValue($uri);
-
-            return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null, null);
+        if (!in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
+            return null;
         }
 
-        return null;
+        $null = self::emptyComponentValue($uri);
+
+        return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
     }
 
     /**

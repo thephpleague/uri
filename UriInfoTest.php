@@ -40,7 +40,7 @@ final class UriInfoTest extends TestCase
         self::assertSame($infos['network_path'], UriInfo::isNetworkPath($uri));
     }
 
-    public function uriProvider(): array
+    public static function uriProvider(): array
     {
         return [
             'absolute uri' => [
@@ -106,7 +106,7 @@ final class UriInfoTest extends TestCase
         self::assertSame($expected, UriInfo::isSameDocument($uri1, $uri2));
     }
 
-    public function sameValueAsProvider(): array
+    public static function sameValueAsProvider(): array
     {
         return [
             '2 disctincts URIs' => [
@@ -165,7 +165,7 @@ final class UriInfoTest extends TestCase
         self::assertSame($expectedOrigin, UriInfo::getOrigin($uri));
     }
 
-    public function getOriginProvider(): array
+    public static function getOriginProvider(): array
     {
         return [
             'http uri' => [
@@ -211,7 +211,7 @@ final class UriInfoTest extends TestCase
     /**
      * @return array<string, array{0:string, 1:string, 2:bool}>
      */
-    public function getCrossOriginExamples(): array
+    public static function getCrossOriginExamples(): array
     {
         return [
             'different path' => ['http://example.com/123', 'http://example.com/', false],

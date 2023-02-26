@@ -29,7 +29,7 @@ final class FtpTest extends TestCase
         self::assertSame($expected, (string) Uri::createFromString($uri));
     }
 
-    public function validUrlProvider(): array
+    public static function validUrlProvider(): array
     {
         return [
             'with default port' => [
@@ -70,7 +70,7 @@ final class FtpTest extends TestCase
         Uri::createFromString($uri);
     }
 
-    public function invalidUrlProvider(): array
+    public static function invalidUrlProvider(): array
     {
         return [
             //['http://example.com'],
@@ -98,7 +98,7 @@ final class FtpTest extends TestCase
         self::assertSame($port, Uri::createFromString($uri)->getPort());
     }
 
-    public function portProvider(): array
+    public static function portProvider(): array
     {
         return [
             ['ftp://www.example.com:443/', 443],

@@ -26,7 +26,7 @@ final class UriStringTest extends TestCase
         self::assertSame($expected, UriString::parse($uri));
     }
 
-    public function validUriProvider(): array
+    public static function validUriProvider(): array
     {
         return [
             'scheme with non-leading digit' => [
@@ -748,7 +748,7 @@ final class UriStringTest extends TestCase
         UriString::parse($uri);
     }
 
-    public function invalidUriProvider(): array
+    public static function invalidUriProvider(): array
     {
         return [
             'invalid scheme' => ['0scheme://host/path?query#fragment'],
@@ -785,7 +785,7 @@ final class UriStringTest extends TestCase
         self::assertSame($expected, UriString::build(UriString::parse($uri)));
     }
 
-    public function buildUriProvider(): array
+    public static function buildUriProvider(): array
     {
         return [
             'complete URI' => [

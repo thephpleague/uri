@@ -42,7 +42,7 @@ final class FileTest extends TestCase
         self::assertSame($expected, (string) Uri::createFromString($uri));
     }
 
-    public function validUrlProvider(): array
+    public static function validUrlProvider(): array
     {
         return [
             'relative path' => [
@@ -99,7 +99,7 @@ final class FileTest extends TestCase
         Uri::createFromString($uri);
     }
 
-    public function invalidUrlProvider(): array
+    public static function invalidUrlProvider(): array
     {
         return [
             'no authority 1' => ['file:example.com'],

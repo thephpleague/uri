@@ -34,7 +34,7 @@ final class TemplateTest extends TestCase
         self::assertSame($notation, $template->value);
     }
 
-    public function providesValidNotation(): iterable
+    public static function providesValidNotation(): iterable
     {
         return [
             'complex template' => ['http://example.com{+path}{/segments}{?query,more*,foo[]*}'],
@@ -55,7 +55,7 @@ final class TemplateTest extends TestCase
         Template::createFromString($notation);
     }
 
-    public function providesInvalidNotation(): iterable
+    public static function providesInvalidNotation(): iterable
     {
         return [
             ['fooba{r'],
@@ -86,7 +86,7 @@ final class TemplateTest extends TestCase
         self::assertSame($expected, Template::createFromString($template)->variableNames);
     }
 
-    public function expectedVariableNames(): iterable
+    public static function expectedVariableNames(): iterable
     {
         return [
             [
@@ -116,7 +116,7 @@ final class TemplateTest extends TestCase
         self::assertSame($expected, Template::createFromString($notation)->expand(new VariableBag($variables)));
     }
 
-    public function providesExpansion(): iterable
+    public static function providesExpansion(): iterable
     {
         return [
             'with variables' => [

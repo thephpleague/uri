@@ -31,7 +31,7 @@ final class FactoryTest extends TestCase
         Uri::createFromDataPath($path);
     }
 
-    public function invalidDataPath(): array
+    public static function invalidDataPath(): array
     {
         return [
             'invalid format' => ['/usr/bin/yeah'],
@@ -56,7 +56,7 @@ final class FactoryTest extends TestCase
         self::assertStringContainsString($expected, $uri->getPath());
     }
 
-    public function validFilePath(): array
+    public static function validFilePath(): array
     {
         return [
             'text file' => ['hello-world.txt', 'text/plain'],
@@ -74,7 +74,7 @@ final class FactoryTest extends TestCase
         self::assertSame($expected, (string) Uri::createFromUnixPath($uri));
     }
 
-    public function unixpathProvider(): array
+    public static function unixpathProvider(): array
     {
         return [
             'relative path' => [
@@ -110,7 +110,7 @@ final class FactoryTest extends TestCase
         self::assertSame($expected, (string) Uri::createFromWindowsPath($uri));
     }
 
-    public function windowLocalPathProvider(): array
+    public static function windowLocalPathProvider(): array
     {
         return [
             'relative path' => [
@@ -180,7 +180,7 @@ final class FactoryTest extends TestCase
         self::assertSame($expected, (string) Http::createFromServer($input));
     }
 
-    public function validServerArray(): array
+    public static function validServerArray(): array
     {
         return [
             'with host' => [
@@ -364,7 +364,8 @@ final class FactoryTest extends TestCase
     {
         self::assertSame($expected, (string) Uri::createFromBaseUri($uri, $base_uri));
     }
-    public function createProvider(): array
+
+    public static function createProvider(): array
     {
         $base_uri = 'http://a/b/c/d;p?q';
 

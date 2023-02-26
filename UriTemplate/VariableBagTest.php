@@ -50,7 +50,7 @@ final class VariableBagTest extends TestCase
         self::assertCount($count, $bag);
     }
 
-    public function provideValidIterable(): iterable
+    public static function provideValidIterable(): iterable
     {
         return [
             'array' => [
@@ -92,7 +92,7 @@ final class VariableBagTest extends TestCase
         self::assertSame($expected, $bag->fetch($name));
     }
 
-    public function provideValidAssignParameters(): iterable
+    public static function provideValidAssignParameters(): iterable
     {
         return [
             'string' => [

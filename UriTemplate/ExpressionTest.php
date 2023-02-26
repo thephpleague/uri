@@ -36,7 +36,7 @@ final class ExpressionTest extends TestCase
         self::assertSame($variableNames, $expression->variableNames);
     }
 
-    public function providesValidNotation(): iterable
+    public static function providesValidNotation(): iterable
     {
         return [
             'level 1' => ['notation' => '{var}', 'variableNames' => ['var']],
@@ -86,7 +86,7 @@ final class ExpressionTest extends TestCase
         Expression::createFromString($expression);
     }
 
-    public function providesInvalidExpression(): iterable
+    public static function providesInvalidExpression(): iterable
     {
         return [
             'missing content' => ['{}'],
@@ -136,7 +136,7 @@ final class ExpressionTest extends TestCase
         self::assertSame($expectedUriString, Expression::createFromString($template)->expand(new VariableBag($variables)));
     }
 
-    public function templateExpansionProvider(): iterable
+    public static function templateExpansionProvider(): iterable
     {
         $variables = [
             'var'   => 'value',
@@ -271,7 +271,7 @@ final class ExpressionTest extends TestCase
      *
      * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
      */
-    public function invalidModifierToApply(): iterable
+    public static function invalidModifierToApply(): iterable
     {
         return [
             'can not apply a modifier on a hash value (1)' => [

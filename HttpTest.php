@@ -153,7 +153,7 @@ final class HttpTest extends UriIntegrationTest
         self::assertEquals($uri, eval('return '.var_export($uri, true).';'));
     }
 
-    public function setStateDataProvider(): array
+    public static function setStateDataProvider(): array
     {
         return [
             'all components' => [Http::createFromString('https://a:b@c:442/d?q=r#f')],
@@ -178,7 +178,7 @@ final class HttpTest extends UriIntegrationTest
         self::assertSame($expected, (string) Http::createFromString($uri));
     }
 
-    public function validUrlProvider(): array
+    public static function validUrlProvider(): array
     {
         return [
             'with default port' => [
@@ -213,7 +213,7 @@ final class HttpTest extends UriIntegrationTest
         Http::createFromString($uri);
     }
 
-    public function invalidUrlProvider(): array
+    public static function invalidUrlProvider(): array
     {
         return [
             ['http:example.com'],
@@ -235,7 +235,7 @@ final class HttpTest extends UriIntegrationTest
         self::assertSame($port, Http::createFromString($uri)->getPort());
     }
 
-    public function portProvider(): array
+    public static function portProvider(): array
     {
         return [
             ['http://www.example.com:443/', 443],
@@ -255,7 +255,7 @@ final class HttpTest extends UriIntegrationTest
         Http::createFromString()->withPath($path);
     }
 
-    public function invalidPathProvider(): array
+    public static function invalidPathProvider(): array
     {
         return [
             ['data:go'],
@@ -276,7 +276,7 @@ final class HttpTest extends UriIntegrationTest
         Http::createFromString($uri);
     }
 
-    public function invalidURI(): array
+    public static function invalidURI(): array
     {
         return [
             ['http://user@:80'],

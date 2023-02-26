@@ -123,7 +123,7 @@ final class UriTemplateTest extends TestCase
         self::assertSame($expected, (new UriTemplate($template))->getVariableNames());
     }
 
-    public function expectedVariableNames(): iterable
+    public static function expectedVariableNames(): iterable
     {
         return [
             [
@@ -155,7 +155,7 @@ final class UriTemplateTest extends TestCase
         self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->__toString());
     }
 
-    public function templateExpansionProvider(): iterable
+    public static function templateExpansionProvider(): iterable
     {
         $variables = [
             'var'   => 'value',
@@ -389,7 +389,7 @@ final class UriTemplateTest extends TestCase
     /**
      * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
      */
-    public function provideInvalidTemplate(): iterable
+    public static function provideInvalidTemplate(): iterable
     {
         return [
             'mismatch in at least one expression (1)' => ['http://example.com/}/{+foo}'],

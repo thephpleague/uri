@@ -300,7 +300,7 @@ class UriTest extends TestCase
     /**
      * @covers ::assertValidState
      */
-    public function missingAuthorityProvider(): array
+    public static function missingAuthorityProvider(): array
     {
         return [
             ['data:go'],
@@ -349,7 +349,7 @@ class UriTest extends TestCase
         self::assertEquals($uri, eval('return '.var_export($uri, true).';'));
     }
 
-    public function setStateDataProvider(): array
+    public static function setStateDataProvider(): array
     {
         return [
             'all components' => [Uri::createFromString('https://a:b@c:442/d?q=r#f')],
@@ -577,7 +577,7 @@ class UriTest extends TestCase
         self::assertSame($expected, $new->getUserInfo());
     }
 
-    public function userInfoProvider(): array
+    public static function userInfoProvider(): array
     {
         return [
             'no password' => ['login:', null, 'login%3A'],

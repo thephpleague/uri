@@ -34,7 +34,7 @@ final class VarSpecifierTest extends TestCase
         self::assertSame($notation, VarSpecifier::createFromString($notation)->toString());
     }
 
-    public function providesValidNotation(): iterable
+    public static function providesValidNotation(): iterable
     {
         return [
             'simple' => ['notation' => 'var'],
@@ -60,7 +60,7 @@ final class VarSpecifierTest extends TestCase
         VarSpecifier::createFromString($notation);
     }
 
-    public function providesInvalidNotation(): iterable
+    public static function providesInvalidNotation(): iterable
     {
         return [
             'using the explode modifier with the position notation' => ['notation' => 'var:*'],

@@ -30,7 +30,7 @@ class WsTest extends TestCase
         self::assertSame($expected, (string) Uri::createFromString($input));
     }
 
-    public function validUrlProvider(): array
+    public static function validUrlProvider(): array
     {
         return [
             'with default port' => [
@@ -69,7 +69,7 @@ class WsTest extends TestCase
         Uri::createFromString($uri);
     }
 
-    public function invalidUrlProvider(): array
+    public static function invalidUrlProvider(): array
     {
         return [
             ['wss:example.com'],
@@ -95,7 +95,7 @@ class WsTest extends TestCase
         self::assertSame($port, Uri::createFromString($uri)->getPort());
     }
 
-    public function portProvider(): array
+    public static function portProvider(): array
     {
         return [
             ['ws://www.example.com:443/', 443],

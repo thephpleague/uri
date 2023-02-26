@@ -45,7 +45,7 @@ final class DataTest extends TestCase
         self::assertSame($path, Uri::createFromString($uri)->getPath());
     }
 
-    public function validUrlProvider(): array
+    public static function validUrlProvider(): array
     {
         return [
             'simple string' => [
@@ -84,7 +84,7 @@ final class DataTest extends TestCase
         Uri::createFromString($uri);
     }
 
-    public function invalidUrlProvider(): array
+    public static function invalidUrlProvider(): array
     {
         return [
             'invalid data' => ['data:image/png;base64,°28'],
@@ -105,7 +105,7 @@ final class DataTest extends TestCase
         Uri::createFromString($uri);
     }
 
-    public function invalidComponentProvider(): array
+    public static function invalidComponentProvider(): array
     {
         return [
             'invalid data' => ['data:image/png;base64,zzz28'],

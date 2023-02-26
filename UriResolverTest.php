@@ -40,7 +40,7 @@ final class UriResolverTest extends TestCase
         ));
     }
 
-    public function resolveProvider(): array
+    public static function resolveProvider(): array
     {
         return [
             'base uri'                => [self::BASE_URI, '',              self::BASE_URI],
@@ -103,7 +103,7 @@ final class UriResolverTest extends TestCase
         );
     }
 
-    public function relativizeProvider(): array
+    public static function relativizeProvider(): array
     {
         return [
             'different scheme'        => [self::BASE_URI,       'https://a/b/c/d;p?q',   'https://a/b/c/d;p?q'],
@@ -160,7 +160,7 @@ final class UriResolverTest extends TestCase
         );
     }
 
-    public function relativizeAndResolveProvider(): array
+    public static function relativizeAndResolveProvider(): array
     {
         return [
             'empty path'            => [self::BASE_URI, 'http://a/', '../../',   'http://a/'],

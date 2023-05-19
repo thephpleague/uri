@@ -82,26 +82,6 @@ final class Template
     }
 
     /**
-     * @deprecated since version 6.6.0 use the readonly property instead
-     * @codeCoverageIgnore
-     */
-    public function toString(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @deprecated since version 6.6.0 use the readonly property instead
-     * @codeCoverageIgnore
-     *
-     * @return array<string>
-     */
-    public function variableNames(): array
-    {
-        return $this->variableNames;
-    }
-
-    /**
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */

@@ -70,11 +70,6 @@ final class VarSpecifierTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::position
-     * @covers ::modifier
-     * @covers ::name
-     */
     public function testItCanReturnsTheVarSpecifierProperties(): void
     {
         $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B:5');

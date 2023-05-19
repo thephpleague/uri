@@ -37,7 +37,6 @@ use function implode;
 use function in_array;
 use function inet_pton;
 use function is_int;
-use function is_scalar;
 use function is_string;
 use function ltrim;
 use function preg_match;
@@ -1155,7 +1154,7 @@ final class Uri implements UriInterface
     /**
      * {@inheritDoc}
      */
-    public function withScheme($scheme): UriInterface
+    public function withScheme(Stringable|string|null $scheme): UriInterface
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
         if ($scheme === $this->scheme) {
@@ -1174,18 +1173,12 @@ final class Uri implements UriInterface
     /**
      * Filter a string.
      *
-     * @param mixed $str the value to evaluate as a string
-     *
      * @throws SyntaxError if the submitted data can not be converted to string
      */
-    private function filterString(mixed $str): ?string
+    private function filterString(Stringable|string|null $str): ?string
     {
         if (null === $str) {
             return null;
-        }
-
-        if (!is_scalar($str) && !$str instanceof Stringable) {
-            throw new SyntaxError('The component must be a string, a scalar or a Stringable object; `'.gettype($str).'` given.');
         }
 
         $str = (string) $str;
@@ -1196,12 +1189,9 @@ final class Uri implements UriInterface
         throw new SyntaxError('The component `'.$str.'` contains invalid characters.');
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withUserInfo(
-        $user,
-        #[SensitiveParameter] $password = null
+        Stringable|string|null $user,
+        #[SensitiveParameter] Stringable|string|null $password = null
     ): UriInterface {
         $user_info = null;
         $user = $this->filterString($user);
@@ -1225,10 +1215,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withHost($host): UriInterface
+    public function withHost(Stringable|string|null $host): UriInterface
     {
         $host = $this->formatHost($this->filterString($host));
         if ($host === $this->host) {
@@ -1243,10 +1230,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withPort($port): UriInterface
+    public function withPort(int|null $port): UriInterface
     {
         $port = $this->formatPort($port);
         if ($port === $this->port) {
@@ -1261,12 +1245,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param string|object $path
-     */
-    public function withPath($path): UriInterface
+    public function withPath(Stringable|string $path): UriInterface
     {
         $path = $this->filterString($path);
         if (null === $path) {
@@ -1285,10 +1264,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withQuery($query): UriInterface
+    public function withQuery(Stringable|string|null $query): UriInterface
     {
         $query = $this->formatQueryAndFragment($this->filterString($query));
         if ($query === $this->query) {
@@ -1302,10 +1278,7 @@ final class Uri implements UriInterface
         return $clone;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withFragment($fragment): UriInterface
+    public function withFragment(Stringable|string|null $fragment): UriInterface
     {
         $fragment = $this->formatQueryAndFragment($this->filterString($fragment));
         if ($fragment === $this->fragment) {

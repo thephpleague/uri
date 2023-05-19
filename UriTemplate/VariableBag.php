@@ -46,14 +46,6 @@ final class VariableBag implements ArrayAccess, Countable
         return count($this->variables);
     }
 
-    /**
-     * @param array{variables: array<string,string|array<string>>} $properties
-     */
-    public static function __set_state(array $properties): self
-    {
-        return new self($properties['variables']);
-    }
-
     public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($offset, $this->variables);

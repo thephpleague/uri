@@ -36,14 +36,6 @@ final class VarSpecifier
     ) {
     }
 
-    /**
-     * @param array{name: string, modifier:string, position:int} $properties
-     */
-    public static function __set_state(array $properties): self
-    {
-        return new self($properties['name'], $properties['modifier'], $properties['position']);
-    }
-
     public static function createFromString(string $specification): self
     {
         if (1 !== preg_match(self::REGEXP_VARSPEC, $specification, $parsed)) {

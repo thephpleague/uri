@@ -19,7 +19,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Remove
 
-- None
+- Support for `__set_state`
 
 ## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...6.8.0) - 2022-09-13
 

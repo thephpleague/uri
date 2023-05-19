@@ -44,14 +44,6 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * @param array{uri:UriInterface} $components
-     */
-    public static function __set_state(array $components): self
-    {
-        return new self($components['uri']);
-    }
-
-    /**
      * Create a new instance from a string.
      */
     public static function createFromString(UriInterface|Stringable|String $uri = ''): self

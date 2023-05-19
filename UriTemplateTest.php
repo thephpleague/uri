@@ -101,19 +101,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::__set_state
-     */
-    public function testSetState(): void
-    {
-        $template = '{foo}{bar}';
-        $variables = ['foo' => 'foo', 'bar' => 'bar'];
-
-        $uriTemplate = new UriTemplate($template, $variables);
-
-        self::assertEquals($uriTemplate, eval('return '.var_export($uriTemplate, true).';'));
-    }
-
-    /**
      * @covers ::getVariableNames
      *
      * @dataProvider expectedVariableNames

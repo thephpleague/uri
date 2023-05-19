@@ -15,7 +15,6 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
-use function var_export;
 
 /**
  * @coversDefaultClass \League\Uri\UriTemplate\VarSpecifier
@@ -83,15 +82,5 @@ final class VarSpecifierTest extends TestCase
         self::assertSame('und.er_sc0re%3B', $varSpecifier->name);
         self::assertSame('*', $varSpecifier->modifier);
         self::assertSame(0, $varSpecifier->position);
-    }
-
-    /**
-     * @covers ::__set_state
-     */
-    public function testSetState(): void
-    {
-        $varSpecifier = VarSpecifier::createFromString('und.er_sc0re%3B*');
-
-        self::assertEquals($varSpecifier, eval('return '.var_export($varSpecifier, true).';'));
     }
 }

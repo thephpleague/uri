@@ -47,14 +47,6 @@ final class Expression
     }
 
     /**
-     * @param array{operator:Operator, varSpecifiers:array<VarSpecifier>} $properties
-     */
-    public static function __set_state(array $properties): self
-    {
-        return new self($properties['operator'], ...$properties['varSpecifiers']);
-    }
-
-    /**
      * @throws SyntaxError if the expression is invalid
      */
     public static function createFromString(string $expression): self

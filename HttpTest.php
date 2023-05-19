@@ -133,16 +133,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider setStateDataProvider
-     *
-     * @covers ::__set_state
-     */
-    public function testSetState(Http $uri): void
-    {
-        self::assertEquals($uri, eval('return '.var_export($uri, true).';'));
-    }
-
     public static function setStateDataProvider(): array
     {
         return [

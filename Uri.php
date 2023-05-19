@@ -390,26 +390,6 @@ final class Uri implements UriInterface
         return $port;
     }
 
-    public static function __set_state(array $components): self
-    {
-        $components['user'] = null;
-        $components['pass'] = null;
-        if (null !== $components['user_info']) {
-            [$components['user'], $components['pass']] = explode(':', $components['user_info'], 2) + [1 => null];
-        }
-
-        return new self(
-            $components['scheme'],
-            $components['user'],
-            $components['pass'],
-            $components['host'],
-            $components['port'],
-            $components['path'],
-            $components['query'],
-            $components['fragment']
-        );
-    }
-
     /**
      * Creates a new instance from a URI and a Base URI.
      *

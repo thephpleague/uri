@@ -18,7 +18,6 @@ use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
-use function var_export;
 
 /**
  * @coversDefaultClass \League\Uri\UriTemplate\VariableBag
@@ -145,18 +144,6 @@ final class VariableBagTest extends TestCase
         self::expectException(TemplateCanNotBeExpanded::class);
 
         new VariableBag(['name' => ['foo' => ['bar' => 'baz']]]); /* @phpstan-ignore-line */
-    }
-
-    /**
-     * @covers ::__set_state
-     * @covers ::isEmpty
-     */
-    public function testSetState(): void
-    {
-        $bag = new VariableBag(['foo' => 'bar', 'yolo' => 42, 'list' => [1, 2, 'three']]);
-
-        self::assertEquals($bag, eval('return '.var_export($bag, true).';'));
-        self::assertFalse($bag->isEmpty());
     }
 
     public function testArrayAccess(): void

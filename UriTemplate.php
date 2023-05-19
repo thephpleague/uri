@@ -47,11 +47,6 @@ final class UriTemplate
         $this->defaultVariables = $this->filterVariables($defaultVariables);
     }
 
-    public static function __set_state(array $properties): self
-    {
-        return new self($properties['template'], $properties['defaultVariables']);
-    }
-
     /**
      * Filters out variables for the given template.
      */

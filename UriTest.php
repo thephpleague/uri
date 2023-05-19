@@ -328,16 +328,6 @@ class UriTest extends TestCase
         Uri::createFromString('https://example.com')->withPath(null); /* @phpstan-ignore-line */
     }
 
-    /**
-     * @dataProvider setStateDataProvider
-     *
-     * @covers ::__set_state
-     */
-    public function testSetState(Uri $uri): void
-    {
-        self::assertEquals($uri, eval('return '.var_export($uri, true).';'));
-    }
-
     public static function setStateDataProvider(): array
     {
         return [

@@ -16,7 +16,6 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
-use function var_export;
 
 /**
  * @coversDefaultClass \League\Uri\UriTemplate\Expression
@@ -58,19 +57,6 @@ final class ExpressionTest extends TestCase
             'level 4.6' => ['notation' => '{?var:3}', 'variableNames' => ['var']],
             'level 4.7' => ['notation' => '{.null}', 'variableNames' => ['null']],
         ];
-    }
-
-    /**
-     * @covers ::__set_state
-     * @covers \League\Uri\UriTemplate\Template
-     */
-    public function testSetState(): void
-    {
-        $expressionString = '{;keys*}';
-
-        $expression = Expression::createFromString($expressionString);
-
-        self::assertEquals($expression, eval('return '.var_export($expression, true).';'));
     }
 
     /**

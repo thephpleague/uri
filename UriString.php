@@ -153,7 +153,16 @@ final class UriString
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
-     * @param array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:?string, query:?string, fragment:?string} $components
+     * @param array{
+     *     scheme: ?string,
+     *     user: ?string,
+     *     pass: ?string,
+     *     host: ?string,
+     *     port: ?int,
+     *     path: ?string,
+     *     query: ?string,
+     *     fragment: ?string
+     * } $components
      */
     public static function build(array $components): string
     {

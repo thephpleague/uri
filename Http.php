@@ -19,7 +19,7 @@ use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
-final class Http implements Psr7UriInterface, JsonSerializable
+final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 {
     private function __construct(private readonly UriInterface $uri)
     {
@@ -44,9 +44,20 @@ final class Http implements Psr7UriInterface, JsonSerializable
     }
 
     /**
+     * Create a new instance from a URI object.
+     */
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    {
+        return match (true) {
+            $uri instanceof UriInterface => new self($uri),
+            default => new self(Uri::createFromUri($uri)),
+        };
+    }
+
+    /**
      * Create a new instance from a string.
      */
-    public static function createFromString(UriInterface|Stringable|String $uri = ''): self
+    public static function createFromString(Stringable|string $uri = ''): self
     {
         return new self(Uri::createFromString($uri));
     }
@@ -54,8 +65,17 @@ final class Http implements Psr7UriInterface, JsonSerializable
     /**
      * Create a new instance from a hash of parse_url parts.
      *
-     * @param array $components a hash representation of the URI similar
-     *                          to PHP parse_url function result
+     * @param array{
+     *     scheme?: ?string,
+     *     user?: ?string,
+     *     pass?: ?string,
+     *     host?: ?string,
+     *     port?: ?int,
+     *     path?: ?string,
+     *     query?: ?string,
+     *     fragment?: ?string
+     * } $components a hash representation of the URI similar
+     *               to PHP parse_url function result
      */
     public static function createFromComponents(array $components): self
     {
@@ -82,93 +102,51 @@ final class Http implements Psr7UriInterface, JsonSerializable
         return new self(Uri::createFromBaseUri($uri, $base_uri));
     }
 
-    /**
-     * Create a new instance from a URI object.
-     */
-    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
-    {
-        if ($uri instanceof UriInterface) {
-            return new self($uri);
-        }
-
-        return new self(Uri::createFromUri($uri));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getScheme(): string
     {
         return (string) $this->uri->getScheme();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getAuthority(): string
     {
         return (string) $this->uri->getAuthority();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getUserInfo(): string
     {
         return (string) $this->uri->getUserInfo();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getHost(): string
     {
         return (string) $this->uri->getHost();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPort(): ?int
     {
         return $this->uri->getPort();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPath(): string
     {
         return $this->uri->getPath();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getQuery(): string
     {
         return (string) $this->uri->getQuery();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFragment(): string
     {
         return (string) $this->uri->getFragment();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __toString(): string
     {
         return $this->uri->__toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function jsonSerialize(): string
     {
         return $this->uri->__toString();
@@ -176,78 +154,53 @@ final class Http implements Psr7UriInterface, JsonSerializable
 
     /**
      * Safely stringify input when possible for League UriInterface compatibility.
-     *
-     * @throws SyntaxError
      */
     private function filterInput(string $str): string|null
     {
-        if ('' === $str) {
-            return null;
-        }
-
-        return $str;
+        return match (true) {
+            '' === $str => null,
+            default => $str,
+        };
     }
 
     private function newInstance(UriInterface $uri): self
     {
-        if ((string) $uri === (string) $this->uri) {
-            return $this;
-        }
-
-        return new self($uri);
+        return match (true) {
+            (string) $uri === (string) $this->uri => $this,
+            default => new self($uri),
+        };
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withScheme(string $scheme): self
     {
         return $this->newInstance($this->uri->withScheme($this->filterInput($scheme)));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function withUserInfo(string $user, string $password = null): self
+    public function withUserInfo(string $user, ?string $password = null): self
     {
         return $this->newInstance($this->uri->withUserInfo($this->filterInput($user), $password));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withHost(string $host): self
     {
         return $this->newInstance($this->uri->withHost($this->filterInput($host)));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withPort(int|null $port): self
     {
         return $this->newInstance($this->uri->withPort($port));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withPath(string $path): self
     {
         return $this->newInstance($this->uri->withPath($path));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withQuery(string $query): self
     {
         return $this->newInstance($this->uri->withQuery($this->filterInput($query)));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withFragment(string $fragment): self
     {
         return $this->newInstance($this->uri->withFragment($this->filterInput($fragment)));

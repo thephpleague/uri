@@ -454,6 +454,18 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a hash representation of the URI similar
      * to PHP parse_url function result.
+     *
+     * @param array{
+     *     scheme?: ?string,
+     *     user?: ?string,
+     *     pass?: ?string,
+     *     host?: ?string,
+     *     port?: ?int,
+     *     path?: ?string,
+     *     query?: ?string,
+     *     fragment?: ?string
+     * } $components a hash representation of the URI similar
+     *               to PHP parse_url function result
      */
     public static function createFromComponents(array $components = []): self
     {
@@ -461,6 +473,10 @@ final class Uri implements UriInterface
             'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
             'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
         ];
+
+        if (null === $components['path']) {
+            $components['path'] = '';
+        }
 
         return new self(
             $components['scheme'],

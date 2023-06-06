@@ -20,7 +20,6 @@ use function is_array;
 use function preg_match;
 use function rawurlencode;
 use function str_contains;
-use function str_replace;
 use function substr;
 
 /**
@@ -33,6 +32,24 @@ use function substr;
  */
 enum Operator: string
 {
+    /**
+     * RFC3986 Sub delimiter characters regular expression pattern.
+     *
+     * @link https://tools.ietf.org/html/rfc3986#section-2.2
+     *
+     * @var string
+     */
+    private const REGEXP_CHARS_SUBDELIM = "\!\$&'\(\)\*\+,;\=%";
+
+    /**
+     * RFC3986 unreserved characters regular expression pattern.
+     *
+     * @link https://tools.ietf.org/html/rfc3986#section-2.3
+     *
+     * @var string
+     */
+    private const REGEXP_CHARS_UNRESERVED = 'A-Za-z\d_\-\.~';
+
     /**
      * Expression regular expression pattern.
      *
@@ -86,18 +103,8 @@ enum Operator: string
      */
     public function decode(string $var): string
     {
-        static $delimiters = [
-            ':', '/', '?', '#', '[', ']', '@', '!', '$',
-            '&', '\'', '(', ')', '*', '+', ',', ';', '=',
-        ];
-
-        static $delimitersEncoded = [
-            '%3A', '%2F', '%3F', '%23', '%5B', '%5D', '%40', '%21', '%24',
-            '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D',
-        ];
-
         return match ($this) {
-            Operator::ReservedChars, Operator::Fragment => str_replace($delimitersEncoded, $delimiters, rawurlencode($var)),
+            Operator::ReservedChars, Operator::Fragment => self::encodeQueryOrFragment($var),
             default => rawurlencode($var),
         };
     }
@@ -229,5 +236,24 @@ enum Operator: string
         }
 
         return [implode(',', $pairs), $useQuery];
+    }
+
+    /**
+     * Returns the RFC3986 encoded string matched.
+     */
+    private static function urlEncodeMatch(array $matches): string
+    {
+        return rawurlencode($matches[0]);
+    }
+
+    private static function encodeQueryOrFragment(string $uriPart): string
+    {
+        if ('' === $uriPart) {
+            return $uriPart;
+        }
+
+        static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
+
+        return (string) preg_replace_callback($pattern, self::urlEncodeMatch(...), $uriPart);
     }
 }

@@ -32,12 +32,12 @@ final class VariableBag implements ArrayAccess, Countable
     private array $variables = [];
 
     /**
-     * @param iterable<string,string|bool|int|float|array<string|bool|int|float>> $variables
+     * @param iterable<string|int, string|bool|int|float|array<string|bool|int|float>> $variables
      */
     public function __construct(iterable $variables = [])
     {
         foreach ($variables as $name => $value) {
-            $this->assign($name, $value);
+            $this->assign((string) $name, $value);
         }
     }
 

@@ -14,13 +14,19 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
-use PHPUnit\Framework\TestCase;
+use League\Uri\UriTemplateSpecificationTestCase;
 
 /**
  * @coversDefaultClass \League\Uri\UriTemplate\Template
  */
-final class TemplateTest extends TestCase
+final class TemplateTest extends UriTemplateSpecificationTestCase
 {
+    protected static array $testFilenames = [
+        'spec-examples.json',
+        'negative-tests.json',
+        'extended-tests.json',
+    ];
+
     /**
      * @covers ::createFromString
      * @covers ::__construct

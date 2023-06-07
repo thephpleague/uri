@@ -77,8 +77,12 @@ final class Template
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
-    public function expand(VariableBag $variables): string
+    public function expand(VariableBag|iterable $variables): string
     {
+        if (!$variables instanceof VariableBag) {
+            $variables = new VariableBag($variables);
+        }
+
         return array_reduce(
             $this->expressions,
             fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),

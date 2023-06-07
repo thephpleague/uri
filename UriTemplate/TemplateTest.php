@@ -13,19 +13,81 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use JsonException;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\UriTemplateSpecificationTestCase;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
+use const JSON_THROW_ON_ERROR;
 
 /**
  * @coversDefaultClass \League\Uri\UriTemplate\Template
  */
-final class TemplateTest extends UriTemplateSpecificationTestCase
+final class TemplateTest extends TestCase
 {
-    protected static array $testFilenames = [
+    private static string $rootPath = __DIR__.'/../../vendor/uri-templates/uritemplate-test';
+
+    /** @var array<string> */
+    private static array $testFilenames = [
         'spec-examples.json',
         'negative-tests.json',
         'extended-tests.json',
     ];
+
+    /**
+     * @test
+     * @dataProvider uriTemplateSpecificationDataProvider
+     */
+    public function testItCompliesWithUriTemplatesExpansionTests(
+        array $variables,
+        string $input,
+        string|array|false $expected
+    ): void {
+        if (false === $expected) {
+            $this->expectException(Throwable::class);
+        }
+
+        $result = Template::createFromString($input)->expand(new VariableBag($variables));
+
+        if (is_array($expected)) {
+            self::assertContains($result, $expected);
+        } else {
+            self::assertSame($expected, $result);
+        }
+    }
+
+    /**
+     * @throws JsonException
+     * @throws RuntimeException
+     * @return iterable<string, array{
+     *     variables:array{string, string|int},
+     *     input:string,
+     *     expected:string|array<string>|false
+     * }>
+     */
+    public static function uriTemplateSpecificationDataProvider(): iterable
+    {
+        foreach (static::$testFilenames as $path) {
+            $path = static::$rootPath.'/'.ltrim($path, '/');
+            if (false === $content = file_get_contents($path)) {
+                throw new RuntimeException("unable to connect to the path `$path`.");
+            }
+
+            /** @var array $records */
+            $records = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+            foreach ($records as $title => $testSuite) {
+                $level = $testSuite['level'] ?? null;
+                $variables = $testSuite['variables'];
+                foreach ($testSuite['testcases'] as $offset => [$input, $expected]) {
+                    yield $title.' - '.$level.' # '.($offset + 1) => [
+                        'variables' => $variables,
+                        'input' => $input,
+                        'expected' => $expected,
+                    ];
+                }
+            }
+        }
+    }
 
     /**
      * @covers ::createFromString
@@ -106,7 +168,7 @@ final class TemplateTest extends UriTemplateSpecificationTestCase
      */
     public function testItCanExpandVariables(string $notation, array $variables, string $expected): void
     {
-        self::assertSame($expected, Template::createFromString($notation)->expand(new VariableBag($variables)));
+        self::assertSame($expected, Template::createFromString($notation)->expand($variables));
     }
 
     public static function providesExpansion(): iterable

@@ -41,7 +41,7 @@ final class UriTemplate
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */
-    public function __construct(Template|Stringable|string $template, VariableBag|array $defaultVariables = [])
+    public function __construct(Template|Stringable|string $template, VariableBag|iterable $defaultVariables = [])
     {
         $this->template = $template instanceof Template ? $template : Template::createFromString($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
@@ -50,8 +50,12 @@ final class UriTemplate
     /**
      * Filters out variables for the given template.
      */
-    private function filterVariables(VariableBag|array $inputVariables): VariableBag
+    private function filterVariables(VariableBag|iterable $inputVariables): VariableBag
     {
+        if (!$inputVariables instanceof VariableBag) {
+            $inputVariables = new VariableBag($inputVariables);
+        }
+
         $variableBag = new VariableBag();
         foreach ($this->template->variableNames as $name) {
             if (isset($inputVariables[$name])) {
@@ -101,7 +105,7 @@ final class UriTemplate
      * If present, variables whose name is not part of the current template
      * possible variable names are removed.
      */
-    public function withDefaultVariables(VariableBag|array $defaultDefaultVariables): self
+    public function withDefaultVariables(VariableBag|iterable $defaultDefaultVariables): self
     {
         return new self($this->template, $defaultDefaultVariables);
     }
@@ -110,7 +114,7 @@ final class UriTemplate
      * @throws TemplateCanNotBeExpanded if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expand(VariableBag|array $variables = []): UriInterface
+    public function expand(VariableBag|iterable $variables = []): UriInterface
     {
         return Uri::createFromString(
             $this->template->expand(

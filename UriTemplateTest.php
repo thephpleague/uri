@@ -22,10 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class UriTemplateTest extends TestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getTemplate
-     */
     public function testGetTemplate(): void
     {
         $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -43,11 +39,6 @@ final class UriTemplateTest extends TestCase
         self::assertSame($template, $uriTemplate->template->value);
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::filterVariables
-     * @covers ::getDefaultVariables
-     */
     public function testGetDefaultVariables(): void
     {
         $template = 'https://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -79,10 +70,6 @@ final class UriTemplateTest extends TestCase
         self::assertTrue($uriTemplateEmpty->defaultVariables->isEmpty());
     }
 
-    /**
-     * @covers ::filterVariables
-     * @covers ::withDefaultVariables
-     */
     public function testWithDefaultVariables(): void
     {
         $template = '{foo}{bar}';
@@ -101,8 +88,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::getVariableNames
-     *
      * @dataProvider expectedVariableNames
      */
     public function testGetVariableNames(string $template, array $expected): void
@@ -133,8 +118,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers ::expand
-     *
      * @dataProvider templateExpansionProvider
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
@@ -282,10 +265,6 @@ final class UriTemplateTest extends TestCase
         );
     }
 
-    /**
-     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
-     * @covers \League\Uri\UriTemplate\Template
-     */
     public function testDisallowNestedArrayExpansion(): void
     {
         $template = 'http://example.com{?query,data*,foo*}';
@@ -308,11 +287,6 @@ final class UriTemplateTest extends TestCase
         (new UriTemplate($template))->expand($variables);
     }
 
-    /**
-     * @covers ::expand
-     * @covers ::filterVariables
-     * @covers \League\Uri\UriTemplate\Template
-     */
     public function testExpandWithDefaultVariables(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -334,11 +308,6 @@ final class UriTemplateTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::expand
-     * @covers ::filterVariables
-     * @covers \League\Uri\UriTemplate\Template
-     */
     public function testExpandWithDefaultVariablesWithOverride(): void
     {
         $template = 'http://example.com{+path}{/segments}{?query,more*,foo[]*}';
@@ -362,8 +331,6 @@ final class UriTemplateTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\UriTemplate\Template
-     *
      * @dataProvider provideInvalidTemplate
      */
     public function testInvalidUriTemplate(string $template): void
@@ -384,9 +351,6 @@ final class UriTemplateTest extends TestCase
         ];
     }
 
-    /**
-     * @covers \League\Uri\UriTemplate\Template
-     */
     public function testExpansionWithMultipleSameExpression(): void
     {
         $template = '{foo}/{foo}';

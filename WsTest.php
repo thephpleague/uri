@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 class WsTest extends TestCase
 {
     /**
-     *
      * @dataProvider validUrlProvider
      */
     public function testCreateFromString(string $input, string $expected): void

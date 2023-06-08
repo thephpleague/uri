@@ -25,13 +25,6 @@ use TypeError;
 final class VariableBagTest extends TestCase
 {
     /**
-     * @covers ::assign
-     * @covers ::__construct
-     * @covers ::all
-     * @covers ::isEmpty
-     * @covers ::normalizeValue
-     * @covers ::count
-     *
      * @param array<string, string|array<string>> $expected
      *
      * @dataProvider provideValidIterable
@@ -74,17 +67,16 @@ final class VariableBagTest extends TestCase
     }
 
     /**
-     * @covers ::assign
-     * @covers ::normalizeValue
-     * @covers ::fetch
-     *
      * @param int|float|string|bool|array<string|bool|string|float> $value    the value to be assigned to the name
      * @param string|array<string>                                  $expected
      *
      * @dataProvider provideValidAssignParameters
      */
-    public function testItCanAssignNameAndValuesToTheBag(string $name, $value, $expected): void
-    {
+    public function testItCanAssignNameAndValuesToTheBag(
+        string $name,
+        int|float|string|bool|array $value,
+        string|array $expected
+    ): void {
         $bag = new VariableBag();
         $bag->assign($name, $value);
 
@@ -122,11 +114,6 @@ final class VariableBagTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::assign
-     * @covers ::normalizeValue
-     * @covers ::__construct
-     */
     public function testItWillFailToAssignUnsupportedType(): void
     {
         self::expectException(TypeError::class);
@@ -134,11 +121,6 @@ final class VariableBagTest extends TestCase
         new VariableBag(['name' => new stdClass()]); /* @phpstan-ignore-line */
     }
 
-    /**
-     * @covers ::assign
-     * @covers ::normalizeValue
-     * @covers ::__construct
-     */
     public function testItWillFailToAssignNestedList(): void
     {
         self::expectException(TemplateCanNotBeExpanded::class);

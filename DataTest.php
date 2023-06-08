@@ -21,9 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class DataTest extends TestCase
 {
-    /**
-     * @covers ::formatDataPath
-     */
     public function testDefaultConstructor(): void
     {
         self::assertSame(
@@ -33,11 +30,6 @@ final class DataTest extends TestCase
     }
 
     /**
-     * @covers ::formatPath
-     * @covers ::formatDataPath
-     * @covers ::assertValidPath
-     * @covers ::assertValidState
-     *
      * @dataProvider validUrlProvider
      */
     public function testCreateFromString(string $uri, string $path): void
@@ -72,10 +64,6 @@ final class DataTest extends TestCase
     }
 
     /**
-     * @covers ::formatDataPath
-     * @covers ::assertValidPath
-     * @covers ::assertValidState
-     *
      * @dataProvider invalidUrlProvider
      */
     public function testCreateFromStringFailed(string $uri): void
@@ -93,10 +81,6 @@ final class DataTest extends TestCase
 
 
     /**
-     * @covers ::formatDataPath
-     * @covers ::assertValidPath
-     * @covers ::assertValidState
-     *
      * @dataProvider invalidComponentProvider
      */
     public function testCreateFromStringFailedWithWrongComponent(string $uri): void
@@ -114,23 +98,12 @@ final class DataTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::assertValidPath
-     * @covers ::formatDataPath
-     * @covers ::assertValidState
-     */
     public function testCreateFromComponentsFailedWithInvalidArgumentException(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('data:image/png;base64,°28');
     }
 
-    /**
-     * @covers ::assertValidPath
-     * @covers ::validateParameter
-     * @covers ::formatDataPath
-     * @covers ::assertValidState
-     */
     public function testCreateFromComponentsFailedInvalidMediatype(): void
     {
         self::expectException(SyntaxError::class);
@@ -143,11 +116,6 @@ final class DataTest extends TestCase
         Uri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21#fragment');
     }
 
-    /**
-     * @covers ::assertValidPath
-     * @covers ::formatDataPath
-     * @covers ::assertValidState
-     */
     public function testWithPath(): void
     {
         $path = 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21';
@@ -155,9 +123,6 @@ final class DataTest extends TestCase
         self::assertSame($uri, $uri->withPath($path));
     }
 
-    /**
-     * @covers ::assertValidState
-     */
     public function testSyntaxError(): void
     {
         self::expectException(SyntaxError::class);

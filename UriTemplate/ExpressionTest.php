@@ -23,9 +23,6 @@ use PHPUnit\Framework\TestCase;
 final class ExpressionTest extends TestCase
 {
     /**
-     * @covers ::createFromString
-     * @covers ::__construct
-     *
      * @dataProvider providesValidNotation
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation, array $variableNames): void
@@ -60,9 +57,6 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @covers ::createFromString
-     * @covers \League\Uri\UriTemplate\Operator::parseExpression
-     *
      * @dataProvider providesInvalidExpression
      */
     public function testExpressionConstructFailsWithInvalidString(string $expression): void
@@ -109,12 +103,6 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @covers ::expand
-     * @covers \League\Uri\UriTemplate\Operator::expand
-     * @covers \League\Uri\UriTemplate\Operator::inject
-     * @covers \League\Uri\UriTemplate\Operator::replaceList
-     * @covers \League\Uri\UriTemplate\Operator::decode
-     *
      * @dataProvider templateExpansionProvider
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
@@ -240,9 +228,6 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\UriTemplate\Operator::replaceList
-     * @covers \League\Uri\Exceptions\TemplateCanNotBeExpanded
-     *
      * @dataProvider invalidModifierToApply
      */
     public function testExpandThrowsExceptionIfTheModifierCanNotBeApplied(string $expression, array $variables): void

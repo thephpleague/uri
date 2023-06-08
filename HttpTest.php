@@ -32,9 +32,6 @@ final class HttpTest extends TestCase
         self::assertSame('', (string) Http::createFromString());
     }
 
-    /**
-     * @covers ::jsonSerialize
-     */
     public function testJson(): void
     {
         self::assertSame(
@@ -43,9 +40,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::__construct
-     */
     public function testInvalidPort(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -53,19 +47,12 @@ final class HttpTest extends TestCase
         Http::createFromString('https://example.com:-1');
     }
 
-    /**
-     * @covers ::filterInput
-     */
     public function testThrowInvalidArgumentExceptionOnIllegalCharacters(): void
     {
         self::expectException(InvalidArgumentException::class);
         Http::createFromString('https://example.com')->withFragment("\0");
     }
 
-    /**
-     * @covers ::getPort
-     * @covers ::withPort
-     */
     public function testPortModification(): void
     {
         $uri = Http::createFromString('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
@@ -78,10 +65,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getUserInfo
-     * @covers ::withUserInfo
-     */
     public function testUserInfoModification(): void
     {
         $uri = Http::createFromString('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
@@ -94,9 +77,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::createFromComponents
-     */
     public function testCreateFromComponents(): void
     {
         $uri = '//0:0@0/0?0#0';
@@ -106,9 +86,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::createFromBaseUri
-     */
     public function testCreateFromBaseUri(): void
     {
         self::assertEquals(
@@ -117,9 +94,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::createFromUri
-     */
     public function testCreateFromUri(): void
     {
         self::assertEquals(
@@ -149,8 +123,6 @@ final class HttpTest extends TestCase
     }
 
     /**
-     * @covers \League\Uri\Uri::formatPort
-     *
      * @dataProvider validUrlProvider
      */
     public function testCreateFromString(string $expected, string $uri): void
@@ -207,8 +179,6 @@ final class HttpTest extends TestCase
 
     /**
      * @dataProvider portProvider
-     *
-     * @covers \League\Uri\Uri::formatPort
      */
     public function testValidPort(string $uri, ?int $port): void
     {
@@ -245,8 +215,6 @@ final class HttpTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     *
      * @dataProvider invalidURI
      */
     public function testCreateFromInvalidUrlKO(string $uri): void

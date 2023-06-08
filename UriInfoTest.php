@@ -23,7 +23,7 @@ final class UriInfoTest extends TestCase
     /**
      * @dataProvider uriProvider
      *
-     * @param bool[] $infos
+     * @param array<bool> $infos
      */
     public function testInfo(
         Psr7UriInterface|Uri $uri,

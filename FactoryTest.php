@@ -21,8 +21,6 @@ use PHPUnit\Framework\TestCase;
 final class FactoryTest extends TestCase
 {
     /**
-     * @covers ::createFromDataPath
-     *
      * @dataProvider invalidDataPath
      */
     public function testCreateFromPathFailed(string $path): void
@@ -39,8 +37,6 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createFromDataPath
-     *
      * @dataProvider validFilePath
      */
     public function testCreateFromPath(string $path, string $expected): void
@@ -65,8 +61,6 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createFromUnixPath
-     *
      * @dataProvider unixpathProvider
      */
     public function testCreateFromUnixPath(string $uri, string $expected): void
@@ -101,8 +95,6 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createFromWindowsPath
-     *
      * @dataProvider windowLocalPathProvider
      */
     public function testCreateFromWindowsLocalPath(string $uri, string $expected): void
@@ -165,13 +157,6 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createFromServer
-     * @covers \League\Uri\Http::createFromServer
-     * @covers ::fetchScheme
-     * @covers ::fetchUserInfo
-     * @covers ::fetchHostname
-     * @covers ::fetchRequestUri
-     *
      * @dataProvider validServerArray
      */
     public function testCreateFromServer(string $expected, array $input): void
@@ -325,9 +310,6 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::fetchHostname
-     */
     public function testFailCreateFromServerWithoutHost(): void
     {
         self::expectException(SyntaxError::class);
@@ -339,9 +321,6 @@ final class FactoryTest extends TestCase
         ]);
     }
 
-    /**
-     * @covers ::fetchUserInfo
-     */
     public function testFailCreateFromServerWithoutInvalidUserInfo(): void
     {
         self::expectException(SyntaxError::class);
@@ -356,8 +335,6 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createFromBaseUri
-     *
      * @dataProvider createProvider
      */
     public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
@@ -412,27 +389,18 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::createFromBaseUri
-     */
     public function testCreateThrowExceptionWithBaseUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromBaseUri('/path/to/you', '//example.com');
     }
 
-    /**
-     * @covers ::createFromBaseUri
-     */
     public function testCreateThrowExceptionWithUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromBaseUri('/path/to/you');
     }
 
-    /**
-     * @covers ::createFromBaseUri
-     */
     public function testCreateWithUriWithoutAuthority(): void
     {
         self::assertSame(
@@ -441,9 +409,6 @@ final class FactoryTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::createFromBaseUri
-     */
     public function testCreateWithAbasoluteUriWithoutBaseUri(): void
     {
         self::assertSame(

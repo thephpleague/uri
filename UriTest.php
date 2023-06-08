@@ -35,15 +35,6 @@ class UriTest extends TestCase
         unset($this->uri);
     }
 
-    /**
-     * @covers ::__toString
-     * @covers ::formatHost
-     * @covers ::formatRegisteredName
-     * @covers ::formatQueryAndFragment
-     * @covers ::formatPort
-     * @covers ::formatUserInfo
-     * @covers ::formatScheme
-     */
     public function testAutomaticUrlNormalization(): void
     {
         $raw = 'HtTpS://MaStEr.B%c3%A9b%c3%a9.eXaMpLe.CoM:/%7ejohndoe/%a1/in+dex.php?fào.%bar=v%61lue#fragment';
@@ -51,10 +42,6 @@ class UriTest extends TestCase
         self::assertSame($normalized, (string) Uri::createFromString($raw));
     }
 
-    /**
-     * @covers ::__toString
-     * @covers ::formatHost
-     */
     public function testAutomaticUrlNormalizationBis(): void
     {
         self::assertSame(
@@ -63,21 +50,12 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::__toString
-     * @covers ::formatScheme
-     */
     public function testConstructingUrisWithSchemesWithNonLeadingDigits(): void
     {
         $uri = 's3://somebucket/somefile.txt';
         self::assertSame($uri, (string) Uri::createFromString($uri));
     }
 
-    /**
-     * @covers ::__toString
-     * @covers ::formatScheme
-     * @covers ::withScheme
-     */
     public function testSettingSchemesWithNonLeadingDigits(): void
     {
         $uri = 'http://somebucket/somefile.txt';
@@ -85,22 +63,12 @@ class UriTest extends TestCase
         self::assertSame($expected_uri, (string) Uri::createFromString($uri)->withScheme('s3'));
     }
 
-    /**
-     * @covers ::getUriString
-     * @covers ::__toString
-     * @covers ::formatUserInfo
-     * @covers ::formatQueryAndFragment
-     */
     public function testPreserveComponentsOnInstantiation(): void
     {
         $uri = 'http://:@example.com?#';
         self::assertSame($uri, (string) Uri::createFromString($uri));
     }
 
-    /**
-     * @covers ::getScheme
-     * @covers ::withScheme
-     */
     public function testScheme(): void
     {
         self::assertSame('http', $this->uri->getScheme());
@@ -112,11 +80,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getUserInfo
-     * @covers ::withUserInfo
-     * @covers ::formatUserInfo
-     */
     public function testUserInfo(): void
     {
         self::assertSame('login:pass', $this->uri->getUserInfo());
@@ -131,13 +94,6 @@ class UriTest extends TestCase
         self::assertSame('http://secure.example.com:443/test/query.php?kingkong=toto#doc3', (string) $altUri);
     }
 
-    /**
-     * @covers ::getHost
-     * @covers ::withHost
-     * @covers ::formatHost
-     * @covers ::formatIp
-     * @covers ::formatRegisteredName
-     */
     public function testHost(): void
     {
         self::assertSame('secure.example.com', $this->uri->getHost());
@@ -145,20 +101,11 @@ class UriTest extends TestCase
         self::assertNotEquals($this->uri, $this->uri->withHost('[::1]'));
     }
 
-    /**
-     * @covers ::getAuthority
-     */
     public function testGetAuthority(): void
     {
         self::assertSame('login:pass@secure.example.com:443', $this->uri->getAuthority());
     }
 
-    /**
-     * @covers ::withUserInfo
-     * @covers ::withPort
-     * @covers ::withScheme
-     * @covers ::withHost
-     */
     public function testRemoveAuthority(): void
     {
         $uri_with_host = (string) $this->uri
@@ -169,11 +116,6 @@ class UriTest extends TestCase
         self::assertSame('/test/query.php?kingkong=toto#doc3', $uri_with_host);
     }
 
-    /**
-     * @covers ::getPort
-     * @covers ::withPort
-     * @covers ::formatPort
-     */
     public function testPort(): void
     {
         self::assertSame(443, $this->uri->getPort());
@@ -185,10 +127,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getPath
-     * @covers ::withPath
-     */
     public function testPath(): void
     {
         self::assertSame('/test/query.php', $this->uri->getPath());
@@ -200,10 +138,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getQuery
-     * @covers ::withQuery
-     */
     public function testQuery(): void
     {
         self::assertSame('kingkong=toto', $this->uri->getQuery());
@@ -215,10 +149,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getFragment
-     * @covers ::withFragment
-     */
     public function testFragment(): void
     {
         self::assertSame('doc3', $this->uri->getFragment());
@@ -230,9 +160,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::formatHost
-     */
     public function testCannotConvertInvalidHost(): void
     {
         self::expectException(SyntaxError::class);
@@ -245,28 +172,18 @@ class UriTest extends TestCase
         Uri::createFromString('http://example.com')->withScheme('tété');
     }
 
-    /**
-     * @covers ::assertValidState
-     */
     public function testWithPathFailedWithInvalidChars(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('http://example.com')->withPath('#24');
     }
 
-    /**
-     * @covers ::assertValidState
-     */
     public function testWithPathFailedWithInvalidPathRelativeToTheAuthority(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('http://example.com')->withPath('foo/bar');
     }
 
-    /**
-     * @covers ::formatRegisteredName
-     * @covers ::withHost
-     */
     public function testModificationFailedWithInvalidHost(): void
     {
         self::expectException(SyntaxError::class);
@@ -274,7 +191,6 @@ class UriTest extends TestCase
     }
 
     /**
-     * @covers ::assertValidState
      * @dataProvider missingAuthorityProvider
      */
     public function testModificationFailedWithMissingAuthority(string $path): void
@@ -286,9 +202,6 @@ class UriTest extends TestCase
             ->withPath($path);
     }
 
-    /**
-     * @covers ::assertValidState
-     */
     public static function missingAuthorityProvider(): array
     {
         return [
@@ -297,14 +210,6 @@ class UriTest extends TestCase
         ];
     }
 
-    /**
-     * @covers ::__toString
-     * @covers ::formatHost
-     * @covers ::formatRegisteredName
-     * @covers ::formatQueryAndFragment
-     * @covers ::formatPort
-     * @covers ::formatUserInfo
-     */
     public function testEmptyValueDetection(): void
     {
         $expected = '//0:0@0/0?0#0';
@@ -317,10 +222,6 @@ class UriTest extends TestCase
         self::assertSame($expected, Uri::createFromString($expected)->getPath());
     }
 
-    /**
-     * @covers ::filterString
-     * @covers ::withPath
-     */
     public function testWithPathThrowTypeErrorOnWrongType(): void
     {
         self::expectException(TypeError::class);
@@ -343,9 +244,6 @@ class UriTest extends TestCase
        ];
     }
 
-    /**
-     * @covers ::__debugInfo
-     */
     public function testDebugInfo(): void
     {
         $uri = Uri::createFromString('https://a:b@c:442/d?q=r#f');
@@ -366,10 +264,6 @@ class UriTest extends TestCase
         self::assertJsonStringEqualsJsonString($uriString, $uriJsonString);
     }
 
-    /**
-     * @covers ::createFromComponents
-     * @covers ::formatRegisteredName
-     */
     public function testCreateFromComponents(): void
     {
         $uri = '//0:0@0/0?0#0';
@@ -379,29 +273,18 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::formatPort
-     * @covers ::withPort
-     */
     public function testModificationFailedWithInvalidPort(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('http://example.com/path')->withPort(-1);
     }
 
-    /**
-     * @covers ::formatPort
-     * @covers ::withPort
-     */
     public function testModificationFailedWithInvalidPort2(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromString('http://example.com/path')->withPort('-1'); /* @phpstan-ignore-line */
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsHandlesScopedIpv6(): void
     {
         $expected = '[fe80:1234::%251]';
@@ -411,9 +294,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsHandlesIpvFuture(): void
     {
         $expected = '[v1.ZZ.ZZ]';
@@ -423,73 +303,48 @@ class UriTest extends TestCase
         );
     }
 
-
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsThrowsOnInvalidIpvFuture(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => '[v4.1.2.3]']);
     }
 
-    /**
-     * @covers ::filterString
-     */
     public function testCreateFromComponentsThrowsExceptionWithInvalidChars(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents()->withFragment("\n\rtoto");
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsThrowsException(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => '[127.0.0.1]']);
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsThrowsException2(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => '[127.0.0.1%251]']);
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsThrowsException3(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => '[fe80:1234::%25 1]']);
     }
 
-    /**
-     * @covers ::formatIp
-     */
     public function testCreateFromComponentsThrowsException4(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => '[::1%251]']);
     }
 
-    /**
-     * @covers ::formatRegisteredName
-     */
     public function testCreateFromComponentsThrowsException5(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => 'a⒈com']);
     }
 
-    /**
-     * @covers ::formatRegisteredName
-     */
     public function testCreateFromComponentsShouldNotThrowWithAsciiToUnicodeConversion(): void
     {
         self::assertSame(
@@ -498,27 +353,18 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::formatRegisteredName
-     */
     public function testCreateFromComponentsThrowsException7(): void
     {
         self::expectException(SyntaxError::class);
         Uri::createFromComponents(['host' => str_repeat('A', 255)]);
     }
 
-    /**
-     * @covers ::formatRegisteredName
-     */
     public function testCreateFromComponentsWorksWithPunycode(): void
     {
         $uri = Uri::createFromComponents(['host' => 'xn--mgbh0fb.xn--kgbechtv']);
         self::assertSame('xn--mgbh0fb.xn--kgbechtv', $uri->getHost());
     }
 
-    /**
-     * @covers ::formatPath
-     */
     public function testReservedCharsInPathUnencoded(): void
     {
         $uri = Uri::createFromString()
@@ -532,9 +378,6 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::formatPath
-     */
     public function testUnreservedCharsInPathUnencoded(): void
     {
         $uri = Uri::createFromString('http://www.example.com/')

@@ -22,10 +22,6 @@ use PHPUnit\Framework\TestCase;
 final class VarSpecifierTest extends TestCase
 {
     /**
-     * @covers ::createFromString
-     * @covers ::toString
-     * @covers ::__construct
-     *
      * @dataProvider providesValidNotation
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
@@ -48,8 +44,6 @@ final class VarSpecifierTest extends TestCase
     }
 
     /**
-     * @covers ::createFromString
-     *
      * @dataProvider providesInvalidNotation
      */
     public function testItFailsToInstantiatedWithAnInvalidNotationString(string $notation): void

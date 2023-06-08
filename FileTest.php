@@ -21,20 +21,12 @@ use PHPUnit\Framework\TestCase;
  */
 final class FileTest extends TestCase
 {
-    /**
-     * @covers ::formatHost
-     */
     public function testDefaultConstructor(): void
     {
         self::assertSame('', (string) Uri::createFromString());
     }
 
     /**
-     * @covers ::formatHost
-     * @covers ::formatFilePath
-     * @covers ::assertValidState
-     * @covers ::isUriWithSchemeHostAndPathOnly
-     *
      * @dataProvider validUrlProvider
      */
     public function testCreateFromString(string $uri, string $expected): void
@@ -90,8 +82,6 @@ final class FileTest extends TestCase
 
     /**
      * @dataProvider invalidUrlProvider
-     * @covers ::assertValidState
-     * @covers ::isUriWithSchemeHostAndPathOnly
      */
     public function testConstructorThrowsException(string $uri): void
     {

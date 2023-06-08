@@ -90,9 +90,6 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::createFromString
-     * @covers ::__construct
-     *
      * @dataProvider providesValidNotation
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
@@ -111,8 +108,6 @@ final class TemplateTest extends TestCase
     }
 
     /**
-     * @covers ::createFromString
-     *
      * @dataProvider providesInvalidNotation
      */
     public function testItFailsToInstantiatedWithAnInvalidNotation(string $notation): void

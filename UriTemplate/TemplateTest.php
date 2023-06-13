@@ -47,7 +47,7 @@ final class TemplateTest extends TestCase
             $this->expectException(Throwable::class);
         }
 
-        $result = Template::createFromString($input)->expand(new VariableBag($variables));
+        $result = Template::fromString($input)->expand(new VariableBag($variables));
 
         if (is_array($expected)) {
             self::assertContains($result, $expected);
@@ -94,7 +94,7 @@ final class TemplateTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
-        $template = Template::createFromString($notation);
+        $template = Template::fromString($notation);
         self::assertSame($notation, $template->value);
     }
 
@@ -114,7 +114,7 @@ final class TemplateTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Template::createFromString($notation);
+        Template::fromString($notation);
     }
 
     public static function providesInvalidNotation(): iterable
@@ -133,7 +133,7 @@ final class TemplateTest extends TestCase
      */
     public function testGetVariableNames(string $template, array $expected): void
     {
-        self::assertSame($expected, Template::createFromString($template)->variableNames);
+        self::assertSame($expected, Template::fromString($template)->variableNames);
     }
 
     public static function expectedVariableNames(): iterable
@@ -163,7 +163,7 @@ final class TemplateTest extends TestCase
      */
     public function testItCanExpandVariables(string $notation, array $variables, string $expected): void
     {
-        self::assertSame($expected, Template::createFromString($notation)->expand($variables));
+        self::assertSame($expected, Template::fromString($notation)->expand($variables));
     }
 
     public static function providesExpansion(): iterable

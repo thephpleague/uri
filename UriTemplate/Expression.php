@@ -49,12 +49,12 @@ final class Expression
     /**
      * @throws SyntaxError if the expression is invalid
      */
-    public static function createFromString(string $expression): self
+    public static function fromString(string $expression): self
     {
         $parts = Operator::parseExpression($expression);
 
         return new Expression($parts['operator'], ...array_map(
-            static fn (string $varSpec): VarSpecifier => VarSpecifier::createFromString($varSpec),
+            static fn (string $varSpec): VarSpecifier => VarSpecifier::fromString($varSpec),
             explode(',', $parts['variables'])
         ));
     }

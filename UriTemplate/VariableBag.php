@@ -93,15 +93,15 @@ final class VariableBag implements ArrayAccess, Countable
     }
 
     /**
-     * @param string|bool|int|float|null|array<string|bool|int|float> $value
+     * @param Stringable|string|bool|int|float|null|array<string|bool|int|float> $value
      */
-    public function assign(string $name, string|bool|int|float|array|null $value): void
+    public function assign(string $name, Stringable|string|bool|int|float|array|null $value): void
     {
         $this->variables[$name] = $this->normalizeValue($value, $name, true);
     }
 
     /**
-     * @param Stringable|string|float|int|bool|null $value the value to be expanded
+     * @param Stringable|string|bool|int|float|null|array<string|bool|int|float> $value
      *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
      */

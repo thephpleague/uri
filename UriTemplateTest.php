@@ -35,7 +35,6 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($template, $variables);
 
-        self::assertSame($template, $uriTemplate->getTemplate());
         self::assertSame($template, $uriTemplate->template->value);
     }
 
@@ -60,12 +59,10 @@ final class UriTemplateTest extends TestCase
         ];
 
         $uriTemplate = new UriTemplate($template, $variables);
-        self::assertSame($expectedVariables, $uriTemplate->getDefaultVariables());
         self::assertSame($expectedVariables, $uriTemplate->defaultVariables->all());
         self::assertFalse($uriTemplate->defaultVariables->isEmpty());
 
         $uriTemplateEmpty = new UriTemplate($template, []);
-        self::assertSame([], $uriTemplateEmpty->getDefaultVariables());
         self::assertSame([], $uriTemplateEmpty->defaultVariables->all());
         self::assertTrue($uriTemplateEmpty->defaultVariables->isEmpty());
     }
@@ -82,9 +79,9 @@ final class UriTemplateTest extends TestCase
         $altTemplate = $uriTemplate->withDefaultVariables($variables);
         $newAltTemplate = $uriTemplate->withDefaultVariables($newAltVariables);
 
-        self::assertSame($altTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
-        self::assertSame($newAltTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
-        self::assertNotSame($newTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
+        self::assertSame($altTemplate->defaultVariables->all(), $uriTemplate->defaultVariables->all());
+        self::assertSame($newAltTemplate->defaultVariables->all(), $uriTemplate->defaultVariables->all());
+        self::assertNotSame($newTemplate->defaultVariables->all(), $uriTemplate->defaultVariables->all());
     }
 
     /**
@@ -92,7 +89,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testGetVariableNames(string $template, array $expected): void
     {
-        self::assertSame($expected, (new UriTemplate($template))->getVariableNames());
+        self::assertSame($expected, (new UriTemplate($template))->template->variableNames);
     }
 
     public static function expectedVariableNames(): iterable

@@ -51,7 +51,7 @@ final class Template
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
-    public static function createFromString(Stringable|string $template): self
+    public static function fromString(Stringable|string $template): self
     {
         $template = (string) $template;
         /** @var string $remainder */
@@ -65,7 +65,7 @@ final class Template
         $expressions = [];
         foreach ($founds as $found) {
             if (!isset($names[$found['expression']])) {
-                $expressions[] = Expression::createFromString($found['expression']);
+                $expressions[] = Expression::fromString($found['expression']);
                 $names[$found['expression']] = 1;
             }
         }

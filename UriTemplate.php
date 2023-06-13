@@ -41,9 +41,11 @@ final class UriTemplate
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */
-    public function __construct(Template|Stringable|string $template, VariableBag|iterable $defaultVariables = [])
-    {
-        $this->template = $template instanceof Template ? $template : Template::createFromString($template);
+    public function __construct(
+        Template|Stringable|string $template,
+        VariableBag|iterable $defaultVariables = new VariableBag()
+    ) {
+        $this->template = $template instanceof Template ? $template : Template::fromString($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
     }
 
@@ -67,36 +69,6 @@ final class UriTemplate
     }
 
     /**
-     * The template string.
-     */
-    public function getTemplate(): string
-    {
-        return $this->template->value;
-    }
-
-    /**
-     * Returns the names of the variables in the template, in order.
-     *
-     * @return string[]
-     */
-    public function getVariableNames(): array
-    {
-        return $this->template->variableNames;
-    }
-
-    /**
-     * Returns the default values used to expand the template.
-     *
-     * The returned list only contains variables whose name is part of the current template.
-     *
-     * @return array<string,string|array>
-     */
-    public function getDefaultVariables(): array
-    {
-        return $this->defaultVariables->all();
-    }
-
-    /**
      * Returns a new instance with the updated default variables.
      *
      * This method MUST retain the state of the current instance, and return
@@ -114,7 +86,7 @@ final class UriTemplate
      * @throws TemplateCanNotBeExpanded if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expand(VariableBag|iterable $variables = []): UriInterface
+    public function expand(VariableBag|iterable $variables = new VariableBag()): UriInterface
     {
         return Uri::createFromString(
             $this->template->expand(

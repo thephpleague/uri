@@ -138,13 +138,13 @@ final class UriInfo
      */
     public static function isSameDocument(
         Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+        Psr7UriInterface|UriInterface|Stringable|string $baseUri
     ): bool {
         $uri = self::normalize(self::filterUri($uri));
-        $base_uri = self::normalize(self::filterUri($base_uri));
+        $baseUri = self::normalize(self::filterUri($baseUri));
 
         return (string) $uri->withFragment($uri instanceof Psr7UriInterface ? '' : null)
-            === (string) $base_uri->withFragment($base_uri instanceof Psr7UriInterface ? '' : null);
+            === (string) $baseUri->withFragment($baseUri instanceof Psr7UriInterface ? '' : null);
     }
 
     /**
@@ -181,13 +181,13 @@ final class UriInfo
      */
     public static function isCrossOrigin(
         Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+        Psr7UriInterface|UriInterface|Stringable|string $baseUri
     ): bool {
         $uri = self::filterUri($uri);
-        $base_uri = self::filterUri($base_uri);
+        $baseUri = self::filterUri($baseUri);
 
         return null === ($uriString = self::getOrigin(Uri::createFromUri($uri)))
-            || null === ($baseUriString = self::getOrigin(Uri::createFromUri($base_uri)))
+            || null === ($baseUriString = self::getOrigin(Uri::createFromUri($baseUri)))
             || $uriString !== $baseUriString;
     }
 }

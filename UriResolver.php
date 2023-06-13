@@ -60,10 +60,10 @@ final class UriResolver
      */
     public static function resolve(
         Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+        Psr7UriInterface|UriInterface|Stringable|string $baseUri
     ): Psr7UriInterface|UriInterface {
         $uri = self::filterUri($uri);
-        $base_uri = self::filterUri($base_uri);
+        $baseUri = self::filterUri($baseUri);
 
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
@@ -74,26 +74,26 @@ final class UriResolver
 
         if ($null !== $uri->getAuthority()) {
             return $uri
-                ->withScheme($base_uri->getScheme())
+                ->withScheme($baseUri->getScheme())
                 ->withPath(self::removeDotSegments($uri->getPath()));
         }
 
         $user = $null;
         $pass = null;
-        $userInfo = $base_uri->getUserInfo();
+        $userInfo = $baseUri->getUserInfo();
         if (null !== $userInfo) {
             [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
         }
 
-        [$uri_path, $uri_query] = self::resolvePathAndQuery($uri, $base_uri);
+        [$uri_path, $uri_query] = self::resolvePathAndQuery($uri, $baseUri);
 
         return $uri
             ->withPath(self::removeDotSegments($uri_path))
             ->withQuery($uri_query)
-            ->withHost($base_uri->getHost())
-            ->withPort($base_uri->getPort())
+            ->withHost($baseUri->getHost())
+            ->withPort($baseUri->getPort())
             ->withUserInfo((string) $user, $pass)
-            ->withScheme($base_uri->getScheme())
+            ->withScheme($baseUri->getScheme())
         ;
     }
 
@@ -149,47 +149,47 @@ final class UriResolver
      */
     private static function resolvePathAndQuery(
         Psr7UriInterface|UriInterface $uri,
-        Psr7UriInterface|UriInterface $base_uri
+        Psr7UriInterface|UriInterface $baseUri
     ): array {
-        $target_path = $uri->getPath();
-        $target_query = $uri->getQuery();
+        $targetPath = $uri->getPath();
+        $targetQuery = $uri->getQuery();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
-        $baseNull = $base_uri instanceof Psr7UriInterface ? '' : null;
+        $baseNull = $baseUri instanceof Psr7UriInterface ? '' : null;
 
-        if (str_starts_with($target_path, '/')) {
-            return [$target_path, $target_query];
+        if (str_starts_with($targetPath, '/')) {
+            return [$targetPath, $targetQuery];
         }
 
-        if ('' === $target_path) {
-            if ($null === $target_query) {
-                $target_query = $base_uri->getQuery();
+        if ('' === $targetPath) {
+            if ($null === $targetQuery) {
+                $targetQuery = $baseUri->getQuery();
             }
 
-            $target_path = $base_uri->getPath();
+            $targetPath = $baseUri->getPath();
             //@codeCoverageIgnoreStart
             //because some PSR-7 Uri implementations allow this RFC3986 forbidden construction
-            if ($baseNull !== $base_uri->getAuthority() && !str_starts_with($target_path, '/')) {
-                $target_path = '/'.$target_path;
+            if ($baseNull !== $baseUri->getAuthority() && !str_starts_with($targetPath, '/')) {
+                $targetPath = '/'.$targetPath;
             }
             //@codeCoverageIgnoreEnd
 
-            return [$target_path, $target_query];
+            return [$targetPath, $targetQuery];
         }
 
-        $base_path = $base_uri->getPath();
-        if ($baseNull !== $base_uri->getAuthority() && '' === $base_path) {
-            $target_path = '/'.$target_path;
+        $base_path = $baseUri->getPath();
+        if ($baseNull !== $baseUri->getAuthority() && '' === $base_path) {
+            $targetPath = '/'.$targetPath;
         }
 
         if ('' !== $base_path) {
             $segments = explode('/', $base_path);
             array_pop($segments);
             if ([] !== $segments) {
-                $target_path = implode('/', $segments).'/'.$target_path;
+                $targetPath = implode('/', $segments).'/'.$targetPath;
             }
         }
 
-        return [$target_path, $target_query];
+        return [$targetPath, $targetQuery];
     }
 
     /**
@@ -203,30 +203,30 @@ final class UriResolver
      */
     public static function relativize(
         Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $base_uri
+        Psr7UriInterface|UriInterface|Stringable|string $baseUri
     ): Psr7UriInterface|UriInterface {
         $uri = self::filterUri($uri);
-        $base_uri = self::filterUri($base_uri);
+        $baseUri = self::filterUri($baseUri);
 
         $uri = self::formatHost($uri);
-        $base_uri = self::formatHost($base_uri);
-        if (!self::isRelativizable($uri, $base_uri)) {
+        $baseUri = self::formatHost($baseUri);
+        if (!self::isRelativizable($uri, $baseUri)) {
             return $uri;
         }
 
         $null = $uri instanceof Psr7UriInterface ? '' : null;
         $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
-        $target_path = $uri->getPath();
-        if ($target_path !== $base_uri->getPath()) {
-            return $uri->withPath(self::relativizePath($target_path, $base_uri->getPath()));
+        $targetPath = $uri->getPath();
+        if ($targetPath !== $baseUri->getPath()) {
+            return $uri->withPath(self::relativizePath($targetPath, $baseUri->getPath()));
         }
 
-        if (self::componentEquals('query', $uri, $base_uri)) {
+        if (self::componentEquals('query', $uri, $baseUri)) {
             return $uri->withPath('')->withQuery($null);
         }
 
         if ($null === $uri->getQuery()) {
-            return $uri->withPath(self::formatPathWithEmptyBaseQuery($target_path));
+            return $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath));
         }
 
         return $uri->withPath('');
@@ -236,11 +236,11 @@ final class UriResolver
      * Tells whether the component value from both URI object equals.
      */
     private static function componentEquals(
-        string                        $property,
+        string $property,
         Psr7UriInterface|UriInterface $uri,
-        Psr7UriInterface|UriInterface $base_uri
+        Psr7UriInterface|UriInterface $baseUri
     ): bool {
-        return self::getComponent($property, $uri) === self::getComponent($property, $base_uri);
+        return self::getComponent($property, $uri) === self::getComponent($property, $baseUri);
     }
 
     /**
@@ -279,37 +279,37 @@ final class UriResolver
     }
 
     /**
-     * Tells whether the submitted URI object can be relativize.
+     * Tells whether the submitted URI object can be relativized.
      */
     private static function isRelativizable(
         Psr7UriInterface|UriInterface $uri,
-        Psr7UriInterface|UriInterface $base_uri
+        Psr7UriInterface|UriInterface $baseUri
     ): bool {
         return !UriInfo::isRelativePath($uri)
-            && self::componentEquals('scheme', $uri, $base_uri)
-            && self::componentEquals('authority', $uri, $base_uri);
+            && self::componentEquals('scheme', $uri, $baseUri)
+            && self::componentEquals('authority', $uri, $baseUri);
     }
 
     /**
      * Relatives the URI for an authority-less target URI.
      */
-    private static function relativizePath(string $path, string $basepath): string
+    private static function relativizePath(string $path, string $basePath): string
     {
-        $base_segments = self::getSegments($basepath);
-        $target_segments = self::getSegments($path);
-        $target_basename = array_pop($target_segments);
-        array_pop($base_segments);
-        foreach ($base_segments as $offset => $segment) {
-            if (!isset($target_segments[$offset]) || $segment !== $target_segments[$offset]) {
+        $baseSegments = self::getSegments($basePath);
+        $targetSegments = self::getSegments($path);
+        $targetBasename = array_pop($targetSegments);
+        array_pop($baseSegments);
+        foreach ($baseSegments as $offset => $segment) {
+            if (!isset($targetSegments[$offset]) || $segment !== $targetSegments[$offset]) {
                 break;
             }
-            unset($base_segments[$offset], $target_segments[$offset]);
+            unset($baseSegments[$offset], $targetSegments[$offset]);
         }
-        $target_segments[] = $target_basename;
+        $targetSegments[] = $targetBasename;
 
         return self::formatPath(
-            str_repeat('../', count($base_segments)).implode('/', $target_segments),
-            $basepath
+            str_repeat('../', count($baseSegments)).implode('/', $targetSegments),
+            $basePath
         );
     }
 
@@ -330,18 +330,18 @@ final class UriResolver
     /**
      * Formatting the path to keep a valid URI.
      */
-    private static function formatPath(string $path, string $basepath): string
+    private static function formatPath(string $path, string $basePath): string
     {
         if ('' === $path) {
-            return in_array($basepath, ['', '/'], true) ? $basepath : './';
+            return in_array($basePath, ['', '/'], true) ? $basePath : './';
         }
 
-        if (false === ($colon_pos = strpos($path, ':'))) {
+        if (false === ($colonPosition = strpos($path, ':'))) {
             return $path;
         }
 
-        $slash_pos = strpos($path, '/');
-        if (false === $slash_pos || $colon_pos < $slash_pos) {
+        $slashPosition = strpos($path, '/');
+        if (false === $slashPosition || $colonPosition < $slashPosition) {
             return "./$path";
         }
 
@@ -353,9 +353,9 @@ final class UriResolver
      */
     private static function formatPathWithEmptyBaseQuery(string $path): string
     {
-        $target_segments = self::getSegments($path);
+        $targetSegments = self::getSegments($path);
         /** @var string $basename */
-        $basename = end($target_segments);
+        $basename = end($targetSegments);
 
         return '' === $basename ? './' : $basename;
     }

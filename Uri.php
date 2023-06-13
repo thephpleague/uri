@@ -57,6 +57,9 @@ use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
 
+/**
+ * @phpstan-import-type InputComponentMap from UriString
+ */
 final class Uri implements UriInterface
 {
     /**
@@ -455,17 +458,7 @@ final class Uri implements UriInterface
      * Create a new instance from a hash representation of the URI similar
      * to PHP parse_url function result.
      *
-     * @param array{
-     *     scheme?: ?string,
-     *     user?: ?string,
-     *     pass?: ?string,
-     *     host?: ?string,
-     *     port?: ?int,
-     *     path?: ?string,
-     *     query?: ?string,
-     *     fragment?: ?string
-     * } $components a hash representation of the URI similar
-     *               to PHP parse_url function result
+     * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
      */
     public static function createFromComponents(array $components = []): self
     {
@@ -903,7 +896,8 @@ final class Uri implements UriInterface
         }
 
         static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
-        return preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $component);
+
+        return preg_replace_callback($pattern, self::urlEncodeMatch(...), $component);
     }
 
     /**

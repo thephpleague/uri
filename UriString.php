@@ -37,6 +37,10 @@ use const FILTER_VALIDATE_IP;
  * @package League\Uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   6.0.0
+ *
+ * @phpstan-type InputComponentMap array{scheme? : ?string, user? : ?string, pass? : ?string, host? : ?string, port? : ?int, path? : ?string, query? : ?string, fragment? : ?string}
+ * @phpstan-type ComponentMap array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
+ * @phpstan-type AuthorityMap array{user:?string, pass:?string, host:?string, port:?int}
  */
 final class UriString
 {
@@ -144,7 +148,7 @@ final class UriString
     private const ZONE_ID_ADDRESS_BLOCK = "\xfe\x80";
 
     /**
-     * Generate an URI string representation from its parsed representation
+     * Generate a URI string representation from its parsed representation
      * returned by League\UriString::parse() or PHP's parse_url.
      *
      * If you supply your own array, you are responsible for providing
@@ -153,16 +157,7 @@ final class UriString
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      * @link https://tools.ietf.org/html/rfc3986#section-7.5
      *
-     * @param array{
-     *     scheme: ?string,
-     *     user: ?string,
-     *     pass: ?string,
-     *     host: ?string,
-     *     port: ?int,
-     *     path: ?string,
-     *     query: ?string,
-     *     fragment: ?string
-     * } $components
+     * @param InputComponentMap $components
      */
     public static function build(array $components): string
     {
@@ -203,13 +198,13 @@ final class UriString
     }
 
     /**
-     * Parse an URI string into its components.
+     * Parse a URI string into its components.
      *
      * This method parses a URI and returns an associative array containing any
      * of the various components of the URI that are present.
      *
      * <code>
-     * $components = (new Parser())->parse('http://foo@test.example.com:42?query#');
+     * $components = UriString::parse('http://foo@test.example.com:42?query#');
      * var_export($components);
      * //will display
      * array(
@@ -232,25 +227,23 @@ final class UriString
      * <li>Empty and undefined component are treated differently. And empty component is
      *   set to the empty string while an undefined component is set to the `null` value.</li>
      * <li>The path component is never undefined</li>
-     * <li>The method parses the URI following the RFC3986 rules but you are still
+     * <li>The method parses the URI following the RFC3986 rules, but you are still
      *   required to validate the returned components against its related scheme specific rules.</li>
      * </ul>
      *
      * @link https://tools.ietf.org/html/rfc3986
      *
-     * @param Stringable|string|int|float $uri any scalar or stringable object
-     *
      * @throws SyntaxError if the URI contains invalid characters
      * @throws SyntaxError if the URI contains an invalid scheme
      * @throws SyntaxError if the URI contains an invalid path
      *
-     * @return array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string}
+     * @return ComponentMap
      */
-    public static function parse(Stringable|string|int|float $uri): array
+    public static function parse(Stringable|string|int $uri): array
     {
         $uri = (string) $uri;
         if (isset(self::URI_SCHORTCUTS[$uri])) {
-            /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+            /** @var ComponentMap $components */
             $components = array_merge(self::URI_COMPONENTS, self::URI_SCHORTCUTS[$uri]);
 
             return $components;
@@ -295,7 +288,7 @@ final class UriString
             throw new SyntaxError(sprintf('The uri `%s` contains an invalid path.', $uri));
         }
 
-        /** @var array{scheme:?string, user:?string, pass:?string, host:?string, port:?int, path:string, query:?string, fragment:?string} $components */
+        /** @var ComponentMap $components */
         $components = array_merge(
             self::URI_COMPONENTS,
             '' === $parts['authority'] ? [] : self::parseAuthority($parts['acontent']),
@@ -317,7 +310,7 @@ final class UriString
      *
      * @throws SyntaxError If the port component is invalid
      *
-     * @return array{user:?string, pass:?string, host:?string, port:?int}
+     * @return AuthorityMap
      */
     private static function parseAuthority(string $authority): array
     {
@@ -349,15 +342,11 @@ final class UriString
      */
     private static function filterPort(string $port): ?int
     {
-        if ('' === $port) {
-            return null;
-        }
-
-        if (1 === preg_match('/^\d*$/', $port)) {
-            return (int) $port;
-        }
-
-        throw new SyntaxError(sprintf('The port `%s` is invalid', $port));
+        return match (true) {
+            '' === $port => null,
+            1 === preg_match('/^\d*$/', $port) => (int) $port,
+            default => throw new SyntaxError(sprintf('The port `%s` is invalid', $port)),
+        };
     }
 
     /**
@@ -369,19 +358,12 @@ final class UriString
      */
     private static function filterHost(string $host): string
     {
-        if ('' === $host) {
-            return $host;
-        }
-
-        if ('[' !== $host[0] || !str_ends_with($host, ']')) {
-            return self::filterRegisteredName($host);
-        }
-
-        if (!self::isIpHost(substr($host, 1, -1))) {
-            throw new SyntaxError(sprintf('Host `%s` is invalid : the IP host is malformed', $host));
-        }
-
-        return $host;
+        return match (true) {
+            '' === $host => '',
+            '[' !== $host[0] || !str_ends_with($host, ']') => self::filterRegisteredName($host),
+            !self::isIpHost(substr($host, 1, -1)) => throw new SyntaxError(sprintf('Host `%s` is invalid : the IP host is malformed', $host)),
+            default => $host,
+        };
     }
 
     /**
@@ -413,33 +395,30 @@ final class UriString
     }
 
     /**
-     * Validates a IPv6/IPvfuture host.
+     * Validates a IPv6/IPfuture host.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
      * @link https://tools.ietf.org/html/rfc6874#section-2
      * @link https://tools.ietf.org/html/rfc6874#section-4
      */
-    private static function isIpHost(string $ip_host): bool
+    private static function isIpHost(string $ipHost): bool
     {
-        if (false !== filter_var($ip_host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        if (false !== filter_var($ipHost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             return true;
         }
 
-        if (1 === preg_match(self::REGEXP_IP_FUTURE, $ip_host, $matches)) {
+        if (1 === preg_match(self::REGEXP_IP_FUTURE, $ipHost, $matches)) {
             return !in_array($matches['version'], ['4', '6'], true);
         }
 
-        $pos = strpos($ip_host, '%');
-        if (false === $pos || 1 === preg_match(
-            self::REGEXP_INVALID_HOST_CHARS,
-            rawurldecode(substr($ip_host, $pos))
-        )) {
+        $pos = strpos($ipHost, '%');
+        if (false === $pos || 1 === preg_match(self::REGEXP_INVALID_HOST_CHARS, rawurldecode(substr($ipHost, $pos)))) {
             return false;
         }
 
-        $ip_host = substr($ip_host, 0, $pos);
+        $ipHost = substr($ipHost, 0, $pos);
 
-        return false !== filter_var($ip_host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
-            && str_starts_with((string)inet_pton($ip_host), self::ZONE_ID_ADDRESS_BLOCK);
+        return false !== filter_var($ipHost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+            && str_starts_with((string)inet_pton($ipHost), self::ZONE_ID_ADDRESS_BLOCK);
     }
 }

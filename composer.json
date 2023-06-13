@@ -46,7 +46,7 @@
     "require": {
         "php": "^8.1",
         "ext-json": "*",
-        "league/uri-interfaces": "^2.4",
+        "league/uri-interfaces": "dev-master",
         "psr/http-message": "^2.0"
     },
     "autoload": {

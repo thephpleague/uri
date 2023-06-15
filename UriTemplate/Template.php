@@ -89,4 +89,21 @@ final class Template
             $this->value
         );
     }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Template::fromString()
+     *
+     * Create a new instance from a string.
+     *
+     * @throws SyntaxError if the template contains invalid expressions
+     * @throws SyntaxError if the template contains invalid variable specification
+     */
+    public static function createFromString(Stringable|string $template): self
+    {
+        return self::fromString($template);
+    }
 }

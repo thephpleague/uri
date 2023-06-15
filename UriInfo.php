@@ -40,7 +40,7 @@ final class UriInfo
     {
         return match (true) {
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
-            default => Uri::createFromString($uri),
+            default => Uri::fromString($uri),
         };
     }
 
@@ -79,7 +79,7 @@ final class UriInfo
         }
 
         return $uri
-            ->withHost(Uri::createFromComponents(['host' => $uri->getHost()])->getHost())
+            ->withHost(Uri::fromComponents(['host' => $uri->getHost()])->getHost())
             ->withPath($path)
             ->withQuery([] === $pairs ? $null : $query)
             ->withFragment($null === $fragmentOrig ? $fragmentOrig : $fragment);
@@ -161,7 +161,7 @@ final class UriInfo
         $uri = self::filterUri($uri);
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = Uri::createFromString($uri->getPath());
+            $uri = Uri::fromString($uri->getPath());
             $scheme = $uri->getScheme();
         }
 
@@ -186,8 +186,8 @@ final class UriInfo
         $uri = self::filterUri($uri);
         $baseUri = self::filterUri($baseUri);
 
-        return null === ($uriString = self::getOrigin(Uri::createFromUri($uri)))
-            || null === ($baseUriString = self::getOrigin(Uri::createFromUri($baseUri)))
+        return null === ($uriString = self::getOrigin(Uri::fromUri($uri)))
+            || null === ($baseUriString = self::getOrigin(Uri::fromUri($baseUri)))
             || $uriString !== $baseUriString;
     }
 }

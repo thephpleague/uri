@@ -15,6 +15,7 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use Stringable;
 use function implode;
 use function is_array;
 use function preg_match;
@@ -116,8 +117,9 @@ enum Operator: string
      *
      * @return array{operator:Operator, variables:string}
      */
-    public static function parseExpression(string $expression): array
+    public static function parseExpression(Stringable|string $expression): array
     {
+        $expression = (string) $expression;
         if (1 !== preg_match(self::REGEXP_EXPRESSION, $expression, $parts)) {
             throw new SyntaxError('The expression "'.$expression.'" is invalid.');
         }

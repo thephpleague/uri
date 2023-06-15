@@ -22,7 +22,9 @@ use function is_object;
 use function is_scalar;
 
 /**
+ *
  * @implements ArrayAccess<string, string|bool|int|float|array<string|bool|int|float>>
+ * @phpstan-type InputValue string|bool|int|float|array<string|bool|int|float>
  */
 final class VariableBag implements ArrayAccess, Countable
 {
@@ -32,7 +34,7 @@ final class VariableBag implements ArrayAccess, Countable
     private array $variables = [];
 
     /**
-     * @param iterable<string|int, string|bool|int|float|array<string|bool|int|float>> $variables
+     * @param iterable<array-key, InputValue> $variables
      */
     public function __construct(iterable $variables = [])
     {
@@ -83,6 +85,14 @@ final class VariableBag implements ArrayAccess, Countable
     }
 
     /**
+     * Tells whether the bag is empty or not.
+     */
+    public function isNotEmpty(): bool
+    {
+        return [] !== $this->variables;
+    }
+
+    /**
      * Fetches the variable value if none found returns null.
      *
      * @return null|string|array<string>
@@ -93,7 +103,7 @@ final class VariableBag implements ArrayAccess, Countable
     }
 
     /**
-     * @param Stringable|string|bool|int|float|null|array<string|bool|int|float> $value
+     * @param Stringable|InputValue $value
      */
     public function assign(string $name, Stringable|string|bool|int|float|array|null $value): void
     {
@@ -101,7 +111,7 @@ final class VariableBag implements ArrayAccess, Countable
     }
 
     /**
-     * @param Stringable|string|bool|int|float|null|array<string|bool|int|float> $value
+     * @param Stringable|InputValue $value
      *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
      */

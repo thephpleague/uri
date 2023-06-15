@@ -26,7 +26,7 @@ final class FactoryTest extends TestCase
     public function testCreateFromPathFailed(string $path): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromDataPath($path);
+        Uri::fromDataPath($path);
     }
 
     public static function invalidDataPath(): array
@@ -48,7 +48,7 @@ final class FactoryTest extends TestCase
             ],
         ]);
 
-        $uri = Uri::createFromDataPath(dirname(__DIR__).'/test_files/'.$path, $context);
+        $uri = Uri::fromDataPath(dirname(__DIR__).'/test_files/'.$path, $context);
         self::assertStringContainsString($expected, $uri->getPath());
     }
 
@@ -65,7 +65,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromUnixPath(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromUnixPath($uri));
+        self::assertSame($expected, (string) Uri::fromUnixPath($uri));
     }
 
     public static function unixpathProvider(): array
@@ -99,7 +99,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromWindowsLocalPath(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromWindowsPath($uri));
+        self::assertSame($expected, (string) Uri::fromWindowsPath($uri));
     }
 
     public static function windowLocalPathProvider(): array
@@ -143,17 +143,17 @@ final class FactoryTest extends TestCase
     public function testCreateFromUri(): void
     {
         $expected = 'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';
-        $psr7 = Http::createFromString($expected);
-        $leagueUri = Uri::createFromString($expected);
+        $psr7 = Http::fromString($expected);
+        $leagueUri = Uri::fromString($expected);
 
-        $uriFromPsr7 = Uri::createFromUri($psr7);
-        $uriFromLeagueUri = Uri::createFromUri($leagueUri);
+        $uriFromPsr7 = Uri::fromUri($psr7);
+        $uriFromLeagueUri = Uri::fromUri($leagueUri);
 
         self::assertSame((string) $psr7, (string) $uriFromPsr7);
         self::assertSame((string) $psr7, (string) $uriFromLeagueUri);
 
-        $uribis = Http::createFromString();
-        self::assertSame((string) $uribis, Uri::createFromUri($uribis)->__toString());
+        $uribis = Http::fromString();
+        self::assertSame((string) $uribis, Uri::fromUri($uribis)->__toString());
     }
 
     /**
@@ -161,8 +161,8 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromServer(string $expected, array $input): void
     {
-        self::assertSame($expected, (string) Uri::createFromServer($input));
-        self::assertSame($expected, (string) Http::createFromServer($input));
+        self::assertSame($expected, (string) Uri::fromServer($input));
+        self::assertSame($expected, (string) Http::fromServer($input));
     }
 
     public static function validServerArray(): array
@@ -313,7 +313,7 @@ final class FactoryTest extends TestCase
     public function testFailCreateFromServerWithoutHost(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromServer([
+        Uri::fromServer([
             'PHP_SELF' => '',
             'REQUEST_URI' => '',
             'HTTPS' => 'on',
@@ -324,7 +324,7 @@ final class FactoryTest extends TestCase
     public function testFailCreateFromServerWithoutInvalidUserInfo(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromServer([
+        Uri::fromServer([
             'PHP_SELF' => '/toto',
             'SERVER_ADDR' => '127.0.0.1',
             'HTTPS' => 'on',
@@ -339,7 +339,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromBaseUri($uri, $base_uri));
+        self::assertSame($expected, (string) Uri::fromBaseUri($uri, $base_uri));
     }
 
     public static function createProvider(): array
@@ -392,20 +392,20 @@ final class FactoryTest extends TestCase
     public function testCreateThrowExceptionWithBaseUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromBaseUri('/path/to/you', '//example.com');
+        Uri::fromBaseUri('/path/to/you', '//example.com');
     }
 
     public function testCreateThrowExceptionWithUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromBaseUri('/path/to/you');
+        Uri::fromBaseUri('/path/to/you');
     }
 
     public function testCreateWithUriWithoutAuthority(): void
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            (string) Uri::createFromBaseUri('data:text/plain;charset=us-ascii,')
+            (string) Uri::fromBaseUri('data:text/plain;charset=us-ascii,')
         );
     }
 
@@ -413,7 +413,7 @@ final class FactoryTest extends TestCase
     {
         self::assertSame(
             'scheme://host/sky?q#f',
-            (string) Uri::createFromBaseUri('scheme://host/path/../sky?q#f')
+            (string) Uri::fromBaseUri('scheme://host/path/../sky?q#f')
         );
     }
 }

@@ -19,6 +19,9 @@ use League\Uri\Exceptions\SyntaxError;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
+/**
+ * @phpstan-import-type InputComponentMap from UriString
+ */
 final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 {
     private function __construct(private readonly UriInterface $uri)
@@ -46,48 +49,39 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     /**
      * Create a new instance from a URI object.
      */
-    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    public static function fromUri(Psr7UriInterface|UriInterface $uri): self
     {
         return match (true) {
             $uri instanceof UriInterface => new self($uri),
-            default => new self(Uri::createFromUri($uri)),
+            default => new self(Uri::fromUri($uri)),
         };
     }
 
     /**
      * Create a new instance from a string.
      */
-    public static function createFromString(Stringable|string $uri = ''): self
+    public static function fromString(Stringable|string $uri = ''): self
     {
-        return new self(Uri::createFromString($uri));
+        return new self(Uri::fromString($uri));
     }
 
     /**
      * Create a new instance from a hash of parse_url parts.
      *
-     * @param array{
-     *     scheme?: ?string,
-     *     user?: ?string,
-     *     pass?: ?string,
-     *     host?: ?string,
-     *     port?: ?int,
-     *     path?: ?string,
-     *     query?: ?string,
-     *     fragment?: ?string
-     * } $components a hash representation of the URI similar
-     *               to PHP parse_url function result
+     * @param InputComponentMap $components a hash representation of the URI similar
+     *                                      to PHP parse_url function result
      */
-    public static function createFromComponents(array $components): self
+    public static function fromComponents(array $components): self
     {
-        return new self(Uri::createFromComponents($components));
+        return new self(Uri::fromComponents($components));
     }
 
     /**
      * Create a new instance from the environment.
      */
-    public static function createFromServer(array $server): self
+    public static function fromServer(array $server): self
     {
-        return new self(Uri::createFromServer($server));
+        return new self(Uri::fromServer($server));
     }
 
     /**
@@ -95,11 +89,11 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
-    public static function createFromBaseUri(
+    public static function fromBaseUri(
         UriInterface|Stringable|String $uri,
-        UriInterface|Stringable|String|null $base_uri = null
+        UriInterface|Stringable|String|null $baseUri = null
     ): self {
-        return new self(Uri::createFromBaseUri($uri, $base_uri));
+        return new self(Uri::fromBaseUri($uri, $baseUri));
     }
 
     public function getScheme(): string
@@ -204,5 +198,76 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     public function withFragment(string $fragment): self
     {
         return $this->newInstance($this->uri->withFragment($this->filterInput($fragment)));
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Http::fromString()
+     *
+     * Create a new instance from a string.
+     */
+    public static function createFromString(Stringable|string $uri = ''): self
+    {
+        return self::fromString($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Http::fromComponents()
+     *
+     * Create a new instance from a hash of parse_url parts.
+     *
+     * @param InputComponentMap $components a hash representation of the URI similar
+     *                                      to PHP parse_url function result
+     */
+    public static function createFromComponents(array $components): self
+    {
+        return self::fromComponents($components);
+    }
+
+    /**
+     * Create a new instance from the environment.
+     */
+    public static function createFromServer(array $server): self
+    {
+        return self::fromServer($server);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Http::fromUri()
+     *
+     * Create a new instance from a URI object.
+     */
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    {
+        return self::fromUri($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Http::fromBaseUri()
+     *
+     * Create a new instance from a URI and a Base URI.
+     *
+     * The returned URI must be absolute.
+     */
+    public static function createFromBaseUri(
+        UriInterface|Stringable|String $uri,
+        UriInterface|Stringable|String|null $baseUri = null
+    ): self {
+        return self::fromBaseUri($uri, $baseUri);
     }
 }

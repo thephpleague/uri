@@ -25,7 +25,7 @@ final class DataTest extends TestCase
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            (string) Uri::createFromString('data:')
+            (string) Uri::fromString('data:')
         );
     }
 
@@ -34,7 +34,7 @@ final class DataTest extends TestCase
      */
     public function testCreateFromString(string $uri, string $path): void
     {
-        self::assertSame($path, Uri::createFromString($uri)->getPath());
+        self::assertSame($path, Uri::fromString($uri)->getPath());
     }
 
     public static function validUrlProvider(): array
@@ -69,7 +69,7 @@ final class DataTest extends TestCase
     public function testCreateFromStringFailed(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString($uri);
+        Uri::fromString($uri);
     }
 
     public static function invalidUrlProvider(): array
@@ -86,7 +86,7 @@ final class DataTest extends TestCase
     public function testCreateFromStringFailedWithWrongComponent(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString($uri);
+        Uri::fromString($uri);
     }
 
     public static function invalidComponentProvider(): array
@@ -101,31 +101,31 @@ final class DataTest extends TestCase
     public function testCreateFromComponentsFailedWithInvalidArgumentException(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('data:image/png;base64,°28');
+        Uri::fromString('data:image/png;base64,°28');
     }
 
     public function testCreateFromComponentsFailedInvalidMediatype(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('data:image/png;base64=toto;base64,dsqdfqfd');
+        Uri::fromString('data:image/png;base64=toto;base64,dsqdfqfd');
     }
 
     public function testCreateFromComponentsFailedWithException(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21#fragment');
+        Uri::fromString('data:text/plain;charset=us-ascii,Bonjour%20le%20monde%21#fragment');
     }
 
     public function testWithPath(): void
     {
         $path = 'text/plain;charset=us-ascii,Bonjour%20le%20monde%21';
-        $uri = Uri::createFromString('data:'.$path);
+        $uri = Uri::fromString('data:'.$path);
         self::assertSame($uri, $uri->withPath($path));
     }
 
     public function testSyntaxError(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('http:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
+        Uri::fromString('http:text/plain;charset=us-ascii,Bonjour%20le%20monde%21');
     }
 }

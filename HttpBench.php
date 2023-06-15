@@ -33,7 +33,7 @@ final class HttpBench
         ];
 
         for ($i = 0; $i < 100_000; $i++) {
-            Http::createFromComponents($components);
+            Http::fromComponents($components);
         }
     }
 
@@ -42,7 +42,7 @@ final class HttpBench
     public function benchBuildingAnUriFromUriComponentsMutation(): void
     {
         for ($i = 0; $i < 100_000; $i++) {
-            Http::createFromString()
+            Http::fromString()
                 ->withPath('/5.0')
                 ->withQuery('q=val1&q=val2&query[3]=val3')
                 ->withFragment('foobar')

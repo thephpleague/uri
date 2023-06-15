@@ -26,7 +26,7 @@ class WsTest extends TestCase
      */
     public function testCreateFromString(string $input, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromString($input));
+        self::assertSame($expected, (string) Uri::fromString($input));
     }
 
     public static function validUrlProvider(): array
@@ -65,7 +65,7 @@ class WsTest extends TestCase
     public function testConstructorThrowInvalidArgumentException(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString($uri);
+        Uri::fromString($uri);
     }
 
     public static function invalidUrlProvider(): array
@@ -80,7 +80,7 @@ class WsTest extends TestCase
     public function testModificationFailedWithEmptyAuthority(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString('wss://example.com/path')
+        Uri::fromString('wss://example.com/path')
             ->withScheme(null)
             ->withHost(null)
             ->withPath('//toto');
@@ -91,7 +91,7 @@ class WsTest extends TestCase
      */
     public function testPort(string $uri, ?int $port): void
     {
-        self::assertSame($port, Uri::createFromString($uri)->getPort());
+        self::assertSame($port, Uri::fromString($uri)->getPort());
     }
 
     public static function portProvider(): array

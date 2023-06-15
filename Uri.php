@@ -398,15 +398,15 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function createFromBaseUri(
+    public static function fromBaseUri(
         Stringable|UriInterface|String $uri,
-        Stringable|UriInterface|String $base_uri = null
+        Stringable|UriInterface|String|null $baseUri = null
     ): UriInterface {
         if (!$uri instanceof UriInterface) {
-            $uri = self::createFromString($uri);
+            $uri = self::fromString($uri);
         }
 
-        if (null === $base_uri) {
+        if (null === $baseUri) {
             if (null === $uri->getScheme()) {
                 throw new SyntaxError('the URI `'.$uri.'` must be absolute.');
             }
@@ -421,16 +421,16 @@ final class Uri implements UriInterface
             return $uri;
         }
 
-        if (!$base_uri instanceof UriInterface) {
-            $base_uri = self::createFromString($base_uri);
+        if (!$baseUri instanceof UriInterface) {
+            $baseUri = self::fromString($baseUri);
         }
 
-        if (null === $base_uri->getScheme()) {
-            throw new SyntaxError('the base URI `'.$base_uri.'` must be absolute.');
+        if (null === $baseUri->getScheme()) {
+            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
         }
 
         /** @var UriInterface $uri */
-        $uri = UriResolver::resolve($uri, $base_uri);
+        $uri = UriResolver::resolve($uri, $baseUri);
 
         return $uri;
     }
@@ -438,7 +438,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function createFromString(Stringable|string $uri = ''): self
+    public static function fromString(Stringable|string $uri = ''): self
     {
         $components = UriString::parse($uri);
 
@@ -460,7 +460,7 @@ final class Uri implements UriInterface
      *
      * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
      */
-    public static function createFromComponents(array $components = []): self
+    public static function fromComponents(array $components = []): self
     {
         $components += [
             'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
@@ -491,7 +491,7 @@ final class Uri implements UriInterface
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
      */
-    public static function createFromDataPath(string $path, $context = null): self
+    public static function fromDataPath(Stringable|string $path, $context = null): self
     {
         static $finfo_support = null;
         $finfo_support = $finfo_support ?? class_exists(finfo::class);
@@ -502,6 +502,7 @@ final class Uri implements UriInterface
         }
         // @codeCoverageIgnoreEnd
 
+        $path = (string) $path;
         $file_args = [$path, false];
         $mime_args = [$path, FILEINFO_MIME];
         if (null !== $context) {
@@ -519,7 +520,7 @@ final class Uri implements UriInterface
 
         $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mime_args);
 
-        return Uri::createFromComponents([
+        return Uri::fromComponents([
             'scheme' => 'data',
             'path' => str_replace(' ', '', $mimetype.';base64,'.base64_encode($raw)),
         ]);
@@ -528,20 +529,20 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a Unix path string.
      */
-    public static function createFromUnixPath(string $uri = ''): self
+    public static function fromUnixPath(string $uri = ''): self
     {
         $uri = implode('/', array_map(rawurlencode(...), explode('/', $uri)));
         if ('/' !== ($uri[0] ?? '')) {
-            return Uri::createFromComponents(['path' => $uri]);
+            return Uri::fromComponents(['path' => $uri]);
         }
 
-        return Uri::createFromComponents(['path' => $uri, 'scheme' => 'file', 'host' => '']);
+        return Uri::fromComponents(['path' => $uri, 'scheme' => 'file', 'host' => '']);
     }
 
     /**
      * Create a new instance from a local Windows path string.
      */
-    public static function createFromWindowsPath(string $uri = ''): self
+    public static function fromWindowsPath(string $uri = ''): self
     {
         $root = '';
         if (1 === preg_match(self::REGEXP_WINDOW_PATH, $uri, $matches)) {
@@ -553,23 +554,23 @@ final class Uri implements UriInterface
 
         //Local Windows absolute path
         if ('' !== $root) {
-            return Uri::createFromComponents(['path' => '/'.$root.$uri, 'scheme' => 'file', 'host' => '']);
+            return Uri::fromComponents(['path' => '/'.$root.$uri, 'scheme' => 'file', 'host' => '']);
         }
 
         //UNC Windows Path
         if (!str_starts_with($uri, '//')) {
-            return Uri::createFromComponents(['path' => $uri]);
+            return Uri::fromComponents(['path' => $uri]);
         }
 
         $parts = explode('/', substr($uri, 2), 2) + [1 => null];
 
-        return Uri::createFromComponents(['host' => $parts[0], 'path' => '/'.$parts[1], 'scheme' => 'file']);
+        return Uri::fromComponents(['host' => $parts[0], 'path' => '/'.$parts[1], 'scheme' => 'file']);
     }
 
     /**
      * Create a new instance from a URI object.
      */
-    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    public static function fromUri(Psr7UriInterface|UriInterface $uri): self
     {
         if ($uri instanceof UriInterface) {
             $user_info = $uri->getUserInfo();
@@ -633,14 +634,14 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from the environment.
      */
-    public static function createFromServer(array $server): self
+    public static function fromServer(array $server): self
     {
         $components = ['scheme' => self::fetchScheme($server)];
         [$components['user'], $components['pass']] = self::fetchUserInfo($server);
         [$components['host'], $components['port']] = self::fetchHostname($server);
         [$components['path'], $components['query']] = self::fetchRequestUri($server);
 
-        return Uri::createFromComponents($components);
+        return Uri::fromComponents($components);
     }
 
     /**
@@ -657,7 +658,7 @@ final class Uri implements UriInterface
     /**
      * Returns the environment user info.
      *
-     * @return non-empty-array{0:?string, 1:?string}
+     * @return non-empty-array{0: ?string, 1: ?string}
      */
     private static function fetchUserInfo(array $server): array
     {
@@ -1280,5 +1281,122 @@ final class Uri implements UriInterface
         $clone->assertValidState();
 
         return $clone;
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 9.9.0
+     * @codeCoverageIgnore
+     * @see Uri::fromString()
+     */
+    public static function createFromString(Stringable|string $uri = ''): self
+    {
+        return self::fromString($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 9.9.0
+     * @codeCoverageIgnore
+     * @see Uri::fromComponents()
+     *
+     * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
+     */
+    public static function createFromComponents(array $components = []): self
+    {
+        return self::fromComponents($components);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 9.9.0
+     * @codeCoverageIgnore
+     * @see Uri::fromDataPath()
+     *
+     * @param resource|null $context
+     *
+     * @throws FileinfoSupportMissing If ext/fileinfo is not installed
+     * @throws SyntaxError            If the file does not exist or is not readable
+     */
+    public static function createFromDataPath(Stringable|string $path, $context = null): self
+    {
+        return self::fromDataPath($path, $context);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Uri::fromBaseUri()
+     *
+     * Creates a new instance from a URI and a Base URI.
+     *
+     * The returned URI must be absolute.
+     */
+    public static function createFromBaseUri(
+        Stringable|UriInterface|String $uri,
+        Stringable|UriInterface|String|null $baseUri = null
+    ): UriInterface {
+        return self::fromBaseUri($uri, $baseUri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Uri::fromUnixPath()
+     *
+     * Create a new instance from a Unix path string.
+     */
+    public static function createFromUnixPath(string $uri = ''): self
+    {
+        return self::fromUnixPath($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Uri::fromWindowsPath()
+     *
+     * Create a new instance from a local Windows path string.
+     */
+    public static function createFromWindowsPath(string $uri = ''): self
+    {
+        return self::fromWindowsPath($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Uri::fromUri()
+     *
+     * Create a new instance from a URI object.
+     */
+    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    {
+        return self::fromUri($uri);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Uri::fromServer()
+     *
+     * Create a new instance from the environment.
+     */
+    public static function createFromServer(array $server): self
+    {
+        return self::fromServer($server);
     }
 }

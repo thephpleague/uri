@@ -43,7 +43,7 @@ final class UriInfoTest extends TestCase
     {
         return [
             'absolute uri' => [
-                'uri' => Http::createFromString('http://a/p?q#f'),
+                'uri' => Http::fromString('http://a/p?q#f'),
                 'base_uri' => null,
                 'infos' => [
                     'absolute_uri' => true,
@@ -54,8 +54,8 @@ final class UriInfoTest extends TestCase
                 ],
             ],
             'network relative uri' => [
-                'uri' => Http::createFromString('//스타벅스코리아.com/p?q#f'),
-                'base_uri' => Http::createFromString('//xn--oy2b35ckwhba574atvuzkc.com/p?q#z'),
+                'uri' => Http::fromString('//스타벅스코리아.com/p?q#f'),
+                'base_uri' => Http::fromString('//xn--oy2b35ckwhba574atvuzkc.com/p?q#z'),
                 'infos' => [
                     'absolute_uri' => false,
                     'network_path' => true,
@@ -65,7 +65,7 @@ final class UriInfoTest extends TestCase
                 ],
             ],
             'path relative uri with non empty path' => [
-                'uri' => Http::createFromString('p?q#f'),
+                'uri' => Http::fromString('p?q#f'),
                 'base_uri' => null,
                 'infos' => [
                     'absolute_uri' => false,
@@ -76,7 +76,7 @@ final class UriInfoTest extends TestCase
                 ],
             ],
             'path relative uri with empty' => [
-                'uri' => Http::createFromString('?q#f'),
+                'uri' => Http::fromString('?q#f'),
                 'base_uri' => null,
                 'infos' => [
                     'absolute_uri' => false,
@@ -109,48 +109,48 @@ final class UriInfoTest extends TestCase
     {
         return [
             '2 disctincts URIs' => [
-                Http::createFromString('http://example.com'),
-                Uri::createFromString('ftp://example.com'),
+                Http::fromString('http://example.com'),
+                Uri::fromString('ftp://example.com'),
                 false,
             ],
             '2 identical URIs' => [
-                Http::createFromString('http://example.com'),
-                Http::createFromString('http://example.com'),
+                Http::fromString('http://example.com'),
+                Http::fromString('http://example.com'),
                 true,
             ],
             '2 identical URIs after removing dot segment' => [
-                Http::createFromString('http://example.org/~foo/'),
-                Http::createFromString('http://example.ORG/bar/./../~foo/'),
+                Http::fromString('http://example.org/~foo/'),
+                Http::fromString('http://example.ORG/bar/./../~foo/'),
                 true,
             ],
             '2 distincts relative URIs' => [
-                Http::createFromString('~foo/'),
-                Http::createFromString('../~foo/'),
+                Http::fromString('~foo/'),
+                Http::fromString('../~foo/'),
                 false,
             ],
             '2 identical relative URIs' => [
-                Http::createFromString('../%7efoo/'),
-                Http::createFromString('../~foo/'),
+                Http::fromString('../%7efoo/'),
+                Http::fromString('../~foo/'),
                 true,
             ],
             '2 identical URIs after normalization (1)' => [
-                Http::createFromString('HtTp://مثال.إختبار:80/%7efoo/%7efoo/'),
-                Http::createFromString('http://xn--mgbh0fb.xn--kgbechtv/%7Efoo/~foo/'),
+                Http::fromString('HtTp://مثال.إختبار:80/%7efoo/%7efoo/'),
+                Http::fromString('http://xn--mgbh0fb.xn--kgbechtv/%7Efoo/~foo/'),
                 true,
             ],
             '2 identical URIs after normalization (2)' => [
-                Http::createFromString('http://www.example.com'),
-                Http::createFromString('http://www.example.com/'),
+                Http::fromString('http://www.example.com'),
+                Http::fromString('http://www.example.com/'),
                 true,
             ],
             '2 identical URIs after normalization (3)' => [
-                Http::createFromString('http://www.example.com'),
-                Http::createFromString('http://www.example.com:/'),
+                Http::fromString('http://www.example.com'),
+                Http::fromString('http://www.example.com:/'),
                 true,
             ],
             '2 identical URIs after normalization (4)' => [
-                Http::createFromString('http://www.example.com'),
-                Http::createFromString('http://www.example.com:80/'),
+                Http::fromString('http://www.example.com'),
+                Http::fromString('http://www.example.com:80/'),
                 true,
             ],
         ];
@@ -168,31 +168,31 @@ final class UriInfoTest extends TestCase
     {
         return [
             'http uri' => [
-                'uri' => Uri::createFromString('https://example.com/path?query#fragment'),
+                'uri' => Uri::fromString('https://example.com/path?query#fragment'),
                 'expectedOrigin' => 'https://example.com',
             ],
             'http uri with non standard port' => [
-                'uri' => Uri::createFromString('https://example.com:81/path?query#fragment'),
+                'uri' => Uri::fromString('https://example.com:81/path?query#fragment'),
                 'expectedOrigin' => 'https://example.com:81',
             ],
             'relative uri' => [
-                'uri' => Uri::createFromString('//example.com:81/path?query#fragment'),
+                'uri' => Uri::fromString('//example.com:81/path?query#fragment'),
                 'expectedOrigin' => null,
             ],
             'absolute uri with user info' => [
-                'uri' => Uri::createFromString('https://user:pass@example.com:81/path?query#fragment'),
+                'uri' => Uri::fromString('https://user:pass@example.com:81/path?query#fragment'),
                 'expectedOrigin' => 'https://example.com:81',
             ],
             'opaque URI' => [
-                'uri' => Uri::createFromString('mailto:info@thephpleague.com'),
+                'uri' => Uri::fromString('mailto:info@thephpleague.com'),
                 'expectedOrigin' => null,
             ],
             'file URI' => [
-                'uri' => Uri::createFromString('file:///usr/bin/test'),
+                'uri' => Uri::fromString('file:///usr/bin/test'),
                 'expectedOrigin' => null,
             ],
             'blob' => [
-                'uri' => Uri::createFromString('blob:https://mozilla.org:443/'),
+                'uri' => Uri::fromString('blob:https://mozilla.org:443/'),
                 'expectedOrigin' => 'https://mozilla.org',
             ],
         ];
@@ -203,7 +203,7 @@ final class UriInfoTest extends TestCase
      */
     public function testIsCrossOrigin(string $original, string $modified, bool $expected): void
     {
-        self::assertSame($expected, UriInfo::isCrossOrigin(Uri::createFromString($original), Http::createFromString($modified)));
+        self::assertSame($expected, UriInfo::isCrossOrigin(Uri::fromString($original), Http::fromString($modified)));
     }
 
     /**

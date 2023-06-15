@@ -23,7 +23,7 @@ final class FileTest extends TestCase
 {
     public function testDefaultConstructor(): void
     {
-        self::assertSame('', (string) Uri::createFromString());
+        self::assertSame('', (string) Uri::fromString());
     }
 
     /**
@@ -31,7 +31,7 @@ final class FileTest extends TestCase
      */
     public function testCreateFromString(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::createFromString($uri));
+        self::assertSame($expected, (string) Uri::fromString($uri));
     }
 
     public static function validUrlProvider(): array
@@ -86,7 +86,7 @@ final class FileTest extends TestCase
     public function testConstructorThrowsException(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Uri::createFromString($uri);
+        Uri::fromString($uri);
     }
 
     public static function invalidUrlProvider(): array

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
+use Stringable;
 use function array_fill_keys;
 use function array_filter;
 use function array_keys;
@@ -49,7 +50,7 @@ final class Expression
     /**
      * @throws SyntaxError if the expression is invalid
      */
-    public static function fromString(string $expression): self
+    public static function fromString(Stringable|string $expression): self
     {
         $parts = Operator::parseExpression($expression);
 
@@ -57,6 +58,20 @@ final class Expression
             static fn (string $varSpec): VarSpecifier => VarSpecifier::fromString($varSpec),
             explode(',', $parts['variables'])
         ));
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Expression::fromString()
+     *
+     * @throws SyntaxError if the expression is invalid
+     */
+    public static function createFromString(Stringable|string $expression): self
+    {
+        return self::fromString($expression);
     }
 
     public function expand(VariableBag $variables): string

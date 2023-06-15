@@ -88,7 +88,7 @@ final class UriTemplate
      */
     public function expand(VariableBag|iterable $variables = new VariableBag()): UriInterface
     {
-        return Uri::createFromString(
+        return Uri::fromString(
             $this->template->expand(
                 $this->filterVariables($variables)->replace($this->defaultVariables)
             )

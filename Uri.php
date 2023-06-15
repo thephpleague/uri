@@ -23,7 +23,6 @@ use League\Uri\Idna\Idna;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
-use TypeError;
 use function array_filter;
 use function array_key_first;
 use function array_map;
@@ -36,8 +35,6 @@ use function filter_var;
 use function implode;
 use function in_array;
 use function inet_pton;
-use function is_int;
-use function is_string;
 use function ltrim;
 use function preg_match;
 use function preg_replace;
@@ -370,27 +367,15 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError
      */
-    private function formatPort(Stringable|string|int|null $port = null): ?int
+    private function formatPort(int|null $port = null): ?int
     {
-        if (null === $port || '' === $port) {
-            return null;
-        }
-
-        if (!is_int($port) && !(is_string($port) && 1 === preg_match('/^\d*$/', $port))) {
-            throw new SyntaxError('The port is expected to be an integer or a string representing an integer; '.gettype($port).' given.');
-        }
-
-        $port = (int) $port;
-        if (0 > $port) {
-            throw new SyntaxError('The port `'.$port.'` is invalid.');
-        }
-
         $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme] ?? null;
-        if ($defaultPort === $port) {
-            return null;
-        }
 
-        return $port;
+        return match (true) {
+            null === $port, $defaultPort === $port => null,
+            0 > $port => throw new SyntaxError('The port `'.$port.'` is invalid.'),
+            default => $port,
+        };
     }
 
     /**
@@ -491,7 +476,7 @@ final class Uri implements UriInterface
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
      */
-    public static function fromDataPath(Stringable|string $path, $context = null): self
+    public static function fromDataPath(string $path, $context = null): self
     {
         static $finfo_support = null;
         $finfo_support = $finfo_support ?? class_exists(finfo::class);
@@ -502,7 +487,6 @@ final class Uri implements UriInterface
         }
         // @codeCoverageIgnoreEnd
 
-        $path = (string) $path;
         $file_args = [$path, false];
         $mime_args = [$path, FILEINFO_MIME];
         if (null !== $context) {
@@ -1238,11 +1222,8 @@ final class Uri implements UriInterface
 
     public function withPath(Stringable|string $path): UriInterface
     {
+        /** @var string $path */
         $path = $this->filterString($path);
-        if (null === $path) {
-            throw new TypeError('A path must be a string NULL given.');
-        }
-
         $path = $this->formatPath($path);
         if ($path === $this->path) {
             return $this;
@@ -1321,7 +1302,7 @@ final class Uri implements UriInterface
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
      */
-    public static function createFromDataPath(Stringable|string $path, $context = null): self
+    public static function createFromDataPath(string $path, $context = null): self
     {
         return self::fromDataPath($path, $context);
     }

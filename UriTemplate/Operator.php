@@ -250,10 +250,6 @@ enum Operator: string
 
     private static function encodeQueryOrFragment(string $uriPart): string
     {
-        if ('' === $uriPart) {
-            return $uriPart;
-        }
-
         static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
 
         return (string) preg_replace_callback($pattern, self::urlEncodeMatch(...), $uriPart);

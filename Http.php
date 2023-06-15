@@ -232,6 +232,12 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     }
 
     /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see Http::fromServer()
+     *
      * Create a new instance from the environment.
      */
     public static function createFromServer(array $server): self

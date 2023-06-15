@@ -409,11 +409,16 @@ final class FactoryTest extends TestCase
         );
     }
 
-    public function testCreateWithAbasoluteUriWithoutBaseUri(): void
+    public function testCreateWithAbsoluteUriWithoutBaseUri(): void
     {
         self::assertSame(
             'scheme://host/sky?q#f',
             (string) Uri::fromBaseUri('scheme://host/path/../sky?q#f')
         );
+    }
+
+    public function testCreateFromComponentsWithNullPath(): void
+    {
+        self::assertSame('', Uri::fromComponents(['path' => null])->toString());
     }
 }

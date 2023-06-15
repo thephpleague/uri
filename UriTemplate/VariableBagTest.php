@@ -39,6 +39,7 @@ final class VariableBagTest extends TestCase
 
         self::assertEquals($expected, $bag->all());
         self::assertSame($isEmpty, $bag->isEmpty());
+        self::assertSame(!$isEmpty, $bag->isNotEmpty());
         self::assertCount($count, $bag);
     }
 

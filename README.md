@@ -6,7 +6,11 @@ URI
 [![Latest Version](https://img.shields.io/github/release/thephpleague/uri.svg?style=flat-square)](https://github.com/thephpleague/uri/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/uri.svg?style=flat-square)](https://packagist.org/packages/league/uri)
 
-The `Uri` package provides simple and intuitive classes to manage URIs in PHP. You will be able to
+The `Uri` package provides simple and intuitive classes to manage URIs in PHP.
+
+> ⚠️ this is a sub-split, for development, pull requests and issues, visit: https://github.com/thephpleague/uri-src
+
+You will be able to
 
 - parse, build and resolve URIs
 - create URIs from different sources (string, PHP environment, base URI, URI template, ...);
@@ -78,11 +82,6 @@ Documentation
 --------
 
 Full documentation can be found at [uri.thephpleague.com][].
-
-Contributing
--------
-
-> ⚠️ this is a sub-split, for development, pull requests and issues, visit: https://github.com/thephpleague/uri-src
 
 License
 -------

@@ -213,7 +213,7 @@ class UriTest extends TestCase
     public function testEmptyValueDetection(): void
     {
         $expected = '//0:0@0/0?0#0';
-        self::assertSame($expected, Uri::fromString($expected)->__toString());
+        self::assertSame($expected, Uri::fromString($expected)->toString());
     }
 
     public function testPathDetection(): void

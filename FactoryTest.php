@@ -153,7 +153,7 @@ final class FactoryTest extends TestCase
         self::assertSame((string) $psr7, (string) $uriFromLeagueUri);
 
         $uribis = Http::fromString();
-        self::assertSame((string) $uribis, Uri::fromUri($uribis)->__toString());
+        self::assertSame((string) $uribis, Uri::fromUri($uribis)->toString());
     }
 
     /**

@@ -694,7 +694,7 @@ final class UriStringTest extends TestCase
             ],
             'URI is a object with __toString' => [
                 new class() {
-                    public function __toString()
+                    public function __toString(): string
                     {
                         return 'http://example.org/hello:12?foo=bar#test';
                     }

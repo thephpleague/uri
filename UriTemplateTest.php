@@ -119,7 +119,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
-        self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->__toString());
+        self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->toString());
     }
 
     public static function templateExpansionProvider(): iterable
@@ -258,7 +258,7 @@ final class UriTemplateTest extends TestCase
 
         self::assertSame(
             'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            (new UriTemplate($template))->expand($variables)->__toString()
+            (new UriTemplate($template))->expand($variables)->toString()
         );
     }
 
@@ -301,7 +301,7 @@ final class UriTemplateTest extends TestCase
 
         self::assertSame(
             'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            (new UriTemplate($template, $defaultVariables))->expand($variables)->__toString()
+            (new UriTemplate($template, $defaultVariables))->expand($variables)->toString()
         );
     }
 
@@ -323,7 +323,7 @@ final class UriTemplateTest extends TestCase
 
         self::assertSame(
             'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
-            (new UriTemplate($template, $defaultVariables))->expand($variables)->__toString()
+            (new UriTemplate($template, $defaultVariables))->expand($variables)->toString()
         );
     }
 
@@ -353,6 +353,6 @@ final class UriTemplateTest extends TestCase
         $template = '{foo}/{foo}';
         $data = ['foo' => 'foo'];
 
-        self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->__toString());
+        self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->toString());
     }
 }

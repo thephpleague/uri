@@ -6,20 +6,37 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- `League\Uri\UriTemplate\Operator` to improve internal representation when using UriTemplate features.
+- `League\Uri\UriTemplate\Template` is now part of the public API
 
 ### Fixed
 
-- `UriResolver` and `UriInfo` uri input now supports `Stringable` and `string` type.
+- `League\Uri\UriResolver` and `League\Uri\UriInfo` uri input now supports `Stringable` and `string` type.
 - `League\Uri\UriTemplate`, `League\Uri\UriTemplate\Template`, `League\Uri\UriTemplate\VariableBag` are the only classes that are part of the public API. All the other classes are internal by default.
+- `League\Uri\UriTemplate\VariableBag` implements the `IteratorAggregate` interface
+- `League\Uri\UriTemplate\Operator` to improve internal representation when using UriTemplate features.
 
 ### Deprecated
 
-- None
+- `League\Uri\Uri::createFromString` use `League\Uri\Uri::fromString`
+- `League\Uri\Uri::createFromComponents` use `League\Uri\Uri::fromComponents`
+- `League\Uri\Uri::createFromUri` use `League\Uri\Uri::fromUri`
+- `League\Uri\Uri::createFromBaseUri` use `League\Uri\Uri::fromBaseUri`
+- `League\Uri\Uri::createFromServer` use `League\Uri\Uri::fromServer`
+- `League\Uri\Uri::createFromWindowsPath` use `League\Uri\Uri::fromWindowsPath`
+- `League\Uri\Uri::createFromUnixPath` use `League\Uri\Uri::fromUnixPath`
+- `League\Uri\Uri::createFromDataPath` use `League\Uri\Uri::fromDataPath`
+- `League\Uri\Http::createFromString` use `League\Uri\Http::fromString`
+- `League\Uri\Http::createFromComponents` use `League\Uri\Http::fromComponents`
+- `League\Uri\Http::createFromUri` use `League\Uri\Http::fromUri`
+- `League\Uri\Http::createFromBaseUri` use `League\Uri\Http::fromBaseUri`
+- `League\Uri\Http::createFromServer` use `League\Uri\Http::fromServer`
+- `League\Uri\UriTemplate\Template::createFromString` use `League\Uri\UriTemplate\Template::fromString`
 
 ### Remove
 
 - Support for `__set_state`
+- `League\Uri\UriTemplate\VariableBag::all`
+- Support for `PSR-7` v1
 
 ## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...6.8.0) - 2022-09-13
 

@@ -37,10 +37,10 @@ final class VariableBagTest extends TestCase
     ): void {
         $bag = new VariableBag($iterable);
 
-        self::assertEquals($expected, $bag->all());
         self::assertSame($isEmpty, $bag->isEmpty());
         self::assertSame(!$isEmpty, $bag->isNotEmpty());
         self::assertCount($count, $bag);
+        self::assertEquals($expected, iterator_to_array($bag));
     }
 
     public static function provideValidIterable(): iterable

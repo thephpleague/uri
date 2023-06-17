@@ -41,31 +41,10 @@ final class UriTemplate
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template variables are invalid
      */
-    public function __construct(
-        Template|Stringable|string $template,
-        VariableBag|iterable $defaultVariables = new VariableBag()
-    ) {
-        $this->template = $template instanceof Template ? $template : Template::fromString($template);
-        $this->defaultVariables = $this->filterVariables($defaultVariables);
-    }
-
-    /**
-     * Filters out variables for the given template.
-     */
-    private function filterVariables(VariableBag|iterable $inputVariables): VariableBag
+    public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
     {
-        if (!$inputVariables instanceof VariableBag) {
-            $inputVariables = new VariableBag($inputVariables);
-        }
-
-        $variableBag = new VariableBag();
-        foreach ($this->template->variableNames as $name) {
-            if (isset($inputVariables[$name])) {
-                $variableBag[$name] = $inputVariables[$name];
-            }
-        }
-
-        return $variableBag;
+        $this->template = $template instanceof Template ? $template : Template::fromString($template);
+        $this->defaultVariables = VariableBag::fromTemplate($this->template, $defaultVariables);
     }
 
     /**
@@ -77,20 +56,26 @@ final class UriTemplate
      * If present, variables whose name is not part of the current template
      * possible variable names are removed.
      */
-    public function withDefaultVariables(VariableBag|iterable $defaultDefaultVariables): self
+    public function withDefaultVariables(iterable $defaultVariables): self
     {
-        return new self($this->template, $defaultDefaultVariables);
+        $variables = VariableBag::fromTemplate($this->template, $defaultVariables);
+        if ($variables == $this->defaultVariables) {
+            return $this;
+        }
+
+        return new self($this->template, $defaultVariables);
     }
 
     /**
      * @throws TemplateCanNotBeExpanded if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expand(VariableBag|iterable $variables = new VariableBag()): UriInterface
+    public function expand(iterable $variables = []): UriInterface
     {
         return Uri::fromString(
             $this->template->expand(
-                $this->filterVariables($variables)->replace($this->defaultVariables)
+                VariableBag::fromTemplate($this->template, $variables)
+                    ->replace($this->defaultVariables)
             )
         );
     }

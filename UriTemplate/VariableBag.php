@@ -15,18 +15,21 @@ namespace League\Uri\UriTemplate;
 
 use ArrayAccess;
 use Countable;
+use IteratorAggregate;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
+use Traversable;
 use function is_bool;
-use function is_object;
 use function is_scalar;
 
 /**
+ * @internal The class exposes the internal representation of variable bags
  *
- * @implements ArrayAccess<string, string|bool|int|float|array<string|bool|int|float>>
  * @phpstan-type InputValue string|bool|int|float|array<string|bool|int|float>
+ * @implements ArrayAccess<string, InputValue>
+ * @implements IteratorAggregate<string, InputValue>
  */
-final class VariableBag implements ArrayAccess, Countable
+final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * @var array<string,string|array<string>>
@@ -43,9 +46,34 @@ final class VariableBag implements ArrayAccess, Countable
         }
     }
 
+    public static function fromTemplate(Template $template, iterable $inputVariables): self
+    {
+        if (!$inputVariables instanceof VariableBag) {
+            $inputVariables = new VariableBag($inputVariables);
+        }
+
+        $variableBag = [];
+        foreach ($template->variableNames as $name) {
+            if (isset($inputVariables[$name])) {
+                $variableBag[$name] = $inputVariables[$name];
+            }
+        }
+
+        if ($inputVariables->variables === $variableBag) {
+            return $inputVariables;
+        }
+
+        return new self($variableBag);
+    }
+
     public function count(): int
     {
         return count($this->variables);
+    }
+
+    public function getIterator(): Traversable
+    {
+        yield from $this->variables;
     }
 
     public function offsetExists(mixed $offset): bool
@@ -66,14 +94,6 @@ final class VariableBag implements ArrayAccess, Countable
     public function offsetGet(mixed $offset): mixed
     {
         return $this->fetch($offset);
-    }
-
-    /**
-     * @return array<string,string|array<string>>
-     */
-    public function all(): array
-    {
-        return $this->variables;
     }
 
     /**
@@ -119,7 +139,7 @@ final class VariableBag implements ArrayAccess, Countable
     {
         return match (true) {
             is_bool($value) => true === $value ? '1' : '0',
-            (null === $value || is_scalar($value) || is_object($value)) => (string) $value,
+            (null === $value || is_scalar($value) || $value instanceof Stringable) => (string) $value,
             !$isNestedListAllowed => throw TemplateCanNotBeExpanded::dueToNestedListOfValue($name),
             default => array_map(fn ($var): array|string => self::normalizeValue($var, $name, false), $value),
         };

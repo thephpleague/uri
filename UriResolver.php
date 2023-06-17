@@ -193,7 +193,7 @@ final class UriResolver
     }
 
     /**
-     * Relativizes an URI according to a base URI.
+     * Relativizes a URI according to a base URI.
      *
      * This method MUST retain the state of the submitted URI instance, and return
      * an URI instance of the same type that contains the applied modifications.

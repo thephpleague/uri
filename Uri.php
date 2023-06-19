@@ -193,7 +193,7 @@ final class Uri implements UriInterface
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
     private ?string $scheme;
-    private ?string $user_info;
+    private ?string $userInfo;
     private ?string $host;
     private ?int $port;
     private ?string $authority;
@@ -213,7 +213,7 @@ final class Uri implements UriInterface
         ?string $fragment
     ) {
         $this->scheme = $this->formatScheme($scheme);
-        $this->user_info = $this->formatUserInfo($user, $pass);
+        $this->userInfo = $this->formatUserInfo($user, $pass);
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();
@@ -254,15 +254,15 @@ final class Uri implements UriInterface
             return null;
         }
 
-        static $user_pattern = '/[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
-        $user = preg_replace_callback($user_pattern, Uri::urlEncodeMatch(...), $user);
+        static $userPattern = '/[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
+        $user = preg_replace_callback($userPattern, Uri::urlEncodeMatch(...), $user);
         if (null === $password) {
             return $user;
         }
 
-        static $password_pattern = '/[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
+        static $passwordPattern = '/[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
 
-        return $user.':'.preg_replace_callback($password_pattern, Uri::urlEncodeMatch(...), $password);
+        return $user.':'.preg_replace_callback($passwordPattern, Uri::urlEncodeMatch(...), $password);
     }
 
     /**
@@ -306,12 +306,12 @@ final class Uri implements UriInterface
      */
     private function formatRegisteredName(string $host): string
     {
-        $formatted_host = rawurldecode($host);
-        if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formatted_host)) {
-            return $formatted_host;
+        $formattedHost = rawurldecode($host);
+        if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost)) {
+            return $formattedHost;
         }
 
-        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formatted_host)) {
+        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost)) {
             throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.');
         }
 
@@ -384,11 +384,11 @@ final class Uri implements UriInterface
      * The returned URI must be absolute.
      */
     public static function fromBaseUri(
-        Stringable|UriInterface|String $uri,
-        Stringable|UriInterface|String|null $baseUri = null
+        Stringable|String $uri,
+        Stringable|String|null $baseUri = null
     ): UriInterface {
         if (!$uri instanceof UriInterface) {
-            $uri = self::fromString($uri);
+            $uri = self::new($uri);
         }
 
         if (null === $baseUri) {
@@ -407,7 +407,7 @@ final class Uri implements UriInterface
         }
 
         if (!$baseUri instanceof UriInterface) {
-            $baseUri = self::fromString($baseUri);
+            $baseUri = self::new($baseUri);
         }
 
         if (null === $baseUri->getScheme()) {
@@ -423,7 +423,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function fromString(Stringable|string $uri = ''): self
+    public static function new(Stringable|string $uri = ''): self
     {
         $components = UriString::parse($uri);
 
@@ -487,22 +487,22 @@ final class Uri implements UriInterface
         }
         // @codeCoverageIgnoreEnd
 
-        $file_args = [$path, false];
-        $mime_args = [$path, FILEINFO_MIME];
+        $fileArguments = [$path, false];
+        $mimeArguments = [$path, FILEINFO_MIME];
         if (null !== $context) {
-            $file_args[] = $context;
-            $mime_args[] = $context;
+            $fileArguments[] = $context;
+            $mimeArguments[] = $context;
         }
 
         set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-        $raw = file_get_contents(...$file_args);
+        $raw = file_get_contents(...$fileArguments);
         restore_error_handler();
 
         if (false === $raw) {
             throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
         }
 
-        $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mime_args);
+        $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mimeArguments);
 
         return Uri::fromComponents([
             'scheme' => 'data',
@@ -549,70 +549,6 @@ final class Uri implements UriInterface
         $parts = explode('/', substr($uri, 2), 2) + [1 => null];
 
         return Uri::fromComponents(['host' => $parts[0], 'path' => '/'.$parts[1], 'scheme' => 'file']);
-    }
-
-    /**
-     * Create a new instance from a URI object.
-     */
-    public static function fromUri(Psr7UriInterface|UriInterface $uri): self
-    {
-        if ($uri instanceof UriInterface) {
-            $user_info = $uri->getUserInfo();
-            $user = null;
-            $pass = null;
-            if (null !== $user_info) {
-                [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
-            }
-
-            return new self(
-                $uri->getScheme(),
-                $user,
-                $pass,
-                $uri->getHost(),
-                $uri->getPort(),
-                $uri->getPath(),
-                $uri->getQuery(),
-                $uri->getFragment()
-            );
-        }
-
-        $scheme = $uri->getScheme();
-        if ('' === $scheme) {
-            $scheme = null;
-        }
-
-        $fragment = $uri->getFragment();
-        if ('' === $fragment) {
-            $fragment = null;
-        }
-
-        $query = $uri->getQuery();
-        if ('' === $query) {
-            $query = null;
-        }
-
-        $host = $uri->getHost();
-        if ('' === $host) {
-            $host = null;
-        }
-
-        $user_info = $uri->getUserInfo();
-        $user = null;
-        $pass = null;
-        if ('' !== $user_info) {
-            [$user, $pass] = explode(':', $user_info, 2) + [1 => null];
-        }
-
-        return new self(
-            $scheme,
-            $user,
-            $pass,
-            $host,
-            $uri->getPort(),
-            $uri->getPath(),
-            $query,
-            $fragment
-        );
     }
 
     /**
@@ -737,8 +673,8 @@ final class Uri implements UriInterface
     private function setAuthority(): ?string
     {
         $authority = null;
-        if (null !== $this->user_info) {
-            $authority = $this->user_info.'@';
+        if (null !== $this->userInfo) {
+            $authority = $this->userInfo.'@';
         }
 
         if (null !== $this->host) {
@@ -942,7 +878,7 @@ final class Uri implements UriInterface
      */
     private function isUriWithSchemeHostAndPathOnly(): bool
     {
-        return null === $this->user_info
+        return null === $this->userInfo
             && null === $this->port
             && null === $this->query
             && null === $this->fragment
@@ -1049,7 +985,7 @@ final class Uri implements UriInterface
     {
         return [
             'scheme' => $this->scheme,
-            'user_info' => isset($this->user_info) ? preg_replace(',:(.*).?$,', ':***', $this->user_info) : null,
+            'user_info' => isset($this->userInfo) ? preg_replace(',:(.*).?$,', ':***', $this->userInfo) : null,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,
@@ -1079,7 +1015,7 @@ final class Uri implements UriInterface
      */
     public function getUserInfo(): ?string
     {
-        return $this->user_info;
+        return $this->userInfo;
     }
 
     /**
@@ -1178,12 +1114,12 @@ final class Uri implements UriInterface
             $user_info = $this->formatUserInfo($user, $password);
         }
 
-        if ($user_info === $this->user_info) {
+        if ($user_info === $this->userInfo) {
             return $this;
         }
 
         $clone = clone $this;
-        $clone->user_info = $user_info;
+        $clone->userInfo = $user_info;
         $clone->authority = $clone->setAuthority();
         $clone->assertValidState();
 
@@ -1269,11 +1205,11 @@ final class Uri implements UriInterface
      *
      * @deprecated Since version 9.9.0
      * @codeCoverageIgnore
-     * @see Uri::fromString()
+     * @see Uri::new()
      */
     public static function createFromString(Stringable|string $uri = ''): self
     {
-        return self::fromString($uri);
+        return self::new($uri);
     }
 
     /**
@@ -1358,13 +1294,13 @@ final class Uri implements UriInterface
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Uri::fromUri()
+     * @see Uri::new()
      *
      * Create a new instance from a URI object.
      */
     public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
-        return self::fromUri($uri);
+        return self::new($uri);
     }
 
     /**

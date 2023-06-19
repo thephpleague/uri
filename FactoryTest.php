@@ -143,17 +143,17 @@ final class FactoryTest extends TestCase
     public function testCreateFromUri(): void
     {
         $expected = 'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';
-        $psr7 = Http::fromString($expected);
-        $leagueUri = Uri::fromString($expected);
+        $psr7 = Http::new($expected);
+        $leagueUri = Uri::new($expected);
 
-        $uriFromPsr7 = Uri::fromUri($psr7);
-        $uriFromLeagueUri = Uri::fromUri($leagueUri);
+        $uriFromPsr7 = Uri::new($psr7);
+        $uriFromLeagueUri = Uri::new($leagueUri);
 
         self::assertSame((string) $psr7, (string) $uriFromPsr7);
         self::assertSame((string) $psr7, (string) $uriFromLeagueUri);
 
-        $uribis = Http::fromString();
-        self::assertSame((string) $uribis, Uri::fromUri($uribis)->toString());
+        $uribis = Http::new();
+        self::assertSame((string) $uribis, Uri::new($uribis)->toString());
     }
 
     /**

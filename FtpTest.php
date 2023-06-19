@@ -26,7 +26,7 @@ final class FtpTest extends TestCase
      */
     public function testCreateFromString(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::fromString($uri));
+        self::assertSame($expected, (string) Uri::new($uri));
     }
 
     public static function validUrlProvider(): array
@@ -67,7 +67,7 @@ final class FtpTest extends TestCase
     public function testConstructorThrowInvalidArgumentException(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString($uri);
+        Uri::new($uri);
     }
 
     public static function invalidUrlProvider(): array
@@ -83,7 +83,7 @@ final class FtpTest extends TestCase
     public function testModificationFailedWithEmptyAuthority(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('ftp://example.com/path')
+        Uri::new('ftp://example.com/path')
             ->withScheme(null)
             ->withHost(null)
             ->withPath('//toto');
@@ -94,7 +94,7 @@ final class FtpTest extends TestCase
      */
     public function testPort(string $uri, ?int $port): void
     {
-        self::assertSame($port, Uri::fromString($uri)->getPort());
+        self::assertSame($port, Uri::new($uri)->getPort());
     }
 
     public static function portProvider(): array

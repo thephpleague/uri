@@ -25,7 +25,7 @@ class UriTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->uri = Uri::fromString(
+        $this->uri = Uri::new(
             'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
         );
     }
@@ -39,34 +39,34 @@ class UriTest extends TestCase
     {
         $raw = 'HtTpS://MaStEr.B%c3%A9b%c3%a9.eXaMpLe.CoM:/%7ejohndoe/%a1/in+dex.php?fào.%bar=v%61lue#fragment';
         $normalized = 'https://master.xn--bb-bjab.example.com/%7ejohndoe/%a1/in+dex.php?f%C3%A0o.%bar=v%61lue#fragment';
-        self::assertSame($normalized, (string) Uri::fromString($raw));
+        self::assertSame($normalized, (string) Uri::new($raw));
     }
 
     public function testAutomaticUrlNormalizationBis(): void
     {
         self::assertSame(
             'http://xn--bb-bjab.be./path',
-            (string) Uri::fromString('http://Bébé.BE./path')
+            (string) Uri::new('http://Bébé.BE./path')
         );
     }
 
     public function testConstructingUrisWithSchemesWithNonLeadingDigits(): void
     {
         $uri = 's3://somebucket/somefile.txt';
-        self::assertSame($uri, (string) Uri::fromString($uri));
+        self::assertSame($uri, (string) Uri::new($uri));
     }
 
     public function testSettingSchemesWithNonLeadingDigits(): void
     {
         $uri = 'http://somebucket/somefile.txt';
         $expected_uri = 's3://somebucket/somefile.txt';
-        self::assertSame($expected_uri, (string) Uri::fromString($uri)->withScheme('s3'));
+        self::assertSame($expected_uri, (string) Uri::new($uri)->withScheme('s3'));
     }
 
     public function testPreserveComponentsOnInstantiation(): void
     {
         $uri = 'http://:@example.com?#';
-        self::assertSame($uri, (string) Uri::fromString($uri));
+        self::assertSame($uri, (string) Uri::new($uri));
     }
 
     public function testScheme(): void
@@ -163,31 +163,31 @@ class UriTest extends TestCase
     public function testCannotConvertInvalidHost(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://_b%C3%A9bé.be-/foo/bar');
+        Uri::new('http://_b%C3%A9bé.be-/foo/bar');
     }
 
     public function testWithSchemeFailedWithInvalidSchemeValue(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com')->withScheme('tété');
+        Uri::new('http://example.com')->withScheme('tété');
     }
 
     public function testWithPathFailedWithInvalidChars(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com')->withPath('#24');
+        Uri::new('http://example.com')->withPath('#24');
     }
 
     public function testWithPathFailedWithInvalidPathRelativeToTheAuthority(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com')->withPath('foo/bar');
+        Uri::new('http://example.com')->withPath('foo/bar');
     }
 
     public function testModificationFailedWithInvalidHost(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com/path')->withHost('%23');
+        Uri::new('http://example.com/path')->withHost('%23');
     }
 
     /**
@@ -196,7 +196,7 @@ class UriTest extends TestCase
     public function testModificationFailedWithMissingAuthority(string $path): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com/path')
+        Uri::new('http://example.com/path')
             ->withScheme(null)
             ->withHost(null)
             ->withPath($path);
@@ -213,40 +213,40 @@ class UriTest extends TestCase
     public function testEmptyValueDetection(): void
     {
         $expected = '//0:0@0/0?0#0';
-        self::assertSame($expected, Uri::fromString($expected)->toString());
+        self::assertSame($expected, Uri::new($expected)->toString());
     }
 
     public function testPathDetection(): void
     {
         $expected = 'foo/bar:';
-        self::assertSame($expected, Uri::fromString($expected)->getPath());
+        self::assertSame($expected, Uri::new($expected)->getPath());
     }
 
     public function testWithPathThrowTypeErrorOnWrongType(): void
     {
         self::expectException(TypeError::class);
 
-        Uri::fromString('https://example.com')->withPath(null); /* @phpstan-ignore-line */
+        Uri::new('https://example.com')->withPath(null); /* @phpstan-ignore-line */
     }
 
     public static function setStateDataProvider(): array
     {
         return [
-            'all components' => [Uri::fromString('https://a:b@c:442/d?q=r#f')],
-            'without scheme' => [Uri::fromString('//a:b@c:442/d?q=r#f')],
-            'without userinfo' => [Uri::fromString('https://c:442/d?q=r#f')],
-            'without port' => [Uri::fromString('https://a:b@c/d?q=r#f')],
-            'without path' => [Uri::fromString('https://a:b@c:442?q=r#f')],
-            'without query' => [Uri::fromString('https://a:b@c:442/d#f')],
-            'without fragment' => [Uri::fromString('https://a:b@c:442/d?q=r')],
-            'without pass' => [Uri::fromString('https://a@c:442/d?q=r#f')],
-            'without authority' => [Uri::fromString('/d?q=r#f')],
+            'all components' => [Uri::new('https://a:b@c:442/d?q=r#f')],
+            'without scheme' => [Uri::new('//a:b@c:442/d?q=r#f')],
+            'without userinfo' => [Uri::new('https://c:442/d?q=r#f')],
+            'without port' => [Uri::new('https://a:b@c/d?q=r#f')],
+            'without path' => [Uri::new('https://a:b@c:442?q=r#f')],
+            'without query' => [Uri::new('https://a:b@c:442/d#f')],
+            'without fragment' => [Uri::new('https://a:b@c:442/d?q=r')],
+            'without pass' => [Uri::new('https://a@c:442/d?q=r#f')],
+            'without authority' => [Uri::new('/d?q=r#f')],
        ];
     }
 
     public function testDebugInfo(): void
     {
-        $uri = Uri::fromString('https://a:b@c:442/d?q=r#f');
+        $uri = Uri::new('https://a:b@c:442/d?q=r#f');
         $debugInfo = $uri->__debugInfo();
         self::assertSame('a:***', $debugInfo['user_info']);
         self::assertCount(7, $debugInfo);
@@ -254,7 +254,7 @@ class UriTest extends TestCase
 
     public function testJsonSerialize(): void
     {
-        $uri = Uri::fromString('https://a:b@c:442/d?q=r#f');
+        $uri = Uri::new('https://a:b@c:442/d?q=r#f');
 
         /** @var string $uriString */
         $uriString = json_encode((string) $uri);
@@ -269,20 +269,20 @@ class UriTest extends TestCase
         $uri = '//0:0@0/0?0#0';
         self::assertEquals(
             Uri::fromComponents(parse_url($uri)),
-            Uri::fromString($uri)
+            Uri::new($uri)
         );
     }
 
     public function testModificationFailedWithInvalidPort(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com/path')->withPort(-1);
+        Uri::new('http://example.com/path')->withPort(-1);
     }
 
     public function testModificationFailedWithInvalidPort2(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromString('http://example.com/path')->withPort('-1'); /* @phpstan-ignore-line */
+        Uri::new('http://example.com/path')->withPort('-1'); /* @phpstan-ignore-line */
     }
 
     public function testCreateFromComponentsHandlesScopedIpv6(): void
@@ -367,7 +367,7 @@ class UriTest extends TestCase
 
     public function testReservedCharsInPathUnencoded(): void
     {
-        $uri = Uri::fromString()
+        $uri = Uri::new()
             ->withHost('api.linkedin.com')
             ->withScheme('https')
             ->withPath('/v1/people/~:(first-name,last-name,email-address,picture-url)');
@@ -380,7 +380,7 @@ class UriTest extends TestCase
 
     public function testUnreservedCharsInPathUnencoded(): void
     {
-        $uri = Uri::fromString('http://www.example.com/')
+        $uri = Uri::new('http://www.example.com/')
             ->withPath('/h"ell\'o/./wor ld<i>/%25abc%xyz');
 
         self::assertSame(
@@ -394,7 +394,7 @@ class UriTest extends TestCase
      */
     public function testWithUserInfoEncodesUsernameAndPassword(string $user, ?string $credential, string $expected): void
     {
-        $uri = Uri::fromString('https://user:pass@local.example.com:3001/foo?bar=baz#quz');
+        $uri = Uri::new('https://user:pass@local.example.com:3001/foo?bar=baz#quz');
         $new = $uri->withUserInfo($user, $credential);
         self::assertSame($expected, $new->getUserInfo());
     }
@@ -417,7 +417,7 @@ class UriTest extends TestCase
         self::expectException(SyntaxError::class);
         self::expectExceptionMessage('The uri `file://example.org:80/home/jsmith/foo.txt` is invalid for the `file` scheme.');
 
-        Uri::fromString('file://example.org:80/home/jsmith/foo.txt');
+        Uri::new('file://example.org:80/home/jsmith/foo.txt');
     }
 
     public function testIssue171TheEmptySchemeShouldThrow(): void
@@ -425,12 +425,12 @@ class UriTest extends TestCase
         self::expectException(SyntaxError::class);
         self::expectExceptionMessage('The scheme `` is invalid.');
 
-        Uri::fromString('domain.com')->withScheme('');
+        Uri::new('domain.com')->withScheme('');
     }
 
     public function testItStripMultipleLeadingSlashOnGetPath(): void
     {
-        $uri = Uri::fromString('https://example.com///miscillaneous.tld');
+        $uri = Uri::new('https://example.com///miscillaneous.tld');
 
         self::assertSame('https://example.com///miscillaneous.tld', (string) $uri);
         self::assertSame('/miscillaneous.tld', $uri->getPath());
@@ -447,7 +447,7 @@ class UriTest extends TestCase
 
     public function testItPreservesMultipleLeadingSlashesOnMutation(): void
     {
-        $uri = Uri::fromString('https://www.example.com///google.com');
+        $uri = Uri::new('https://www.example.com///google.com');
         self::assertSame('https://www.example.com///google.com', (string) $uri);
         self::assertSame('/google.com', $uri->getPath());
 

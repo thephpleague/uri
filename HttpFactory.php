@@ -20,6 +20,6 @@ final class HttpFactory implements UriFactoryInterface
 {
     public function createUri(string $uri = ''): UriInterface
     {
-        return Http::fromString($uri);
+        return Http::new($uri);
     }
 }

@@ -17,17 +17,17 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
-- `League\Uri\Uri::createFromString` use `League\Uri\Uri::fromString`
+- `League\Uri\Uri::createFromString` use `League\Uri\Uri::new`
 - `League\Uri\Uri::createFromComponents` use `League\Uri\Uri::fromComponents`
-- `League\Uri\Uri::createFromUri` use `League\Uri\Uri::fromUri`
+- `League\Uri\Uri::createFromUri` use `League\Uri\Uri::new`
 - `League\Uri\Uri::createFromBaseUri` use `League\Uri\Uri::fromBaseUri`
 - `League\Uri\Uri::createFromServer` use `League\Uri\Uri::fromServer`
 - `League\Uri\Uri::createFromWindowsPath` use `League\Uri\Uri::fromWindowsPath`
 - `League\Uri\Uri::createFromUnixPath` use `League\Uri\Uri::fromUnixPath`
 - `League\Uri\Uri::createFromDataPath` use `League\Uri\Uri::fromDataPath`
-- `League\Uri\Http::createFromString` use `League\Uri\Http::fromString`
+- `League\Uri\Http::createFromString` use `League\Uri\Http::new`
 - `League\Uri\Http::createFromComponents` use `League\Uri\Http::fromComponents`
-- `League\Uri\Http::createFromUri` use `League\Uri\Http::fromUri`
+- `League\Uri\Http::createFromUri` use `League\Uri\Http::new`
 - `League\Uri\Http::createFromBaseUri` use `League\Uri\Http::fromBaseUri`
 - `League\Uri\Http::createFromServer` use `League\Uri\Http::fromServer`
 - `League\Uri\UriTemplate\Template::createFromString` use `League\Uri\UriTemplate\Template::fromString`

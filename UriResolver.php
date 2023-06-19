@@ -48,7 +48,7 @@ final class UriResolver
     {
         return match (true) {
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
-            default => Uri::fromString($uri),
+            default => Uri::new($uri),
         };
     }
 

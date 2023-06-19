@@ -29,14 +29,14 @@ final class HttpTest extends TestCase
 
     public function testDefaultConstructor(): void
     {
-        self::assertSame('', (string) Http::fromString());
+        self::assertSame('', (string) Http::new());
     }
 
     public function testJson(): void
     {
         self::assertSame(
             '"http:\/\/example.com"',
-            json_encode(Http::fromString('http://example.com'))
+            json_encode(Http::new('http://example.com'))
         );
     }
 
@@ -44,18 +44,18 @@ final class HttpTest extends TestCase
     {
         self::expectException(InvalidArgumentException::class);
 
-        Http::fromString('https://example.com:-1');
+        Http::new('https://example.com:-1');
     }
 
     public function testThrowInvalidArgumentExceptionOnIllegalCharacters(): void
     {
         self::expectException(InvalidArgumentException::class);
-        Http::fromString('https://example.com')->withFragment("\0");
+        Http::new('https://example.com')->withFragment("\0");
     }
 
     public function testPortModification(): void
     {
-        $uri = Http::fromString('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
+        $uri = Http::new('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
         self::assertSame(443, $uri->getPort());
         self::assertSame($uri, $uri->withPort(443));
         self::assertNotEquals($uri, $uri->withPort(81));
@@ -67,7 +67,7 @@ final class HttpTest extends TestCase
 
     public function testUserInfoModification(): void
     {
-        $uri = Http::fromString('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
+        $uri = Http::new('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
         self::assertSame('login:pass', $uri->getUserInfo());
         self::assertSame($uri, $uri->withUserInfo('login', 'pass'));
         self::assertNotEquals($uri, $uri->withUserInfo('login'));
@@ -82,14 +82,14 @@ final class HttpTest extends TestCase
         $uri = '//0:0@0/0?0#0';
         self::assertEquals(
             Http::fromComponents(parse_url($uri)),
-            Http::fromString($uri)
+            Http::new($uri)
         );
     }
 
     public function testCreateFromBaseUri(): void
     {
         self::assertEquals(
-            Http::fromString('http://0:0@0/0?0#0'),
+            Http::new('http://0:0@0/0?0#0'),
             Http::fromBaseUri('0?0#0', 'http://0:0@0/')
         );
     }
@@ -97,28 +97,28 @@ final class HttpTest extends TestCase
     public function testCreateFromUri(): void
     {
         self::assertEquals(
-            Http::fromString('http://0:0@0/0?0#0'),
-            Http::fromUri(Uri::fromString('http://0:0@0/0?0#0'))
+            Http::new('http://0:0@0/0?0#0'),
+            Http::new(Uri::new('http://0:0@0/0?0#0'))
         );
 
         self::assertEquals(
-            Http::fromString('http://0:0@0/0?0#0'),
-            Http::fromUri(Http::fromString('http://0:0@0/0?0#0'))
+            Http::new('http://0:0@0/0?0#0'),
+            Http::new(Http::new('http://0:0@0/0?0#0'))
         );
     }
 
     public static function setStateDataProvider(): array
     {
         return [
-            'all components' => [Http::fromString('https://a:b@c:442/d?q=r#f')],
-            'without scheme' => [Http::fromString('//a:b@c:442/d?q=r#f')],
-            'without userinfo' => [Http::fromString('https://c:442/d?q=r#f')],
-            'without port' => [Http::fromString('https://a:b@c/d?q=r#f')],
-            'without path' => [Http::fromString('https://a:b@c:442?q=r#f')],
-            'without query' => [Http::fromString('https://a:b@c:442/d#f')],
-            'without fragment' => [Http::fromString('https://a:b@c:442/d?q=r')],
-            'without pass' => [Http::fromString('https://a@c:442/d?q=r#f')],
-            'without authority' => [Http::fromString('/d?q=r#f')],
+            'all components' => [Http::new('https://a:b@c:442/d?q=r#f')],
+            'without scheme' => [Http::new('//a:b@c:442/d?q=r#f')],
+            'without userinfo' => [Http::new('https://c:442/d?q=r#f')],
+            'without port' => [Http::new('https://a:b@c/d?q=r#f')],
+            'without path' => [Http::new('https://a:b@c:442?q=r#f')],
+            'without query' => [Http::new('https://a:b@c:442/d#f')],
+            'without fragment' => [Http::new('https://a:b@c:442/d?q=r')],
+            'without pass' => [Http::new('https://a@c:442/d?q=r#f')],
+            'without authority' => [Http::new('/d?q=r#f')],
        ];
     }
 
@@ -127,7 +127,7 @@ final class HttpTest extends TestCase
      */
     public function testCreateFromString(string $expected, string $uri): void
     {
-        self::assertSame($expected, (string) Http::fromString($uri));
+        self::assertSame($expected, (string) Http::new($uri));
     }
 
     public static function validUrlProvider(): array
@@ -162,7 +162,7 @@ final class HttpTest extends TestCase
     public function testIsValid(string $uri): void
     {
         self::expectException(SyntaxError::class);
-        Http::fromString($uri);
+        Http::new($uri);
     }
 
     public static function invalidUrlProvider(): array
@@ -182,7 +182,7 @@ final class HttpTest extends TestCase
      */
     public function testValidPort(string $uri, ?int $port): void
     {
-        self::assertSame($port, Http::fromString($uri)->getPort());
+        self::assertSame($port, Http::new($uri)->getPort());
     }
 
     public static function portProvider(): array
@@ -202,7 +202,7 @@ final class HttpTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Http::fromString()->withPath($path);
+        Http::new()->withPath($path);
     }
 
     public static function invalidPathProvider(): array
@@ -221,7 +221,7 @@ final class HttpTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Http::fromString($uri);
+        Http::new($uri);
     }
 
     public static function invalidURI(): array
@@ -238,7 +238,7 @@ final class HttpTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Http::fromString('http://example.com/path')
+        Http::new('http://example.com/path')
             ->withScheme('')
             ->withHost('')
             ->withPath('//toto');
@@ -246,7 +246,7 @@ final class HttpTest extends TestCase
 
     public function testItStripMultipleLeadingSlashOnGetPath(): void
     {
-        $uri = Http::fromString('https://example.com///miscillaneous.tld');
+        $uri = Http::new('https://example.com///miscillaneous.tld');
 
         self::assertSame('https://example.com///miscillaneous.tld', (string) $uri);
         self::assertSame('/miscillaneous.tld', $uri->getPath());
@@ -264,7 +264,7 @@ final class HttpTest extends TestCase
 
     public function testItPreservesMultipleLeadingSlashesOnMutation(): void
     {
-        $uri = Http::fromString('https://www.example.com///google.com');
+        $uri = Http::new('https://www.example.com///google.com');
 
         self::assertSame('https://www.example.com///google.com', (string) $uri);
         self::assertSame('/google.com', $uri->getPath());

@@ -47,22 +47,14 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * Create a new instance from a URI object.
+     * Create a new instance from a string or a stringable object.
      */
-    public static function fromUri(Psr7UriInterface|UriInterface $uri): self
+    public static function new(Stringable|string $uri = ''): self
     {
         return match (true) {
             $uri instanceof UriInterface => new self($uri),
-            default => new self(Uri::fromUri($uri)),
+            default => new self(Uri::new($uri)),
         };
-    }
-
-    /**
-     * Create a new instance from a string.
-     */
-    public static function fromString(Stringable|string $uri = ''): self
-    {
-        return new self(Uri::fromString($uri));
     }
 
     /**
@@ -205,13 +197,13 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Http::fromString()
+     * @see Http::new()
      *
      * Create a new instance from a string.
      */
     public static function createFromString(Stringable|string $uri = ''): self
     {
-        return self::fromString($uri);
+        return self::new($uri);
     }
 
     /**
@@ -250,13 +242,13 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Http::fromUri()
+     * @see Http::new()
      *
      * Create a new instance from a URI object.
      */
     public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
-        return self::fromUri($uri);
+        return self::new($uri);
     }
 
     /**

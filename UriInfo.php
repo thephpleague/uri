@@ -40,7 +40,7 @@ final class UriInfo
     {
         return match (true) {
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
-            default => Uri::fromString($uri),
+            default => Uri::new($uri),
         };
     }
 
@@ -161,7 +161,7 @@ final class UriInfo
         $uri = self::filterUri($uri);
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = Uri::fromString($uri->getPath());
+            $uri = Uri::new($uri->getPath());
             $scheme = $uri->getScheme();
         }
 
@@ -186,8 +186,8 @@ final class UriInfo
         $uri = self::filterUri($uri);
         $baseUri = self::filterUri($baseUri);
 
-        return null === ($uriString = self::getOrigin(Uri::fromUri($uri)))
-            || null === ($baseUriString = self::getOrigin(Uri::fromUri($baseUri)))
+        return null === ($uriString = self::getOrigin(Uri::new($uri)))
+            || null === ($baseUriString = self::getOrigin(Uri::new($baseUri)))
             || $uriString !== $baseUriString;
     }
 }

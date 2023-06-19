@@ -72,7 +72,7 @@ final class UriTemplate
      */
     public function expand(iterable $variables = []): UriInterface
     {
-        return Uri::fromString(
+        return Uri::new(
             $this->template->expand(
                 VariableBag::fromTemplate($this->template, $variables)
                     ->replace($this->defaultVariables)

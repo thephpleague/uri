@@ -383,10 +383,8 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(
-        Stringable|String $uri,
-        Stringable|String|null $baseUri = null
-    ): UriInterface {
+    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
+    {
         if (!$uri instanceof UriInterface) {
             $uri = self::new($uri);
         }

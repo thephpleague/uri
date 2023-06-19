@@ -22,7 +22,7 @@ final class TemplateBench
     public function benchBuildingAnUriStringFromATemplateAndAVariableBag(): void
     {
         $template = 'https://uri.thephpleague.com/{foo}{?query,limit}';
-        $uriTemplate = Template::fromString($template);
+        $uriTemplate = Template::new($template);
         $data = new VariableBag([
             'foo' => 'foo',
             'query' => ['foo', 'bar', 'baz'],

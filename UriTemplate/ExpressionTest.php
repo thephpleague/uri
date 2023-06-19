@@ -27,7 +27,7 @@ final class ExpressionTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation, array $variableNames): void
     {
-        $expression = Expression::fromString($notation);
+        $expression = Expression::new($notation);
         self::assertSame($notation, $expression->value);
         self::assertSame($variableNames, $expression->variableNames);
     }
@@ -63,7 +63,7 @@ final class ExpressionTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        Expression::fromString($expression);
+        Expression::new($expression);
     }
 
     public static function providesInvalidExpression(): iterable
@@ -107,7 +107,7 @@ final class ExpressionTest extends TestCase
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
-        self::assertSame($expectedUriString, Expression::fromString($template)->expand(new VariableBag($variables)));
+        self::assertSame($expectedUriString, Expression::new($template)->expand(new VariableBag($variables)));
     }
 
     public static function templateExpansionProvider(): iterable
@@ -234,7 +234,7 @@ final class ExpressionTest extends TestCase
     {
         self::expectException(TemplateCanNotBeExpanded::class);
 
-        Expression::fromString($expression)->expand(new VariableBag($variables));
+        Expression::new($expression)->expand(new VariableBag($variables));
     }
 
     /**

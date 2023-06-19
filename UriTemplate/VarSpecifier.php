@@ -36,7 +36,7 @@ final class VarSpecifier
     ) {
     }
 
-    public static function fromString(string $specification): self
+    public static function new(string $specification): self
     {
         if (1 !== preg_match(self::REGEXP_VARSPEC, $specification, $parsed)) {
             throw new SyntaxError('The variable specification "'.$specification.'" is invalid.');

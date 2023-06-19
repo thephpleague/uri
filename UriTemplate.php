@@ -43,7 +43,7 @@ final class UriTemplate
      */
     public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
     {
-        $this->template = $template instanceof Template ? $template : Template::fromString($template);
+        $this->template = $template instanceof Template ? $template : Template::new($template);
         $this->defaultVariables = VariableBag::fromTemplate($this->template, $defaultVariables);
     }
 

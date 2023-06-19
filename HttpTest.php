@@ -107,21 +107,6 @@ final class HttpTest extends TestCase
         );
     }
 
-    public static function setStateDataProvider(): array
-    {
-        return [
-            'all components' => [Http::new('https://a:b@c:442/d?q=r#f')],
-            'without scheme' => [Http::new('//a:b@c:442/d?q=r#f')],
-            'without userinfo' => [Http::new('https://c:442/d?q=r#f')],
-            'without port' => [Http::new('https://a:b@c/d?q=r#f')],
-            'without path' => [Http::new('https://a:b@c:442?q=r#f')],
-            'without query' => [Http::new('https://a:b@c:442/d#f')],
-            'without fragment' => [Http::new('https://a:b@c:442/d?q=r')],
-            'without pass' => [Http::new('https://a@c:442/d?q=r#f')],
-            'without authority' => [Http::new('/d?q=r#f')],
-       ];
-    }
-
     /**
      * @dataProvider validUrlProvider
      */

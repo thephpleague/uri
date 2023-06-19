@@ -51,7 +51,7 @@ final class Template
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
-    public static function fromString(Stringable|string $template): self
+    public static function new(Stringable|string $template): self
     {
         $template = (string) $template;
         /** @var string $remainder */
@@ -65,7 +65,7 @@ final class Template
         $expressions = [];
         foreach ($founds as $found) {
             if (!isset($names[$found['expression']])) {
-                $expressions[] = Expression::fromString($found['expression']);
+                $expressions[] = Expression::new($found['expression']);
                 $names[$found['expression']] = 1;
             }
         }
@@ -93,17 +93,17 @@ final class Template
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
+     * @throws SyntaxError if the template contains invalid expressions
+     * @throws SyntaxError if the template contains invalid variable specification
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Template::fromString()
+     * @see Template::new()
      *
      * Create a new instance from a string.
      *
-     * @throws SyntaxError if the template contains invalid expressions
-     * @throws SyntaxError if the template contains invalid variable specification
      */
     public static function createFromString(Stringable|string $template): self
     {
-        return self::fromString($template);
+        return self::new($template);
     }
 }

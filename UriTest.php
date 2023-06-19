@@ -229,21 +229,6 @@ class UriTest extends TestCase
         Uri::new('https://example.com')->withPath(null); /* @phpstan-ignore-line */
     }
 
-    public static function setStateDataProvider(): array
-    {
-        return [
-            'all components' => [Uri::new('https://a:b@c:442/d?q=r#f')],
-            'without scheme' => [Uri::new('//a:b@c:442/d?q=r#f')],
-            'without userinfo' => [Uri::new('https://c:442/d?q=r#f')],
-            'without port' => [Uri::new('https://a:b@c/d?q=r#f')],
-            'without path' => [Uri::new('https://a:b@c:442?q=r#f')],
-            'without query' => [Uri::new('https://a:b@c:442/d#f')],
-            'without fragment' => [Uri::new('https://a:b@c:442/d?q=r')],
-            'without pass' => [Uri::new('https://a@c:442/d?q=r#f')],
-            'without authority' => [Uri::new('/d?q=r#f')],
-       ];
-    }
-
     public function testDebugInfo(): void
     {
         $uri = Uri::new('https://a:b@c:442/d?q=r#f');

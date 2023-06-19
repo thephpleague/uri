@@ -50,12 +50,12 @@ final class Expression
     /**
      * @throws SyntaxError if the expression is invalid
      */
-    public static function fromString(Stringable|string $expression): self
+    public static function new(Stringable|string $expression): self
     {
         $parts = Operator::parseExpression($expression);
 
         return new Expression($parts['operator'], ...array_map(
-            static fn (string $varSpec): VarSpecifier => VarSpecifier::fromString($varSpec),
+            static fn (string $varSpec): VarSpecifier => VarSpecifier::new($varSpec),
             explode(',', $parts['variables'])
         ));
     }
@@ -63,15 +63,15 @@ final class Expression
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
+     * @throws SyntaxError if the expression is invalid
+     * @see Expression::new()
+     *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Expression::fromString()
-     *
-     * @throws SyntaxError if the expression is invalid
      */
     public static function createFromString(Stringable|string $expression): self
     {
-        return self::fromString($expression);
+        return self::new($expression);
     }
 
     public function expand(VariableBag $variables): string
@@ -87,10 +87,9 @@ final class Expression
             )
         );
 
-        if ('' === $expanded) {
-            return '';
-        }
-
-        return $this->operator->first().$expanded;
+        return match (true) {
+            '' !== $expanded => $this->operator->first().$expanded,
+            default => '',
+        };
     }
 }

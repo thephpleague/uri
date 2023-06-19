@@ -26,7 +26,7 @@ final class VarSpecifierTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
-        self::assertSame($notation, VarSpecifier::fromString($notation)->toString());
+        self::assertSame($notation, VarSpecifier::new($notation)->toString());
     }
 
     public static function providesValidNotation(): iterable
@@ -50,7 +50,7 @@ final class VarSpecifierTest extends TestCase
     {
         self::expectException(SyntaxError::class);
 
-        VarSpecifier::fromString($notation);
+        VarSpecifier::new($notation);
     }
 
     public static function providesInvalidNotation(): iterable
@@ -65,13 +65,13 @@ final class VarSpecifierTest extends TestCase
 
     public function testItCanReturnsTheVarSpecifierProperties(): void
     {
-        $varSpecifier = VarSpecifier::fromString('und.er_sc0re%3B:5');
+        $varSpecifier = VarSpecifier::new('und.er_sc0re%3B:5');
 
         self::assertSame('und.er_sc0re%3B', $varSpecifier->name);
         self::assertSame(':', $varSpecifier->modifier);
         self::assertSame(5, $varSpecifier->position);
 
-        $varSpecifier = VarSpecifier::fromString('und.er_sc0re%3B*');
+        $varSpecifier = VarSpecifier::new('und.er_sc0re%3B*');
 
         self::assertSame('und.er_sc0re%3B', $varSpecifier->name);
         self::assertSame('*', $varSpecifier->modifier);

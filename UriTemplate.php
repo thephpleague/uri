@@ -67,13 +67,27 @@ final class UriTemplate
     }
 
     /**
-     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
+     * @throws TemplateCanNotBeExpanded only if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
     {
         return Uri::new(
             $this->template->expand(
+                VariableBag::fromTemplate($this->template, $variables)
+                    ->replace($this->defaultVariables)
+            )
+        );
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the expansion fails
+     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
+     */
+    public function expandOrFail(iterable $variables): UriInterface
+    {
+        return Uri::new(
+            $this->template->expandOrFail(
                 VariableBag::fromTemplate($this->template, $variables)
                     ->replace($this->defaultVariables)
             )

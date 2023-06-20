@@ -79,10 +79,48 @@ final class Template
      */
     public function expand(VariableBag|iterable $variables): string
     {
+        [$variables] = $this->filterVariables($variables);
+
+        return $this->expandAll($variables);
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
+     * @throws TemplateCanNotBeExpanded if the variables contains nested array values
+     * @throws TemplateCanNotBeExpanded if a variable is missing from the input
+     */
+    public function expandOrFail(VariableBag|iterable $variables): string
+    {
+        [$variables, $missing] = $this->filterVariables($variables);
+        if ([] !== $missing) {
+            throw new TemplateCanNotBeExpanded('Missing variables `'.implode('`, `', $missing).'`.');
+        }
+
+        return $this->expandAll($variables);
+    }
+
+    /**
+     * @return array{0:VariableBag, 1:array<string>}
+     */
+    private function filterVariables(VariableBag|iterable $variables): array
+    {
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
         }
 
+        $reducer = function (array $carry, int|string $name) use ($variables): array {
+            if (!isset($variables[$name])) {
+                $carry[] = $name;
+            }
+
+            return $carry;
+        };
+
+        return [$variables, array_reduce($this->variableNames, $reducer, [])];
+    }
+
+    private function expandAll(VariableBag $variables): string
+    {
         return array_reduce(
             $this->expressions,
             fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),

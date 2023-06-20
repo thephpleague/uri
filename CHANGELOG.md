@@ -18,6 +18,8 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\Http::fromComponents`
 - `League\Uri\Http::fromBaseUri`
 - `League\Uri\Http::fromServer`
+- `League\Uri\UriTemplate::expandOrFail`
+- `League\Uri\UriTemplate\Template::expandOrFail`
 
 ### Fixed
 

@@ -150,7 +150,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     private function newInstance(UriInterface $uri): self
     {
         return match (true) {
-            (string) $uri === (string) $this->uri => $this,
+            $uri->toString() === $this->uri->toString() => $this,
             default => new self($uri),
         };
     }

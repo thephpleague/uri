@@ -57,7 +57,7 @@ Highlights
 System Requirements
 -------
 
-- You require **PHP >= 7.3** but the latest stable version of PHP is recommended
+- You require **PHP >= 8.1** but the latest stable version of PHP is recommended
 - You will need the **ext-intl** to handle i18n URI.
 - Since version 6.2.0 you will need the **ext-fileinfo** to handle Data URI creation from a filepath.
 

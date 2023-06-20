@@ -44,7 +44,7 @@ final class UriResolver
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(Psr7UriInterface|UriInterface|Stringable|string $uri): Psr7UriInterface|UriInterface
+    private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
     {
         return match (true) {
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
@@ -58,13 +58,10 @@ final class UriResolver
      * If the first argument is a UriInterface the method returns a UriInterface object
      * If the first argument is a Psr7UriInterface the method returns a Psr7UriInterface object
      */
-    public static function resolve(
-        Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $baseUri
-    ): Psr7UriInterface|UriInterface {
+    public static function resolve(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
+    {
         $uri = self::filterUri($uri);
         $baseUri = self::filterUri($baseUri);
-
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -85,11 +82,11 @@ final class UriResolver
             [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
         }
 
-        [$uri_path, $uri_query] = self::resolvePathAndQuery($uri, $baseUri);
+        [$path, $query] = self::resolvePathAndQuery($uri, $baseUri);
 
         return $uri
-            ->withPath(self::removeDotSegments($uri_path))
-            ->withQuery($uri_query)
+            ->withPath(self::removeDotSegments($path))
+            ->withQuery($query)
             ->withHost($baseUri->getHost())
             ->withPort($baseUri->getPort())
             ->withUserInfo((string) $user, $pass)
@@ -106,9 +103,9 @@ final class UriResolver
             return $path;
         }
 
-        $old_segments = explode('/', $path);
-        $new_path = implode('/', array_reduce($old_segments, UriResolver::reducer(...), []));
-        if (isset(self::DOT_SEGMENTS[end($old_segments)])) {
+        $oldSegments = explode('/', $path);
+        $new_path = implode('/', array_reduce($oldSegments, UriResolver::reducer(...), []));
+        if (isset(self::DOT_SEGMENTS[end($oldSegments)])) {
             $new_path .= '/';
         }
 
@@ -201,10 +198,8 @@ final class UriResolver
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public static function relativize(
-        Psr7UriInterface|UriInterface|Stringable|string $uri,
-        Psr7UriInterface|UriInterface|Stringable|string $baseUri
-    ): Psr7UriInterface|UriInterface {
+    public static function relativize(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
+    {
         $uri = self::filterUri($uri);
         $baseUri = self::filterUri($baseUri);
 

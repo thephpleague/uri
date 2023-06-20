@@ -46,7 +46,7 @@
     "require": {
         "php": "^8.1",
         "ext-json": "*",
-        "league/uri-interfaces": "dev-master",
+        "league/uri-interfaces": "7.x-dev",
         "psr/http-message": "^2.0"
     },
     "autoload": {
@@ -58,10 +58,11 @@
         "league/uri-schemes": "^1.0"
     },
     "suggest": {
-        "league/uri-components" : "Needed to easily manipulate URI objects",
         "ext-intl" : "Needed to improve host validation",
         "ext-fileinfo": "Needed to create Data URI from a filepath",
-        "psr/http-factory": "Needed to use the URI factory"
+        "league/uri-components" : "Needed to easily manipulate URI objects",
+        "psr/http-factory": "Needed to use the URI factory",
+        "symfony/polyfill-intl-idn": "to use the IDNA feature via Symfony Polyfill"
     },
     "extra": {
         "branch-alias": {

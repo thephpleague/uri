@@ -65,7 +65,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromUnixPath(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::fromUnixPath($uri));
+        self::assertSame($expected, Uri::fromUnixPath($uri)->toString());
     }
 
     public static function unixpathProvider(): array
@@ -99,7 +99,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromWindowsLocalPath(string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::fromWindowsPath($uri));
+        self::assertSame($expected, Uri::fromWindowsPath($uri)->toString());
     }
 
     public static function windowLocalPathProvider(): array
@@ -149,8 +149,8 @@ final class FactoryTest extends TestCase
         $uriFromPsr7 = Uri::new($psr7);
         $uriFromLeagueUri = Uri::new($leagueUri);
 
-        self::assertSame((string) $psr7, (string) $uriFromPsr7);
-        self::assertSame((string) $psr7, (string) $uriFromLeagueUri);
+        self::assertSame((string) $psr7, $uriFromPsr7->toString());
+        self::assertSame((string) $psr7, $uriFromLeagueUri->toString());
 
         $uribis = Http::new();
         self::assertSame((string) $uribis, Uri::new($uribis)->toString());
@@ -161,7 +161,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromServer(string $expected, array $input): void
     {
-        self::assertSame($expected, (string) Uri::fromServer($input));
+        self::assertSame($expected, Uri::fromServer($input)->toString());
         self::assertSame($expected, (string) Http::fromServer($input));
     }
 
@@ -339,7 +339,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) Uri::fromBaseUri($uri, $base_uri));
+        self::assertSame($expected, Uri::fromBaseUri($uri, $base_uri)->toString());
     }
 
     public static function createProvider(): array
@@ -405,7 +405,7 @@ final class FactoryTest extends TestCase
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            (string) Uri::fromBaseUri('data:text/plain;charset=us-ascii,')
+            Uri::fromBaseUri('data:text/plain;charset=us-ascii,')->toString()
         );
     }
 
@@ -413,7 +413,7 @@ final class FactoryTest extends TestCase
     {
         self::assertSame(
             'scheme://host/sky?q#f',
-            (string) Uri::fromBaseUri('scheme://host/path/../sky?q#f')
+            Uri::fromBaseUri('scheme://host/path/../sky?q#f')->toString()
         );
     }
 

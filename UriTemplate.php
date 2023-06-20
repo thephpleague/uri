@@ -67,7 +67,7 @@ final class UriTemplate
     }
 
     /**
-     * @throws TemplateCanNotBeExpanded only if the variable contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
@@ -82,6 +82,7 @@ final class UriTemplate
 
     /**
      * @throws TemplateCanNotBeExpanded if the expansion fails
+     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expandOrFail(iterable $variables): UriInterface

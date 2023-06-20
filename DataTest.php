@@ -25,7 +25,7 @@ final class DataTest extends TestCase
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            (string) Uri::new('data:')
+            Uri::new('data:')->toString()
         );
     }
 

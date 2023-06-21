@@ -86,6 +86,11 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
         return new self(Uri::fromBaseUri($uri, $baseUri));
     }
 
+    public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
+    {
+        return new self(Uri::fromTemplate($template, $variables));
+    }
+
     public function getScheme(): string
     {
         return (string) $this->uri->getScheme();

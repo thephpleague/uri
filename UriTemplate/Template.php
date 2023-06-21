@@ -38,13 +38,14 @@ final class Template
     private function __construct(public readonly string $value, Expression ...$expressions)
     {
         $this->expressions = $expressions;
-        $this->variableNames = array_keys(
-            array_reduce(
-                $expressions,
-                fn (array $curry, Expression $expression): array => [...$curry, ...array_fill_keys($expression->variableNames, 1)],
-                []
-            )
-        );
+        $this->variableNames = array_keys(array_reduce(
+            $expressions,
+            fn (array $curry, Expression $expression): array => [
+                ...$curry,
+                ...array_fill_keys($expression->variableNames, 1),
+            ],
+            []
+        ));
     }
 
     /**
@@ -60,17 +61,17 @@ final class Template
             throw new SyntaxError('The template "'.$template.'" contains invalid expressions.');
         }
 
-        $names = [];
         preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $founds, PREG_SET_ORDER);
-        $expressions = [];
-        foreach ($founds as $found) {
-            if (!isset($names[$found['expression']])) {
-                $expressions[] = Expression::new($found['expression']);
-                $names[$found['expression']] = 1;
-            }
-        }
 
-        return new self($template, ...$expressions);
+        return new self($template, ...array_values(
+            array_reduce($founds, function (array $carry, array $found): array {
+                if (!isset($carry[$found['expression']])) {
+                    $carry[$found['expression']] = Expression::new($found['expression']);
+                }
+
+                return $carry;
+            }, [])
+        ));
     }
 
     /**
@@ -87,7 +88,7 @@ final class Template
     /**
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
-     * @throws TemplateCanNotBeExpanded if a variable is missing from the input
+     * @throws TemplateCanNotBeExpanded if a required variable is missing from the input iterable
      */
     public function expandOrFail(VariableBag|iterable $variables): string
     {

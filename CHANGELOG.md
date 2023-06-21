@@ -9,15 +9,17 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\UriTemplate\Template` is now part of the public API
 - `League\Uri\Uri::new`
 - `League\Uri\Uri::fromComponents`
-- `League\Uri\Uri::fromBaseUri`
 - `League\Uri\Uri::fromServer`
 - `League\Uri\Uri::fromWindowsPath`
 - `League\Uri\Uri::fromUnixPath`
 - `League\Uri\Uri::fromDataPath`
+- `League\Uri\Uri::fromBaseUri`
+- `League\Uri\Uri::fromTemplate`
 - `League\Uri\Http::new`
 - `League\Uri\Http::fromComponents`
 - `League\Uri\Http::fromBaseUri`
 - `League\Uri\Http::fromServer`
+- `League\Uri\Http::fromTemplate`
 - `League\Uri\UriTemplate::expandOrFail`
 - `League\Uri\UriTemplate\Template::expandOrFail`
 

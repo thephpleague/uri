@@ -379,46 +379,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Creates a new instance from a URI and a Base URI.
-     *
-     * The returned URI must be absolute.
-     */
-    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
-    {
-        if (!$uri instanceof UriInterface) {
-            $uri = self::new($uri);
-        }
-
-        if (null === $baseUri) {
-            if (null === $uri->getScheme()) {
-                throw new SyntaxError('the URI `'.$uri.'` must be absolute.');
-            }
-
-            if (null === $uri->getAuthority()) {
-                return $uri;
-            }
-
-            /** @var UriInterface $uri */
-            $uri = UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
-
-            return $uri;
-        }
-
-        if (!$baseUri instanceof UriInterface) {
-            $baseUri = self::new($baseUri);
-        }
-
-        if (null === $baseUri->getScheme()) {
-            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
-        }
-
-        /** @var UriInterface $uri */
-        $uri = UriResolver::resolve($uri, $baseUri);
-
-        return $uri;
-    }
-
-    /**
      * Create a new instance from a string.
      */
     public static function new(Stringable|string $uri = ''): self
@@ -464,6 +424,46 @@ final class Uri implements UriInterface
             $components['query'],
             $components['fragment']
         );
+    }
+
+    /**
+     * Creates a new instance from a URI and a Base URI.
+     *
+     * The returned URI must be absolute.
+     */
+    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
+    {
+        if (!$uri instanceof UriInterface) {
+            $uri = self::new($uri);
+        }
+
+        if (null === $baseUri) {
+            if (null === $uri->getScheme()) {
+                throw new SyntaxError('the URI `'.$uri.'` must be absolute.');
+            }
+
+            if (null === $uri->getAuthority()) {
+                return $uri;
+            }
+
+            /** @var UriInterface $uri */
+            $uri = UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
+
+            return $uri;
+        }
+
+        if (!$baseUri instanceof UriInterface) {
+            $baseUri = self::new($baseUri);
+        }
+
+        if (null === $baseUri->getScheme()) {
+            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
+        }
+
+        /** @var UriInterface $uri */
+        $uri = UriResolver::resolve($uri, $baseUri);
+
+        return $uri;
     }
 
     /**
@@ -560,6 +560,14 @@ final class Uri implements UriInterface
         [$components['path'], $components['query']] = self::fetchRequestUri($server);
 
         return Uri::fromComponents($components);
+    }
+
+    /**
+     * Creates a new instance from a template.
+     */
+    public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
+    {
+        return self::new(UriTemplate\Template::new($template)->expand($variables));
     }
 
     /**

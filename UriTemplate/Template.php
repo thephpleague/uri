@@ -34,8 +34,9 @@ final class Template
     private readonly array $expressions;
     /** @var array<string> */
     public readonly array $variableNames;
+    public readonly VariableBag $defaultVariables;
 
-    private function __construct(public readonly string $value, Expression ...$expressions)
+    private function __construct(public readonly string $value, iterable $defaultVariables, Expression ...$expressions)
     {
         $this->expressions = $expressions;
         $this->variableNames = array_keys(array_reduce(
@@ -46,13 +47,14 @@ final class Template
             ],
             []
         ));
+        [$this->defaultVariables] = $this->filterVariables($defaultVariables);
     }
 
     /**
      * @throws SyntaxError if the template contains invalid expressions
      * @throws SyntaxError if the template contains invalid variable specification
      */
-    public static function new(Stringable|string $template): self
+    public static function new(Stringable|string $template, iterable $defaultVariables = []): self
     {
         $template = (string) $template;
         /** @var string $remainder */
@@ -63,7 +65,7 @@ final class Template
 
         preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $founds, PREG_SET_ORDER);
 
-        return new self($template, ...array_values(
+        return new self($template, $defaultVariables, ...array_values(
             array_reduce($founds, function (array $carry, array $found): array {
                 if (!isset($carry[$found['expression']])) {
                     $carry[$found['expression']] = Expression::new($found['expression']);
@@ -75,12 +77,36 @@ final class Template
     }
 
     /**
+     * Returns a new instance with the updated default variables.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the modified default variables.
+     *
+     * If present, variables whose name is not part of the current template
+     * possible variable names are removed.
+     */
+    public function withDefaultVariables(iterable $defaultVariables): self
+    {
+        $defaultVariables = $this->filterVariables($defaultVariables);
+        if ($defaultVariables == $this->defaultVariables) {
+            return $this;
+        }
+
+        return new self(
+            $this->value,
+            $defaultVariables,
+            ...$this->expressions
+        );
+    }
+
+    /**
      * @throws TemplateCanNotBeExpanded if the variables is an array and a ":" modifier needs to be applied
      * @throws TemplateCanNotBeExpanded if the variables contains nested array values
      */
     public function expand(VariableBag|iterable $variables): string
     {
         [$variables] = $this->filterVariables($variables);
+        ;
 
         return $this->expandAll($variables);
     }
@@ -122,6 +148,8 @@ final class Template
 
     private function expandAll(VariableBag $variables): string
     {
+        $variables = $variables->replace($this->defaultVariables);
+
         return array_reduce(
             $this->expressions,
             fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),

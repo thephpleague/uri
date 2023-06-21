@@ -161,13 +161,13 @@ final class UriString
      */
     public static function build(array $components): string
     {
-        $result = $components['path'] ?? '';
+        $uri = $components['path'] ?? '';
         if (isset($components['query'])) {
-            $result .= '?'.$components['query'];
+            $uri .= '?'.$components['query'];
         }
 
         if (isset($components['fragment'])) {
-            $result .= '#'.$components['fragment'];
+            $uri .= '#'.$components['fragment'];
         }
 
         $scheme = null;
@@ -175,26 +175,40 @@ final class UriString
             $scheme = $components['scheme'].':';
         }
 
-        if (!isset($components['host'])) {
-            return $scheme.$result;
+        $authority = self::buildAuthority($components);
+        if (null !== $authority) {
+            $authority = '//'.$authority;
         }
 
-        $scheme .= '//';
+        return $scheme.$authority.$uri;
+    }
+
+    /**
+     * Generate a URI authority representation from its parsed representation.
+     *
+     * @param InputComponentMap $components
+     */
+    public static function buildAuthority(array $components): ?string
+    {
+        if (!isset($components['host'])) {
+            return null;
+        }
+
         $authority = $components['host'];
         if (isset($components['port'])) {
             $authority .= ':'.$components['port'];
         }
 
         if (!isset($components['user'])) {
-            return $scheme.$authority.$result;
+            return $authority;
         }
 
         $authority = '@'.$authority;
         if (!isset($components['pass'])) {
-            return $scheme.$components['user'].$authority.$result;
+            return $components['user'].$authority;
         }
 
-        return $scheme.$components['user'].':'.$components['pass'].$authority.$result;
+        return $components['user'].':'.$components['pass'].$authority;
     }
 
     /**
@@ -312,9 +326,14 @@ final class UriString
      *
      * @return AuthorityMap
      */
-    private static function parseAuthority(string $authority): array
+    public static function parseAuthority(?string $authority): array
     {
-        $components = ['user' => null, 'pass' => null, 'host' => '', 'port' => null];
+        $components = ['user' => null, 'pass' => null, 'host' => null, 'port' => null];
+        if (null === $authority) {
+            return $components;
+        }
+
+        $components['host'] = '';
         if ('' === $authority) {
             return $components;
         }

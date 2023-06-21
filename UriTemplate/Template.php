@@ -93,7 +93,7 @@ final class Template
     {
         [$variables, $missing] = $this->filterVariables($variables);
         if ([] !== $missing) {
-            throw new TemplateCanNotBeExpanded('Missing variables `'.implode('`, `', $missing).'`.');
+            throw TemplateCanNotBeExpanded::dueToMissingVariables(...$missing);
         }
 
         return $this->expandAll($variables);

@@ -141,8 +141,8 @@ final class UriInfo
         $uri = self::normalize(self::filterUri($uri));
         $baseUri = self::normalize(self::filterUri($baseUri));
 
-        return (string) $uri->withFragment($uri instanceof Psr7UriInterface ? '' : null)
-            === (string) $baseUri->withFragment($baseUri instanceof Psr7UriInterface ? '' : null);
+        return (string) $uri->withFragment(self::emptyComponentValue($uri))
+            === (string) $baseUri->withFragment(self::emptyComponentValue($baseUri));
     }
 
     /**
@@ -179,11 +179,8 @@ final class UriInfo
      */
     public static function isCrossOrigin(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        $uri = self::filterUri($uri);
-        $baseUri = self::filterUri($baseUri);
-
-        return null === ($uriString = self::getOrigin(Uri::new($uri)))
-            || null === ($baseUriString = self::getOrigin(Uri::new($baseUri)))
+        return null === ($uriString = self::getOrigin(Uri::new(self::filterUri($uri))))
+            || null === ($baseUriString = self::getOrigin(Uri::new(self::filterUri($baseUri))))
             || $uriString !== $baseUriString;
     }
 }

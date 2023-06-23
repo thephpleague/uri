@@ -14,13 +14,16 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use ArrayAccess;
+use Closure;
 use Countable;
 use IteratorAggregate;
 use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
 use Traversable;
+use function array_filter;
 use function is_bool;
 use function is_scalar;
+use const ARRAY_FILTER_USE_BOTH;
 
 /**
  * @internal The class exposes the internal representation of variable bags
@@ -44,26 +47,6 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
         foreach ($variables as $name => $value) {
             $this->assign((string) $name, $value);
         }
-    }
-
-    public static function fromTemplate(Template $template, iterable $inputVariables): self
-    {
-        if (!$inputVariables instanceof VariableBag) {
-            $inputVariables = new VariableBag($inputVariables);
-        }
-
-        $variableBag = [];
-        foreach ($template->variableNames as $name) {
-            if (isset($inputVariables[$name])) {
-                $variableBag[$name] = $inputVariables[$name];
-            }
-        }
-
-        if ($inputVariables->variables === $variableBag) {
-            return $inputVariables;
-        }
-
-        return new self($variableBag);
     }
 
     public function count(): int
@@ -151,5 +134,10 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
     public function replace(VariableBag $variables): self
     {
         return new self($this->variables + $variables->variables);
+    }
+
+    public function filter(Closure $fn): self
+    {
+        return new self(array_filter($this->variables, $fn, ARRAY_FILTER_USE_BOTH));
     }
 }

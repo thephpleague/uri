@@ -11,6 +11,8 @@
 
 namespace League\Uri;
 
+use League\Uri\Components\HierarchicalPath;
+use League\Uri\Components\Port;
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -443,5 +445,20 @@ class UriTest extends TestCase
         $modifiedUri2 =  $uri->withPath('///google.com');
         self::assertSame('https://www.example.com///google.com', (string) $modifiedUri2);
         self::assertSame('/google.com', $modifiedUri2->getPath());
+    }
+
+    public function testItCanBeUpdatedWithAnUriComponent(): void
+    {
+        $uri = Uri::new('https://www.example.com/')
+            ->withPath(HierarchicalPath::fromAbsoluteSegments(['do', 'you', 'love', 'brahms']));
+
+        self::assertSame('https://www.example.com/do/you/love/brahms', $uri->toString());
+    }
+
+    public function testItThrowsWhenTheUriComponentValueIsNull(): void
+    {
+        $this->expectException(SyntaxError::class);
+
+        Uri::new('https://www.example.com/')->withPath(Port::new());
     }
 }

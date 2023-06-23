@@ -20,6 +20,8 @@ use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\VariableBag;
 use Stringable;
+use function array_fill_keys;
+use function array_key_exists;
 
 /**
  * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.
@@ -28,9 +30,6 @@ use Stringable;
  * @package League\Uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   6.1.0
- *
- * Based on GuzzleHttp\UriTemplate class in Guzzle v6.5.
- * @link https://github.com/guzzle/guzzle/blob/6.5/src/UriTemplate.php
  */
 final class UriTemplate
 {
@@ -39,12 +38,22 @@ final class UriTemplate
 
     /**
      * @throws SyntaxError              if the template syntax is invalid
-     * @throws TemplateCanNotBeExpanded if the template variables are invalid
+     * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
      */
     public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
     {
         $this->template = $template instanceof Template ? $template : Template::new($template);
-        $this->defaultVariables = VariableBag::fromTemplate($this->template, $defaultVariables);
+        $this->defaultVariables = $this->filterVariables($defaultVariables);
+    }
+
+    private function filterVariables(iterable $variables): VariableBag
+    {
+        if (!$variables instanceof VariableBag) {
+            $variables = new VariableBag($variables);
+        }
+        $variablesNames = array_fill_keys($this->template->variableNames, 1);
+
+        return $variables->filter(fn ($value, string|int $name) => array_key_exists($name, $variablesNames));
     }
 
     /**
@@ -55,11 +64,13 @@ final class UriTemplate
      *
      * If present, variables whose name is not part of the current template
      * possible variable names are removed.
+     *
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
      */
     public function withDefaultVariables(iterable $defaultVariables): self
     {
-        $variables = VariableBag::fromTemplate($this->template, $defaultVariables);
-        if ($variables == $this->defaultVariables) {
+        $defaultVariables = $this->filterVariables($defaultVariables);
+        if ($defaultVariables == $this->defaultVariables) {
             return $this;
         }
 
@@ -67,30 +78,27 @@ final class UriTemplate
     }
 
     /**
-     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
     {
         return Uri::new(
             $this->template->expand(
-                VariableBag::fromTemplate($this->template, $variables)
-                    ->replace($this->defaultVariables)
+                $this->filterVariables($variables)->replace($this->defaultVariables)
             )
         );
     }
 
     /**
-     * @throws TemplateCanNotBeExpanded if the expansion fails
-     * @throws TemplateCanNotBeExpanded if the variable contains nested array values
+     * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expandOrFail(iterable $variables): UriInterface
+    public function expandOrFail(iterable $variables = []): UriInterface
     {
         return Uri::new(
             $this->template->expandOrFail(
-                VariableBag::fromTemplate($this->template, $variables)
-                    ->replace($this->defaultVariables)
+                $this->filterVariables($variables)->replace($this->defaultVariables)
             )
         );
     }

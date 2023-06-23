@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use finfo;
+use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\IdnaConversionFailed;
@@ -398,35 +399,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Create a new instance from a hash representation of the URI similar
-     * to PHP parse_url function result.
-     *
-     * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
-     */
-    public static function fromComponents(array $components = []): self
-    {
-        $components += [
-            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
-            'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
-        ];
-
-        if (null === $components['path']) {
-            $components['path'] = '';
-        }
-
-        return new self(
-            $components['scheme'],
-            $components['user'],
-            $components['pass'],
-            $components['host'],
-            $components['port'],
-            $components['path'],
-            $components['query'],
-            $components['fragment']
-        );
-    }
-
-    /**
      * Creates a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
@@ -464,6 +436,45 @@ final class Uri implements UriInterface
         $uri = UriResolver::resolve($uri, $baseUri);
 
         return $uri;
+    }
+
+    /**
+     * Creates a new instance from a template.
+     */
+    public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
+    {
+        return self::new(
+            UriTemplate\Template::new($template)->expand($variables)
+        );
+    }
+
+    /**
+     * Create a new instance from a hash representation of the URI similar
+     * to PHP parse_url function result.
+     *
+     * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
+     */
+    public static function fromComponents(array $components = []): self
+    {
+        $components += [
+            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
+            'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
+        ];
+
+        if (null === $components['path']) {
+            $components['path'] = '';
+        }
+
+        return new self(
+            $components['scheme'],
+            $components['user'],
+            $components['pass'],
+            $components['host'],
+            $components['port'],
+            $components['path'],
+            $components['query'],
+            $components['fragment']
+        );
     }
 
     /**
@@ -560,14 +571,6 @@ final class Uri implements UriInterface
         [$components['path'], $components['query']] = self::fetchRequestUri($server);
 
         return Uri::fromComponents($components);
-    }
-
-    /**
-     * Creates a new instance from a template.
-     */
-    public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
-    {
-        return self::new(UriTemplate\Template::new($template)->expand($variables));
     }
 
     /**
@@ -1094,6 +1097,10 @@ final class Uri implements UriInterface
      */
     private function filterString(Stringable|string|null $str): ?string
     {
+        if ($str instanceof UriComponentInterface) {
+            $str = $str->value();
+        }
+
         if (null === $str) {
             return null;
         }
@@ -1164,8 +1171,10 @@ final class Uri implements UriInterface
 
     public function withPath(Stringable|string $path): UriInterface
     {
-        /** @var string $path */
         $path = $this->filterString($path);
+        if (null === $path) {
+            throw new SyntaxError('The path component can not be null.');
+        }
         $path = $this->formatPath($path);
         if ($path === $this->path) {
             return $this;

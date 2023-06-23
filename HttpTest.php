@@ -264,4 +264,15 @@ final class HttpTest extends TestCase
         self::assertSame('https://www.example.com///google.com', (string) $modifiedUri2);
         self::assertSame('/google.com', $modifiedUri2->getPath());
     }
+
+    public function testICanBeInstantiateFromRFC6750(): void
+    {
+        $template = 'https://example.com/hotels/{hotel}/bookings/{booking}';
+        $params = ['booking' => '42', 'hotel' => 'Rest & Relax'];
+
+        self::assertSame(
+            '/hotels/Rest%20%26%20Relax/bookings/42',
+            Http::fromTemplate($template, $params)->getPath()
+        );
+    }
 }

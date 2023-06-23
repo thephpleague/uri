@@ -421,4 +421,15 @@ final class FactoryTest extends TestCase
     {
         self::assertSame('', Uri::fromComponents(['path' => null])->toString());
     }
+
+    public function testICanBeInstantiateFromRFC6750(): void
+    {
+        $template = 'https://example.com/hotels/{hotel}/bookings/{booking}';
+        $params = ['booking' => '42', 'hotel' => 'Rest & Relax'];
+
+        self::assertSame(
+            '/hotels/Rest%20%26%20Relax/bookings/42',
+            Uri::fromTemplate($template, $params)->getPath()
+        );
+    }
 }

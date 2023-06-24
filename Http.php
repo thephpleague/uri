@@ -249,7 +249,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * Create a new instance from a URI object.
      */
-    public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
+    public static function createFromUri(Stringable|string $uri): self
     {
         return self::new($uri);
     }

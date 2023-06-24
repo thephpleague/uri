@@ -91,6 +91,8 @@ final class Uri implements UriInterface
      * RFC3986 schema regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
+     *
+     * @var string
      */
     private const REGEXP_SCHEME = ',^[a-z]([-a-z\d+.]+)?$,i';
 
@@ -98,6 +100,8 @@ final class Uri implements UriInterface
      * RFC3986 host identified by a registered name regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_REGNAME = '/^(
         (?<unreserved>[a-z\d_~\-\.])|
@@ -109,6 +113,8 @@ final class Uri implements UriInterface
      * RFC3986 delimiters of the generic URI components regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
 
@@ -116,6 +122,8 @@ final class Uri implements UriInterface
      * RFC3986 IPvFuture regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
+     *
+     * @var string
      */
     private const REGEXP_HOST_IPFUTURE = '/^
         v(?<version>[A-F\d])+\.
@@ -127,11 +135,15 @@ final class Uri implements UriInterface
 
     /**
      * RFC3986 IPvFuture host and port component.
+     *
+     * @var string
      */
     private const REGEXP_HOST_PORT = ',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x';
 
     /**
      * Significant 10 bits of IP to detect Zone ID regular expression pattern.
+     *
+     * @var string
      */
     private const HOST_ADDRESS_BLOCK = "\xfe\x80";
 
@@ -140,6 +152,8 @@ final class Uri implements UriInterface
      * <volume> contains the volume but not the volume separator.
      * The volume separator may be URL-encoded (`|` as `%7C`) by ::formatPath(),
      * so we account for that here.
+     *
+     * @var string
      */
     private const REGEXP_FILE_PATH = ',^(?<delim>/)?(?<volume>[a-zA-Z])(?:[:|\|]|%7C)(?<rest>.*)?,';
 
@@ -147,6 +161,8 @@ final class Uri implements UriInterface
      * Mimetype regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_MIMETYPE = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
@@ -154,12 +170,16 @@ final class Uri implements UriInterface
      * Base64 content regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc2397
+     *
+     * @var string
      */
     private const REGEXP_BINARY = ',(;|^)base64$,';
 
     /**
      * Windows file path string regular expression pattern.
      * <root> contains both the volume and volume separator.
+     *
+     * @var string
      */
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
@@ -193,13 +213,21 @@ final class Uri implements UriInterface
      */
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
+    /** @readonly */
     private ?string $scheme;
+    /** @readonly */
     private ?string $userInfo;
+    /** @readonly */
     private ?string $host;
+    /** @readonly */
     private ?int $port;
+    /** @readonly */
     private ?string $authority;
+    /** @readonly */
     private string $path;
+    /** @readonly */
     private ?string $query;
+    /** @readonly */
     private ?string $fragment;
     private ?string $uri;
 
@@ -236,9 +264,9 @@ final class Uri implements UriInterface
             return $scheme;
         }
 
-        $formatted_scheme = strtolower($scheme);
-        if (array_key_exists($formatted_scheme, self::SCHEME_DEFAULT_PORT) || 1 === preg_match(self::REGEXP_SCHEME, $formatted_scheme)) {
-            return $formatted_scheme;
+        $formattedScheme = strtolower($scheme);
+        if (array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT) || 1 === preg_match(self::REGEXP_SCHEME, $formattedScheme)) {
+            return $formattedScheme;
         }
 
         throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
@@ -487,11 +515,11 @@ final class Uri implements UriInterface
      */
     public static function fromDataPath(string $path, $context = null): self
     {
-        static $finfo_support = null;
-        $finfo_support = $finfo_support ?? class_exists(finfo::class);
+        static $finfoSupport = null;
+        $finfoSupport = $finfoSupport ?? class_exists(finfo::class);
 
         // @codeCoverageIgnoreStart
-        if (!$finfo_support) {
+        if (!$finfoSupport) {
             throw new FileinfoSupportMissing('Please install ext/fileinfo to use the '.__METHOD__.'() method.');
         }
         // @codeCoverageIgnoreEnd
@@ -579,9 +607,11 @@ final class Uri implements UriInterface
     private static function fetchScheme(array $server): string
     {
         $server += ['HTTPS' => ''];
-        $res = filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return false !== $res ? 'https' : 'http';
+        return match (true) {
+            false !== filter_var($server['HTTPS'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) => 'https',
+            default => 'http',
+        };
     }
 
     /**
@@ -767,8 +797,8 @@ final class Uri implements UriInterface
             throw new SyntaxError('The path mimetype `'.$mimetype.'` is invalid.');
         }
 
-        $is_binary = 1 === preg_match(self::REGEXP_BINARY, $parameters, $matches);
-        if ($is_binary) {
+        $isBinary = 1 === preg_match(self::REGEXP_BINARY, $parameters, $matches);
+        if ($isBinary) {
             $parameters = substr($parameters, 0, - strlen($matches[0]));
         }
 
@@ -777,7 +807,7 @@ final class Uri implements UriInterface
             throw new SyntaxError('The path paremeters `'.$parameters.'` is invalid.');
         }
 
-        if (!$is_binary) {
+        if (!$isBinary) {
             return;
         }
 
@@ -802,11 +832,11 @@ final class Uri implements UriInterface
      */
     private function formatFilePath(string $path): string
     {
-        $replace = static function (array $matches): string {
-            return $matches['delim'].$matches['volume'].':'.$matches['rest'];
-        };
-
-        return (string) preg_replace_callback(self::REGEXP_FILE_PATH, $replace, $path);
+        return (string) preg_replace_callback(
+            self::REGEXP_FILE_PATH,
+            static fn (array $matches): string => $matches['delim'].$matches['volume'].':'.$matches['rest'],
+            $path
+        );
     }
 
     /**

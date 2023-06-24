@@ -513,7 +513,7 @@ final class Uri implements UriInterface
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
      */
-    public static function fromDataPath(string $path, $context = null): self
+    public static function fromDataPath(Stringable|string $path, $context = null): self
     {
         static $finfoSupport = null;
         $finfoSupport = $finfoSupport ?? class_exists(finfo::class);
@@ -524,6 +524,7 @@ final class Uri implements UriInterface
         }
         // @codeCoverageIgnoreEnd
 
+        $path = (string) $path;
         $fileArguments = [$path, false];
         $mimeArguments = [$path, FILEINFO_MIME];
         if (null !== $context) {
@@ -550,40 +551,41 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a Unix path string.
      */
-    public static function fromUnixPath(string $uri = ''): self
+    public static function fromUnixPath(Stringable|string $path = ''): self
     {
-        $uri = implode('/', array_map(rawurlencode(...), explode('/', $uri)));
-        if ('/' !== ($uri[0] ?? '')) {
-            return Uri::fromComponents(['path' => $uri]);
+        $path = implode('/', array_map(rawurlencode(...), explode('/', (string) $path)));
+        if ('/' !== ($path[0] ?? '')) {
+            return Uri::fromComponents(['path' => $path]);
         }
 
-        return Uri::fromComponents(['path' => $uri, 'scheme' => 'file', 'host' => '']);
+        return Uri::fromComponents(['path' => $path, 'scheme' => 'file', 'host' => '']);
     }
 
     /**
      * Create a new instance from a local Windows path string.
      */
-    public static function fromWindowsPath(string $uri = ''): self
+    public static function fromWindowsPath(Stringable|string $path = ''): self
     {
+        $path = (string) $path;
         $root = '';
-        if (1 === preg_match(self::REGEXP_WINDOW_PATH, $uri, $matches)) {
+        if (1 === preg_match(self::REGEXP_WINDOW_PATH, $path, $matches)) {
             $root = substr($matches['root'], 0, -1).':';
-            $uri = substr($uri, strlen($root));
+            $path = substr($path, strlen($root));
         }
-        $uri = str_replace('\\', '/', $uri);
-        $uri = implode('/', array_map(rawurlencode(...), explode('/', $uri)));
+        $path = str_replace('\\', '/', $path);
+        $path = implode('/', array_map(rawurlencode(...), explode('/', $path)));
 
         //Local Windows absolute path
         if ('' !== $root) {
-            return Uri::fromComponents(['path' => '/'.$root.$uri, 'scheme' => 'file', 'host' => '']);
+            return Uri::fromComponents(['path' => '/'.$root.$path, 'scheme' => 'file', 'host' => '']);
         }
 
         //UNC Windows Path
-        if (!str_starts_with($uri, '//')) {
-            return Uri::fromComponents(['path' => $uri]);
+        if (!str_starts_with($path, '//')) {
+            return Uri::fromComponents(['path' => $path]);
         }
 
-        $parts = explode('/', substr($uri, 2), 2) + [1 => null];
+        $parts = explode('/', substr($path, 2), 2) + [1 => null];
 
         return Uri::fromComponents(['host' => $parts[0], 'path' => '/'.$parts[1], 'scheme' => 'file']);
     }

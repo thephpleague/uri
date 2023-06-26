@@ -450,7 +450,7 @@ class UriTest extends TestCase
     public function testItCanBeUpdatedWithAnUriComponent(): void
     {
         $uri = Uri::new('https://www.example.com/')
-            ->withPath(HierarchicalPath::fromAbsoluteSegments(['do', 'you', 'love', 'brahms']));
+            ->withPath(HierarchicalPath::fromAbsolute('do', 'you', 'love', 'brahms'));
 
         self::assertSame('https://www.example.com/do/you/love/brahms', $uri->toString());
     }

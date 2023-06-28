@@ -431,7 +431,7 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
+    public static function fromClient(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
     {
         if (!$uri instanceof UriInterface) {
             $uri = self::new($uri);
@@ -513,7 +513,7 @@ final class Uri implements UriInterface
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
      */
-    public static function fromDataPath(Stringable|string $path, $context = null): self
+    public static function fromFileContents(Stringable|string $path, $context = null): self
     {
         static $finfoSupport = null;
         $finfoSupport = $finfoSupport ?? class_exists(finfo::class);
@@ -551,7 +551,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a Unix path string.
      */
-    public static function fromUnixPath(Stringable|string $path = ''): self
+    public static function fromUnixPath(Stringable|string $path): self
     {
         $path = implode('/', array_map(rawurlencode(...), explode('/', (string) $path)));
         if ('/' !== ($path[0] ?? '')) {
@@ -564,7 +564,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a local Windows path string.
      */
-    public static function fromWindowsPath(Stringable|string $path = ''): self
+    public static function fromWindowsPath(Stringable|string $path): self
     {
         $path = (string) $path;
         $root = '';
@@ -1276,18 +1276,18 @@ final class Uri implements UriInterface
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
-     * @deprecated Since version 9.9.0
-     * @codeCoverageIgnore
-     * @see Uri::fromDataPath()
-     *
      * @param resource|null $context
      *
      * @throws FileinfoSupportMissing If ext/fileinfo is not installed
      * @throws SyntaxError            If the file does not exist or is not readable
+     *@see Uri::fromFileContents()
+     *
+     * @deprecated Since version 9.9.0
+     * @codeCoverageIgnore
      */
     public static function createFromDataPath(string $path, $context = null): self
     {
-        return self::fromDataPath($path, $context);
+        return self::fromFileContents($path, $context);
     }
 
     /**
@@ -1295,7 +1295,7 @@ final class Uri implements UriInterface
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Uri::fromBaseUri()
+     * @see Uri::fromClient()
      *
      * Creates a new instance from a URI and a Base URI.
      *
@@ -1305,7 +1305,7 @@ final class Uri implements UriInterface
         Stringable|UriInterface|String $uri,
         Stringable|UriInterface|String|null $baseUri = null
     ): UriInterface {
-        return self::fromBaseUri($uri, $baseUri);
+        return self::fromClient($uri, $baseUri);
     }
 
     /**

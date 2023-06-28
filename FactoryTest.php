@@ -26,7 +26,7 @@ final class FactoryTest extends TestCase
     public function testCreateFromPathFailed(string $path): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromDataPath($path);
+        Uri::fromFileContents($path);
     }
 
     public static function invalidDataPath(): array
@@ -48,7 +48,7 @@ final class FactoryTest extends TestCase
             ],
         ]);
 
-        $uri = Uri::fromDataPath(dirname(__DIR__).'/test_files/'.$path, $context);
+        $uri = Uri::fromFileContents(dirname(__DIR__).'/test_files/'.$path, $context);
         self::assertStringContainsString($expected, $uri->getPath());
     }
 
@@ -339,7 +339,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
     {
-        self::assertSame($expected, Uri::fromBaseUri($uri, $base_uri)->toString());
+        self::assertSame($expected, Uri::fromClient($uri, $base_uri)->toString());
     }
 
     public static function createProvider(): array
@@ -392,20 +392,20 @@ final class FactoryTest extends TestCase
     public function testCreateThrowExceptionWithBaseUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromBaseUri('/path/to/you', '//example.com');
+        Uri::fromClient('/path/to/you', '//example.com');
     }
 
     public function testCreateThrowExceptionWithUriNotAbsolute(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::fromBaseUri('/path/to/you');
+        Uri::fromClient('/path/to/you');
     }
 
     public function testCreateWithUriWithoutAuthority(): void
     {
         self::assertSame(
             'data:text/plain;charset=us-ascii,',
-            Uri::fromBaseUri('data:text/plain;charset=us-ascii,')->toString()
+            Uri::fromClient('data:text/plain;charset=us-ascii,')->toString()
         );
     }
 
@@ -413,7 +413,7 @@ final class FactoryTest extends TestCase
     {
         self::assertSame(
             'scheme://host/sky?q#f',
-            Uri::fromBaseUri('scheme://host/path/../sky?q#f')->toString()
+            Uri::fromClient('scheme://host/path/../sky?q#f')->toString()
         );
     }
 

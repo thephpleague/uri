@@ -81,9 +81,9 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
+    public static function fromClient(Stringable|String $uri, Stringable|String|null $baseUri = null): self
     {
-        return new self(Uri::fromBaseUri($uri, $baseUri));
+        return new self(Uri::fromClient($uri, $baseUri));
     }
 
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
@@ -259,7 +259,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Http::fromBaseUri()
+     * @see Http::fromClient()
      *
      * Create a new instance from a URI and a Base URI.
      *
@@ -267,6 +267,6 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      */
     public static function createFromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
     {
-        return self::fromBaseUri($uri, $baseUri);
+        return self::fromClient($uri, $baseUri);
     }
 }

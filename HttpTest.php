@@ -90,7 +90,7 @@ final class HttpTest extends TestCase
     {
         self::assertEquals(
             Http::new('http://0:0@0/0?0#0'),
-            Http::fromBaseUri('0?0#0', 'http://0:0@0/')
+            Http::fromClient('0?0#0', 'http://0:0@0/')
         );
     }
 

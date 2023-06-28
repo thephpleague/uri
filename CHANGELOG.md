@@ -6,14 +6,13 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- `League\Uri\UriTemplate\Template` is now part of the public API
 - `League\Uri\Uri::new`
 - `League\Uri\Uri::fromComponents`
 - `League\Uri\Uri::fromServer`
 - `League\Uri\Uri::fromWindowsPath`
 - `League\Uri\Uri::fromUnixPath`
-- `League\Uri\Uri::fromDataPath`
-- `League\Uri\Uri::fromBaseUri`
+- `League\Uri\Uri::fromFileContents`
+- `League\Uri\Uri::fromClient`
 - `League\Uri\Uri::fromTemplate`
 - `League\Uri\Http::new`
 - `League\Uri\Http::fromComponents`
@@ -22,6 +21,8 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\Http::fromTemplate`
 - `League\Uri\UriTemplate::expandOrFail`
 - `League\Uri\UriTemplate\Template::expandOrFail`
+- `League\Uri\UriString::parseAuthority`
+- `League\Uri\UriString::buildAuthority`
 
 ### Fixed
 
@@ -34,17 +35,17 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\Uri::createFromString` use `League\Uri\Uri::new`
 - `League\Uri\Uri::createFromUri` use `League\Uri\Uri::new`
 - `League\Uri\Uri::createFromComponents` use `League\Uri\Uri::fromComponents`
-- `League\Uri\Uri::createFromBaseUri` use `League\Uri\Uri::fromBaseUri`
+- `League\Uri\Uri::createFromBaseUri` use `League\Uri\Uri::fromClient`
 - `League\Uri\Uri::createFromServer` use `League\Uri\Uri::fromServer`
 - `League\Uri\Uri::createFromWindowsPath` use `League\Uri\Uri::fromWindowsPath`
 - `League\Uri\Uri::createFromUnixPath` use `League\Uri\Uri::fromUnixPath`
-- `League\Uri\Uri::createFromDataPath` use `League\Uri\Uri::fromDataPath`
+- `League\Uri\Uri::createFromDataPath` use `League\Uri\Uri::fromFileContents`
 - `League\Uri\Http::createFromString` use `League\Uri\Http::new`
 - `League\Uri\Http::createFromUri` use `League\Uri\Http::new`
 - `League\Uri\Http::createFromComponents` use `League\Uri\Http::fromComponents`
-- `League\Uri\Http::createFromBaseUri` use `League\Uri\Http::fromBaseUri`
+- `League\Uri\Http::createFromBaseUri` use `League\Uri\Http::fromClient`
 - `League\Uri\Http::createFromServer` use `League\Uri\Http::fromServer`
-- `League\Uri\UriTemplate\Template::createFromString` use `League\Uri\UriTemplate\Template::fromString`
+- `League\Uri\UriTemplate\Template::createFromString` use `League\Uri\UriTemplate\Template::new`
 
 ### Remove
 

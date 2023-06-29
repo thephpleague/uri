@@ -15,29 +15,18 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @group modifier
- * @coversDefaultClass \League\Uri\UriResolver
+ * @coversDefaultClass \League\Uri\BaseUri
  */
-final class UriResolverTest extends TestCase
+final class BaseUriTest extends TestCase
 {
     private const BASE_URI = 'http://a/b/c/d;p?q';
-
-    public function testResolveLetThrowResolvedInvalidUri(): void
-    {
-        $http = Uri::new('https://example.com/path/to/file');
-        $ftp = Http::new('ftp://a/b/c/d;p');
-
-        self::assertEquals(UriResolver::resolve($ftp, $http), $ftp);
-    }
 
     /**
      * @dataProvider resolveProvider
      */
-    public function testCreateResolve(string $base_uri, string $uri, string $expected): void
+    public function testCreateResolve(string $baseUri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) UriResolver::resolve(
-            Uri::new($uri),
-            $base_uri
-        ));
+        self::assertSame($expected, (string) BaseUri::new($baseUri)->resolve($uri));
     }
 
     public static function resolveProvider(): array
@@ -80,16 +69,16 @@ final class UriResolverTest extends TestCase
             'dot segments presence 4' => [self::BASE_URI, '.g',            'http://a/b/c/.g'],
             'dot segments presence 5' => [self::BASE_URI, 'g..',           'http://a/b/c/g..'],
             'dot segments presence 6' => [self::BASE_URI, '..g',           'http://a/b/c/..g'],
-            'origin uri without path' => ['http://h:b@a', 'b/../y',   'http://h:b@a/y'],
+            'origin uri without path' => ['http://h:b@a', 'b/../y',        'http://h:b@a/y'],
+            'not same origin'         => [self::BASE_URI, 'ftp://a/b/c/d', 'ftp://a/b/c/d'],
         ];
     }
 
     public function testRelativizeIsNotMade(): void
     {
-        $uri = Uri::new('//path#fragment');
-        $base_uri = Http::new('https://example.com/path');
+        $uri = '//path#fragment';
 
-        self::assertEquals($uri, UriResolver::relativize($uri, $base_uri));
+        self::assertEquals($uri, (string) BaseUri::new('https://example.com/path')->relativize($uri));
     }
 
     /**
@@ -99,7 +88,7 @@ final class UriResolverTest extends TestCase
     {
         self::assertSame(
             $expected,
-            (string) UriResolver::relativize(Uri::new($resolved), Http::new($uri))
+            (string) BaseUri::new(Http::new($uri))->relativize($resolved)
         );
     }
 
@@ -156,7 +145,7 @@ final class UriResolverTest extends TestCase
     ): void {
         self::assertSame(
             $expectedRelativize,
-            (string) UriResolver::relativize($uri, Uri::new($baseUri))
+            (string) BaseUri::new($baseUri)->relativize($uri)
         );
     }
 

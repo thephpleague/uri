@@ -431,7 +431,7 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromClient(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
+    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
     {
         if (!$uri instanceof UriInterface) {
             $uri = self::new($uri);
@@ -447,21 +447,18 @@ final class Uri implements UriInterface
             }
 
             /** @var UriInterface $uri */
-            $uri = UriResolver::resolve($uri, $uri->withFragment(null)->withQuery(null)->withPath(''));
+            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri);
 
             return $uri;
         }
 
-        if (!$baseUri instanceof UriInterface) {
-            $baseUri = self::new($baseUri);
-        }
-
-        if (null === $baseUri->getScheme()) {
-            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
+        $baseUri = BaseUri::new($baseUri);
+        if (null === $baseUri->value->getScheme()) {
+            throw new SyntaxError('the base URI `'.$baseUri->value.'` must be absolute.');
         }
 
         /** @var UriInterface $uri */
-        $uri = UriResolver::resolve($uri, $baseUri);
+        $uri = $baseUri->resolve($uri);
 
         return $uri;
     }
@@ -1295,7 +1292,7 @@ final class Uri implements UriInterface
      *
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
-     * @see Uri::fromClient()
+     * @see Uri::fromBaseUri()
      *
      * Creates a new instance from a URI and a Base URI.
      *
@@ -1305,7 +1302,7 @@ final class Uri implements UriInterface
         Stringable|UriInterface|String $uri,
         Stringable|UriInterface|String|null $baseUri = null
     ): UriInterface {
-        return self::fromClient($uri, $baseUri);
+        return self::fromBaseUri($uri, $baseUri);
     }
 
     /**

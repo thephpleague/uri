@@ -179,8 +179,8 @@ final class UriInfo
      */
     public static function isCrossOrigin(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        return null === ($uriString = self::getOrigin(Uri::new(self::filterUri($uri))))
-            || null === ($baseUriString = self::getOrigin(Uri::new(self::filterUri($baseUri))))
+        return null === ($uriString = self::getOrigin($uri))
+            || null === ($baseUriString = self::getOrigin($baseUri))
             || $uriString !== $baseUriString;
     }
 }

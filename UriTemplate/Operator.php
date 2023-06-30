@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
 use function implode;
 use function is_array;

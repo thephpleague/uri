@@ -157,15 +157,14 @@ final class BaseUri
     private function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri): array
     {
         $targetPath = $uri->getPath();
-        $targetQuery = $uri->getQuery();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
-        $baseNull = $this->value instanceof Psr7UriInterface ? '' : null;
 
         if (str_starts_with($targetPath, '/')) {
-            return [$targetPath, $targetQuery];
+            return [$targetPath, $uri->getQuery()];
         }
 
         if ('' === $targetPath) {
+            $targetQuery = $uri->getQuery();
             if ($null === $targetQuery) {
                 $targetQuery = $this->value->getQuery();
             }
@@ -173,7 +172,7 @@ final class BaseUri
             $targetPath = $this->value->getPath();
             //@codeCoverageIgnoreStart
             //because some PSR-7 Uri implementations allow this RFC3986 forbidden construction
-            if ($baseNull !== $this->value->getAuthority() && !str_starts_with($targetPath, '/')) {
+            if (null !== $this->value->getAuthority() && !str_starts_with($targetPath, '/')) {
                 $targetPath = '/'.$targetPath;
             }
             //@codeCoverageIgnoreEnd
@@ -182,7 +181,7 @@ final class BaseUri
         }
 
         $basePath = $this->value->getPath();
-        if ($baseNull !== $this->value->getAuthority() && '' === $basePath) {
+        if (null !== $this->value->getAuthority() && '' === $basePath) {
             $targetPath = '/'.$targetPath;
         }
 
@@ -194,14 +193,14 @@ final class BaseUri
             }
         }
 
-        return [$targetPath, $targetQuery];
+        return [$targetPath, $uri->getQuery()];
     }
 
     /**
-     * Relativizes a URI according to a base URI.
+     * Relativize a URI according to a base URI.
      *
      * This method MUST retain the state of the submitted URI instance, and return
-     * an URI instance of the same type that contains the applied modifications.
+     * a URI instance of the same type that contains the applied modifications.
      *
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
@@ -217,19 +216,13 @@ final class BaseUri
         $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
         $targetPath = $uri->getPath();
         $basePath = $this->value->getPath();
-        if ($targetPath !== $basePath) {
-            return $uri->withPath(self::relativizePath($targetPath, $basePath));
-        }
 
-        if (self::componentEquals('query', $uri)) {
-            return $uri->withPath('')->withQuery($null);
-        }
-
-        if ($null === $uri->getQuery()) {
-            return $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath));
-        }
-
-        return $uri->withPath('');
+        return match (true) {
+            $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
+            self::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
+            $null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
+            default => $uri->withPath(''),
+        };
     }
 
     /**

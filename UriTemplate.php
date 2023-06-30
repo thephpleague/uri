@@ -16,8 +16,8 @@ namespace League\Uri;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\Template;
+use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\VariableBag;
 use Stringable;
 use function array_fill_keys;
@@ -37,8 +37,8 @@ final class UriTemplate
     public readonly VariableBag $defaultVariables;
 
     /**
-     * @throws SyntaxError              if the template syntax is invalid
-     * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
+     * @throws SyntaxError                                      if the template syntax is invalid
+     * @throws \League\Uri\UriTemplate\TemplateCanNotBeExpanded if the template or the variables are invalid
      */
     public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
     {

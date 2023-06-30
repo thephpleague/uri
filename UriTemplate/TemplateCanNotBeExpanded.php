@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace League\Uri\Exceptions;
+namespace League\Uri\UriTemplate;
 
 use InvalidArgumentException;
 use League\Uri\Contracts\UriException;

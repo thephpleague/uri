@@ -17,7 +17,6 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use IteratorAggregate;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use Stringable;
 use Traversable;
 use function array_filter;

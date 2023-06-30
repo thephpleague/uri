@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use ArrayIterator;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;

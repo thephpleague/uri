@@ -21,6 +21,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\Http::fromTemplate`
 - `League\Uri\UriTemplate::expandOrFail`
 - `League\Uri\UriTemplate\Template::expandOrFail`
+- `League\Uri\UriTemplate\TemplateCanNotBeExpanded`
 - `League\Uri\UriString::parseAuthority`
 - `League\Uri\UriString::buildAuthority`
 - `League\Uri\BaseUri`
@@ -53,7 +54,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - Support for `__set_state`
 - `League\Uri\UriTemplate\VariableBag::all`
-- Support for `PSR-7` v1
+- `League\Uri\Exceptions\TemplateCanNotBeExpanded` use `League\Uri\UriTemplate\TemplateCanNotBeExpanded` instead
 
 ## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...6.8.0) - 2022-09-13
 

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Exceptions\TemplateCanNotBeExpanded;
+use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -356,7 +356,7 @@ final class UriTemplateTest extends TestCase
 
     public function testExpandOrFailIfVariablesAreMissing(): void
     {
-        $this->expectException(TemplateCanNotBeExpanded::class);
+        $this->expectException(UriTemplate\TemplateCanNotBeExpanded::class);
 
         (new UriTemplate('{var}'))->expandOrFail([]);
     }

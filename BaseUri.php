@@ -27,21 +27,29 @@ use function str_repeat;
 use function strpos;
 use function substr;
 
-final class BaseUri
+final class BaseUri implements Stringable
 {
     /**
      * @var array<string,int>
      */
     private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
+    public readonly ?string $origin;
+
     private function __construct(
         public readonly UriInterface $value
     ) {
+        $this->origin = UriInfo::getOrigin($this->value);
     }
 
     public static function new(Stringable|string $baseUri): self
     {
         return new self(Uri::new($baseUri));
+    }
+
+    public function __toString(): string
+    {
+        return $this->value->toString();
     }
 
     /**
@@ -346,5 +354,17 @@ final class BaseUri
         $basename = end($targetSegments);
 
         return '' === $basename ? './' : $basename;
+    }
+
+    /**
+     * Tells whether two URI do not share the same origin.
+     *
+     * @see UriInfo::getOrigin()
+     */
+    public function isCrossOrigin(Stringable|string $uri): bool
+    {
+        return null === $this->origin
+            || null === ($uriString = UriInfo::getOrigin($uri))
+            || $uriString !== $this->origin;
     }
 }

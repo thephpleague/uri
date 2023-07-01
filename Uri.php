@@ -452,7 +452,10 @@ final class Uri implements UriInterface
             return $uri;
         }
 
-        $baseUri = BaseUri::new($baseUri);
+        if (!$baseUri instanceof BaseUri) {
+            $baseUri = BaseUri::new($baseUri);
+        }
+
         if (null === $baseUri->value->getScheme()) {
             throw new SyntaxError('the base URI `'.$baseUri->value.'` must be absolute.');
         }

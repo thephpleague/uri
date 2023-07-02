@@ -29,20 +29,41 @@ use function substr;
 
 final class BaseUri implements Stringable
 {
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
+    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
+
     /**
      * @var array<string,int>
      */
     private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
-    public readonly ?UriInterface $origin;
+    public readonly Psr7UriInterface|UriInterface|null $origin;
+    private readonly ?string $nullValue;
 
     private function __construct(
         public readonly Psr7UriInterface|UriInterface $value
     ) {
-        $origin = UriInfo::getOrigin($this->value);
-        if (null !== $origin) {
-            $this->origin = Uri::new($origin);
+        $this->nullValue = $this->value instanceof Psr7UriInterface ? '' : null;
+        $this->origin = $this->computeOrigin($this->value, $this->nullValue);
+    }
+
+    private function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
+    {
+        $scheme = $uri->getScheme();
+        if ('blob' === $scheme) {
+            $uri = Uri::new($uri->getPath());
+            $scheme = $uri->getScheme();
         }
+
+        if (!in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
+            return null;
+        }
+
+        return $uri
+            ->withFragment($nullValue)
+            ->withQuery($nullValue)
+            ->withPath('')
+            ->withUserInfo($nullValue);
     }
 
     public static function new(Stringable|string $baseUri): self
@@ -55,12 +76,96 @@ final class BaseUri implements Stringable
         return $this->value->__toString();
     }
 
+    public function isAbsolute(): bool
+    {
+        return $this->nullValue !== $this->value->getScheme();
+    }
+
+    public function isNetworkPath(): bool
+    {
+        return $this->nullValue === $this->value->getScheme()
+            && $this->nullValue !== $this->value->getAuthority();
+    }
+
+    public function isAbsolutePath(): bool
+    {
+        return $this->nullValue === $this->value->getScheme()
+            && $this->nullValue === $this->value->getAuthority()
+            && '/' === ($this->value->getPath()[0] ?? '');
+    }
+
+    public function isRelativePath(): bool
+    {
+        return $this->nullValue === $this->value->getScheme()
+            && $this->nullValue === $this->value->getAuthority()
+            && '/' !== ($this->value->getPath()[0] ?? '');
+    }
+
+    /**
+     * Tells whether both URI refers to the same document.
+     */
+    public function isSameDocument(Stringable|string $uri): bool
+    {
+        return self::normalize(self::filterUri($uri)) === self::normalize($this->value);
+    }
+
+    /**
+     * Normalizes a URI for comparison.
+     */
+    private static function normalize(Psr7UriInterface|UriInterface $uri): string
+    {
+        $null = $uri instanceof Psr7UriInterface ? '' : null;
+
+        $path = $uri->getPath();
+        if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
+            $path = BaseUri::new($uri->withPath('')->withQuery($null))->resolve($uri)->value->getPath();
+        }
+
+        $query = $uri->getQuery();
+        $pairs = null === $query ? [] : explode('&', $query);
+        sort($pairs);
+
+        $value = preg_replace_callback(
+            self::REGEXP_ENCODED_CHARS,
+            static fn (array $matches): string => rawurldecode($matches[0]),
+            [$path, implode('&', $pairs)]
+        );
+
+        if (null !== $value) {
+            [$path, $query] = $value + ['', $null];
+        }
+
+        if ($null !== $uri->getAuthority() && '' === $path) {
+            $path = '/';
+        }
+
+        return $uri
+            ->withHost(Uri::fromComponents(['host' => $uri->getHost()])->getHost())
+            ->withPath($path)
+            ->withQuery([] === $pairs ? $null : $query)
+            ->withFragment($null)
+            ->__toString();
+    }
+
+    /**
+     * Tells whether two URI do not share the same origin.
+     *
+     * @see UriInfo::getOrigin()
+     */
+    public function isCrossOrigin(Stringable|string $uri): bool
+    {
+        return null === $this->origin
+            || null === ($uriOrigin = $this->computeOrigin(Uri::new($uri), null))
+            || $uriOrigin->__toString() !== $this->origin->__toString();
+    }
+
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
     private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
     {
         return match (true) {
+            $uri instanceof self => $uri->value,
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
             default => Uri::new($uri),
         };
@@ -284,7 +389,7 @@ final class BaseUri implements Stringable
      */
     private function isRelativizable(Psr7UriInterface|UriInterface $uri): bool
     {
-        return !UriInfo::isRelativePath($uri)
+        return !self::new($uri)->isRelativePath()
             && self::componentEquals('scheme', $uri)
             && self::componentEquals('authority', $uri);
     }
@@ -357,17 +462,5 @@ final class BaseUri implements Stringable
         $basename = end($targetSegments);
 
         return '' === $basename ? './' : $basename;
-    }
-
-    /**
-     * Tells whether two URI do not share the same origin.
-     *
-     * @see UriInfo::getOrigin()
-     */
-    public function isCrossOrigin(Stringable|string $uri): bool
-    {
-        return null === $this->origin
-            || null === ($uriString = UriInfo::getOrigin($uri))
-            || $uriString !== $this->origin->toString();
     }
 }

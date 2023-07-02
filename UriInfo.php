@@ -13,19 +13,15 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use League\Uri\Contracts\UriInterface;
-use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
-use function explode;
-use function implode;
-use function preg_replace_callback;
-use function rawurldecode;
 
+/**
+ * @deprecated since version 7.0.0
+ * @codeCoverageIgnore
+ * @see BaseUri
+ */
 final class UriInfo
 {
-    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
-    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
-
     /**
      * @codeCoverageIgnore
      */
@@ -34,66 +30,11 @@ final class UriInfo
     }
 
     /**
-     * Input URI normalization to allow Stringable and string URI.
-     */
-    private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
-    {
-        return match (true) {
-            $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
-            $uri instanceof BaseUri => $uri->value,
-            default => Uri::new($uri),
-        };
-    }
-
-    private static function emptyComponentValue(Psr7UriInterface|UriInterface $uri): ?string
-    {
-        return $uri instanceof Psr7UriInterface ? '' : null;
-    }
-
-    /**
-     * Normalizes a URI for comparison.
-     */
-    private static function normalize(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
-    {
-        $null = self::emptyComponentValue($uri);
-
-        $path = $uri->getPath();
-        if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
-            $path = BaseUri::new($uri->withPath('')->withQuery($null))->resolve($uri)->value->getPath();
-        }
-
-        $query = $uri->getQuery();
-        $fragment = $uri->getFragment();
-        $fragmentOrig = $fragment;
-        $pairs = null === $query ? [] : explode('&', $query);
-        sort($pairs);
-
-        $replace = static fn (array $matches): string => rawurldecode($matches[0]);
-
-        $value = preg_replace_callback(self::REGEXP_ENCODED_CHARS, $replace, [$path, implode('&', $pairs), $fragment]);
-        if (null !== $value) {
-            [$path, $query, $fragment] = $value + ['', $null, $null];
-        }
-
-        if ($null !== $uri->getAuthority() && '' === $path) {
-            $path = '/';
-        }
-
-        return $uri
-            ->withHost(Uri::fromComponents(['host' => $uri->getHost()])->getHost())
-            ->withPath($path)
-            ->withQuery([] === $pairs ? $null : $query)
-            ->withFragment($null === $fragmentOrig ? $fragmentOrig : $fragment);
-    }
-
-    /**
      * Tells whether the URI represents an absolute URI.
      */
     public static function isAbsolute(Stringable|string $uri): bool
     {
-        $uri = self::filterUri($uri);
-
-        return self::emptyComponentValue($uri) !== $uri->getScheme();
+        return BaseUri::new($uri)->isAbsolute();
     }
 
     /**
@@ -101,10 +42,7 @@ final class UriInfo
      */
     public static function isNetworkPath(Stringable|string $uri): bool
     {
-        $uri = self::filterUri($uri);
-        $null = self::emptyComponentValue($uri);
-
-        return $null === $uri->getScheme() && $null !== $uri->getAuthority();
+        return BaseUri::new($uri)->isNetworkPath();
     }
 
     /**
@@ -112,12 +50,7 @@ final class UriInfo
      */
     public static function isAbsolutePath(Stringable|string $uri): bool
     {
-        $uri = self::filterUri($uri);
-        $null = self::emptyComponentValue($uri);
-
-        return $null === $uri->getScheme()
-            && $null === $uri->getAuthority()
-            && '/' === ($uri->getPath()[0] ?? '');
+        return BaseUri::new($uri)->isAbsolutePath();
     }
 
     /**
@@ -126,12 +59,7 @@ final class UriInfo
      */
     public static function isRelativePath(Stringable|string $uri): bool
     {
-        $uri = self::filterUri($uri);
-        $null = self::emptyComponentValue($uri);
-
-        return $null === $uri->getScheme()
-            && $null === $uri->getAuthority()
-            && '/' !== ($uri->getPath()[0] ?? '');
+        return BaseUri::new($uri)->isRelativePath();
     }
 
     /**
@@ -139,11 +67,7 @@ final class UriInfo
      */
     public static function isSameDocument(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        $uri = self::normalize(self::filterUri($uri));
-        $baseUri = self::normalize(self::filterUri($baseUri));
-
-        return (string) $uri->withFragment(self::emptyComponentValue($uri))
-            === (string) $baseUri->withFragment(self::emptyComponentValue($baseUri));
+        return BaseUri::new($baseUri)->isSameDocument($uri);
     }
 
     /**
@@ -157,20 +81,7 @@ final class UriInfo
      */
     public static function getOrigin(Stringable|string $uri): ?string
     {
-        $uri = self::filterUri($uri);
-        $scheme = $uri->getScheme();
-        if ('blob' === $scheme) {
-            $uri = Uri::new($uri->getPath());
-            $scheme = $uri->getScheme();
-        }
-
-        if (!in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
-            return null;
-        }
-
-        $null = self::emptyComponentValue($uri);
-
-        return (string) $uri->withFragment($null)->withQuery($null)->withPath('')->withUserInfo($null);
+        return BaseUri::new($uri)->origin?->__toString();
     }
 
     /**
@@ -180,8 +91,6 @@ final class UriInfo
      */
     public static function isCrossOrigin(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        return null === ($uriString = self::getOrigin($uri))
-            || null === ($baseUriString = self::getOrigin($baseUri))
-            || $uriString !== $baseUriString;
+        return BaseUri::new($baseUri)->isCrossOrigin($uri);
     }
 }

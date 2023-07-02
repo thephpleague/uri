@@ -34,22 +34,25 @@ final class BaseUri implements Stringable
      */
     private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
-    public readonly ?string $origin;
+    public readonly ?UriInterface $origin;
 
     private function __construct(
-        public readonly UriInterface $value
+        public readonly Psr7UriInterface|UriInterface $value
     ) {
-        $this->origin = UriInfo::getOrigin($this->value);
+        $origin = UriInfo::getOrigin($this->value);
+        if (null !== $origin) {
+            $this->origin = Uri::new($origin);
+        }
     }
 
     public static function new(Stringable|string $baseUri): self
     {
-        return new self(Uri::new($baseUri));
+        return new self(self::filterUri($baseUri));
     }
 
     public function __toString(): string
     {
-        return $this->value->toString();
+        return $this->value->__toString();
     }
 
     /**
@@ -72,14 +75,14 @@ final class BaseUri implements Stringable
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Stringable|string $uri): Psr7UriInterface|UriInterface
+    public function resolve(Stringable|string $uri): self
     {
         $uri = self::filterUri($uri);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
-            return $uri
-                ->withPath(self::removeDotSegments($uri->getPath()));
+            return new self($uri
+                ->withPath(self::removeDotSegments($uri->getPath())));
         }
 
         if ($null !== $uri->getAuthority()) {
@@ -88,9 +91,9 @@ final class BaseUri implements Stringable
                 $scheme = '';
             }
 
-            return $uri
+            return new self($uri
                 ->withScheme($scheme)
-                ->withPath(self::removeDotSegments($uri->getPath()));
+                ->withPath(self::removeDotSegments($uri->getPath())));
         }
 
         $user = $null;
@@ -102,13 +105,13 @@ final class BaseUri implements Stringable
 
         [$path, $query] = $this->resolvePathAndQuery($uri);
 
-        return $uri
+        return new self($uri
             ->withPath($this->removeDotSegments($path))
             ->withQuery($query)
             ->withHost($this->value->getHost())
             ->withPort($this->value->getPort())
             ->withUserInfo((string) $user, $pass)
-            ->withScheme($this->value->getScheme())
+            ->withScheme($this->value->getScheme()))
         ;
     }
 
@@ -213,11 +216,11 @@ final class BaseUri implements Stringable
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Stringable|string $uri): Psr7UriInterface|UriInterface
+    public function relativize(Stringable|string $uri): self
     {
         $uri = self::formatHost(self::filterUri($uri));
         if (!$this->isRelativizable($uri)) {
-            return $uri;
+            return new self($uri);
         }
 
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -225,12 +228,12 @@ final class BaseUri implements Stringable
         $targetPath = $uri->getPath();
         $basePath = $this->value->getPath();
 
-        return match (true) {
+        return new self(match (true) {
             $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
             self::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
             $null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
             default => $uri->withPath(''),
-        };
+        });
     }
 
     /**
@@ -365,6 +368,6 @@ final class BaseUri implements Stringable
     {
         return null === $this->origin
             || null === ($uriString = UriInfo::getOrigin($uri))
-            || $uriString !== $this->origin;
+            || $uriString !== $this->origin->toString();
     }
 }

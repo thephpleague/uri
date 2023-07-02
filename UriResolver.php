@@ -35,7 +35,7 @@ final class UriResolver
      */
     public static function resolve(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
     {
-        return BaseUri::new($baseUri)->resolve($uri);
+        return BaseUri::new($baseUri)->resolve($uri)->value;
     }
 
     /**
@@ -49,6 +49,6 @@ final class UriResolver
      */
     public static function relativize(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
     {
-        return BaseUri::new($baseUri)->relativize($uri);
+        return BaseUri::new($baseUri)->relativize($uri)->value;
     }
 }

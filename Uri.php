@@ -447,7 +447,7 @@ final class Uri implements UriInterface
             }
 
             /** @var UriInterface $uri */
-            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri);
+            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->value;
 
             return $uri;
         }
@@ -461,7 +461,7 @@ final class Uri implements UriInterface
         }
 
         /** @var UriInterface $uri */
-        $uri = $baseUri->resolve($uri);
+        $uri = $baseUri->resolve($uri)->value;
 
         return $uri;
     }

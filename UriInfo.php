@@ -59,7 +59,7 @@ final class UriInfo
 
         $path = $uri->getPath();
         if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
-            $path = BaseUri::new($uri->withPath('')->withQuery($null))->resolve($uri)->getPath();
+            $path = BaseUri::new($uri->withPath('')->withQuery($null))->resolve($uri)->value->getPath();
         }
 
         $query = $uri->getQuery();

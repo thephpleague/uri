@@ -11,6 +11,7 @@
 
 namespace League\Uri;
 
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
@@ -375,5 +376,27 @@ final class BaseUriTest extends TestCase
             'comparing a URI with an origin and one with an opaque origin' => ['https://example.com:443/123', 'ldap://ldap.example.net', true],
             'cross origin using a blob' => ['blob:http://mozilla.org:443/', 'https://mozilla.org/123', true],
         ];
+    }
+
+    /**
+     * @dataProvider resolveProvider
+     */
+    public function testResolveWithPsr7Implementation(string $baseUri, string $uri, string $expected): void
+    {
+        $resolvedUri = BaseUri::new(Utils::uriFor($baseUri))->resolve($uri);
+
+        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $resolvedUri->uri());
+        self::assertSame($expected, (string) $resolvedUri);
+    }
+
+    /**
+     * @dataProvider relativizeProvider
+     */
+    public function testRelativizeWithPsr7Implementation(string $uri, string $resolved, string $expected): void
+    {
+        $relativizedUri = BaseUri::new(Utils::uriFor($uri))->relativize($resolved);
+
+        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizedUri->uri());
+        self::assertSame($expected, (string) $relativizedUri);
     }
 }

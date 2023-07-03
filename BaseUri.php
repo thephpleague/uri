@@ -177,12 +177,12 @@ final class BaseUri implements Stringable, JsonSerializable
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
+    private static function filterUri(Stringable|string $uri, Psr7UriInterface|UriInterface|null $href = null): Psr7UriInterface|UriInterface
     {
         return match (true) {
             $uri instanceof self => $uri->value,
             $uri instanceof Psr7UriInterface, $uri instanceof UriInterface => $uri,
-            default => Uri::new($uri),
+            default => $href instanceof Psr7UriInterface ? self::createPsr7Uri($uri, $href) : Uri::new($uri),
         };
     }
 
@@ -197,7 +197,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function resolve(Stringable|string $uri): self
     {
-        $uri = self::filterUri($uri);
+        $uri = self::filterUri($uri, $this->value);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -206,13 +206,8 @@ final class BaseUri implements Stringable, JsonSerializable
         }
 
         if ($null !== $uri->getAuthority()) {
-            $scheme = $this->value->getScheme();
-            if (null === $scheme || '' === $null) {
-                $scheme = '';
-            }
-
             return new self($uri
-                ->withScheme($scheme)
+                ->withScheme($this->value->getScheme())
                 ->withPath(self::removeDotSegments($uri->getPath())));
         }
 
@@ -338,7 +333,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function relativize(Stringable|string $uri): self
     {
-        $uri = self::formatHost(self::filterUri($uri));
+        $uri = self::formatHost(self::filterUri($uri, $this->value));
         if (!$this->isRelativizable($uri)) {
             return new self($uri);
         }
@@ -477,5 +472,23 @@ final class BaseUri implements Stringable, JsonSerializable
         $basename = end($targetSegments);
 
         return '' === $basename ? './' : $basename;
+    }
+
+    private static function createPsr7Uri(Stringable|string $uri, Psr7UriInterface $href): Psr7UriInterface
+    {
+        if ($href instanceof Http) {
+            return Http::new($uri);
+        }
+
+        $components = UriString::parse($uri);
+        return $href
+            ->withFragment($components['fragment'] ?? '')
+            ->withQuery($components['query'] ?? '')
+            ->withPath($components['path'])
+            ->withScheme($components['scheme'] ?? '')
+            ->withHost($components['host'] ?? '')
+            ->withUserInfo($components['user'] ?? '', $components['pass'])
+            ->withPort($components['port'])
+        ;
     }
 }

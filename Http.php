@@ -93,22 +93,22 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 
     public function getScheme(): string
     {
-        return (string) $this->uri->getScheme();
+        return $this->uri->getScheme() ?? '';
     }
 
     public function getAuthority(): string
     {
-        return (string) $this->uri->getAuthority();
+        return $this->uri->getAuthority() ?? '';
     }
 
     public function getUserInfo(): string
     {
-        return (string) $this->uri->getUserInfo();
+        return $this->uri->getUserInfo() ?? '';
     }
 
     public function getHost(): string
     {
-        return (string) $this->uri->getHost();
+        return $this->uri->getHost() ?? '';
     }
 
     public function getPort(): ?int
@@ -123,12 +123,12 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 
     public function getQuery(): string
     {
-        return (string) $this->uri->getQuery();
+        return $this->uri->getQuery() ?? '';
     }
 
     public function getFragment(): string
     {
-        return (string) $this->uri->getFragment();
+        return $this->uri->getFragment() ?? '';
     }
 
     public function __toString(): string

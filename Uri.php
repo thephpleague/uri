@@ -447,7 +447,7 @@ final class Uri implements UriInterface
             }
 
             /** @var UriInterface $uri */
-            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->value;
+            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->uri();
 
             return $uri;
         }
@@ -456,12 +456,12 @@ final class Uri implements UriInterface
             $baseUri = BaseUri::new($baseUri);
         }
 
-        if (null === $baseUri->value->getScheme()) {
-            throw new SyntaxError('the base URI `'.$baseUri->value.'` must be absolute.');
+        if (null === $baseUri->uri()->getScheme()) {
+            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
         }
 
         /** @var UriInterface $uri */
-        $uri = $baseUri->resolve($uri)->value;
+        $uri = $baseUri->resolve($uri)->uri();
 
         return $uri;
     }

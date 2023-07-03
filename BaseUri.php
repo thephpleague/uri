@@ -30,8 +30,7 @@ use function substr;
 
 final class BaseUri implements Stringable, JsonSerializable
 {
-    private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
-    private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
 
     /**
      * @var array<string,int>
@@ -42,7 +41,7 @@ final class BaseUri implements Stringable, JsonSerializable
     private readonly ?string $nullValue;
 
     private function __construct(
-        public readonly Psr7UriInterface|UriInterface $value
+        private readonly Psr7UriInterface|UriInterface $value
     ) {
         $this->nullValue = $this->value instanceof Psr7UriInterface ? '' : null;
         $this->origin = $this->computeOrigin($this->value, $this->nullValue);
@@ -56,7 +55,7 @@ final class BaseUri implements Stringable, JsonSerializable
             $scheme = $uri->getScheme();
         }
 
-        if (!in_array($scheme, self::WHATWG_SPECIAL_SCHEMES, true)) {
+        if (!isset(self::WHATWG_SPECIAL_SCHEMES[$scheme])) {
             return null;
         }
 
@@ -67,9 +66,9 @@ final class BaseUri implements Stringable, JsonSerializable
             ->withUserInfo($nullValue);
     }
 
-    public static function new(Stringable|string $baseUri): self
+    public static function new(Stringable|string $uri): self
     {
-        return new self(self::filterUri($baseUri));
+        return new self(self::filterUri($uri));
     }
 
     public function jsonSerialize(): mixed
@@ -80,6 +79,20 @@ final class BaseUri implements Stringable, JsonSerializable
     public function __toString(): string
     {
         return $this->value->__toString();
+    }
+
+    public function uri(): Psr7UriInterface|UriInterface
+    {
+        return $this->value;
+    }
+
+    public function origin(): ?self
+    {
+        if (null === $this->origin) {
+            return null;
+        }
+
+        return new self($this->origin);
     }
 
     public function isAbsolute(): bool
@@ -131,8 +144,9 @@ final class BaseUri implements Stringable, JsonSerializable
         $pairs = null === $query ? [] : explode('&', $query);
         sort($pairs);
 
+        static $regexpEncodedChars = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
         $value = preg_replace_callback(
-            self::REGEXP_ENCODED_CHARS,
+            $regexpEncodedChars,
             static fn (array $matches): string => rawurldecode($matches[0]),
             [$path, implode('&', $pairs)]
         ) ?? ['', $null];
@@ -148,15 +162,6 @@ final class BaseUri implements Stringable, JsonSerializable
             ->withQuery([] === $pairs ? $null : $query)
             ->withFragment($null)
             ->__toString();
-    }
-
-    public function origin(): ?self
-    {
-        if (null === $this->origin) {
-            return null;
-        }
-
-        return new self($this->origin);
     }
 
     /**

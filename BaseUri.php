@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
@@ -27,7 +28,7 @@ use function str_repeat;
 use function strpos;
 use function substr;
 
-final class BaseUri implements Stringable
+final class BaseUri implements Stringable, JsonSerializable
 {
     private const WHATWG_SPECIAL_SCHEMES = ['ftp', 'http', 'https', 'ws', 'wss'];
     private const REGEXP_ENCODED_CHARS = ',%(2[D|E]|3\d|4[1-9|A-F]|5[\d|AF]|6[1-9|A-F]|7[\d|E]),i';
@@ -37,7 +38,7 @@ final class BaseUri implements Stringable
      */
     private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
-    public readonly Psr7UriInterface|UriInterface|null $origin;
+    private readonly Psr7UriInterface|UriInterface|null $origin;
     private readonly ?string $nullValue;
 
     private function __construct(
@@ -69,6 +70,11 @@ final class BaseUri implements Stringable
     public static function new(Stringable|string $baseUri): self
     {
         return new self(self::filterUri($baseUri));
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->value->__toString();
     }
 
     public function __toString(): string
@@ -106,19 +112,19 @@ final class BaseUri implements Stringable
      */
     public function isSameDocument(Stringable|string $uri): bool
     {
-        return self::normalize(self::filterUri($uri)) === self::normalize($this->value);
+        return $this->normalize(self::filterUri($uri)) === $this->normalize($this->value);
     }
 
     /**
      * Normalizes a URI for comparison.
      */
-    private static function normalize(Psr7UriInterface|UriInterface $uri): string
+    private function normalize(Psr7UriInterface|UriInterface $uri): string
     {
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         $path = $uri->getPath();
         if ('/' === ($path[0] ?? '') || '' !== $uri->getScheme().$uri->getAuthority()) {
-            $path = BaseUri::new($uri->withPath('')->withQuery($null))->resolve($uri)->value->getPath();
+            $path = $this->removeDotSegments($path);
         }
 
         $query = $uri->getQuery();
@@ -129,12 +135,9 @@ final class BaseUri implements Stringable
             self::REGEXP_ENCODED_CHARS,
             static fn (array $matches): string => rawurldecode($matches[0]),
             [$path, implode('&', $pairs)]
-        );
+        ) ?? ['', $null];
 
-        if (null !== $value) {
-            [$path, $query] = $value + ['', $null];
-        }
-
+        [$path, $query] = $value + ['', $null];
         if ($null !== $uri->getAuthority() && '' === $path) {
             $path = '/';
         }
@@ -147,10 +150,17 @@ final class BaseUri implements Stringable
             ->__toString();
     }
 
+    public function origin(): ?self
+    {
+        if (null === $this->origin) {
+            return null;
+        }
+
+        return new self($this->origin);
+    }
+
     /**
      * Tells whether two URI do not share the same origin.
-     *
-     * @see UriInfo::getOrigin()
      */
     public function isCrossOrigin(Stringable|string $uri): bool
     {

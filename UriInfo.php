@@ -81,7 +81,7 @@ final class UriInfo
      */
     public static function getOrigin(Stringable|string $uri): ?string
     {
-        return BaseUri::new($uri)->origin?->__toString();
+        return BaseUri::new($uri)->origin()?->__toString();
     }
 
     /**

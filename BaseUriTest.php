@@ -309,7 +309,7 @@ final class BaseUriTest extends TestCase
      */
     public function testGetOrigin(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
-        self::assertSame($expectedOrigin, BaseUri::new($uri)->origin?->__toString());
+        self::assertSame($expectedOrigin, BaseUri::new($uri)->origin()?->__toString());
     }
 
     public static function getOriginProvider(): array

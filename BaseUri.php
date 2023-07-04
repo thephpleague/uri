@@ -95,6 +95,16 @@ final class BaseUri implements Stringable, JsonSerializable
         return new self($this->origin);
     }
 
+    /**
+     * Tells whether two URI do not share the same origin.
+     */
+    public function isCrossOrigin(Stringable|string $uri): bool
+    {
+        return null === $this->origin
+            || null === ($uriOrigin = $this->computeOrigin(self::filterUri($uri), null))
+            || $uriOrigin->__toString() !== $this->origin->__toString();
+    }
+
     public function isAbsolute(): bool
     {
         return $this->nullValue !== $this->value->getScheme();
@@ -165,16 +175,6 @@ final class BaseUri implements Stringable, JsonSerializable
     }
 
     /**
-     * Tells whether two URI do not share the same origin.
-     */
-    public function isCrossOrigin(Stringable|string $uri): bool
-    {
-        return null === $this->origin
-            || null === ($uriOrigin = $this->computeOrigin(Uri::new($uri), null))
-            || $uriOrigin->__toString() !== $this->origin->__toString();
-    }
-
-    /**
      * Input URI normalization to allow Stringable and string URI.
      */
     private static function filterUri(
@@ -198,6 +198,7 @@ final class BaseUri implements Stringable, JsonSerializable
         }
 
         $components = UriString::parse($uri);
+
         return $href
             ->withFragment($components['fragment'] ?? '')
             ->withQuery($components['query'] ?? '')

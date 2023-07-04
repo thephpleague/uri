@@ -399,4 +399,12 @@ final class BaseUriTest extends TestCase
         self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizedUri->uri());
         self::assertSame($expected, (string) $relativizedUri);
     }
+
+    public function testItCanBeJsonSerialized(): void
+    {
+        self::assertSame(
+            json_encode(Uri::new('http://example.com')),
+            json_encode(BaseUri::new('http://example.com'))
+        );
+    }
 }

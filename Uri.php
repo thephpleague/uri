@@ -456,7 +456,8 @@ final class Uri implements UriInterface
             $baseUri = BaseUri::new($baseUri);
         }
 
-        if (null === $baseUri->uri()->getScheme()) {
+        $null = $baseUri->uri() instanceof Psr7UriInterface ? '' : null;
+        if ($null === $baseUri->uri()->getScheme()) {
             throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
         }
 

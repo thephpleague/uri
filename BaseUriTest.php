@@ -23,6 +23,14 @@ final class BaseUriTest extends TestCase
 {
     private const BASE_URI = 'http://a/b/c/d;p?q';
 
+    public function testItCanBeJsonSerialized(): void
+    {
+        self::assertSame(
+            json_encode(Uri::new('http://example.com')),
+            json_encode(BaseUri::new('http://example.com'))
+        );
+    }
+
     /**
      * @dataProvider resolveProvider
      */
@@ -400,11 +408,19 @@ final class BaseUriTest extends TestCase
         self::assertSame($expected, (string) $relativizedUri);
     }
 
-    public function testItCanBeJsonSerialized(): void
+    /**
+     * @dataProvider getOriginProvider
+     */
+    public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
-        self::assertSame(
-            json_encode(Uri::new('http://example.com')),
-            json_encode(BaseUri::new('http://example.com'))
-        );
+        $origin = BaseUri::new(Utils::uriFor((string) $uri))->origin();
+        if (null !== $origin) {
+            self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->uri());
+            self::assertSame($expectedOrigin, $origin->__toString());
+
+            return;
+        }
+
+        self::assertSame($expectedOrigin, $origin);
     }
 }

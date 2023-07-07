@@ -30,6 +30,9 @@ use function substr;
 
 final class BaseUri implements Stringable, JsonSerializable
 {
+    /**
+     * @var array<string,int>
+     */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
 
     /**
@@ -51,7 +54,7 @@ final class BaseUri implements Stringable, JsonSerializable
     {
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = Uri::new($uri->getPath());
+            $uri = self::filterUri($uri->getPath(), $uri);
             $scheme = $uri->getScheme();
         }
 

@@ -37,10 +37,10 @@ final class UriTemplate
     public readonly VariableBag $defaultVariables;
 
     /**
-     * @throws SyntaxError                                      if the template syntax is invalid
-     * @throws \League\Uri\UriTemplate\TemplateCanNotBeExpanded if the template or the variables are invalid
+     * @throws SyntaxError              if the template syntax is invalid
+     * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
      */
-    public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
+    public function __construct(Stringable|string $template, iterable $defaultVariables = [])
     {
         $this->template = $template instanceof Template ? $template : Template::new($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
@@ -51,9 +51,11 @@ final class UriTemplate
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
         }
-        $variablesNames = array_fill_keys($this->template->variableNames, 1);
 
-        return $variables->filter(fn ($value, string|int $name) => array_key_exists($name, $variablesNames));
+        $offsets = array_fill_keys($this->template->variableNames, 1);
+
+        return $variables
+            ->filter(fn ($value, string|int $name) => array_key_exists($name, $offsets));
     }
 
     /**

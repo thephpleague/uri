@@ -25,7 +25,7 @@ use function str_contains;
 use function str_replace;
 use const PREG_SET_ORDER;
 
-final class Template
+final class Template implements Stringable
 {
     /**
      * Expression regular expression pattern.
@@ -74,6 +74,11 @@ final class Template
                 return $carry;
             }, [])
         ));
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 
     /**

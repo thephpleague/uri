@@ -15,12 +15,14 @@ namespace League\Uri;
 
 use finfo;
 use League\Uri\Contracts\UriComponentInterface;
+use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
+use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
@@ -469,12 +471,17 @@ final class Uri implements UriInterface
 
     /**
      * Creates a new instance from a template.
+     *
+     * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
+     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
-        return self::new(
-            UriTemplate\Template::new($template)->expand($variables)
-        );
+        if (!$template instanceof UriTemplate\Template) {
+            $template = UriTemplate\Template::new($template);
+        }
+
+        return self::new($template->expand($variables));
     }
 
     /**

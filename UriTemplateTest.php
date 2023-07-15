@@ -35,7 +35,7 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($template, $variables);
 
-        self::assertSame($template, $uriTemplate->template->value);
+        self::assertSame($template, (string) $uriTemplate->template);
     }
 
     public function testGetDefaultVariables(): void

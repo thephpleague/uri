@@ -41,7 +41,20 @@ class UriTest extends TestCase
     {
         $raw = 'HtTpS://MaStEr.B%c3%A9b%c3%a9.eXaMpLe.CoM:/%7ejohndoe/%a1/in+dex.php?fào.%bar=v%61lue#fragment';
         $normalized = 'https://master.xn--bb-bjab.example.com/%7ejohndoe/%a1/in+dex.php?f%C3%A0o.%bar=v%61lue#fragment';
-        self::assertSame($normalized, (string) Uri::new($raw));
+        $components = [
+            'scheme' => 'https',
+            'user' => null,
+            'pass' => null,
+            'host' => 'master.xn--bb-bjab.example.com',
+            'port' => null,
+            'path' => '/%7ejohndoe/%a1/in+dex.php',
+            'query' => 'f%C3%A0o.%bar=v%61lue',
+            'fragment' => 'fragment',
+        ];
+        $uri = Uri::new($raw);
+
+        self::assertSame($normalized, $uri->toString());
+        self::assertSame($components, $uri->components());
     }
 
     public function testAutomaticUrlNormalizationBis(): void
@@ -229,14 +242,6 @@ class UriTest extends TestCase
         self::expectException(TypeError::class);
 
         Uri::new('https://example.com')->withPath(null); /* @phpstan-ignore-line */
-    }
-
-    public function testDebugInfo(): void
-    {
-        $uri = Uri::new('https://a:b@c:442/d?q=r#f');
-        $debugInfo = $uri->__debugInfo();
-        self::assertSame('a:***', $debugInfo['user_info']);
-        self::assertCount(7, $debugInfo);
     }
 
     public function testJsonSerialize(): void

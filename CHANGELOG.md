@@ -53,6 +53,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Remove
 
 - Support for `__set_state`
+- Support for `__debugInfo`
 - `League\Uri\UriTemplate\VariableBag::all`
 - `League\Uri\Exceptions\TemplateCanNotBeExpanded` use `League\Uri\UriTemplate\TemplateCanNotBeExpanded` instead
 

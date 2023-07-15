@@ -94,8 +94,7 @@ final class TemplateTest extends TestCase
      */
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
-        $template = Template::new($notation);
-        self::assertSame($notation, $template->value);
+        self::assertSame($notation, (string) Template::new($notation));
     }
 
     public static function providesValidNotation(): iterable

@@ -40,7 +40,6 @@ use function in_array;
 use function inet_pton;
 use function ltrim;
 use function preg_match;
-use function preg_replace;
 use function preg_replace_callback;
 use function rawurlencode;
 use function str_contains;
@@ -58,6 +57,7 @@ use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
 
 /**
+ * @phpstan-import-type ComponentMap from UriInterface
  * @phpstan-import-type InputComponentMap from UriString
  */
 final class Uri implements UriInterface
@@ -1020,21 +1020,16 @@ final class Uri implements UriInterface
     }
 
     /**
-     * @return array{
-     *     scheme:?string,
-     *     user_info:?string,
-     *     host:?string,
-     *     port:?int,
-     *     path:string,
-     *     query:?string,
-     *     fragment:?string
-     * }
+     * @return ComponentMap
      */
-    public function __debugInfo(): array
+    public function components(): array
     {
+        [$user, $pass] = null !== $this->userInfo ? explode(':', $this->userInfo) : [null, null];
+
         return [
             'scheme' => $this->scheme,
-            'user_info' => isset($this->userInfo) ? preg_replace(',:(.*).?$,', ':***', $this->userInfo) : null,
+            'user' => $user,
+            'pass' => $pass,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,

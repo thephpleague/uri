@@ -117,8 +117,11 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
      *
      * @throws TemplateCanNotBeExpanded if the value contains nested list
      */
-    private function normalizeValue(Stringable|array|string|float|int|bool|null $value, string $name, bool $isNestedListAllowed): array|string
-    {
+    private function normalizeValue(
+        Stringable|string|float|int|bool|array|null $value,
+        string $name,
+        bool $isNestedListAllowed
+    ): array|string {
         return match (true) {
             is_bool($value) => true === $value ? '1' : '0',
             (null === $value || is_scalar($value) || $value instanceof Stringable) => (string) $value,

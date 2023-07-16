@@ -31,6 +31,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `League\Uri\UriInfo` uri input now supports `Stringable` and `string` type.
 - `League\Uri\UriTemplate\VariableBag` implements the `IteratorAggregate` interface
 - `League\Uri\UriTemplate\Operator` to improve internal representation when using UriTemplate features.
+- `League\Uri\UriTemplate::expand` returns a string, no longer an `UriInterface` implementing object.
 
 ### Deprecated
 

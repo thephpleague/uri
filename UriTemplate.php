@@ -31,16 +31,16 @@ use function array_key_exists;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   6.1.0
  */
-final class UriTemplate
+final class UriTemplate implements Stringable
 {
-    public readonly Template $template;
-    public readonly VariableBag $defaultVariables;
+    private readonly Template $template;
+    private readonly VariableBag $defaultVariables;
 
     /**
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
      */
-    public function __construct(Stringable|string $template, iterable $defaultVariables = [])
+    public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
     {
         $this->template = $template instanceof Template ? $template : Template::new($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
@@ -56,6 +56,24 @@ final class UriTemplate
 
         return $variables
             ->filter(fn ($value, string|int $name) => array_key_exists($name, $offsets));
+    }
+
+    public function __toString(): string
+    {
+        return $this->template->value;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getVariableNames(): array
+    {
+        return $this->template->variableNames;
+    }
+
+    public function getDefaultVariables(): iterable
+    {
+        return $this->defaultVariables;
     }
 
     /**
@@ -83,12 +101,10 @@ final class UriTemplate
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expand(iterable $variables = []): UriInterface
+    public function expand(iterable $variables = []): string
     {
-        return Uri::new(
-            $this->template->expand(
-                $this->filterVariables($variables)->replace($this->defaultVariables)
-            )
+        return $this->template->expand(
+            $this->filterVariables($variables)->replace($this->defaultVariables)
         );
     }
 
@@ -96,12 +112,24 @@ final class UriTemplate
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expandOrFail(iterable $variables = []): UriInterface
+    public function expandOrFail(iterable $variables = []): string
     {
-        return Uri::new(
-            $this->template->expandOrFail(
-                $this->filterVariables($variables)->replace($this->defaultVariables)
-            )
+        return $this->template->expandOrFail(
+            $this->filterVariables($variables)->replace($this->defaultVariables)
         );
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     * @see UriTemplate::__toString
+     *
+     * Returns the template string
+     */
+    public function getTemplate(): string
+    {
+        return $this->__toString();
     }
 }

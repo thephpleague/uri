@@ -23,6 +23,7 @@ use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
+use League\Uri\UriTemplate\VariableBag;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
@@ -477,11 +478,14 @@ final class Uri implements UriInterface
      */
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
-        if (!$template instanceof UriTemplate\Template) {
-            $template = UriTemplate\Template::new($template);
+        if (!$variables instanceof VariableBag) {
+            $variables = new VariableBag($variables);
         }
 
-        return self::new($template->expand($variables));
+        return self::new(match (true) {
+            $template instanceof UriTemplate => $template->expand($variables),
+            default => UriTemplate\Template::new($template)->expand($variables),
+        });
     }
 
     /**

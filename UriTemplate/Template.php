@@ -25,7 +25,10 @@ use function str_contains;
 use function str_replace;
 use const PREG_SET_ORDER;
 
-final class Template implements Stringable
+/**
+ * @internal The class exposes the internal representation of a Template and its usage
+ */
+final class Template
 {
     /**
      * Expression regular expression pattern.
@@ -37,7 +40,7 @@ final class Template implements Stringable
     /** @var array<string> */
     public readonly array $variableNames;
 
-    private function __construct(private readonly string $value, Expression ...$expressions)
+    private function __construct(public readonly string $value, Expression ...$expressions)
     {
         $this->expressions = $expressions;
         $this->variableNames = array_keys(array_reduce(
@@ -74,11 +77,6 @@ final class Template implements Stringable
                 return $carry;
             }, [])
         ));
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
     }
 
     /**

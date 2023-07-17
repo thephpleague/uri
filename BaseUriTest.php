@@ -12,6 +12,7 @@
 namespace League\Uri;
 
 use GuzzleHttp\Psr7\Utils;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
@@ -393,18 +394,33 @@ final class BaseUriTest extends TestCase
     {
         $resolvedUri = BaseUri::new(Utils::uriFor($baseUri))->resolve($uri);
 
-        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $resolvedUri->uri());
+        self::assertInstanceOf(Uri::class, $resolvedUri->uri());
         self::assertSame($expected, (string) $resolvedUri);
     }
 
     /**
      * @dataProvider relativizeProvider
      */
-    public function testRelativizeWithPsr7Implementation(string $uri, string $resolved, string $expected): void
+    public function testRelativizeWithPsr7Implementation(string $uriString, string $resolved, string $expected): void
     {
-        $relativizedUri = BaseUri::new(Utils::uriFor($uri))->relativize($resolved);
+        $uri = Utils::uriFor($uriString);
+
+        BaseUri::registerUriFactory(new Psr17Factory());
+        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
+
+        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizedUri->uri());
+        self::assertSame($expected, (string) $relativizedUri);
+
+        BaseUri::registerUriFactory(new \GuzzleHttp\Psr7\HttpFactory());
+        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
 
         self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizedUri->uri());
+        self::assertSame($expected, (string) $relativizedUri);
+
+        BaseUri::unregisterUriFactory();
+        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
+
+        self::assertInstanceOf(Uri::class, $relativizedUri->uri());
         self::assertSame($expected, (string) $relativizedUri);
     }
 
@@ -413,6 +429,7 @@ final class BaseUriTest extends TestCase
      */
     public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
+        BaseUri::registerUriFactory(new \GuzzleHttp\Psr7\HttpFactory());
         $origin = BaseUri::new(Utils::uriFor((string) $uri))->origin();
         if (null !== $origin) {
             self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->uri());

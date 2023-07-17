@@ -119,7 +119,7 @@ final class UriTemplateTest extends TestCase
      */
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
-        self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables));
+        self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->toString());
     }
 
     public static function templateExpansionProvider(): iterable
@@ -255,11 +255,11 @@ final class UriTemplateTest extends TestCase
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
         ];
-        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo[]=fizz&foo[]=buzz';
+        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz';
 
         $uriTemplate = new UriTemplate($template);
-        self::assertSame($expectedUri, $uriTemplate->expand($variables));
-        self::assertSame($expectedUri, $uriTemplate->expandOrFail($variables));
+        self::assertSame($expectedUri, $uriTemplate->expand($variables)->toString());
+        self::assertSame($expectedUri, $uriTemplate->expandOrFail($variables)->toString());
     }
 
     public function testDisallowNestedArrayExpansion(): void
@@ -296,11 +296,11 @@ final class UriTemplateTest extends TestCase
             'more' => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
         ];
-        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo[]=fizz&foo[]=buzz';
+        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz';
 
         $uriTemplate = new UriTemplate($template, $defaultVariables);
-        self::assertSame($expectedUri, $uriTemplate->expand($variables));
-        self::assertSame($expectedUri, $uriTemplate->expandOrFail($variables));
+        self::assertSame($expectedUri, $uriTemplate->expand($variables)->toString());
+        self::assertSame($expectedUri, $uriTemplate->expandOrFail($variables)->toString());
     }
 
     public function testExpandWithDefaultVariablesWithOverride(): void
@@ -320,8 +320,8 @@ final class UriTemplateTest extends TestCase
         ];
 
         self::assertSame(
-            'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo[]=fizz&foo[]=buzz',
-            (new UriTemplate($template, $defaultVariables))->expand($variables)
+            'http://example.com/bar/baz/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz',
+            (new UriTemplate($template, $defaultVariables))->expand($variables)->toString()
         );
     }
 
@@ -351,7 +351,7 @@ final class UriTemplateTest extends TestCase
         $template = '{foo}/{foo}';
         $data = ['foo' => 'foo'];
 
-        self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand());
+        self::assertSame('foo/foo', (new UriTemplate($template, $data))->expand()->toString());
     }
 
     public function testExpandOrFailIfVariablesAreMissing(): void

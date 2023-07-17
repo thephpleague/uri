@@ -71,9 +71,9 @@ final class UriTemplate implements Stringable
         return $this->template->variableNames;
     }
 
-    public function getDefaultVariables(): iterable
+    public function getDefaultVariables(): array
     {
-        return $this->defaultVariables;
+        return iterator_to_array($this->defaultVariables);
     }
 
     /**
@@ -101,22 +101,22 @@ final class UriTemplate implements Stringable
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expand(iterable $variables = []): string
+    public function expand(iterable $variables = []): UriInterface
     {
-        return $this->template->expand(
+        return Uri::new($this->template->expand(
             $this->filterVariables($variables)->replace($this->defaultVariables)
-        );
+        ));
     }
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public function expandOrFail(iterable $variables = []): string
+    public function expandOrFail(iterable $variables = []): UriInterface
     {
-        return $this->template->expandOrFail(
+        return Uri::new($this->template->expandOrFail(
             $this->filterVariables($variables)->replace($this->defaultVariables)
-        );
+        ));
     }
 
     /**

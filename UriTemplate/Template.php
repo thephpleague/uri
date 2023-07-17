@@ -28,7 +28,7 @@ use const PREG_SET_ORDER;
 /**
  * @internal The class exposes the internal representation of a Template and its usage
  */
-final class Template
+final class Template implements Stringable
 {
     /**
      * Expression regular expression pattern.
@@ -115,6 +115,11 @@ final class Template
             fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),
             $this->value
         );
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 
     /**

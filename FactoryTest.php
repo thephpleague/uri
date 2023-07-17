@@ -337,9 +337,11 @@ final class FactoryTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCreateFromBaseUri(string $base_uri, string $uri, string $expected): void
+    public function testCreateFromBaseUri(string $baseUri, string $uri, string $expected): void
     {
-        self::assertSame($expected, Uri::fromBaseUri($uri, $base_uri)->toString());
+        BaseUri::unregisterUriFactory();
+
+        self::assertSame($expected, Uri::fromBaseUri($uri, $baseUri)->toString());
     }
 
     public static function createProvider(): array

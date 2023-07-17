@@ -28,6 +28,7 @@ use const ARRAY_FILTER_USE_BOTH;
  * @internal The class exposes the internal representation of variable bags
  *
  * @phpstan-type InputValue string|bool|int|float|array<string|bool|int|float>
+ *
  * @implements ArrayAccess<string, InputValue>
  * @implements IteratorAggregate<string, InputValue>
  */
@@ -138,6 +139,9 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
         return new self($this->variables + $variables->variables);
     }
 
+    /**
+     * Filters elements using the closure.
+     */
     public function filter(Closure $fn): self
     {
         return new self(array_filter($this->variables, $fn, ARRAY_FILTER_USE_BOTH));

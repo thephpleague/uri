@@ -23,7 +23,6 @@ use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
-use League\Uri\UriTemplate\VariableBag;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
@@ -338,21 +337,21 @@ final class Uri implements UriInterface
      */
     private function formatRegisteredName(string $host): string
     {
+        $formatter = static function (string $host) {
+            $info = Idna::toAscii($host, Idna::IDNA2008_ASCII);
+
+            return match (true) {
+                0 !== $info->errors() => throw IdnaConversionFailed::dueToIDNAError($host, $info),
+                default => $info->result(),
+            };
+        };
         $formattedHost = rawurldecode($host);
-        if (1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost)) {
-            return $formattedHost;
-        }
 
-        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost)) {
-            throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.');
-        }
-
-        $info = Idna::toAscii($host, Idna::IDNA2008_ASCII);
-        if (0 !== $info->errors()) {
-            throw IdnaConversionFailed::dueToIDNAError($host, $info);
-        }
-
-        return $info->result();
+        return match (true) {
+            1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
+            1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
+            default => $formatter($host),
+        };
     }
 
     /**
@@ -441,16 +440,12 @@ final class Uri implements UriInterface
         }
 
         if (null === $baseUri) {
-            if (null === $uri->getScheme()) {
-                throw new SyntaxError('the URI `'.$uri.'` must be absolute.');
-            }
-
-            if (null === $uri->getAuthority()) {
-                return $uri;
-            }
-
             /** @var UriInterface $uri */
-            $uri = BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->uri();
+            $uri = match (true) {
+                null === $uri->getScheme() => throw new SyntaxError('the URI `'.$uri.'` must be absolute.'),
+                null === $uri->getAuthority() => $uri,
+                default => BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->uri(),
+            };
 
             return $uri;
         }
@@ -459,8 +454,7 @@ final class Uri implements UriInterface
             $baseUri = BaseUri::new($baseUri);
         }
 
-        $null = $baseUri->uri() instanceof Psr7UriInterface ? '' : null;
-        if ($null === $baseUri->uri()->getScheme()) {
+        if (($baseUri->uri() instanceof Psr7UriInterface ? '' : null) === $baseUri->uri()->getScheme()) {
             throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
         }
 
@@ -478,14 +472,11 @@ final class Uri implements UriInterface
      */
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
-        if (!$variables instanceof VariableBag) {
-            $variables = new VariableBag($variables);
-        }
-
-        return self::new(match (true) {
-            $template instanceof UriTemplate => $template->expand($variables),
-            default => UriTemplate\Template::new($template)->expand($variables),
-        });
+        return match (true) {
+            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->components()),
+            $template instanceof UriTemplate\Template => self::new($template->expand($variables)),
+            default => self::new(UriTemplate\Template::new($template)->expand($variables)),
+        };
     }
 
     /**
@@ -597,9 +588,9 @@ final class Uri implements UriInterface
             return Uri::fromComponents(['path' => $path]);
         }
 
-        $parts = explode('/', substr($path, 2), 2) + [1 => null];
+        [$host, $path] = explode('/', substr($path, 2), 2) + [1 => ''];
 
-        return Uri::fromComponents(['host' => $parts[0], 'path' => '/'.$parts[1], 'scheme' => 'file']);
+        return Uri::fromComponents(['host' => $host, 'path' => '/'.$path, 'scheme' => 'file']);
     }
 
     /**
@@ -681,10 +672,7 @@ final class Uri implements UriInterface
                 $matches['host'] = (string) $matches['host'];
             }
 
-            return [
-                $matches['host'],
-                $matches['port'] ?? $server['SERVER_PORT'],
-            ];
+            return [$matches['host'], $matches['port'] ?? $server['SERVER_PORT']];
         }
 
         if (!isset($server['SERVER_ADDR'])) {
@@ -692,7 +680,7 @@ final class Uri implements UriInterface
         }
 
         if (false === filter_var($server['SERVER_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $server['SERVER_ADDR'] = '['.$server['SERVER_ADDR'].']';
+            return ['['.$server['SERVER_ADDR'].']', $server['SERVER_PORT']];
         }
 
         return [$server['SERVER_ADDR'], $server['SERVER_PORT']];
@@ -757,7 +745,7 @@ final class Uri implements UriInterface
         }
 
         if ('file' === $this->scheme) {
-            $path = $this->formatFilePath($path);
+            return $this->formatFilePath($path);
         }
 
         return $path;
@@ -1087,11 +1075,10 @@ final class Uri implements UriInterface
      */
     public function getPath(): string
     {
-        if (str_starts_with($this->path, '//')) {
-            return '/'.ltrim($this->path, '/');
-        }
-
-        return $this->path;
+        return match (true) {
+            str_starts_with($this->path, '//') => '/'.ltrim($this->path, '/'),
+            default => $this->path,
+        };
     }
 
     /**
@@ -1136,20 +1123,17 @@ final class Uri implements UriInterface
      */
     private function filterString(Stringable|string|null $str): ?string
     {
-        if ($str instanceof UriComponentInterface) {
-            $str = $str->value();
-        }
+        $str = match (true) {
+            $str instanceof UriComponentInterface => $str->value(),
+            null === $str => null,
+            default => (string) $str,
+        };
 
-        if (null === $str) {
-            return null;
-        }
-
-        $str = (string) $str;
-        if (1 !== preg_match(self::REGEXP_INVALID_CHARS, $str)) {
-            return $str;
-        }
-
-        throw new SyntaxError('The component `'.$str.'` contains invalid characters.');
+        return match (true) {
+            null === $str => null,
+            1 === preg_match(self::REGEXP_INVALID_CHARS, $str) => throw new SyntaxError('The component `'.$str.'` contains invalid characters.'),
+            default => $str,
+        };
     }
 
     public function withUserInfo(

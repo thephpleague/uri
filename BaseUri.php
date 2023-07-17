@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use JsonSerializable;
 use League\Uri\Contracts\UriInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 use function array_pop;
@@ -42,6 +43,7 @@ final class BaseUri implements Stringable, JsonSerializable
 
     private readonly Psr7UriInterface|UriInterface|null $origin;
     private readonly ?string $nullValue;
+    private static UriFactoryInterface|null $uriFactory = null;
 
     private function __construct(
         private readonly Psr7UriInterface|UriInterface $value
@@ -54,7 +56,7 @@ final class BaseUri implements Stringable, JsonSerializable
     {
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = self::filterUri($uri->getPath(), $uri);
+            $uri = self::filterUri($uri->getPath());
             $scheme = $uri->getScheme();
         }
 
@@ -72,6 +74,16 @@ final class BaseUri implements Stringable, JsonSerializable
     public static function new(Stringable|string $uri): self
     {
         return new self(self::filterUri($uri));
+    }
+
+    public static function registerUriFactory(UriFactoryInterface $uriFactory): void
+    {
+        self::$uriFactory = $uriFactory;
+    }
+
+    public static function unregisterUriFactory(): void
+    {
+        self::$uriFactory = null;
     }
 
     public function jsonSerialize(): mixed
@@ -180,37 +192,15 @@ final class BaseUri implements Stringable, JsonSerializable
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(
-        Stringable|string $uri,
-        Psr7UriInterface|UriInterface|null $href = null
-    ): Psr7UriInterface|UriInterface {
-        if ($uri instanceof self) {
-            return $uri->value;
-        }
-
-        if ($uri instanceof Psr7UriInterface || $uri instanceof UriInterface) {
-            return $uri;
-        }
-
-        if (!$href instanceof Psr7UriInterface) {
-            return Uri::new($uri);
-        }
-
-        if ($href instanceof Http) {
-            return Http::new($uri);
-        }
-
-        $components = UriString::parse($uri);
-
-        return $href
-            ->withFragment($components['fragment'] ?? '')
-            ->withQuery($components['query'] ?? '')
-            ->withPath($components['path'])
-            ->withScheme($components['scheme'] ?? '')
-            ->withHost($components['host'] ?? '')
-            ->withUserInfo($components['user'] ?? '', $components['pass'])
-            ->withPort($components['port'])
-        ;
+    private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
+    {
+        return match (true) {
+            $uri instanceof self => $uri->value,
+            $uri instanceof Psr7UriInterface,
+            $uri instanceof UriInterface => $uri,
+            null !== self::$uriFactory => self::$uriFactory->createUri((string) $uri),
+            default => Uri::new($uri),
+        };
     }
 
     /**
@@ -224,7 +214,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function resolve(Stringable|string $uri): self
     {
-        $uri = self::filterUri($uri, $this->value);
+        $uri = self::filterUri($uri);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -360,7 +350,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function relativize(Stringable|string $uri): self
     {
-        $uri = self::formatHost(self::filterUri($uri, $this->value));
+        $uri = self::formatHost(self::filterUri($uri));
         if (!$this->isRelativizable($uri)) {
             return new self($uri);
         }
@@ -388,13 +378,15 @@ final class BaseUri implements Stringable, JsonSerializable
 
     /**
      * Returns the component value from the submitted URI object.
+     *
+     * @pqram 'query'|'authority'|'scheme' $property
      */
     private static function getComponent(string $property, Psr7UriInterface|UriInterface $uri): ?string
     {
         $component = match ($property) {
             'query' => $uri->getQuery(),
             'authority' => $uri->getAuthority(),
-            default => $uri->getScheme(), //scheme
+            default => $uri->getScheme(),
         };
 
         if ($uri instanceof Psr7UriInterface && '' === $component) {
@@ -409,16 +401,12 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     private static function formatHost(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
-        if (!$uri instanceof Psr7UriInterface) {
-            return $uri;
-        }
-
         $host = $uri->getHost();
-        if ('' === $host) {
-            return $uri;
-        }
 
-        return $uri->withHost((string) Uri::fromComponents(['host' => $host])->getHost());
+        return match (true) {
+            $uri instanceof UriInterface, '' === $host => $uri,
+            default => $uri->withHost((string) Uri::fromComponents(['host' => $host])->getHost()),
+        };
     }
 
     /**

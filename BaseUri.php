@@ -69,7 +69,7 @@ final class BaseUri implements Stringable, JsonSerializable
 
     public static function new(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self
     {
-        return new self(self::filterUri($uri, $uriFactory), $uriFactory);
+        return new self(self::formatHost(self::filterUri($uri, $uriFactory)), $uriFactory);
     }
 
     public function withUriFactory(UriFactoryInterface $uriFactory): self
@@ -82,7 +82,7 @@ final class BaseUri implements Stringable, JsonSerializable
         return new self($this->value, null);
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): string
     {
         return $this->value->__toString();
     }
@@ -354,7 +354,7 @@ final class BaseUri implements Stringable, JsonSerializable
     public function relativize(Stringable|string $uri): self
     {
         $uri = self::formatHost(self::filterUri($uri, $this->uriFactory));
-        if (!$this->isRelativizable($uri)) {
+        if ($this->canNotBeRelativize($uri)) {
             return new self($uri, $this->uriFactory);
         }
 
@@ -417,11 +417,11 @@ final class BaseUri implements Stringable, JsonSerializable
     /**
      * Tells whether the submitted URI object can be relativized.
      */
-    private function isRelativizable(Psr7UriInterface|UriInterface $uri): bool
+    private function canNotBeRelativize(Psr7UriInterface|UriInterface $uri): bool
     {
-        return !self::new($uri)->isRelativePath()
-            && self::componentEquals('scheme', $uri)
-            && self::componentEquals('authority', $uri);
+        return self::new($uri)->isRelativePath()
+            || !self::componentEquals('scheme', $uri)
+            || !self::componentEquals('authority', $uri);
     }
 
     /**

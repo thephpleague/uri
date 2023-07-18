@@ -404,18 +404,19 @@ final class BaseUriTest extends TestCase
     public function testRelativizeWithPsr7Implementation(string $uriString, string $resolved, string $expected): void
     {
         $uri = Utils::uriFor($uriString);
+        $baseUri = BaseUri::new($uri, new Psr17Factory());
 
-        $relativizedUri = BaseUri::new($uri, new Psr17Factory())->relativize($resolved);
-        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizedUri->uri());
-        self::assertSame($expected, (string) $relativizedUri);
+        $relativizeUri = $baseUri->relativize($resolved);
+        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizeUri->uri());
+        self::assertSame($expected, (string) $relativizeUri);
 
-        $relativizedUri = BaseUri::new($uri, new \GuzzleHttp\Psr7\HttpFactory())->relativize($resolved);
-        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizedUri->uri());
-        self::assertSame($expected, (string) $relativizedUri);
+        $relativizeUri = $baseUri->withUriFactory(new \GuzzleHttp\Psr7\HttpFactory())->relativize($resolved);
+        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizeUri->uri());
+        self::assertSame($expected, (string) $relativizeUri);
 
-        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
-        self::assertInstanceOf(Uri::class, $relativizedUri->uri());
-        self::assertSame($expected, (string) $relativizedUri);
+        $relativizeUri = $baseUri->withoutUriFactory()->relativize($resolved);
+        self::assertInstanceOf(Uri::class, $relativizeUri->uri());
+        self::assertSame($expected, (string) $relativizeUri);
     }
 
     /**

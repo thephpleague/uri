@@ -31,20 +31,16 @@ use function substr;
 
 final class BaseUri implements Stringable, JsonSerializable
 {
-    /**
-     * @var array<string,int>
-     */
+    /** @var array<string,int> */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
 
-    /**
-     * @var array<string,int>
-     */
+    /** @var array<string,int> */
     private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
     private readonly Psr7UriInterface|UriInterface|null $origin;
     private readonly ?string $nullValue;
 
-    private function __construct(
+    public function __construct(
         private readonly Psr7UriInterface|UriInterface $value,
         private readonly UriFactoryInterface|null $uriFactory
     ) {
@@ -103,11 +99,10 @@ final class BaseUri implements Stringable, JsonSerializable
 
     public function origin(): ?self
     {
-        if (null === $this->origin) {
-            return null;
-        }
-
-        return new self($this->origin, $this->uriFactory);
+        return match (true) {
+            null === $this->origin => null,
+            default => new self($this->origin, $this->uriFactory),
+        };
     }
 
     /**
@@ -192,10 +187,8 @@ final class BaseUri implements Stringable, JsonSerializable
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(
-        Stringable|string $uri,
-        UriFactoryInterface|null $uriFactory = null
-    ): Psr7UriInterface|UriInterface {
+    private static function filterUri(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): Psr7UriInterface|UriInterface
+    {
         return match (true) {
             $uri instanceof self => $uri->value,
             $uri instanceof Psr7UriInterface,
@@ -214,8 +207,9 @@ final class BaseUri implements Stringable, JsonSerializable
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Stringable|string $uri): self
+    public function resolve(Stringable|string $uri = null): self
     {
+        $uri = $uri ?? $this->value;
         $uri = self::filterUri($uri, $this->uriFactory);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
@@ -401,11 +395,10 @@ final class BaseUri implements Stringable, JsonSerializable
             default => $uri->getScheme(),
         };
 
-        if ($uri instanceof Psr7UriInterface && '' === $component) {
-            return null;
-        }
-
-        return $component;
+        return match (true) {
+            $uri instanceof UriInterface, '' !== $component => $component,
+            default => null,
+        };
     }
 
     /**

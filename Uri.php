@@ -414,7 +414,7 @@ final class Uri implements UriInterface
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        $components = UriString::parse($uri);
+        $components = $uri instanceof UriInterface ? $uri->components() : UriString::parse($uri);
 
         return new self(
             $components['scheme'],
@@ -433,33 +433,15 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): UriInterface
+    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
     {
-        if (!$uri instanceof UriInterface) {
-            $uri = self::new($uri);
-        }
+        $baseUri = BaseUri::new($baseUri ?? self::new($uri));
 
-        if (null === $baseUri) {
-            /** @var UriInterface $uri */
-            $uri = match (true) {
-                null === $uri->getScheme() => throw new SyntaxError('the URI `'.$uri.'` must be absolute.'),
-                null === $uri->getAuthority() => $uri,
-                default => BaseUri::new($uri->withFragment(null)->withQuery(null)->withPath(''))->resolve($uri)->uri(),
-            };
-
-            return $uri;
-        }
-
-        if (!$baseUri instanceof BaseUri) {
-            $baseUri = BaseUri::new($baseUri);
-        }
-
-        if (($baseUri->uri() instanceof Psr7UriInterface ? '' : null) === $baseUri->uri()->getScheme()) {
-            throw new SyntaxError('the base URI `'.$baseUri.'` must be absolute.');
-        }
-
-        /** @var UriInterface $uri */
-        $uri = $baseUri->resolve($uri)->uri();
+        /** @var self $uri */
+        $uri = match (true) {
+            $baseUri->isAbsolute() => $baseUri->resolve($uri)->uri(),
+            default => throw new SyntaxError('the URI `'.$baseUri.'` must be absolute.'),
+        };
 
         return $uri;
     }
@@ -557,11 +539,11 @@ final class Uri implements UriInterface
     public static function fromUnixPath(Stringable|string $path): self
     {
         $path = implode('/', array_map(rawurlencode(...), explode('/', (string) $path)));
-        if ('/' !== ($path[0] ?? '')) {
-            return Uri::fromComponents(['path' => $path]);
-        }
 
-        return Uri::fromComponents(['path' => $path, 'scheme' => 'file', 'host' => '']);
+        return Uri::fromComponents(match (true) {
+            '/' !== ($path[0] ?? '') => ['path' => $path],
+            default => ['path' => $path, 'scheme' => 'file', 'host' => ''],
+        });
     }
 
     /**

@@ -339,8 +339,6 @@ final class FactoryTest extends TestCase
      */
     public function testCreateFromBaseUri(string $baseUri, string $uri, string $expected): void
     {
-        BaseUri::unregisterUriFactory();
-
         self::assertSame($expected, Uri::fromBaseUri($uri, $baseUri)->toString());
     }
 

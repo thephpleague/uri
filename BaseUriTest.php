@@ -405,21 +405,15 @@ final class BaseUriTest extends TestCase
     {
         $uri = Utils::uriFor($uriString);
 
-        BaseUri::registerUriFactory(new Psr17Factory());
-        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
-
+        $relativizedUri = BaseUri::new($uri, new Psr17Factory())->relativize($resolved);
         self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizedUri->uri());
         self::assertSame($expected, (string) $relativizedUri);
 
-        BaseUri::registerUriFactory(new \GuzzleHttp\Psr7\HttpFactory());
-        $relativizedUri = BaseUri::new($uri)->relativize($resolved);
-
+        $relativizedUri = BaseUri::new($uri, new \GuzzleHttp\Psr7\HttpFactory())->relativize($resolved);
         self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizedUri->uri());
         self::assertSame($expected, (string) $relativizedUri);
 
-        BaseUri::unregisterUriFactory();
         $relativizedUri = BaseUri::new($uri)->relativize($resolved);
-
         self::assertInstanceOf(Uri::class, $relativizedUri->uri());
         self::assertSame($expected, (string) $relativizedUri);
     }
@@ -429,8 +423,7 @@ final class BaseUriTest extends TestCase
      */
     public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
-        BaseUri::registerUriFactory(new \GuzzleHttp\Psr7\HttpFactory());
-        $origin = BaseUri::new(Utils::uriFor((string) $uri))->origin();
+        $origin = BaseUri::new(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
         if (null !== $origin) {
             self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->uri());
             self::assertSame($expectedOrigin, $origin->__toString());

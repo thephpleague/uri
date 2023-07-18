@@ -43,10 +43,10 @@ final class BaseUri implements Stringable, JsonSerializable
 
     private readonly Psr7UriInterface|UriInterface|null $origin;
     private readonly ?string $nullValue;
-    private static UriFactoryInterface|null $uriFactory = null;
 
     private function __construct(
-        private readonly Psr7UriInterface|UriInterface $value
+        private readonly Psr7UriInterface|UriInterface $value,
+        private readonly UriFactoryInterface|null $uriFactory
     ) {
         $this->nullValue = $this->value instanceof Psr7UriInterface ? '' : null;
         $this->origin = $this->computeOrigin($this->value, $this->nullValue);
@@ -56,7 +56,7 @@ final class BaseUri implements Stringable, JsonSerializable
     {
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = self::filterUri($uri->getPath());
+            $uri = self::filterUri($uri->getPath(), $this->uriFactory);
             $scheme = $uri->getScheme();
         }
 
@@ -71,19 +71,19 @@ final class BaseUri implements Stringable, JsonSerializable
             ->withUserInfo($nullValue);
     }
 
-    public static function new(Stringable|string $uri): self
+    public static function new(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self
     {
-        return new self(self::filterUri($uri));
+        return new self(self::filterUri($uri, $uriFactory), $uriFactory);
     }
 
-    public static function registerUriFactory(UriFactoryInterface $uriFactory): void
+    public function withUriFactory(UriFactoryInterface $uriFactory): self
     {
-        self::$uriFactory = $uriFactory;
+        return new self($this->value, $uriFactory);
     }
 
-    public static function unregisterUriFactory(): void
+    public function withoutUriFactory(): self
     {
-        self::$uriFactory = null;
+        return new self($this->value, null);
     }
 
     public function jsonSerialize(): mixed
@@ -107,7 +107,7 @@ final class BaseUri implements Stringable, JsonSerializable
             return null;
         }
 
-        return new self($this->origin);
+        return new self($this->origin, $this->uriFactory);
     }
 
     /**
@@ -192,13 +192,15 @@ final class BaseUri implements Stringable, JsonSerializable
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(Stringable|string $uri): Psr7UriInterface|UriInterface
-    {
+    private static function filterUri(
+        Stringable|string $uri,
+        UriFactoryInterface|null $uriFactory = null
+    ): Psr7UriInterface|UriInterface {
         return match (true) {
             $uri instanceof self => $uri->value,
             $uri instanceof Psr7UriInterface,
             $uri instanceof UriInterface => $uri,
-            null !== self::$uriFactory => self::$uriFactory->createUri((string) $uri),
+            $uriFactory instanceof UriFactoryInterface => $uriFactory->createUri((string) $uri),
             default => Uri::new($uri),
         };
     }
@@ -214,18 +216,23 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function resolve(Stringable|string $uri): self
     {
-        $uri = self::filterUri($uri);
+        $uri = self::filterUri($uri, $this->uriFactory);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
-            return new self($uri
-                ->withPath(self::removeDotSegments($uri->getPath())));
+            return new self(
+                $uri->withPath(self::removeDotSegments($uri->getPath())),
+                $this->uriFactory
+            );
         }
 
         if ($null !== $uri->getAuthority()) {
-            return new self($uri
-                ->withScheme($this->value->getScheme())
-                ->withPath(self::removeDotSegments($uri->getPath())));
+            return new self(
+                $uri
+                    ->withScheme($this->value->getScheme())
+                    ->withPath(self::removeDotSegments($uri->getPath())),
+                $this->uriFactory
+            );
         }
 
         $user = $null;
@@ -237,14 +244,16 @@ final class BaseUri implements Stringable, JsonSerializable
 
         [$path, $query] = $this->resolvePathAndQuery($uri);
 
-        return new self($uri
-            ->withPath($this->removeDotSegments($path))
-            ->withQuery($query)
-            ->withHost($this->value->getHost())
-            ->withPort($this->value->getPort())
-            ->withUserInfo((string) $user, $pass)
-            ->withScheme($this->value->getScheme()))
-        ;
+        return new self(
+            $uri
+                ->withPath($this->removeDotSegments($path))
+                ->withQuery($query)
+                ->withHost($this->value->getHost())
+                ->withPort($this->value->getPort())
+                ->withUserInfo((string) $user, $pass)
+                ->withScheme($this->value->getScheme()),
+            $this->uriFactory
+        );
     }
 
     /**
@@ -350,9 +359,9 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function relativize(Stringable|string $uri): self
     {
-        $uri = self::formatHost(self::filterUri($uri));
+        $uri = self::formatHost(self::filterUri($uri, $this->uriFactory));
         if (!$this->isRelativizable($uri)) {
-            return new self($uri);
+            return new self($uri, $this->uriFactory);
         }
 
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -360,12 +369,15 @@ final class BaseUri implements Stringable, JsonSerializable
         $targetPath = $uri->getPath();
         $basePath = $this->value->getPath();
 
-        return new self(match (true) {
-            $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
-            self::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
-            $null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
-            default => $uri->withPath(''),
-        });
+        return new self(
+            match (true) {
+                $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
+                self::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
+                $null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
+                default => $uri->withPath(''),
+            },
+            $this->uriFactory
+        );
     }
 
     /**

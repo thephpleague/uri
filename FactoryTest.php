@@ -12,7 +12,9 @@
 namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
+use Nyholm\Psr7\Uri as NyholmUri;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 
 /**
  * @group factory
@@ -337,7 +339,7 @@ final class FactoryTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCreateFromBaseUri(string $baseUri, string $uri, string $expected): void
+    public function testCreateFromBaseUri(Stringable|string $baseUri, Stringable|string $uri, string $expected): void
     {
         self::assertSame($expected, Uri::fromBaseUri($uri, $baseUri)->toString());
     }
@@ -386,6 +388,9 @@ final class FactoryTest extends TestCase
             'dot segments presence 6' => [$base_uri, '..g',           'http://a/b/c/..g'],
             'origin uri without path' => ['http://h:b@a', 'b/../y',   'http://h:b@a/y'],
             'uri without auhtority'   => ['mailto:f@a.b', 'b@c.d?subject=baz', 'mailto:b@c.d?subject=baz'],
+            'with PSR7 base URI' => [new NyholmUri($base_uri), 'g.', 'http://a/b/c/g.'],
+            'with PSR7 ref URI' => [$base_uri, new NyholmUri('g.'), 'http://a/b/c/g.'],
+            'with PSR7 base URI and ref URI' => [new NyholmUri($base_uri), new NyholmUri('g.'), 'http://a/b/c/g.'],
         ];
     }
 

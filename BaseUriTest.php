@@ -28,7 +28,7 @@ final class BaseUriTest extends TestCase
     {
         self::assertSame(
             json_encode(Uri::new('http://example.com')),
-            json_encode(BaseUri::new('http://example.com'))
+            json_encode(BaseUri::from('http://example.com'))
         );
     }
 
@@ -37,7 +37,7 @@ final class BaseUriTest extends TestCase
      */
     public function testCreateResolve(string $baseUri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) BaseUri::new($baseUri)->resolve($uri));
+        self::assertSame($expected, (string) BaseUri::from($baseUri)->resolve($uri));
     }
 
     public static function resolveProvider(): array
@@ -89,7 +89,7 @@ final class BaseUriTest extends TestCase
     {
         $uri = '//path#fragment';
 
-        self::assertEquals($uri, (string) BaseUri::new('https://example.com/path')->relativize($uri));
+        self::assertEquals($uri, (string) BaseUri::from('https://example.com/path')->relativize($uri));
     }
 
     /**
@@ -99,7 +99,7 @@ final class BaseUriTest extends TestCase
     {
         self::assertSame(
             $expected,
-            (string) BaseUri::new(Http::new($uri))->relativize($resolved)
+            (string) BaseUri::from(Http::new($uri))->relativize($resolved)
         );
     }
 
@@ -156,7 +156,7 @@ final class BaseUriTest extends TestCase
     ): void {
         self::assertSame(
             $expectedRelativize,
-            (string) BaseUri::new($baseUri)->relativize($uri)
+            (string) BaseUri::from($baseUri)->relativize($uri)
         );
     }
 
@@ -189,12 +189,12 @@ final class BaseUriTest extends TestCase
         array $infos
     ): void {
         if (null !== $base_uri) {
-            self::assertSame($infos['same_document'], BaseUri::new($base_uri)->isSameDocument($uri));
+            self::assertSame($infos['same_document'], BaseUri::from($base_uri)->isSameDocument($uri));
         }
-        self::assertSame($infos['relative_path'], BaseUri::new($uri)->isRelativePath());
-        self::assertSame($infos['absolute_path'], BaseUri::new($uri)->isAbsolutePath());
-        self::assertSame($infos['absolute_uri'], BaseUri::new($uri)->isAbsolute());
-        self::assertSame($infos['network_path'], BaseUri::new($uri)->isNetworkPath());
+        self::assertSame($infos['relative_path'], BaseUri::from($uri)->isRelativePath());
+        self::assertSame($infos['absolute_path'], BaseUri::from($uri)->isAbsolutePath());
+        self::assertSame($infos['absolute_uri'], BaseUri::from($uri)->isAbsolute());
+        self::assertSame($infos['network_path'], BaseUri::from($uri)->isNetworkPath());
     }
 
     public static function uriProvider(): array
@@ -249,10 +249,10 @@ final class BaseUriTest extends TestCase
 
     public function testIsFunctionsThrowsTypeError(): void
     {
-        self::assertTrue(BaseUri::new('http://example.com')->isAbsolute());
-        self::assertFalse(BaseUri::new('http://example.com')->isNetworkPath());
-        self::assertTrue(BaseUri::new('/example.com')->isAbsolutePath());
-        self::assertTrue(BaseUri::new('example.com#foobar')->isRelativePath());
+        self::assertTrue(BaseUri::from('http://example.com')->isAbsolute());
+        self::assertFalse(BaseUri::from('http://example.com')->isNetworkPath());
+        self::assertTrue(BaseUri::from('/example.com')->isAbsolutePath());
+        self::assertTrue(BaseUri::from('example.com#foobar')->isRelativePath());
     }
 
     /**
@@ -260,7 +260,7 @@ final class BaseUriTest extends TestCase
      */
     public function testSameValueAs(Psr7UriInterface|Uri $uri1, Psr7UriInterface|Uri $uri2, bool $expected): void
     {
-        self::assertSame($expected, BaseUri::new($uri2)->isSameDocument($uri1));
+        self::assertSame($expected, BaseUri::from($uri2)->isSameDocument($uri1));
     }
 
     public static function sameValueAsProvider(): array
@@ -319,7 +319,7 @@ final class BaseUriTest extends TestCase
      */
     public function testGetOrigin(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
-        self::assertSame($expectedOrigin, BaseUri::new($uri)->origin()?->__toString());
+        self::assertSame($expectedOrigin, BaseUri::from($uri)->origin()?->__toString());
     }
 
     public static function getOriginProvider(): array
@@ -361,7 +361,7 @@ final class BaseUriTest extends TestCase
      */
     public function testIsCrossOrigin(string $original, string $modified, bool $expected): void
     {
-        self::assertSame($expected, BaseUri::new($original)->isCrossOrigin($modified));
+        self::assertSame($expected, BaseUri::from($original)->isCrossOrigin($modified));
     }
 
     /**
@@ -392,7 +392,7 @@ final class BaseUriTest extends TestCase
      */
     public function testResolveWithPsr7Implementation(string $baseUri, string $uri, string $expected): void
     {
-        $resolvedUri = BaseUri::new(Utils::uriFor($baseUri))->resolve($uri);
+        $resolvedUri = BaseUri::from(Utils::uriFor($baseUri))->resolve($uri);
 
         self::assertInstanceOf(Uri::class, $resolvedUri->uri());
         self::assertSame($expected, (string) $resolvedUri);
@@ -404,7 +404,7 @@ final class BaseUriTest extends TestCase
     public function testRelativizeWithPsr7Implementation(string $uriString, string $resolved, string $expected): void
     {
         $uri = Utils::uriFor($uriString);
-        $baseUri = BaseUri::new($uri, new Psr17Factory());
+        $baseUri = BaseUri::from($uri, new Psr17Factory());
 
         $relativizeUri = $baseUri->relativize($resolved);
         self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizeUri->uri());
@@ -424,7 +424,7 @@ final class BaseUriTest extends TestCase
      */
     public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
     {
-        $origin = BaseUri::new(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
+        $origin = BaseUri::from(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
         if (null !== $origin) {
             self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->uri());
             self::assertSame($expectedOrigin, $origin->__toString());

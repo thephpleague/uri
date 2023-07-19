@@ -67,7 +67,7 @@ final class BaseUri implements Stringable, JsonSerializable
             ->withUserInfo($nullValue);
     }
 
-    public static function new(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self
+    public static function from(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self
     {
         return new self(self::formatHost(self::filterUri($uri, $uriFactory)), $uriFactory);
     }
@@ -82,6 +82,16 @@ final class BaseUri implements Stringable, JsonSerializable
         return new self($this->value, null);
     }
 
+    public function uri(): Psr7UriInterface|UriInterface
+    {
+        return $this->value;
+    }
+
+    public function withUri(Stringable|string $uri): self
+    {
+        return self::from($uri, $this->uriFactory);
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value->__toString();
@@ -90,11 +100,6 @@ final class BaseUri implements Stringable, JsonSerializable
     public function __toString(): string
     {
         return $this->value->__toString();
-    }
-
-    public function uri(): Psr7UriInterface|UriInterface
-    {
-        return $this->value;
     }
 
     public function origin(): ?self
@@ -207,9 +212,8 @@ final class BaseUri implements Stringable, JsonSerializable
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Stringable|string $uri = null): self
+    public function resolve(Stringable|string $uri): self
     {
-        $uri = $uri ?? $this->value;
         $uri = self::filterUri($uri, $this->uriFactory);
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
@@ -419,7 +423,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     private function canNotBeRelativize(Psr7UriInterface|UriInterface $uri): bool
     {
-        return self::new($uri)->isRelativePath()
+        return self::from($uri)->isRelativePath()
             || !self::componentEquals('scheme', $uri)
             || !self::componentEquals('authority', $uri);
     }

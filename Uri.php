@@ -435,7 +435,8 @@ final class Uri implements UriInterface
      */
     public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
     {
-        $baseUri = BaseUri::new($baseUri ?? self::new($uri));
+        $uri = self::new((string) $uri);
+        $baseUri = BaseUri::from($baseUri ?? $uri);
 
         /** @var self $uri */
         $uri = match (true) {

@@ -34,7 +34,7 @@ final class UriInfo
      */
     public static function isAbsolute(Stringable|string $uri): bool
     {
-        return BaseUri::new($uri)->isAbsolute();
+        return BaseUri::from($uri)->isAbsolute();
     }
 
     /**
@@ -42,7 +42,7 @@ final class UriInfo
      */
     public static function isNetworkPath(Stringable|string $uri): bool
     {
-        return BaseUri::new($uri)->isNetworkPath();
+        return BaseUri::from($uri)->isNetworkPath();
     }
 
     /**
@@ -50,7 +50,7 @@ final class UriInfo
      */
     public static function isAbsolutePath(Stringable|string $uri): bool
     {
-        return BaseUri::new($uri)->isAbsolutePath();
+        return BaseUri::from($uri)->isAbsolutePath();
     }
 
     /**
@@ -59,7 +59,7 @@ final class UriInfo
      */
     public static function isRelativePath(Stringable|string $uri): bool
     {
-        return BaseUri::new($uri)->isRelativePath();
+        return BaseUri::from($uri)->isRelativePath();
     }
 
     /**
@@ -67,7 +67,7 @@ final class UriInfo
      */
     public static function isSameDocument(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        return BaseUri::new($baseUri)->isSameDocument($uri);
+        return BaseUri::from($baseUri)->isSameDocument($uri);
     }
 
     /**
@@ -81,7 +81,7 @@ final class UriInfo
      */
     public static function getOrigin(Stringable|string $uri): ?string
     {
-        return BaseUri::new($uri)->origin()?->__toString();
+        return BaseUri::from($uri)->origin()?->__toString();
     }
 
     /**
@@ -91,6 +91,6 @@ final class UriInfo
      */
     public static function isCrossOrigin(Stringable|string $uri, Stringable|string $baseUri): bool
     {
-        return BaseUri::new($baseUri)->isCrossOrigin($uri);
+        return BaseUri::from($baseUri)->isCrossOrigin($uri);
     }
 }

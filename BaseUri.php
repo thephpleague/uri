@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use JsonSerializable;
+use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -29,7 +30,7 @@ use function str_repeat;
 use function strpos;
 use function substr;
 
-final class BaseUri implements Stringable, JsonSerializable
+final class BaseUri implements Stringable, JsonSerializable, UriAccess
 {
     /** @var array<string,int> */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
@@ -82,7 +83,7 @@ final class BaseUri implements Stringable, JsonSerializable
         return new self($this->uri, null);
     }
 
-    public function get(): Psr7UriInterface|UriInterface
+    public function getUri(): Psr7UriInterface|UriInterface
     {
         return $this->uri;
     }
@@ -190,7 +191,7 @@ final class BaseUri implements Stringable, JsonSerializable
     private static function filterUri(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): Psr7UriInterface|UriInterface
     {
         return match (true) {
-            $uri instanceof self => $uri->uri,
+            $uri instanceof UriAccess => $uri->getUri(),
             $uri instanceof Psr7UriInterface,
             $uri instanceof UriInterface => $uri,
             $uriFactory instanceof UriFactoryInterface => $uriFactory->createUri((string) $uri),

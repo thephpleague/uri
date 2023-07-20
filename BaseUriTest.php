@@ -394,7 +394,7 @@ final class BaseUriTest extends TestCase
     {
         $resolvedUri = BaseUri::from(Utils::uriFor($baseUri))->resolve($uri);
 
-        self::assertInstanceOf(Uri::class, $resolvedUri->get());
+        self::assertInstanceOf(Uri::class, $resolvedUri->getUri());
         self::assertSame($expected, (string) $resolvedUri);
     }
 
@@ -407,15 +407,15 @@ final class BaseUriTest extends TestCase
         $baseUri = BaseUri::from($uri, new Psr17Factory());
 
         $relativizeUri = $baseUri->relativize($resolved);
-        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizeUri->get());
+        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
 
         $relativizeUri = $baseUri->withUriFactory(new \GuzzleHttp\Psr7\HttpFactory())->relativize($resolved);
-        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizeUri->get());
+        self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
 
         $relativizeUri = $baseUri->withoutUriFactory()->relativize($resolved);
-        self::assertInstanceOf(Uri::class, $relativizeUri->get());
+        self::assertInstanceOf(Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
     }
 
@@ -426,7 +426,7 @@ final class BaseUriTest extends TestCase
     {
         $origin = BaseUri::from(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
         if (null !== $origin) {
-            self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->get());
+            self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $origin->getUri());
             self::assertSame($expectedOrigin, $origin->__toString());
 
             return;

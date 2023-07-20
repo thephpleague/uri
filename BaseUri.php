@@ -41,11 +41,11 @@ final class BaseUri implements Stringable, JsonSerializable
     private readonly ?string $nullValue;
 
     public function __construct(
-        private readonly Psr7UriInterface|UriInterface $value,
+        private readonly Psr7UriInterface|UriInterface $uri,
         private readonly UriFactoryInterface|null $uriFactory
     ) {
-        $this->nullValue = $this->value instanceof Psr7UriInterface ? '' : null;
-        $this->origin = $this->computeOrigin($this->value, $this->nullValue);
+        $this->nullValue = $this->uri instanceof Psr7UriInterface ? '' : null;
+        $this->origin = $this->computeOrigin($this->uri, $this->nullValue);
     }
 
     private function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
@@ -74,32 +74,27 @@ final class BaseUri implements Stringable, JsonSerializable
 
     public function withUriFactory(UriFactoryInterface $uriFactory): self
     {
-        return new self($this->value, $uriFactory);
+        return new self($this->uri, $uriFactory);
     }
 
     public function withoutUriFactory(): self
     {
-        return new self($this->value, null);
+        return new self($this->uri, null);
     }
 
     public function get(): Psr7UriInterface|UriInterface
     {
-        return $this->value;
-    }
-
-    public function withUri(Stringable|string $uri): self
-    {
-        return self::from($uri, $this->uriFactory);
+        return $this->uri;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->value->__toString();
+        return $this->uri->__toString();
     }
 
     public function __toString(): string
     {
-        return $this->value->__toString();
+        return $this->uri->__toString();
     }
 
     public function origin(): ?self
@@ -122,27 +117,27 @@ final class BaseUri implements Stringable, JsonSerializable
 
     public function isAbsolute(): bool
     {
-        return $this->nullValue !== $this->value->getScheme();
+        return $this->nullValue !== $this->uri->getScheme();
     }
 
     public function isNetworkPath(): bool
     {
-        return $this->nullValue === $this->value->getScheme()
-            && $this->nullValue !== $this->value->getAuthority();
+        return $this->nullValue === $this->uri->getScheme()
+            && $this->nullValue !== $this->uri->getAuthority();
     }
 
     public function isAbsolutePath(): bool
     {
-        return $this->nullValue === $this->value->getScheme()
-            && $this->nullValue === $this->value->getAuthority()
-            && '/' === ($this->value->getPath()[0] ?? '');
+        return $this->nullValue === $this->uri->getScheme()
+            && $this->nullValue === $this->uri->getAuthority()
+            && '/' === ($this->uri->getPath()[0] ?? '');
     }
 
     public function isRelativePath(): bool
     {
-        return $this->nullValue === $this->value->getScheme()
-            && $this->nullValue === $this->value->getAuthority()
-            && '/' !== ($this->value->getPath()[0] ?? '');
+        return $this->nullValue === $this->uri->getScheme()
+            && $this->nullValue === $this->uri->getAuthority()
+            && '/' !== ($this->uri->getPath()[0] ?? '');
     }
 
     /**
@@ -150,7 +145,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     public function isSameDocument(Stringable|string $uri): bool
     {
-        return $this->normalize(self::filterUri($uri)) === $this->normalize($this->value);
+        return $this->normalize(self::filterUri($uri)) === $this->normalize($this->uri);
     }
 
     /**
@@ -195,7 +190,7 @@ final class BaseUri implements Stringable, JsonSerializable
     private static function filterUri(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): Psr7UriInterface|UriInterface
     {
         return match (true) {
-            $uri instanceof self => $uri->value,
+            $uri instanceof self => $uri->uri,
             $uri instanceof Psr7UriInterface,
             $uri instanceof UriInterface => $uri,
             $uriFactory instanceof UriFactoryInterface => $uriFactory->createUri((string) $uri),
@@ -227,7 +222,7 @@ final class BaseUri implements Stringable, JsonSerializable
         if ($null !== $uri->getAuthority()) {
             return new self(
                 $uri
-                    ->withScheme($this->value->getScheme())
+                    ->withScheme($this->uri->getScheme())
                     ->withPath(self::removeDotSegments($uri->getPath())),
                 $this->uriFactory
             );
@@ -235,7 +230,7 @@ final class BaseUri implements Stringable, JsonSerializable
 
         $user = $null;
         $pass = null;
-        $userInfo = $this->value->getUserInfo();
+        $userInfo = $this->uri->getUserInfo();
         if (null !== $userInfo) {
             [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
         }
@@ -246,10 +241,10 @@ final class BaseUri implements Stringable, JsonSerializable
             $uri
                 ->withPath($this->removeDotSegments($path))
                 ->withQuery($query)
-                ->withHost($this->value->getHost())
-                ->withPort($this->value->getPort())
+                ->withHost($this->uri->getHost())
+                ->withPort($this->uri->getPort())
                 ->withUserInfo((string) $user, $pass)
-                ->withScheme($this->value->getScheme()),
+                ->withScheme($this->uri->getScheme()),
             $this->uriFactory
         );
     }
@@ -316,13 +311,13 @@ final class BaseUri implements Stringable, JsonSerializable
         if ('' === $targetPath) {
             $targetQuery = $uri->getQuery();
             if ($null === $targetQuery) {
-                $targetQuery = $this->value->getQuery();
+                $targetQuery = $this->uri->getQuery();
             }
 
-            $targetPath = $this->value->getPath();
+            $targetPath = $this->uri->getPath();
             //@codeCoverageIgnoreStart
             //because some PSR-7 Uri implementations allow this RFC3986 forbidden construction
-            if (null !== $this->value->getAuthority() && !str_starts_with($targetPath, '/')) {
+            if (null !== $this->uri->getAuthority() && !str_starts_with($targetPath, '/')) {
                 $targetPath = '/'.$targetPath;
             }
             //@codeCoverageIgnoreEnd
@@ -330,8 +325,8 @@ final class BaseUri implements Stringable, JsonSerializable
             return [$targetPath, $targetQuery];
         }
 
-        $basePath = $this->value->getPath();
-        if (null !== $this->value->getAuthority() && '' === $basePath) {
+        $basePath = $this->uri->getPath();
+        if (null !== $this->uri->getAuthority() && '' === $basePath) {
             $targetPath = '/'.$targetPath;
         }
 
@@ -365,7 +360,7 @@ final class BaseUri implements Stringable, JsonSerializable
         $null = $uri instanceof Psr7UriInterface ? '' : null;
         $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
         $targetPath = $uri->getPath();
-        $basePath = $this->value->getPath();
+        $basePath = $this->uri->getPath();
 
         return new self(
             match (true) {
@@ -383,7 +378,7 @@ final class BaseUri implements Stringable, JsonSerializable
      */
     private function componentEquals(string $property, Psr7UriInterface|UriInterface $uri): bool
     {
-        return self::getComponent($property, $uri) === self::getComponent($property, $this->value);
+        return self::getComponent($property, $uri) === self::getComponent($property, $this->uri);
     }
 
     /**

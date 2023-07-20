@@ -37,7 +37,7 @@ final class BaseUriTest extends TestCase
      */
     public function testCreateResolve(string $baseUri, string $uri, string $expected): void
     {
-        self::assertSame($expected, (string) BaseUri::from($baseUri)->resolve($uri));
+        self::assertSame($expected, BaseUri::from($baseUri)->resolve($uri)->getUriString());
     }
 
     public static function resolveProvider(): array
@@ -89,7 +89,7 @@ final class BaseUriTest extends TestCase
     {
         $uri = '//path#fragment';
 
-        self::assertEquals($uri, (string) BaseUri::from('https://example.com/path')->relativize($uri));
+        self::assertEquals($uri, BaseUri::from('https://example.com/path')->relativize($uri)->getUriString());
     }
 
     /**
@@ -99,7 +99,7 @@ final class BaseUriTest extends TestCase
     {
         self::assertSame(
             $expected,
-            (string) BaseUri::from(Http::new($uri))->relativize($resolved)
+            BaseUri::from(Http::new($uri))->relativize($resolved)->getUriString()
         );
     }
 

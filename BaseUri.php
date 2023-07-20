@@ -88,6 +88,11 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         return $this->uri;
     }
 
+    public function getUriString(): string
+    {
+        return $this->uri->__toString();
+    }
+
     public function jsonSerialize(): string
     {
         return $this->uri->__toString();

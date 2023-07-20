@@ -440,7 +440,7 @@ final class Uri implements UriInterface
 
         /** @var self $uri */
         $uri = match (true) {
-            $baseUri->isAbsolute() => $baseUri->resolve($uri)->uri(),
+            $baseUri->isAbsolute() => $baseUri->resolve($uri)->get(),
             default => throw new SyntaxError('the URI `'.$baseUri.'` must be absolute.'),
         };
 

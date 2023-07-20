@@ -82,7 +82,7 @@ final class BaseUri implements Stringable, JsonSerializable
         return new self($this->value, null);
     }
 
-    public function uri(): Psr7UriInterface|UriInterface
+    public function get(): Psr7UriInterface|UriInterface
     {
         return $this->value;
     }

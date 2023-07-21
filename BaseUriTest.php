@@ -37,7 +37,15 @@ final class BaseUriTest extends TestCase
      */
     public function testCreateResolve(string $baseUri, string $uri, string $expected): void
     {
-        self::assertSame($expected, BaseUri::from($baseUri)->resolve($uri)->getUriString());
+        $uriResolved = BaseUri::from($baseUri)->resolve($uri);
+
+        self::assertInstanceOf(Uri::class, $uriResolved->getUri());
+        self::assertSame($expected, $uriResolved->getUriString());
+
+        $psr7Resolved = BaseUri::from($baseUri, new Psr17Factory())->resolve($uri);
+
+        self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $psr7Resolved->getUri());
+        self::assertSame($expected, $psr7Resolved->getUriString());
     }
 
     public static function resolveProvider(): array
@@ -404,17 +412,18 @@ final class BaseUriTest extends TestCase
     public function testRelativizeWithPsr7Implementation(string $uriString, string $resolved, string $expected): void
     {
         $uri = Utils::uriFor($uriString);
-        $baseUri = BaseUri::from($uri, new Psr17Factory());
+        $baseUri = BaseUri::from($uri);
 
-        $relativizeUri = $baseUri->relativize($resolved);
+        $relativizeUri = $baseUri->withUriFactory(new \Nyholm\Psr7\Factory\Psr17Factory())->relativize($resolved);
         self::assertInstanceOf(\Nyholm\Psr7\Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
 
-        $relativizeUri = $baseUri->withUriFactory(new \GuzzleHttp\Psr7\HttpFactory())->relativize($resolved);
+        $guzzleBaseUri = $baseUri->withUriFactory(new \GuzzleHttp\Psr7\HttpFactory());
+        $relativizeUri = $guzzleBaseUri->relativize($resolved);
         self::assertInstanceOf(\GuzzleHttp\Psr7\Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
 
-        $relativizeUri = $baseUri->withoutUriFactory()->relativize($resolved);
+        $relativizeUri = $guzzleBaseUri->withoutUriFactory()->relativize($resolved);
         self::assertInstanceOf(Uri::class, $relativizeUri->getUri());
         self::assertSame($expected, (string) $relativizeUri);
     }

@@ -30,6 +30,9 @@ use function str_repeat;
 use function strpos;
 use function substr;
 
+/**
+ * @phpstan-import-type ComponentMap from UriInterface
+ */
 final class BaseUri implements Stringable, JsonSerializable, UriAccess
 {
     /** @var array<string,int> */
@@ -53,7 +56,21 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     {
         $scheme = $uri->getScheme();
         if ('blob' === $scheme) {
-            $uri = self::filterUri($uri->getPath(), $this->uriFactory);
+            $components = UriString::parse($uri->getPath());
+            if ($uri instanceof Psr7UriInterface) {
+                /** @var ComponentMap $components */
+                $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
+            }
+
+            $uri = $uri
+                ->withFragment($this->nullValue)
+                ->withQuery($this->nullValue)
+                ->withPath('')
+                ->withHost($components['host'])
+                ->withPort($components['port'])
+                ->withScheme($components['scheme'])
+                ->withUserInfo($this->nullValue);
+
             $scheme = $uri->getScheme();
         }
 

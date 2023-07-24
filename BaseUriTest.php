@@ -325,7 +325,7 @@ final class BaseUriTest extends TestCase
     /**
      * @dataProvider getOriginProvider
      */
-    public function testGetOrigin(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
+    public function testGetOrigin(Psr7UriInterface|Uri|string $uri, ?string $expectedOrigin): void
     {
         self::assertSame($expectedOrigin, BaseUri::from($uri)->origin()?->__toString());
     }
@@ -360,6 +360,14 @@ final class BaseUriTest extends TestCase
             'blob' => [
                 'uri' => Uri::new('blob:https://mozilla.org:443/'),
                 'expectedOrigin' => 'https://mozilla.org',
+            ],
+            'normalized ipv4' => [
+                'uri' => 'https://0:443/',
+                'expectedOrigin' => 'https://0.0.0.0',
+            ],
+            'normalized ipv4 with object' => [
+                'uri' => Uri::new('https://0:443/'),
+                'expectedOrigin' => 'https://0.0.0.0',
             ],
         ];
     }
@@ -431,7 +439,7 @@ final class BaseUriTest extends TestCase
     /**
      * @dataProvider getOriginProvider
      */
-    public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri $uri, ?string $expectedOrigin): void
+    public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri|string $uri, ?string $expectedOrigin): void
     {
         $origin = BaseUri::from(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
         if (null !== $origin) {

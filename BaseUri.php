@@ -16,6 +16,7 @@ namespace League\Uri;
 use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
+use League\Uri\IPv4Calculators\MissingIPv4Calculator;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
@@ -44,7 +45,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     private readonly Psr7UriInterface|UriInterface|null $origin;
     private readonly ?string $nullValue;
 
-    public function __construct(
+    private function __construct(
         private readonly Psr7UriInterface|UriInterface $uri,
         private readonly UriFactoryInterface|null $uriFactory
     ) {
@@ -232,7 +233,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function resolve(Stringable|string $uri): self
     {
-        $uri = self::filterUri($uri, $this->uriFactory);
+        $uri = self::formatHost(self::filterUri($uri, $this->uriFactory));
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
@@ -429,8 +430,14 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     private static function formatHost(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
         $host = $uri->getHost();
+        try {
+            $converted = IPv4Converter::fromEnvironment()->normalize($host);
+        } catch (MissingIPv4Calculator) {
+            $converted = null;
+        }
 
         return match (true) {
+            null !== $converted => $uri->withHost($converted),
             $uri instanceof UriInterface, '' === $host => $uri,
             default => $uri->withHost((string) Uri::fromComponents(['host' => $host])->getHost()),
         };

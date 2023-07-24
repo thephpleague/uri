@@ -89,7 +89,7 @@ final class HttpTest extends TestCase
     public function testCreateFromBaseUri(): void
     {
         self::assertEquals(
-            Http::new('http://0:0@0/0?0#0'),
+            Http::new('http://0:0@0.0.0.0/0?0#0'),
             Http::fromBaseUri('0?0#0', 'http://0:0@0/')
         );
     }

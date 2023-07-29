@@ -56,7 +56,8 @@ All Notable changes to `League\Uri` will be documented in this file
 - Support for `__debugInfo`
 - `League\Uri\UriTemplate\VariableBag::all`
 - `League\Uri\Exceptions\TemplateCanNotBeExpanded` use `League\Uri\UriTemplate\TemplateCanNotBeExpanded` instead
-
+- `League\Uri\UriString` class. Class moved to the `uri-interfaces` package.
+- 
 ## [6.8.0](https://github.com/thephpleague/uri/compare/6.7.2...6.8.0) - 2022-09-13
 
 ### Added

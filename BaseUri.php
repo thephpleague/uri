@@ -76,13 +76,13 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
 
         return match (true) {
             null !== $components['scheme'] && isset(self::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
-                ->withFragment($this->nullValue)
-                ->withQuery($this->nullValue)
+                ->withFragment($nullValue)
+                ->withQuery($nullValue)
                 ->withPath('')
                 ->withHost($components['host'])
                 ->withPort($components['port'])
                 ->withScheme($components['scheme'])
-                ->withUserInfo($this->nullValue),
+                ->withUserInfo($nullValue),
             default => null,
         };
     }

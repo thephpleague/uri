@@ -432,7 +432,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     {
         $host = $uri->getHost();
         try {
-            $converted = IPv4Converter::fromEnvironment()->normalize($host);
+            $converted = IPv4Converter::fromEnvironment()($host);
         } catch (MissingIPv4Calculator) {
             $converted = null;
         }

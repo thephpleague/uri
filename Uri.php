@@ -415,7 +415,7 @@ final class Uri implements UriInterface
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        $components = $uri instanceof UriInterface ? $uri->components() : UriString::parse($uri);
+        $components = $uri instanceof UriInterface ? $uri->getComponents() : UriString::parse($uri);
 
         return new self(
             $components['scheme'],
@@ -457,7 +457,7 @@ final class Uri implements UriInterface
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
         return match (true) {
-            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->components()),
+            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->getComponents()),
             $template instanceof UriTemplate\Template => self::new($template->expand($variables)),
             default => self::new(UriTemplate\Template::new($template)->expand($variables)),
         };
@@ -998,7 +998,7 @@ final class Uri implements UriInterface
     /**
      * @return ComponentMap
      */
-    public function components(): array
+    public function getComponents(): array
     {
         [$user, $pass] = null !== $this->userInfo ? explode(':', $this->userInfo) : [null, null];
 

@@ -57,34 +57,34 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     private function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
         $scheme = $uri->getScheme();
-        if ('blob' === $scheme) {
-            $components = UriString::parse($uri->getPath());
-            if ($uri instanceof Psr7UriInterface) {
-                /** @var ComponentMap $components */
-                $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
-            }
+        if ('blob' !== $scheme) {
+            return match (true) {
+                isset(self::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
+                    ->withFragment($nullValue)
+                    ->withQuery($nullValue)
+                    ->withPath('')
+                    ->withUserInfo($nullValue),
+                default => null,
+            };
+        }
 
-            $uri = $uri
+        $components = UriString::parse($uri->getPath());
+        if ($uri instanceof Psr7UriInterface) {
+            /** @var ComponentMap $components */
+            $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
+        }
+
+        return match (true) {
+            null !== $components['scheme'] && isset(self::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
                 ->withFragment($this->nullValue)
                 ->withQuery($this->nullValue)
                 ->withPath('')
                 ->withHost($components['host'])
                 ->withPort($components['port'])
                 ->withScheme($components['scheme'])
-                ->withUserInfo($this->nullValue);
-
-            $scheme = $uri->getScheme();
-        }
-
-        if (!isset(self::WHATWG_SPECIAL_SCHEMES[$scheme])) {
-            return null;
-        }
-
-        return $uri
-            ->withFragment($nullValue)
-            ->withQuery($nullValue)
-            ->withPath('')
-            ->withUserInfo($nullValue);
+                ->withUserInfo($this->nullValue),
+            default => null,
+        };
     }
 
     public static function from(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self

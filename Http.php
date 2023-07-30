@@ -26,21 +26,11 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 {
     private function __construct(private readonly UriInterface $uri)
     {
-        $this->validate($this->uri);
-    }
-
-    /**
-     * Validate the submitted uri against PSR-7 UriInterface.
-     *
-     * @throws SyntaxError if the given URI does not follow PSR-7 UriInterface rules
-     */
-    private function validate(UriInterface $uri): void
-    {
-        if (null === $uri->getScheme() && '' === $uri->getHost()) {
+        if (null === $this->uri->getScheme() && '' === $this->uri->getHost()) {
             throw new SyntaxError('An URI without scheme can not contains a empty host string according to PSR-7: '.$uri);
         }
 
-        $port = $uri->getPort();
+        $port = $this->uri->getPort();
         if (null !== $port && ($port < 0 || $port > 65535)) {
             throw new SyntaxError('The URI port is outside the established TCP and UDP port ranges: '.$uri);
         }
@@ -81,7 +71,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
+    public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
     {
         return new self(Uri::fromBaseUri($uri, $baseUri));
     }
@@ -265,7 +255,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
-    public static function createFromBaseUri(Stringable|String $uri, Stringable|String|null $baseUri = null): self
+    public static function createFromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
     {
         return self::fromBaseUri($uri, $baseUri);
     }

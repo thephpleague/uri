@@ -399,7 +399,7 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError
      */
-    private function formatPort(int|null $port = null): ?int
+    private function formatPort(?int $port = null): ?int
     {
         $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme] ?? null;
 

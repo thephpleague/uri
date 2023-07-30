@@ -48,7 +48,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
 
     private function __construct(
         private readonly Psr7UriInterface|UriInterface $uri,
-        private readonly UriFactoryInterface|null $uriFactory
+        private readonly ?UriFactoryInterface $uriFactory
     ) {
         $this->nullValue = $this->uri instanceof Psr7UriInterface ? '' : null;
         $this->origin = $this->computeOrigin($this->uri, $this->nullValue);

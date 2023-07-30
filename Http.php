@@ -134,7 +134,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     /**
      * Safely stringify input when possible for League UriInterface compatibility.
      */
-    private function filterInput(string $str): string|null
+    private function filterInput(string $str): ?string
     {
         return match (true) {
             '' === $str => null,
@@ -165,7 +165,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
         return $this->newInstance($this->uri->withHost($this->filterInput($host)));
     }
 
-    public function withPort(int|null $port): self
+    public function withPort(?int $port): self
     {
         return $this->newInstance($this->uri->withPort($port));
     }

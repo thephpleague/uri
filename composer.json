@@ -45,10 +45,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "ext-json": "*",
-        "league/uri-interfaces": "7.x-dev",
-        "psr/http-message": "^1.1.0 || ^2.0",
-        "psr/http-factory": "^1"
+        "league/uri-interfaces": "7.x-dev"
     },
     "autoload": {
         "psr-4": {

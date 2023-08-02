@@ -87,7 +87,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         };
     }
 
-    public static function from(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): self
+    public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): self
     {
         return new self(self::formatHost(self::filterUri($uri, $uriFactory)), $uriFactory);
     }

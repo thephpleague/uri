@@ -22,7 +22,6 @@ use League\Uri\Exceptions\IdnaConversionFailed;
 use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Idna;
-use League\Uri\Idna\IdnaOption;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
@@ -339,11 +338,11 @@ final class Uri implements UriInterface
     private function formatRegisteredName(string $host): string
     {
         $formatter = static function (string $host) {
-            $info = Idna::toAscii($host, IdnaOption::forIDNA2008Ascii());
+            $info = Idna::toAscii($host);
 
             return match (true) {
                 $info->hasErrors() => throw IdnaConversionFailed::dueToIDNAError($host, $info),
-                default => $info->result(),
+                default => $info->domain(),
             };
         };
         $formattedHost = rawurldecode($host);

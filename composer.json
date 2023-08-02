@@ -56,10 +56,14 @@
         "league/uri-schemes": "^1.0"
     },
     "suggest": {
-        "ext-intl" : "Needed to improve host validation",
-        "ext-fileinfo": "Needed to create Data URI from a filepath",
+        "ext-intl": "to handle IDN host with the best performance",
+        "ext-gmp": "to improve handle IPV4 parsing",
+        "ext-bcmath": "to improve handle IPV4 parsing",
+        "ext-fileinfo": "to create Data URI from a filepath",
+        "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
         "league/uri-components" : "Needed to easily manipulate URI objects",
-        "symfony/polyfill-intl-idn": "Needed to improve host validation"
+        "php-64bit": "to improve handle IPV4 parsing",
+        "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is missing"
     },
     "extra": {
         "branch-alias": {

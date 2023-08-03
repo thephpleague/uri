@@ -18,9 +18,8 @@ use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
-use League\Uri\Exceptions\IdnaConversionFailed;
-use League\Uri\Exceptions\IdnSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Idna\ConversionFailed;
 use League\Uri\Idna\Idna;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -332,17 +331,17 @@ final class Uri implements UriInterface
      *
      * The host is converted to its ascii representation if needed
      *
-     * @throws IdnSupportMissing if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError       if the submitted host is not a valid registered name
+     * @throws \League\Uri\Idna\MissingSupport if the submitted host required missing or misconfigured IDN support
+     * @throws SyntaxError                     if the submitted host is not a valid registered name
      */
     private function formatRegisteredName(string $host): string
     {
         $formatter = static function (string $host) {
-            $info = Idna::toAscii($host);
+            $result = Idna::toAscii($host);
 
             return match (true) {
-                $info->hasErrors() => throw IdnaConversionFailed::dueToIDNAError($host, $info),
-                default => $info->domain(),
+                $result->hasErrors() => throw ConversionFailed::dueToError($host, $result),
+                default => $result->domain(),
             };
         };
         $formattedHost = rawurldecode($host);
@@ -435,7 +434,7 @@ final class Uri implements UriInterface
      */
     public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
     {
-        $uri = self::new((string) $uri);
+        $uri = self::new($uri);
         $baseUri = BaseUri::from($baseUri ?? $uri);
 
         /** @var self $uri */

@@ -16,8 +16,8 @@ namespace League\Uri;
 use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\IPv4\IPv4Converter;
-use League\Uri\IPv4\MissingIPv4Calculator;
+use League\Uri\IPv4\Converter;
+use League\Uri\IPv4\MissingCalculator;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
@@ -432,8 +432,8 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     {
         $host = $uri->getHost();
         try {
-            $converted = IPv4Converter::fromEnvironment()($host);
-        } catch (MissingIPv4Calculator) {
+            $converted = Converter::fromEnvironment()($host);
+        } catch (MissingCalculator) {
             $converted = null;
         }
 

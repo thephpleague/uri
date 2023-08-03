@@ -79,10 +79,6 @@ Dependencies
 - [League URI Interfaces](https://github.com/thephpleague/uri-interfaces)
 - [PSR-7][]
 
-In order to handle IDN host you are required to also install the `intl` extension otherwise an exception will be thrown when attempting to validate such host.
-
-In order to create Data URI from a filepath, since version `6.2`, you are required to also install the `fileinfo` extension otherwise an exception will be thrown.
-
 Installation
 --------
 

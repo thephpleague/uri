@@ -20,7 +20,7 @@ use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\FileinfoSupportMissing;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\ConversionFailed;
-use League\Uri\Idna\Idna;
+use League\Uri\Idna\Converter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
@@ -337,7 +337,7 @@ final class Uri implements UriInterface
     private function formatRegisteredName(string $host): string
     {
         $formatter = static function (string $host) {
-            $result = Idna::toAscii($host);
+            $result = Converter::toAscii($host);
 
             return match (true) {
                 $result->hasErrors() => throw ConversionFailed::dueToError($host, $result),

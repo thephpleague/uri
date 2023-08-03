@@ -57,9 +57,21 @@ Highlights
 System Requirements
 -------
 
-- You require **PHP >= 8.1** but the latest stable version of PHP is recommended
-- You will need the **ext-intl** to handle i18n URI.
-- Since version 6.2.0 you will need the **ext-fileinfo** to handle Data URI creation from a filepath.
+You require **PHP >= 8.1** but the latest stable version of PHP is recommended
+
+Handling of an IDN host requires the presence of the `intl`
+extension or a polyfill for the `intl` IDN functions like the
+`symfony/polyfill-intl-idn` otherwise an exception will be thrown
+when attempting to validate or interact with such a host.
+
+IPv4 conversion requires at least one of the following:
+
+- the `GMP` extension,
+- the `BCMatch` extension or
+- a `64-bits` PHP version
+
+otherwise an exception will be thrown when attempting to convert a host
+as an IPv4 address.
 
 Dependencies
 -------

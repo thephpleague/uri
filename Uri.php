@@ -17,7 +17,7 @@ use finfo;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\FileinfoSupportMissing;
+use League\Uri\Exceptions\MissingSupport;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\ConversionFailed;
 use League\Uri\Idna\Converter;
@@ -331,8 +331,8 @@ final class Uri implements UriInterface
      *
      * The host is converted to its ascii representation if needed
      *
-     * @throws \League\Uri\Idna\MissingSupport if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError                     if the submitted host is not a valid registered name
+     * @throws \League\Uri\Exceptions\MissingSupport if the submitted host required missing or misconfigured IDN support
+     * @throws SyntaxError                           if the submitted host is not a valid registered name
      */
     private function formatRegisteredName(string $host): string
     {
@@ -495,8 +495,8 @@ final class Uri implements UriInterface
      *
      * @param resource|null $context
      *
-     * @throws FileinfoSupportMissing If ext/fileinfo is not installed
-     * @throws SyntaxError            If the file does not exist or is not readable
+     * @throws MissingSupport If ext/fileinfo is not installed
+     * @throws SyntaxError    If the file does not exist or is not readable
      */
     public static function fromFileContents(Stringable|string $path, $context = null): self
     {
@@ -505,7 +505,7 @@ final class Uri implements UriInterface
 
         // @codeCoverageIgnoreStart
         if (!$finfoSupport) {
-            throw new FileinfoSupportMissing('Please install ext/fileinfo to use the '.__METHOD__.'() method.');
+            throw MissingSupport::forFileInfo();
         }
         // @codeCoverageIgnoreEnd
 
@@ -1251,9 +1251,9 @@ final class Uri implements UriInterface
      *
      * @param resource|null $context
      *
-     * @throws FileinfoSupportMissing If ext/fileinfo is not installed
-     * @throws SyntaxError            If the file does not exist or is not readable
-     *@see Uri::fromFileContents()
+     * @throws MissingSupport If ext/fileinfo is not installed
+     * @throws SyntaxError    If the file does not exist or is not readable
+     * @see Uri::fromFileContents()
      *
      * @deprecated Since version 9.9.0
      * @codeCoverageIgnore

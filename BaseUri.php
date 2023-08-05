@@ -16,7 +16,7 @@ namespace League\Uri;
 use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\MissingSupport;
+use League\Uri\Exceptions\MissingFeature;
 use League\Uri\IPv4\Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -433,7 +433,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         $host = $uri->getHost();
         try {
             $converted = Converter::fromEnvironment()($host);
-        } catch (MissingSupport) {
+        } catch (MissingFeature) {
             $converted = null;
         }
 

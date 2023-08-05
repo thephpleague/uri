@@ -331,8 +331,8 @@ final class Uri implements UriInterface
      *
      * The host is converted to its ascii representation if needed
      *
-     * @throws \League\Uri\Exceptions\MissingFeature if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError                           if the submitted host is not a valid registered name
+     * @throws MissingFeature if the submitted host required missing or misconfigured IDN support
+     * @throws SyntaxError    if the submitted host is not a valid registered name
      */
     private function formatRegisteredName(string $host): string
     {

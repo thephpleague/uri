@@ -15,7 +15,6 @@ namespace League\Uri;
 
 use League\Uri\Contracts\UriInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
-use Stringable;
 
 /**
  * @deprecated since version 7.0.0
@@ -33,7 +32,7 @@ final class UriResolver
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public static function resolve(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
+    public static function resolve(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $baseUri): Psr7UriInterface|UriInterface
     {
         return BaseUri::from($baseUri)->resolve($uri)->getUri();
     }
@@ -47,7 +46,7 @@ final class UriResolver
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public static function relativize(Stringable|string $uri, Stringable|string $baseUri): Psr7UriInterface|UriInterface
+    public static function relativize(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $baseUri): Psr7UriInterface|UriInterface
     {
         return BaseUri::from($baseUri)->relativize($uri)->getUri();
     }

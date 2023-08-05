@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
-use Stringable;
+use League\Uri\Contracts\UriInterface;
+use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
 /**
  * @deprecated since version 7.0.0
@@ -32,7 +33,7 @@ final class UriInfo
     /**
      * Tells whether the URI represents an absolute URI.
      */
-    public static function isAbsolute(Stringable|string $uri): bool
+    public static function isAbsolute(Psr7UriInterface|UriInterface $uri): bool
     {
         return BaseUri::from($uri)->isAbsolute();
     }
@@ -40,7 +41,7 @@ final class UriInfo
     /**
      * Tell whether the URI represents a network path.
      */
-    public static function isNetworkPath(Stringable|string $uri): bool
+    public static function isNetworkPath(Psr7UriInterface|UriInterface $uri): bool
     {
         return BaseUri::from($uri)->isNetworkPath();
     }
@@ -48,7 +49,7 @@ final class UriInfo
     /**
      * Tells whether the URI represents an absolute path.
      */
-    public static function isAbsolutePath(Stringable|string $uri): bool
+    public static function isAbsolutePath(Psr7UriInterface|UriInterface $uri): bool
     {
         return BaseUri::from($uri)->isAbsolutePath();
     }
@@ -57,7 +58,7 @@ final class UriInfo
      * Tell whether the URI represents a relative path.
      *
      */
-    public static function isRelativePath(Stringable|string $uri): bool
+    public static function isRelativePath(Psr7UriInterface|UriInterface $uri): bool
     {
         return BaseUri::from($uri)->isRelativePath();
     }
@@ -65,7 +66,7 @@ final class UriInfo
     /**
      * Tells whether both URI refers to the same document.
      */
-    public static function isSameDocument(Stringable|string $uri, Stringable|string $baseUri): bool
+    public static function isSameDocument(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $baseUri): bool
     {
         return BaseUri::from($baseUri)->isSameDocument($uri);
     }
@@ -79,7 +80,7 @@ final class UriInfo
      * For URI with the file scheme the method will return null (as this is left to the implementation decision)
      * For URI with a special scheme the method returns the scheme followed by its authority (without the userinfo part)
      */
-    public static function getOrigin(Stringable|string $uri): ?string
+    public static function getOrigin(Psr7UriInterface|UriInterface $uri): ?string
     {
         return BaseUri::from($uri)->origin()?->__toString();
     }
@@ -89,7 +90,7 @@ final class UriInfo
      *
      * @see UriInfo::getOrigin()
      */
-    public static function isCrossOrigin(Stringable|string $uri, Stringable|string $baseUri): bool
+    public static function isCrossOrigin(Psr7UriInterface|UriInterface $uri, Psr7UriInterface|UriInterface $baseUri): bool
     {
         return BaseUri::from($baseUri)->isCrossOrigin($uri);
     }

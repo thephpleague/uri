@@ -35,31 +35,31 @@ use function substr;
 /**
  * @phpstan-import-type ComponentMap from UriInterface
  */
-final class BaseUri implements Stringable, JsonSerializable, UriAccess
+class BaseUri implements Stringable, JsonSerializable, UriAccess
 {
     /** @var array<string,int> */
-    private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
+    protected final const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
 
     /** @var array<string,int> */
-    private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
+    protected final const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
-    private readonly Psr7UriInterface|UriInterface|null $origin;
-    private readonly ?string $nullValue;
+    protected readonly Psr7UriInterface|UriInterface|null $origin;
+    protected readonly ?string $nullValue;
 
-    private function __construct(
-        private readonly Psr7UriInterface|UriInterface $uri,
-        private readonly ?UriFactoryInterface $uriFactory
+    final protected function __construct(
+        protected readonly Psr7UriInterface|UriInterface $uri,
+        protected readonly ?UriFactoryInterface $uriFactory
     ) {
         $this->nullValue = $this->uri instanceof Psr7UriInterface ? '' : null;
         $this->origin = $this->computeOrigin($this->uri, $this->nullValue);
     }
 
-    private function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
+    final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
         $scheme = $uri->getScheme();
         if ('blob' !== $scheme) {
             return match (true) {
-                isset(self::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
+                isset(static::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
                     ->withFragment($nullValue)
                     ->withQuery($nullValue)
                     ->withPath('')
@@ -75,7 +75,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         }
 
         return match (true) {
-            null !== $components['scheme'] && isset(self::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
+            null !== $components['scheme'] && isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
                 ->withFragment($nullValue)
                 ->withQuery($nullValue)
                 ->withPath('')
@@ -87,19 +87,19 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         };
     }
 
-    public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): self
+    public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): static
     {
-        return new self(self::formatHost(self::filterUri($uri, $uriFactory)), $uriFactory);
+        return new static(static::formatHost(static::filterUri($uri, $uriFactory)), $uriFactory);
     }
 
-    public function withUriFactory(UriFactoryInterface $uriFactory): self
+    public function withUriFactory(UriFactoryInterface $uriFactory): static
     {
-        return new self($this->uri, $uriFactory);
+        return new static($this->uri, $uriFactory);
     }
 
-    public function withoutUriFactory(): self
+    public function withoutUriFactory(): static
     {
-        return new self($this->uri, null);
+        return new static($this->uri, null);
     }
 
     public function getUri(): Psr7UriInterface|UriInterface
@@ -136,7 +136,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     public function isCrossOrigin(Stringable|string $uri): bool
     {
         return null === $this->origin
-            || null === ($uriOrigin = $this->computeOrigin(self::filterUri($uri), null))
+            || null === ($uriOrigin = $this->computeOrigin(static::filterUri($uri), null))
             || $uriOrigin->__toString() !== $this->origin->__toString();
     }
 
@@ -170,13 +170,13 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function isSameDocument(Stringable|string $uri): bool
     {
-        return $this->normalize(self::filterUri($uri)) === $this->normalize($this->uri);
+        return $this->normalize(static::filterUri($uri)) === $this->normalize($this->uri);
     }
 
     /**
      * Normalizes a URI for comparison.
      */
-    private function normalize(Psr7UriInterface|UriInterface $uri): string
+    final protected function normalize(Psr7UriInterface|UriInterface $uri): string
     {
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
@@ -212,7 +212,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Input URI normalization to allow Stringable and string URI.
      */
-    private static function filterUri(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): Psr7UriInterface|UriInterface
+    final protected static function filterUri(Stringable|string $uri, UriFactoryInterface|null $uriFactory = null): Psr7UriInterface|UriInterface
     {
         return match (true) {
             $uri instanceof UriAccess => $uri->getUri(),
@@ -232,23 +232,23 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Stringable|string $uri): self
+    final public function resolve(Stringable|string $uri): static
     {
-        $uri = self::formatHost(self::filterUri($uri, $this->uriFactory));
+        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
         $null = $uri instanceof Psr7UriInterface ? '' : null;
 
         if ($null !== $uri->getScheme()) {
-            return new self(
-                $uri->withPath(self::removeDotSegments($uri->getPath())),
+            return new static(
+                $uri->withPath(static::removeDotSegments($uri->getPath())),
                 $this->uriFactory
             );
         }
 
         if ($null !== $uri->getAuthority()) {
-            return new self(
+            return new static(
                 $uri
                     ->withScheme($this->uri->getScheme())
-                    ->withPath(self::removeDotSegments($uri->getPath())),
+                    ->withPath(static::removeDotSegments($uri->getPath())),
                 $this->uriFactory
             );
         }
@@ -262,7 +262,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
 
         [$path, $query] = $this->resolvePathAndQuery($uri);
 
-        return new self(
+        return new static(
             $uri
                 ->withPath($this->removeDotSegments($path))
                 ->withQuery($query)
@@ -277,15 +277,15 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Remove dot segments from the URI path.
      */
-    private function removeDotSegments(string $path): string
+    final protected function removeDotSegments(string $path): string
     {
         if (!str_contains($path, '.')) {
             return $path;
         }
 
         $oldSegments = explode('/', $path);
-        $newPath = implode('/', array_reduce($oldSegments, self::reducer(...), []));
-        if (isset(self::DOT_SEGMENTS[end($oldSegments)])) {
+        $newPath = implode('/', array_reduce($oldSegments, static::reducer(...), []));
+        if (isset(static::DOT_SEGMENTS[end($oldSegments)])) {
             $newPath .= '/';
         }
 
@@ -304,7 +304,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      *
      * @return array<int, string>
      */
-    private static function reducer(array $carry, string $segment): array
+    final protected static function reducer(array $carry, string $segment): array
     {
         if ('..' === $segment) {
             array_pop($carry);
@@ -312,7 +312,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
             return $carry;
         }
 
-        if (!isset(self::DOT_SEGMENTS[$segment])) {
+        if (!isset(static::DOT_SEGMENTS[$segment])) {
             $carry[] = $segment;
         }
 
@@ -324,7 +324,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      *
      * @return array{0:string, 1:string|null}
      */
-    private function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri): array
+    final protected function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri): array
     {
         $targetPath = $uri->getPath();
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -375,11 +375,11 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Stringable|string $uri): self
+    final public function relativize(Stringable|string $uri): static
     {
-        $uri = self::formatHost(self::filterUri($uri, $this->uriFactory));
+        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
         if ($this->canNotBeRelativize($uri)) {
-            return new self($uri, $this->uriFactory);
+            return new static($uri, $this->uriFactory);
         }
 
         $null = $uri instanceof Psr7UriInterface ? '' : null;
@@ -387,11 +387,11 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         $targetPath = $uri->getPath();
         $basePath = $this->uri->getPath();
 
-        return new self(
+        return new static(
             match (true) {
-                $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
-                self::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
-                $null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
+                $targetPath !== $basePath => $uri->withPath(static::relativizePath($targetPath, $basePath)),
+                static::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
+                $null === $uri->getQuery() => $uri->withPath(static::formatPathWithEmptyBaseQuery($targetPath)),
                 default => $uri->withPath(''),
             },
             $this->uriFactory
@@ -401,9 +401,9 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Tells whether the component value from both URI object equals.
      */
-    private function componentEquals(string $property, Psr7UriInterface|UriInterface $uri): bool
+    final protected function componentEquals(string $property, Psr7UriInterface|UriInterface $uri): bool
     {
-        return self::getComponent($property, $uri) === self::getComponent($property, $this->uri);
+        return static::getComponent($property, $uri) === static::getComponent($property, $this->uri);
     }
 
     /**
@@ -411,7 +411,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      *
      * @pqram 'query'|'authority'|'scheme' $property
      */
-    private static function getComponent(string $property, Psr7UriInterface|UriInterface $uri): ?string
+    final protected static function getComponent(string $property, Psr7UriInterface|UriInterface $uri): ?string
     {
         $component = match ($property) {
             'query' => $uri->getQuery(),
@@ -428,7 +428,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Filter the URI object.
      */
-    private static function formatHost(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
+    final protected static function formatHost(Psr7UriInterface|UriInterface $uri): Psr7UriInterface|UriInterface
     {
         $host = $uri->getHost();
         try {
@@ -447,20 +447,20 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Tells whether the submitted URI object can be relativized.
      */
-    private function canNotBeRelativize(Psr7UriInterface|UriInterface $uri): bool
+    final protected function canNotBeRelativize(Psr7UriInterface|UriInterface $uri): bool
     {
-        return self::from($uri)->isRelativePath()
-            || !self::componentEquals('scheme', $uri)
-            || !self::componentEquals('authority', $uri);
+        return static::from($uri)->isRelativePath()
+            || !static::componentEquals('scheme', $uri)
+            || !static::componentEquals('authority', $uri);
     }
 
     /**
      * Relatives the URI for an authority-less target URI.
      */
-    private static function relativizePath(string $path, string $basePath): string
+    final protected static function relativizePath(string $path, string $basePath): string
     {
-        $baseSegments = self::getSegments($basePath);
-        $targetSegments = self::getSegments($path);
+        $baseSegments = static::getSegments($basePath);
+        $targetSegments = static::getSegments($path);
         $targetBasename = array_pop($targetSegments);
         array_pop($baseSegments);
         foreach ($baseSegments as $offset => $segment) {
@@ -471,7 +471,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
         }
         $targetSegments[] = $targetBasename;
 
-        return self::formatPath(
+        return static::formatPath(
             str_repeat('../', count($baseSegments)).implode('/', $targetSegments),
             $basePath
         );
@@ -482,7 +482,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
      *
      * @return string[]
      */
-    private static function getSegments(string $path): array
+    final protected static function getSegments(string $path): array
     {
         if ('' !== $path && '/' === $path[0]) {
             $path = substr($path, 1);
@@ -494,7 +494,7 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Formatting the path to keep a valid URI.
      */
-    private static function formatPath(string $path, string $basePath): string
+    final protected static function formatPath(string $path, string $basePath): string
     {
         if ('' === $path) {
             return in_array($basePath, ['', '/'], true) ? $basePath : './';
@@ -515,9 +515,9 @@ final class BaseUri implements Stringable, JsonSerializable, UriAccess
     /**
      * Formatting the path to keep a resolvable URI.
      */
-    private static function formatPathWithEmptyBaseQuery(string $path): string
+    final protected static function formatPathWithEmptyBaseQuery(string $path): string
     {
-        $targetSegments = self::getSegments($path);
+        $targetSegments = static::getSegments($path);
         /** @var string $basename */
         $basename = end($targetSegments);
 

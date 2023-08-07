@@ -342,7 +342,7 @@ final class Uri implements UriInterface
         return match (true) {
             1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
             1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
-            default => Converter::toAsciiOrFail($host)->domain(),
+            default => Converter::toAsciiOrFail($host),
         };
     }
 

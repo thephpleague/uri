@@ -331,25 +331,18 @@ final class Uri implements UriInterface
      *
      * The host is converted to its ascii representation if needed
      *
-     * @throws MissingFeature if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError    if the submitted host is not a valid registered name
+     * @throws MissingFeature   if the submitted host required missing or misconfigured IDN support
+     * @throws SyntaxError      if the submitted host is not a valid registered name
+     * @throws ConversionFailed if the submitted IDN host can not be converted to a valid ascii form
      */
     private function formatRegisteredName(string $host): string
     {
-        $formatter = static function (string $host) {
-            $result = Converter::toAscii($host);
-
-            return match (true) {
-                $result->hasErrors() => throw ConversionFailed::dueToError($host, $result),
-                default => $result->domain(),
-            };
-        };
         $formattedHost = rawurldecode($host);
 
         return match (true) {
             1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
             1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
-            default => $formatter($host),
+            default => Converter::toAsciiOrFail($host)->domain(),
         };
     }
 

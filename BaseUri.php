@@ -17,7 +17,7 @@ use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
-use League\Uri\IPv4\Converter;
+use League\Uri\IPv4\Converter as IPv4Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
@@ -432,7 +432,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     {
         $host = $uri->getHost();
         try {
-            $converted = Converter::fromEnvironment()($host);
+            $converted = IPv4Converter::fromEnvironment()->toDecimal($host);
         } catch (MissingFeature) {
             $converted = null;
         }

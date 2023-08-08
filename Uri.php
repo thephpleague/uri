@@ -17,10 +17,10 @@ use finfo;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Idna\ConversionFailed;
-use League\Uri\Idna\Converter;
+use League\Uri\Idna\Converter as IdnConverter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
@@ -342,7 +342,7 @@ final class Uri implements UriInterface
         return match (true) {
             1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
             1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
-            default => Converter::toAsciiOrFail($host),
+            default => IdnConverter::toAsciiOrFail($host),
         };
     }
 

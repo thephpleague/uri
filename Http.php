@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use JsonSerializable;
+use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
@@ -76,6 +78,12 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
         return new self(Uri::fromBaseUri($uri, $baseUri));
     }
 
+    /**
+     * Creates a new instance from a template.
+     *
+     * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
+     * @throws UriException             if the variables are invalid or missing
+     */
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
         return new self(Uri::fromTemplate($template, $variables));

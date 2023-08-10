@@ -31,7 +31,7 @@ use function array_key_exists;
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   6.1.0
  */
-final class UriTemplate implements Stringable
+final class UriTemplate
 {
     private readonly Template $template;
     private readonly VariableBag $defaultVariables;
@@ -40,7 +40,7 @@ final class UriTemplate implements Stringable
      * @throws SyntaxError              if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
      */
-    public function __construct(Template|Stringable|string $template, iterable $defaultVariables = [])
+    public function __construct(Stringable|string $template, iterable $defaultVariables = [])
     {
         $this->template = $template instanceof Template ? $template : Template::new($template);
         $this->defaultVariables = $this->filterVariables($defaultVariables);
@@ -52,13 +52,14 @@ final class UriTemplate implements Stringable
             $variables = new VariableBag($variables);
         }
 
-        $offsets = array_fill_keys($this->template->variableNames, 1);
-
         return $variables
-            ->filter(fn ($value, string|int $name) => array_key_exists($name, $offsets));
+            ->filter(fn ($value, string|int $name) => array_key_exists(
+                $name,
+                array_fill_keys($this->template->variableNames, 1)
+            ));
     }
 
-    public function __toString(): string
+    public function getTemplate(): string
     {
         return $this->template->value;
     }
@@ -117,19 +118,5 @@ final class UriTemplate implements Stringable
         return Uri::new($this->template->expandOrFail(
             $this->filterVariables($variables)->replace($this->defaultVariables)
         ));
-    }
-
-    /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release.
-     *
-     * @deprecated Since version 7.0.0
-     * @codeCoverageIgnore
-     * @see UriTemplate::__toString
-     *
-     * Returns the template string
-     */
-    public function getTemplate(): string
-    {
-        return $this->__toString();
     }
 }

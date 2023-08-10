@@ -35,7 +35,7 @@ final class UriTemplateTest extends TestCase
 
         $uriTemplate = new UriTemplate($template, $variables);
 
-        self::assertSame($template, (string) $uriTemplate);
+        self::assertSame($template, $uriTemplate->getTemplate());
     }
 
     public function testGetDefaultVariables(): void
@@ -356,9 +356,9 @@ final class UriTemplateTest extends TestCase
 
     public function testExpandOrFailIfVariablesAreMissing(): void
     {
-        $this->expectException(UriTemplate\TemplateCanNotBeExpanded::class);
+        $this->expectException(TemplateCanNotBeExpanded::class);
 
-        (new UriTemplate('{var}'))->expandOrFail([]);
+        (new UriTemplate('{var}'))->expandOrFail();
     }
 
     public function testExpandOrFailIfAtLeastOneVariableIsMissing(): void

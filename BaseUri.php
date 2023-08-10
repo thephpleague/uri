@@ -54,39 +54,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         $this->origin = $this->computeOrigin($this->uri, $this->nullValue);
     }
 
-    final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
-    {
-        $scheme = $uri->getScheme();
-        if ('blob' !== $scheme) {
-            return match (true) {
-                isset(static::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
-                    ->withFragment($nullValue)
-                    ->withQuery($nullValue)
-                    ->withPath('')
-                    ->withUserInfo($nullValue),
-                default => null,
-            };
-        }
-
-        $components = UriString::parse($uri->getPath());
-        if ($uri instanceof Psr7UriInterface) {
-            /** @var ComponentMap $components */
-            $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
-        }
-
-        return match (true) {
-            null !== $components['scheme'] && isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
-                ->withFragment($nullValue)
-                ->withQuery($nullValue)
-                ->withPath('')
-                ->withHost($components['host'])
-                ->withPort($components['port'])
-                ->withScheme($components['scheme'])
-                ->withUserInfo($nullValue),
-            default => null,
-        };
-    }
-
     public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): static
     {
         return new static(static::formatHost(static::filterUri($uri, $uriFactory)), $uriFactory);
@@ -135,22 +102,37 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function isCrossOrigin(Stringable|string $uri): bool
     {
-        return null === $this->origin
-            || null === ($uriOrigin = $this->computeOrigin(static::filterUri($uri), null))
+        if (null === $this->origin) {
+            return true;
+        }
+
+        $uri = static::filterUri($uri);
+        $uriOrigin = $this->computeOrigin($uri, $uri instanceof Psr7UriInterface ? '' : null);
+
+        return null === $uriOrigin
             || $uriOrigin->__toString() !== $this->origin->__toString();
     }
 
+    /**
+     * Tells whether the URI is absolute.
+     */
     public function isAbsolute(): bool
     {
         return $this->nullValue !== $this->uri->getScheme();
     }
 
+    /**
+     * Tells whether the URI is a network path.
+     */
     public function isNetworkPath(): bool
     {
         return $this->nullValue === $this->uri->getScheme()
             && $this->nullValue !== $this->uri->getAuthority();
     }
 
+    /**
+     * Tells whether the URI is an absolute path.
+     */
     public function isAbsolutePath(): bool
     {
         return $this->nullValue === $this->uri->getScheme()
@@ -158,6 +140,9 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
             && '/' === ($this->uri->getPath()[0] ?? '');
     }
 
+    /**
+     * Tells whether the URI is a relative path.
+     */
     public function isRelativePath(): bool
     {
         return $this->nullValue === $this->uri->getScheme()
@@ -174,7 +159,123 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
-     * Normalizes a URI for comparison.
+     * Resolves a URI against a base URI using RFC3986 rules.
+     *
+     * This method MUST retain the state of the submitted URI instance, and return
+     * a URI instance of the same type that contains the applied modifications.
+     *
+     * This method MUST be transparent when dealing with error and exceptions.
+     * It MUST not alter or silence them apart from validating its own parameters.
+     */
+    public function resolve(Stringable|string $uri): static
+    {
+        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
+        $null = $uri instanceof Psr7UriInterface ? '' : null;
+
+        if ($null !== $uri->getScheme()) {
+            return new static(
+                $uri->withPath(static::removeDotSegments($uri->getPath())),
+                $this->uriFactory
+            );
+        }
+
+        if ($null !== $uri->getAuthority()) {
+            return new static(
+                $uri
+                    ->withScheme($this->uri->getScheme())
+                    ->withPath(static::removeDotSegments($uri->getPath())),
+                $this->uriFactory
+            );
+        }
+
+        $user = $null;
+        $pass = null;
+        $userInfo = $this->uri->getUserInfo();
+        if (null !== $userInfo) {
+            [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
+        }
+
+        [$path, $query] = $this->resolvePathAndQuery($uri);
+
+        return new static(
+            $uri
+                ->withPath($this->removeDotSegments($path))
+                ->withQuery($query)
+                ->withHost($this->uri->getHost())
+                ->withPort($this->uri->getPort())
+                ->withUserInfo((string) $user, $pass)
+                ->withScheme($this->uri->getScheme()),
+            $this->uriFactory
+        );
+    }
+
+    /**
+     * Relativize a URI according to a base URI.
+     *
+     * This method MUST retain the state of the submitted URI instance, and return
+     * a URI instance of the same type that contains the applied modifications.
+     *
+     * This method MUST be transparent when dealing with error and exceptions.
+     * It MUST not alter of silence them apart from validating its own parameters.
+     */
+    public function relativize(Stringable|string $uri): static
+    {
+        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
+        if ($this->canNotBeRelativize($uri)) {
+            return new static($uri, $this->uriFactory);
+        }
+
+        $null = $uri instanceof Psr7UriInterface ? '' : null;
+        $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
+        $targetPath = $uri->getPath();
+        $basePath = $this->uri->getPath();
+
+        return new static(
+            match (true) {
+                $targetPath !== $basePath => $uri->withPath(static::relativizePath($targetPath, $basePath)),
+                static::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
+                $null === $uri->getQuery() => $uri->withPath(static::formatPathWithEmptyBaseQuery($targetPath)),
+                default => $uri->withPath(''),
+            },
+            $this->uriFactory
+        );
+    }
+
+    final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
+    {
+        $scheme = $uri->getScheme();
+        if ('blob' !== $scheme) {
+            return match (true) {
+                isset(static::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
+                    ->withFragment($nullValue)
+                    ->withQuery($nullValue)
+                    ->withPath('')
+                    ->withUserInfo($nullValue),
+                default => null,
+            };
+        }
+
+        $components = UriString::parse($uri->getPath());
+        if ($uri instanceof Psr7UriInterface) {
+            /** @var ComponentMap $components */
+            $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
+        }
+
+        return match (true) {
+            null !== $components['scheme'] && isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
+                ->withFragment($nullValue)
+                ->withQuery($nullValue)
+                ->withPath('')
+                ->withHost($components['host'])
+                ->withPort($components['port'])
+                ->withScheme($components['scheme'])
+                ->withUserInfo($nullValue),
+            default => null,
+        };
+    }
+
+    /**
+     * Normalizes a URI for comparison; this URI string representation is not suitable for usage as per RFC guidelines.
      */
     final protected function normalize(Psr7UriInterface|UriInterface $uri): string
     {
@@ -224,58 +325,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
-     * Resolves a URI against a base URI using RFC3986 rules.
-     *
-     * This method MUST retain the state of the submitted URI instance, and return
-     * a URI instance of the same type that contains the applied modifications.
-     *
-     * This method MUST be transparent when dealing with error and exceptions.
-     * It MUST not alter or silence them apart from validating its own parameters.
-     */
-    final public function resolve(Stringable|string $uri): static
-    {
-        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
-
-        if ($null !== $uri->getScheme()) {
-            return new static(
-                $uri->withPath(static::removeDotSegments($uri->getPath())),
-                $this->uriFactory
-            );
-        }
-
-        if ($null !== $uri->getAuthority()) {
-            return new static(
-                $uri
-                    ->withScheme($this->uri->getScheme())
-                    ->withPath(static::removeDotSegments($uri->getPath())),
-                $this->uriFactory
-            );
-        }
-
-        $user = $null;
-        $pass = null;
-        $userInfo = $this->uri->getUserInfo();
-        if (null !== $userInfo) {
-            [$user, $pass] = explode(':', $userInfo, 2) + [1 => null];
-        }
-
-        [$path, $query] = $this->resolvePathAndQuery($uri);
-
-        return new static(
-            $uri
-                ->withPath($this->removeDotSegments($path))
-                ->withQuery($query)
-                ->withHost($this->uri->getHost())
-                ->withPort($this->uri->getPort())
-                ->withUserInfo((string) $user, $pass)
-                ->withScheme($this->uri->getScheme()),
-            $this->uriFactory
-        );
-    }
-
-    /**
-     * Remove dot segments from the URI path.
+     * Remove dot segments from the URI path as per RFC specification.
      */
     final protected function removeDotSegments(string $path): string
     {
@@ -283,8 +333,22 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
             return $path;
         }
 
+        $reducer = function (array $carry, string $segment): array {
+            if ('..' === $segment) {
+                array_pop($carry);
+
+                return $carry;
+            }
+
+            if (!isset(static::DOT_SEGMENTS[$segment])) {
+                $carry[] = $segment;
+            }
+
+            return $carry;
+        };
+
         $oldSegments = explode('/', $path);
-        $newPath = implode('/', array_reduce($oldSegments, static::reducer(...), []));
+        $newPath = implode('/', array_reduce($oldSegments, $reducer(...), []));
         if (isset(static::DOT_SEGMENTS[end($oldSegments)])) {
             $newPath .= '/';
         }
@@ -297,26 +361,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         // @codeCoverageIgnoreEnd
 
         return $newPath;
-    }
-
-    /**
-     * Remove dot segments.
-     *
-     * @return array<int, string>
-     */
-    final protected static function reducer(array $carry, string $segment): array
-    {
-        if ('..' === $segment) {
-            array_pop($carry);
-
-            return $carry;
-        }
-
-        if (!isset(static::DOT_SEGMENTS[$segment])) {
-            $carry[] = $segment;
-        }
-
-        return $carry;
     }
 
     /**
@@ -367,62 +411,26 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
-     * Relativize a URI according to a base URI.
-     *
-     * This method MUST retain the state of the submitted URI instance, and return
-     * a URI instance of the same type that contains the applied modifications.
-     *
-     * This method MUST be transparent when dealing with error and exceptions.
-     * It MUST not alter of silence them apart from validating its own parameters.
-     */
-    final public function relativize(Stringable|string $uri): static
-    {
-        $uri = static::formatHost(static::filterUri($uri, $this->uriFactory));
-        if ($this->canNotBeRelativize($uri)) {
-            return new static($uri, $this->uriFactory);
-        }
-
-        $null = $uri instanceof Psr7UriInterface ? '' : null;
-        $uri = $uri->withScheme($null)->withPort(null)->withUserInfo($null)->withHost($null);
-        $targetPath = $uri->getPath();
-        $basePath = $this->uri->getPath();
-
-        return new static(
-            match (true) {
-                $targetPath !== $basePath => $uri->withPath(static::relativizePath($targetPath, $basePath)),
-                static::componentEquals('query', $uri) => $uri->withPath('')->withQuery($null),
-                $null === $uri->getQuery() => $uri->withPath(static::formatPathWithEmptyBaseQuery($targetPath)),
-                default => $uri->withPath(''),
-            },
-            $this->uriFactory
-        );
-    }
-
-    /**
      * Tells whether the component value from both URI object equals.
-     */
-    final protected function componentEquals(string $property, Psr7UriInterface|UriInterface $uri): bool
-    {
-        return static::getComponent($property, $uri) === static::getComponent($property, $this->uri);
-    }
-
-    /**
-     * Returns the component value from the submitted URI object.
      *
      * @pqram 'query'|'authority'|'scheme' $property
      */
-    final protected static function getComponent(string $property, Psr7UriInterface|UriInterface $uri): ?string
+    final protected function componentEquals(string $property, Psr7UriInterface|UriInterface $uri): bool
     {
-        $component = match ($property) {
-            'query' => $uri->getQuery(),
-            'authority' => $uri->getAuthority(),
-            default => $uri->getScheme(),
+        $getComponent = function (string $property, Psr7UriInterface|UriInterface $uri): ?string {
+            $component = match ($property) {
+                'query' => $uri->getQuery(),
+                'authority' => $uri->getAuthority(),
+                default => $uri->getScheme(),
+            };
+
+            return match (true) {
+                $uri instanceof UriInterface, '' !== $component => $component,
+                default => null,
+            };
         };
 
-        return match (true) {
-            $uri instanceof UriInterface, '' !== $component => $component,
-            default => null,
-        };
+        return $getComponent($property, $uri) === $getComponent($property, $this->uri);
     }
 
     /**
@@ -449,9 +457,9 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     final protected function canNotBeRelativize(Psr7UriInterface|UriInterface $uri): bool
     {
-        return static::from($uri)->isRelativePath()
-            || !static::componentEquals('scheme', $uri)
-            || !static::componentEquals('authority', $uri);
+        return !static::componentEquals('scheme', $uri)
+            || !static::componentEquals('authority', $uri)
+            || static::from($uri)->isRelativePath();
     }
 
     /**
@@ -484,11 +492,11 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     final protected static function getSegments(string $path): array
     {
-        if ('' !== $path && '/' === $path[0]) {
-            $path = substr($path, 1);
-        }
-
-        return explode('/', $path);
+        return explode('/', match (true) {
+            '' === $path,
+            '/' !== $path[0] => $path,
+            default => substr($path, 1),
+        });
     }
 
     /**

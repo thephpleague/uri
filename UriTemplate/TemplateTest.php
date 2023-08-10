@@ -95,6 +95,7 @@ final class TemplateTest extends TestCase
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
         self::assertSame($notation, Template::new($notation)->value);
+        self::assertSame($notation, (string) Template::new($notation));
     }
 
     public static function providesValidNotation(): iterable
@@ -179,5 +180,12 @@ final class TemplateTest extends TestCase
                 'expected' => 'foobar',
             ],
         ];
+    }
+
+    public function testExpandOrFailIfAtLeastOneVariableIsMissing(): void
+    {
+        $this->expectException(TemplateCanNotBeExpanded::class);
+
+        Template::new('{var}{baz}')->expandOrFail(['var' => 'bar']);
     }
 }

@@ -56,7 +56,7 @@ use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
 
 /**
- * @phpstan-import-type ComponentMap from UriInterface
+ * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
 final class Uri implements UriInterface
@@ -406,7 +406,25 @@ final class Uri implements UriInterface
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        $components = $uri instanceof UriInterface ? $uri->getComponents() : UriString::parse($uri);
+        $components = match (true) {
+            $uri instanceof UriInterface => $uri->getComponents(),
+            $uri instanceof Psr7UriInterface => (function (Psr7UriInterface $uri): array {
+                $normalize = fn ($component) => '' !== $component ? $component : null;
+                $userInfo = $uri->getUserInfo();
+                [$user, $pass] = '' !== $userInfo ? explode(':', $userInfo, 2) : ['', ''];
+                return [
+                    'scheme' => $normalize($uri->getScheme()),
+                    'user' => $normalize($user),
+                    'pass' => $normalize($pass),
+                    'host' => $normalize($uri->getHost()),
+                    'port' => $uri->getPort(),
+                    'path' => $uri->getPath(),
+                    'query' => $normalize($uri->getQuery()),
+                    'fragment' => $normalize($uri->getFragment()),
+                ];
+            })($uri),
+            default => UriString::parse($uri),
+        };
 
         return new self(
             $components['scheme'],
@@ -445,7 +463,7 @@ final class Uri implements UriInterface
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
      */
-    public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
+    public static function fromTemplate(UriTemplate|Stringable|string $template, iterable $variables = []): self
     {
         return match (true) {
             $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->getComponents()),
@@ -984,7 +1002,7 @@ final class Uri implements UriInterface
      */
     public function getComponents(): array
     {
-        [$user, $pass] = null !== $this->userInfo ? explode(':', $this->userInfo) : [null, null];
+        [$user, $pass] = null !== $this->userInfo ? explode(':', $this->userInfo, 2) : [null, null];
 
         return [
             'scheme' => $this->scheme,

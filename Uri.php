@@ -71,24 +71,6 @@ final class Uri implements UriInterface
     private const REGEXP_INVALID_CHARS = '/[\x00-\x1f\x7f]/';
 
     /**
-     * RFC3986 Sub delimiter characters regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-2.2
-     *
-     * @var string
-     */
-    private const REGEXP_CHARS_SUBDELIM = "\!\$&'\(\)\*\+,;\=%";
-
-    /**
-     * RFC3986 unreserved characters regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-2.3
-     *
-     * @var string
-     */
-    private const REGEXP_CHARS_UNRESERVED = 'A-Za-z\d_\-\.~';
-
-    /**
      * RFC3986 schema regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.1
@@ -248,8 +230,8 @@ final class Uri implements UriInterface
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();
         $this->path = $this->formatPath($path);
-        $this->query = $this->formatQueryAndFragment($query);
-        $this->fragment = $this->formatQueryAndFragment($fragment);
+        $this->query = Encoder::encodeQueryOrFragment($query);
+        $this->fragment = Encoder::encodeQueryOrFragment($fragment);
 
         $this->assertValidState();
     }
@@ -280,27 +262,10 @@ final class Uri implements UriInterface
         ?string $user,
         #[SensitiveParameter] ?string $password
     ): ?string {
-        if (null === $user) {
-            return null;
-        }
-
-        static $userPattern = '/[^%'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
-        $user = preg_replace_callback($userPattern, Uri::urlEncodeMatch(...), $user);
-        if (null === $password) {
-            return $user;
-        }
-
-        static $passwordPattern = '/[^%:'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.']++|%(?![A-Fa-f\d]{2})/';
-
-        return $user.':'.preg_replace_callback($passwordPattern, Uri::urlEncodeMatch(...), $password);
-    }
-
-    /**
-     * Returns the RFC3986 encoded string matched.
-     */
-    private static function urlEncodeMatch(array $matches): string
-    {
-        return rawurlencode($matches[0]);
+        return match (true) {
+            null === $password => Encoder::encodeUser($user),
+            default => Encoder::encodeUser($user).':'.Encoder::encodePassword($password),
+        };
     }
 
     /**
@@ -720,21 +685,11 @@ final class Uri implements UriInterface
      */
     private function formatPath(string $path): string
     {
-        if ('data' === $this->scheme) {
-            $path = $this->formatDataPath($path);
-        }
-
-        if ('/' !== $path) {
-            static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/}{]++|%(?![A-Fa-f\d]{2})/';
-
-            $path = (string) preg_replace_callback($pattern, Uri::urlEncodeMatch(...), $path);
-        }
-
-        if ('file' === $this->scheme) {
-            return $this->formatFilePath($path);
-        }
-
-        return $path;
+        return match (true) {
+            'data' === $this->scheme => Encoder::encodePath($this->formatDataPath($path)),
+            'file' === $this->scheme => $this->formatFilePath(Encoder::encodePath($path)),
+            default => Encoder::encodePath($path),
+        };
     }
 
     /**
@@ -825,27 +780,6 @@ final class Uri implements UriInterface
             static fn (array $matches): string => $matches['delim'].$matches['volume'].':'.$matches['rest'],
             $path
         );
-    }
-
-    /**
-     * Format the Query or the Fragment component.
-     *
-     * Returns a array containing:
-     * <ul>
-     * <li> the formatted component (a string or null)</li>
-     * <li> a boolean flag telling wether the delimiter is to be added to the component
-     * when building the URI string representation</li>
-     * </ul>
-     */
-    private function formatQueryAndFragment(?string $component): ?string
-    {
-        if (null === $component || '' === $component) {
-            return $component;
-        }
-
-        static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
-
-        return preg_replace_callback($pattern, self::urlEncodeMatch(...), $component);
     }
 
     /**
@@ -1198,7 +1132,7 @@ final class Uri implements UriInterface
 
     public function withQuery(Stringable|string|null $query): UriInterface
     {
-        $query = $this->formatQueryAndFragment($this->filterString($query));
+        $query = Encoder::encodeQueryOrFragment($this->filterString($query));
         if ($query === $this->query) {
             return $this;
         }
@@ -1212,7 +1146,7 @@ final class Uri implements UriInterface
 
     public function withFragment(Stringable|string|null $fragment): UriInterface
     {
-        $fragment = $this->formatQueryAndFragment($this->filterString($fragment));
+        $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
         if ($fragment === $this->fragment) {
             return $this;
         }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use League\Uri\Encoder;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 use function implode;
@@ -32,24 +33,6 @@ use function substr;
  */
 enum Operator: string
 {
-    /**
-     * RFC3986 Sub delimiter characters regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-2.2
-     *
-     * @var string
-     */
-    private const REGEXP_CHARS_SUBDELIM = "\!\$&'\(\)\*\+,;\=%";
-
-    /**
-     * RFC3986 unreserved characters regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-2.3
-     *
-     * @var string
-     */
-    private const REGEXP_CHARS_UNRESERVED = 'A-Za-z\d_\-\.~';
-
     /**
      * Expression regular expression pattern.
      *
@@ -104,7 +87,7 @@ enum Operator: string
     public function decode(string $var): string
     {
         return match ($this) {
-            Operator::ReservedChars, Operator::Fragment => self::encodeQueryOrFragment($var),
+            Operator::ReservedChars, Operator::Fragment => (string) Encoder::encodeQueryOrFragment($var),
             default => rawurlencode($var),
         };
     }
@@ -237,20 +220,5 @@ enum Operator: string
         }
 
         return [implode(',', $pairs), $useQuery];
-    }
-
-    /**
-     * Returns the RFC3986 encoded string matched.
-     */
-    private static function urlEncodeMatch(array $matches): string
-    {
-        return rawurlencode($matches[0]);
-    }
-
-    private static function encodeQueryOrFragment(string $uriPart): string
-    {
-        static $pattern = '/[^'.self::REGEXP_CHARS_UNRESERVED.self::REGEXP_CHARS_SUBDELIM.':@\/?]++|%(?![A-Fa-f\d]{2})/';
-
-        return (string) preg_replace_callback($pattern, self::urlEncodeMatch(...), $uriPart);
     }
 }

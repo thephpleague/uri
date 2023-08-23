@@ -109,8 +109,11 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         $uri = static::filterUri($uri);
         $uriOrigin = $this->computeOrigin($uri, $uri instanceof Psr7UriInterface ? '' : null);
 
-        return null === $uriOrigin
-            || $uriOrigin->__toString() !== $this->origin->__toString();
+        return match(true) {
+            null === $uriOrigin,
+            $uriOrigin->__toString() !== $this->origin->__toString() => true,
+            default => false,
+        };
     }
 
     /**
@@ -447,7 +450,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
         return match (true) {
             null !== $converted => $uri->withHost($converted),
-            $uri instanceof UriInterface, '' === $host => $uri,
+            '' === $host,
+            $uri instanceof UriInterface => $uri,
             default => $uri->withHost((string) Uri::fromComponents(['host' => $host])->getHost()),
         };
     }
@@ -504,20 +508,16 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     final protected static function formatPath(string $path, string $basePath): string
     {
-        if ('' === $path) {
-            return in_array($basePath, ['', '/'], true) ? $basePath : './';
-        }
-
-        if (false === ($colonPosition = strpos($path, ':'))) {
-            return $path;
-        }
-
+        $colonPosition = strpos($path, ':');
         $slashPosition = strpos($path, '/');
-        if (false === $slashPosition || $colonPosition < $slashPosition) {
-            return "./$path";
-        }
 
-        return $path;
+        return match (true) {
+            '' === $path => in_array($basePath, ['', '/'], true) ? $basePath : './',
+            false === $colonPosition => $path,
+            false === $slashPosition,
+            $colonPosition < $slashPosition  =>  "./$path",
+            default => $path,
+        };
     }
 
     /**

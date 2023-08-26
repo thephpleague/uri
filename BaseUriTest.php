@@ -451,4 +451,41 @@ final class BaseUriTest extends TestCase
 
         self::assertSame($expectedOrigin, $origin);
     }
+
+    /**
+     * @dataProvider provideIDNUri
+     */
+    public function testHostIsIDN(string $uri, bool $expected): void
+    {
+        self::assertSame($expected, BaseUri::from($uri)->hasIdn());
+        self::assertSame($expected, BaseUri::from(Utils::uriFor($uri), new \GuzzleHttp\Psr7\HttpFactory())->hasIdn());
+    }
+
+    public static function provideIDNUri(): iterable
+    {
+        yield 'ascii uri (1)' => [
+            'uri' => 'https://www.example.com',
+            'expected' => false,
+        ];
+
+        yield 'ascii uri with invalid converted i18n' => [
+            'uri' => 'https://www.xn--ample.com',
+            'expected' => false,
+        ];
+
+        yield 'idn uri' => [
+            'uri' => 'https://www.bébé.be',
+            'expected' => true,
+        ];
+
+        yield 'uri without host' => [
+            'uri' => '/path/to/the?sky=1',
+            'expected' => false,
+        ];
+
+        yield 'uri without empty host' => [
+            'uri' => 'file:///path/to/the/sky',
+            'expected' => false,
+        ];
+    }
 }

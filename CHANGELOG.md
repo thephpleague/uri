@@ -2,7 +2,25 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## 7.1.0 - 2023-08-21
+## [7.1.0](https://github.com/thephpleague/uri/compare/7.1.0...master) - TBD
+
+### Added
+
+- `BasUri::hasIDN`
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
+## [7.1.0](https://github.com/thephpleague/uri/compare/7.0.0...7.1.0) - 2023-08-21
 
 ### Added
 

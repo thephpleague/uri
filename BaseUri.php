@@ -17,6 +17,7 @@ use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
+use League\Uri\Idna\Converter;
 use League\Uri\IPv4\Converter as IPv4Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -27,7 +28,6 @@ use function count;
 use function end;
 use function explode;
 use function implode;
-use function in_array;
 use function str_repeat;
 use function strpos;
 use function substr;
@@ -159,6 +159,14 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     public function isSameDocument(Stringable|string $uri): bool
     {
         return $this->normalize(static::filterUri($uri)) === $this->normalize($this->uri);
+    }
+
+    /**
+     * Tells whether the URI contains an Internationalized Domain Name (IDN).
+     */
+    public function hasIdn(): bool
+    {
+        return Converter::isIdn($this->uri->getHost());
     }
 
     /**
@@ -512,7 +520,11 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         $slashPosition = strpos($path, '/');
 
         return match (true) {
-            '' === $path => in_array($basePath, ['', '/'], true) ? $basePath : './',
+            '' === $path => match (true) {
+                '' === $basePath,
+                '/' === $basePath => $basePath,
+                default => './',
+            },
             false === $colonPosition => $path,
             false === $slashPosition,
             $colonPosition < $slashPosition  =>  "./$path",

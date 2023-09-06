@@ -217,7 +217,8 @@ final class Uri implements UriInterface
     private function __construct(
         ?string $scheme,
         ?string $user,
-        #[SensitiveParameter] ?string $pass,
+        #[SensitiveParameter]
+        ?string $pass,
         ?string $host,
         ?int $port,
         string $path,
@@ -260,10 +261,11 @@ final class Uri implements UriInterface
      */
     private function formatUserInfo(
         ?string $user,
-        #[SensitiveParameter] ?string $password
+        #[SensitiveParameter]
+        ?string $password
     ): ?string {
-        return match (true) {
-            null === $password => Encoder::encodeUser($user),
+        return match (null) {
+            $password => Encoder::encodeUser($user),
             default => Encoder::encodeUser($user).':'.Encoder::encodePassword($password),
         };
     }
@@ -304,9 +306,9 @@ final class Uri implements UriInterface
     {
         $formattedHost = rawurldecode($host);
 
-        return match (true) {
-            1 === preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
-            1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
+        return match (1) {
+            preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
+            preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
             default => IdnConverter::toAsciiOrFail($host),
         };
     }
@@ -1058,7 +1060,8 @@ final class Uri implements UriInterface
 
     public function withUserInfo(
         Stringable|string|null $user,
-        #[SensitiveParameter] Stringable|string|null $password = null
+        #[SensitiveParameter]
+        Stringable|string|null $password = null
     ): UriInterface {
         $user_info = null;
         $user = $this->filterString($user);

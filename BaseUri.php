@@ -91,8 +91,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
     public function origin(): ?self
     {
-        return match (true) {
-            null === $this->origin => null,
+        return match (null) {
+            $this->origin => null,
             default => new self($this->origin, $this->uriFactory),
         };
     }

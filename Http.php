@@ -144,16 +144,16 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      */
     private function filterInput(string $str): ?string
     {
-        return match (true) {
-            '' === $str => null,
+        return match ('') {
+            $str => null,
             default => $str,
         };
     }
 
     private function newInstance(UriInterface $uri): self
     {
-        return match (true) {
-            $uri->toString() === $this->uri->toString() => $this,
+        return match ($this->uri->toString()) {
+            $uri->toString() => $this,
             default => new self($uri),
         };
     }

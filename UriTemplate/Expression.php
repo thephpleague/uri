@@ -87,9 +87,9 @@ final class Expression
             )
         );
 
-        return match (true) {
-            '' !== $expanded => $this->operator->first().$expanded,
-            default => '',
+        return match ('') {
+            $expanded => '',
+            default => $this->operator->first().$expanded,
         };
     }
 }

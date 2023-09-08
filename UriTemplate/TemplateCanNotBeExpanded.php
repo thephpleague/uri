@@ -29,12 +29,12 @@ class TemplateCanNotBeExpanded extends InvalidArgumentException implements UriEx
 
     public static function dueToUnableToProcessValueListWithPrefix(string $variableName): self
     {
-        return new self('The ":" modifier can not be applied on "'.$variableName.'" since it is a list of values.', $variableName);
+        return new self('The ":" modifier cannot be applied on "'.$variableName.'" since it is a list of values.', $variableName);
     }
 
     public static function dueToNestedListOfValue(string $variableName): self
     {
-        return new self('The "'.$variableName.'" can not be a nested list.', $variableName);
+        return new self('The "'.$variableName.'" cannot be a nested list.', $variableName);
     }
 
     public static function dueToMissingVariables(string ...$variableNames): self

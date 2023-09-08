@@ -15,15 +15,14 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
-use function array_fill_keys;
 use function array_filter;
-use function array_keys;
+use function array_unique;
 use function array_map;
 use function explode;
 use function implode;
 
 /**
- * @internal The class exposes the internal representation of an Exression and its usage
+ * @internal The class exposes the internal representation of an Expression and its usage
  * @link https://www.rfc-editor.org/rfc/rfc6570#section-2.2
  */
 final class Expression

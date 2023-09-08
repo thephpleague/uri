@@ -2,6 +2,42 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [Next](https://github.com/thephpleague/uri/compare/7.2.1...master) - TBD
+
+### Added
+
+- None
+
+### Fixed
+
+- URI Template incorrect when variable name only contains numbers [#109](https://github.com/thephpleague/uri-src/issues/119) by [GrahamCampbell](https://github.com/GrahamCampbell)
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
+## [7.2.1](https://github.com/thephpleague/uri-components/compare/7.2.0...7.2.1) - 2023-08-30
+
+### Added
+
+- None
+
+### Fixed
+
+- `composer.json` constraints
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.2.0](https://github.com/thephpleague/uri/compare/7.1.0...7.2.0) - 2023-08-30
 
 ### Added

@@ -144,8 +144,8 @@ final class TemplateTest extends TestCase
                 'expected' => [],
             ],
             [
-                'template' => '{foo}{bar}',
-                'expected' => ['foo', 'bar'],
+                'template' => '{foo}{bar}{420}',
+                'expected' => ['foo', 'bar', '420'],
             ],
             [
                 'template' => '{foo}{foo:2}{+foo}',

@@ -43,14 +43,14 @@ final class Template implements Stringable
     private function __construct(public readonly string $value, Expression ...$expressions)
     {
         $this->expressions = $expressions;
-        $this->variableNames = array_keys(array_reduce(
-            $expressions,
-            fn (array $curry, Expression $expression): array => [
-                ...$curry,
-                ...array_fill_keys($expression->variableNames, 1),
-            ],
-            []
-        ));
+        $this->variableNames = array_unique(
+            array_merge(
+                ...array_map(
+                    static fn (Expression $expression): array => $expression->variableNames,
+                    $expressions
+                )
+            )
+        );
     }
 
     /**

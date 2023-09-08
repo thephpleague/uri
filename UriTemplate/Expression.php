@@ -37,10 +37,12 @@ final class Expression
     private function __construct(public readonly Operator $operator, VarSpecifier ...$varSpecifiers)
     {
         $this->varSpecifiers = $varSpecifiers;
-        $this->variableNames = array_keys(array_fill_keys(
-            array_map(static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name, $varSpecifiers),
-            1
-        ));
+        $this->variableNames = array_unique(
+            array_map(
+                static fn (VarSpecifier $varSpecifier): string => $varSpecifier->name,
+                $varSpecifiers
+            )
+        );
         $this->value = '{'.$operator->value.implode(',', array_map(
             static fn (VarSpecifier $varSpecifier): string => $varSpecifier->toString(),
             $varSpecifiers

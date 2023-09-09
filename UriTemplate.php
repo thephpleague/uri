@@ -100,7 +100,7 @@ final class UriTemplate
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
-     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
+     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
     {
@@ -111,7 +111,7 @@ final class UriTemplate
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
-     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
+     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
      */
     public function expandOrFail(iterable $variables = []): UriInterface
     {

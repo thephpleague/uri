@@ -244,7 +244,7 @@ final class ExpressionTest extends TestCase
     public static function invalidModifierToApply(): iterable
     {
         return [
-            'can not apply a modifier on a hash value (1)' => [
+            'cannot apply a modifier on a hash value (1)' => [
                 'expression' => '{keys:1}',
                 'variables' => [
                     'keys' => [
@@ -254,7 +254,7 @@ final class ExpressionTest extends TestCase
                     ],
                 ],
             ],
-            'can not apply a modifier on a hash value (2)' => [
+            'cannot apply a modifier on a hash value (2)' => [
                 'expression' => '{+keys:1}',
                 'variables' => [
                     'keys' => [

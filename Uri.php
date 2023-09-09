@@ -300,7 +300,7 @@ final class Uri implements UriInterface
      *
      * @throws MissingFeature   if the submitted host required missing or misconfigured IDN support
      * @throws SyntaxError      if the submitted host is not a valid registered name
-     * @throws ConversionFailed if the submitted IDN host can not be converted to a valid ascii form
+     * @throws ConversionFailed if the submitted IDN host cannot be converted to a valid ascii form
      */
     private function formatRegisteredName(string $host): string
     {
@@ -308,7 +308,7 @@ final class Uri implements UriInterface
 
         return match (1) {
             preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
-            preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name can not contain URI delimiters or spaces.'),
+            preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name cannot contain URI delimiters or spaces.'),
             default => IdnConverter::toAsciiOrFail($host),
         };
     }
@@ -428,7 +428,7 @@ final class Uri implements UriInterface
      * Creates a new instance from a template.
      *
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
-     * @throws UriException             if the resulting expansion can not be converted to a UriInterface instance
+     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
      */
     public static function fromTemplate(UriTemplate|Stringable|string $template, iterable $variables = []): self
     {
@@ -604,7 +604,7 @@ final class Uri implements UriInterface
     /**
      * Returns the environment host.
      *
-     * @throws SyntaxError If the host can not be detected
+     * @throws SyntaxError If the host cannot be detected
      *
      * @return array{0:string|null, 1:int|null}
      */
@@ -800,7 +800,7 @@ final class Uri implements UriInterface
         }
 
         if (null === $this->authority && str_starts_with($this->path, '//')) {
-            throw new SyntaxError('If there is no authority the path `'.$this->path.'` can not start with a `//`.');
+            throw new SyntaxError('If there is no authority the path `'.$this->path.'` cannot start with a `//`.');
         }
 
         $pos = strpos($this->path, ':');
@@ -1041,7 +1041,7 @@ final class Uri implements UriInterface
     /**
      * Filter a string.
      *
-     * @throws SyntaxError if the submitted data can not be converted to string
+     * @throws SyntaxError if the submitted data cannot be converted to string
      */
     private function filterString(Stringable|string|null $str): ?string
     {
@@ -1119,7 +1119,7 @@ final class Uri implements UriInterface
     {
         $path = $this->filterString($path);
         if (null === $path) {
-            throw new SyntaxError('The path component can not be null.');
+            throw new SyntaxError('The path component cannot be null.');
         }
         $path = $this->formatPath($path);
         if ($path === $this->path) {

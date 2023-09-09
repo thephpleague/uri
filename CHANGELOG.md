@@ -11,6 +11,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - URI Template incorrect when variable name only contains numbers [#109](https://github.com/thephpleague/uri-src/issues/119) by [GrahamCampbell](https://github.com/GrahamCampbell)
+- Exception message typo fix [#121](https://github.com/thephpleague/uri-src/pull/121) by [GrahamCampbell](https://github.com/GrahamCampbell)
 
 ### Deprecated
 

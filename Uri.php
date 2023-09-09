@@ -1166,7 +1166,7 @@ final class Uri implements UriInterface
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
-     * @deprecated Since version 9.9.0
+     * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
      * @see Uri::new()
      */
@@ -1178,7 +1178,7 @@ final class Uri implements UriInterface
     /**
      * DEPRECATION WARNING! This method will be removed in the next major point release.
      *
-     * @deprecated Since version 9.9.0
+     * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
      * @see Uri::fromComponents()
      *
@@ -1198,7 +1198,7 @@ final class Uri implements UriInterface
      * @throws SyntaxError If the file does not exist or is not readable
      * @see Uri::fromFileContents()
      *
-     * @deprecated Since version 9.9.0
+     * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
      */
     public static function createFromDataPath(string $path, $context = null): self

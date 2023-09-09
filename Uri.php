@@ -25,6 +25,7 @@ use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
+
 use function array_filter;
 use function array_key_first;
 use function array_map;
@@ -48,6 +49,7 @@ use function strpos;
 use function strspn;
 use function strtolower;
 use function substr;
+
 use const FILEINFO_MIME;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
@@ -298,8 +300,8 @@ final class Uri implements UriInterface
      *
      * The host is converted to its ascii representation if needed
      *
-     * @throws MissingFeature   if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError      if the submitted host is not a valid registered name
+     * @throws MissingFeature if the submitted host required missing or misconfigured IDN support
+     * @throws SyntaxError if the submitted host is not a valid registered name
      * @throws ConversionFailed if the submitted IDN host cannot be converted to a valid ascii form
      */
     private function formatRegisteredName(string $host): string
@@ -428,7 +430,7 @@ final class Uri implements UriInterface
      * Creates a new instance from a template.
      *
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
-     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
+     * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
     public static function fromTemplate(UriTemplate|Stringable|string $template, iterable $variables = []): self
     {
@@ -474,7 +476,7 @@ final class Uri implements UriInterface
      * @param resource|null $context
      *
      * @throws MissingFeature If ext/fileinfo is not installed
-     * @throws SyntaxError    If the file does not exist or is not readable
+     * @throws SyntaxError If the file does not exist or is not readable
      */
     public static function fromFileContents(Stringable|string $path, $context = null): self
     {
@@ -1193,7 +1195,7 @@ final class Uri implements UriInterface
      * @param resource|null $context
      *
      * @throws MissingFeature If ext/fileinfo is not installed
-     * @throws SyntaxError    If the file does not exist or is not readable
+     * @throws SyntaxError If the file does not exist or is not readable
      * @see Uri::fromFileContents()
      *
      * @deprecated Since version 9.9.0

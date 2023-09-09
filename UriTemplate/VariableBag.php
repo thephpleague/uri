@@ -19,9 +19,11 @@ use Countable;
 use IteratorAggregate;
 use Stringable;
 use Traversable;
+
 use function array_filter;
 use function is_bool;
 use function is_scalar;
+
 use const ARRAY_FILTER_USE_BOTH;
 
 /**

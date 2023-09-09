@@ -15,6 +15,7 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+
 use function array_filter;
 use function array_map;
 use function array_reduce;
@@ -23,6 +24,7 @@ use function preg_match_all;
 use function preg_replace;
 use function str_contains;
 use function str_replace;
+
 use const PREG_SET_ORDER;
 
 /**

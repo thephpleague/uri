@@ -67,8 +67,8 @@ final class VariableBagTest extends TestCase
     }
 
     /**
-     * @param int|float|string|bool|array<string|bool|string|float> $value    the value to be assigned to the name
-     * @param string|array<string>                                  $expected
+     * @param int|float|string|bool|array<string|bool|string|float> $value the value to be assigned to the name
+     * @param string|array<string> $expected
      *
      * @dataProvider provideValidAssignParameters
      */

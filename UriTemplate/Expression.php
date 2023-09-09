@@ -15,9 +15,10 @@ namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+
 use function array_filter;
-use function array_unique;
 use function array_map;
+use function array_unique;
 use function explode;
 use function implode;
 

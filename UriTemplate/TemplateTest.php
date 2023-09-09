@@ -18,6 +18,7 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
+
 use const JSON_THROW_ON_ERROR;
 
 /**

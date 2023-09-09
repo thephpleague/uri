@@ -20,6 +20,7 @@ use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\VariableBag;
 use Stringable;
+
 use function array_fill_keys;
 use function array_key_exists;
 
@@ -37,7 +38,7 @@ final class UriTemplate
     private readonly VariableBag $defaultVariables;
 
     /**
-     * @throws SyntaxError              if the template syntax is invalid
+     * @throws SyntaxError if the template syntax is invalid
      * @throws TemplateCanNotBeExpanded if the template or the variables are invalid
      */
     public function __construct(Stringable|string $template, iterable $defaultVariables = [])
@@ -100,7 +101,7 @@ final class UriTemplate
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
-     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
+     * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
     {
@@ -111,7 +112,7 @@ final class UriTemplate
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
-     * @throws UriException             if the resulting expansion cannot be converted to a UriInterface instance
+     * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
     public function expandOrFail(iterable $variables = []): UriInterface
     {

@@ -82,7 +82,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      * Creates a new instance from a template.
      *
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
-     * @throws UriException             if the variables are invalid or missing
+     * @throws UriException if the variables are invalid or missing
      */
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {

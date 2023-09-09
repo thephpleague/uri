@@ -44,7 +44,7 @@ final class FactoryTest extends TestCase
     public function testCreateFromPath(string $path, string $expected): void
     {
         $context = stream_context_create([
-            'http'=> [
+            'http' => [
                 'method' => 'GET',
                 'header' => "Accept-language: en\r\nCookie: foo=bar\r\n",
             ],

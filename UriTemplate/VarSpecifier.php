@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
+
 use function preg_match;
 
 /**

@@ -22,6 +22,7 @@ use League\Uri\IPv4\Converter as IPv4Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+
 use function array_pop;
 use function array_reduce;
 use function count;
@@ -38,10 +39,10 @@ use function substr;
 class BaseUri implements Stringable, JsonSerializable, UriAccess
 {
     /** @var array<string,int> */
-    protected final const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
+    final protected const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
 
     /** @var array<string,int> */
-    protected final const DOT_SEGMENTS = ['.' => 1, '..' => 1];
+    final protected const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
     protected readonly Psr7UriInterface|UriInterface|null $origin;
     protected readonly ?string $nullValue;

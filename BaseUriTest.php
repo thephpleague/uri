@@ -488,4 +488,91 @@ final class BaseUriTest extends TestCase
             'expected' => false,
         ];
     }
+
+    /** @dataProvider unixpathProvider */
+    public function testReturnsUnixPath(?string $expected, string $input): void
+    {
+        self::assertSame($expected, BaseUri::from($input)->unixPath());
+        self::assertSame($expected, BaseUri::from(Utils::uriFor($input))->unixPath());
+    }
+
+    public static function unixpathProvider(): array
+    {
+        return [
+            'relative path' => [
+                'expected' => 'path',
+                'input' => 'path',
+            ],
+            'absolute path' => [
+                'expected' => '/path',
+                'inout' => 'file:///path',
+            ],
+            'path with empty char' => [
+                'expected' => '/path empty/bar',
+                'inout' => 'file:///path%20empty/bar',
+            ],
+            'relative path with dot segments' => [
+                'expected' => 'path/./relative',
+                'input' => 'path/./relative',
+            ],
+            'absolute path with dot segments' => [
+                'expected' => '/path/./../relative',
+                'input' => 'file:///path/./../relative',
+            ],
+            'unsupported scheme' => [
+                'expected' => null,
+                'input' => 'http://example.com/foo/bar',
+            ],
+        ];
+    }
+
+    /** @dataProvider windowLocalPathProvider */
+    public function testReturnsWindowsPath(?string $expected, string $input): void
+    {
+        self::assertSame($expected, BaseUri::from($input)->windowsPath());
+        self::assertSame($expected, BaseUri::from(Utils::uriFor($input))->windowsPath());
+
+    }
+
+    public static function windowLocalPathProvider(): array
+    {
+        return [
+            'relative path' => [
+                'expected' => 'path',
+                'input' => 'path',
+            ],
+            'relative path with dot segments' => [
+                'expected' => 'path\.\relative',
+                'input' => 'path/./relative',
+            ],
+            'absolute path' => [
+                'expected' => 'c:\windows\My Documents 100%20\foo.txt',
+                'input' => 'file:///c:/windows/My%20Documents%20100%2520/foo.txt',
+            ],
+            'windows relative path' => [
+                'expected' => 'c:My Documents 100%20\foo.txt',
+                'input' => 'file:///c:My%20Documents%20100%2520/foo.txt',
+            ],
+            'absolute path with `|`' => [
+                'expected' => 'c:\windows\My Documents 100%20\foo.txt',
+                'input' => 'file:///c:/windows/My%20Documents%20100%2520/foo.txt',
+            ],
+            'windows relative path with `|`' => [
+                'expected' => 'c:My Documents 100%20\foo.txt',
+                'input' => 'file:///c:My%20Documents%20100%2520/foo.txt',
+            ],
+            'absolute path with dot segments' => [
+                'expected' => '\path\.\..\relative',
+                'input' => '/path/./../relative',
+            ],
+            'absolute UNC path' => [
+                'expected' => '\\\\server\share\My Documents 100%20\foo.txt',
+                'input' => 'file://server/share/My%20Documents%20100%2520/foo.txt',
+            ],
+            'unsupported scheme' => [
+                'expected' => null,
+                'input' => 'http://example.com/foo/bar',
+            ],
+        ];
+    }
 }

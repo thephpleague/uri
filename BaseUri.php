@@ -29,7 +29,11 @@ use function count;
 use function end;
 use function explode;
 use function implode;
+use function in_array;
+use function preg_match;
+use function rawurldecode;
 use function str_repeat;
+use function str_replace;
 use function strpos;
 use function substr;
 
@@ -95,6 +99,53 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         return match (null) {
             $this->origin => null,
             default => new self($this->origin, $this->uriFactory),
+        };
+    }
+
+    /**
+     * Returns the Unix filesystem path.
+     *
+     * The method will return null if a scheme is present and is not the `file` scheme
+     */
+    public function unixPath(): ?string
+    {
+        return match ($this->uri->getScheme()) {
+            'file', $this->nullValue => rawurldecode($this->uri->getPath()),
+            default => null,
+        };
+    }
+
+    /**
+     * Returns the Windows filesystem path.
+     *
+     * The method will return null if a scheme is present and is not the `file` scheme
+     */
+    public function windowsPath(): ?string
+    {
+        static $regexpWindowsPath = ',^(?<root>[a-zA-Z]:),';
+
+        if (!in_array($this->uri->getScheme(), ['file', $this->nullValue], true)) {
+            return null;
+        }
+
+        $originalPath = $this->uri->getPath();
+        $path = $originalPath;
+        if ('/' === ($path[0] ?? '')) {
+            $path = substr($path, 1);
+        }
+
+        if (1 === preg_match($regexpWindowsPath, $path, $matches)) {
+            $root = $matches['root'];
+            $path = substr($path, strlen($root));
+
+            return $root.str_replace('/', '\\', rawurldecode($path));
+        }
+
+        $host = $this->uri->getHost();
+
+        return match ($this->nullValue) {
+            $host => str_replace('/', '\\', rawurldecode($originalPath)),
+            default => '\\\\'.$host.'\\'.str_replace('/', '\\', rawurldecode($path)),
         };
     }
 

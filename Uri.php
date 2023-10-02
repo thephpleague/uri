@@ -791,7 +791,7 @@ final class Uri implements UriInterface
 
         $res = array_filter(array_filter(explode(';', $parameters), self::validateParameter(...)));
         if ([] !== $res) {
-            throw new SyntaxError('The path paremeters `'.$parameters.'` is invalid.');
+            throw new SyntaxError('The path parameters `'.$parameters.'` is invalid.');
         }
 
         if (!$isBinary) {

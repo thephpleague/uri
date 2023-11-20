@@ -221,6 +221,50 @@ final class FactoryTest extends TestCase
         ];
     }
 
+    /** @dataProvider rfc8089UriProvider */
+    public function testCreateFromRfc8089(string $expected, string $uri): void
+    {
+        self::assertSame($expected, Uri::fromRfc8089($uri)->toString());
+    }
+
+    public static function rfc8089UriProvider(): iterable
+    {
+        return [
+            'empty authority' => [
+                'expected' => 'file:///etc/fstab',
+                'uri' => 'file:/etc/fstab',
+            ],
+            'localhost' => [
+                'expected' => 'file:///etc/fstab',
+                'uri' => 'file://localhost/etc/fstab',
+            ],
+            'file with authority' => [
+                'expected' => 'file://yesman/etc/fstab',
+                'uri' => 'file://yesman/etc/fstab',
+            ],
+        ];
+    }
+
+    /** @dataProvider invalidRfc8089UriProvider */
+    public function testIfFailsToGenerateAnUriFromRfc8089(string $invalidUri): void
+    {
+        $this->expectException(SyntaxError::class);
+
+        Uri::fromRfc8089($invalidUri);
+    }
+
+    public static function invalidRfc8089UriProvider(): iterable
+    {
+        return [
+            'unsupported scheme' => [
+                'invalidUri' => 'http://www.example.com',
+            ],
+            'missing scheme' => [
+                'invalidUri' => '//localhost/etc/fstab',
+            ],
+        ];
+    }
+
     public function testCreateFromUri(): void
     {
         $expected = 'https://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3';

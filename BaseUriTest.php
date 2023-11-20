@@ -531,7 +531,6 @@ final class BaseUriTest extends TestCase
     {
         self::assertSame($expected, BaseUri::from($input)->windowsPath());
         self::assertSame($expected, BaseUri::from(Utils::uriFor($input))->windowsPath());
-
     }
 
     public static function windowLocalPathProvider(): array
@@ -572,6 +571,35 @@ final class BaseUriTest extends TestCase
             'unsupported scheme' => [
                 'expected' => null,
                 'input' => 'http://example.com/foo/bar',
+            ],
+        ];
+    }
+
+    /** @dataProvider rfc8089UriProvider */
+    public function testReturnsRFC8089UriString(?string $expected, string $input): void
+    {
+        self::assertSame($expected, BaseUri::from($input)->toRfc8089());
+        self::assertSame($expected, BaseUri::from(Utils::uriFor($input))->toRfc8089());
+    }
+
+    public static function rfc8089UriProvider(): iterable
+    {
+        return [
+            'localhost' => [
+                'expected' => 'file:/etc/fstab',
+                'input' => 'file://localhost/etc/fstab',
+            ],
+            'empty authority' => [
+                'expected' => 'file:/etc/fstab',
+                'input' => 'file:///etc/fstab',
+            ],
+            'file with authority' => [
+                'expected' => 'file://yesman/etc/fstab',
+                'input' => 'file://yesman/etc/fstab',
+            ],
+            'invalid scheme' => [
+                'expected' => null,
+                'input' => 'foobar://yesman/etc/fstab',
             ],
         ];
     }

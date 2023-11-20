@@ -7,8 +7,10 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `Uri::fromData`
+- `Uri::fromRfc8089`
 - `BaseUri::unixPath`
 - `BaseUri::windowsPath`
+- `BaseUri::toRfc8089`
 
 ### Fixed
 

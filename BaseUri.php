@@ -150,6 +150,38 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
+     * Returns a string representation of a File URI according to RFC8089.
+     *
+     * The method will return null if the URI scheme is not the `file` scheme
+     */
+    public function toRfc8089(): ?string
+    {
+        $path = $this->uri->getPath();
+
+        return match (true) {
+            'file' !== $this->uri->getScheme() => null,
+            in_array($this->uri->getAuthority(), ['', null, 'localhost'], true) => 'file:'.match (true) {
+                '' === $path,
+                '/' === $path[0] => $path,
+                default => '/'.$path,
+            },
+            default => (string) $this->uri,
+        };
+    }
+
+    /**
+     * Tells whether the `file` scheme base URI represents a local file.
+     */
+    public function isLocalFile(): bool
+    {
+        return match (true) {
+            'file' !== $this->uri->getScheme() => false,
+            in_array($this->uri->getAuthority(), ['', null, 'localhost'], true) => true,
+            default => false,
+        };
+    }
+
+    /**
      * Tells whether two URI do not share the same origin.
      */
     public function isCrossOrigin(Stringable|string $uri): bool

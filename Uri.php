@@ -521,29 +521,30 @@ final class Uri implements UriInterface
             default => throw new SyntaxError('Invalid mimeType, `'.$mimetype.'`.'),
         };
 
-        if ('' != $parameters) {
-            if (str_starts_with($parameters, ';')) {
-                $parameters = substr($parameters, 1);
-            }
-
-            $validateParameter = function (string $parameter): bool {
-                $properties = explode('=', $parameter);
-
-                return 2 != count($properties) || 'base64' === strtolower($properties[0]);
-            };
-
-            $params = array_filter(explode(';', $parameters));
-            if ([] !== array_filter($params, $validateParameter(...))) {
-                throw new SyntaxError(sprintf('Invalid mediatype parameters, `%s`.', $parameters));
-            }
-
-            $parameters = ';'.$parameters;
+        if ('' === $parameters) {
+            return self::fromComponents([
+                'scheme' => 'data',
+                'path' => self::formatDataPath($mimetype.','.rawurlencode($data)),
+            ]);
         }
 
-        return self::fromComponents([
-            'scheme' => 'data',
-            'path' => self::formatDataPath($mimetype.$parameters.','.rawurlencode($data)),
-        ]);
+        $isInvalidParameter = static function (string $parameter): bool {
+            $properties = explode('=', $parameter);
+
+            return 2 !== count($properties) || 'base64' === strtolower($properties[0]);
+        };
+
+        if (str_starts_with($parameters, ';')) {
+            $parameters = substr($parameters, 1);
+        }
+
+        return match ([]) {
+            array_filter(explode(';', $parameters), $isInvalidParameter) => self::fromComponents([
+               'scheme' => 'data',
+               'path' => self::formatDataPath($mimetype.';'.$parameters.','.rawurlencode($data)),
+            ]),
+            default => throw new SyntaxError(sprintf('Invalid mediatype parameters, `%s`.', $parameters))
+        };
     }
 
     /**

@@ -12,18 +12,17 @@
 namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group ws
- * @group uri
- * @coversDefaultClass \League\Uri\Uri
- */
+#[CoversClass(\League\Uri\Uri::class)]
+#[Group('ws')]
+#[Group('uri')]
 class WsTest extends TestCase
 {
-    /**
-     * @dataProvider validUrlProvider
-     */
+    #[DataProvider('validUrlProvider')]
     public function testCreateFromString(string $input, string $expected): void
     {
         self::assertSame($expected, (string) Uri::new($input));
@@ -59,9 +58,7 @@ class WsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidUrlProvider
-     */
+    #[DataProvider('invalidUrlProvider')]
     public function testConstructorThrowInvalidArgumentException(string $uri): void
     {
         self::expectException(SyntaxError::class);
@@ -86,9 +83,7 @@ class WsTest extends TestCase
             ->withPath('//toto');
     }
 
-    /**
-     * @dataProvider portProvider
-     */
+    #[DataProvider('portProvider')]
     public function testPort(string $uri, ?int $port): void
     {
         self::assertSame($port, Uri::new($uri)->getPort());

@@ -14,13 +14,14 @@ namespace League\Uri;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Port;
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-/**
- * @group uri
- * @coversDefaultClass \League\Uri\Uri
- */
+#[CoversClass(Uri::class)]
+#[Group('uri')]
 class UriTest extends TestCase
 {
     private Uri $uri;
@@ -205,9 +206,7 @@ class UriTest extends TestCase
         Uri::new('http://example.com/path')->withHost('%23');
     }
 
-    /**
-     * @dataProvider missingAuthorityProvider
-     */
+    #[DataProvider('missingAuthorityProvider')]
     public function testModificationFailedWithMissingAuthority(string $path): void
     {
         self::expectException(SyntaxError::class);
@@ -381,9 +380,7 @@ class UriTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider userInfoProvider
-     */
+    #[DataProvider('userInfoProvider')]
     public function testWithUserInfoEncodesUsernameAndPassword(string $user, ?string $credential, string $expected): void
     {
         $uri = Uri::new('https://user:pass@local.example.com:3001/foo?bar=baz#quz');

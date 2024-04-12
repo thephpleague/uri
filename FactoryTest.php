@@ -13,18 +13,17 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
 use Nyholm\Psr7\Uri as NyholmUri;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
-/**
- * @group factory
- * @coversDefaultClass \League\Uri\Uri
- */
+#[CoversClass(Uri::class)]
+#[Group('factory')]
 final class FactoryTest extends TestCase
 {
-    /**
-     * @dataProvider invalidDataPath
-     */
+    #[DataProvider('invalidDataPath')]
     public function testCreateFromPathFailed(string $path): void
     {
         self::expectException(SyntaxError::class);
@@ -38,9 +37,7 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validFilePath
-     */
+    #[DataProvider('validFilePath')]
     public function testCreateFromPath(string $path, string $expected): void
     {
         $context = stream_context_create([
@@ -62,7 +59,7 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideValidData */
+    #[DataProvider('provideValidData')]
     public function testFromData(string $data, string $mimetype, string $parameters, string $expected): void
     {
         self::assertSame($expected, Uri::fromData($data, $mimetype, $parameters)->toString());
@@ -141,12 +138,10 @@ final class FactoryTest extends TestCase
         Uri::fromData('Hello World!', 'text/plain', 'foobar');
     }
 
-    /**
-     * @dataProvider unixpathProvider
-     */
-    public function testCreateFromUnixPath(string $uri, string $expected): void
+    #[DataProvider('unixpathProvider')]
+    public function testCreateFromUnixPath(string $input, string $expected): void
     {
-        self::assertSame($expected, Uri::fromUnixPath($uri)->toString());
+        self::assertSame($expected, Uri::fromUnixPath($input)->toString());
     }
 
     public static function unixpathProvider(): array
@@ -175,12 +170,10 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider windowLocalPathProvider
-     */
-    public function testCreateFromWindowsLocalPath(string $uri, string $expected): void
+    #[DataProvider('windowLocalPathProvider')]
+    public function testCreateFromWindowsLocalPath(string $input, string $expected): void
     {
-        self::assertSame($expected, Uri::fromWindowsPath($uri)->toString());
+        self::assertSame($expected, Uri::fromWindowsPath($input)->toString());
     }
 
     public static function windowLocalPathProvider(): array
@@ -221,7 +214,7 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /** @dataProvider rfc8089UriProvider */
+    #[DataProvider('rfc8089UriProvider')]
     public function testCreateFromRfc8089(string $expected, string $uri): void
     {
         self::assertSame($expected, Uri::fromRfc8089($uri)->toString());
@@ -245,7 +238,7 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    /** @dataProvider invalidRfc8089UriProvider */
+    #[DataProvider('invalidRfc8089UriProvider')]
     public function testIfFailsToGenerateAnUriFromRfc8089(string $invalidUri): void
     {
         $this->expectException(SyntaxError::class);
@@ -281,9 +274,7 @@ final class FactoryTest extends TestCase
         self::assertSame((string) $uribis, Uri::new($uribis)->toString());
     }
 
-    /**
-     * @dataProvider validServerArray
-     */
+    #[DataProvider('validServerArray')]
     public function testCreateFromServer(string $expected, array $input): void
     {
         self::assertSame($expected, Uri::fromServer($input)->toString());
@@ -459,9 +450,7 @@ final class FactoryTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider createProvider
-     */
+    #[DataProvider('createProvider')]
     public function testCreateFromBaseUri(Stringable|string $baseUri, Stringable|string $uri, string $expected): void
     {
         self::assertSame($expected, Uri::fromBaseUri($uri, $baseUri)->toString());

@@ -15,11 +15,11 @@ namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \League\Uri\UriTemplate
- */
+#[CoversClass(UriTemplate::class)]
 final class UriTemplateTest extends TestCase
 {
     public function testGetTemplate(): void
@@ -84,9 +84,7 @@ final class UriTemplateTest extends TestCase
         self::assertNotEquals($newTemplate->getDefaultVariables(), $uriTemplate->getDefaultVariables());
     }
 
-    /**
-     * @dataProvider expectedVariableNames
-     */
+    #[DataProvider('expectedVariableNames')]
     public function testGetVariableNames(string $template, array $expected): void
     {
         self::assertSame($expected, (new UriTemplate($template))->getVariableNames());
@@ -114,9 +112,7 @@ final class UriTemplateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider templateExpansionProvider
-     */
+    #[DataProvider('templateExpansionProvider')]
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
         self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->toString());
@@ -325,9 +321,7 @@ final class UriTemplateTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideInvalidTemplate
-     */
+    #[DataProvider('provideInvalidTemplate')]
     public function testInvalidUriTemplate(string $template): void
     {
         self::expectException(SyntaxError::class);

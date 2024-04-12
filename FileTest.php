@@ -12,13 +12,14 @@
 namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group file
- * @group uri
- * @coversDefaultClass \League\Uri\Uri
- */
+#[CoversClass(\League\Uri\Uri::class)]
+#[Group('file')]
+#[Group('uri')]
 final class FileTest extends TestCase
 {
     public function testDefaultConstructor(): void
@@ -26,9 +27,7 @@ final class FileTest extends TestCase
         self::assertSame('', (string) Uri::new());
     }
 
-    /**
-     * @dataProvider validUrlProvider
-     */
+    #[DataProvider('validUrlProvider')]
     public function testCreateFromString(string $uri, string $expected): void
     {
         self::assertSame($expected, (string) Uri::new($uri));
@@ -80,9 +79,7 @@ final class FileTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidUrlProvider
-     */
+    #[DataProvider('invalidUrlProvider')]
     public function testConstructorThrowsException(string $uri): void
     {
         self::expectException(SyntaxError::class);

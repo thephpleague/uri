@@ -13,13 +13,14 @@ namespace League\Uri;
 
 use GuzzleHttp\Psr7\Utils;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
-/**
- * @group modifier
- * @coversDefaultClass \League\Uri\BaseUri
- */
+#[CoversClass(BaseUri::class)]
+#[Group('modifier')]
 final class BaseUriTest extends TestCase
 {
     private const BASE_URI = 'http://a/b/c/d;p?q';
@@ -32,9 +33,7 @@ final class BaseUriTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider resolveProvider
-     */
+    #[DataProvider('resolveProvider')]
     public function testCreateResolve(string $baseUri, string $uri, string $expected): void
     {
         $uriResolved = BaseUri::from($baseUri)->resolve($uri);
@@ -100,9 +99,7 @@ final class BaseUriTest extends TestCase
         self::assertEquals($uri, BaseUri::from('https://example.com/path')->relativize($uri)->getUriString());
     }
 
-    /**
-     * @dataProvider relativizeProvider
-     */
+    #[DataProvider('relativizeProvider')]
     public function testRelativize(string $uri, string $resolved, string $expected): void
     {
         self::assertSame(
@@ -154,9 +151,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider relativizeAndResolveProvider
-     */
+    #[DataProvider('relativizeAndResolveProvider')]
     public function testRelativizeAndResolve(
         string $baseUri,
         string $uri,
@@ -187,10 +182,9 @@ final class BaseUriTest extends TestCase
     }
 
     /**
-     * @dataProvider uriProvider
-     *
      * @param array<bool> $infos
      */
+    #[DataProvider('uriProvider')]
     public function testInfo(
         Psr7UriInterface|Uri $uri,
         Psr7UriInterface|Uri|null $base_uri,
@@ -263,9 +257,7 @@ final class BaseUriTest extends TestCase
         self::assertTrue(BaseUri::from('example.com#foobar')->isRelativePath());
     }
 
-    /**
-     * @dataProvider sameValueAsProvider
-     */
+    #[DataProvider('sameValueAsProvider')]
     public function testSameValueAs(Psr7UriInterface|Uri $uri1, Psr7UriInterface|Uri $uri2, bool $expected): void
     {
         self::assertSame($expected, BaseUri::from($uri2)->isSameDocument($uri1));
@@ -322,9 +314,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getOriginProvider
-     */
+    #[DataProvider('getOriginProvider')]
     public function testGetOrigin(Psr7UriInterface|Uri|string $uri, ?string $expectedOrigin): void
     {
         self::assertSame($expectedOrigin, BaseUri::from($uri)->origin()?->__toString());
@@ -372,9 +362,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getCrossOriginExamples
-     */
+    #[DataProvider('getCrossOriginExamples')]
     public function testIsCrossOrigin(string $original, string $modified, bool $expected): void
     {
         self::assertSame($expected, BaseUri::from($original)->isCrossOrigin($modified));
@@ -403,9 +391,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider resolveProvider
-     */
+    #[DataProvider('resolveProvider')]
     public function testResolveWithPsr7Implementation(string $baseUri, string $uri, string $expected): void
     {
         $resolvedUri = BaseUri::from(Utils::uriFor($baseUri))->resolve($uri);
@@ -414,9 +400,7 @@ final class BaseUriTest extends TestCase
         self::assertSame($expected, (string) $resolvedUri);
     }
 
-    /**
-     * @dataProvider relativizeProvider
-     */
+    #[DataProvider('relativizeProvider')]
     public function testRelativizeWithPsr7Implementation(string $uriString, string $resolved, string $expected): void
     {
         $uri = Utils::uriFor($uriString);
@@ -436,9 +420,7 @@ final class BaseUriTest extends TestCase
         self::assertSame($expected, (string) $relativizeUri);
     }
 
-    /**
-     * @dataProvider getOriginProvider
-     */
+    #[DataProvider('getOriginProvider')]
     public function testGetOriginWithPsr7Implementation(Psr7UriInterface|Uri|string $uri, ?string $expectedOrigin): void
     {
         $origin = BaseUri::from(Utils::uriFor((string) $uri), new \GuzzleHttp\Psr7\HttpFactory())->origin();
@@ -452,9 +434,7 @@ final class BaseUriTest extends TestCase
         self::assertSame($expectedOrigin, $origin);
     }
 
-    /**
-     * @dataProvider provideIDNUri
-     */
+    #[DataProvider('provideIDNUri')]
     public function testHostIsIDN(string $uri, bool $expected): void
     {
         self::assertSame($expected, BaseUri::from($uri)->hasIdn());
@@ -489,7 +469,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /** @dataProvider unixpathProvider */
+    #[DataProvider('unixpathProvider')]
     public function testReturnsUnixPath(?string $expected, string $input): void
     {
         self::assertSame($expected, BaseUri::from($input)->unixPath());
@@ -505,11 +485,11 @@ final class BaseUriTest extends TestCase
             ],
             'absolute path' => [
                 'expected' => '/path',
-                'inout' => 'file:///path',
+                'input' => 'file:///path',
             ],
             'path with empty char' => [
                 'expected' => '/path empty/bar',
-                'inout' => 'file:///path%20empty/bar',
+                'input' => 'file:///path%20empty/bar',
             ],
             'relative path with dot segments' => [
                 'expected' => 'path/./relative',
@@ -526,7 +506,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /** @dataProvider windowLocalPathProvider */
+    #[DataProvider('windowLocalPathProvider')]
     public function testReturnsWindowsPath(?string $expected, string $input): void
     {
         self::assertSame($expected, BaseUri::from($input)->windowsPath());
@@ -575,7 +555,7 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /** @dataProvider rfc8089UriProvider */
+    #[DataProvider('rfc8089UriProvider')]
     public function testReturnsRFC8089UriString(?string $expected, string $input): void
     {
         self::assertSame($expected, BaseUri::from($input)->toRfc8089());

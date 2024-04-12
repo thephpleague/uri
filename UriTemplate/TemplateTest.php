@@ -15,15 +15,16 @@ namespace League\Uri\UriTemplate;
 
 use JsonException;
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
 
 use const JSON_THROW_ON_ERROR;
 
-/**
- * @coversDefaultClass \League\Uri\UriTemplate\Template
- */
+#[CoversClass(Template::class)]
 final class TemplateTest extends TestCase
 {
     private static string $rootPath = __DIR__.'/../../vendor/uri-templates/uritemplate-test';
@@ -35,10 +36,8 @@ final class TemplateTest extends TestCase
         'extended-tests.json',
     ];
 
-    /**
-     * @test
-     * @dataProvider uriTemplateSpecificationDataProvider
-     */
+    #[DataProvider('uriTemplateSpecificationDataProvider')]
+    #[Test]
     public function testItCompliesWithUriTemplatesExpansionTests(
         array $variables,
         string $input,
@@ -90,9 +89,7 @@ final class TemplateTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider providesValidNotation
-     */
+    #[DataProvider('providesValidNotation')]
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
         self::assertSame($notation, Template::new($notation)->value);
@@ -108,9 +105,7 @@ final class TemplateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providesInvalidNotation
-     */
+    #[DataProvider('providesInvalidNotation')]
     public function testItFailsToInstantiatedWithAnInvalidNotation(string $notation): void
     {
         self::expectException(SyntaxError::class);
@@ -129,9 +124,7 @@ final class TemplateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider expectedVariableNames
-     */
+    #[DataProvider('expectedVariableNames')]
     public function testGetVariableNames(string $template, array $expected): void
     {
         self::assertSame($expected, Template::new($template)->variableNames);
@@ -159,9 +152,7 @@ final class TemplateTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providesExpansion
-     */
+    #[DataProvider('providesExpansion')]
     public function testItCanExpandVariables(string $notation, array $variables, string $expected): void
     {
         self::assertSame($expected, Template::new($notation)->expand($variables));

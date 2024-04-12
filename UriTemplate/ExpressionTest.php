@@ -14,16 +14,14 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \League\Uri\UriTemplate\Expression
- */
+#[CoversClass(Expression::class)]
 final class ExpressionTest extends TestCase
 {
-    /**
-     * @dataProvider providesValidNotation
-     */
+    #[DataProvider('providesValidNotation')]
     public function testItCanBeInstantiatedWithAValidNotation(string $notation, array $variableNames): void
     {
         $expression = Expression::new($notation);
@@ -55,9 +53,7 @@ final class ExpressionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providesInvalidExpression
-     */
+    #[DataProvider('providesInvalidExpression')]
     public function testExpressionConstructFailsWithInvalidString(string $expression): void
     {
         self::expectException(SyntaxError::class);
@@ -101,9 +97,7 @@ final class ExpressionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider templateExpansionProvider
-     */
+    #[DataProvider('templateExpansionProvider')]
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
         self::assertSame($expectedUriString, Expression::new($template)->expand(new VariableBag($variables)));
@@ -226,9 +220,7 @@ final class ExpressionTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider invalidModifierToApply
-     */
+    #[DataProvider('invalidModifierToApply')]
     public function testExpandThrowsExceptionIfTheModifierCanNotBeApplied(string $expression, array $variables): void
     {
         self::expectException(TemplateCanNotBeExpanded::class);

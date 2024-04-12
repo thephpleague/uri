@@ -14,16 +14,14 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \League\Uri\UriTemplate\VarSpecifier
- */
+#[CoversClass(VarSpecifier::class)]
 final class VarSpecifierTest extends TestCase
 {
-    /**
-     * @dataProvider providesValidNotation
-     */
+    #[DataProvider('providesValidNotation')]
     public function testItCanBeInstantiatedWithAValidNotation(string $notation): void
     {
         self::assertSame($notation, VarSpecifier::new($notation)->toString());
@@ -43,9 +41,7 @@ final class VarSpecifierTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providesInvalidNotation
-     */
+    #[DataProvider('providesInvalidNotation')]
     public function testItFailsToInstantiatedWithAnInvalidNotationString(string $notation): void
     {
         self::expectException(SyntaxError::class);

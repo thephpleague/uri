@@ -14,20 +14,19 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use ArrayIterator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
 
-/**
- * @coversDefaultClass \League\Uri\UriTemplate\VariableBag
- */
+#[CoversClass(VariableBag::class)]
 final class VariableBagTest extends TestCase
 {
     /**
      * @param array<string, string|array<string>> $expected
-     *
-     * @dataProvider provideValidIterable
      */
+    #[DataProvider('provideValidIterable')]
     public function testItCanBeInstantiatedWithAnIterable(
         iterable $iterable,
         array $expected,
@@ -69,9 +68,8 @@ final class VariableBagTest extends TestCase
     /**
      * @param int|float|string|bool|array<string|bool|string|float> $value the value to be assigned to the name
      * @param string|array<string> $expected
-     *
-     * @dataProvider provideValidAssignParameters
      */
+    #[DataProvider('provideValidAssignParameters')]
     public function testItCanAssignNameAndValuesToTheBag(
         string $name,
         int|float|string|bool|array $value,

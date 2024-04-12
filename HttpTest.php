@@ -13,13 +13,14 @@ namespace League\Uri;
 
 use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
-/**
- * @group http
- * @coversDefaultClass \League\Uri\Http
- */
+#[CoversClass(Http::class)]
+#[Group('http')]
 final class HttpTest extends TestCase
 {
     public function createUri(string $uri): UriInterface
@@ -107,9 +108,7 @@ final class HttpTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider validUrlProvider
-     */
+    #[DataProvider('validUrlProvider')]
     public function testCreateFromString(string $expected, string $uri): void
     {
         self::assertSame($expected, (string) Http::new($uri));
@@ -141,9 +140,7 @@ final class HttpTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidUrlProvider
-     */
+    #[DataProvider('invalidUrlProvider')]
     public function testIsValid(string $uri): void
     {
         self::expectException(SyntaxError::class);
@@ -162,9 +159,7 @@ final class HttpTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider portProvider
-     */
+    #[DataProvider('portProvider')]
     public function testValidPort(string $uri, ?int $port): void
     {
         self::assertSame($port, Http::new($uri)->getPort());
@@ -180,9 +175,7 @@ final class HttpTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidPathProvider
-     */
+    #[DataProvider('invalidPathProvider')]
     public function testPathIsInvalid(string $path): void
     {
         self::expectException(SyntaxError::class);
@@ -199,9 +192,7 @@ final class HttpTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidURI
-     */
+    #[DataProvider('invalidURI')]
     public function testCreateFromInvalidUrlKO(string $uri): void
     {
         self::expectException(SyntaxError::class);

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [Next](https://github.com/thephpleague/uri/compare/7.4.1...master) - TBD
+
+### Added
+
+- Adding `BaseUri::getIdnUriString`
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.4.1](https://github.com/thephpleague/uri/compare/7.4.0...7.4.1) - 2024-02-23
 
 ### Added

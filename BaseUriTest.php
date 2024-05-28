@@ -583,4 +583,33 @@ final class BaseUriTest extends TestCase
             ],
         ];
     }
+
+    #[DataProvider('idnUriProvider')]
+    public function testItReturnsTheCorrectUriString(string $expected, string $input): void
+    {
+        self::assertSame($expected, BaseUri::from($input)->getIdnUriString());
+    }
+
+    public static function idnUriProvider(): iterable
+    {
+        yield 'basic uri stays the same' => [
+          'expected' => 'http://example.com/foo/bar',
+          'input' => 'http://example.com/foo/bar',
+        ];
+
+        yield 'idn host are changed' => [
+            'expected' => "http://bébé.be",
+            'input' => "http://xn--bb-bjab.be",
+        ];
+
+        yield 'idn host are the same' => [
+            'expected' => "http://bébé.be",
+            'input' => "http://bébé.be",
+        ];
+
+        yield 'the rest of the URI is not affected and uses RFC3986 rules' => [
+            'expected' => "http://bébé.be?q=toto%20le%20h%C3%A9ros",
+            'input' => "http://bébé.be:80?q=toto le héros",
+        ];
+    }
 }

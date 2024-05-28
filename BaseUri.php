@@ -79,6 +79,24 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         return $this->uri;
     }
 
+    public function getIdnUriString(): string
+    {
+        $currentHost = $this->uri->getHost();
+        if (null === $currentHost || '' === $currentHost) {
+            return $this->getUriString();
+        }
+
+        $host = Converter::toUnicode($currentHost)->domain();
+        if ($host === $currentHost) {
+            return $this->getUriString();
+        }
+
+        $components = $this->uri instanceof UriInterface ? $this->uri->getComponents() : UriString::parse($this->uri);
+        $components['host'] = $host;
+
+        return UriString::build($components);
+    }
+
     public function getUriString(): string
     {
         return $this->uri->__toString();

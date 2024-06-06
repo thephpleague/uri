@@ -316,7 +316,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
                 ->withQuery($query)
                 ->withHost($this->uri->getHost())
                 ->withPort($this->uri->getPort())
-                ->withUserInfo((string) $user, $pass)
+                ->withUserInfo($user, $pass)
                 ->withScheme($this->uri->getScheme()),
             $this->uriFactory
         );

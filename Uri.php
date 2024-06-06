@@ -373,7 +373,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function new(Stringable|string $uri = ''): self
+    public static function new(#[SensitiveParameter] Stringable|string $uri = ''): self
     {
         $components = match (true) {
             $uri instanceof UriInterface => $uri->getComponents(),

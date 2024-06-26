@@ -51,6 +51,10 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     protected readonly Psr7UriInterface|UriInterface|null $origin;
     protected readonly ?string $nullValue;
 
+    /**
+     * @param Psr7UriInterface|UriInterface $uri
+     * @param UriFactoryInterface|null $uriFactory Deprecated, will be removed in the next major release
+     */
     final protected function __construct(
         protected readonly Psr7UriInterface|UriInterface $uri,
         protected readonly ?UriFactoryInterface $uriFactory
@@ -77,24 +81,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     public function getUri(): Psr7UriInterface|UriInterface
     {
         return $this->uri;
-    }
-
-    public function getIdnUriString(): string
-    {
-        $currentHost = $this->uri->getHost();
-        if (null === $currentHost || '' === $currentHost) {
-            return $this->getUriString();
-        }
-
-        $host = Converter::toUnicode($currentHost)->domain();
-        if ($host === $currentHost) {
-            return $this->getUriString();
-        }
-
-        $components = $this->uri instanceof UriInterface ? $this->uri->getComponents() : UriString::parse($this->uri);
-        $components['host'] = $host;
-
-        return UriString::build($components);
     }
 
     public function getUriString(): string

@@ -110,7 +110,7 @@ final class Uri implements UriInterface
      *
      * @var string
      */
-    private const REGEXP_HOST_IPFUTURE = '/^
+    private const REGEXP_HOST_IP_FUTURE = '/^
         v(?<version>[A-F\d])+\.
         (?:
             (?<unreserved>[a-z\d_~\-\.])|
@@ -201,6 +201,10 @@ final class Uri implements UriInterface
     /** @readonly */
     private ?string $scheme;
     /** @readonly */
+    private ?string $username;
+    /** @readonly */
+    private ?string $password;
+    /** @readonly */
     private ?string $userInfo;
     /** @readonly */
     private ?string $host;
@@ -219,8 +223,7 @@ final class Uri implements UriInterface
     private function __construct(
         ?string $scheme,
         ?string $user,
-        #[SensitiveParameter]
-        ?string $pass,
+        #[SensitiveParameter] ?string $pass,
         ?string $host,
         ?int $port,
         string $path,
@@ -229,6 +232,7 @@ final class Uri implements UriInterface
     ) {
         $this->scheme = $this->formatScheme($scheme);
         $this->userInfo = $this->formatUserInfo($user, $pass);
+        [$this->username, $this->password] = $this->setUserAndPass();
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();
@@ -263,8 +267,7 @@ final class Uri implements UriInterface
      */
     private function formatUserInfo(
         ?string $user,
-        #[SensitiveParameter]
-        ?string $password
+        #[SensitiveParameter] ?string $password
     ): ?string {
         return match (null) {
             $password => Encoder::encodeUser($user),
@@ -289,7 +292,7 @@ final class Uri implements UriInterface
         $formattedHost = '[' === $host[0] ? $this->formatIp($host) : $this->formatRegisteredName($host);
         $formattedHostCache[$host] = $formattedHost;
         if (self::MAXIMUM_FORMATTED_HOST_CACHED < count($formattedHostCache)) {
-            unset($formattedHostCache[array_key_first($formattedHostCache)]);
+            array_shift($formattedHostCache);
         }
 
         return $formattedHost;
@@ -327,7 +330,7 @@ final class Uri implements UriInterface
             return $host;
         }
 
-        if (1 === preg_match(self::REGEXP_HOST_IPFUTURE, $ip, $matches) && !in_array($matches['version'], ['4', '6'], true)) {
+        if (1 === preg_match(self::REGEXP_HOST_IP_FUTURE, $ip, $matches) && !in_array($matches['version'], ['4', '6'], true)) {
             return $host;
         }
 
@@ -377,21 +380,6 @@ final class Uri implements UriInterface
     {
         $components = match (true) {
             $uri instanceof UriInterface => $uri->getComponents(),
-            $uri instanceof Psr7UriInterface => (function (Psr7UriInterface $uri): array {
-                $normalize = fn ($component) => '' !== $component ? $component : null;
-                $userInfo = $uri->getUserInfo();
-                [$user, $pass] = '' !== $userInfo ? explode(':', $userInfo, 2) : ['', ''];
-                return [
-                    'scheme' => $normalize($uri->getScheme()),
-                    'user' => $normalize($user),
-                    'pass' => $normalize($pass),
-                    'host' => $normalize($uri->getHost()),
-                    'port' => $uri->getPort(),
-                    'path' => $uri->getPath(),
-                    'query' => $normalize($uri->getQuery()),
-                    'fragment' => $normalize($uri->getFragment()),
-                ];
-            })($uri),
             default => UriString::parse($uri),
         };
 
@@ -412,7 +400,7 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
+    public static function fromBaseUri(#[SensitiveParameter] Stringable|string $uri, #[SensitiveParameter] Stringable|string|null $baseUri = null): self
     {
         $uri = self::new($uri);
         $baseUri = BaseUri::from($baseUri ?? $uri);
@@ -447,7 +435,7 @@ final class Uri implements UriInterface
      *
      * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
      */
-    public static function fromComponents(array $components = []): self
+    public static function fromComponents(#[SensitiveParameter] array $components = []): self
     {
         $components += [
             'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
@@ -507,7 +495,7 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Create a new instance from a data string.
+     * Create a new instance from a data URI string.
      *
      * @throws SyntaxError If the parameter syntax is invalid
      */
@@ -609,7 +597,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from the environment.
      */
-    public static function fromServer(array $server): self
+    public static function fromServer(#[SensitiveParameter] array $server): self
     {
         $components = ['scheme' => self::fetchScheme($server)];
         [$components['user'], $components['pass']] = self::fetchUserInfo($server);
@@ -637,7 +625,7 @@ final class Uri implements UriInterface
      *
      * @return non-empty-array{0: ?string, 1: ?string}
      */
-    private static function fetchUserInfo(array $server): array
+    private static function fetchUserInfo(#[SensitiveParameter] array $server): array
     {
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => ''];
         $user = $server['PHP_AUTH_USER'];
@@ -740,6 +728,14 @@ final class Uri implements UriInterface
         }
 
         return $authority;
+    }
+
+    /**
+     * @return non-empty-array<int, ?string>
+     */
+    private function setUserAndPass(): array
+    {
+        return null !== $this->userInfo ? explode(':', $this->userInfo, 2) + [1 => null] : [null, null];
     }
 
     /**
@@ -998,12 +994,10 @@ final class Uri implements UriInterface
      */
     public function getComponents(): array
     {
-        [$user, $pass] = null !== $this->userInfo ? explode(':', $this->userInfo, 2) : [null, null];
-
         return [
             'scheme' => $this->scheme,
-            'user' => $user,
-            'pass' => $pass,
+            'user' => $this->username,
+            'pass' => $this->password,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,
@@ -1026,6 +1020,22 @@ final class Uri implements UriInterface
     public function getAuthority(): ?string
     {
         return $this->authority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 
     /**
@@ -1139,6 +1149,7 @@ final class Uri implements UriInterface
 
         $clone = clone $this;
         $clone->userInfo = $user_info;
+        [$clone->username, $clone->password] = $clone->setUserAndPass();
         $clone->authority = $clone->setAuthority();
         $clone->assertValidState();
 

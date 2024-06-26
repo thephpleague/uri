@@ -6,15 +6,16 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- Adding `BaseUri::getIdnUriString`
+- `Uri::getUsername` returns the encoded user component of the URI.
+- `Uri::getPassword` returns the encoded password component of the URI.
 
 ### Fixed
 
-- None
+- Adding `SensitiveParameter` attribute in the `Uri` and the `BaseUri` class.
 
 ### Deprecated
 
-- None
+- Usage of PSR-7 `UriFactoryInterface` is deprecated in `BaseUri` class
 
 ### Removed
 

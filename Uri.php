@@ -250,16 +250,17 @@ final class Uri implements UriInterface
      */
     private function formatScheme(?string $scheme): ?string
     {
-        if (null === $scheme || array_key_exists($scheme, self::SCHEME_DEFAULT_PORT)) {
-            return $scheme;
+        $formattedScheme = $scheme;
+        if (null !== $scheme) {
+            $formattedScheme = strtolower($scheme);
         }
 
-        $formattedScheme = strtolower($scheme);
-        if (array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT) || 1 === preg_match(self::REGEXP_SCHEME, $formattedScheme)) {
-            return $formattedScheme;
-        }
-
-        throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
+        return match (true) {
+            null === $formattedScheme,
+            array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT),
+            1 === preg_match(self::REGEXP_SCHEME, $formattedScheme) => $formattedScheme,
+            default => throw new SyntaxError('The scheme `'.$scheme.'` is invalid.'),
+        };
     }
 
     /**

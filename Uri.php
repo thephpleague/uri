@@ -716,16 +716,16 @@ final class Uri implements UriInterface
     private function setAuthority(): ?string
     {
         $authority = null;
-        if (null !== $this->userInfo) {
-            $authority = $this->userInfo.'@';
+        if (null !== $this->host) {
+            $authority = $this->host;
         }
 
-        if (null !== $this->host) {
-            $authority .= $this->host;
+        if (null !== $this->userInfo) {
+            $authority = $this->userInfo.'@'.$authority;
         }
 
         if (null !== $this->port) {
-            $authority .= ':'.$this->port;
+            return $authority.':'.$this->port;
         }
 
         return $authority;

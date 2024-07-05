@@ -220,15 +220,18 @@ final class Uri implements UriInterface
         ?string $fragment
     ) {
         $this->scheme = $this->formatScheme($scheme);
+        $this->user = Encoder::encodeUser($user);
+        $this->pass = Encoder::encodePassword($pass);
         $this->userInfo = $this->formatUserInfo($user, $pass);
-        [$this->user, $this->pass] = $this->setUserAndPass();
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
+
         $this->assertValidState();
+
         $this->uri = $this->getUriString();
     }
 
@@ -272,8 +275,8 @@ final class Uri implements UriInterface
         #[SensitiveParameter] ?string $password
     ): ?string {
         return match (null) {
-            $password => Encoder::encodeUser($user),
-            default => Encoder::encodeUser($user).':'.Encoder::encodePassword($password),
+            $password => $user,
+            default => $user.':'.$password,
         };
     }
 
@@ -735,14 +738,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * @return non-empty-array<int, ?string>
-     */
-    private function setUserAndPass(): array
-    {
-        return null !== $this->userInfo ? explode(':', $this->userInfo, 2) + [1 => null] : [null, null];
-    }
-
-    /**
      * Format the Path component.
      */
     private function formatPath(string $path): string
@@ -939,27 +934,24 @@ final class Uri implements UriInterface
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
     private function getUriString(): string {
-        $scheme = match ($this->scheme) {
-            null => '',
-            default => $this->scheme.':',
-        };
+        $uri = '';
+        if (null !== $this->scheme) {
+            $uri .= $this->scheme.':';
+        }
 
-        $authority = match ($this->authority) {
-            null => '',
-            default => '//'.$this->authority,
-        };
+        if (null !== $this->authority) {
+            $uri .= '//'.$this->authority;
+        }
 
-        $query = match ($this->query) {
-            null => '',
-            default => '?'.$this->query,
-        };
+        $uri .= $this->path;
+        if (null !== $this->query) {
+            $uri .= '?'.$this->query;
+        }
 
-        $fragment = match ($this->fragment) {
-            null => '',
-            default => '#'.$this->fragment,
+        return match ($this->fragment) {
+            null => $uri,
+            default => $uri.'#'.$this->fragment,
         };
-
-        return $scheme.$authority.$this->path.$query.$fragment;
     }
 
     public function toString(): string
@@ -1110,7 +1102,7 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError if the submitted data cannot be converted to string
      */
-    private function filterString(Stringable|string|null $str): ?string
+    private function filterString(#[SensitiveParameter] Stringable|string|null $str): ?string
     {
         $str = match (true) {
             $str instanceof UriComponentInterface => $str->value(),
@@ -1129,18 +1121,12 @@ final class Uri implements UriInterface
         Stringable|string|null $user,
         #[SensitiveParameter] Stringable|string|null $password = null
     ): UriInterface {
-        $user_info = null;
-        $user = $this->filterString($user);
-        if (null !== $password) {
-            $password = $this->filterString($password);
-        }
+        $user = Encoder::encodeUser($this->filterString($user));
+        $password = Encoder::encodePassword($this->filterString($password));
+        $userInfo = ('' !== $user) ? $this->formatUserInfo($user, $password) : null;
 
-        if ('' !== $user) {
-            $user_info = $this->formatUserInfo($user, $password);
-        }
-
-        return match ($user_info) {
-            $this->userInfo=> $this,
+        return match ($userInfo) {
+            $this->userInfo => $this,
             default => new self(
                 $this->scheme,
                 $user,

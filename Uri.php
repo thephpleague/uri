@@ -27,7 +27,6 @@ use SensitiveParameter;
 use Stringable;
 
 use function array_filter;
-use function array_key_first;
 use function array_map;
 use function base64_decode;
 use function base64_encode;
@@ -198,27 +197,17 @@ final class Uri implements UriInterface
      */
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
-    /** @readonly */
-    private ?string $scheme;
-    /** @readonly */
-    private ?string $username;
-    /** @readonly */
-    private ?string $password;
-    /** @readonly */
-    private ?string $userInfo;
-    /** @readonly */
-    private ?string $host;
-    /** @readonly */
-    private ?int $port;
-    /** @readonly */
-    private ?string $authority;
-    /** @readonly */
-    private string $path;
-    /** @readonly */
-    private ?string $query;
-    /** @readonly */
-    private ?string $fragment;
-    private ?string $uri;
+    private readonly ?string $scheme;
+    private readonly ?string $username;
+    private readonly ?string $password;
+    private readonly ?string $userInfo;
+    private readonly ?string $host;
+    private readonly ?int $port;
+    private readonly ?string $authority;
+    private readonly string $path;
+    private readonly ?string $query;
+    private readonly ?string $fragment;
+    private readonly string $uri;
 
     private function __construct(
         ?string $scheme,
@@ -239,8 +228,8 @@ final class Uri implements UriInterface
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
-
         $this->assertValidState();
+        $this->uri = $this->getUriString();
     }
 
     /**
@@ -401,8 +390,10 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(#[SensitiveParameter] Stringable|string $uri, #[SensitiveParameter] Stringable|string|null $baseUri = null): self
-    {
+    public static function fromBaseUri(
+        #[SensitiveParameter] Stringable|string $uri,
+        #[SensitiveParameter] Stringable|string|null $baseUri = null
+    ): self {
         $uri = self::new($uri);
         $baseUri = BaseUri::from($baseUri ?? $uri);
 
@@ -869,8 +860,6 @@ final class Uri implements UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
-        $this->uri = null;
-
         if (! match ($this->scheme) {
             'data' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
@@ -879,7 +868,7 @@ final class Uri implements UriInterface
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             default => true,
         }) {
-            throw new SyntaxError('The uri `'.$this.'` is invalid for the `'.$this->scheme.'` scheme.');
+            throw new SyntaxError('The uri `'.$this->getUriString().'` is invalid for the `'.$this->scheme.'` scheme.');
         }
     }
 
@@ -937,41 +926,33 @@ final class Uri implements UriInterface
      *
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
-    private function getUriString(
-        ?string $scheme,
-        ?string $authority,
-        string $path,
-        ?string $query,
-        ?string $fragment
-    ): string {
-        if (null !== $scheme) {
-            $scheme = $scheme.':';
+    private function getUriString(): string {
+        $scheme = '';
+        if (null !== $this->scheme) {
+            $scheme = $this->scheme.':';
         }
 
+        $authority = $this->getAuthority();
         if (null !== $authority) {
             $authority = '//'.$authority;
         }
 
-        if (null !== $query) {
-            $query = '?'.$query;
+        $query = '';
+        if (null !== $this->query) {
+            $query = '?'.$this->query;
         }
 
-        if (null !== $fragment) {
-            $fragment = '#'.$fragment;
+        $fragment = '';
+        if (null !== $this->fragment) {
+            $fragment = '#'.$this->fragment;
         }
 
-        return $scheme.$authority.$path.$query.$fragment;
+        return $scheme.$authority.$this->path.$query.$fragment;
     }
 
     public function toString(): string
     {
-        return $this->uri ??= $this->getUriString(
-            $this->scheme,
-            $this->authority,
-            $this->path,
-            $this->query,
-            $this->fragment
-        );
+        return $this->uri;
     }
 
     /**
@@ -1096,17 +1077,20 @@ final class Uri implements UriInterface
     public function withScheme(Stringable|string|null $scheme): UriInterface
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
-        if ($scheme === $this->scheme) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->scheme = $scheme;
-        $clone->port = $clone->formatPort($clone->port);
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($scheme) {
+            $this->scheme => $this,
+            default => new self(
+                $scheme,
+                $this->username,
+                $this->password,
+                $this->host,
+                $this->port,
+                $this->path,
+                $this->query,
+                $this->fragment,
+            ),
+        };
     }
 
     /**
@@ -1131,8 +1115,7 @@ final class Uri implements UriInterface
 
     public function withUserInfo(
         Stringable|string|null $user,
-        #[SensitiveParameter]
-        Stringable|string|null $password = null
+        #[SensitiveParameter] Stringable|string|null $password = null
     ): UriInterface {
         $user_info = null;
         $user = $this->filterString($user);
@@ -1144,47 +1127,57 @@ final class Uri implements UriInterface
             $user_info = $this->formatUserInfo($user, $password);
         }
 
-        if ($user_info === $this->userInfo) {
-            return $this;
-        }
-
-        $clone = clone $this;
-        $clone->userInfo = $user_info;
-        [$clone->username, $clone->password] = $clone->setUserAndPass();
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($user_info) {
+            $this->userInfo=> $this,
+            default => new self(
+                $this->scheme,
+                $user,
+                $password,
+                $this->host,
+                $this->port,
+                $this->path,
+                $this->query,
+                $this->fragment,
+            ),
+        };
     }
 
     public function withHost(Stringable|string|null $host): UriInterface
     {
         $host = $this->formatHost($this->filterString($host));
-        if ($host === $this->host) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->host = $host;
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($host) {
+            $this->host => $this,
+            default => new self(
+                $this->scheme,
+                $this->username,
+                $this->password,
+                $host,
+                $this->port,
+                $this->path,
+                $this->query,
+                $this->fragment,
+            ),
+        };
     }
 
     public function withPort(int|null $port): UriInterface
     {
         $port = $this->formatPort($port);
-        if ($port === $this->port) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->port = $port;
-        $clone->authority = $clone->setAuthority();
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($port) {
+            $this->port => $this,
+            default => new self(
+                $this->scheme,
+                $this->username,
+                $this->password,
+                $this->host,
+                $port,
+                $this->path,
+                $this->query,
+                $this->fragment,
+            ),
+        };
     }
 
     public function withPath(Stringable|string $path): UriInterface
@@ -1193,44 +1186,60 @@ final class Uri implements UriInterface
         if (null === $path) {
             throw new SyntaxError('The path component cannot be null.');
         }
+
         $path = $this->formatPath($path);
-        if ($path === $this->path) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->path = $path;
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($path) {
+            $this->path => $this,
+            default => new self(
+                $this->scheme,
+                $this->username,
+                $this->password,
+                $this->host,
+                $this->port,
+                $path,
+                $this->query,
+                $this->fragment,
+            ),
+        };
     }
 
     public function withQuery(Stringable|string|null $query): UriInterface
     {
         $query = Encoder::encodeQueryOrFragment($this->filterString($query));
-        if ($query === $this->query) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->query = $query;
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($query) {
+            $this->query => $this,
+            default => new self(
+                $this->scheme,
+                $this->username,
+                $this->password,
+                $this->host,
+                $this->port,
+                $this->path,
+                $query,
+                $this->fragment,
+            ),
+        };
     }
 
     public function withFragment(Stringable|string|null $fragment): UriInterface
     {
         $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
-        if ($fragment === $this->fragment) {
-            return $this;
-        }
 
-        $clone = clone $this;
-        $clone->fragment = $fragment;
-        $clone->assertValidState();
-
-        return $clone;
+        return match ($fragment) {
+            $this->fragment => $this,
+            default => new self(
+                $this->scheme,
+                $this->username,
+                $this->password,
+                $this->host,
+                $this->port,
+                $this->path,
+                $this->query,
+                $fragment,
+            ),
+        };
     }
 
     /**

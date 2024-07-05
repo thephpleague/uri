@@ -184,11 +184,11 @@ final class Uri implements UriInterface
     ];
 
     /**
-     * Maximum number of formatted host cached.
+     * Maximum number of cached items.
      *
      * @var int
      */
-    private const MAXIMUM_FORMATTED_HOST_CACHED = 100;
+    private const MAXIMUM_CACHED_ITEMS = 100;
 
     /**
      * All ASCII letters sorted by typical frequency of occurrence.
@@ -198,8 +198,8 @@ final class Uri implements UriInterface
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
     private readonly ?string $scheme;
-    private readonly ?string $username;
-    private readonly ?string $password;
+    private readonly ?string $user;
+    private readonly ?string $pass;
     private readonly ?string $userInfo;
     private readonly ?string $host;
     private readonly ?int $port;
@@ -221,7 +221,7 @@ final class Uri implements UriInterface
     ) {
         $this->scheme = $this->formatScheme($scheme);
         $this->userInfo = $this->formatUserInfo($user, $pass);
-        [$this->username, $this->password] = $this->setUserAndPass();
+        [$this->user, $this->pass] = $this->setUserAndPass();
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();
@@ -239,17 +239,29 @@ final class Uri implements UriInterface
      */
     private function formatScheme(?string $scheme): ?string
     {
-        $formattedScheme = $scheme;
-        if (null !== $scheme) {
-            $formattedScheme = strtolower($scheme);
+        if (null === $scheme) {
+            return null;
         }
 
-        return match (true) {
-            null === $formattedScheme,
-            array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT),
-            1 === preg_match(self::REGEXP_SCHEME, $formattedScheme) => $formattedScheme,
-            default => throw new SyntaxError('The scheme `'.$scheme.'` is invalid.'),
-        };
+        $formattedScheme = strtolower($scheme);
+        static $cache = [];
+        if (isset($cache[$formattedScheme])) {
+            return $formattedScheme;
+        }
+
+        if (
+            !array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT)
+            && 1 !== preg_match(self::REGEXP_SCHEME, $formattedScheme)
+        ) {
+            throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
+        }
+
+        $cache[$formattedScheme] = 1;
+        if (self::MAXIMUM_CACHED_ITEMS < count($cache)) {
+            array_shift($cache);
+        }
+
+        return $formattedScheme;
     }
 
     /**
@@ -274,15 +286,15 @@ final class Uri implements UriInterface
             return $host;
         }
 
-        static $formattedHostCache = [];
-        if (isset($formattedHostCache[$host])) {
-            return $formattedHostCache[$host];
+        static $cache = [];
+        if (isset($cache[$host])) {
+            return $cache[$host];
         }
 
         $formattedHost = '[' === $host[0] ? $this->formatIp($host) : $this->formatRegisteredName($host);
-        $formattedHostCache[$host] = $formattedHost;
-        if (self::MAXIMUM_FORMATTED_HOST_CACHED < count($formattedHostCache)) {
-            array_shift($formattedHostCache);
+        $cache[$host] = $formattedHost;
+        if (self::MAXIMUM_CACHED_ITEMS < count($cache)) {
+            array_shift($cache);
         }
 
         return $formattedHost;
@@ -735,9 +747,9 @@ final class Uri implements UriInterface
      */
     private function formatPath(string $path): string
     {
-        return match (true) {
-            'data' === $this->scheme => Encoder::encodePath(self::formatDataPath($path)),
-            'file' === $this->scheme => $this->formatFilePath(Encoder::encodePath($path)),
+        return match ($this->scheme) {
+            'data' => Encoder::encodePath(self::formatDataPath($path)),
+            'file' => $this->formatFilePath(Encoder::encodePath($path)),
             default => Encoder::encodePath($path),
         };
     }
@@ -927,25 +939,25 @@ final class Uri implements UriInterface
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
     private function getUriString(): string {
-        $scheme = '';
-        if (null !== $this->scheme) {
-            $scheme = $this->scheme.':';
-        }
+        $scheme = match ($this->scheme) {
+            null => '',
+            default => $this->scheme.':',
+        };
 
-        $authority = $this->getAuthority();
-        if (null !== $authority) {
-            $authority = '//'.$authority;
-        }
+        $authority = match ($this->authority) {
+            null => '',
+            default => '//'.$this->authority,
+        };
 
-        $query = '';
-        if (null !== $this->query) {
-            $query = '?'.$this->query;
-        }
+        $query = match ($this->query) {
+            null => '',
+            default => '?'.$this->query,
+        };
 
-        $fragment = '';
-        if (null !== $this->fragment) {
-            $fragment = '#'.$this->fragment;
-        }
+        $fragment = match ($this->fragment) {
+            null => '',
+            default => '#'.$this->fragment,
+        };
 
         return $scheme.$authority.$this->path.$query.$fragment;
     }
@@ -978,8 +990,8 @@ final class Uri implements UriInterface
     {
         return [
             'scheme' => $this->scheme,
-            'user' => $this->username,
-            'pass' => $this->password,
+            'user' => $this->user,
+            'pass' => $this->pass,
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->path,
@@ -1009,7 +1021,7 @@ final class Uri implements UriInterface
      */
     public function getUsername(): ?string
     {
-        return $this->username;
+        return $this->user;
     }
 
     /**
@@ -1017,7 +1029,7 @@ final class Uri implements UriInterface
      */
     public function getPassword(): ?string
     {
-        return $this->password;
+        return $this->pass;
     }
 
     /**
@@ -1082,8 +1094,8 @@ final class Uri implements UriInterface
             $this->scheme => $this,
             default => new self(
                 $scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $this->host,
                 $this->port,
                 $this->path,
@@ -1150,8 +1162,8 @@ final class Uri implements UriInterface
             $this->host => $this,
             default => new self(
                 $this->scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $host,
                 $this->port,
                 $this->path,
@@ -1169,8 +1181,8 @@ final class Uri implements UriInterface
             $this->port => $this,
             default => new self(
                 $this->scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $this->host,
                 $port,
                 $this->path,
@@ -1193,8 +1205,8 @@ final class Uri implements UriInterface
             $this->path => $this,
             default => new self(
                 $this->scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $this->host,
                 $this->port,
                 $path,
@@ -1212,8 +1224,8 @@ final class Uri implements UriInterface
             $this->query => $this,
             default => new self(
                 $this->scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $this->host,
                 $this->port,
                 $this->path,
@@ -1231,8 +1243,8 @@ final class Uri implements UriInterface
             $this->fragment => $this,
             default => new self(
                 $this->scheme,
-                $this->username,
-                $this->password,
+                $this->user,
+                $this->pass,
                 $this->host,
                 $this->port,
                 $this->path,

@@ -26,16 +26,49 @@ use Stringable;
  */
 final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 {
-    private function __construct(private readonly UriInterface $uri)
+    private readonly UriInterface $uri;
+
+    private function __construct(UriInterface $uri)
     {
-        if (null === $this->uri->getScheme() && '' === $this->uri->getHost()) {
+        if (null === $uri->getScheme() && '' === $uri->getHost()) {
             throw new SyntaxError('An URI without scheme cannot contain an empty host string according to PSR-7: '.$uri);
         }
 
-        $port = $this->uri->getPort();
+        $port = $uri->getPort();
         if (null !== $port && ($port < 0 || $port > 65535)) {
             throw new SyntaxError('The URI port is outside the established TCP and UDP port ranges: '.$uri);
         }
+
+        $this->uri = $this->normalizePsr7Uri($uri);
+    }
+
+    /**
+     * PSR-7 UriInterface makes the following normalization
+     *
+     * Safely stringify input when possible for League UriInterface compatibility.
+     *
+     * Query, Fragment and User Info when undefined are normalized to the empty string
+     */
+    private function normalizePsr7Uri(UriInterface $uri): UriInterface
+    {
+        $components = [];
+        if ('' === $uri->getFragment()) {
+            $components['fragment'] = null;
+        }
+
+        if ('' === $uri->getQuery()) {
+            $components['query'] = null;
+        }
+
+        if ('' === $uri->getUserInfo()) {
+            $components['user'] = null;
+            $components['pass'] = null;
+        }
+
+        return match ($components) {
+            [] => $uri,
+            default => Uri::fromComponents([...$uri->getComponents(), ...$components]), /* @phpstan-ignore-line */
+        };
     }
 
     /**

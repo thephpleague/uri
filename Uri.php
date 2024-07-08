@@ -1121,16 +1121,17 @@ final class Uri implements UriInterface
         Stringable|string|null $user,
         #[SensitiveParameter] Stringable|string|null $password = null
     ): UriInterface {
-        $user = Encoder::encodeUser($this->filterString($user));
-        $password = Encoder::encodePassword($this->filterString($password));
-        $userInfo = ('' !== $user) ? $this->formatUserInfo($user, $password) : null;
+        $userInfo = ('' !== $user) ? $this->formatUserInfo(
+            Encoder::encodeUser($this->filterString($user)),
+            Encoder::encodePassword($this->filterString($password))
+        ) : null;
 
         return match ($userInfo) {
             $this->userInfo => $this,
             default => new self(
                 $this->scheme,
-                $user,
-                $password,
+                $user instanceof Stringable ? $user->__toString() : $user,
+                $password instanceof Stringable ? $password->__toString() : $password,
                 $this->host,
                 $this->port,
                 $this->path,

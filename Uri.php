@@ -222,7 +222,7 @@ final class Uri implements UriInterface
         $this->scheme = $this->formatScheme($scheme);
         $this->user = Encoder::encodeUser($user);
         $this->pass = Encoder::encodePassword($pass);
-        $this->userInfo = $this->formatUserInfo($user, $pass);
+        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
         $this->authority = $this->setAuthority();

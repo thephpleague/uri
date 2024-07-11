@@ -384,7 +384,7 @@ final class Uri implements UriInterface
     public static function new(#[SensitiveParameter] Stringable|string $uri = ''): self
     {
         $components = match (true) {
-            $uri instanceof UriInterface => $uri->getComponents(),
+            $uri instanceof UriInterface => $uri->toComponents(),
             default => UriString::parse($uri),
         };
 
@@ -430,7 +430,7 @@ final class Uri implements UriInterface
     public static function fromTemplate(UriTemplate|Stringable|string $template, iterable $variables = []): self
     {
         return match (true) {
-            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->getComponents()),
+            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->toComponents()),
             $template instanceof UriTemplate\Template => self::new($template->expand($variables)),
             default => self::new(UriTemplate\Template::new($template)->expand($variables)),
         };
@@ -978,7 +978,7 @@ final class Uri implements UriInterface
     /**
      * @return ComponentMap
      */
-    public function getComponents(): array
+    public function toComponents(): array
     {
         return [
             'scheme' => $this->scheme,
@@ -1239,6 +1239,20 @@ final class Uri implements UriInterface
                 $fragment,
             ),
         };
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.5.0
+     * @codeCoverageIgnore
+     * @see Uri::toComponents()
+     *
+     * @return ComponentMap
+     */
+    public function getComponents(): array
+    {
+        return $this->toComponents();
     }
 
     /**

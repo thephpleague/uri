@@ -186,6 +186,18 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
+     * Tells whether the URI is opaque or not.
+     *
+     * A URI is opaque if and only if it is absolute
+     * and does not has an authority path.
+     */
+    public function isOpaque(): bool
+    {
+        return $this->nullValue === $this->uri->getAuthority()
+            && $this->isAbsolute();
+    }
+
+    /**
      * Tells whether two URI do not share the same origin.
      */
     public function isCrossOrigin(Stringable|string $uri): bool

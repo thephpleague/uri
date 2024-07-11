@@ -67,7 +67,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
 
         return match ($components) {
             [] => $uri,
-            default => Uri::fromComponents([...$uri->getComponents(), ...$components]), /* @phpstan-ignore-line */
+            default => Uri::fromComponents([...$uri->toComponents(), ...$components]),
         };
     }
 
@@ -76,10 +76,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        return match (true) {
-            $uri instanceof UriInterface => new self($uri),
-            default => new self(Uri::new($uri)),
-        };
+        return self::fromComponents(UriString::parse($uri));
     }
 
     /**
@@ -90,6 +87,27 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      */
     public static function fromComponents(array $components): self
     {
+        $components += [
+            'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
+            'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
+        ];
+
+        if ($components['user'] === '') {
+            $components['user'] = null;
+        }
+
+        if ($components['pass'] === '') {
+            $components['pass'] = null;
+        }
+
+        if ($components['query'] === '') {
+            $components['query'] = null;
+        }
+
+        if ($components['fragment'] === '') {
+            $components['fragment'] = null;
+        }
+
         return new self(Uri::fromComponents($components));
     }
 

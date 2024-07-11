@@ -16,6 +16,7 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 
@@ -581,6 +582,46 @@ final class BaseUriTest extends TestCase
                 'expected' => null,
                 'input' => 'foobar://yesman/etc/fstab',
             ],
+        ];
+    }
+
+    #[DataProvider('opaqueUriProvider')]
+    #[Test]
+    public function it_tells_if_an_uri_is_opaque(bool $expected, string $uri): void
+    {
+        self::assertSame($expected, BaseUri::from($uri)->isOpaque());
+    }
+
+    public static function opaqueUriProvider(): iterable
+    {
+        yield 'empty URI' => [
+            'expected' => false,
+            'uri' => '',
+        ];
+
+        yield 'relative URI' => [
+            'expected' => false,
+            'uri' => 'path?query#fragment',
+        ];
+
+        yield 'URI with authority' => [
+            'expected' => false,
+            'uri' => '//authority/path?query#fragment',
+        ];
+
+        yield 'absolute HTTP URI' => [
+            'expected' => false,
+            'uri' => 'https://authority/path?query#fragment',
+        ];
+
+        yield 'absolute mail URI' => [
+            'expected' => true,
+            'uri' => 'mail:foo@example.com',
+        ];
+
+        yield 'data URI' => [
+            'expected' => true,
+            'uri' => 'data:',
         ];
     }
 }

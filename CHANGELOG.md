@@ -8,6 +8,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - `Uri::getUsername` returns the encoded user component of the URI.
 - `Uri::getPassword` returns the encoded password component of the URI.
+- `BaseUri::isOpaque` tells whether a URI is opaque.
 
 ### Fixed
 

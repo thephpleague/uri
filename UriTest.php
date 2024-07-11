@@ -55,7 +55,7 @@ class UriTest extends TestCase
         $uri = Uri::new($raw);
 
         self::assertSame($normalized, $uri->toString());
-        self::assertSame($components, $uri->getComponents());
+        self::assertSame($components, $uri->toComponents());
     }
 
     public function testAutomaticUrlNormalizationBis(): void

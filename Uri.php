@@ -933,25 +933,9 @@ final class Uri implements UriInterface
      *
      * @link https://tools.ietf.org/html/rfc3986#section-5.3
      */
-    private function getUriString(): string {
-        $uri = '';
-        if (null !== $this->scheme) {
-            $uri .= $this->scheme.':';
-        }
-
-        if (null !== $this->authority) {
-            $uri .= '//'.$this->authority;
-        }
-
-        $uri .= $this->path;
-        if (null !== $this->query) {
-            $uri .= '?'.$this->query;
-        }
-
-        return match ($this->fragment) {
-            null => $uri,
-            default => $uri.'#'.$this->fragment,
-        };
+    private function getUriString(): string
+    {
+        return UriString::build($this->toComponents());
     }
 
     public function toString(): string

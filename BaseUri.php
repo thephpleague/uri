@@ -19,6 +19,7 @@ use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Idna\Converter;
 use League\Uri\IPv4\Converter as IPv4Converter;
+use League\Uri\IPv6\Converter as IPv6Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
@@ -554,6 +555,10 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
             $converted = IPv4Converter::fromEnvironment()->toDecimal($host);
         } catch (MissingFeature) {
             $converted = null;
+        }
+
+        if (false === filter_var($converted, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $converted = IPv6Converter::compress($host);
         }
 
         return match (true) {

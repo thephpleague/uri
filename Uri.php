@@ -227,10 +227,9 @@ final class Uri implements UriInterface
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
-        $components = $this->toComponents();
         $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
-        $this->authority = UriString::buildAuthority($components);
-        $this->uri = UriString::build($components);
+        $this->authority = UriString::buildAuthority($this->toComponents());
+        $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
 
         $this->assertValidState();
     }

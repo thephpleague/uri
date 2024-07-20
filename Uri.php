@@ -222,17 +222,17 @@ final class Uri implements UriInterface
         $this->scheme = $this->formatScheme($scheme);
         $this->user = Encoder::encodeUser($user);
         $this->pass = Encoder::encodePassword($pass);
-        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
-        $this->authority = $this->setAuthority();
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
+        $components = $this->toComponents();
+        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
+        $this->authority = UriString::buildAuthority($components);
+        $this->uri = UriString::build($components);
 
         $this->assertValidState();
-
-        $this->uri = $this->getUriString();
     }
 
     /**
@@ -717,27 +717,6 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Generate the URI authority part.
-     */
-    private function setAuthority(): ?string
-    {
-        $authority = null;
-        if (null !== $this->host) {
-            $authority = $this->host;
-        }
-
-        if (null !== $this->userInfo) {
-            $authority = $this->userInfo.'@'.$authority;
-        }
-
-        if (null !== $this->port) {
-            return $authority.':'.$this->port;
-        }
-
-        return $authority;
-    }
-
-    /**
      * Format the Path component.
      */
     private function formatPath(string $path): string
@@ -875,7 +854,7 @@ final class Uri implements UriInterface
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             default => true,
         }) {
-            throw new SyntaxError('The uri `'.$this->getUriString().'` is invalid for the `'.$this->scheme.'` scheme.');
+            throw new SyntaxError('The uri `'.$this->uri.'` is invalid for the `'.$this->scheme.'` scheme.');
         }
     }
 
@@ -926,16 +905,6 @@ final class Uri implements UriInterface
     private function isNonEmptyHostUriWithoutFragmentAndQuery(): bool
     {
         return $this->isNonEmptyHostUri() && null === $this->fragment && null === $this->query;
-    }
-
-    /**
-     * Generate the URI string representation from its components.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-5.3
-     */
-    private function getUriString(): string
-    {
-        return UriString::build($this->toComponents());
     }
 
     public function toString(): string
@@ -1105,17 +1074,16 @@ final class Uri implements UriInterface
         Stringable|string|null $user,
         #[SensitiveParameter] Stringable|string|null $password = null
     ): UriInterface {
-        $userInfo = ('' !== $user) ? $this->formatUserInfo(
-            Encoder::encodeUser($this->filterString($user)),
-            Encoder::encodePassword($this->filterString($password))
-        ) : null;
+        $user = Encoder::encodeUser($this->filterString($user));
+        $pass = Encoder::encodePassword($this->filterString($password));
+        $userInfo = ('' !== $user) ? $this->formatUserInfo($user, $pass) : null;
 
         return match ($userInfo) {
             $this->userInfo => $this,
             default => new self(
                 $this->scheme,
-                $user instanceof Stringable ? $user->__toString() : $user,
-                $password instanceof Stringable ? $password->__toString() : $password,
+                $user,
+                $pass,
                 $this->host,
                 $this->port,
                 $this->path,
@@ -1165,12 +1133,9 @@ final class Uri implements UriInterface
 
     public function withPath(Stringable|string $path): UriInterface
     {
-        $path = $this->filterString($path);
-        if (null === $path) {
-            throw new SyntaxError('The path component cannot be null.');
-        }
-
-        $path = $this->formatPath($path);
+        $path = $this->formatPath(
+            $this->filterString($path) ?? throw new SyntaxError('The path component cannot be null.')
+        );
 
         return match ($path) {
             $this->path => $this,

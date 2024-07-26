@@ -17,7 +17,7 @@ use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
-use League\Uri\Idna\Converter;
+use League\Uri\Idna\Converter as IdnaConverter;
 use League\Uri\IPv4\Converter as IPv4Converter;
 use League\Uri\IPv6\Converter as IPv6Converter;
 use Psr\Http\Message\UriFactoryInterface;
@@ -267,7 +267,15 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function hasIdn(): bool
     {
-        return Converter::isIdn($this->uri->getHost());
+        return IdnaConverter::isIdn($this->uri->getHost());
+    }
+
+    /**
+     * Tells whether the URI contains an IPv4 regardless if it is mapped or native
+     */
+    public function hasIPv4(): bool
+    {
+        return IPv4Converter::fromEnvironment()->isIpv4($this->uri->getHost());
     }
 
     /**

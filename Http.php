@@ -43,7 +43,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     }
 
     /**
-     * PSR-7 UriInterface makes the following normalization
+     * PSR-7 UriInterface makes the following normalization.
      *
      * Safely stringify input when possible for League UriInterface compatibility.
      *
@@ -92,19 +92,19 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
             'port' => null, 'path' => '', 'query' => null, 'fragment' => null,
         ];
 
-        if ($components['user'] === '') {
+        if ('' === $components['user']) {
             $components['user'] = null;
         }
 
-        if ($components['pass'] === '') {
+        if ('' === $components['pass']) {
             $components['pass'] = null;
         }
 
-        if ($components['query'] === '') {
+        if ('' === $components['query']) {
             $components['query'] = null;
         }
 
-        if ($components['fragment'] === '') {
+        if ('' === $components['fragment']) {
             $components['fragment'] = null;
         }
 

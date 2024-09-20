@@ -53,7 +53,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     protected readonly ?string $nullValue;
 
     /**
-     * @param Psr7UriInterface|UriInterface $uri
      * @param UriFactoryInterface|null $uriFactory Deprecated, will be removed in the next major release
      */
     final protected function __construct(
@@ -271,7 +270,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     }
 
     /**
-     * Tells whether the URI contains an IPv4 regardless if it is mapped or native
+     * Tells whether the URI contains an IPv4 regardless if it is mapped or native.
      */
     public function hasIPv4(): bool
     {

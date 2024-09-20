@@ -380,7 +380,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function new(#[SensitiveParameter] Stringable|string $uri = ''): self
+    public static function new(Stringable|string $uri = ''): self
     {
         $components = match (true) {
             $uri instanceof UriInterface => $uri->toComponents(),
@@ -405,8 +405,8 @@ final class Uri implements UriInterface
      * The returned URI must be absolute.
      */
     public static function fromBaseUri(
-        #[SensitiveParameter] Stringable|string $uri,
-        #[SensitiveParameter] Stringable|string|null $baseUri = null
+        Stringable|string $uri,
+        Stringable|string|null $baseUri = null
     ): self {
         $uri = self::new($uri);
         $baseUri = BaseUri::from($baseUri ?? $uri);
@@ -441,7 +441,7 @@ final class Uri implements UriInterface
      *
      * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
      */
-    public static function fromComponents(#[SensitiveParameter] array $components = []): self
+    public static function fromComponents(array $components = []): self
     {
         $components += [
             'scheme' => null, 'user' => null, 'pass' => null, 'host' => null,
@@ -603,7 +603,7 @@ final class Uri implements UriInterface
     /**
      * Create a new instance from the environment.
      */
-    public static function fromServer(#[SensitiveParameter] array $server): self
+    public static function fromServer(array $server): self
     {
         $components = ['scheme' => self::fetchScheme($server)];
         [$components['user'], $components['pass']] = self::fetchUserInfo($server);
@@ -631,7 +631,7 @@ final class Uri implements UriInterface
      *
      * @return non-empty-array{0: ?string, 1: ?string}
      */
-    private static function fetchUserInfo(#[SensitiveParameter] array $server): array
+    private static function fetchUserInfo(array $server): array
     {
         $server += ['PHP_AUTH_USER' => null, 'PHP_AUTH_PW' => null, 'HTTP_AUTHORIZATION' => ''];
         $user = $server['PHP_AUTH_USER'];
@@ -673,10 +673,6 @@ final class Uri implements UriInterface
             $matches += ['host' => null, 'port' => null];
             if (null !== $matches['port']) {
                 $matches['port'] = (int) $matches['port'];
-            }
-
-            if (null !== $matches['host']) {
-                $matches['host'] = (string) $matches['host'];
             }
 
             return [$matches['host'], $matches['port'] ?? $server['SERVER_PORT']];
@@ -812,7 +808,7 @@ final class Uri implements UriInterface
     {
         return (string) preg_replace_callback(
             self::REGEXP_FILE_PATH,
-            static fn (array $matches): string => $matches['delim'].$matches['volume'].':'.$matches['rest'],
+            static fn (array $matches): string => $matches['delim'].$matches['volume'].(isset($matches['rest']) ? ':'.$matches['rest'] : ''),
             $path
         );
     }
@@ -1054,7 +1050,7 @@ final class Uri implements UriInterface
      *
      * @throws SyntaxError if the submitted data cannot be converted to string
      */
-    private function filterString(#[SensitiveParameter] Stringable|string|null $str): ?string
+    private function filterString(Stringable|string|null $str): ?string
     {
         $str = match (true) {
             $str instanceof UriComponentInterface => $str->value(),

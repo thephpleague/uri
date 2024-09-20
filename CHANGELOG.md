@@ -12,7 +12,6 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- Adding `SensitiveParameter` attribute in the `Uri` and the `BaseUri` class.
 - Improve PSR-7 `Http` class implementation.
 - `BaseUri::from` will compress the IPv6 host to its compressed form if possible.
 

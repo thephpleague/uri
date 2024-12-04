@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use Deprecated;
 use JsonSerializable;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
@@ -253,6 +254,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * Create a new instance from a string.
      */
+    #[Deprecated(message:'use League\Uri\Http::new() instead', since:'league/uri:7.0.0')]
     public static function createFromString(Stringable|string $uri = ''): self
     {
         return self::new($uri);
@@ -270,6 +272,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      * @param InputComponentMap $components a hash representation of the URI similar
      *                                      to PHP parse_url function result
      */
+    #[Deprecated(message:'use League\Uri\Http::fromComponents() instead', since:'league/uri:7.0.0')]
     public static function createFromComponents(array $components): self
     {
         return self::fromComponents($components);
@@ -284,6 +287,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * Create a new instance from the environment.
      */
+    #[Deprecated(message:'use League\Uri\Http::fromServer() instead', since:'league/uri:7.0.0')]
     public static function createFromServer(array $server): self
     {
         return self::fromServer($server);
@@ -298,6 +302,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * Create a new instance from a URI object.
      */
+    #[Deprecated(message:'use League\Uri\Http::new() instead', since:'league/uri:7.0.0')]
     public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         return self::new($uri);
@@ -314,6 +319,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
      *
      * The returned URI must be absolute.
      */
+    #[Deprecated(message:'use League\Uri\Http::fromBaseUri() instead', since:'league/uri:7.0.0')]
     public static function createFromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
     {
         return self::fromBaseUri($uri, $baseUri);

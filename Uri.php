@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use Deprecated;
 use finfo;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
@@ -692,7 +693,7 @@ final class Uri implements UriInterface
     /**
      * Returns the environment path.
      *
-     * @return non-empty-array{0:?string, 1:?string}
+     * @return list<?string>
      */
     private static function fetchRequestUri(array $server): array
     {
@@ -1194,6 +1195,7 @@ final class Uri implements UriInterface
      *
      * @return ComponentMap
      */
+    #[Deprecated(message:'use League\Uri\Uri::toComponents() instead', since:'league/uri:7.5.0')]
     public function getComponents(): array
     {
         return $this->toComponents();
@@ -1206,6 +1208,7 @@ final class Uri implements UriInterface
      * @codeCoverageIgnore
      * @see Uri::new()
      */
+    #[Deprecated(message:'use League\Uri\Uri::new() instead', since:'league/uri:7.0.0')]
     public static function createFromString(Stringable|string $uri = ''): self
     {
         return self::new($uri);
@@ -1220,6 +1223,7 @@ final class Uri implements UriInterface
      *
      * @param InputComponentMap $components a hash representation of the URI similar to PHP parse_url function result
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromComponents() instead', since:'league/uri:7.0.0')]
     public static function createFromComponents(array $components = []): self
     {
         return self::fromComponents($components);
@@ -1237,6 +1241,7 @@ final class Uri implements UriInterface
      * @deprecated Since version 7.0.0
      * @codeCoverageIgnore
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromDataPath() instead', since:'league/uri:7.0.0')]
     public static function createFromDataPath(string $path, $context = null): self
     {
         return self::fromFileContents($path, $context);
@@ -1253,6 +1258,7 @@ final class Uri implements UriInterface
      *
      * The returned URI must be absolute.
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromBaseUri() instead', since:'league/uri:7.0.0')]
     public static function createFromBaseUri(
         Stringable|UriInterface|String $uri,
         Stringable|UriInterface|String|null $baseUri = null
@@ -1269,6 +1275,7 @@ final class Uri implements UriInterface
      *
      * Create a new instance from a Unix path string.
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromUnixPath() instead', since:'league/uri:7.0.0')]
     public static function createFromUnixPath(string $uri = ''): self
     {
         return self::fromUnixPath($uri);
@@ -1283,6 +1290,7 @@ final class Uri implements UriInterface
      *
      * Create a new instance from a local Windows path string.
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromWindowsPath() instead', since:'league/uri:7.0.0')]
     public static function createFromWindowsPath(string $uri = ''): self
     {
         return self::fromWindowsPath($uri);
@@ -1297,6 +1305,7 @@ final class Uri implements UriInterface
      *
      * Create a new instance from a URI object.
      */
+    #[Deprecated(message:'use League\Uri\Uri::new() instead', since:'league/uri:7.0.0')]
     public static function createFromUri(Psr7UriInterface|UriInterface $uri): self
     {
         return self::new($uri);
@@ -1311,6 +1320,7 @@ final class Uri implements UriInterface
      *
      * Create a new instance from the environment.
      */
+    #[Deprecated(message:'use League\Uri\Uri::fromServer() instead', since:'league/uri:7.0.0')]
     public static function createFromServer(array $server): self
     {
         return self::fromServer($server);

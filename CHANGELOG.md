@@ -2,13 +2,14 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## [Next](https://github.com/thephpleague/uri/compare/7.4.1...master) - TBD
+## [7.5.0](https://github.com/thephpleague/uri/compare/7.4.1...7.5.0) - 2024-12-08
 
 ### Added
 
 - `Uri::getUsername` returns the encoded user component of the URI.
 - `Uri::getPassword` returns the encoded password component of the URI.
 - `BaseUri::isOpaque` tells whether a URI is opaque.
+- Using PHP8.4 `Deprecated` attribute to signal deprecated public API methods and constants.
 
 ### Fixed
 

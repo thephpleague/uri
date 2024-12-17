@@ -22,6 +22,8 @@ use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
+use function is_bool;
+
 /**
  * @phpstan-import-type InputComponentMap from UriString
  */
@@ -208,6 +210,26 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
             $uri->toString() => $this,
             default => new self($uri),
         };
+    }
+
+    /**
+     * Apply the callback if the given "condition" is (or resolves to) true.
+     *
+     * @param (callable($this): bool)|bool $condition
+     * @param callable($this): (self|null) $onSuccess
+     * @param ?callable($this): (self|null) $onFail
+     */
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): self
+    {
+        if (!is_bool($condition)) {
+            $condition = $condition($this);
+        }
+
+        return match (true) {
+            $condition => $onSuccess($this),
+            null !== $onFail => $onFail($this),
+            default => $this,
+        } ?? $this;
     }
 
     public function withScheme(string $scheme): self

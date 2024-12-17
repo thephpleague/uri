@@ -2,6 +2,26 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [Next](https://github.com/thephpleague/uri/compare/7.5.1...master) - TBD
+
+### Added
+
+- `Http::when` conditional method to ease component building logic.
+- `Uri::when` conditional method to ease component building logic.
+- `BaseUri::when` conditional method to ease component building logic.
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.5.0](https://github.com/thephpleague/uri/compare/7.4.1...7.5.0) - 2024-12-08
 
 ### Added

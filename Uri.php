@@ -38,6 +38,7 @@ use function filter_var;
 use function implode;
 use function in_array;
 use function inet_pton;
+use function is_bool;
 use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
@@ -1022,6 +1023,26 @@ final class Uri implements UriInterface
     public function getFragment(): ?string
     {
         return $this->fragment;
+    }
+
+    /**
+     * Apply the callback if the given "condition" is (or resolves to) true.
+     *
+     * @param (callable($this): bool)|bool $condition
+     * @param callable($this): (self|null) $onSuccess
+     * @param ?callable($this): (self|null) $onFail
+     */
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): self
+    {
+        if (!is_bool($condition)) {
+            $condition = $condition($this);
+        }
+
+        return match (true) {
+            $condition => $onSuccess($this),
+            null !== $onFail => $onFail($this),
+            default => $this,
+        } ?? $this;
     }
 
     /**

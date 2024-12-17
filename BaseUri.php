@@ -24,6 +24,7 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
+use function array_map;
 use function array_pop;
 use function array_reduce;
 use function count;

@@ -380,6 +380,18 @@ final class Uri implements UriInterface
     }
 
     /**
+     * Create a new instance from a string.or a stringable structure or returns null on failure.
+     */
+    public static function tryNew(Stringable|string $uri = ''): ?self
+    {
+        try {
+            return self::new($uri);
+        } catch (UriException) {
+            return null;
+        }
+    }
+
+    /**
      * Create a new instance from a string.
      */
     public static function new(Stringable|string $uri = ''): self

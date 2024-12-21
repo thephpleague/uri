@@ -9,6 +9,8 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Http::when` conditional method to ease component building logic.
 - `Uri::when` conditional method to ease component building logic.
 - `BaseUri::when` conditional method to ease component building logic.
+- `Uri::tryNew` returns a new `Uri` instance on success or null on failure.
+- `Http::tryNew` returns a new `Uri` instance on success or null on failure.
 
 ### Fixed
 

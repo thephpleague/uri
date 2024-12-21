@@ -83,6 +83,18 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
     }
 
     /**
+     * Create a new instance from a string.or a stringable structure or returns null on failure.
+     */
+    public static function tryNew(Stringable|string $uri = ''): ?self
+    {
+        try {
+            return self::new($uri);
+        } catch (UriException) {
+            return null;
+        }
+    }
+
+    /**
      * Create a new instance from a hash of parse_url parts.
      *
      * @param InputComponentMap $components a hash representation of the URI similar

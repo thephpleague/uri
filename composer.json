@@ -45,7 +45,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "league/uri-interfaces": "^7.5"
+        "league/uri-interfaces": "^7.6"
     },
     "autoload": {
         "psr-4": {

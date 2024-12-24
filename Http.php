@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use Deprecated;
 use JsonSerializable;
+use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
@@ -27,7 +28,7 @@ use function is_bool;
 /**
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Http implements Stringable, Psr7UriInterface, JsonSerializable
+final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Conditionable
 {
     private readonly UriInterface $uri;
 
@@ -224,14 +225,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable
         };
     }
 
-    /**
-     * Apply the callback if the given "condition" is (or resolves to) true.
-     *
-     * @param (callable($this): bool)|bool $condition
-     * @param callable($this): (self|null) $onSuccess
-     * @param ?callable($this): (self|null) $onFail
-     */
-    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): self
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
     {
         if (!is_bool($condition)) {
             $condition = $condition($this);

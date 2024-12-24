@@ -15,23 +15,30 @@ namespace League\Uri;
 
 use Deprecated;
 use finfo;
+use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\Idna\Converter as IdnConverter;
+use League\Uri\Idna\Converter as IdnaConverter;
+use League\Uri\IPv4\Converter as IPv4Converter;
+use League\Uri\IPv6\Converter as IPv6Converter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use SensitiveParameter;
 use Stringable;
+use Throwable;
 
 use function array_filter;
 use function array_map;
+use function array_pop;
+use function array_reduce;
 use function base64_decode;
 use function base64_encode;
 use function count;
+use function end;
 use function explode;
 use function file_get_contents;
 use function filter_var;
@@ -42,14 +49,19 @@ use function is_bool;
 use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
+use function preg_split;
+use function rawurldecode;
 use function rawurlencode;
 use function str_contains;
+use function str_repeat;
 use function str_replace;
+use function strcmp;
 use function strlen;
 use function strpos;
 use function strspn;
 use function strtolower;
 use function substr;
+use function uksort;
 
 use const FILEINFO_MIME;
 use const FILTER_FLAG_IPV4;
@@ -57,12 +69,13 @@ use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
+use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Uri implements UriInterface
+final class Uri implements UriInterface, Conditionable
 {
     /**
      * RFC3986 invalid characters.
@@ -170,6 +183,13 @@ final class Uri implements UriInterface
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
+     * Unreserved characters.
+     *
+     * @see https://www.rfc-editor.org/rfc/rfc3986.html#section-2.3
+     */
+    private const REGEXP_UNRESERVED_CHARACTERS = ',%(2[1-9A-Fa-f]|[3-7][0-9A-Fa-f]|61|62|64|65|66|7[AB]|5F),';
+
+    /**
      * Supported schemes and corresponding default port.
      *
      * @var array<string, int|null>
@@ -199,6 +219,12 @@ final class Uri implements UriInterface
      */
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
+    /** @var array<string,int> */
+    private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
+
+    /** @var array<string,int> */
+    private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
+
     private readonly ?string $scheme;
     private readonly ?string $user;
     private readonly ?string $pass;
@@ -210,6 +236,7 @@ final class Uri implements UriInterface
     private readonly ?string $query;
     private readonly ?string $fragment;
     private readonly string $uri;
+    private readonly ?string $origin;
 
     private function __construct(
         ?string $scheme,
@@ -232,8 +259,9 @@ final class Uri implements UriInterface
         $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
         $this->authority = UriString::buildAuthority($this->toComponents());
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
-
         $this->assertValidState();
+
+        $this->origin = $this->setOrigin();
     }
 
     /**
@@ -320,7 +348,7 @@ final class Uri implements UriInterface
         return match (1) {
             preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
             preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name cannot contain URI delimiters or spaces.'),
-            default => IdnConverter::toAsciiOrFail($host),
+            default => IdnaConverter::toAsciiOrFail($host),
         };
     }
 
@@ -380,13 +408,17 @@ final class Uri implements UriInterface
     }
 
     /**
-     * Create a new instance from a string.or a stringable structure or returns null on failure.
+     * Create a new instance from a string or a stringable structure or returns null on failure.
      */
-    public static function tryNew(Stringable|string $uri = ''): ?self
+    public static function tryNew(Stringable|string|null $uri = ''): ?self
     {
+        if (null === $uri) {
+            return null;
+        }
+
         try {
             return self::new($uri);
-        } catch (UriException) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -423,11 +455,11 @@ final class Uri implements UriInterface
         Stringable|string|null $baseUri = null
     ): self {
         $uri = self::new($uri);
-        $baseUri = BaseUri::from($baseUri ?? $uri);
+        $baseUri = self::tryNew($baseUri) ?? $uri;
 
         /** @var self $uri */
         $uri = match (true) {
-            $baseUri->isAbsolute() => $baseUri->resolve($uri)->getUri(),
+            $baseUri->isAbsolute() => $baseUri->resolve($uri),
             default => throw new SyntaxError('the URI `'.$baseUri.'` must be absolute.'),
         };
 
@@ -868,6 +900,58 @@ final class Uri implements UriInterface
     }
 
     /**
+     * Sets the URI origin.
+     *
+     * The origin read-only property of the URL interface returns a string containing the Unicode serialization
+     * of the origin of the represented URL.
+     */
+    private function setOrigin(): ?string
+    {
+        try {
+            if ('blob' !== $this->scheme) {
+                if (!isset(static::WHATWG_SPECIAL_SCHEMES[$this->scheme])) {
+                    return null;
+                }
+
+                return $this
+                    ->withFragment(null)
+                    ->withQuery(null)
+                    ->withPath('')
+                    ->withUserInfo(null)
+                    ->withHost($this->normalizeHost())
+                    ->toString();
+            }
+
+            $components = UriString::parse($this->path);
+            $scheme = strtolower($components['scheme'] ?? '');
+            if (!isset(static::WHATWG_SPECIAL_SCHEMES[$scheme])) {
+                return null;
+            }
+
+            return self::fromComponents($components)->origin;
+        } catch (UriException) {
+            return null;
+        }
+    }
+
+    private function normalizeHost(): ?string
+    {
+        if (null === $this->host) {
+            return null;
+        }
+
+        $host = $this->host;
+        $hostIp = IPv4Converter::fromEnvironment()->toDecimal($host);
+
+        return IdnaConverter::toUnicode((string)IPv6Converter::compress(match (true) {
+            '' === $host,
+            null === $hostIp,
+            $host === $hostIp => $host,
+            default => $hostIp,
+        }))->domain();
+    }
+
+    /**
      * URI validation for URI schemes which allows only scheme and path components.
      */
     private function isUriWithSchemeAndPathOnly(): bool
@@ -1037,14 +1121,12 @@ final class Uri implements UriInterface
         return $this->fragment;
     }
 
-    /**
-     * Apply the callback if the given "condition" is (or resolves to) true.
-     *
-     * @param (callable($this): bool)|bool $condition
-     * @param callable($this): (self|null) $onSuccess
-     * @param ?callable($this): (self|null) $onFail
-     */
-    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): self
+    public function getOrigin(): ?self
+    {
+        return null === $this->origin ? null : Uri::new($this->origin);
+    }
+
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
     {
         if (!is_bool($condition)) {
             $condition = $condition($this);
@@ -1217,6 +1299,415 @@ final class Uri implements UriInterface
                 $fragment,
             ),
         };
+    }
+
+    /**
+     * Tells whether the `file` scheme base URI represents a local file.
+     */
+    public function isLocalFile(): bool
+    {
+        return match (true) {
+            'file' !== $this->scheme => false,
+            in_array($this->authority, ['', null, 'localhost'], true) => true,
+            default => false,
+        };
+    }
+
+    /**
+     * Tells whether the URI is opaque or not.
+     *
+     * A URI is opaque if and only if it is absolute
+     * and does not have an authority path.
+     */
+    public function isOpaque(): bool
+    {
+        return null === $this->authority
+            && null !== $this->scheme;
+    }
+
+    /**
+     * Tells whether two URI do not share the same origin.
+     */
+    public function isCrossOrigin(UriInterface|Stringable|string $uri): bool
+    {
+        if (null === $this->origin) {
+            return true;
+        }
+
+        if (!$uri instanceof UriInterface) {
+            $uri = self::tryNew($uri);
+        }
+
+        if (null === $uri || null === ($origin = $uri->getOrigin())) {
+            return true;
+        }
+
+        return $this->origin !== (string) $origin;
+    }
+
+    public function isSameOrigin(Stringable|string $uri): bool
+    {
+        return ! $this->isCrossOrigin($uri);
+    }
+
+    /**
+     * Tells whether the URI is absolute.
+     */
+    public function isAbsolute(): bool
+    {
+        return null !== $this->scheme;
+    }
+
+    /**
+     * Tells whether the URI is a network path.
+     */
+    public function isNetworkPath(): bool
+    {
+        return null === $this->scheme
+            && null !== $this->authority;
+    }
+
+    /**
+     * Tells whether the URI is an absolute path.
+     */
+    public function isAbsolutePath(): bool
+    {
+        return null === $this->scheme
+            && null === $this->authority
+            && '/' === ($this->path[0] ?? '');
+    }
+
+    /**
+     * Tells whether the URI is a relative path.
+     */
+    public function isRelativePath(): bool
+    {
+        return null === $this->scheme
+            && null === $this->authority
+            && '/' !== ($this->path[0] ?? '');
+    }
+
+    /**
+     * Tells whether both URI refers to the same document.
+     */
+    public function isSameDocument(UriInterface|Stringable|string $uri): bool
+    {
+        return $this->equals($uri);
+    }
+
+    public function equals(UriInterface|Stringable|string $uri, bool $excludeFragment = true): bool
+    {
+        if (!$uri instanceof UriInterface) {
+            $uri = self::tryNew($uri);
+        }
+
+        return match(true) {
+            null === $uri => false,
+            $excludeFragment => $uri->withFragment(null)->toNormalizedString() === $this->withFragment(null)->toNormalizedString(),
+            default => $uri->toNormalizedString() === $this->toNormalizedString(),
+        };
+    }
+
+    public function toNormalizedString(): string
+    {
+        return $this->normalize()->toString();
+    }
+
+    /**
+     * Tells whether the URI contains an Internationalized Domain Name (IDN).
+     */
+    public function hasIdn(): bool
+    {
+        return IdnaConverter::isIdn($this->host);
+    }
+
+    /**
+     * Tells whether the URI contains an IPv4 regardless if it is mapped or native.
+     */
+    public function hasIPv4(): bool
+    {
+        return IPv4Converter::fromEnvironment()->isIpv4($this->host);
+    }
+
+    public function normalize(): UriInterface
+    {
+        return $this
+            ->withHost($this->normalizeHost())
+            ->withPath($this->normalizePath())
+            ->withQuery($this->decodeUnreservedCharacters($this->sortQuery($this->query)))
+            ->withFragment($this->decodeUnreservedCharacters($this->fragment));
+    }
+
+    private function normalizePath(): string
+    {
+        $authority = $this->authority;
+        $path = $this->path;
+        if ('/' === ($path[0] ?? '') || '' !== $this->scheme.$authority) {
+            $path = self::removeDotSegments($path);
+        }
+
+        $path = (string) $this->decodeUnreservedCharacters($path);
+        if (null !== $authority && '' === $path) {
+            return '/';
+        }
+
+        return $path;
+    }
+
+    private function decodeUnreservedCharacters(?string $str): ?string
+    {
+        return match (true) {
+            null === $str,
+            '' === $str => $str,
+            default => preg_replace_callback(
+                self::REGEXP_UNRESERVED_CHARACTERS,
+                static fn (array $matches): string => rawurldecode($matches[0]),
+                $str
+            ) ?? '',
+        };
+    }
+
+    private function sortQuery(?string $query): ?string
+    {
+        $codepoints = fn (?string $str): string => in_array($str, ['', null], true) ? '' : implode('.', array_map(
+            mb_ord(...), /* @phpstan-ignore-line */
+            (array) preg_split(pattern:'//u', subject: $str, flags: PREG_SPLIT_NO_EMPTY)
+        ));
+
+        $compare = fn (string $name1, string $name2): int => match (1) {
+            preg_match('/[^\x20-\x7f]/', $name1.$name2) => strcmp($codepoints($name1), $codepoints($name2)),
+            default => strcmp($name1, $name2),
+        };
+
+        $pairs = QueryString::parseFromValue($query);
+        $parameters = array_reduce($pairs, function (array $carry, array $pair) {
+            $carry[$pair[0]] ??= [];
+            $carry[$pair[0]][] = $pair[1];
+
+            return $carry;
+        }, []);
+
+        uksort($parameters, $compare);
+
+        $newPairs = [];
+        foreach ($parameters as $key => $values) {
+            $newPairs = [...$newPairs, ...array_map(fn ($value) => [$key, $value], $values)];
+        }
+
+        return match ($newPairs) {
+            $pairs  => $query,
+            default => QueryString::buildFromPairs($newPairs),
+        };
+    }
+
+    /**
+     * Remove dot segments from the URI path as per RFC specification.
+     */
+    private static function removeDotSegments(string $path): string
+    {
+        if (!str_contains($path, '.')) {
+            return $path;
+        }
+
+        $reducer = function (array $carry, string $segment): array {
+            if ('..' === $segment) {
+                array_pop($carry);
+
+                return $carry;
+            }
+
+            if (!isset(static::DOT_SEGMENTS[$segment])) {
+                $carry[] = $segment;
+            }
+
+            return $carry;
+        };
+
+        $oldSegments = explode('/', $path);
+        $newPath = implode('/', array_reduce($oldSegments, $reducer(...), []));
+        if (isset(static::DOT_SEGMENTS[end($oldSegments)])) {
+            $newPath .= '/';
+        }
+
+        return $newPath;
+    }
+
+    /**
+     * Resolves a URI against a base URI using RFC3986 rules.
+     *
+     * This method MUST retain the state of the submitted URI instance, and return
+     * a URI instance of the same type that contains the applied modifications.
+     *
+     * This method MUST be transparent when dealing with error and exceptions.
+     * It MUST not alter or silence them apart from validating its own parameters.
+     */
+    public function resolve(Stringable|string $uri): UriInterface
+    {
+        if (!$uri instanceof UriInterface) {
+            $uri = self::new($uri);
+        }
+
+        if (null !== $uri->getScheme()) {
+            return $uri
+                ->withPath(self::removeDotSegments($uri->getPath()));
+        }
+
+        if (null !== $uri->getAuthority()) {
+            return $uri
+                ->withPath(self::removeDotSegments($uri->getPath()))
+                ->withScheme($this->scheme);
+        }
+
+        [$path, $query] = $this->resolvePathAndQuery($uri);
+        $path = self::removeDotSegments($path);
+        if ('' !== $path && '/' !== $path[0] && null !== $this->getAuthority()) {
+            $path = '/'.$path;
+        }
+
+        return $this
+            ->withPath($path)
+            ->withQuery($query)
+            ->withFragment($uri->getFragment());
+    }
+
+    /**
+     * Resolves an URI path and query component.
+     *
+     * @return array{0:string, 1:string|null}
+     */
+    private function resolvePathAndQuery(UriInterface $uri): array
+    {
+        if (str_starts_with($uri->getPath(), '/')) {
+            return [$uri->getPath(), $uri->getQuery()];
+        }
+
+        if ('' === $uri->getPath()) {
+            return [$this->path, $uri->getQuery() ?? $this->query];
+        }
+
+        $targetPath = $uri->getPath();
+        if (null !== $this->authority && '' === $this->path) {
+            $targetPath = '/'.$targetPath;
+        }
+
+        if ('' !== $this->path) {
+            $segments = explode('/', $this->path);
+            array_pop($segments);
+            if ([] !== $segments) {
+                $targetPath = implode('/', $segments).'/'.$targetPath;
+            }
+        }
+
+        return [$targetPath, $uri->getQuery()];
+    }
+
+    /**
+     * Relativize a URI according to a base URI.
+     *
+     * This method MUST retain the state of the submitted URI instance, and return
+     * a URI instance of the same type that contains the applied modifications.
+     *
+     * This method MUST be transparent when dealing with error and exceptions.
+     * It MUST not alter of silence them apart from validating its own parameters.
+     */
+    public function relativize(Stringable|string $uri): UriInterface
+    {
+        if (!$uri instanceof UriInterface) {
+            $uri = self::new($uri);
+        }
+
+        if (
+            $this->scheme !== $uri->getScheme() ||
+            $this->authority !== $uri->getAuthority() ||
+            $uri->isRelativePath()) {
+            return $uri;
+        }
+
+        $targetPath = $uri->getPath();
+        $basePath = $this->path;
+
+        $uri = $uri
+            ->withScheme(null)
+            ->withUserInfo(null)
+            ->withPort(null)
+            ->withHost(null);
+
+        return match (true) {
+            $targetPath !== $basePath => $uri->withPath(self::relativizePath($targetPath, $basePath)),
+            $this->query === $uri->getQuery() => $uri->withPath('')->withQuery(null),
+            null === $uri->getQuery() => $uri->withPath(self::formatPathWithEmptyBaseQuery($targetPath)),
+            default => $uri->withPath(''),
+        };
+    }
+
+    /**
+     * Formatting the path to keep a resolvable URI.
+     */
+    private static function formatPathWithEmptyBaseQuery(string $path): string
+    {
+        $targetSegments = self::getSegments($path);
+        /** @var string $basename */
+        $basename = end($targetSegments);
+
+        return '' === $basename ? './' : $basename;
+    }
+
+    /**
+     * Relatives the URI for an authority-less target URI.
+     */
+    private static function relativizePath(string $path, string $basePath): string
+    {
+        $baseSegments = self::getSegments($basePath);
+        $targetSegments = self::getSegments($path);
+        $targetBasename = array_pop($targetSegments);
+        array_pop($baseSegments);
+        foreach ($baseSegments as $offset => $segment) {
+            if (!isset($targetSegments[$offset]) || $segment !== $targetSegments[$offset]) {
+                break;
+            }
+            unset($baseSegments[$offset], $targetSegments[$offset]);
+        }
+        $targetSegments[] = $targetBasename;
+
+        return static::formatRelativePath(
+            str_repeat('../', count($baseSegments)).implode('/', $targetSegments),
+            $basePath
+        );
+    }
+
+    /**
+     * Formatting the path to keep a valid URI.
+     */
+    private static function formatRelativePath(string $path, string $basePath): string
+    {
+        $colonPosition = strpos($path, ':');
+        $slashPosition = strpos($path, '/');
+
+        return match (true) {
+            '' === $path => match (true) {
+                '' === $basePath,
+                '/' === $basePath => $basePath,
+                default => './',
+            },
+            false === $colonPosition => $path,
+            false === $slashPosition,
+            $colonPosition < $slashPosition  =>  "./$path",
+            default => $path,
+        };
+    }
+
+    /**
+     * returns the path segments.
+     *
+     * @return string[]
+     */
+    private static function getSegments(string $path): array
+    {
+        return explode('/', match (true) {
+            '' === $path,
+            '/' !== $path[0] => $path,
+            default => substr($path, 1),
+        });
     }
 
     /**

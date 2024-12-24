@@ -6,15 +6,27 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- `Http::when` conditional method to ease component building logic.
-- `Uri::when` conditional method to ease component building logic.
 - `BaseUri::when` conditional method to ease component building logic.
-- `Uri::tryNew` returns a new `Uri` instance on success or null on failure.
+- `Http::when` conditional method to ease component building logic.
 - `Http::tryNew` returns a new `Uri` instance on success or null on failure.
+- `Uri::when` conditional method to ease component building logic.
+- `Uri::tryNew` returns a new `Uri` instance on success or null on failure.
+- `Uri::resolve`
+- `Uri::relativize`
+- `Uri::isAbsolute`
+- `Uri::isNetworkPath`
+- `Uri::isAbsolutePath`
+- `Uri::isRelativePath`
+- `Uri::isSameDocument`
+- `Uri::equals`
+- `Uri::toNormalizedString`
+- `Uri::getOrigin`
+- `Uri::isSameOrigin`
+- `Uri::isCrossOrigin`
 
 ### Fixed
 
-- None
+- `Uri` and `Http` normalization normalized IP against RFC3986 rules and not WHATWG rules.
 
 ### Deprecated
 

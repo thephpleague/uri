@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use JsonSerializable;
+use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
@@ -43,7 +44,7 @@ use function substr;
 /**
  * @phpstan-import-type ComponentMap from UriInterface
  */
-class BaseUri implements Stringable, JsonSerializable, UriAccess
+class BaseUri implements Stringable, JsonSerializable, UriAccess, Conditionable
 {
     /** @var array<string,int> */
     final protected const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
@@ -362,14 +363,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         );
     }
 
-    /**
-     * Apply the callback if the given "condition" is (or resolves to) true.
-     *
-     * @param (callable($this): bool)|bool $condition
-     * @param callable($this): (self|null) $onSuccess
-     * @param ?callable($this): (self|null) $onFail
-     */
-    final public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): self
+    final public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
     {
         if (!is_bool($condition)) {
             $condition = $condition($this);

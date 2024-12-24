@@ -11,12 +11,14 @@
 
 namespace League\Uri;
 
+use GuzzleHttp\Psr7\Utils;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Port;
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
@@ -790,6 +792,193 @@ class UriTest extends TestCase
             'comparing two opaque URI' => ['ldap://ldap.example.net', 'ldap://ldap.example.net', true],
             'comparing a URI with an origin and one with an opaque origin' => ['https://example.com:443/123', 'ldap://ldap.example.net', true],
             'cross origin using a blob' => ['blob:http://mozilla.org:443/', 'https://mozilla.org/123', true],
+        ];
+    }
+
+    #[DataProvider('idnUriProvider')]
+    public function testItReturnsTheCorrectUriString(string $expected, string $input): void
+    {
+        self::assertSame($expected, Uri::new($input)->toDisplayString());
+    }
+
+    public static function idnUriProvider(): iterable
+    {
+        yield 'basic uri stays the same' => [
+            'expected' => 'http://example.com/foo/bar',
+            'input' => 'http://example.com/foo/bar',
+        ];
+
+        yield 'idn host are changed' => [
+            'expected' => 'http://bébé.be',
+            'input' => 'http://xn--bb-bjab.be',
+        ];
+
+        yield 'idn host are the same' => [
+            'expected' => 'http://bébé.be',
+            'input' => 'http://bébé.be',
+        ];
+
+        yield 'the rest of the URI is not affected and uses RFC3986 rules' => [
+            'expected' => 'http://bébé.be?q=toto le héros',
+            'input' => 'http://bébé.be:80?q=toto%20le%20h%C3%A9ros',
+        ];
+    }
+
+    #[DataProvider('unixpathProvider')]
+    public function testReturnsUnixPath(?string $expected, string $input): void
+    {
+        self::assertSame($expected, Uri::new($input)->toUnixPath());
+        self::assertSame($expected, Uri::new(Utils::uriFor($input))->toUnixPath());
+    }
+
+    public static function unixpathProvider(): array
+    {
+        return [
+            'relative path' => [
+                'expected' => 'path',
+                'input' => 'path',
+            ],
+            'absolute path' => [
+                'expected' => '/path',
+                'input' => 'file:///path',
+            ],
+            'path with empty char' => [
+                'expected' => '/path empty/bar',
+                'input' => 'file:///path%20empty/bar',
+            ],
+            'relative path with dot segments' => [
+                'expected' => 'path/./relative',
+                'input' => 'path/./relative',
+            ],
+            'absolute path with dot segments' => [
+                'expected' => '/path/./../relative',
+                'input' => 'file:///path/./../relative',
+            ],
+            'unsupported scheme' => [
+                'expected' => null,
+                'input' => 'http://example.com/foo/bar',
+            ],
+        ];
+    }
+
+    #[DataProvider('windowLocalPathProvider')]
+    public function testReturnsWindowsPath(?string $expected, string $input): void
+    {
+        self::assertSame($expected, Uri::new($input)->toWindowsPath());
+    }
+
+    public static function windowLocalPathProvider(): array
+    {
+        return [
+            'relative path' => [
+                'expected' => 'path',
+                'input' => 'path',
+            ],
+            'relative path with dot segments' => [
+                'expected' => 'path\.\relative',
+                'input' => 'path/./relative',
+            ],
+            'absolute path' => [
+                'expected' => 'c:\windows\My Documents 100%20\foo.txt',
+                'input' => 'file:///c:/windows/My%20Documents%20100%2520/foo.txt',
+            ],
+            'windows relative path' => [
+                'expected' => 'c:My Documents 100%20\foo.txt',
+                'input' => 'file:///c:My%20Documents%20100%2520/foo.txt',
+            ],
+            'absolute path with `|`' => [
+                'expected' => 'c:\windows\My Documents 100%20\foo.txt',
+                'input' => 'file:///c:/windows/My%20Documents%20100%2520/foo.txt',
+            ],
+            'windows relative path with `|`' => [
+                'expected' => 'c:My Documents 100%20\foo.txt',
+                'input' => 'file:///c:My%20Documents%20100%2520/foo.txt',
+            ],
+            'absolute path with dot segments' => [
+                'expected' => '\path\.\..\relative',
+                'input' => '/path/./../relative',
+            ],
+            'absolute UNC path' => [
+                'expected' => '\\\\server\share\My Documents 100%20\foo.txt',
+                'input' => 'file://server/share/My%20Documents%20100%2520/foo.txt',
+            ],
+            'unsupported scheme' => [
+                'expected' => null,
+                'input' => 'http://example.com/foo/bar',
+            ],
+        ];
+    }
+
+    #[DataProvider('rfc8089UriProvider')]
+    public function testReturnsRFC8089UriString(?string $expected, string $input): void
+    {
+        self::assertSame($expected, Uri::new($input)->toRfc8089());
+    }
+
+    public static function rfc8089UriProvider(): iterable
+    {
+        return [
+            'localhost' => [
+                'expected' => 'file:/etc/fstab',
+                'input' => 'file://localhost/etc/fstab',
+            ],
+            'empty authority' => [
+                'expected' => 'file:/etc/fstab',
+                'input' => 'file:///etc/fstab',
+            ],
+            'file with authority' => [
+                'expected' => 'file://yesman/etc/fstab',
+                'input' => 'file://yesman/etc/fstab',
+            ],
+            'invalid scheme' => [
+                'expected' => null,
+                'input' => 'foobar://yesman/etc/fstab',
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('providesUriToDisplay')]
+    public function it_will_generate_the_display_uri_string(string $input, string $output): void
+    {
+        self::assertSame($output, Uri::new($input)->toDisplayString());
+    }
+
+    public static function providesUriToDisplay(): iterable
+    {
+        yield 'empty string' => [
+            'input' => '',
+            'output' => '',
+        ];
+
+        yield 'host IPv6' => [
+            'input' => 'https://[fe80:0000:0000:0000:0000:0000:0000:000a%25en1]/foo/bar',
+            'output' => 'https://[fe80::a%en1]/foo/bar',
+        ];
+
+        yield 'IPv6 gets expanded if needed' => [
+            'input' => 'http://bébé.be?q=toto%20le%20h%C3%A9ros',
+            'output' => 'http://bébé.be?q=toto le héros',
+        ];
+
+        yield 'complex URI' => [
+            'input' => 'https://xn--google.com/secret/../search?q=%F0%9F%8D%94',
+            'output' => 'https://䕮䕵䕶䕱.com/search?q=🍔',
+        ];
+
+        yield 'basic uri stays the same' => [
+            'input' => 'http://example.com/foo/bar',
+            'output' => 'http://example.com/foo/bar',
+        ];
+
+        yield 'idn host are changed' => [
+            'input' => 'http://xn--bb-bjab.be',
+            'output' => 'http://bébé.be',
+        ];
+
+        yield 'idn host are the same' => [
+            'input' => 'http://bébé.be',
+            'output' => 'http://bébé.be',
         ];
     }
 }

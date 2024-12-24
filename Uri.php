@@ -1000,25 +1000,112 @@ final class Uri implements UriInterface, Conditionable
         return $this->isNonEmptyHostUri() && null === $this->fragment && null === $this->query;
     }
 
-    public function toString(): string
-    {
-        return $this->uri;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function __toString(): string
     {
         return $this->toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function jsonSerialize(): string
     {
         return $this->toString();
+    }
+
+    public function toString(): string
+    {
+        return $this->uri;
+    }
+
+    public function toNormalizedString(): string
+    {
+        return $this->normalize()->toString();
+    }
+
+    public function toDisplayString(): string
+    {
+        /** @var ComponentMap $components */
+        $components = array_map(
+            fn (?string $value): ?string => (null === $value || '' === $value) ? $value : rawurldecode($value),
+            $this->normalize()->toComponents()
+        );
+
+        if (null !== $components['host']) {
+            $components['host'] = IdnaConverter::toUnicode($components['host'])->domain();
+        }
+
+        if ('/' === $components['path'] && null !== $this->authority) {
+            $components['path'] = '';
+        }
+
+        return UriString::build($components);
+    }
+
+    /**
+     * Returns the Unix filesystem path.
+     *
+     * The method will return null if a scheme is present and is not the `file` scheme
+     */
+    public function toUnixPath(): ?string
+    {
+        return match ($this->scheme) {
+            'file', null => rawurldecode($this->path),
+            default => null,
+        };
+    }
+
+    /**
+     * Returns the Windows filesystem path.
+     *
+     * The method will return null if a scheme is present and is not the `file` scheme
+     */
+    public function toWindowsPath(): ?string
+    {
+        static $regexpWindowsPath = ',^(?<root>[a-zA-Z]:),';
+
+        if (!in_array($this->scheme, ['file', null], true)) {
+            return null;
+        }
+
+        $originalPath = $this->path;
+        $path = $originalPath;
+        if ('/' === ($path[0] ?? '')) {
+            $path = substr($path, 1);
+        }
+
+        if (1 === preg_match($regexpWindowsPath, $path, $matches)) {
+            $root = $matches['root'];
+            $path = substr($path, strlen($root));
+
+            return $root.str_replace('/', '\\', rawurldecode($path));
+        }
+
+        $host = $this->host;
+
+        return match (null) {
+            $host => str_replace('/', '\\', rawurldecode($originalPath)),
+            default => '\\\\'.$host.'\\'.str_replace('/', '\\', rawurldecode($path)),
+        };
+    }
+
+    /**
+     * Returns a string representation of a File URI according to RFC8089.
+     *
+     * The method will return null if the URI scheme is not the `file` scheme
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc8089
+     */
+    public function toRfc8089(): ?string
+    {
+        $path = $this->path;
+
+        return match (true) {
+            'file' !== $this->scheme => null,
+            in_array($this->authority, ['', null, 'localhost'], true) => 'file:'.match (true) {
+                '' === $path,
+                '/' === $path[0] => $path,
+                default => '/'.$path,
+            },
+            default => $this->toString(),
+        };
     }
 
     /**
@@ -1406,11 +1493,6 @@ final class Uri implements UriInterface, Conditionable
             $excludeFragment => $uri->withFragment(null)->toNormalizedString() === $this->withFragment(null)->toNormalizedString(),
             default => $uri->toNormalizedString() === $this->toNormalizedString(),
         };
-    }
-
-    public function toNormalizedString(): string
-    {
-        return $this->normalize()->toString();
     }
 
     /**

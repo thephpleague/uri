@@ -23,6 +23,10 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::getOrigin`
 - `Uri::isSameOrigin`
 - `Uri::isCrossOrigin`
+- `Uri::todisplayString` shows the URI in a human-readable format which may be an invalid URI.
+- `Uri::toUnixPath` returns the URI path as a Unix Path or `null`
+- `Uri::toWindowsPath` returns the URI path as a Windows Path or `null`
+- `Uri::toRfc8089` return the URI in a RFC8089 formator `null`
 
 ### Fixed
 

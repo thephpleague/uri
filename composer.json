@@ -56,6 +56,7 @@
         "league/uri-schemes": "^1.0"
     },
     "suggest": {
+        "ext-dom": "to convert the URI into an HTML anchor tag",
         "ext-bcmath": "to improve IPV4 host parsing",
         "ext-fileinfo": "to create Data URI from file contennts",
         "ext-gmp": "to improve IPV4 host parsing",

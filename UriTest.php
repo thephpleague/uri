@@ -717,7 +717,7 @@ class UriTest extends TestCase
     #[DataProvider('getOriginProvider')]
     public function testGetOrigin(Psr7UriInterface|Uri|string $uri, ?string $expectedOrigin): void
     {
-        self::assertSame($expectedOrigin, Uri::new($uri)->getOrigin()?->toString());
+        self::assertSame($expectedOrigin, Uri::new($uri)->getOrigin());
     }
 
     public static function getOriginProvider(): array
@@ -979,6 +979,97 @@ class UriTest extends TestCase
         yield 'idn host are the same' => [
             'input' => 'http://bébé.be',
             'output' => 'http://bébé.be',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('providesUriToMarkdown')]
+    public function it_will_generate_the_markdown_code_for_the_instance(string $uri, ?string $content, string $expected): void
+    {
+        self::assertSame($expected, Uri::new($uri)->toMarkdown($content));
+    }
+
+    public static function providesUriToMarkdown(): iterable
+    {
+        yield 'empty string' => [
+            'uri' => '',
+            'content' => '',
+            'expected' => '[]()',
+        ];
+
+        yield 'URI with a specific content' => [
+            'uri' => 'http://example.com/foo/bar',
+            'content' => 'this is a link',
+            'expected' => '[this is a link](http://example.com/foo/bar)',
+        ];
+
+        yield 'URI without content' => [
+            'uri' => 'http://Bébé.be',
+            'content' => null,
+            'expected' => '[http://bébé.be](http://xn--bb-bjab.be)',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('providesUriToHTML')]
+    public function it_will_generate_the_html_code_for_the_instance(
+        string $uri,
+        ?string $content,
+        ?string $class,
+        ?string $target,
+        string $expected
+    ): void {
+        self::assertSame($expected, Uri::new($uri)->toAnchorTag($content, $class, $target));
+    }
+
+    public static function providesUriToHTML(): iterable
+    {
+        yield 'empty string' => [
+            'uri' => '',
+            'content' => '',
+            'class' => null,
+            'target' => null,
+            'expected' => '<a href=""></a>',
+        ];
+
+        yield 'URI with a specific content' => [
+            'uri' => 'http://example.com/foo/bar',
+            'content' => 'this is a link',
+            'class' => null,
+            'target' => null,
+            'expected' => '<a href="http://example.com/foo/bar">this is a link</a>',
+        ];
+
+        yield 'URI without content' => [
+            'uri' => 'http://Bébé.be',
+            'content' => null,
+            'class' => null,
+            'target' => null,
+            'expected' => '<a href="http://xn--bb-bjab.be">http://bébé.be</a>',
+        ];
+
+        yield 'URI without content and with class' => [
+            'uri' => 'http://Bébé.be',
+            'content' => null,
+            'class' => 'foo bar',
+            'target' => null,
+            'expected' => '<a href="http://xn--bb-bjab.be" class="foo bar">http://bébé.be</a>',
+        ];
+
+        yield 'URI without content and with target' => [
+            'uri' => 'http://Bébé.be',
+            'content' => null,
+            'class' => null,
+            'target' => '_blank',
+            'expected' => '<a href="http://xn--bb-bjab.be" target="_blank">http://bébé.be</a>',
+        ];
+
+        yield 'URI without content, with target and class' => [
+            'uri' => 'http://Bébé.be',
+            'content' => null,
+            'class' => 'foo bar',
+            'target' => '_blank',
+            'expected' => '<a href="http://xn--bb-bjab.be" class="foo bar" target="_blank">http://bébé.be</a>',
         ];
     }
 }

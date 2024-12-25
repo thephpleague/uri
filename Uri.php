@@ -14,10 +14,14 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use Deprecated;
+use DOMDocument;
+use DOMException;
 use finfo;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
+use League\Uri\Contracts\UriEncoder;
 use League\Uri\Contracts\UriException;
+use League\Uri\Contracts\UriInspector;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
@@ -45,6 +49,7 @@ use function filter_var;
 use function implode;
 use function in_array;
 use function inet_pton;
+use function is_array;
 use function is_bool;
 use function ltrim;
 use function preg_match;
@@ -75,7 +80,7 @@ use const PREG_SPLIT_NO_EMPTY;
  * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Uri implements UriInterface, Conditionable
+final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
 {
     /**
      * RFC3986 invalid characters.
@@ -428,10 +433,7 @@ final class Uri implements UriInterface, Conditionable
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        $components = match (true) {
-            $uri instanceof UriInterface => $uri->toComponents(),
-            default => UriString::parse($uri),
-        };
+        $components = UriString::parse($uri);
 
         return new self(
             $components['scheme'],
@@ -475,7 +477,7 @@ final class Uri implements UriInterface, Conditionable
     public static function fromTemplate(UriTemplate|Stringable|string $template, iterable $variables = []): self
     {
         return match (true) {
-            $template instanceof UriTemplate => self::fromComponents($template->expand($variables)->toComponents()),
+            $template instanceof UriTemplate => self::new($template->expand($variables)),
             $template instanceof UriTemplate\Template => self::new($template->expand($variables)),
             default => self::new(UriTemplate\Template::new($template)->expand($variables)),
         };
@@ -1040,6 +1042,49 @@ final class Uri implements UriInterface, Conditionable
     }
 
     /**
+     * Returns the HTML string representation of the anchor tag with the current instance as its href attribute.
+     *
+     * @param list<string>|string|null $class
+     *
+     * @throws DOMException
+     */
+    public function toAnchorTag(?string $linkText = null, array|string|null $class = null, ?string $target = null): string
+    {
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->preserveWhiteSpace = false;
+        $doc->formatOutput = true;
+        $anchor = $doc->createElement('a');
+        $anchor->setAttribute('href', $this->toString());
+        if (null !== $class) {
+            $anchor->setAttribute('class', is_array($class) ? implode(' ', $class) : $class);
+        }
+
+        if (null !== $target) {
+            $anchor->setAttribute('target', $target);
+        }
+
+        $textNode = $doc->createTextNode($linkText ?? $this->toDisplayString());
+        if (false === $textNode) {
+            throw new DOMException('The link generation failed.');
+        }
+        $anchor->appendChild($textNode);
+        $anchor = $doc->saveHTML($anchor);
+        if (false === $anchor) {
+            throw new DOMException('The link generation failed.');
+        }
+
+        return $anchor;
+    }
+
+    /**
+     * Returns the markdown string representation of the anchor tag with the current instance as its href attribute.
+     */
+    public function toMarkdown(?string $linkText = null): string
+    {
+        return '['.($linkText ?? $this->toDisplayString()).']('.$this->toString().')';
+    }
+
+    /**
      * Returns the Unix filesystem path.
      *
      * The method will return null if a scheme is present and is not the `file` scheme
@@ -1125,65 +1170,41 @@ final class Uri implements UriInterface, Conditionable
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getScheme(): ?string
     {
         return $this->scheme;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getAuthority(): ?string
     {
         return $this->authority;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getUsername(): ?string
+    public function getUser(): ?string
     {
         return $this->user;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPassword(): ?string
     {
         return $this->pass;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getUserInfo(): ?string
     {
         return $this->userInfo;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getHost(): ?string
     {
         return $this->host;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPort(): ?int
     {
         return $this->port;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPath(): string
     {
         return match (true) {
@@ -1192,25 +1213,19 @@ final class Uri implements UriInterface, Conditionable
         };
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getQuery(): ?string
     {
         return $this->query;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getFragment(): ?string
     {
         return $this->fragment;
     }
 
-    public function getOrigin(): ?self
+    public function getOrigin(): ?string
     {
-        return null === $this->origin ? null : Uri::new($this->origin);
+        return $this->origin;
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
@@ -1226,9 +1241,6 @@ final class Uri implements UriInterface, Conditionable
         } ?? $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function withScheme(Stringable|string|null $scheme): UriInterface
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
@@ -1421,15 +1433,12 @@ final class Uri implements UriInterface, Conditionable
             return true;
         }
 
-        if (!$uri instanceof UriInterface) {
-            $uri = self::tryNew($uri);
-        }
-
+        $uri = self::tryNew($uri);
         if (null === $uri || null === ($origin = $uri->getOrigin())) {
             return true;
         }
 
-        return $this->origin !== (string) $origin;
+        return $this->origin !== $origin;
     }
 
     public function isSameOrigin(Stringable|string $uri): bool
@@ -1694,9 +1703,7 @@ final class Uri implements UriInterface, Conditionable
      */
     public function relativize(Stringable|string $uri): UriInterface
     {
-        if (!$uri instanceof UriInterface) {
-            $uri = self::new($uri);
-        }
+        $uri = self::new($uri);
 
         if (
             $this->scheme !== $uri->getScheme() ||
@@ -1930,5 +1937,20 @@ final class Uri implements UriInterface, Conditionable
     public static function createFromServer(array $server): self
     {
         return self::fromServer($server);
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.6.0
+     * @codeCoverageIgnore
+     * @see Uri::getUser()
+     *
+     * Retuns the user component encoded value.
+     */
+    #[Deprecated(message:'use League\Uri\Uri::getUser() instead', since:'league/uri:7.6.0')]
+    public function getUsername(): ?string
+    {
+        return $this->getUser();
     }
 }

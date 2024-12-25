@@ -29,6 +29,9 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::toRfc8089` return the URI in a RFC8089 formator `null`
 - `Uri::toAnchor` returns the HTML anchor string using the instance as the href attribute value
 - `Uri::toMarkdown` returns the markdown link construct using the instance as the href attribute value
+- `Uri::getUser` to be inline with PHP native URI interface
+- `Uri::withUser` to be inline with PHP native URI interface
+- `Uri::withPassword` to be inline with PHP native URI interface
 
 ### Fixed
 

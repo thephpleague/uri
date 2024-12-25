@@ -1072,4 +1072,30 @@ class UriTest extends TestCase
             'expected' => '<a href="http://xn--bb-bjab.be" class="foo bar" target="_blank">http://bébé.be</a>',
         ];
     }
+
+    #[Test]
+    public function it_can_update_the_user_component(): void
+    {
+        self::assertSame('user', Uri::new('example://host/path?query')->withUser('user')->getUser());
+        self::assertNull(Uri::new('example://user@host/path?query')->withUser(null)->getUser());
+    }
+
+    #[Test]
+    public function it_can_update_the_password_component(): void
+    {
+        self::assertNull(Uri::new('example://user:pass@host/path?query')->withPassword(null)->getPassword());
+
+        self::assertSame(
+            'example://user:pass@host/path?query',
+            Uri::new('example://user@host/path?query')->withPassword('pass')->toString()
+        );
+    }
+
+    #[Test]
+    public function it_requires_a_user_component_to_update_the_password_component(): void
+    {
+        $this->expectException(SyntaxError::class);
+
+        Uri::new('example://host/path?query')->withPassword('pass');
+    }
 }

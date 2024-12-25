@@ -1303,6 +1303,19 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         };
     }
 
+    public function withUser(Stringable|string|null $user): UriInterface
+    {
+        return $this->withUserInfo($user, $this->pass);
+    }
+
+    public function withPassword(#[SensitiveParameter] Stringable|string|null $password): UriInterface
+    {
+        return match ($this->user) {
+            null => throw new SyntaxError('The password component can not be if the URI user component is not set.'),
+            default => $this->withUserInfo($this->user, $password),
+        };
+    }
+
     public function withHost(Stringable|string|null $host): UriInterface
     {
         $host = $this->formatHost($this->filterString($host));

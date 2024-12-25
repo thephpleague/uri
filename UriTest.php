@@ -23,6 +23,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
 
+use function serialize;
+use function unserialize;
+
 #[CoversClass(Uri::class)]
 #[Group('uri')]
 class UriTest extends TestCase
@@ -1097,5 +1100,15 @@ class UriTest extends TestCase
         $this->expectException(SyntaxError::class);
 
         Uri::new('example://host/path?query')->withPassword('pass');
+    }
+
+    #[Test]
+    public function it_can_be_serialized_by_php(): void
+    {
+        $uri = Uri::new('https://user:pass@example.com:81/path?query#fragment');
+        /** @var Uri $newUri */
+        $newUri = unserialize(serialize($uri));
+
+        self::assertTrue($uri->equals($newUri, excludeFragment: false));
     }
 }

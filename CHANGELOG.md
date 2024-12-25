@@ -32,6 +32,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::getUser` to be inline with PHP native URI interface
 - `Uri::withUser` to be inline with PHP native URI interface
 - `Uri::withPassword` to be inline with PHP native URI interface
+- `Uri::__serialize` and `Uri::__unserialize` methods
 
 ### Fixed
 

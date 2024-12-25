@@ -265,7 +265,6 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         $this->authority = UriString::buildAuthority($this->toComponents());
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
-
         $this->origin = $this->setOrigin();
     }
 
@@ -1810,6 +1809,31 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
             '/' !== $path[0] => $path,
             default => substr($path, 1),
         });
+    }
+
+    public function __serialize(): array
+    {
+        return $this->toComponents();
+    }
+
+    /**
+     * @param ComponentMap $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->scheme = $this->formatScheme($data['scheme'] ?? null);
+        $this->user = Encoder::encodeUser($data['user'] ?? null);
+        $this->pass = Encoder::encodePassword($data['pass'] ?? null);
+        $this->host = $this->formatHost($data['host'] ?? null);
+        $this->port = $this->formatPort($data['port'] ?? null);
+        $this->path = $this->formatPath($data['path'] ?? '');
+        $this->query = Encoder::encodeQueryOrFragment($data['query'] ?? null);
+        $this->fragment = Encoder::encodeQueryOrFragment($data['fragment'] ?? null);
+        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
+        $this->authority = UriString::buildAuthority($this->toComponents());
+        $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
+        $this->assertValidState();
+        $this->origin = $this->setOrigin();
     }
 
     /**

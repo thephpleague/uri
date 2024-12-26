@@ -23,7 +23,12 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use TypeError;
 
+use function base64_encode;
+use function dirname;
+use function file_get_contents;
 use function serialize;
+use function stream_context_create;
+use function unlink;
 use function unserialize;
 
 #[CoversClass(Uri::class)]
@@ -34,11 +39,12 @@ class UriTest extends TestCase
 
     private Uri $uri;
 
-    protected function setUp(): void
+    private string $rootPath;
+
+    public function setUp(): void
     {
-        $this->uri = Uri::new(
-            'http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3'
-        );
+        $this->rootPath = dirname(__DIR__).'/test_files';
+        $this->uri = Uri::new('http://login:pass@secure.example.com:443/test/query.php?kingkong=toto#doc3');
     }
 
     protected function tearDown(): void
@@ -1015,14 +1021,9 @@ class UriTest extends TestCase
 
     #[Test]
     #[DataProvider('providesUriToHTML')]
-    public function it_will_generate_the_html_code_for_the_instance(
-        string $uri,
-        ?string $content,
-        ?string $class,
-        ?string $target,
-        string $expected
-    ): void {
-        self::assertSame($expected, Uri::new($uri)->toAnchorTag($content, $class, $target));
+    public function it_will_generate_the_html_code_for_the_instance(string $uri, ?string $content, array $parameters, string $expected): void
+    {
+        self::assertSame($expected, Uri::new($uri)->toAnchorTag($content, $parameters));
     }
 
     public static function providesUriToHTML(): iterable
@@ -1030,48 +1031,51 @@ class UriTest extends TestCase
         yield 'empty string' => [
             'uri' => '',
             'content' => '',
-            'class' => null,
-            'target' => null,
+            'parameters' => [],
             'expected' => '<a href=""></a>',
         ];
 
         yield 'URI with a specific content' => [
             'uri' => 'http://example.com/foo/bar',
             'content' => 'this is a link',
-            'class' => null,
-            'target' => null,
+            'parameters' => [],
             'expected' => '<a href="http://example.com/foo/bar">this is a link</a>',
         ];
 
         yield 'URI without content' => [
             'uri' => 'http://Bébé.be',
             'content' => null,
-            'class' => null,
-            'target' => null,
+            'parameters' => [],
             'expected' => '<a href="http://xn--bb-bjab.be">http://bébé.be</a>',
         ];
 
         yield 'URI without content and with class' => [
             'uri' => 'http://Bébé.be',
             'content' => null,
-            'class' => 'foo bar',
-            'target' => null,
+            'parameters' => [
+                'class' => 'foo bar',
+                'target' => null,
+            ],
             'expected' => '<a href="http://xn--bb-bjab.be" class="foo bar">http://bébé.be</a>',
         ];
 
         yield 'URI without content and with target' => [
             'uri' => 'http://Bébé.be',
             'content' => null,
-            'class' => null,
-            'target' => '_blank',
+            'parameters' => [
+                'class' => null,
+                'target' => '_blank',
+            ],
             'expected' => '<a href="http://xn--bb-bjab.be" target="_blank">http://bébé.be</a>',
         ];
 
         yield 'URI without content, with target and class' => [
             'uri' => 'http://Bébé.be',
             'content' => null,
-            'class' => 'foo bar',
-            'target' => '_blank',
+            'parameters' => [
+                'class' => 'foo bar',
+                'target' => '_blank',
+            ],
             'expected' => '<a href="http://xn--bb-bjab.be" class="foo bar" target="_blank">http://bébé.be</a>',
         ];
     }
@@ -1110,5 +1114,41 @@ class UriTest extends TestCase
         $newUri = unserialize(serialize($uri));
 
         self::assertTrue($uri->equals($newUri, excludeFragment: false));
+    }
+
+    #[Test]
+    public function it_can_save_data_uri_binary_encoded(): void
+    {
+        $newFilePath = $this->rootPath.'/temp.gif';
+        $uri = Uri::fromFileContents($this->rootPath.'/red-nose.gif');
+        $uri->toFileContents($newFilePath);
+
+        self::assertSame($uri->toString(), Uri::fromFileContents($newFilePath)->toString());
+
+        // Ensure file handle of \SplFileObject gets closed.
+        unlink($newFilePath);
+    }
+
+    #[Test]
+    public function it_can_save_to_file_with_raw_data(): void
+    {
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "Accept-language: en\r\nCookie: foo=bar\r\n",
+            ],
+        ]);
+
+        $newFilePath = $this->rootPath.'/temp.txt';
+
+        $uri = Uri::fromFileContents($this->rootPath.'/hello-world.txt', $context);
+        $uri->toFileContents($newFilePath);
+        self::assertSame((string) $uri, (string) Uri::fromFileContents($newFilePath));
+
+        $data = file_get_contents($newFilePath);
+        self::assertStringContainsString(base64_encode((string) $data), $uri->getPath());
+
+        // Ensure file handle of \SplFileObject gets closed.
+        unlink($newFilePath);
     }
 }

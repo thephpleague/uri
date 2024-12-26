@@ -6,33 +6,15 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
+- Added methods to align with the upcoming `Uri\Rfc3986Uri` PHP native class (see: https://wiki.php.net/rfc/url_parsing_api#proposal)
+- `Uri::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::new`).
+- `Http::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Http::new`).
+- `BaseUri::tryfrom` returns a new `BaseUri` instance on success or null on failure (ie: a Relax version of `BaseUri::from`).
 - `BaseUri::when` conditional method to ease component building logic.
 - `Http::when` conditional method to ease component building logic.
-- `Http::tryNew` returns a new `Uri` instance on success or null on failure.
 - `Uri::when` conditional method to ease component building logic.
-- `Uri::tryNew` returns a new `Uri` instance on success or null on failure.
-- `Uri::resolve`
-- `Uri::relativize`
-- `Uri::isAbsolute`
-- `Uri::isNetworkPath`
-- `Uri::isAbsolutePath`
-- `Uri::isRelativePath`
-- `Uri::isSameDocument`
-- `Uri::equals`
-- `Uri::toNormalizedString`
-- `Uri::getOrigin`
-- `Uri::isSameOrigin`
-- `Uri::isCrossOrigin`
-- `Uri::todisplayString` shows the URI in a human-readable format which may be an invalid URI.
-- `Uri::toUnixPath` returns the URI path as a Unix Path or `null`
-- `Uri::toWindowsPath` returns the URI path as a Windows Path or `null`
-- `Uri::toRfc8089` return the URI in a RFC8089 formator `null`
-- `Uri::toAnchor` returns the HTML anchor string using the instance as the href attribute value
-- `Uri::toMarkdown` returns the markdown link construct using the instance as the href attribute value
-- `Uri::getUser` to be inline with PHP native URI interface
-- `Uri::withUser` to be inline with PHP native URI interface
-- `Uri::withPassword` to be inline with PHP native URI interface
-- `Uri::__serialize` and `Uri::__unserialize` methods
+- `Uri` implements the new `League\Uri\Contract\UriInspector` interface
+- `Uri` implements the new `League\Uri\Contract\UriRenderer` interface
 
 ### Fixed
 

@@ -24,6 +24,7 @@ use League\Uri\IPv6\Converter as IPv6Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+use Throwable;
 
 use function array_map;
 use function array_pop;
@@ -69,6 +70,15 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess, Conditionable
     public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): static
     {
         return new static(static::formatHost(static::filterUri($uri, $uriFactory)), $uriFactory);
+    }
+
+    public static function tryFrom(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): ?static
+    {
+        try {
+            return self::from($uri, $uriFactory);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     public function withUriFactory(UriFactoryInterface $uriFactory): static

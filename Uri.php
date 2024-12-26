@@ -13,16 +13,17 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use Closure;
 use Deprecated;
 use DOMDocument;
 use DOMException;
 use finfo;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
-use League\Uri\Contracts\UriEncoder;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInspector;
 use League\Uri\Contracts\UriInterface;
+use League\Uri\Contracts\UriRenderer;
 use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
@@ -31,11 +32,16 @@ use League\Uri\IPv4\Converter as IPv4Converter;
 use League\Uri\IPv6\Converter as IPv6Converter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
+use RuntimeException;
 use SensitiveParameter;
+use SplFileInfo;
+use SplFileObject;
 use Stringable;
 use Throwable;
+use TypeError;
 
 use function array_filter;
+use function array_keys;
 use function array_map;
 use function array_pop;
 use function array_reduce;
@@ -44,22 +50,31 @@ use function base64_encode;
 use function count;
 use function end;
 use function explode;
+use function feof;
 use function file_get_contents;
 use function filter_var;
+use function fread;
 use function implode;
 use function in_array;
 use function inet_pton;
 use function is_array;
 use function is_bool;
+use function is_float;
+use function iterator_to_array;
+use function json_encode;
 use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
 use function preg_split;
 use function rawurldecode;
 use function rawurlencode;
+use function restore_error_handler;
+use function round;
+use function set_error_handler;
 use function str_contains;
 use function str_repeat;
 use function str_replace;
+use function str_starts_with;
 use function strcmp;
 use function strlen;
 use function strpos;
@@ -69,18 +84,21 @@ use function substr;
 use function uksort;
 
 use const FILEINFO_MIME;
+use const FILEINFO_MIME_TYPE;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
+use const JSON_PRESERVE_ZERO_FRACTION;
+use const PHP_ROUND_HALF_EVEN;
 use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
+final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspector
 {
     /**
      * RFC3986 invalid characters.
@@ -447,6 +465,22 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
     }
 
     /**
+     * Returns a new instance from a URI and a Base URI.or null on failure.
+     *
+     * The returned URI must be absolute.
+     *
+     * @see https://wiki.php.net/rfc/url_parsing_api
+     */
+    public static function parse(Stringable|string $uri, Stringable|string|null $baseUri = null): ?self
+    {
+        try {
+            return self::fromBaseUri($uri, $baseUri);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
      * Creates a new instance from a URI and a Base URI.
      *
      * The returned URI must be absolute.
@@ -514,32 +548,70 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
     /**
      * Create a new instance from a data file path.
      *
-     * @param resource|null $context
+     * @param SplFileInfo|SplFileObject|resource|Stringable|string $path
+     * @param ?resource $context
      *
      * @throws MissingFeature If ext/fileinfo is not installed
      * @throws SyntaxError If the file does not exist or is not readable
      */
-    public static function fromFileContents(Stringable|string $path, $context = null): self
+    public static function fromFileContents(mixed $path, $context = null): self
     {
         FeatureDetection::supportsFileDetection();
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $bufferSize = 8192;
 
-        $path = (string) $path;
-        $fileArguments = [$path, false];
-        $mimeArguments = [$path, FILEINFO_MIME];
-        if (null !== $context) {
-            $fileArguments[] = $context;
-            $mimeArguments[] = $context;
-        }
+        /** @var Closure(SplFileobject): array{0:string, 1:string} $fromFileObject */
+        $fromFileObject = function (SplFileObject $path) use ($finfo, $bufferSize): array {
+            $raw = $path->fread($bufferSize);
+            if (false === $raw) {
+                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
+            }
+            $mimetype = (string) $finfo->buffer($raw);
+            while (!$path->eof()) {
+                $raw .= $path->fread($bufferSize);
+            }
 
-        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-        $raw = file_get_contents(...$fileArguments);
-        restore_error_handler();
+            return [$mimetype, $raw];
+        };
 
-        if (false === $raw) {
-            throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
-        }
+        /** @var Closure(resource): array{0:string, 1:string} $fromResource */
+        $fromResource = function ($stream) use ($finfo, $path, $bufferSize): array {
+            set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+            $raw = fread($stream, $bufferSize);
+            if (false === $raw) {
+                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
+            }
+            $mimetype = (string) $finfo->buffer($raw);
+            while (!feof($stream)) {
+                $raw .= fread($stream, $bufferSize);
+            }
+            restore_error_handler();
 
-        $mimetype = (string) (new finfo(FILEINFO_MIME))->file(...$mimeArguments);
+            return [$mimetype, $raw];
+        };
+
+        /** @var Closure(Stringable|string, resource|null): array{0:string, 1:string} $fromPath */
+        $fromPath = function (Stringable|string $path, $context) use ($finfo): array {
+            $path = (string) $path;
+            set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+            $raw = file_get_contents(filename: $path, context: $context);
+            restore_error_handler();
+            if (false === $raw) {
+                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
+            }
+            $mimetype = (string) $finfo->file(filename: $path, flags: FILEINFO_MIME, context: $context);
+
+            return [$mimetype, $raw];
+        };
+
+        [$mimetype, $raw] = match (true) {
+            $path instanceof SplFileObject => $fromFileObject($path),
+            $path instanceof SplFileInfo => $fromFileObject($path->openFile(mode: 'rb', context: $context)),
+            is_resource($path) => $fromResource($path),
+            $path instanceof Stringable,
+            is_string($path) => $fromPath($path, $context),
+            default => throw new TypeError('The path `'.$path.'` is not a valid resource.'),
+        };
 
         return Uri::fromComponents([
             'scheme' => 'data',
@@ -1016,6 +1088,9 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         return $this->uri;
     }
 
+    /**
+     * * @see https://wiki.php.net/rfc/url_parsing_api
+     */
     public function toNormalizedString(): string
     {
         return $this->normalize()->toString();
@@ -1041,46 +1116,96 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
     }
 
     /**
+     * Returns the markdown string representation of the anchor tag with the current instance as its href attribute.
+     */
+    public function toMarkdown(?string $linkTextTemplate = null): string
+    {
+        return '['.strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]).']('.$this->toString().')';
+    }
+
+    /**
      * Returns the HTML string representation of the anchor tag with the current instance as its href attribute.
      *
-     * @param list<string>|string|null $class
+     * @param iterable<string, string|null> $attributes an ordered map of key value. you must quote the value if needed
      *
      * @throws DOMException
      */
-    public function toAnchorTag(?string $linkText = null, array|string|null $class = null, ?string $target = null): string
+    public function toAnchorTag(?string $linkTextTemplate = null, iterable $attributes = []): string
     {
         $doc = new DOMDocument('1.0', 'utf-8');
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
         $anchor = $doc->createElement('a');
         $anchor->setAttribute('href', $this->toString());
-        if (null !== $class) {
-            $anchor->setAttribute('class', is_array($class) ? implode(' ', $class) : $class);
+        foreach ($attributes as $name => $value) {
+            if ('href' !== strtolower($name) && null !== $value) {
+                $anchor->setAttribute($name, $value);
+            }
         }
 
-        if (null !== $target) {
-            $anchor->setAttribute('target', $target);
+        $anchor->appendChild($doc->createTextNode(strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()])));
+        $html = $doc->saveHTML($anchor);
+        if (false === $html) {
+            throw new DOMException('The anchor tag generation failed.');
         }
 
-        $textNode = $doc->createTextNode($linkText ?? $this->toDisplayString());
-        if (false === $textNode) {
-            throw new DOMException('The link generation failed.');
-        }
-        $anchor->appendChild($textNode);
-        $anchor = $doc->saveHTML($anchor);
-        if (false === $anchor) {
-            throw new DOMException('The link generation failed.');
-        }
-
-        return $anchor;
+        return $html;
     }
 
     /**
-     * Returns the markdown string representation of the anchor tag with the current instance as its href attribute.
+     * Returns the Link tag content for the current instance.
+     *
+     * @param iterable<string, string|null> $attributes an ordered map of key value. you must quote the value if needed
+     *
+     * @throws DOMException
      */
-    public function toMarkdown(?string $linkText = null): string
+    public function toLinkTag(iterable $attributes = []): string
     {
-        return '['.($linkText ?? $this->toDisplayString()).']('.$this->toString().')';
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->preserveWhiteSpace = false;
+        $doc->formatOutput = true;
+        $link = $doc->createElement('link');
+        $link->setAttribute('href', $this->toString());
+        foreach ($attributes as $name => $value) {
+            if ('href' !== strtolower($name) && null !== $value) {
+                $link->setAttribute($name, $value);
+            }
+        }
+
+        $html = $doc->saveHTML($link);
+        if (false === $html) {
+            throw new DOMException('The link generation failed.');
+        }
+
+        return $html;
+    }
+
+    /**
+     * Returns the Link header content for a single item.
+     *
+     * @param iterable<string, string|int|float|bool> $parameters an ordered map of key value. you must quote the value if needed
+     *
+     * @see https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.6
+     */
+    public function toLinkFieldValue(iterable $parameters = []): string
+    {
+        $value = '<'.$this->toString().'>';
+        if (!is_array($parameters)) {
+            $parameters = iterator_to_array($parameters);
+        }
+
+        if ([] === $parameters) {
+            return $value;
+        }
+
+        $formatter = static fn (string|int|float|bool $member, string $offset): string => match (true) {
+            true === $member => ';'.$offset,
+            false === $member => ';'.$offset.'=?0',
+            is_float($member) => ';'.$offset.'='.json_encode(round($member, 3, PHP_ROUND_HALF_EVEN), JSON_PRESERVE_ZERO_FRACTION),
+            default => ';'.$offset.'='.$member,
+        };
+
+        return $value.' '.implode('', array_map($formatter, $parameters, array_keys($parameters)));
     }
 
     /**
@@ -1152,6 +1277,51 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         };
     }
 
+    public function toFileContents(mixed $destination, $context = null): ?int
+    {
+        if ('data' !== $this->scheme) {
+            return null;
+        }
+
+        [$mediaType, $document] = explode(',', $this->path, 2) + [0 => '', 1 => null];
+        if (null === $document) {
+            throw new RuntimeException('Unable to extract the document part from the URI path.');
+        }
+
+        $data = match (true) {
+            str_ends_with((string) $mediaType, ';base64') => (string) base64_decode($document, true),
+            default => rawurldecode($document),
+        };
+
+        $res = match (true) {
+            $destination instanceof SplFileObject => $destination->fwrite($data),
+            $destination instanceof SplFileInfo => $destination->openFile(mode:'wb', context: $context)->fwrite($data),
+            is_resource($destination) => fwrite($destination, $data),
+            $destination instanceof Stringable,
+            is_string($destination) => (function () use ($destination, $data, $context): int|false {
+                set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+                $rsrc = fopen((string) $destination, mode:'wb', context: $context);
+                if (false === $rsrc) {
+                    restore_error_handler();
+                    throw new RuntimeException('Unable to open the destination file: '.$destination);
+                }
+
+                $bytes = fwrite($rsrc, $data);
+                fclose($rsrc);
+                restore_error_handler();
+
+                return $bytes;
+            })(),
+            default => throw new TypeError('Unsupported destination type; expected SplFileObject, SplFileInfo, resource or a string; '.(is_object($destination) ? $destination::class : gettype($destination)).' given.'),
+        };
+
+        if (false === $res) {
+            throw new RuntimeException('Unable to write to the destination file.');
+        }
+
+        return $res;
+    }
+
     /**
      * @return ComponentMap
      */
@@ -1179,6 +1349,9 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         return $this->authority;
     }
 
+    /**
+     * * @see https://wiki.php.net/rfc/url_parsing_api
+     */
     public function getUser(): ?string
     {
         return $this->user;
@@ -1517,21 +1690,8 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
     }
 
     /**
-     * Tells whether the URI contains an Internationalized Domain Name (IDN).
+     * * @see https://wiki.php.net/rfc/url_parsing_api
      */
-    public function hasIdn(): bool
-    {
-        return IdnaConverter::isIdn($this->host);
-    }
-
-    /**
-     * Tells whether the URI contains an IPv4 regardless if it is mapped or native.
-     */
-    public function hasIPv4(): bool
-    {
-        return IPv4Converter::fromEnvironment()->isIpv4($this->host);
-    }
-
     public function normalize(): UriInterface
     {
         return $this
@@ -1543,14 +1703,13 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
 
     private function normalizePath(): string
     {
-        $authority = $this->authority;
         $path = $this->path;
-        if ('/' === ($path[0] ?? '') || '' !== $this->scheme.$authority) {
+        if ('/' === ($path[0] ?? '') || '' !== $this->scheme.$this->authority) {
             $path = self::removeDotSegments($path);
         }
 
         $path = (string) $this->decodeUnreservedCharacters($path);
-        if (null !== $authority && '' === $path) {
+        if (null !== $this->authority && '' === $path) {
             return '/';
         }
 
@@ -1643,6 +1802,8 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
      *
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
+     *
+     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public function resolve(Stringable|string $uri): UriInterface
     {
@@ -1800,7 +1961,7 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
     /**
      * returns the path segments.
      *
-     * @return string[]
+     * @return array<string>
      */
     private static function getSegments(string $path): array
     {
@@ -1811,6 +1972,9 @@ final class Uri implements Conditionable, UriInterface, UriEncoder, UriInspector
         });
     }
 
+    /**
+     * @return ComponentMap
+     */
     public function __serialize(): array
     {
         return $this->toComponents();

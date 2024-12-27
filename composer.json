@@ -64,8 +64,7 @@
         "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
         "league/uri-components" : "Needed to easily manipulate URI objects components",
         "php-64bit": "to improve IPV4 host parsing",
-        "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present",
-        "symfony/polyfill-mbstring": "to handle URI normalization if the ext-mbstring is not present"
+        "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
     },
     "extra": {
         "branch-alias": {

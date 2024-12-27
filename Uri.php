@@ -43,7 +43,6 @@ use function array_filter;
 use function array_keys;
 use function array_map;
 use function array_pop;
-use function array_reduce;
 use function base64_decode;
 use function base64_encode;
 use function count;
@@ -64,7 +63,6 @@ use function json_encode;
 use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
-use function preg_split;
 use function rawurldecode;
 use function rawurlencode;
 use function restore_error_handler;
@@ -74,13 +72,11 @@ use function str_contains;
 use function str_repeat;
 use function str_replace;
 use function str_starts_with;
-use function strcmp;
 use function strlen;
 use function strpos;
 use function strspn;
 use function strtolower;
 use function substr;
-use function uksort;
 
 use const FILEINFO_MIME;
 use const FILEINFO_MIME_TYPE;
@@ -91,7 +87,6 @@ use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const PHP_ROUND_HALF_EVEN;
-use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @phpstan-import-type ComponentMap from UriString
@@ -243,9 +238,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
     /** @var array<string,int> */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
-
-    /** @var array<string,int> */
-    private const DOT_SEGMENTS = ['.' => 1, '..' => 1];
 
     private readonly ?string $scheme;
     private readonly ?string $user;
@@ -1686,9 +1678,10 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public function normalize(): UriInterface
     {
         return $this
+            ->withUserInfo($this->decodeUnreservedCharacters($this->user), $this->decodeUnreservedCharacters($this->pass))
             ->withHost($this->normalizeHost())
             ->withPath($this->normalizePath())
-            ->withQuery($this->decodeUnreservedCharacters($this->sortQuery($this->query)))
+            ->withQuery($this->decodeUnreservedCharacters($this->query))
             ->withFragment($this->decodeUnreservedCharacters($this->fragment));
     }
 
@@ -1696,7 +1689,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     {
         $path = $this->path;
         if ('/' === ($path[0] ?? '') || '' !== $this->scheme.$this->authority) {
-            $path = self::removeDotSegments($path);
+            $path = UriString::removeDotSegments($path);
         }
 
         $path = (string) $this->decodeUnreservedCharacters($path);
@@ -1720,71 +1713,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    private function sortQuery(?string $query): ?string
-    {
-        $codepoints = fn (?string $str): string => in_array($str, ['', null], true) ? '' : implode('.', array_map(
-            mb_ord(...), /* @phpstan-ignore-line */
-            (array) preg_split(pattern:'//u', subject: $str, flags: PREG_SPLIT_NO_EMPTY)
-        ));
-
-        $compare = fn (string $name1, string $name2): int => match (1) {
-            preg_match('/[^\x20-\x7f]/', $name1.$name2) => strcmp($codepoints($name1), $codepoints($name2)),
-            default => strcmp($name1, $name2),
-        };
-
-        $pairs = QueryString::parseFromValue($query);
-        $parameters = array_reduce($pairs, function (array $carry, array $pair) {
-            $carry[$pair[0]] ??= [];
-            $carry[$pair[0]][] = $pair[1];
-
-            return $carry;
-        }, []);
-
-        uksort($parameters, $compare);
-
-        $newPairs = [];
-        foreach ($parameters as $key => $values) {
-            $newPairs = [...$newPairs, ...array_map(fn ($value) => [$key, $value], $values)];
-        }
-
-        return match ($newPairs) {
-            $pairs  => $query,
-            default => QueryString::buildFromPairs($newPairs),
-        };
-    }
-
-    /**
-     * Remove dot segments from the URI path as per RFC specification.
-     */
-    private static function removeDotSegments(string $path): string
-    {
-        if (!str_contains($path, '.')) {
-            return $path;
-        }
-
-        $reducer = function (array $carry, string $segment): array {
-            if ('..' === $segment) {
-                array_pop($carry);
-
-                return $carry;
-            }
-
-            if (!isset(static::DOT_SEGMENTS[$segment])) {
-                $carry[] = $segment;
-            }
-
-            return $carry;
-        };
-
-        $oldSegments = explode('/', $path);
-        $newPath = implode('/', array_reduce($oldSegments, $reducer(...), []));
-        if (isset(static::DOT_SEGMENTS[end($oldSegments)])) {
-            $newPath .= '/';
-        }
-
-        return $newPath;
-    }
-
     /**
      * Resolves a URI against a base URI using RFC3986 rules.
      *
@@ -1804,17 +1732,17 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         if (null !== $uri->getScheme()) {
             return $uri
-                ->withPath(self::removeDotSegments($uri->getPath()));
+                ->withPath(UriString::removeDotSegments($uri->getPath()));
         }
 
         if (null !== $uri->getAuthority()) {
             return $uri
-                ->withPath(self::removeDotSegments($uri->getPath()))
+                ->withPath(UriString::removeDotSegments($uri->getPath()))
                 ->withScheme($this->scheme);
         }
 
         [$path, $query] = $this->resolvePathAndQuery($uri);
-        $path = self::removeDotSegments($path);
+        $path = UriString::removeDotSegments($path);
         if ('' !== $path && '/' !== $path[0] && null !== $this->getAuthority()) {
             $path = '/'.$path;
         }

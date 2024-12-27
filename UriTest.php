@@ -529,8 +529,6 @@ class UriTest extends TestCase
         ];
     }
 
-
-
     public function testRelativizeIsNotMade(): void
     {
         $uri = '//path#fragment';

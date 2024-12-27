@@ -1670,7 +1670,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function normalize(): UriInterface
     {
-        return self::fromComponents(UriString::normalize($this->toString()));
+        return self::new(UriString::normalize($this->toString()));
     }
 
     /**
@@ -1686,7 +1686,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function resolve(Stringable|string $uri): UriInterface
     {
-        return self::fromComponents(UriString::resolve($uri, $this->toString()));
+        return self::new(UriString::resolve($uri, $this->toString()));
     }
 
     /**

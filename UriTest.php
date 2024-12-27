@@ -760,14 +760,6 @@ class UriTest extends TestCase
                 'uri' => Uri::new('blob:https://mozilla.org:443/'),
                 'expectedOrigin' => 'https://mozilla.org',
             ],
-            'normalized ipv4' => [
-                'uri' => 'https://0:443/',
-                'expectedOrigin' => 'https://0.0.0.0',
-            ],
-            'normalized ipv4 with object' => [
-                'uri' => Uri::new('https://0:443/'),
-                'expectedOrigin' => 'https://0.0.0.0',
-            ],
             'compressed ipv6' => [
                 'uri' => 'https://[1050:0000:0000:0000:0005:0000:300c:326b]:443/',
                 'expectedOrigin' => 'https://[1050::5:0:300c:326b]',

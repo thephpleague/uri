@@ -28,7 +28,6 @@ use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Converter as IdnaConverter;
-use League\Uri\IPv4\Converter as IPv4Converter;
 use League\Uri\IPv6\Converter as IPv6Converter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -1013,15 +1012,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             return null;
         }
 
-        $host = $this->host;
-        $hostIp = IPv4Converter::fromEnvironment()->toDecimal($host);
-
-        return IdnaConverter::toUnicode((string)IPv6Converter::compress(match (true) {
-            '' === $host,
-            null === $hostIp,
-            $host === $hostIp => $host,
-            default => $hostIp,
-        }))->domain();
+        return IdnaConverter::toUnicode((string)IPv6Converter::compress($this->host))->domain();
     }
 
     /**

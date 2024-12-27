@@ -200,13 +200,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
-     * Unreserved characters.
-     *
-     * @see https://www.rfc-editor.org/rfc/rfc3986.html#section-2.3
-     */
-    private const REGEXP_UNRESERVED_CHARACTERS = ',%(2[1-9A-Fa-f]|[3-7][0-9A-Fa-f]|61|62|64|65|66|7[AB]|5F),';
-
-    /**
      * Supported schemes and corresponding default port.
      *
      * @var array<string, int|null>
@@ -1677,40 +1670,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function normalize(): UriInterface
     {
-        return $this
-            ->withUserInfo($this->decodeUnreservedCharacters($this->user), $this->decodeUnreservedCharacters($this->pass))
-            ->withHost($this->normalizeHost())
-            ->withPath($this->normalizePath())
-            ->withQuery($this->decodeUnreservedCharacters($this->query))
-            ->withFragment($this->decodeUnreservedCharacters($this->fragment));
-    }
-
-    private function normalizePath(): string
-    {
-        $path = $this->path;
-        if ('/' === ($path[0] ?? '') || '' !== $this->scheme.$this->authority) {
-            $path = UriString::removeDotSegments($path);
-        }
-
-        $path = (string) $this->decodeUnreservedCharacters($path);
-        if (null !== $this->authority && '' === $path) {
-            return '/';
-        }
-
-        return $path;
-    }
-
-    private function decodeUnreservedCharacters(?string $str): ?string
-    {
-        return match (true) {
-            null === $str,
-            '' === $str => $str,
-            default => preg_replace_callback(
-                self::REGEXP_UNRESERVED_CHARACTERS,
-                static fn (array $matches): string => rawurldecode($matches[0]),
-                $str
-            ) ?? '',
-        };
+        return self::fromComponents(UriString::normalize($this->toString()));
     }
 
     /**
@@ -1726,62 +1686,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function resolve(Stringable|string $uri): UriInterface
     {
-        if (!$uri instanceof UriInterface) {
-            $uri = self::new($uri);
-        }
-
-        if (null !== $uri->getScheme()) {
-            return $uri
-                ->withPath(UriString::removeDotSegments($uri->getPath()));
-        }
-
-        if (null !== $uri->getAuthority()) {
-            return $uri
-                ->withPath(UriString::removeDotSegments($uri->getPath()))
-                ->withScheme($this->scheme);
-        }
-
-        [$path, $query] = $this->resolvePathAndQuery($uri);
-        $path = UriString::removeDotSegments($path);
-        if ('' !== $path && '/' !== $path[0] && null !== $this->getAuthority()) {
-            $path = '/'.$path;
-        }
-
-        return $this
-            ->withPath($path)
-            ->withQuery($query)
-            ->withFragment($uri->getFragment());
-    }
-
-    /**
-     * Resolves an URI path and query component.
-     *
-     * @return array{0:string, 1:string|null}
-     */
-    private function resolvePathAndQuery(UriInterface $uri): array
-    {
-        if (str_starts_with($uri->getPath(), '/')) {
-            return [$uri->getPath(), $uri->getQuery()];
-        }
-
-        if ('' === $uri->getPath()) {
-            return [$this->path, $uri->getQuery() ?? $this->query];
-        }
-
-        $targetPath = $uri->getPath();
-        if (null !== $this->authority && '' === $this->path) {
-            $targetPath = '/'.$targetPath;
-        }
-
-        if ('' !== $this->path) {
-            $segments = explode('/', $this->path);
-            array_pop($segments);
-            if ([] !== $segments) {
-                $targetPath = implode('/', $segments).'/'.$targetPath;
-            }
-        }
-
-        return [$targetPath, $uri->getQuery()];
+        return self::fromComponents(UriString::resolve($uri, $this->toString()));
     }
 
     /**

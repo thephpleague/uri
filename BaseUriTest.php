@@ -182,22 +182,23 @@ final class BaseUriTest extends TestCase
         ];
     }
 
-    /**
-     * @param array<bool> $infos
-     */
     #[DataProvider('uriProvider')]
     public function testInfo(
         Psr7UriInterface|Uri $uri,
         Psr7UriInterface|Uri|null $base_uri,
-        array $infos
+        bool $absolute_uri,
+        bool $network_path,
+        bool $absolute_path,
+        bool $relative_path,
+        bool $same_document,
     ): void {
         if (null !== $base_uri) {
-            self::assertSame($infos['same_document'], BaseUri::from($base_uri)->isSameDocument($uri));
+            self::assertSame($same_document, BaseUri::from($base_uri)->isSameDocument($uri));
         }
-        self::assertSame($infos['relative_path'], BaseUri::from($uri)->isRelativePath());
-        self::assertSame($infos['absolute_path'], BaseUri::from($uri)->isAbsolutePath());
-        self::assertSame($infos['absolute_uri'], BaseUri::from($uri)->isAbsolute());
-        self::assertSame($infos['network_path'], BaseUri::from($uri)->isNetworkPath());
+        self::assertSame($relative_path, BaseUri::from($uri)->isRelativePath());
+        self::assertSame($absolute_path, BaseUri::from($uri)->isAbsolutePath());
+        self::assertSame($absolute_uri, BaseUri::from($uri)->isAbsolute());
+        self::assertSame($network_path, BaseUri::from($uri)->isNetworkPath());
     }
 
     public static function uriProvider(): array
@@ -206,46 +207,38 @@ final class BaseUriTest extends TestCase
             'absolute uri' => [
                 'uri' => Http::new('http://a/p?q#f'),
                 'base_uri' => null,
-                'infos' => [
-                    'absolute_uri' => true,
-                    'network_path' => false,
-                    'absolute_path' => false,
-                    'relative_path' => false,
-                    'same_document' => false,
-                ],
+                'absolute_uri' => true,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => false,
             ],
             'network relative uri' => [
                 'uri' => Http::new('//스타벅스코리아.com/p?q#f'),
                 'base_uri' => Http::new('//xn--oy2b35ckwhba574atvuzkc.com/p?q#z'),
-                'infos' => [
-                    'absolute_uri' => false,
-                    'network_path' => true,
-                    'absolute_path' => false,
-                    'relative_path' => false,
-                    'same_document' => true,
-                ],
+                'absolute_uri' => false,
+                'network_path' => true,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => true,
             ],
             'path relative uri with non empty path' => [
                 'uri' => Http::new('p?q#f'),
                 'base_uri' => null,
-                'infos' => [
-                    'absolute_uri' => false,
-                    'network_path' => false,
-                    'absolute_path' => false,
-                    'relative_path' => true,
-                    'same_document' => false,
-                ],
+                'absolute_uri' => false,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => true,
+                'same_document' => false,
             ],
             'path relative uri with empty' => [
                 'uri' => Http::new('?q#f'),
                 'base_uri' => null,
-                'infos' => [
-                    'absolute_uri' => false,
-                    'network_path' => false,
-                    'absolute_path' => false,
-                    'relative_path' => true,
-                    'same_document' => false,
-                ],
+                'absolute_uri' => false,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => true,
+                'same_document' => false,
             ],
         ];
     }

@@ -15,7 +15,6 @@ namespace League\Uri;
 
 use Deprecated;
 use JsonSerializable;
-use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriAccess;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
@@ -25,7 +24,6 @@ use League\Uri\IPv6\Converter as IPv6Converter;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
-use Throwable;
 
 use function array_map;
 use function array_pop;
@@ -35,7 +33,6 @@ use function end;
 use function explode;
 use function implode;
 use function in_array;
-use function is_bool;
 use function preg_match;
 use function rawurldecode;
 use function str_repeat;
@@ -46,7 +43,7 @@ use function substr;
 /**
  * @phpstan-import-type ComponentMap from UriInterface
  */
-class BaseUri implements Stringable, JsonSerializable, UriAccess, Conditionable
+class BaseUri implements Stringable, JsonSerializable, UriAccess
 {
     /** @var array<string,int> */
     final protected const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
@@ -71,15 +68,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess, Conditionable
     public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): static
     {
         return new static(static::formatHost(static::filterUri($uri, $uriFactory)), $uriFactory);
-    }
-
-    public static function tryFrom(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): ?static
-    {
-        try {
-            return self::from($uri, $uriFactory);
-        } catch (Throwable) {
-            return null;
-        }
     }
 
     public function withUriFactory(UriFactoryInterface $uriFactory): static
@@ -344,20 +332,6 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess, Conditionable
             $this->uriFactory
         );
     }
-
-    final public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
-    {
-        if (!is_bool($condition)) {
-            $condition = $condition($this);
-        }
-
-        return match (true) {
-            $condition => $onSuccess($this),
-            null !== $onFail => $onFail($this),
-            default => $this,
-        } ?? $this;
-    }
-
     final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
         $scheme = $uri->getScheme();

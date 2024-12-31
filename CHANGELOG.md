@@ -9,8 +9,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - Added methods to align with the upcoming `Uri\Rfc3986Uri` PHP native class (see: https://wiki.php.net/rfc/url_parsing_api#proposal)
 - `Uri::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::new`).
 - `Http::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Http::new`).
-- `BaseUri::tryfrom` returns a new `BaseUri` instance on success or null on failure (ie: a Relax version of `BaseUri::from`).
-- `BaseUri::when` conditional method to ease component building logic.
 - `Http::when` conditional method to ease component building logic.
 - `Uri::when` conditional method to ease component building logic.
 - `Uri` implements the new `League\Uri\Contract\UriInspector` interface

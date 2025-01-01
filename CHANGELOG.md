@@ -20,7 +20,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
-- None
+- `BasUri` use the `Uri` class or the component `Modifier` class depending on the needed requirement.
 
 ### Removed
 

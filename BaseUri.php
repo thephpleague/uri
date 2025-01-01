@@ -42,6 +42,10 @@ use function substr;
 
 /**
  * @phpstan-import-type ComponentMap from UriInterface
+ * @deprecated since version 7.6.0
+ *
+ * @see Modifier
+ * @see Uri
  */
 class BaseUri implements Stringable, JsonSerializable, UriAccess
 {

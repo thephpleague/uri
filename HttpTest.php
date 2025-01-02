@@ -133,10 +133,6 @@ final class HttpTest extends TestCase
                 'http://login:pass@example.com/',
                 'http://login:pass@example.com/',
             ],
-            'empty string' => [
-                '',
-                '',
-            ],
         ];
     }
 

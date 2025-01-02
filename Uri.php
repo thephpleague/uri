@@ -434,6 +434,11 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public static function new(Stringable|string $uri = ''): self
     {
+        $uri = (string) $uri;
+        if ('' === $uri) {
+            return new self(null, null, null, null, null, '', null, null);
+        }
+
         $components = UriString::parse($uri);
 
         return new self(
@@ -473,16 +478,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         Stringable|string $uri,
         Stringable|string|null $baseUri = null
     ): self {
-        $uri = self::new($uri);
-        $baseUri = self::tryNew($baseUri) ?? $uri;
-
-        /** @var self $uri */
-        $uri = match (true) {
-            $baseUri->isAbsolute() => $baseUri->resolve($uri),
-            default => throw new SyntaxError('the URI `'.$baseUri.'` must be absolute.'),
-        };
-
-        return $uri;
+        return self::new(UriString::resolve($uri, $baseUri));
     }
 
     /**
@@ -1670,7 +1666,12 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function normalize(): UriInterface
     {
-        return self::new(UriString::normalize($this->toString()));
+        $uriString = $this->toString();
+        if ('' === $uriString) {
+            return $this;
+        }
+
+        return self::new(UriString::normalize($uriString));
     }
 
     /**

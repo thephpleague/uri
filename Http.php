@@ -80,7 +80,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        return self::fromComponents(UriString::parse($uri));
+        return new self(Uri::new($uri));
     }
 
     /**

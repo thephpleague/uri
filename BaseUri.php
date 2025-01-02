@@ -518,7 +518,12 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     #[Deprecated(message:'no longer used by the isSameDocument method', since:'league/uri-interfaces:7.6.0')]
     final protected function normalize(Psr7UriInterface|UriInterface $uri): string
     {
-        return UriString::normalize($uri->withScheme($uri instanceof Psr7UriInterface ? '' : null));
+        $newUri = $uri->withScheme($uri instanceof Psr7UriInterface ? '' : null);
+        if ('' === $newUri->__toString()) {
+            return '';
+        }
+
+        return UriString::normalize($newUri);
     }
 
 

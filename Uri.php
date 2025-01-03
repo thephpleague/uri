@@ -1159,7 +1159,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * @see https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.6
      */
-    public function toLinkFieldValue(iterable $parameters = []): string
+    public function toLinkHeaderValue(iterable $parameters = []): string
     {
         $value = '<'.$this->toString().'>';
         if (!is_array($parameters)) {

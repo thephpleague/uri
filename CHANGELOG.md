@@ -13,6 +13,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::when` conditional method to ease component building logic.
 - `Uri` implements the new `League\Uri\Contract\UriInspector` interface
 - `Uri` implements the new `League\Uri\Contract\UriRenderer` interface
+- `Uri::getUser` returns the encoded user component of the URI an alias for `Uri::getUsername`
 
 ### Fixed
 

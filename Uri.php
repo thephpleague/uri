@@ -1322,11 +1322,24 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * * @see https://wiki.php.net/rfc/url_parsing_api
+     * Returns the user component encoded value.
+     *
+     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public function getUser(): ?string
     {
         return $this->user;
+    }
+
+    /**
+     * Returns the user component encoded value.
+     *
+     * @codeCoverageIgnore
+     * @see Uri::getUser()
+     */
+    public function getUsername(): ?string
+    {
+        return $this->getUser();
     }
 
     public function getPassword(): ?string
@@ -1963,20 +1976,5 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public static function createFromServer(array $server): self
     {
         return self::fromServer($server);
-    }
-
-    /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release.
-     *
-     * @deprecated Since version 7.6.0
-     * @codeCoverageIgnore
-     * @see Uri::getUser()
-     *
-     * Retuns the user component encoded value.
-     */
-    #[Deprecated(message:'use League\Uri\Uri::getUser() instead', since:'league/uri:7.6.0')]
-    public function getUsername(): ?string
-    {
-        return $this->getUser();
     }
 }

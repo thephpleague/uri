@@ -11,11 +11,13 @@
 
 namespace League\Uri;
 
+use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
 use Nyholm\Psr7\Uri as NyholmUri;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
@@ -548,5 +550,23 @@ final class FactoryTest extends TestCase
             '/hotels/Rest%20%26%20Relax/bookings/42',
             Uri::fromTemplate($template, $params)->getPath()
         );
+    }
+
+    #[Test]
+    #[DataProvider('invalidUriWithWhitespaceProvider')]
+    public function it_fails_parsing_uri_string_with_whitespace(string $uri): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Uri::new($uri);
+    }
+
+    public static function invalidUriWithWhitespaceProvider(): iterable
+    {
+        yield 'uri containing only whitespaces' => ['uri' => '     '];
+        yield 'uri starting with whitespaces' => ['uri' => '    https://a/b?c'];
+        yield 'uri ending with whitespaces' => ['uri' => 'https://a/b?c   '];
+        yield 'uri surrounded by whitespaces' => ['uri' => '   https://a/b?c   '];
+        yield 'uri containing whitespaces' => ['uri' => 'https://a/b ?c'];
     }
 }

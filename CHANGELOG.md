@@ -14,6 +14,10 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri` implements the new `League\Uri\Contract\UriInspector` interface
 - `Uri` implements the new `League\Uri\Contract\UriRenderer` interface
 - `Uri::getUser` returns the encoded user component of the URI an alias for `Uri::getUsername`
+- `Uri::fromMarkdownAnchor`
+- `Uri::fromHtmlAnchor`
+- `Uri::fromHtmlLink`
+- `Uri::fromHeaderLinkValue`
 
 ### Fixed
 

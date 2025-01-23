@@ -569,4 +569,165 @@ final class FactoryTest extends TestCase
         yield 'uri surrounded by whitespaces' => ['uri' => '   https://a/b?c   '];
         yield 'uri containing whitespaces' => ['uri' => 'https://a/b ?c'];
     }
+
+    #[Test]
+    #[DataProvider('provideAnchorTagHtml')]
+    public function it_parses_uri_string_from_an_anchor_tag(string $html, ?string $baseUri, string $expected): void
+    {
+        self::assertSame($expected, Uri::fromHtmlAnchor($html, $baseUri)->toString());
+    }
+
+    public static function provideAnchorTagHtml(): iterable
+    {
+        yield 'empty string' => [
+            'html' => '<a href=""></a>',
+            'baseUri' => null,
+            'expected' => '',
+        ];
+
+        yield 'empty string with base URI' => [
+            'html' => '<a href=""></a>',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/',
+        ];
+
+        yield 'anchor tag with no base URI' => [
+            'html' => '<a href="/">foobar</a>',
+            'baseUri' => null,
+            'expected' => '/',
+        ];
+
+        yield 'multiple anchor tag' => [
+            'html' => '<a href="/foobar">foobar</a> <a href="https://example.com/yolo">foobar</a>',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/foobar',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideAnchorTagMarkdown')]
+    public function it_parses_uri_string_from_an_anchor_markdown(string $html, ?string $baseUri, string $expected): void
+    {
+        self::assertSame($expected, Uri::fromMarkdownAnchor($html, $baseUri)->toString());
+    }
+
+    public static function provideAnchorTagMarkdown(): iterable
+    {
+        yield 'empty string' => [
+            'html' => '[yolo]()',
+            'baseUri' => null,
+            'expected' => '',
+        ];
+
+        yield 'empty string with base URI' => [
+            'html' => '[]()',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/',
+        ];
+
+        yield 'anchor tag with no base URI' => [
+            'html' => '[yolo](/)',
+            'baseUri' => null,
+            'expected' => '/',
+        ];
+
+        yield 'multiple anchor tag' => [
+            'html' => '[foobar](/foobar) and then later on [foobar](https://example.com/yolo)',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/foobar',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidMarkdown')]
+    public function it_fails_to_parse_an_invalid_markdown(string $html): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Uri::fromMarkdownAnchor($html);
+    }
+
+    public static function provideInvalidMarkdown(): iterable
+    {
+        yield 'missing markdown placeholder' => ['html' => 'this is **markdown**'];
+        yield 'invalid markdown placeholder; missing URI part' => ['html' => '[this is an imcomplete] http://example.com markdown'];
+        yield 'invalid markdown placeholder; missing content part' => ['html' => 'this is an imcomplete(http://example.com) markdown'];
+    }
+
+    #[Test]
+    #[DataProvider('provideHeaderLinkValue')]
+    public function it_parses_uri_string_from_an_link_header_value(string $html, ?string $baseUri, string $expected): void
+    {
+        self::assertSame($expected, Uri::fromHeaderLinkValue($html, $baseUri)->toString());
+    }
+
+    public static function provideHeaderLinkValue(): iterable
+    {
+        yield 'empty string' => [
+            'html' => '<>; rel="previous"',
+            'baseUri' => null,
+            'expected' => '',
+        ];
+
+        yield 'empty string with base URI' => [
+            'html' => '<>; rel="next"',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/',
+        ];
+
+        yield 'URI with base URI' => [
+            'html' => '</style.css>; rel="stylesheet"',
+            'baseUri' => 'https://www.example.com',
+            'expected' => 'https://www.example.com/style.css',
+        ];
+
+        yield 'multiple anchor tag' => [
+            'html' => '</style.css>; rel="stylesheet", </foobar.css>; rel="stylesheet"',
+            'baseUri' => 'https://example.com/',
+            'expected' => 'https://example.com/style.css',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidHeaderLinkValue')]
+    public function it_fails_to_parse_an_invalid_http_header_link_with_invalid_characters(string $html): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Uri::fromHeaderLinkValue($html);
+    }
+
+    public static function provideInvalidHeaderLinkValue(): iterable
+    {
+        yield 'header value with invalid characters' => ['html' => '</style.css>; title="stylesheet"'."\r"];
+        yield 'header value with missing URI part' => ['html' => '; rel="stylesheet"'];
+        yield 'header value with missing semicolon' => ['html' => '</style.css> title="stylesheet"'];
+        yield 'header value with missing parameters' => ['html' => '</style.css>'];
+        yield 'header value with missing rel parameter' => ['html' => '</style.css> title="stylesheet"'];
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidUri')]
+    public function it_fails_to_parse_with_new(Stringable|string|null $uri): void
+    {
+        self::assertNull(Uri::tryNew($uri));
+    }
+
+    public static function provideInvalidUri(): iterable
+    {
+        yield 'null value' => ['uri' => null];
+        yield 'invalid URI' => ['uri' => 'http://example.com/  '];
+    }
+
+    #[Test]
+    #[DataProvider('provideInvalidUriForResolution')]
+    public function it_fails_to_parse_with_parse(Stringable|string $uri, Stringable|string|null $baseUri): void
+    {
+        self::assertNull(Uri::parse($uri, $baseUri));
+    }
+
+    public static function provideInvalidUriForResolution(): iterable
+    {
+        yield 'invalid URI' => ['uri' => ':', 'baseUri' => null];
+        yield 'invalid resolution with a non absolute URI' => ['uri' => '', 'baseUri' => '/absolute/path'];
+    }
 }

@@ -15,9 +15,11 @@ namespace League\Uri;
 
 use Closure;
 use Deprecated;
+use Dom\HTMLDocument;
 use DOMDocument;
 use DOMException;
 use finfo;
+use InvalidArgumentException;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
@@ -40,11 +42,11 @@ use Throwable;
 use TypeError;
 
 use function array_filter;
-use function array_keys;
 use function array_map;
 use function array_pop;
 use function base64_decode;
 use function base64_encode;
+use function class_exists;
 use function count;
 use function end;
 use function explode;
@@ -58,7 +60,8 @@ use function inet_pton;
 use function is_array;
 use function is_bool;
 use function is_float;
-use function iterator_to_array;
+use function is_int;
+use function is_string;
 use function json_encode;
 use function ltrim;
 use function preg_match;
@@ -68,6 +71,7 @@ use function rawurlencode;
 use function restore_error_handler;
 use function round;
 use function set_error_handler;
+use function sprintf;
 use function str_contains;
 use function str_repeat;
 use function str_replace;
@@ -77,12 +81,16 @@ use function strpos;
 use function strspn;
 use function strtolower;
 use function substr;
+use function trim;
 
 use const FILEINFO_MIME;
 use const FILEINFO_MIME_TYPE;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
+use const FILTER_FLAG_STRIP_HIGH;
+use const FILTER_FLAG_STRIP_LOW;
 use const FILTER_NULL_ON_FAILURE;
+use const FILTER_UNSAFE_RAW;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
 use const JSON_PRESERVE_ZERO_FRACTION;
@@ -231,6 +239,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
     /** @var array<string,int> */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
+
+    private const ABOUT_BLANK = 'about:blank';
 
     private readonly ?string $scheme;
     private readonly ?string $user;
@@ -658,8 +668,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public static function fromWindowsPath(Stringable|string $path): self
     {
-        $path = (string) $path;
         $root = '';
+        $path = (string) $path;
         if (1 === preg_match(self::REGEXP_WINDOW_PATH, $path, $matches)) {
             $root = substr($matches['root'], 0, -1).':';
             $path = substr($path, strlen($root));
@@ -710,6 +720,84 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         [$components['path'], $components['query']] = self::fetchRequestUri($server);
 
         return Uri::fromComponents($components);
+    }
+
+    public static function fromMarkdownAnchor(Stringable|string $markdown, Stringable|string|null $baseUri = null): self
+    {
+        static $regexp = '/
+             \[(?:[^]]*)]      #title attribute
+             \((?<uri>[^)]*)\) #href attribute
+         /x';
+        $markdown = trim((string) $markdown);
+        if (1 !== preg_match($regexp, $markdown, $matches)) {
+            throw new SyntaxError('The markdown string `'.$markdown.'` is not valid anchor markdown tag.');
+        }
+
+        if (null !== $baseUri) {
+            $baseUri = (string) $baseUri;
+        }
+
+        return match ($baseUri) {
+            self::ABOUT_BLANK, null => self::new($matches['uri']),
+            default => self::fromBaseUri($matches['uri'], $baseUri),
+        };
+    }
+
+    public static function fromHeaderLinkValue(Stringable|string $headerValue, Stringable|string|null $baseUri = null): self
+    {
+        $headerValue = (string) $headerValue;
+        if (
+            1 === preg_match("/(?:(?:(?<!\r)\n)|(?:\r(?!\n))|(?:\r\n(?![ \t])))/", $headerValue) ||
+            1 === preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFE]/', $headerValue)
+        ) {
+            throw new InvalidArgumentException('The value `'.$headerValue.'` contains invalid characters.');
+        }
+
+        $headerValue = ltrim($headerValue);
+        static $regexp = '/<(?<uri>.*?)>(?<parameters>.*)/';
+        if (1 !== preg_match($regexp, $headerValue, $matches)) {
+            throw new InvalidArgumentException('As per RFC8288, the URI must be defined inside two `<>` characters.');
+        }
+
+        $attributes = [];
+        if (false !== preg_match_all('/;\s*(?<name>\w*)\*?="(?<value>[^"]*)"/', $matches['parameters'], $attrMatches, PREG_SET_ORDER)) {
+            foreach ($attrMatches as $attrMatch) {
+                $attributes[$attrMatch['name']] = $attrMatch['value'];
+            }
+        }
+
+        if (!isset($attributes['rel'])) {
+            throw new SyntaxError('The `rel` attribute must be defined.');
+        }
+
+        if (null !== $baseUri) {
+            $baseUri = (string) $baseUri;
+        }
+
+        return match ($baseUri) {
+            self::ABOUT_BLANK, null => self::new($matches['uri']),
+            default => self::fromBaseUri($matches['uri'], $baseUri),
+        };
+    }
+
+    /**
+     * If the html content contains more than one anchor element, only the first one will be parsed.
+     *
+     * @throws DOMException
+     */
+    public static function fromHtmlAnchor(string $html, Stringable|string|null $baseUri = null): self
+    {
+        return self::parseHtml($html, 'a', 'href', $baseUri);
+    }
+
+    /**
+     * If the html content contains more than one link element, only the first one will be parsed.
+     *
+     * @throws DOMException
+     */
+    public static function fromHtmlLink(string $html, Stringable|string|null $baseUri = null): self
+    {
+        return self::parseHtml($html, 'link', 'href', $baseUri);
     }
 
     /**
@@ -1090,7 +1178,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Returns the markdown string representation of the anchor tag with the current instance as its href attribute.
      */
-    public function toMarkdown(?string $linkTextTemplate = null): string
+    public function toMarkdownAnchor(?string $linkTextTemplate = null): string
     {
         return '['.strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]).']('.$this->toString().')';
     }
@@ -1098,86 +1186,92 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Returns the HTML string representation of the anchor tag with the current instance as its href attribute.
      *
-     * @param iterable<string, string|null> $attributes an ordered map of key value. you must quote the value if needed
+     * @param iterable<string, string|null|array<string>> $attributes an ordered map of key value. you must quote the value if needed
      *
      * @throws DOMException
      */
-    public function toAnchorTag(?string $linkTextTemplate = null, iterable $attributes = []): string
+    public function toHtmlAnchor(?string $linkTextTemplate = null, iterable $attributes = []): string
     {
-        $doc = new DOMDocument('1.0', 'utf-8');
-        $doc->preserveWhiteSpace = false;
-        $doc->formatOutput = true;
-        $anchor = $doc->createElement('a');
-        $anchor->setAttribute('href', $this->toString());
-        foreach ($attributes as $name => $value) {
-            if ('href' !== strtolower($name) && null !== $value) {
-                $anchor->setAttribute($name, $value);
-            }
-        }
+        $content = strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]);
 
-        $anchor->appendChild($doc->createTextNode(strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()])));
-        $html = $doc->saveHTML($anchor);
-        if (false === $html) {
-            throw new DOMException('The anchor tag generation failed.');
-        }
-
-        return $html;
+        return self::buildHtml($this, 'a', $attributes, $content);
     }
 
     /**
      * Returns the Link tag content for the current instance.
      *
-     * @param iterable<string, string|null> $attributes an ordered map of key value. you must quote the value if needed
+     * @param iterable<string, string|null|array<string>> $attributes an ordered map of key value. you must quote the value if needed
      *
      * @throws DOMException
      */
-    public function toLinkTag(iterable $attributes = []): string
+    public function toHtmlLink(iterable $attributes = []): string
     {
-        $doc = new DOMDocument('1.0', 'utf-8');
-        $doc->preserveWhiteSpace = false;
-        $doc->formatOutput = true;
-        $link = $doc->createElement('link');
-        $link->setAttribute('href', $this->toString());
-        foreach ($attributes as $name => $value) {
-            if ('href' !== strtolower($name) && null !== $value) {
-                $link->setAttribute($name, $value);
-            }
-        }
-
-        $html = $doc->saveHTML($link);
-        if (false === $html) {
-            throw new DOMException('The link generation failed.');
-        }
-
-        return $html;
+        return self::buildHtml($this, 'link', $attributes, null);
     }
 
     /**
      * Returns the Link header content for a single item.
      *
-     * @param iterable<string, string|int|float|bool> $parameters an ordered map of key value. you must quote the value if needed
+     * @param iterable<string, string|int|float|bool|null> $parameters an ordered map of key value.
      *
      * @see https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.6
      */
-    public function toLinkHeaderValue(iterable $parameters = []): string
+    public function toHeaderLinkValue(iterable $parameters = []): string
     {
-        $value = '<'.$this->toString().'>';
-        if (!is_array($parameters)) {
-            $parameters = iterator_to_array($parameters);
+        $attributes = [];
+        foreach ($parameters as $name => $val) {
+            if (null !== $val && false !== $val) {
+                $attributes[] = $this->formatHeaderValueParameter($name, $val);
+            }
         }
 
-        if ([] === $parameters) {
+        $value = '<'.$this->toString().'>';
+        if ([] === $attributes) {
             return $value;
         }
 
-        $formatter = static fn (string|int|float|bool $member, string $offset): string => match (true) {
-            true === $member => ';'.$offset,
-            false === $member => ';'.$offset.'=?0',
-            is_float($member) => ';'.$offset.'='.json_encode(round($member, 3, PHP_ROUND_HALF_EVEN), JSON_PRESERVE_ZERO_FRACTION),
-            default => ';'.$offset.'='.$member,
-        };
+        return $value.implode('', $attributes);
+    }
 
-        return $value.' '.implode('', array_map($formatter, $parameters, array_keys($parameters)));
+    private function formatHeaderValueParameter(string $name, string|int|float|bool $value): string
+    {
+        $name = strtolower($name);
+
+        return '; '.$name.match (true) {
+            1 !== preg_match('/^([a-z*][a-z\d.*_-]*)$/i', $name) => throw new InvalidArgumentException('The parameter name `'.$name.'` contains invalid characters.'),
+            true === $value => '',
+            false === $value => '=?0',
+            is_float($value) => '="'.json_encode(round($value, 3, PHP_ROUND_HALF_EVEN), JSON_PRESERVE_ZERO_FRACTION).'"',
+            is_int($value) => '="'.$value.'"',
+            default => $this->formatHeaderValueStringParameter($name, $value),
+        };
+    }
+
+    private function formatHeaderValueStringParameter(string $name, string $value): string
+    {
+        if (
+            1 === preg_match("/(?:(?:(?<!\r)\n)|(?:\r(?!\n))|(?:\r\n(?![ \t])))/", $value) ||
+            1 === preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFE]/', $value)
+        ) {
+            throw new InvalidArgumentException('The value `'.$value.'` contains invalid characters.');
+        }
+
+        $flag = FILTER_FLAG_STRIP_LOW;
+        if (1 === preg_match('/[^\x20-\x7E]/', $value)) {
+            $flag |= FILTER_FLAG_STRIP_HIGH;
+        }
+
+        $filteredValue = str_replace('%', '', (string) filter_var($value, FILTER_UNSAFE_RAW, $flag));
+        $headerValue = sprintf('="%s"', str_replace('"', '\\"', $filteredValue));
+        if ($value === $filteredValue) {
+            return $headerValue;
+        }
+
+        return $headerValue.sprintf("; %s*=utf-8''%s", $name, preg_replace_callback(
+            '/[%"\x00-\x1F\x7F-\xFF]/',
+            static fn (array $matches): string => strtolower(rawurlencode($matches[0])),
+            $value
+        ));
     }
 
     /**
@@ -1836,6 +1930,90 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
         $this->origin = $this->setOrigin();
+    }
+
+    private static function parseHtml(
+        Stringable|string $content,
+        string $tagName,
+        string $attributeName,
+        Stringable|string|null $baseUri = null
+    ): self {
+        FeatureDetection::supportsDom();
+
+        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+        $result = true;
+        if (class_exists(HTMLDocument::class)) {
+            $dom = HTMLDocument::createFromString((string) $content);
+        } else {
+            $dom = new DOMDocument();
+            $result = $dom->loadHTML((string) $content);
+        }
+        restore_error_handler();
+        if (false === $result) {
+            throw new DOMException('The content could not be parsed as a valid HTML content.');
+        }
+
+        $tag = $dom->getElementsByTagName($tagName)->item(0);
+        if (null === $tag) {
+            throw new DOMException('No `'.$tagName.'` element was found in the content.');
+        }
+
+        $uri = $tag->getAttribute($attributeName);
+
+        if (null !== $baseUri) {
+            $baseUri = (string) $baseUri;
+        }
+
+        return match (true) {
+            null !== $baseUri && self::ABOUT_BLANK !== $baseUri => self::fromBaseUri($uri, $baseUri),
+            null !== $dom->documentURI && self::ABOUT_BLANK !== $dom->documentURI => self::fromBaseUri($uri, $dom->documentURI),
+            default => self::new($uri),
+        };
+    }
+
+    /**
+     * @param iterable<string, string|null|list<string>> $attributes
+     *
+     * @throws DOMException
+     */
+    private static function buildHtml(self $uri, string $tagName, iterable $attributes, ?string $content): string
+    {
+        FeatureDetection::supportsDom();
+
+        $doc = class_exists(HTMLDocument::class) ? HTMLDocument::createEmpty() : new DOMDocument(encoding:'utf-8');
+        $element = $doc->createElement($tagName);
+        $element->setAttribute('href', $uri->toString());
+        if (null !== $content) {
+            $element->appendChild($doc->createTextNode($content));
+        }
+
+        foreach ($attributes as $name => $value) {
+            if ('href' === strtolower($name) || null === $value) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = implode(' ', $value);
+            }
+
+            if (!is_string($value)) {
+                throw new TypeError('The attribute `'.$name.'` contains an invalid value.');
+            }
+
+            $value = trim($value);
+            if ('' === $value) {
+                continue;
+            }
+
+            $element->setAttribute($name, $value);
+        }
+
+        $html = $doc->saveHTML($element);
+        if (false === $html) {
+            throw new DOMException('The HTML generation failed.');
+        }
+
+        return $html;
     }
 
     /**

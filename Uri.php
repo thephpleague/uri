@@ -19,7 +19,6 @@ use Dom\HTMLDocument;
 use DOMDocument;
 use DOMException;
 use finfo;
-use InvalidArgumentException;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
@@ -59,17 +58,13 @@ use function in_array;
 use function inet_pton;
 use function is_array;
 use function is_bool;
-use function is_float;
-use function is_int;
 use function is_string;
-use function json_encode;
 use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
 use function rawurldecode;
 use function rawurlencode;
 use function restore_error_handler;
-use function round;
 use function set_error_handler;
 use function sprintf;
 use function str_contains;
@@ -87,14 +82,9 @@ use const FILEINFO_MIME;
 use const FILEINFO_MIME_TYPE;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
-use const FILTER_FLAG_STRIP_HIGH;
-use const FILTER_FLAG_STRIP_LOW;
 use const FILTER_NULL_ON_FAILURE;
-use const FILTER_UNSAFE_RAW;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_IP;
-use const JSON_PRESERVE_ZERO_FRACTION;
-use const PHP_ROUND_HALF_EVEN;
 
 /**
  * @phpstan-import-type ComponentMap from UriString
@@ -743,66 +733,49 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public static function fromHeaderLinkValue(Stringable|string $headerValue, Stringable|string|null $baseUri = null): self
-    {
-        $headerValue = (string) $headerValue;
-        if (
-            1 === preg_match("/(?:(?:(?<!\r)\n)|(?:\r(?!\n))|(?:\r\n(?![ \t])))/", $headerValue) ||
-            1 === preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFE]/', $headerValue)
-        ) {
-            throw new InvalidArgumentException('The value `'.$headerValue.'` contains invalid characters.');
-        }
-
-        $headerValue = ltrim($headerValue);
-        static $regexp = '/<(?<uri>.*?)>(?<parameters>.*)/';
-        if (1 !== preg_match($regexp, $headerValue, $matches)) {
-            throw new InvalidArgumentException('As per RFC8288, the URI must be defined inside two `<>` characters.');
-        }
-
-        $parameters = ltrim($matches['parameters']);
-        if (!str_starts_with($parameters, ';')) {
-            throw new InvalidArgumentException('The value `'.$headerValue.'` contains invalid characters.');
-        }
-
-        $attributes = [];
-        if (false !== preg_match_all('/;\s*(?<name>\w*)\*?="(?<value>[^"]*)"/', $parameters, $attrMatches, PREG_SET_ORDER)) {
-            foreach ($attrMatches as $attrMatch) {
-                $attributes[$attrMatch['name']] = $attrMatch['value'];
-            }
-        }
-
-        if (!isset($attributes['rel'])) {
-            throw new SyntaxError('The `rel` attribute must be defined.');
-        }
-
-        if (null !== $baseUri) {
-            $baseUri = (string) $baseUri;
-        }
-
-        return match ($baseUri) {
-            self::ABOUT_BLANK, null => self::new($matches['uri']),
-            default => self::fromBaseUri($matches['uri'], $baseUri),
-        };
-    }
-
     /**
      * If the html content contains more than one anchor element, only the first one will be parsed.
      *
      * @throws DOMException
      */
-    public static function fromHtmlAnchor(string $html, Stringable|string|null $baseUri = null): self
+    public static function fromHtmlAnchor(Stringable|string $html, Stringable|string|null $baseUri = null): self
     {
-        return self::parseHtml($html, 'a', 'href', $baseUri);
-    }
+        FeatureDetection::supportsDom();
+        $html = (string) $html;
+        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+        try {
+            $result = true;
+            $exception = null;
+            if (class_exists(HTMLDocument::class)) {
+                $dom = HTMLDocument::createFromString($html);
+            } else {
+                $dom = new DOMDocument();
+                $result = $dom->loadHTML($html);
+            }
+        } catch (Throwable $exception) {
+            $result = false;
+            $dom = null;
+        }
+        restore_error_handler();
+        if (false === $result || null === $dom) {
+            throw $exception ?? new DOMException('The content could not be parsed as a valid HTML content.');
+        }
 
-    /**
-     * If the html content contains more than one link element, only the first one will be parsed.
-     *
-     * @throws DOMException
-     */
-    public static function fromHtmlLink(string $html, Stringable|string|null $baseUri = null): self
-    {
-        return self::parseHtml($html, 'link', 'href', $baseUri);
+        $element = $dom->getElementsByTagName('a')->item(0);
+        if (null === $element) {
+            throw new DOMException('No anchor element was found in the content.');
+        }
+
+        $uri = $element->getAttribute('href');
+        if (null !== $baseUri) {
+            $baseUri = (string) $baseUri;
+        }
+
+        return match (true) {
+            !in_array($baseUri, [null, self::ABOUT_BLANK], true) => self::fromBaseUri($uri, $baseUri),
+            !in_array($dom->documentURI, [null, self::ABOUT_BLANK], true) => self::fromBaseUri($uri, $dom->documentURI),
+            default => self::new($uri),
+        };
     }
 
     /**
@@ -1200,83 +1173,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $content = strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]);
 
         return self::buildHtml($this, 'a', $attributes, $content);
-    }
-
-    /**
-     * Returns the Link tag content for the current instance.
-     *
-     * @param iterable<string, string|null|array<string>> $attributes an ordered map of key value. you must quote the value if needed
-     *
-     * @throws DOMException
-     */
-    public function toHtmlLink(iterable $attributes = []): string
-    {
-        return self::buildHtml($this, 'link', $attributes, null);
-    }
-
-    /**
-     * Returns the Link header content for a single item.
-     *
-     * @param iterable<string, string|int|float|bool|null> $parameters an ordered map of key value.
-     *
-     * @see https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.6
-     */
-    public function toHeaderLinkValue(iterable $parameters = []): string
-    {
-        $attributes = [];
-        foreach ($parameters as $name => $val) {
-            if (null !== $val && false !== $val) {
-                $attributes[] = $this->formatHeaderValueParameter($name, $val);
-            }
-        }
-
-        $value = '<'.$this->toString().'>';
-        if ([] === $attributes) {
-            return $value;
-        }
-
-        return $value.implode('', $attributes);
-    }
-
-    private function formatHeaderValueParameter(string $name, string|int|float|bool $value): string
-    {
-        $name = strtolower($name);
-
-        return '; '.$name.match (true) {
-            1 !== preg_match('/^([a-z*][a-z\d.*_-]*)$/i', $name) => throw new InvalidArgumentException('The parameter name `'.$name.'` contains invalid characters.'),
-            true === $value => '',
-            false === $value => '=?0',
-            is_float($value) => '="'.json_encode(round($value, 3, PHP_ROUND_HALF_EVEN), JSON_PRESERVE_ZERO_FRACTION).'"',
-            is_int($value) => '="'.$value.'"',
-            default => $this->formatHeaderValueStringParameter($name, $value),
-        };
-    }
-
-    private function formatHeaderValueStringParameter(string $name, string $value): string
-    {
-        if (
-            1 === preg_match("/(?:(?:(?<!\r)\n)|(?:\r(?!\n))|(?:\r\n(?![ \t])))/", $value) ||
-            1 === preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFE]/', $value)
-        ) {
-            throw new InvalidArgumentException('The value `'.$value.'` contains invalid characters.');
-        }
-
-        $flag = FILTER_FLAG_STRIP_LOW;
-        if (1 === preg_match('/[^\x20-\x7E]/', $value)) {
-            $flag |= FILTER_FLAG_STRIP_HIGH;
-        }
-
-        $filteredValue = str_replace('%', '', (string) filter_var($value, FILTER_UNSAFE_RAW, $flag));
-        $headerValue = sprintf('="%s"', str_replace('"', '\\"', $filteredValue));
-        if ($value === $filteredValue) {
-            return $headerValue;
-        }
-
-        return $headerValue.sprintf("; %s*=utf-8''%s", $name, preg_replace_callback(
-            '/[%"\x00-\x1F\x7F-\xFF]/',
-            static fn (array $matches): string => strtolower(rawurlencode($matches[0])),
-            $value
-        ));
     }
 
     /**
@@ -1935,45 +1831,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
         $this->origin = $this->setOrigin();
-    }
-
-    private static function parseHtml(
-        Stringable|string $content,
-        string $tagName,
-        string $attributeName,
-        Stringable|string|null $baseUri = null
-    ): self {
-        FeatureDetection::supportsDom();
-
-        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-        $result = true;
-        if (class_exists(HTMLDocument::class)) {
-            $dom = HTMLDocument::createFromString((string) $content);
-        } else {
-            $dom = new DOMDocument();
-            $result = $dom->loadHTML((string) $content);
-        }
-        restore_error_handler();
-        if (false === $result) {
-            throw new DOMException('The content could not be parsed as a valid HTML content.');
-        }
-
-        $tag = $dom->getElementsByTagName($tagName)->item(0);
-        if (null === $tag) {
-            throw new DOMException('No `'.$tagName.'` element was found in the content.');
-        }
-
-        $uri = $tag->getAttribute($attributeName);
-
-        if (null !== $baseUri) {
-            $baseUri = (string) $baseUri;
-        }
-
-        return match (true) {
-            null !== $baseUri && self::ABOUT_BLANK !== $baseUri => self::fromBaseUri($uri, $baseUri),
-            null !== $dom->documentURI && self::ABOUT_BLANK !== $dom->documentURI => self::fromBaseUri($uri, $dom->documentURI),
-            default => self::new($uri),
-        };
     }
 
     /**

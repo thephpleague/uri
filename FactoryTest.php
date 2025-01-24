@@ -654,59 +654,6 @@ final class FactoryTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideHeaderLinkValue')]
-    public function it_parses_uri_string_from_an_link_header_value(string $html, ?string $baseUri, string $expected): void
-    {
-        self::assertSame($expected, Uri::fromHeaderLinkValue($html, $baseUri)->toString());
-    }
-
-    public static function provideHeaderLinkValue(): iterable
-    {
-        yield 'empty string' => [
-            'html' => '<>; rel="previous"',
-            'baseUri' => null,
-            'expected' => '',
-        ];
-
-        yield 'empty string with base URI' => [
-            'html' => '<>; rel="next"',
-            'baseUri' => 'https://example.com/',
-            'expected' => 'https://example.com/',
-        ];
-
-        yield 'URI with base URI' => [
-            'html' => '</style.css>; rel="stylesheet"',
-            'baseUri' => 'https://www.example.com',
-            'expected' => 'https://www.example.com/style.css',
-        ];
-
-        yield 'multiple anchor tag' => [
-            'html' => '</style.css>; rel="stylesheet", </foobar.css>; rel="stylesheet"',
-            'baseUri' => 'https://example.com/',
-            'expected' => 'https://example.com/style.css',
-        ];
-    }
-
-    #[Test]
-    #[DataProvider('provideInvalidHeaderLinkValue')]
-    public function it_fails_to_parse_an_invalid_http_header_link_with_invalid_characters(string $html): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        Uri::fromHeaderLinkValue($html);
-    }
-
-    public static function provideInvalidHeaderLinkValue(): iterable
-    {
-        yield 'header value with invalid characters' => ['html' => '</style.css>; title="stylesheet"'."\r"];
-        yield 'header value with missing URI part' => ['html' => '; rel="stylesheet"'];
-        yield 'header value with missing semicolon' => ['html' => '</style.css> title="stylesheet"'];
-        yield 'header value with missing parameters' => ['html' => '</style.css>'];
-        yield 'header value with missing rel parameter' => ['html' => '</style.css> title="stylesheet"'];
-        yield 'header value with invalid parameters' => ['html' => '<https://example.com/page1> title="prev"; rel="Previous Page"'];
-    }
-
-    #[Test]
     #[DataProvider('provideInvalidUri')]
     public function it_fails_to_parse_with_new(Stringable|string|null $uri): void
     {

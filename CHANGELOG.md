@@ -16,8 +16,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::getUser` returns the encoded user component of the URI an alias for `Uri::getUsername`
 - `Uri::fromMarkdownAnchor`
 - `Uri::fromHtmlAnchor`
-- `Uri::fromHtmlLink`
-- `Uri::fromHeaderLinkValue`
 
 ### Fixed
 

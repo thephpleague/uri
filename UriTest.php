@@ -13,7 +13,6 @@ namespace League\Uri;
 
 use DOMException;
 use GuzzleHttp\Psr7\Utils;
-use InvalidArgumentException;
 use League\Uri\Components\HierarchicalPath;
 use League\Uri\Components\Port;
 use League\Uri\Exceptions\SyntaxError;
@@ -1073,130 +1072,10 @@ class UriTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('providesUriToLinkTagHTML')]
-    public function it_will_generate_the_html_link_tag_code_for_the_instance(string $uri, array $parameters, string $expected): void
-    {
-        self::assertSame($expected, Uri::new($uri)->toHtmlLink($parameters));
-    }
-
-    public static function providesUriToLinkTagHTML(): iterable
-    {
-        yield 'empty string' => [
-            'uri' => '',
-            'parameters' => [],
-            'expected' => '<link href="">',
-        ];
-
-        yield 'URI without content' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [],
-            'expected' => '<link href="http://xn--bb-bjab.be">',
-        ];
-
-        yield 'URI without content and with class' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [
-                'class' => ['foo', 'bar'],
-                'target' => null,
-            ],
-            'expected' => '<link href="http://xn--bb-bjab.be" class="foo bar">',
-        ];
-
-        yield 'URI without content and with target' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [
-                'class' => null,
-                'rel' => 'stylesheet',
-            ],
-            'expected' => '<link href="http://xn--bb-bjab.be" rel="stylesheet">',
-        ];
-    }
-
-    #[Test]
     public function it_will_fail_to_generate_an_anchor_tag_html_for_the_instance(): void
     {
         $this->expectException(DOMException::class);
         Uri::new('https://example.com')->toHtmlAnchor(attributes: ["bébé\r\n" => 'yes']);
-    }
-
-    #[Test]
-    #[DataProvider('providesUriToLinkHeaderValue')]
-    public function it_will_generate_the_link_header_value_for_the_instance(string $uri, array $parameters, string $expected): void
-    {
-        self::assertSame($expected, Uri::new($uri)->toHeaderLinkValue($parameters));
-    }
-
-    public static function providesUriToLinkHeaderValue(): iterable
-    {
-        yield 'empty string' => [
-            'uri' => '',
-            'parameters' => [],
-            'expected' => '<>',
-        ];
-
-        yield 'URI without content' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [],
-            'expected' => '<http://xn--bb-bjab.be>',
-        ];
-
-        yield 'URI without content and with class' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [
-                'rel' => 'stylesheet',
-                'target' => null,
-            ],
-            'expected' => '<http://xn--bb-bjab.be>; rel="stylesheet"',
-        ];
-
-        yield 'URI without content and with target' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [
-                'title' => null,
-                'rel' => 'stylesheet',
-            ],
-            'expected' => '<http://xn--bb-bjab.be>; rel="stylesheet"',
-        ];
-
-        yield 'URI without title with UTF-8 character' => [
-            'uri' => 'http://Bébé.be',
-            'parameters' => [
-                'title' => 'je suis un bébé',
-                'rel' => 'previous',
-            ],
-            'expected' => '<http://xn--bb-bjab.be>; title="je suis un bb"; title*=utf-8\'\'je suis un b%c3%a9b%c3%a9; rel="previous"',
-        ];
-    }
-
-    #[Test]
-    #[DataProvider('providesUriToLinkInvalidHeaderValue')]
-    public function it_will_fail_to_generate_a_link_header_value_for_the_instance(string $uri, array $parameters): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Uri::new($uri)->toHeaderLinkValue($parameters);
-    }
-
-    public static function providesUriToLinkInvalidHeaderValue(): iterable
-    {
-        yield 'the parameter name contains invalid character' => [
-            'uri' => 'http://www.example.com/',
-            'parameters' => ["bébé\0" => 'yes'],
-        ];
-
-        yield 'the parameter name contains space' => [
-            'uri' => 'http://www.example.com/',
-            'parameters' => ['bébé ' => 'yes'],
-        ];
-
-        yield 'the parameter value contains invalid character (1)' => [
-            'uri' => 'http://www.example.com/',
-            'parameters' => ['foobar' => "yes\r\n"],
-        ];
-
-        yield 'the parameter value contains invalid character (2)' => [
-            'uri' => 'http://www.example.com/',
-            'parameters' => ['foobar' => "yes\0"],
-        ];
     }
 
     #[Test]

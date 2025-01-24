@@ -28,6 +28,8 @@ IPv4 conversion requires at least one of the following:
 otherwise an exception will be thrown when attempting to convert a host
 as an IPv4 address.
 
+Parsing or generating HTML related content requires the `dom` extension.
+
 Dependencies
 -------
 

@@ -759,8 +759,13 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             throw new InvalidArgumentException('As per RFC8288, the URI must be defined inside two `<>` characters.');
         }
 
+        $parameters = ltrim($matches['parameters']);
+        if (!str_starts_with($parameters, ';')) {
+            throw new InvalidArgumentException('The value `'.$headerValue.'` contains invalid characters.');
+        }
+
         $attributes = [];
-        if (false !== preg_match_all('/;\s*(?<name>\w*)\*?="(?<value>[^"]*)"/', $matches['parameters'], $attrMatches, PREG_SET_ORDER)) {
+        if (false !== preg_match_all('/;\s*(?<name>\w*)\*?="(?<value>[^"]*)"/', $parameters, $attrMatches, PREG_SET_ORDER)) {
             foreach ($attrMatches as $attrMatch) {
                 $attributes[$attrMatch['name']] = $attrMatch['value'];
             }

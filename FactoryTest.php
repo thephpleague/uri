@@ -703,6 +703,7 @@ final class FactoryTest extends TestCase
         yield 'header value with missing semicolon' => ['html' => '</style.css> title="stylesheet"'];
         yield 'header value with missing parameters' => ['html' => '</style.css>'];
         yield 'header value with missing rel parameter' => ['html' => '</style.css> title="stylesheet"'];
+        yield 'header value with invalid parameters' => ['html' => '<https://example.com/page1> title="prev"; rel="Previous Page"'];
     }
 
     #[Test]

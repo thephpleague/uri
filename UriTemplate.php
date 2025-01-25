@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use Deprecated;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
@@ -31,8 +32,10 @@ use function array_key_exists;
  * @package League\Uri
  * @author  Ignace Nyamagana Butera <nyamsprod@gmail.com>
  * @since   6.1.0
+ *
+ * @phpstan-import-type InputValue from VariableBag
  */
-final class UriTemplate
+final class UriTemplate implements Stringable
 {
     private readonly Template $template;
     private readonly VariableBag $defaultVariables;
@@ -60,12 +63,17 @@ final class UriTemplate
             ));
     }
 
-    public function getTemplate(): string
+    /**
+     * Returns the string representation of the UriTemplate.
+     */
+    public function __toString(): string
     {
         return $this->template->value;
     }
 
     /**
+     * Returns the distinct variables placeholders used in the template.
+     *
      * @return array<string>
      */
     public function getVariableNames(): array
@@ -73,6 +81,9 @@ final class UriTemplate
         return $this->template->variableNames;
     }
 
+    /**
+     * @return array<string, InputValue>
+     */
     public function getDefaultVariables(): array
     {
         return iterator_to_array($this->defaultVariables);
@@ -119,5 +130,20 @@ final class UriTemplate
         return Uri::new($this->template->expandOrFail(
             $this->filterVariables($variables)->replace($this->defaultVariables)
         ));
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.6.0
+     * @codeCoverageIgnore
+     * @see UriTemplate::toString()
+     *
+     * Create a new instance from the environment.
+     */
+    #[Deprecated(message:'use League\Uri\UriTemplate::__toString() instead', since:'league/uri:7.6.0')]
+    public function getTemplate(): string
+    {
+        return $this->__toString();
     }
 }

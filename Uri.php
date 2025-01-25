@@ -740,27 +740,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public static function fromHtmlAnchor(Stringable|string $html, Stringable|string|null $baseUri = null): self
     {
-        FeatureDetection::supportsDom();
-        $html = (string) $html;
-        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-        try {
-            $result = true;
-            $exception = null;
-            if (class_exists(HTMLDocument::class)) {
-                $dom = HTMLDocument::createFromString($html);
-            } else {
-                $dom = new DOMDocument();
-                $result = $dom->loadHTML($html);
-            }
-        } catch (Throwable $exception) {
-            $result = false;
-            $dom = null;
-        }
-        restore_error_handler();
-        if (false === $result || null === $dom) {
-            throw $exception ?? new DOMException('The content could not be parsed as a valid HTML content.');
-        }
-
+        $dom = self::loadDom($html);
         $element = $dom->getElementsByTagName('a')->item(0);
         if (null === $element) {
             throw new DOMException('No anchor element was found in the content.');
@@ -776,6 +756,36 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             !in_array($dom->documentURI, [null, self::ABOUT_BLANK], true) => self::fromBaseUri($uri, $dom->documentURI),
             default => self::new($uri),
         };
+    }
+
+    /**
+     * @throws DOMException
+     * @throws Throwable
+     */
+    private static function loadDom(Stringable|string $html): DOMDocument|HTMLDocument
+    {
+        FeatureDetection::supportsDom();
+
+        $html = (string) $html;
+        if (class_exists(HTMLDocument::class)) {
+            try {
+                set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+
+                return HTMLDocument::createFromString($html);
+            } finally {
+                restore_error_handler();
+            }
+        }
+
+        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
+        $dom = new DOMDocument();
+        $result = $dom->loadHTML($html);
+        restore_error_handler();
+        if (false === $result) {
+            throw new DOMException('The content could not be parsed as a valid HTML content.');
+        }
+
+        return $dom;
     }
 
     /**

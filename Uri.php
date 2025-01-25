@@ -1180,9 +1180,40 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public function toHtmlAnchor(?string $linkTextTemplate = null, iterable $attributes = []): string
     {
-        $content = strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]);
+        FeatureDetection::supportsDom();
 
-        return self::buildHtml($this, 'a', $attributes, $content);
+        $doc = class_exists(HTMLDocument::class) ? HTMLDocument::createEmpty() : new DOMDocument(encoding:'utf-8');
+        $element = $doc->createElement('a');
+        $element->setAttribute('href', $this->toString());
+        $element->appendChild($doc->createTextNode(strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()])));
+
+        foreach ($attributes as $name => $value) {
+            if ('href' === strtolower($name) || null === $value) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = implode(' ', $value);
+            }
+
+            if (!is_string($value)) {
+                throw new TypeError('The attribute `'.$name.'` contains an invalid value.');
+            }
+
+            $value = trim($value);
+            if ('' === $value) {
+                continue;
+            }
+
+            $element->setAttribute($name, $value);
+        }
+
+        $html = $doc->saveHTML($element);
+        if (false === $html) {
+            throw new DOMException('The HTML generation failed.');
+        }
+
+        return $html;
     }
 
     /**
@@ -1841,51 +1872,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
         $this->origin = $this->setOrigin();
-    }
-
-    /**
-     * @param iterable<string, string|null|list<string>> $attributes
-     *
-     * @throws DOMException
-     */
-    private static function buildHtml(self $uri, string $tagName, iterable $attributes, ?string $content): string
-    {
-        FeatureDetection::supportsDom();
-
-        $doc = class_exists(HTMLDocument::class) ? HTMLDocument::createEmpty() : new DOMDocument(encoding:'utf-8');
-        $element = $doc->createElement($tagName);
-        $element->setAttribute('href', $uri->toString());
-        if (null !== $content) {
-            $element->appendChild($doc->createTextNode($content));
-        }
-
-        foreach ($attributes as $name => $value) {
-            if ('href' === strtolower($name) || null === $value) {
-                continue;
-            }
-
-            if (is_array($value)) {
-                $value = implode(' ', $value);
-            }
-
-            if (!is_string($value)) {
-                throw new TypeError('The attribute `'.$name.'` contains an invalid value.');
-            }
-
-            $value = trim($value);
-            if ('' === $value) {
-                continue;
-            }
-
-            $element->setAttribute($name, $value);
-        }
-
-        $html = $doc->saveHTML($element);
-        if (false === $html) {
-            throw new DOMException('The HTML generation failed.');
-        }
-
-        return $html;
     }
 
     /**

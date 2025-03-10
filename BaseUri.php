@@ -71,7 +71,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
     public static function from(Stringable|string $uri, ?UriFactoryInterface $uriFactory = null): static
     {
-        return new static(static::formatHost(static::filterUri($uri, $uriFactory)), $uriFactory);
+        $uri = static::formatHost(static::filterUri($uri, $uriFactory));
+        return new static($uri, $uriFactory);
     }
 
     public function withUriFactory(UriFactoryInterface $uriFactory): static
@@ -264,10 +265,21 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function isSameDocument(Stringable|string $uri): bool
     {
-        return (match (true) {
-            $this->uri instanceof Uri => $this->uri,
-            default => Uri::new($this->uri),
-        })->isSameDocument($uri);
+        return self::normalizedUri($this->uri)->isSameDocument(self::normalizedUri($uri));
+    }
+
+    private static function normalizedUri(Stringable|string $uri): Uri
+    {
+        $uri = ($uri instanceof Uri) ? $uri : Uri::new($uri);
+        $host = $uri->getHost();
+        if (null === $host || Ipv4Converter::fromEnvironment()->isIpv4($host) || IPv6Converter::isIpv6($host)) {
+            return $uri;
+        }
+
+        /** @var Uri $uri */
+        $uri = $uri->withHost(IdnaConverter::toUnicode((string) Ipv6Converter::compress($host))->domain());
+
+        return $uri;
     }
 
     /**
@@ -357,10 +369,11 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         }
 
         return match (true) {
-            null !== $components['scheme'] && isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'])]) => $uri
+            isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'] ?? '')]) => $uri
                 ->withFragment($nullValue)
                 ->withQuery($nullValue)
                 ->withPath('')
+                ->withScheme('localhost')
                 ->withHost($components['host'])
                 ->withPort($components['port'])
                 ->withScheme($components['scheme'])

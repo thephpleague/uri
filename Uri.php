@@ -199,6 +199,9 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
     /**
      * Supported schemes and corresponding default port.
+     * @see https://github.com/python-hyper/hyperlink/blob/master/src/hyperlink/_url.py for the curating list definition
+     * @see https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+     * @see https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
      *
      * @var array<string, int|null>
      */
@@ -211,6 +214,42 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         'https' => 443,
         'ws' => 80,
         'wss' => 443,
+        'imap' => 143,
+        'ipp' => 631,
+        'ipps' => 631,
+        'irc' => 194,
+        'ircs' => 6697,
+        'ldap' => 389,
+        'ldaps' => 636,
+        'mms' => 1755,
+        'msrp' => 2855,
+        'msrps' => null,
+        'mtqp' => 1038,
+        'nfs' => 111,
+        'nntp' => 119,
+        'nntps' => 563,
+        'pop' => 110,
+        'prospero' => 1525,
+        'redis' => 6379,
+        'rsync' => 873,
+        'rtsp' => 554,
+        'rtsps' => 322,
+        'rtspu' => 5005,
+        'sftp' => 22,
+        'smb' => 445,
+        'snmp' => 161,
+        'ssh' => 22,
+        'steam' => null,
+        'svn' => 3690,
+        'telnet' => 23,
+        'ventrilo' => 3784,
+        'vnc' => 5900,
+        'wais' => 210,
+        'xmpp' => null,
+        'acap' => 674,
+        'afp' => 548,
+        'dict' => 2628,
+        'dns' => 53,
     ];
 
     /**
@@ -1017,7 +1056,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         if (! match ($this->scheme) {
-            'data' => $this->isUriWithSchemeAndPathOnly(),
+            'blob' => $this->isUriWithoutAuthority(),
+            'data', 'about' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
             'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
             'http', 'https' => $this->isNonEmptyHostUri(),
@@ -1070,6 +1110,11 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         return IdnaConverter::toUnicode((string)IPv6Converter::compress($this->host))->domain();
+    }
+
+    private function isUriWithoutAuthority(): bool
+    {
+        return null === $this->authority;
     }
 
     /**
@@ -1711,7 +1756,10 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * * @see https://wiki.php.net/rfc/url_parsing_api
+     * Normalize an URI by applying non-destructive and destructive normalization
+     * rules as defined in RFC3986 and RFC3987.
+     *
+     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public function normalize(): UriInterface
     {
@@ -1849,29 +1897,38 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * @return ComponentMap
      */
-    public function __serialize(): array
+    public function __debugInfo(): array
     {
         return $this->toComponents();
     }
 
     /**
-     * @param ComponentMap $data
+     * @return array{__uri: string}
+     */
+    public function __serialize(): array
+    {
+        return ['__uri' => $this->toString()];
+    }
+
+    /**
+     * @param array{__uri: string} $data
      */
     public function __unserialize(array $data): void
     {
-        $this->scheme = $this->formatScheme($data['scheme'] ?? null);
-        $this->user = Encoder::encodeUser($data['user'] ?? null);
-        $this->pass = Encoder::encodePassword($data['pass'] ?? null);
-        $this->host = $this->formatHost($data['host'] ?? null);
-        $this->port = $this->formatPort($data['port'] ?? null);
-        $this->path = $this->formatPath($data['path'] ?? '');
-        $this->query = Encoder::encodeQueryOrFragment($data['query'] ?? null);
-        $this->fragment = Encoder::encodeQueryOrFragment($data['fragment'] ?? null);
-        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
-        $this->authority = UriString::buildAuthority($this->toComponents());
-        $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
-        $this->assertValidState();
-        $this->origin = $this->setOrigin();
+        $uri = self::new($data['__uri']);
+
+        $this->scheme = $uri->scheme;
+        $this->user = $uri->user;
+        $this->pass = $uri->pass;
+        $this->host = $uri->host;
+        $this->port = $uri->port;
+        $this->path = $uri->path;
+        $this->query = $uri->query;
+        $this->fragment = $uri->fragment;
+        $this->userInfo = $uri->userInfo;
+        $this->authority = $uri->authority;
+        $this->uri = $uri->uri;
+        $this->origin = $uri->origin;
     }
 
     /**

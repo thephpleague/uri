@@ -16,6 +16,7 @@ namespace League\Uri\UriTemplate;
 use ArrayIterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -171,5 +172,37 @@ final class VariableBagTest extends TestCase
 
         self::assertEquals($expected, $bag->replace($defaultBag));
         self::assertEquals($defaultBag, $defaultBag->replace($bag));
+    }
+
+    #[Test]
+    public function it_can_evaluate_if_the_bag_is_identical(): void
+    {
+        $bag = new VariableBag([
+            'foo' => 'bar',
+            'yolo' => 42,
+            'list' => 'this is a list',
+        ]);
+
+        self::assertFalse($bag->equals(new ArrayIterator()));
+        self::assertFalse($bag->equals(new stdClass()));
+        self::assertFalse($bag->equals('bag'));
+        self::assertFalse($bag->equals(new VariableBag()));
+        self::assertTrue($bag->equals($bag));
+    }
+
+    #[Test]
+    public function it_can_filter_its_content(): void
+    {
+        $bag = new VariableBag([
+            'foo' => 'bar',
+            'yolo' => 42,
+            'list' => 'this is a list',
+        ]);
+        self::assertCount(3, $bag);
+
+        $newBag = $bag->filter(fn ($value, $key) => 'foo' === $key);
+
+        self::assertFalse($newBag->equals($bag));
+        self::assertCount(1, $newBag);
     }
 }

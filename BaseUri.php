@@ -527,6 +527,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      * Normalizes a URI for comparison; this URI string representation is not suitable for usage as per RFC guidelines.
      *
      * @deprecated since version 7.6.0
+     *
+     * @codeCoverageIgnore
      */
     #[Deprecated(message:'no longer used by the isSameDocument method', since:'league/uri-interfaces:7.6.0')]
     final protected function normalize(Psr7UriInterface|UriInterface $uri): string
@@ -544,6 +546,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      * Remove dot segments from the URI path as per RFC specification.
      *
      * @deprecated since version 7.6.0
+     *
+     * @codeCoverageIgnore
      */
     #[Deprecated(message:'no longer used by the isSameDocument method', since:'league/uri-interfaces:7.6.0')]
     final protected function removeDotSegments(string $path): string
@@ -588,6 +592,8 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      * @return array{0:string, 1:string|null}
      *
      * @deprecated since version 7.6.0
+     *
+     * @codeCoverageIgnore
      */
     #[Deprecated(message:'no longer used by the isSameDocument method', since:'league/uri-interfaces:7.6.0')]
     final protected function resolvePathAndQuery(Psr7UriInterface|UriInterface $uri): array

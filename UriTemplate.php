@@ -103,7 +103,7 @@ final class UriTemplate implements Stringable
     public function withDefaultVariables(iterable $defaultVariables): self
     {
         $defaultVariables = $this->filterVariables($defaultVariables);
-        if ($defaultVariables == $this->defaultVariables) {
+        if ($this->defaultVariables->equals($defaultVariables)) {
             return $this;
         }
 

@@ -180,4 +180,10 @@ final class TemplateTest extends TestCase
 
         Template::new('{var}{baz}')->expandOrFail(['var' => 'bar']);
     }
+
+    #[Test]
+    public function it_can_expand_with_expand_or_fail_when_all_variables_are_present(): void
+    {
+        self::assertSame('barfoo', Template::new('{var}{baz}')->expandOrFail(['var' => 'bar', 'baz' => 'foo']));
+    }
 }

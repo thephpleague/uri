@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Expression::class)]
+#[CoversClass(Operator::class)]
 final class ExpressionTest extends TestCase
 {
     #[DataProvider('providesValidNotation')]

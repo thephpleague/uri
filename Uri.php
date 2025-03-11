@@ -1748,11 +1748,17 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             $uri = self::tryNew($uri);
         }
 
-        return match(true) {
-            null === $uri => false,
-            $excludeFragment => $uri->withFragment(null)->toNormalizedString() === $this->withFragment(null)->toNormalizedString(),
-            default => $uri->toNormalizedString() === $this->toNormalizedString(),
-        };
+        if (null === $uri) {
+            return false;
+        }
+
+        $baseUri = $this;
+        if ($excludeFragment) {
+            $uri = $uri->withFragment(null);
+            $baseUri = $baseUri->withFragment(null);
+        }
+
+        return $uri->normalize()->toString() === $baseUri->normalize()->toString();
     }
 
     /**

@@ -1903,19 +1903,19 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * @return array{__uri: string}
+     * @return array{uri: string}
      */
     public function __serialize(): array
     {
-        return ['__uri' => $this->toString()];
+        return ['uri' => $this->toString()];
     }
 
     /**
-     * @param array{__uri: string} $data
+     * @param array{uri: string} $data
      */
     public function __unserialize(array $data): void
     {
-        $uri = self::new($data['__uri']);
+        $uri = self::new($data['uri']);
 
         $this->scheme = $uri->scheme;
         $this->user = $uri->user;

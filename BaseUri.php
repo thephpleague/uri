@@ -29,7 +29,6 @@ use function array_map;
 use function array_pop;
 use function array_reduce;
 use function count;
-use function end;
 use function explode;
 use function implode;
 use function in_array;
@@ -517,8 +516,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     final protected static function formatPathWithEmptyBaseQuery(string $path): string
     {
         $targetSegments = static::getSegments($path);
-        /** @var string $basename */
-        $basename = end($targetSegments);
+        $basename = $targetSegments[array_key_last($targetSegments)];
 
         return '' === $basename ? './' : $basename;
     }
@@ -572,7 +570,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
         $oldSegments = explode('/', $path);
         $newPath = implode('/', array_reduce($oldSegments, $reducer(...), []));
-        if (isset(static::DOT_SEGMENTS[end($oldSegments)])) {
+        if (isset(static::DOT_SEGMENTS[$oldSegments[array_key_last($oldSegments)]])) {
             $newPath .= '/';
         }
 

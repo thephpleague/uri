@@ -41,13 +41,13 @@ use Throwable;
 use TypeError;
 
 use function array_filter;
+use function array_key_last;
 use function array_map;
 use function array_pop;
 use function base64_decode;
 use function base64_encode;
 use function class_exists;
 use function count;
-use function end;
 use function explode;
 use function feof;
 use function file_get_contents;
@@ -1836,8 +1836,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     private static function formatPathWithEmptyBaseQuery(string $path): string
     {
         $targetSegments = self::getSegments($path);
-        /** @var string $basename */
-        $basename = end($targetSegments);
+        $basename = $targetSegments[array_key_last($targetSegments)];
 
         return '' === $basename ? './' : $basename;
     }

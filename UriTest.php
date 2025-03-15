@@ -706,7 +706,7 @@ class UriTest extends TestCase
             ],
             '2 identical URIs after normalization (2)' => [
                 Http::new('http://www.example.com'),
-                Http::new('http://www.example.com/'),
+                Http::new('http://www.example.com'),
                 true,
             ],
             '2 identical URIs after normalization (3)' => [
@@ -716,7 +716,7 @@ class UriTest extends TestCase
             ],
             '2 identical URIs after normalization (4)' => [
                 Http::new('http://www.example.com'),
-                Http::new('http://www.example.com:80/'),
+                Http::new('http://www.example.com:80'),
                 true,
             ],
         ];

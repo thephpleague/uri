@@ -763,6 +763,14 @@ class UriTest extends TestCase
                 'uri' => 'https://[1050:0000:0000:0000:0005:0000:300c:326b]:443/',
                 'expectedOrigin' => 'https://[1050::5:0:300c:326b]',
             ],
+            'normalized ipv4 non decimal notation' => [
+                'uri' => 'https://0xc0a821/foo/bar/',
+                'expectedOrigin' => 'https://0.192.168.33',
+            ],
+            'unknown scheme for cross origin' => [
+                'uri' => 'blob:foo://0xc0a821/foo/bar/',
+                'expectedOrigin' => null,
+            ],
         ];
     }
 

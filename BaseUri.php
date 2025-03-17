@@ -16,6 +16,7 @@ namespace League\Uri;
 use Deprecated;
 use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
+use League\Uri\Contracts\UriInspector;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Idna\Converter as IdnaConverter;
@@ -25,7 +26,6 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
-use function array_map;
 use function array_pop;
 use function array_reduce;
 use function count;
@@ -347,38 +347,29 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
             $this->uriFactory
         );
     }
+
     final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
-        $scheme = $uri->getScheme();
-        if ('blob' !== $scheme) {
-            return match (true) {
-                isset(static::WHATWG_SPECIAL_SCHEMES[$scheme]) => $uri
-                    ->withFragment($nullValue)
-                    ->withQuery($nullValue)
-                    ->withPath('')
-                    ->withUserInfo($nullValue),
-                default => null,
-            };
+        if ($uri instanceof UriInspector) {
+            return Uri::tryNew($uri->getOrigin());
         }
 
-        $components = UriString::parse($uri->getPath());
-        if ($uri instanceof Psr7UriInterface) {
-            /** @var ComponentMap $components */
-            $components = array_map(fn ($component) => null === $component ? '' : $component, $components);
+        $origin = Uri::tryNew($uri)?->getOrigin();
+        if (null === $origin) {
+            return null;
         }
 
-        return match (true) {
-            isset(static::WHATWG_SPECIAL_SCHEMES[strtolower($components['scheme'] ?? '')]) => $uri
+        $components = UriString::parse($origin);
+
+        return $uri
                 ->withFragment($nullValue)
                 ->withQuery($nullValue)
                 ->withPath('')
                 ->withScheme('localhost')
-                ->withHost($components['host'])
+                ->withHost((string) $components['host'])
                 ->withPort($components['port'])
-                ->withScheme($components['scheme'])
-                ->withUserInfo($nullValue),
-            default => null,
-        };
+                ->withScheme((string) $components['scheme'])
+                ->withUserInfo($nullValue);
     }
 
     /**

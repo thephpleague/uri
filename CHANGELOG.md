@@ -21,6 +21,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - `Uri` and `Http` normalization normalized IP against RFC3986 rules and not WHATWG rules.
+- `Uri::getOrigin` now follows WHATWG cross-origin definition
 
 ### Deprecated
 

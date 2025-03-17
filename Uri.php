@@ -29,6 +29,7 @@ use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Converter as IdnaConverter;
+use League\Uri\IPv4\Converter as IPv4Converter;
 use League\Uri\IPv6\Converter as IPv6Converter;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
@@ -1082,12 +1083,31 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
                     return null;
                 }
 
+                $host = $this->host;
+                $converted = $host;
+                if (null !== $converted) {
+                    try {
+                        $converted = IPv4Converter::fromEnvironment()->toDecimal($host);
+                    } catch (MissingFeature) {
+                        $converted = null;
+                    }
+
+                    if (false === filter_var($converted, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                        $converted = IPv6Converter::compress($host);
+                    }
+
+                    /** @var string $converted */
+                    if ($converted !== $host) {
+                        $converted = Idna\Converter::toAscii($converted)->domain();
+                    }
+                }
+
                 return $this
                     ->withFragment(null)
                     ->withQuery(null)
                     ->withPath('')
                     ->withUserInfo(null)
-                    ->withHost($this->normalizeHost())
+                    ->withHost($converted)
                     ->toString();
             }
 
@@ -1101,15 +1121,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         } catch (UriException) {
             return null;
         }
-    }
-
-    private function normalizeHost(): ?string
-    {
-        if (null === $this->host) {
-            return null;
-        }
-
-        return IdnaConverter::toUnicode((string)IPv6Converter::compress($this->host))->domain();
     }
 
     private function isUriWithoutAuthority(): bool

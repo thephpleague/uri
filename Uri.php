@@ -479,30 +479,23 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             return new self(null, null, null, null, null, '', null, null);
         }
 
-        $components = UriString::parse($uri);
-
-        return new self(
-            $components['scheme'],
-            $components['user'],
-            $components['pass'],
-            $components['host'],
-            $components['port'],
-            $components['path'],
-            $components['query'],
-            $components['fragment']
-        );
+        return new self(...UriString::parse($uri));
     }
 
     /**
      * Returns a new instance from a URI and a Base URI.or null on failure.
      *
-     * The returned URI must be absolute.
+     * The returned URI must be absolute if a base URI is provided
      *
      * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public static function parse(Stringable|string $uri, Stringable|string|null $baseUri = null): ?self
     {
         try {
+            if (null === $baseUri) {
+                return self::new($uri);
+            }
+
             return self::fromBaseUri($uri, $baseUri);
         } catch (Throwable) {
             return null;
@@ -514,10 +507,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(
-        Stringable|string $uri,
-        Stringable|string|null $baseUri = null
-    ): self {
+    public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
+    {
         return self::new(UriString::resolve($uri, $baseUri));
     }
 

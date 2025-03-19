@@ -971,7 +971,7 @@ class UriTest extends TestCase
 
         yield 'complex URI' => [
             'input' => 'https://xn--google.com/secret/../search?q=%F0%9F%8D%94',
-            'output' => 'https://䕮䕵䕶䕱.com/search?q=🍔',
+            'output' => 'https://䕮䕵䕶䕱.com/secret/../search?q=🍔',
         ];
 
         yield 'basic uri stays the same' => [

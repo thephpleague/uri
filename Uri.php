@@ -492,11 +492,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public static function parse(Stringable|string $uri, Stringable|string|null $baseUri = null): ?self
     {
         try {
-            if (null === $baseUri) {
-                return self::new($uri);
-            }
-
-            return self::fromBaseUri($uri, $baseUri);
+            return null === $baseUri ? self::new($uri) : self::fromBaseUri($uri, $baseUri);
         } catch (Throwable) {
             return null;
         }
@@ -1183,22 +1179,10 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         return $this->uri;
     }
 
-    /**
-     * * @see https://wiki.php.net/rfc/url_parsing_api
-     */
-    public function toNormalizedString(): string
-    {
-        return $this->normalize()->toString();
-    }
-
     public function toDisplayString(): string
     {
-        /** @var ComponentMap $components */
-        $components = array_map(
-            fn (?string $value): ?string => (null === $value || '' === $value) ? $value : rawurldecode($value),
-            $this->normalize()->toComponents()
-        );
-
+        $components = $this->toComponents();
+        unset($components['port']);
         if (null !== $components['host']) {
             $components['host'] = IdnaConverter::toUnicode($components['host'])->domain();
         }
@@ -1207,7 +1191,20 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             $components['path'] = '';
         }
 
-        return UriString::build($components);
+        $components['path'] = Encoder::decodePath($components['path']);
+        $components['user'] = Encoder::decodeNecessary($components['user']);
+        $components['pass'] = Encoder::decodeNecessary($components['pass']);
+        $components['query'] = Encoder::decodeQuery($components['query']);
+        $components['fragment'] = Encoder::decodeFragment($components['fragment']);
+
+        return UriString::build([
+            ...array_map(fn (string|null $value) => match (true) {
+                null === $value,
+                !str_contains($value, '%20') => $value,
+                default => str_replace('%20', ' ', $value),
+            }, $components),
+            ...['port' => $this->port],
+        ]);
     }
 
     /**

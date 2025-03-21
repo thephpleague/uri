@@ -56,12 +56,12 @@ class UriTest extends TestCase
     public function testAutomaticUrlNormalization(): void
     {
         $raw = 'HtTpS://MaStEr.B%c3%A9b%c3%a9.eXaMpLe.CoM:/%7ejohndoe/%a1/in+dex.php?fào.%bar=v%61lue#fragment';
-        $normalized = 'https://master.xn--bb-bjab.example.com/%7ejohndoe/%a1/in+dex.php?f%C3%A0o.%bar=v%61lue#fragment';
+        $normalized = 'https://master.b%C3%A9b%C3%A9.example.com/%7ejohndoe/%a1/in+dex.php?f%C3%A0o.%bar=v%61lue#fragment';
         $components = [
             'scheme' => 'https',
             'user' => null,
             'pass' => null,
-            'host' => 'master.xn--bb-bjab.example.com',
+            'host' => 'master.b%C3%A9b%C3%A9.example.com',
             'port' => null,
             'path' => '/%7ejohndoe/%a1/in+dex.php',
             'query' => 'f%C3%A0o.%bar=v%61lue',
@@ -218,7 +218,7 @@ class UriTest extends TestCase
     public function testModificationFailedWithInvalidHost(): void
     {
         self::expectException(SyntaxError::class);
-        Uri::new('http://example.com/path')->withHost('%23');
+        Uri::new('http://example.com/path')->withHost(':');
     }
 
     #[DataProvider('missingAuthorityProvider')]

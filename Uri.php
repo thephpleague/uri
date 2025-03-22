@@ -1195,6 +1195,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public function toDisplayString(): string
     {
         $components = $this->toComponents();
+
+
         unset($components['port']);
         if (null !== $components['host']) {
             $components['host'] = IdnaConverter::toUnicode($components['host'])->domain();

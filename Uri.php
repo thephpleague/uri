@@ -487,11 +487,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        $uri = (string) $uri;
-        if ('' === $uri) {
-            return new self(null, null, null, null, null, '', null, null);
-        }
-
         return new self(...UriString::parse($uri));
     }
 

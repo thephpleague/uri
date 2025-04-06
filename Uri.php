@@ -104,15 +104,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     private const REGEXP_INVALID_CHARS = '/[\x00-\x1f\x7f]/';
 
     /**
-     * RFC3986 schema regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-3.1
-     *
-     * @var string
-     */
-    private const REGEXP_SCHEME = ',^[a-z]([-a-z\d+.]+)?$,i';
-
-    /**
      * RFC3986 host identified by a registered name regular expression pattern.
      *
      * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
@@ -330,7 +321,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         if (
             !array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT)
-            && 1 !== preg_match(self::REGEXP_SCHEME, $formattedScheme)
+            && !UriString::isScheme($formattedScheme)
         ) {
             throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
         }

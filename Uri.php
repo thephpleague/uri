@@ -478,7 +478,10 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     public static function new(Stringable|string $uri = ''): self
     {
-        return new self(...UriString::parse($uri));
+        $uri = (string) $uri;
+        trim($uri) === $uri || throw new SyntaxError(sprintf('The uri `%s` contains invalid characters', $uri));
+
+        return new self(...UriString::parse(str_replace(' ', '%20', $uri)));
     }
 
     /**

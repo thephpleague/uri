@@ -49,6 +49,5 @@ final class HttpFactoryTest extends TestCase
         yield 'uri starting with whitespaces' => ['uri' => '    https://a/b?c'];
         yield 'uri ending with whitespaces' => ['uri' => 'https://a/b?c   '];
         yield 'uri surrounded with whitespaces' => ['uri' => '   https://a/b?c   '];
-        yield 'uri containing whitespaces' => ['uri' => 'https://a/b ?c'];
     }
 }

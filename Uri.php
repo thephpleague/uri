@@ -1403,20 +1403,9 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * @see https://wiki.php.net/rfc/url_parsing_api
      */
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    /**
-     * Returns the user component encoded value.
-     *
-     * @codeCoverageIgnore
-     * @see Uri::getUser()
-     */
     public function getUsername(): ?string
     {
-        return $this->getUser();
+        return $this->user;
     }
 
     public function getPassword(): ?string

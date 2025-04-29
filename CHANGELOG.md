@@ -13,7 +13,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::when` conditional method to ease component building logic.
 - `Uri` implements the new `League\Uri\Contract\UriInspector` interface
 - `Uri` implements the new `League\Uri\Contract\UriRenderer` interface
-- `Uri::getUser` returns the encoded user component of the URI an alias for `Uri::getUsername`
 - `Uri::fromMarkdownAnchor`
 - `Uri::fromHtmlAnchor`
 - `UriTemplate` implements the `Stringable` interface
@@ -28,7 +27,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
-- `BasUri` use the `Uri` class or the component `Modifier` class depending on the needed requirement.
+- `BasUri` use the `Uri` class or the uri-component `Modifier` class depending on the needed requirement.
 
 ### Removed
 

@@ -1089,8 +1089,8 @@ class UriTest extends TestCase
     #[Test]
     public function it_can_update_the_user_component(): void
     {
-        self::assertSame('user', Uri::new('example://host/path?query')->withUser('user')->getUser());
-        self::assertNull(Uri::new('example://user@host/path?query')->withUser(null)->getUser());
+        self::assertSame('user', Uri::new('example://host/path?query')->withUser('user')->getUsername());
+        self::assertNull(Uri::new('example://user@host/path?query')->withUser(null)->getUsername());
     }
 
     #[Test]

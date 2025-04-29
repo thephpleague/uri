@@ -76,7 +76,6 @@ use function strlen;
 use function strpos;
 use function strspn;
 use function strtolower;
-use function strtoupper;
 use function substr;
 use function trim;
 
@@ -382,24 +381,19 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     private function formatRegisteredName(string $host): string
     {
         $formattedHost = rawurldecode($host);
-        if ($formattedHost !== $host) {
-
-            if (IdnaConverter::toAscii($formattedHost)->hasErrors()) {
-                throw new SyntaxError('The host `'.$host.'` is invalid : the registered name contains invalid characters.');
-            }
-
-            return (string) preg_replace_callback(
-                '/%[0-9A-F]{2}/i',
-                fn (array $matches) => strtoupper($matches[0]),
-                strtolower($host)
-            );
+        if ($formattedHost === $host) {
+            return match (1) {
+                preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
+                preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name cannot contain URI delimiters or spaces.'),
+                default => IdnaConverter::toAsciiOrFail($host),
+            };
         }
 
-        return match (1) {
-            preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
-            preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name cannot contain URI delimiters or spaces.'),
-            default => IdnaConverter::toAsciiOrFail($host),
-        };
+        if (IdnaConverter::toAscii($formattedHost)->hasErrors()) {
+            throw new SyntaxError('The host `'.$host.'` is invalid : the registered name contains invalid characters.');
+        }
+
+        return (string) Encoder::normalizeHost($host);
     }
 
     /**
@@ -1184,7 +1178,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public function toDisplayString(): string
     {
         $components = $this->toComponents();
-
 
         unset($components['port']);
         if (null !== $components['host']) {

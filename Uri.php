@@ -320,7 +320,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         if (
             !array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT)
-            && !UriString::isScheme($formattedScheme)
+            && !UriString::isValidScheme($formattedScheme)
         ) {
             throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
         }

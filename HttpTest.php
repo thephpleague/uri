@@ -16,8 +16,13 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
+
+use function serialize;
+use function unserialize;
 
 #[CoversClass(Http::class)]
 #[Group('http')]
@@ -171,21 +176,14 @@ final class HttpTest extends TestCase
         ];
     }
 
-    #[DataProvider('invalidPathProvider')]
+    #[TestWith(['data:go'])]
+    #[TestWith(['//data'])]
+    #[TestWith(['to://to'])]
     public function testPathIsInvalid(string $path): void
     {
         self::expectException(SyntaxError::class);
 
         Http::new()->withPath($path);
-    }
-
-    public static function invalidPathProvider(): array
-    {
-        return [
-            ['data:go'],
-            ['//data'],
-            ['to://to'],
-        ];
     }
 
     #[DataProvider('invalidURI')]
@@ -261,5 +259,15 @@ final class HttpTest extends TestCase
             '/hotels/Rest%20%26%20Relax/bookings/42',
             Http::fromTemplate($template, $params)->getPath()
         );
+    }
+
+    #[Test]
+    public function it_can_be_serialized_by_php(): void
+    {
+        $uri = Http::new('https://user:pass@example.com:81/path?query#fragment');
+        /** @var Http $newUri */
+        $newUri = unserialize(serialize($uri));
+
+        self::assertEquals($uri, $newUri);
     }
 }

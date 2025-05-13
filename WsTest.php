@@ -15,6 +15,7 @@ use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(\League\Uri\Uri::class)]
@@ -58,20 +59,13 @@ class WsTest extends TestCase
         ];
     }
 
-    #[DataProvider('invalidUrlProvider')]
+    #[TestWith(['wss:example.com'])]
+    #[TestWith(['wss:/example.com'])]
+    #[TestWith(['wss://example.com:80/foo/bar?foo=bar#content'])]
     public function testConstructorThrowInvalidArgumentException(string $uri): void
     {
         self::expectException(SyntaxError::class);
         Uri::new($uri);
-    }
-
-    public static function invalidUrlProvider(): array
-    {
-        return [
-            ['wss:example.com'],
-            ['wss:/example.com'],
-            ['wss://example.com:80/foo/bar?foo=bar#content'],
-        ];
     }
 
     public function testModificationFailedWithEmptyAuthority(): void
@@ -83,19 +77,12 @@ class WsTest extends TestCase
             ->withPath('//toto');
     }
 
-    #[DataProvider('portProvider')]
+    #[TestWith(['ws://www.example.com:443/', 443])]
+    #[TestWith(['ws://www.example.com:80/', null])]
+    #[TestWith(['ws://www.example.com', null])]
+    #[TestWith(['//www.example.com:80/', 80])]
     public function testPort(string $uri, ?int $port): void
     {
         self::assertSame($port, Uri::new($uri)->getPort());
-    }
-
-    public static function portProvider(): array
-    {
-        return [
-            ['ws://www.example.com:443/', 443],
-            ['ws://www.example.com:80/', null],
-            ['ws://www.example.com', null],
-            ['//www.example.com:80/', 80],
-        ];
     }
 }

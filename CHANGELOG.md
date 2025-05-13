@@ -6,7 +6,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- Added methods to align with the upcoming `Uri\Rfc3986Uri` PHP native class (see: https://wiki.php.net/rfc/url_parsing_api#proposal)
+- `Uri::parse` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::fromBaseUri` and `Uri::new`) that mimics the behaviour of the upcoming native PHP URI parse method.
 - `Uri::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::new`).
 - `Http::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Http::new`).
 - `Http::when` conditional method to ease component building logic.
@@ -16,6 +16,10 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::fromMarkdownAnchor`
 - `Uri::fromHtmlAnchor`
 - `UriTemplate` implements the `Stringable` interface
+- `Uri::resolve` returns a new `Uri` instance resolve against the current instance.
+- `Uri::normalize` returns a new `Uri` instance with a full “normalized-decoded” representation: The URI is normalized (when applicable), and components are percent-decoded. Normalization may contain destructive operation.
+- `Uri`  and  `Http` classes implement a serialize mechanism to safely serialize and unserialize the instance
+- Dependency to `psr/http-factory` package which is required for the package.
 
 ### Fixed
 

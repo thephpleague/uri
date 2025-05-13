@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use Deprecated;
+use Exception;
 use JsonSerializable;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriException;
@@ -271,6 +272,26 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     public function withFragment(string $fragment): self
     {
         return $this->newInstance($this->uri->withFragment($this->filterInput($fragment)));
+    }
+
+    /**
+     * @return array{uri: string}
+     */
+    public function __serialize(): array
+    {
+        return ['uri' => $this->uri->toString()];
+    }
+
+    /**
+     * @param array{uri: string} $data
+     *
+     * @throws Exception
+     */
+    public function __unserialize(array $data): void
+    {
+        $uri = self::new($data['uri'] ?? throw new Exception('The `uri` property is missing from the serialized object.'));
+
+        $this->uri = $uri->uri;
     }
 
     /**

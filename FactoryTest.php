@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
@@ -240,24 +241,13 @@ final class FactoryTest extends TestCase
         ];
     }
 
-    #[DataProvider('invalidRfc8089UriProvider')]
-    public function testIfFailsToGenerateAnUriFromRfc8089(string $invalidUri): void
+    #[TestWith(['invalidUri' => 'http://www.example.com'], 'unsupported scheme')]
+    #[TestWith(['invalidUri' => '//localhost/etc/fstab'], 'missing scheme')]
+    public function it_fails_to_generate_an_uri_from_rfc8089(string $invalidUri): void
     {
         $this->expectException(SyntaxError::class);
 
         Uri::fromRfc8089($invalidUri);
-    }
-
-    public static function invalidRfc8089UriProvider(): iterable
-    {
-        return [
-            'unsupported scheme' => [
-                'invalidUri' => 'http://www.example.com',
-            ],
-            'missing scheme' => [
-                'invalidUri' => '//localhost/etc/fstab',
-            ],
-        ];
     }
 
     public function testCreateFromUri(): void
@@ -553,19 +543,14 @@ final class FactoryTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('invalidUriWithWhitespaceProvider')]
+    #[TestWith(['uri' => '     '], 'uri containing only whitespaces')]
+    #[TestWith(['uri' => '    https://a/b?c'], 'uri starting with whitespaces')]
+    #[TestWith(['uri' => 'https://a/b?c   '], 'uri ending with whitespaces')]
     public function it_fails_parsing_uri_string_with_whitespace(string $uri): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         Uri::new($uri);
-    }
-
-    public static function invalidUriWithWhitespaceProvider(): iterable
-    {
-        yield 'uri containing only whitespaces' => ['uri' => '     '];
-        yield 'uri starting with whitespaces' => ['uri' => '    https://a/b?c'];
-        yield 'uri ending with whitespaces' => ['uri' => 'https://a/b?c   '];
     }
 
     #[Test]
@@ -637,18 +622,13 @@ final class FactoryTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideInvalidMarkdown')]
+    #[TestWith(['html' => 'this is **markdown**'], 'missing markdown placeholder')]
+    #[TestWith(['html' => '[this is an incomplete href] http://example.com markdown'], 'invalid markdown placeholder; missing URI part')]
+    #[TestWith(['html' => 'this is an incomplete(http://example.com) markdown'], 'invalid markdown placeholder; missing content part')]
     public function it_fails_to_parse_an_invalid_markdown(string $html): void
     {
         $this->expectException(InvalidArgumentException::class);
         Uri::fromMarkdownAnchor($html);
-    }
-
-    public static function provideInvalidMarkdown(): iterable
-    {
-        yield 'missing markdown placeholder' => ['html' => 'this is **markdown**'];
-        yield 'invalid markdown placeholder; missing URI part' => ['html' => '[this is an imcomplete] http://example.com markdown'];
-        yield 'invalid markdown placeholder; missing content part' => ['html' => 'this is an imcomplete(http://example.com) markdown'];
     }
 
     #[Test]
@@ -665,15 +645,10 @@ final class FactoryTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provideInvalidUriForResolution')]
+    #[TestWith(['uri' => ':', 'baseUri' => null], 'invalid URI')]
+    #[TestWith(['uri' => '', 'baseUri' => '/absolute/path'], 'invalid resolution with a non absolute URI')]
     public function it_fails_to_parse_with_parse(Stringable|string $uri, Stringable|string|null $baseUri): void
     {
         self::assertNull(Uri::parse($uri, $baseUri));
-    }
-
-    public static function provideInvalidUriForResolution(): iterable
-    {
-        yield 'invalid URI' => ['uri' => ':', 'baseUri' => null];
-        yield 'invalid resolution with a non absolute URI' => ['uri' => '', 'baseUri' => '/absolute/path'];
     }
 }

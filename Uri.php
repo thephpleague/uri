@@ -482,8 +482,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * Returns a new instance from a URI and a Base URI.or null on failure.
      *
      * The returned URI must be absolute if a base URI is provided
-     *
-     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public static function parse(Stringable|string $uri, Stringable|string|null $baseUri = null): ?self
     {
@@ -1470,16 +1468,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($scheme) {
             $this->scheme => $this,
-            default => new self(
-                $scheme,
-                $this->user,
-                $this->pass,
-                $this->host,
-                $this->port,
-                $this->path,
-                $this->query,
-                $this->fragment,
-            ),
+            default => new self($scheme, $this->user, $this->pass, $this->host, $this->port, $this->path, $this->query, $this->fragment),
         };
     }
 
@@ -1513,16 +1502,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($userInfo) {
             $this->userInfo => $this,
-            default => new self(
-                $this->scheme,
-                $user,
-                $pass,
-                $this->host,
-                $this->port,
-                $this->path,
-                $this->query,
-                $this->fragment,
-            ),
+            default => new self($this->scheme, $user, $pass, $this->host, $this->port, $this->path, $this->query, $this->fragment),
         };
     }
 
@@ -1545,16 +1525,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($host) {
             $this->host => $this,
-            default => new self(
-                $this->scheme,
-                $this->user,
-                $this->pass,
-                $host,
-                $this->port,
-                $this->path,
-                $this->query,
-                $this->fragment,
-            ),
+            default => new self($this->scheme, $this->user, $this->pass, $host, $this->port, $this->path, $this->query, $this->fragment),
         };
     }
 
@@ -1564,16 +1535,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($port) {
             $this->port => $this,
-            default => new self(
-                $this->scheme,
-                $this->user,
-                $this->pass,
-                $this->host,
-                $port,
-                $this->path,
-                $this->query,
-                $this->fragment,
-            ),
+            default => new self($this->scheme, $this->user, $this->pass, $this->host, $port, $this->path, $this->query, $this->fragment),
         };
     }
 
@@ -1585,16 +1547,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($path) {
             $this->path => $this,
-            default => new self(
-                $this->scheme,
-                $this->user,
-                $this->pass,
-                $this->host,
-                $this->port,
-                $path,
-                $this->query,
-                $this->fragment,
-            ),
+            default => new self($this->scheme, $this->user, $this->pass, $this->host, $this->port, $path, $this->query, $this->fragment),
         };
     }
 
@@ -1604,16 +1557,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($query) {
             $this->query => $this,
-            default => new self(
-                $this->scheme,
-                $this->user,
-                $this->pass,
-                $this->host,
-                $this->port,
-                $this->path,
-                $query,
-                $this->fragment,
-            ),
+            default => new self($this->scheme, $this->user, $this->pass, $this->host, $this->port, $this->path, $query, $this->fragment),
         };
     }
 
@@ -1623,16 +1567,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
         return match ($fragment) {
             $this->fragment => $this,
-            default => new self(
-                $this->scheme,
-                $this->user,
-                $this->pass,
-                $this->host,
-                $this->port,
-                $this->path,
-                $this->query,
-                $fragment,
-            ),
+            default => new self($this->scheme, $this->user, $this->pass, $this->host, $this->port, $this->path, $this->query, $fragment),
         };
     }
 
@@ -1747,10 +1682,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * Normalize an URI by applying non-destructive and destructive normalization
+     * Normalize a URI by applying non-destructive and destructive normalization
      * rules as defined in RFC3986 and RFC3987.
-     *
-     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public function normalize(): UriInterface
     {
@@ -1759,7 +1692,12 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             return $this;
         }
 
-        return self::new(UriString::normalize($uriString));
+        $normalizedUriString = UriString::normalize($uriString);
+        if ($normalizedUriString === $uriString) {
+            return $this;
+        }
+
+        return self::new($normalizedUriString);
     }
 
     /**
@@ -1770,8 +1708,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
-     *
-     * @see https://wiki.php.net/rfc/url_parsing_api
      */
     public function resolve(Stringable|string $uri): UriInterface
     {

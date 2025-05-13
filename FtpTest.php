@@ -69,7 +69,6 @@ final class FtpTest extends TestCase
     public static function invalidUrlProvider(): array
     {
         return [
-            //['http://example.com'],
             ['ftp:/example.com'],
             ['ftp:example.com'],
             ['ftp://example.com?query#fragment'],

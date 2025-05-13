@@ -17,6 +17,7 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UriTemplate::class)]
@@ -319,23 +320,16 @@ final class UriTemplateTest extends TestCase
         );
     }
 
-    #[DataProvider('provideInvalidTemplate')]
+    /**
+     * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
+     */
+    #[TestWith(['http://example.com/}/{+foo}'])]
+    #[TestWith(['http://example.com/{/{+foo}'])]
     public function testInvalidUriTemplate(string $template): void
     {
         self::expectException(SyntaxError::class);
 
         new UriTemplate($template);
-    }
-
-    /**
-     * @see https://github.com/uri-templates/uritemplate-test/blob/master/negative-tests.json
-     */
-    public static function provideInvalidTemplate(): iterable
-    {
-        return [
-            'mismatch in at least one expression (1)' => ['http://example.com/}/{+foo}'],
-            'mismatch in at least one expression (2)' => ['http://example.com/{/{+foo}'],
-        ];
     }
 
     public function testExpansionWithMultipleSameExpression(): void

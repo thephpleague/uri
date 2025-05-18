@@ -66,7 +66,8 @@
         "league/uri-components" : "Needed to easily manipulate URI objects components",
         "php-64bit": "to improve IPV4 host parsing",
         "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present",
-        "rowbot/url": "to handle WHATWG URL"
+        "rowbot/url": "to handle WHATWG URL",
+        "bakame/aide-uri": "A polyfill for PHP8.1 until PHP8.4 to add support to PHP Native URI parser"
     },
     "extra": {
         "branch-alias": {

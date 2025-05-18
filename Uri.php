@@ -40,6 +40,7 @@ use SplFileObject;
 use Stringable;
 use Throwable;
 use TypeError;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 use function array_filter;
 use function array_key_last;
@@ -470,8 +471,21 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Create a new instance from a string.
      */
-    public static function new(Stringable|string $uri = ''): self
+    public static function new(Rfc3986Uri|Stringable|string $uri = ''): self
     {
+        if ($uri instanceof Rfc3986Uri) {
+            return new self(
+                $uri->getRawScheme(),
+                $uri->getRawUsername(),
+                $uri->getRawPassword(),
+                $uri->getRawHost(),
+                $uri->getPort(),
+                $uri->getRawPath(),
+                $uri->getRawQuery(),
+                $uri->getRawFragment()
+            );
+        }
+
         $uri = (string) $uri;
         trim($uri) === $uri || throw new SyntaxError(sprintf('The uri `%s` contains invalid characters', $uri));
 
@@ -483,7 +497,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * The returned URI must be absolute if a base URI is provided
      */
-    public static function parse(Stringable|string $uri, Stringable|string|null $baseUri = null): ?self
+    public static function parse(Rfc3986Uri|Stringable|string $uri, Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
     {
         try {
             return null === $baseUri ? self::new($uri) : self::fromBaseUri($uri, $baseUri);
@@ -497,8 +511,16 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
+    public static function fromBaseUri(Rfc3986Uri|Stringable|string $uri, Rfc3986Uri|Stringable|string|null $baseUri = null): self
     {
+        if ($uri instanceof Rfc3986Uri) {
+            $uri = $uri->toRawString();
+        }
+
+        if ($baseUri instanceof Rfc3986Uri) {
+            $baseUri = $baseUri->toRawString();
+        }
+
         return self::new(UriString::resolve($uri, $baseUri));
     }
 
@@ -1709,8 +1731,12 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Stringable|string $uri): UriInterface
+    public function resolve(Rfc3986Uri|Stringable|string $uri): UriInterface
     {
+        if ($uri instanceof Rfc3986Uri) {
+            $uri = $uri->toRawString();
+        }
+
         return self::new(UriString::resolve($uri, $this->toString()));
     }
 
@@ -1723,7 +1749,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Stringable|string $uri): UriInterface
+    public function relativize(Rfc3986Uri|Stringable|string $uri): UriInterface
     {
         $uri = self::new($uri);
 

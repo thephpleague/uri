@@ -20,6 +20,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::normalize` returns a new `Uri` instance with a full “normalized-decoded” representation: The URI is normalized (when applicable), and components are percent-decoded. Normalization may contain destructive operation.
 - `Uri`  and  `Http` classes implement a serialize mechanism to safely serialize and unserialize the instance
 - Dependency to `psr/http-factory` package which is required for the package.
+- Support for `Uri\Rfc3986\Uri`
 
 ### Fixed
 

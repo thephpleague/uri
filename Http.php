@@ -23,6 +23,7 @@ use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 use function is_bool;
 
@@ -79,7 +80,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     /**
      * Create a new instance from a string or a stringable object.
      */
-    public static function new(Stringable|string $uri = ''): self
+    public static function new(Rfc3986Uri|Stringable|string $uri = ''): self
     {
         return new self(Uri::new($uri));
     }
@@ -87,7 +88,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     /**
      * Create a new instance from a string.or a stringable structure or returns null on failure.
      */
-    public static function tryNew(Stringable|string $uri = ''): ?self
+    public static function tryNew(Rfc3986Uri|Stringable|string $uri = ''): ?self
     {
         try {
             return self::new($uri);
@@ -141,7 +142,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Stringable|string $uri, Stringable|string|null $baseUri = null): self
+    public static function fromBaseUri(Rfc3986Uri|Stringable|string $uri, Rfc3986Uri|Stringable|string|null $baseUri = null): self
     {
         return new self(Uri::fromBaseUri($uri, $baseUri));
     }

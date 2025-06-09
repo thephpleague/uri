@@ -86,7 +86,7 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     }
 
     /**
-     * Create a new instance from a string.or a stringable structure or returns null on failure.
+     * Create a new instance from a string or a stringable structure or returns null on failure.
      */
     public static function tryNew(Rfc3986Uri|Stringable|string $uri = ''): ?self
     {

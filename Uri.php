@@ -41,6 +41,7 @@ use Stringable;
 use Throwable;
 use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url as WhatWgUrl;
 
 use function array_filter;
 use function array_key_last;
@@ -183,7 +184,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     private const REGEXP_BINARY = ',(;|^)base64$,';
 
     /**
-     * Windows file path string regular expression pattern.
+     * Windows filepath regular expression pattern.
      * <root> contains both the volume and volume separator.
      *
      * @var string
@@ -471,7 +472,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Create a new instance from a string.
      */
-    public static function new(Rfc3986Uri|Stringable|string $uri = ''): self
+    public static function new(WhatWgUrl|Rfc3986Uri|Stringable|string $uri = ''): self
     {
         if ($uri instanceof Rfc3986Uri) {
             return new self(
@@ -486,6 +487,19 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             );
         }
 
+        if ($uri instanceof WhatWgUrl) {
+            return new self(
+                $uri->getScheme(),
+                $uri->getUsername(),
+                $uri->getPassword(),
+                $uri->getAsciiHost(),
+                $uri->getPort(),
+                $uri->getPath(),
+                $uri->getQuery(),
+                $uri->getFragment(),
+            );
+        }
+
         $uri = (string) $uri;
         trim($uri) === $uri || throw new SyntaxError(sprintf('The uri `%s` contains invalid characters', $uri));
 
@@ -497,7 +511,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * The returned URI must be absolute if a base URI is provided
      */
-    public static function parse(Rfc3986Uri|Stringable|string $uri, Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
+    public static function parse(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
     {
         try {
             return null === $baseUri ? self::new($uri) : self::fromBaseUri($uri, $baseUri);
@@ -511,14 +525,22 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * The returned URI must be absolute.
      */
-    public static function fromBaseUri(Rfc3986Uri|Stringable|string $uri, Rfc3986Uri|Stringable|string|null $baseUri = null): self
+    public static function fromBaseUri(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): self
     {
         if ($uri instanceof Rfc3986Uri) {
             $uri = $uri->toRawString();
         }
 
+        if ($uri instanceof WhatWgUrl) {
+            $uri = $uri->toAsciiString();
+        }
+
         if ($baseUri instanceof Rfc3986Uri) {
             $baseUri = $baseUri->toRawString();
+        }
+
+        if ($baseUri instanceof WhatWgUrl) {
+            $baseUri = $baseUri->toAsciiString();
         }
 
         return self::new(UriString::resolve($uri, $baseUri));

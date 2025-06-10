@@ -1550,7 +1550,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withUser(Stringable|string|null $user): UriInterface
+    public function withUsername(Stringable|string|null $user): UriInterface
     {
         return $this->withUserInfo($user, $this->pass);
     }

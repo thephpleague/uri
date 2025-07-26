@@ -1119,7 +1119,7 @@ class UriTest extends TestCase
         /** @var Uri $newUri */
         $newUri = unserialize(serialize($uri));
 
-        self::assertTrue($uri->equals($newUri, excludeFragment: false));
+        self::assertTrue($uri->equals($newUri, ComparisonMode::IncludeFragment));
     }
 
     #[Test]

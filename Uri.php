@@ -1701,14 +1701,14 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Tells whether both URI refers to the same document.
      */
-    public function isSameDocument(UriInterface|Stringable|string $uri): bool
+    public function isSameDocument(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
     {
         return $this->equals($uri);
     }
 
-    public function equals(UriInterface|Stringable|string $uri, bool $excludeFragment = true): bool
+    public function equals(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri, ComparisonMode $comparisonMode = ComparisonMode::ExcludeFragment): bool
     {
-        if (!$uri instanceof UriInterface) {
+        if (!$uri instanceof UriInterface && !$uri instanceof Rfc3986Uri && !$uri instanceof WhatWgUrl) {
             $uri = self::tryNew($uri);
         }
 
@@ -1717,12 +1717,16 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         $baseUri = $this;
-        if ($excludeFragment) {
+        if (ComparisonMode::ExcludeFragment === $comparisonMode) {
             $uri = $uri->withFragment(null);
             $baseUri = $baseUri->withFragment(null);
         }
 
-        return $uri->normalize()->toString() === $baseUri->normalize()->toString();
+        return $baseUri->normalize()->toString() === match (true) {
+            $uri instanceof Rfc3986Uri => $uri->toString(),
+            $uri instanceof WhatWgUrl => $uri->toAsciiString(),
+            default => $uri->normalize()->toString(),
+        };
     }
 
     /**

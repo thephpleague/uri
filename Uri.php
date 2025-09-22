@@ -1741,11 +1741,16 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         $normalizedUriString = UriString::normalize($uriString);
-        if ($normalizedUriString === $uriString) {
+        $normalizedUri = self::new($normalizedUriString);
+        if (null !== $normalizedUri->getAuthority() && ('' === $normalizedUri->getPath()) && isset(self::WHATWG_SPECIAL_SCHEMES[$normalizedUri->getScheme()])) {
+            $normalizedUri = $normalizedUri->withPath('/');
+        }
+
+        if ($normalizedUri->toString() === $uriString) {
             return $this;
         }
 
-        return self::new($normalizedUriString);
+        return $normalizedUri;
     }
 
     /**

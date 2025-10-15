@@ -18,7 +18,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `UriTemplate` implements the `Stringable` interface
 - `Uri::resolve` returns a new `Uri` instance resolve against the current instance.
 - `Uri::normalize` returns a new `Uri` instance with a full “normalized-decoded” representation: The URI is normalized (when applicable), and components are percent-decoded. Normalization may contain destructive operation.
-- `Uri`  and  `Http` classes implement a serialize mechanism to safely serialize and unserialize the instance
 - Dependency to `psr/http-factory` package which is required for the package.
 - Support for `Uri\Rfc3986\Uri` and `Uri\Whatwg\Url`
 

@@ -1247,7 +1247,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * Returns the markdown string representation of the anchor tag with the current instance as its href attribute.
+     * Returns the Markdown string representation of the anchor tag with the current instance as its href attribute.
      */
     public function toMarkdownAnchor(?string $linkTextTemplate = null): string
     {
@@ -1699,7 +1699,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     }
 
     /**
-     * Tells whether both URI refers to the same document.
+     * Tells whether both URIs refer to the same document.
      */
     public function isSameDocument(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
     {
@@ -1883,35 +1883,6 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public function __debugInfo(): array
     {
         return $this->toComponents();
-    }
-
-    /**
-     * @return array{uri: string}
-     */
-    public function __serialize(): array
-    {
-        return ['uri' => $this->toString()];
-    }
-
-    /**
-     * @param array{uri: string} $data
-     */
-    public function __unserialize(array $data): void
-    {
-        $uri = self::new($data['uri']);
-
-        $this->scheme = $uri->scheme;
-        $this->user = $uri->user;
-        $this->pass = $uri->pass;
-        $this->host = $uri->host;
-        $this->port = $uri->port;
-        $this->path = $uri->path;
-        $this->query = $uri->query;
-        $this->fragment = $uri->fragment;
-        $this->userInfo = $uri->userInfo;
-        $this->authority = $uri->authority;
-        $this->uri = $uri->uri;
-        $this->origin = $uri->origin;
     }
 
     /**

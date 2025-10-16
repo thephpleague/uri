@@ -752,7 +752,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      *
      * @see https://datatracker.ietf.org/doc/html/rfc8089
      */
-    public static function fromRfc8089(Stringable|string $uri): UriInterface
+    public static function fromRfc8089(Stringable|string $uri): static
     {
         $fileUri = self::new((string) preg_replace(',^(file:/)([^/].*)$,i', 'file:///$2', (string) $uri));
         $scheme = $fileUri->getScheme();
@@ -1506,7 +1506,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         } ?? $this;
     }
 
-    public function withScheme(Stringable|string|null $scheme): UriInterface
+    public function withScheme(Stringable|string|null $scheme): static
     {
         $scheme = $this->formatScheme($this->filterString($scheme));
 
@@ -1539,7 +1539,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public function withUserInfo(
         Stringable|string|null $user,
         #[SensitiveParameter] Stringable|string|null $password = null
-    ): UriInterface {
+    ): static {
         $user = Encoder::encodeUser($this->filterString($user));
         $pass = Encoder::encodePassword($this->filterString($password));
         $userInfo = ('' !== $user) ? $this->formatUserInfo($user, $pass) : null;
@@ -1550,12 +1550,12 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withUsername(Stringable|string|null $user): UriInterface
+    public function withUsername(Stringable|string|null $user): static
     {
         return $this->withUserInfo($user, $this->pass);
     }
 
-    public function withPassword(#[SensitiveParameter] Stringable|string|null $password): UriInterface
+    public function withPassword(#[SensitiveParameter] Stringable|string|null $password): static
     {
         return match ($this->user) {
             null => throw new SyntaxError('The password component can not be if the URI user component is not set.'),
@@ -1563,7 +1563,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withHost(Stringable|string|null $host): UriInterface
+    public function withHost(Stringable|string|null $host): static
     {
         $host = $this->formatHost($this->filterString($host));
 
@@ -1573,7 +1573,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withPort(int|null $port): UriInterface
+    public function withPort(int|null $port): static
     {
         $port = $this->formatPort($port);
 
@@ -1583,7 +1583,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withPath(Stringable|string $path): UriInterface
+    public function withPath(Stringable|string $path): static
     {
         $path = $this->formatPath(
             $this->filterString($path) ?? throw new SyntaxError('The path component cannot be null.')
@@ -1595,7 +1595,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withQuery(Stringable|string|null $query): UriInterface
+    public function withQuery(Stringable|string|null $query): static
     {
         $query = Encoder::encodeQueryOrFragment($this->filterString($query));
 
@@ -1605,7 +1605,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
-    public function withFragment(Stringable|string|null $fragment): UriInterface
+    public function withFragment(Stringable|string|null $fragment): static
     {
         $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
 
@@ -1733,7 +1733,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * Normalize a URI by applying non-destructive and destructive normalization
      * rules as defined in RFC3986 and RFC3987.
      */
-    public function normalize(): UriInterface
+    public function normalize(): static
     {
         $uriString = $this->toString();
         if ('' === $uriString) {
@@ -1762,7 +1762,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Rfc3986Uri|Stringable|string $uri): UriInterface
+    public function resolve(Rfc3986Uri|Stringable|string $uri): static
     {
         if ($uri instanceof Rfc3986Uri) {
             $uri = $uri->toRawString();
@@ -1780,7 +1780,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Rfc3986Uri|Stringable|string $uri): UriInterface
+    public function relativize(Rfc3986Uri|Stringable|string $uri): static
     {
         $uri = self::new($uri);
 
@@ -1961,7 +1961,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     public static function createFromBaseUri(
         Stringable|UriInterface|String $uri,
         Stringable|UriInterface|String|null $baseUri = null
-    ): UriInterface {
+    ): static {
         return self::fromBaseUri($uri, $baseUri);
     }
 

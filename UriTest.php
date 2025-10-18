@@ -1107,9 +1107,11 @@ class UriTest extends TestCase
     #[Test]
     public function it_requires_a_user_component_to_update_the_password_component(): void
     {
-        $this->expectException(SyntaxError::class);
+        $uri = Uri::new('example://host/path?query')->withPassword('pass');
 
-        Uri::new('example://host/path?query')->withPassword('pass');
+        self::assertSame('pass', $uri->getPassword());
+        self::assertNull($uri->getUsername());
+        self::assertSame(':pass', $uri->getUserInfo());
     }
 
     #[Test]

@@ -22,9 +22,7 @@ use finfo;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
-use League\Uri\Contracts\UriInspector;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Contracts\UriRenderer;
 use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
@@ -93,7 +91,7 @@ use const FILTER_VALIDATE_IP;
  * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspector
+final class Uri implements Conditionable, UriInterface
 {
     /**
      * RFC3986 invalid characters.
@@ -158,7 +156,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Regular expression pattern to for file URI.
      * <volume> contains the volume but not the volume separator.
-     * The volume separator may be URL-encoded (`|` as `%7C`) by ::formatPath(),
+     * The volume separator may be URL-encoded (`|` as `%7C`) by formatPath(),
      * so we account for that here.
      *
      * @var string
@@ -608,9 +606,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         /** @var Closure(SplFileobject): array{0:string, 1:string} $fromFileObject */
         $fromFileObject = function (SplFileObject $path) use ($finfo, $bufferSize): array {
             $raw = $path->fread($bufferSize);
-            if (false === $raw) {
-                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
-            }
+            false !== $raw || throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
+
             $mimetype = (string) $finfo->buffer($raw);
             while (!$path->eof()) {
                 $raw .= $path->fread($bufferSize);
@@ -623,9 +620,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $fromResource = function ($stream) use ($finfo, $path, $bufferSize): array {
             set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
             $raw = fread($stream, $bufferSize);
-            if (false === $raw) {
-                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
-            }
+            false !== $raw || throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
+
             $mimetype = (string) $finfo->buffer($raw);
             while (!feof($stream)) {
                 $raw .= fread($stream, $bufferSize);
@@ -641,9 +637,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
             $raw = file_get_contents(filename: $path, context: $context);
             restore_error_handler();
-            if (false === $raw) {
-                throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
-            }
+            false !== $raw || throw new SyntaxError('The file `'.$path.'` does not exist or is not readable.');
             $mimetype = (string) $finfo->file(filename: $path, flags: FILEINFO_MIME, context: $context);
 
             return [$mimetype, $raw];
@@ -784,10 +778,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
              \((?<uri>[^)]*)\) #href attribute
          /x';
         $markdown = trim((string) $markdown);
-        if (1 !== preg_match($regexp, $markdown, $matches)) {
-            throw new SyntaxError('The markdown string `'.$markdown.'` is not valid anchor markdown tag.');
-        }
-
+        1 === preg_match($regexp, $markdown, $matches) || throw new SyntaxError('The markdown string `'.$markdown.'` is not valid anchor markdown tag.');
         if (null !== $baseUri) {
             $baseUri = (string) $baseUri;
         }
@@ -807,9 +798,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     {
         $dom = self::loadDom($html);
         $element = $dom->getElementsByTagName('a')->item(0);
-        if (null === $element) {
-            throw new DOMException('No anchor element was found in the content.');
-        }
+        null !== $element || throw new DOMException('No anchor element was found in the content.');
 
         $uri = $element->getAttribute('href');
         if (null !== $baseUri) {
@@ -846,9 +835,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $dom = new DOMDocument();
         $result = $dom->loadHTML($html);
         restore_error_handler();
-        if (false === $result) {
-            throw new DOMException('The content could not be parsed as a valid HTML content.');
-        }
+        false !== $result || throw new DOMException('The content could not be parsed as a valid HTML content.');
 
         return $dom;
     }
@@ -869,7 +856,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Returns the environment user info.
      *
-     * @return non-empty-array{0: ?string, 1: ?string}
+     * @return non-empty-array {0: ?string, 1: ?string}
      */
     private static function fetchUserInfo(array $server): array
     {
@@ -878,9 +865,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         $pass = $server['PHP_AUTH_PW'];
         if (str_starts_with(strtolower($server['HTTP_AUTHORIZATION']), 'basic')) {
             $userinfo = base64_decode(substr($server['HTTP_AUTHORIZATION'], 6), true);
-            if (false === $userinfo) {
-                throw new SyntaxError('The user info could not be detected');
-            }
+            false !== $userinfo || throw new SyntaxError('The user info could not be detected');
             [$user, $pass] = explode(':', $userinfo, 2) + [1 => null];
         }
 
@@ -918,10 +903,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             return [$matches['host'], $matches['port'] ?? $server['SERVER_PORT']];
         }
 
-        if (!isset($server['SERVER_ADDR'])) {
-            throw new SyntaxError('The host could not be detected');
-        }
-
+        isset($server['SERVER_ADDR']) || throw new SyntaxError('The host could not be detected');
         if (false === filter_var($server['SERVER_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return ['['.$server['SERVER_ADDR'].']', $server['SERVER_PORT']];
         }
@@ -1007,20 +989,14 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
      */
     private static function assertValidPath(string $mimetype, string $parameters, string $data): void
     {
-        if (1 !== preg_match(self::REGEXP_MIMETYPE, $mimetype)) {
-            throw new SyntaxError('The path mimetype `'.$mimetype.'` is invalid.');
-        }
-
+        1 === preg_match(self::REGEXP_MIMETYPE, $mimetype) || throw new SyntaxError('The path mimetype `'.$mimetype.'` is invalid.');
         $isBinary = 1 === preg_match(self::REGEXP_BINARY, $parameters, $matches);
         if ($isBinary) {
             $parameters = substr($parameters, 0, - strlen($matches[0]));
         }
 
         $res = array_filter(array_filter(explode(';', $parameters), self::validateParameter(...)));
-        if ([] !== $res) {
-            throw new SyntaxError('The path parameters `'.$parameters.'` is invalid.');
-        }
-
+        [] === $res || throw new SyntaxError('The path parameters `'.$parameters.'` is invalid.');
         if (!$isBinary) {
             return;
         }
@@ -1097,8 +1073,8 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
     /**
      * Sets the URI origin.
      *
-     * The origin read-only property of the URL interface returns a string containing the Unicode serialization
-     * of the origin of the represented URL.
+     * The origin read-only property of the URL interface returns a string containing
+     * the Unicode serialization of the represented URL.
      */
     private function setOrigin(): ?string
     {
@@ -1207,16 +1183,32 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         return $this->toString();
     }
 
+    /**
+     * Returns the string representation as a URI reference.
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-4.1
+     * @see ::toString
+     */
     public function jsonSerialize(): string
     {
         return $this->toString();
     }
 
+    /**
+     * Returns the string representation as a URI reference.
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-4.1
+     */
     public function toString(): string
     {
         return $this->uri;
     }
 
+    /**
+     * Returns the human-readable string representation of the URI as an IRI.
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc3987
+     */
     public function toDisplayString(): string
     {
         $components = $this->toComponents();
@@ -1292,9 +1284,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         $html = $doc->saveHTML($element);
-        if (false === $html) {
-            throw new DOMException('The HTML generation failed.');
-        }
+        false !== $html || throw new DOMException('The HTML generation failed.');
 
         return $html;
     }
@@ -1368,6 +1358,17 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         };
     }
 
+    /**
+     * Save the data to a specific file.
+     *
+     * The method returns the number of bytes written to the file
+     * or null for any other scheme except the data scheme
+     *
+     * @param SplFileInfo|SplFileObject|resource|Stringable|string $destination
+     * @param ?resource $context
+     *
+     * @throws RuntimeException if the content cannot be stored.
+     */
     public function toFileContents(mixed $destination, $context = null): ?int
     {
         if ('data' !== $this->scheme) {
@@ -1375,9 +1376,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
         }
 
         [$mediaType, $document] = explode(',', $this->path, 2) + [0 => '', 1 => null];
-        if (null === $document) {
-            throw new RuntimeException('Unable to extract the document part from the URI path.');
-        }
+        null !== $document || throw new RuntimeException('Unable to extract the document part from the URI path.');
 
         $data = match (true) {
             str_ends_with((string) $mediaType, ';base64') => (string) base64_decode($document, true),
@@ -1406,14 +1405,14 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
             default => throw new TypeError('Unsupported destination type; expected SplFileObject, SplFileInfo, resource or a string; '.(is_object($destination) ? $destination::class : gettype($destination)).' given.'),
         };
 
-        if (false === $res) {
-            throw new RuntimeException('Unable to write to the destination file.');
-        }
+        false !== $res || throw new RuntimeException('Unable to write to the destination file.');
 
         return $res;
     }
 
     /**
+     * Returns an associative array containing all the URI components.
+     *
      * @return ComponentMap
      */
     public function toComponents(): array
@@ -1557,10 +1556,7 @@ final class Uri implements Conditionable, UriInterface, UriRenderer, UriInspecto
 
     public function withPassword(#[SensitiveParameter] Stringable|string|null $password): static
     {
-        return match ($this->user) {
-            null => throw new SyntaxError('The password component can not be if the URI user component is not set.'),
-            default => $this->withUserInfo($this->user, $password),
-        };
+        return $this->withUserInfo($this->user, $password);
     }
 
     public function withHost(Stringable|string|null $host): static

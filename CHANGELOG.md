@@ -6,18 +6,33 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- `Uri::parse` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::fromBaseUri` and `Uri::new`) that mimics the behaviour of the upcoming native PHP URI parse method.
-- `Uri::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::new`).
 - `Http::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Http::new`).
 - `Http::when` conditional method to ease component building logic.
+- `Uri::parse` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::fromBaseUri` and `Uri::new`) that mimics the behaviour of the upcoming native PHP URI parse method.
+- `Uri::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::new`).
 - `Uri::when` conditional method to ease component building logic.
-- `Uri` implements the new `League\Uri\Contract\UriInspector` interface
-- `Uri` implements the new `League\Uri\Contract\UriRenderer` interface
-- `Uri::fromMarkdownAnchor`
-- `Uri::fromHtmlAnchor`
-- `UriTemplate` implements the `Stringable` interface
+- `Uri::isOpaque` tells whether the URI is opaque or not.
+- `Uri::isAbsolute` tells whether the URI is absolute or not.
+- `Uri::isNetworkPath` tells whether the URI is a network path.
+- `Uri::isAbsolutePath` tells whether the URI is an absolute path.
+- `Uri::isRelativePath` tells whether the URI is a relative path.
+- `Uri::isSameDocument` tells whether both URIs refer to the same document.
+- `Uri::equals` tells whether both URIs refer to the same document (allows taking into account the fragment component)
+- `Uri::isLocalFile` tells whether the `file` scheme base URI represents a local file.
+- `Uri::isCrossOrigin` tells whether two URI do not share the same origin.
+- `Uri::isSameOrigin` tells whether two URI share the same origin.
+- `Uri::getOrigin` returns the URI origin as described in the WHATWG URL Living standard specification.
+- `Uri::toDisplayString` returns the human-readable string representation of the URI as an IRI.
+- `Uri::toMarkdownAnchor` returns the Markdown string representation of the anchor tag with the current instance as its href attribute.
+- `Uri::toHtmlAnchor` returns the HTML string representation of the anchor tag with the current instance as its href attribute.
+- `Uri::fromMarkdownAnchor` create a new instance from a Markdown code. The first URI found is returned.
+- `Uri::fromHtmlAnchor`  create a new instance from an HTML code. The first URI found is returned.
+- `Uri::toRfc8089` The method will return null if the URI scheme is not the `file` scheme
 - `Uri::resolve` returns a new `Uri` instance resolve against the current instance.
 - `Uri::normalize` returns a new `Uri` instance with a full “normalized-decoded” representation: The URI is normalized (when applicable), and components are percent-decoded. Normalization may contain destructive operation.
+- `Uri::withUsername` returns a new `Uri` instance with the updated username component.
+- `Uri::withPassword` returns a new `Uri` instance with the updated password component.
+- `UriTemplate` implements the `Stringable` interface
 - Dependency to `psr/http-factory` package which is required for the package.
 - Support for `Uri\Rfc3986\Uri` and `Uri\Whatwg\Url`
 
@@ -31,7 +46,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Deprecated
 
-- `BasUri` use the `Uri` class or the uri-component `Modifier` class depending on the needed requirement.
+- `BasUri` use the `Uri` class or the uri-component `Modifier` class depending on your requirements.
 
 ### Removed
 

@@ -16,7 +16,6 @@ namespace League\Uri;
 use Deprecated;
 use JsonSerializable;
 use League\Uri\Contracts\UriAccess;
-use League\Uri\Contracts\UriInspector;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Idna\Converter as IdnaConverter;
@@ -350,7 +349,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
     final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
-        if ($uri instanceof UriInspector) {
+        if ($uri instanceof Uri) {
             return Uri::tryNew($uri->getOrigin());
         }
 

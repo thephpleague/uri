@@ -1156,7 +1156,15 @@ class UriTest extends TestCase
         $data = file_get_contents($newFilePath);
         self::assertStringContainsString(base64_encode((string) $data), $uri->getPath());
 
-        // Ensure file handle of \SplFileObject gets closed.
+        // Ensure \SplFileObject is closed
         unlink($newFilePath);
+    }
+
+    public function test_it_can_update_the_user_info_when_no_user_component_is_present(): void
+    {
+        self::assertSame(
+            Uri::new('https://user:pass@example.com')->withUserInfo(null, 'pass')->toString(),
+            Uri::new('https://:pass@example.com')->toString()
+        );
     }
 }

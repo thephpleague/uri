@@ -38,6 +38,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
+- `UserInfo` now can be constructed and mutated even when the `user` component is not present. It was silently ignored.
 - `Uri` and `Http` normalization normalized IP against RFC3986 rules and not WHATWG rules.
 - `Uri::getOrigin` now follows WHATWG cross-origin definition
 - `Uri` host encoding compliance to RFC3986 is improved by supporting RFC3986 encoded URI properly

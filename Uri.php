@@ -294,7 +294,7 @@ final class Uri implements Conditionable, UriInterface
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
-        $this->userInfo = $this->formatUserInfo($this->user, $this->pass);
+        $this->userInfo = null !== $this->pass ? $this->user.':'.$this->pass : $this->user;
         $this->authority = UriString::buildAuthority($this->toComponents());
         $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
@@ -331,19 +331,6 @@ final class Uri implements Conditionable, UriInterface
         }
 
         return $formattedScheme;
-    }
-
-    /**
-     * Set the UserInfo component.
-     */
-    private function formatUserInfo(
-        ?string $user,
-        #[SensitiveParameter] ?string $password
-    ): ?string {
-        return match (null) {
-            $password => $user,
-            default => $user.':'.$password,
-        };
     }
 
     /**
@@ -1541,7 +1528,10 @@ final class Uri implements Conditionable, UriInterface
     ): static {
         $user = Encoder::encodeUser($this->filterString($user));
         $pass = Encoder::encodePassword($this->filterString($password));
-        $userInfo = ('' !== $user) ? $this->formatUserInfo($user, $pass) : null;
+        $userInfo = $user;
+        if (null !== $password) {
+            $userInfo .= ':'.$pass;
+        }
 
         return match ($userInfo) {
             $this->userInfo => $this,

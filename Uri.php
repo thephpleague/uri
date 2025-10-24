@@ -234,6 +234,7 @@ final class Uri implements Conditionable, UriInterface
         'steam' => null,
         'svn' => 3690,
         'telnet' => 23,
+        'tn3270' => 23,
         'ventrilo' => 3784,
         'vnc' => 5900,
         'wais' => 210,

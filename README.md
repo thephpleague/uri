@@ -25,7 +25,7 @@ IPv4 conversion requires at least one of the following:
 - the `BCMatch` extension or
 - a `64-bits` PHP version
 
-otherwise an exception will be thrown when attempting to convert a host
+otherwise, an exception will be thrown when attempting to convert a host
 as an IPv4 address.
 
 Parsing or generating HTML related content requires the `dom` extension.

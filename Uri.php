@@ -442,7 +442,7 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Create a new instance from a string or a stringable structure or returns null on failure.
      */
-    public static function tryNew(Stringable|string|null $uri = ''): ?self
+    public static function tryNew(Rfc3986Uri|WhatWgUrl|Stringable|string|null $uri = ''): ?self
     {
         if (null === $uri) {
             return null;

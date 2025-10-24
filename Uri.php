@@ -1629,7 +1629,7 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Tells whether two URI do not share the same origin.
      */
-    public function isCrossOrigin(UriInterface|Stringable|string $uri): bool
+    public function isCrossOrigin(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
     {
         if (null === $this->origin) {
             return true;
@@ -1643,7 +1643,7 @@ final class Uri implements Conditionable, UriInterface
         return $this->origin !== $origin;
     }
 
-    public function isSameOrigin(Stringable|string $uri): bool
+    public function isSameOrigin(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
     {
         return ! $this->isCrossOrigin($uri);
     }
@@ -1746,16 +1746,20 @@ final class Uri implements Conditionable, UriInterface
      * This method MUST retain the state of the submitted URI instance, and return
      * a URI instance of the same type that contains the applied modifications.
      *
-     * This method MUST be transparent when dealing with error and exceptions.
+     * This method MUST be transparent when dealing with errors and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Rfc3986Uri|Stringable|string $uri): static
+    public function resolve(Rfc3986Uri|WhatWgUrl|Stringable|string $uri): static
     {
-        if ($uri instanceof Rfc3986Uri) {
-            $uri = $uri->toRawString();
-        }
-
-        return self::new(UriString::resolve($uri, $this->toString()));
+        return self::new(UriString::resolve(
+            match (true) {
+                $uri instanceof Rfc3986Uri => $uri->toString(),
+                $uri instanceof WhatWgUrl => $uri->toAsciiString(),
+                $uri instanceof Stringable => (string) $uri,
+                default => $uri,
+            },
+            $this->toString()
+        ));
     }
 
     /**
@@ -1767,7 +1771,7 @@ final class Uri implements Conditionable, UriInterface
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Rfc3986Uri|Stringable|string $uri): static
+    public function relativize(Rfc3986Uri|WhatWgUrl|Stringable|string $uri): static
     {
         $uri = self::new($uri);
 

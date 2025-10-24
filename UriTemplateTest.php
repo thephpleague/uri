@@ -14,13 +14,16 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Uri\WhatWg\InvalidUrlException;
 
 #[CoversClass(UriTemplate::class)]
+#[CoversClass(Template::class)]
 final class UriTemplateTest extends TestCase
 {
     public function testGetTemplate(): void
@@ -115,6 +118,7 @@ final class UriTemplateTest extends TestCase
     public function testExpandsUriTemplates(string $template, string $expectedUriString, array $variables): void
     {
         self::assertSame($expectedUriString, (new UriTemplate($template))->expand($variables)->toString());
+        self::assertSame($expectedUriString, (new UriTemplate($template))->expandToUri($variables)->toRawString());
     }
 
     public static function templateExpansionProvider(): iterable
@@ -250,11 +254,11 @@ final class UriTemplateTest extends TestCase
             'more'     => ['fun', 'ice cream'],
             'foo[]' => ['fizz', 'buzz'],
         ];
-        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo%5B%5D=fizz&foo%5B%5D=buzz';
+        $expectedUri = 'http://example.com/foo/bar/one,two?query=test&more=fun&more=ice%20cream&foo[]=fizz&foo[]=buzz';
 
         $uriTemplate = new UriTemplate($template);
-        self::assertSame($expectedUri, $uriTemplate->expand($variables)->toString());
-        self::assertSame($expectedUri, $uriTemplate->expandOrFail($variables)->toString());
+        self::assertSame($expectedUri, $uriTemplate->expandToUrl($variables)->toAsciiString());
+        self::assertSame($expectedUri, $uriTemplate->expandToUrlOrFail($variables)->toAsciiString());
     }
 
     public function testDisallowNestedArrayExpansion(): void
@@ -352,5 +356,12 @@ final class UriTemplateTest extends TestCase
         $this->expectException(TemplateCanNotBeExpanded::class);
 
         (new UriTemplate('{var}{baz}'))->expandOrFail(['var' => 'bar']);
+    }
+
+    public function testExpandToUrlFailsWithRelativeUrl(): void
+    {
+        $this->expectException(InvalidUrlException::class);
+
+        (new UriTemplate('/foobar'))->expandToUrl();
     }
 }

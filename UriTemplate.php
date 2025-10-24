@@ -21,6 +21,10 @@ use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\VariableBag;
 use Stringable;
+use Uri\InvalidUriException;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\InvalidUrlException;
+use Uri\WhatWg\Url as WhatWgUrl;
 
 use function array_fill_keys;
 use function array_key_exists;
@@ -110,15 +114,42 @@ final class UriTemplate implements Stringable
         return new self($this->template, $defaultVariables);
     }
 
+    private function templateExpanded(iterable $variables = []): string
+    {
+        return $this->template->expand($this->filterVariables($variables)->replace($this->defaultVariables));
+    }
+
+    private function templateExpandedOrFail(iterable $variables = []): string
+    {
+        return $this->template->expandOrFail($this->filterVariables($variables)->replace($this->defaultVariables));
+    }
+
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
     public function expand(iterable $variables = []): UriInterface
     {
-        return Uri::new($this->template->expand(
-            $this->filterVariables($variables)->replace($this->defaultVariables)
-        ));
+        return Uri::new($this->templateExpanded($variables));
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
+     */
+    public function expandToUri(iterable $variables = []): Rfc3986Uri
+    {
+        return new Rfc3986Uri($this->templateExpanded($variables));
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUrlException if the base URI cannot be converted to a Uri\Whatwg\Url instance
+     * @throws InvalidUrlException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
+     */
+    public function expandToUrl(iterable $variables = [], WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
+    {
+        return new WhatWgUrl($this->templateExpanded($variables), $this->newWhatWgUrl($baseUrl));
     }
 
     /**
@@ -127,9 +158,35 @@ final class UriTemplate implements Stringable
      */
     public function expandOrFail(iterable $variables = []): UriInterface
     {
-        return Uri::new($this->template->expandOrFail(
-            $this->filterVariables($variables)->replace($this->defaultVariables)
-        ));
+        return Uri::new($this->templateExpandedOrFail($variables));
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
+     */
+    public function expandToUriOrFail(iterable $variables = []): Rfc3986Uri
+    {
+        return new Rfc3986Uri($this->templateExpandedOrFail($variables));
+    }
+
+    /**
+     * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUriException if the base URI cannot be converted to a Uri\Whatwg\Url instance
+     * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
+     */
+    public function expandToUrlOrFail(iterable $variables = [], WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
+    {
+        return new WhatWgUrl($this->templateExpandedOrFail($variables), $this->newWhatWgUrl($baseUrl));
+    }
+
+    private function newWhatWgUrl(WhatWgUrl|Stringable|string|null $url = null): ?WhatWgUrl
+    {
+        return match (true) {
+            null === $url => null,
+            $url instanceof WhatWgUrl => $url,
+            default => new WhatWgUrl((string) $url),
+        };
     }
 
     /**

@@ -41,6 +41,7 @@ use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
+use ValueError;
 use function array_filter;
 use function array_key_last;
 use function array_map;
@@ -1259,10 +1260,7 @@ final class Uri implements Conditionable, UriInterface
                 $value = implode(' ', $value);
             }
 
-            if (!is_string($value)) {
-                throw new TypeError('The attribute `'.$name.'` contains an invalid value.');
-            }
-
+            is_string($value) || throw new ValueError('The attribute `'.$name.'` contains an invalid value.');
             $value = trim($value);
             if ('' === $value) {
                 continue;

@@ -40,8 +40,8 @@ use Throwable;
 use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
-
 use ValueError;
+
 use function array_filter;
 use function array_key_last;
 use function array_map;
@@ -1201,8 +1201,12 @@ final class Uri implements Conditionable, UriInterface
     public function toDisplayString(): string
     {
         $components = $this->toComponents();
+        $port = null;
+        if (isset($components['port'])) {
+            $port = (int) $components['port'];
+            unset($components['port']);
+        }
 
-        unset($components['port']);
         if (null !== $components['host']) {
             $components['host'] = IdnaConverter::toUnicode($components['host'])->domain();
         }
@@ -1218,12 +1222,12 @@ final class Uri implements Conditionable, UriInterface
         $components['fragment'] = Encoder::decodeFragment($components['fragment']);
 
         return UriString::build([
-            ...array_map(fn (string|null $value) => match (true) {
+            ...array_map(fn (?string $value) => match (true) {
                 null === $value,
                 !str_contains($value, '%20') => $value,
                 default => str_replace('%20', ' ', $value),
             }, $components),
-            ...['port' => $this->port],
+            ...['port' => $port],
         ]);
     }
 

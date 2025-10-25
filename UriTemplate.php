@@ -128,18 +128,21 @@ final class UriTemplate implements Stringable
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
-    public function expand(iterable $variables = []): UriInterface
+    public function expand(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): UriInterface
     {
-        return Uri::new($this->templateExpanded($variables));
+        $expanded = $this->templateExpanded($variables);
+
+        return null === $baseUri ? Uri::new($expanded) : Uri::fromBaseUri($expanded, $baseUri);
     }
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUriException if the base URI cannot be converted to a Uri\Rfc3986\Uri instance
      * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
      */
-    public function expandToUri(iterable $variables = []): Rfc3986Uri
+    public function expandToUri(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Rfc3986Uri
     {
-        return new Rfc3986Uri($this->templateExpanded($variables));
+        return new Rfc3986Uri($this->templateExpanded($variables), $this->newRfc3986Uri($baseUri));
     }
 
     /**
@@ -156,18 +159,21 @@ final class UriTemplate implements Stringable
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      * @throws UriException if the resulting expansion cannot be converted to a UriInterface instance
      */
-    public function expandOrFail(iterable $variables = []): UriInterface
+    public function expandOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): UriInterface
     {
-        return Uri::new($this->templateExpandedOrFail($variables));
+        $expanded = $this->templateExpandedOrFail($variables);
+
+        return null === $baseUri ? Uri::new($expanded) : Uri::fromBaseUri($expanded, $baseUri);
     }
 
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
+     * @throws InvalidUriException if the base URI cannot be converted to a Uri\Rfc3986\Uri instance
      * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
      */
-    public function expandToUriOrFail(iterable $variables = []): Rfc3986Uri
+    public function expandToUriOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Rfc3986Uri
     {
-        return new Rfc3986Uri($this->templateExpandedOrFail($variables));
+        return new Rfc3986Uri($this->templateExpandedOrFail($variables), $this->newRfc3986Uri($baseUri));
     }
 
     /**
@@ -175,17 +181,28 @@ final class UriTemplate implements Stringable
      * @throws InvalidUriException if the base URI cannot be converted to a Uri\Whatwg\Url instance
      * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
      */
-    public function expandToUrlOrFail(iterable $variables = [], WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
+    public function expandToUrlOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
     {
         return new WhatWgUrl($this->templateExpandedOrFail($variables), $this->newWhatWgUrl($baseUrl));
     }
 
-    private function newWhatWgUrl(WhatWgUrl|Stringable|string|null $url = null): ?WhatWgUrl
+    private function newWhatWgUrl(Rfc3986Uri|WhatWgUrl|Stringable|string|null $url = null): ?WhatWgUrl
     {
         return match (true) {
             null === $url => null,
             $url instanceof WhatWgUrl => $url,
+            $url instanceof Rfc3986Uri => new WhatWgUrl($url->toRawString()),
             default => new WhatWgUrl((string) $url),
+        };
+    }
+
+    private function newRfc3986Uri(Rfc3986Uri|WhatWgUrl|Stringable|string|null $url = null): ?Rfc3986Uri
+    {
+        return match (true) {
+            null === $url => null,
+            $url instanceof Rfc3986Uri => $url,
+            $url instanceof WhatWgUrl => new Rfc3986Uri($url->toAsciiString()),
+            default => new Rfc3986Uri((string) $url),
         };
     }
 

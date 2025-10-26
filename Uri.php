@@ -19,6 +19,8 @@ use Dom\HTMLDocument;
 use DOMDocument;
 use DOMException;
 use finfo;
+use League\Uri\Components\FragmentDirectives;
+use League\Uri\Components\FragmentDirectives\Directive;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
@@ -1596,6 +1598,10 @@ final class Uri implements Conditionable, UriInterface
 
     public function withFragment(Stringable|string|null $fragment): static
     {
+        if ($fragment instanceof Directive) {
+            $fragment = new FragmentDirectives($fragment);
+        }
+
         $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
 
         return match ($fragment) {
@@ -1755,9 +1761,9 @@ final class Uri implements Conditionable, UriInterface
     {
         return self::new(UriString::resolve(
             match (true) {
+                $uri instanceof UriInterface,
                 $uri instanceof Rfc3986Uri => $uri->toString(),
                 $uri instanceof WhatWgUrl => $uri->toAsciiString(),
-                $uri instanceof Stringable => (string) $uri,
                 default => $uri,
             },
             $this->toString()

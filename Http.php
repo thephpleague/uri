@@ -26,6 +26,7 @@ use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
 use function is_bool;
+use function ltrim;
 
 /**
  * @phpstan-import-type InputComponentMap from UriString
@@ -185,7 +186,12 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
 
     public function getPath(): string
     {
-        return $this->uri->getPath();
+        $path = $this->uri->getPath();
+
+        return match (true) {
+            str_starts_with($path, '//') => '/'.ltrim($path, '/'),
+            default => $path,
+        };
     }
 
     public function getQuery(): string

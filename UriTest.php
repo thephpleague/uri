@@ -437,12 +437,12 @@ class UriTest extends TestCase
         $uri = Uri::new('https://example.com///miscillaneous.tld');
 
         self::assertSame('https://example.com///miscillaneous.tld', (string) $uri);
-        self::assertSame('/miscillaneous.tld', $uri->getPath());
+        self::assertSame('///miscillaneous.tld', $uri->getPath());
 
         $modifiedUri = $uri->withPath('///foobar');
 
         self::assertSame('https://example.com///foobar', (string) $modifiedUri);
-        self::assertSame('/foobar', $modifiedUri->getPath());
+        self::assertSame('///foobar', $modifiedUri->getPath());
         self::assertSame('//example.com///foobar', (string) $modifiedUri->withScheme(null));
 
         $this->expectException(SyntaxError::class);
@@ -453,7 +453,7 @@ class UriTest extends TestCase
     {
         $uri = Uri::new('https://www.example.com///google.com');
         self::assertSame('https://www.example.com///google.com', (string) $uri);
-        self::assertSame('/google.com', $uri->getPath());
+        self::assertSame('///google.com', $uri->getPath());
 
         $modifiedUri =  $uri->withPath('/google.com');
         self::assertSame('https://www.example.com/google.com', (string) $modifiedUri);
@@ -461,7 +461,7 @@ class UriTest extends TestCase
 
         $modifiedUri2 =  $uri->withPath('///google.com');
         self::assertSame('https://www.example.com///google.com', (string) $modifiedUri2);
-        self::assertSame('/google.com', $modifiedUri2->getPath());
+        self::assertSame('///google.com', $modifiedUri2->getPath());
     }
 
     public function testItCanBeUpdatedWithAnUriComponent(): void

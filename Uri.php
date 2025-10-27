@@ -63,7 +63,6 @@ use function inet_pton;
 use function is_array;
 use function is_bool;
 use function is_string;
-use function ltrim;
 use function preg_match;
 use function preg_replace_callback;
 use function rawurldecode;
@@ -1463,10 +1462,7 @@ final class Uri implements Conditionable, UriInterface
 
     public function getPath(): string
     {
-        return match (true) {
-            str_starts_with($this->path, '//') => '/'.ltrim($this->path, '/'),
-            default => $this->path,
-        };
+        return $this->path;
     }
 
     public function getQuery(): ?string

@@ -46,6 +46,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri` host encoding compliance to RFC3986 is improved by supporting RFC3986 encoded URI properly
 - `Uri` parsing with strings started or ended with empty string are no longer allowed
 - `Uri` space are rawurlencoded.
+- `Uri::getPath` no longer trim the leading slashes (the `Http` class which is a PSR-7 compliant class still do!)
 
 ### Deprecated
 

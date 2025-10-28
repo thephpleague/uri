@@ -35,6 +35,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `UriTemplate` implements the `Stringable` interface
 - `UriTemplate::expandToUri` and `UriTemplate::expandToUrl`
 - `UriTemplate::expandToUriOrFail` and `UriTemplate::expandToUrlOrFail`
+- `UriTemplate::expand` takes a second optional parameter which represents a base URI to resolve the URI from.
 - Dependency to `psr/http-factory` package which is required for the package.
 - Support for `Uri\Rfc3986\Uri` and `Uri\Whatwg\Url`
 

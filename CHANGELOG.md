@@ -33,9 +33,10 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::withUsername` returns a new `Uri` instance with the updated username component.
 - `Uri::withPassword` returns a new `Uri` instance with the updated password component.
 - `UriTemplate` implements the `Stringable` interface
-- `UriTemplate::expandToUri` and `UriTemplate::expandToUrl`
-- `UriTemplate::expandToUriOrFail` and `UriTemplate::expandToUrlOrFail`
-- `UriTemplate::expand` takes a second optional parameter which represents a base URI to resolve the URI from.
+- `UriTemplate::expandToUri` and `UriTemplate::expandToUriOrFail`
+- `UriTemplate::expandToUrl` and `UriTemplate::expandToUrlOrFail`
+- `UriTemplate::expandToPsr7Uri` and `UriTemplate::expandToPsr7UriOrFail`
+- `UriTemplate::expand` and `UriTemplate::expandOrFail` take a second optional parameter which represents a base URI to resolve the URI from.
 - Dependency to `psr/http-factory` package which is required for the package.
 - Support for `Uri\Rfc3986\Uri` and `Uri\Whatwg\Url`
 

@@ -16,6 +16,7 @@ namespace League\Uri;
 use Deprecated;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
@@ -30,6 +31,7 @@ use Uri\WhatWg\Url as WhatWgUrl;
 
 use function array_fill_keys;
 use function array_key_exists;
+use function class_exists;
 
 /**
  * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.
@@ -138,22 +140,28 @@ final class UriTemplate implements Stringable
     }
 
     /**
+     * @throws MissingFeature if no Uri\Rfc3986\Uri class is found
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUriException if the base URI cannot be converted to a Uri\Rfc3986\Uri instance
      * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
      */
     public function expandToUri(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Rfc3986Uri
     {
+        class_exists(Rfc3986Uri::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+
         return new Rfc3986Uri($this->templateExpanded($variables), $this->newRfc3986Uri($baseUri));
     }
 
     /**
+     * @throws MissingFeature if no Uri\Whatwg\Url class is found
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUrlException if the base URI cannot be converted to a Uri\Whatwg\Url instance
      * @throws InvalidUrlException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
      */
     public function expandToUrl(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
     {
+        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+
         return new WhatWgUrl($this->templateExpanded($variables), $this->newWhatWgUrl($baseUrl));
     }
 
@@ -191,22 +199,28 @@ final class UriTemplate implements Stringable
     }
 
     /**
+     * @throws MissingFeature if no Uri\Rfc3986\Uri class is found
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUriException if the base URI cannot be converted to a Uri\Rfc3986\Uri instance
      * @throws InvalidUriException if the resulting expansion cannot be converted to a Uri\Rfc3986\Uri instance
      */
     public function expandToUriOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Rfc3986Uri
     {
+        class_exists(Rfc3986Uri::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+
         return new Rfc3986Uri($this->templateExpandedOrFail($variables), $this->newRfc3986Uri($baseUri));
     }
 
     /**
+     * @throws MissingFeature if no Uri\Whatwg\Url class is found
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUrlException if the base URI cannot be converted to a Uri\Whatwg\Url instance
      * @throws InvalidUrlException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
      */
     public function expandToUrlOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
     {
+        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+
         return new WhatWgUrl($this->templateExpandedOrFail($variables), $this->newWhatWgUrl($baseUrl));
     }
 

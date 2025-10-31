@@ -23,8 +23,6 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::isSameOrigin` tells whether two URI share the same origin.
 - `Uri::getOrigin` returns the URI origin as described in the WHATWG URL Living standard specification.
 - `Uri::toDisplayString` returns the human-readable string representation of the URI as an IRI.
-- `Uri::toMarkdownAnchor` returns the Markdown string representation of the anchor tag with the current instance as its href attribute.
-- `Uri::toHtmlAnchor` returns the HTML string representation of the anchor tag with the current instance as its href attribute.
 - `Uri::fromMarkdownAnchor` create a new instance from a Markdown code. The first URI found is returned.
 - `Uri::fromHtmlAnchor`  create a new instance from an HTML code. The first URI found is returned.
 - `Uri::toRfc8089` The method will return null if the URI scheme is not the `file` scheme

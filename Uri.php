@@ -15,9 +15,6 @@ namespace League\Uri;
 
 use Closure;
 use Deprecated;
-use Dom\HTMLDocument;
-use DOMDocument;
-use DOMException;
 use finfo;
 use League\Uri\Components\FragmentDirectives;
 use League\Uri\Components\FragmentDirectives\Directive;
@@ -42,7 +39,6 @@ use Throwable;
 use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
-use ValueError;
 
 use function array_filter;
 use function array_key_last;
@@ -50,7 +46,6 @@ use function array_map;
 use function array_pop;
 use function base64_decode;
 use function base64_encode;
-use function class_exists;
 use function count;
 use function explode;
 use function feof;
@@ -60,7 +55,6 @@ use function fread;
 use function implode;
 use function in_array;
 use function inet_pton;
-use function is_array;
 use function is_bool;
 use function is_string;
 use function preg_match;
@@ -263,8 +257,6 @@ final class Uri implements Conditionable, UriInterface
 
     /** @var array<string,int> */
     private const WHATWG_SPECIAL_SCHEMES = ['ftp' => 1, 'http' => 1, 'https' => 1, 'ws' => 1, 'wss' => 1];
-
-    private const ABOUT_BLANK = 'about:blank';
 
     private readonly ?string $scheme;
     private readonly ?string $user;
@@ -761,75 +753,6 @@ final class Uri implements Conditionable, UriInterface
         return Uri::fromComponents($components);
     }
 
-    public static function fromMarkdownAnchor(Stringable|string $markdown, Stringable|string|null $baseUri = null): self
-    {
-        static $regexp = '/
-             \[(?:[^]]*)]      #title attribute
-             \((?<uri>[^)]*)\) #href attribute
-         /x';
-        $markdown = trim((string) $markdown);
-        1 === preg_match($regexp, $markdown, $matches) || throw new SyntaxError('The markdown string `'.$markdown.'` is not valid anchor markdown tag.');
-        if (null !== $baseUri) {
-            $baseUri = (string) $baseUri;
-        }
-
-        return match ($baseUri) {
-            self::ABOUT_BLANK, null => self::new($matches['uri']),
-            default => self::fromBaseUri($matches['uri'], $baseUri),
-        };
-    }
-
-    /**
-     * If the html content contains more than one anchor element, only the first one will be parsed.
-     *
-     * @throws DOMException
-     */
-    public static function fromHtmlAnchor(Stringable|string $html, Stringable|string|null $baseUri = null): self
-    {
-        $dom = self::loadDom($html);
-        $element = $dom->getElementsByTagName('a')->item(0);
-        null !== $element || throw new DOMException('No anchor element was found in the content.');
-
-        $uri = $element->getAttribute('href');
-        if (null !== $baseUri) {
-            $baseUri = (string) $baseUri;
-        }
-
-        return match (true) {
-            !in_array($baseUri, [null, self::ABOUT_BLANK], true) => self::fromBaseUri($uri, $baseUri),
-            !in_array($dom->documentURI, [null, self::ABOUT_BLANK], true) => self::fromBaseUri($uri, $dom->documentURI),
-            default => self::new($uri),
-        };
-    }
-
-    /**
-     * @throws DOMException
-     * @throws Throwable
-     */
-    private static function loadDom(Stringable|string $html): DOMDocument|HTMLDocument
-    {
-        FeatureDetection::supportsDom();
-
-        $html = (string) $html;
-        if (class_exists(HTMLDocument::class)) {
-            try {
-                set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-
-                return HTMLDocument::createFromString($html);
-            } finally {
-                restore_error_handler();
-            }
-        }
-
-        set_error_handler(fn (int $errno, string $errstr, string $errfile, int $errline) => true);
-        $dom = new DOMDocument();
-        $result = $dom->loadHTML($html);
-        restore_error_handler();
-        false !== $result || throw new DOMException('The content could not be parsed as a valid HTML content.');
-
-        return $dom;
-    }
-
     /**
      * Returns the environment scheme.
      */
@@ -1201,83 +1124,7 @@ final class Uri implements Conditionable, UriInterface
      */
     public function toDisplayString(): string
     {
-        $components = $this->toComponents();
-        $port = null;
-        if (isset($components['port'])) {
-            $port = (int) $components['port'];
-            unset($components['port']);
-        }
-
-        if (null !== $components['host']) {
-            $components['host'] = IdnaConverter::toUnicode($components['host'])->domain();
-        }
-
-        if ('/' === $components['path'] && null !== $this->authority) {
-            $components['path'] = '';
-        }
-
-        $components['path'] = Encoder::decodePath($components['path']);
-        $components['user'] = Encoder::decodeNecessary($components['user']);
-        $components['pass'] = Encoder::decodeNecessary($components['pass']);
-        $components['query'] = Encoder::decodeQuery($components['query']);
-        $components['fragment'] = Encoder::decodeFragment($components['fragment']);
-
-        return UriString::build([
-            ...array_map(fn (?string $value) => match (true) {
-                null === $value,
-                !str_contains($value, '%20') => $value,
-                default => str_replace('%20', ' ', $value),
-            }, $components),
-            ...['port' => $port],
-        ]);
-    }
-
-    /**
-     * Returns the Markdown string representation of the anchor tag with the current instance as its href attribute.
-     */
-    public function toMarkdownAnchor(?string $linkTextTemplate = null): string
-    {
-        return '['.strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()]).']('.$this->toString().')';
-    }
-
-    /**
-     * Returns the HTML string representation of the anchor tag with the current instance as its href attribute.
-     *
-     * @param iterable<string, string|null|array<string>> $attributes an ordered map of key value. you must quote the value if needed
-     *
-     * @throws DOMException
-     */
-    public function toHtmlAnchor(?string $linkTextTemplate = null, iterable $attributes = []): string
-    {
-        FeatureDetection::supportsDom();
-
-        $doc = class_exists(HTMLDocument::class) ? HTMLDocument::createEmpty() : new DOMDocument(encoding:'utf-8');
-        $element = $doc->createElement('a');
-        $element->setAttribute('href', $this->toString());
-        $element->appendChild($doc->createTextNode(strtr($linkTextTemplate ?? '{uri}', ['{uri}' => $this->toDisplayString()])));
-
-        foreach ($attributes as $name => $value) {
-            if ('href' === strtolower($name) || null === $value) {
-                continue;
-            }
-
-            if (is_array($value)) {
-                $value = implode(' ', $value);
-            }
-
-            is_string($value) || throw new ValueError('The attribute `'.$name.'` contains an invalid value.');
-            $value = trim($value);
-            if ('' === $value) {
-                continue;
-            }
-
-            $element->setAttribute($name, $value);
-        }
-
-        $html = $doc->saveHTML($element);
-        false !== $html || throw new DOMException('The HTML generation failed.');
-
-        return $html;
+        return UriString::toIriString($this->toString());
     }
 
     /**

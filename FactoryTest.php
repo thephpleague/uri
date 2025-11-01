@@ -555,14 +555,13 @@ final class FactoryTest extends TestCase
 
     #[Test]
     #[DataProvider('provideInvalidUri')]
-    public function it_fails_to_parse_with_new(Stringable|string|null $uri): void
+    public function it_fails_to_parse_with_new(Stringable|string $uri): void
     {
         self::assertNull(Uri::tryNew($uri));
     }
 
     public static function provideInvalidUri(): iterable
     {
-        yield 'null value' => ['uri' => null];
         yield 'invalid URI' => ['uri' => 'http://example.com/  '];
     }
 

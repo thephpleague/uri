@@ -350,7 +350,12 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     final protected function computeOrigin(Psr7UriInterface|UriInterface $uri, ?string $nullValue): Psr7UriInterface|UriInterface|null
     {
         if ($uri instanceof Uri) {
-            return Uri::tryNew($uri->getOrigin());
+            $origin = $uri->getOrigin();
+            if (null === $origin) {
+                return null;
+            }
+
+            return Uri::tryNew($origin);
         }
 
         $origin = Uri::tryNew($uri)?->getOrigin();

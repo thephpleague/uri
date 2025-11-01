@@ -139,16 +139,6 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     }
 
     /**
-     * Create a new instance from a URI and a Base URI.
-     *
-     * The returned URI must be absolute.
-     */
-    public static function fromBaseUri(Rfc3986Uri|WhatwgUrl|Stringable|string $uri, Rfc3986Uri|WhatwgUrl|Stringable|string|null $baseUri = null): self
-    {
-        return new self(Uri::fromBaseUri($uri, $baseUri));
-    }
-
-    /**
      * Creates a new instance from a template.
      *
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
@@ -157,6 +147,16 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     public static function fromTemplate(Stringable|string $template, iterable $variables = []): self
     {
         return new self(Uri::fromTemplate($template, $variables));
+    }
+
+    /**
+     * Returns a new instance from a URI and a Base URI.or null on failure.
+     *
+     * The returned URI must be absolute if a base URI is provided
+     */
+    public static function parse(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
+    {
+        return null !== ($uri = Uri::parse($uri, $baseUri)) ? new self($uri) : null;
     }
 
     public function getScheme(): string
@@ -279,6 +279,23 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
     public function withFragment(string $fragment): self
     {
         return $this->newInstance($this->uri->withFragment($this->filterInput($fragment)));
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.6.0
+     * @codeCoverageIgnore
+     * @see Http::parse()
+     *
+     * Create a new instance from a URI and a Base URI.
+     *
+     * The returned URI must be absolute.
+     */
+    #[Deprecated(message:'use League\Uri\Http::parse() instead', since:'league/uri:7.6.0')]
+    public static function fromBaseUri(Rfc3986Uri|WhatwgUrl|Stringable|string $uri, Rfc3986Uri|WhatwgUrl|Stringable|string|null $baseUri = null): self
+    {
+        return new self(Uri::fromBaseUri($uri, $baseUri));
     }
 
     /**

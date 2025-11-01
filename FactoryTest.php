@@ -445,7 +445,10 @@ final class FactoryTest extends TestCase
     #[DataProvider('createProvider')]
     public function testCreateFromBaseUri(Stringable|string $baseUri, Stringable|string $uri, string $expected): void
     {
-        self::assertSame($expected, Uri::fromBaseUri($uri, $baseUri)->toString());
+        $newUri = Uri::parse($uri, $baseUri);
+
+        self::assertInstanceOf(Uri::class, $newUri);
+        self::assertSame($expected, $newUri->toString());
     }
 
     public static function createProvider(): array
@@ -500,30 +503,27 @@ final class FactoryTest extends TestCase
 
     public function testCreateThrowExceptionWithBaseUriNotAbsolute(): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::fromBaseUri('/path/to/you', '//example.com');
+        self::assertNull(Uri::parse('/path/to/you', '//example.com'));
     }
 
-    public function testCreateThrowExceptionWithUriNotAbsolute(): void
+    #[TestWith(['data:text/plain;charset=us-ascii,'])]
+    #[TestWith(['/path/to/you'])]
+    public function testCreateWithUriWithoutAuthority(string $expected): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::fromBaseUri('/path/to/you');
-    }
+        $uri = Uri::parse($expected);
 
-    public function testCreateWithUriWithoutAuthority(): void
-    {
-        self::assertSame(
-            'data:text/plain;charset=us-ascii,',
-            Uri::fromBaseUri('data:text/plain;charset=us-ascii,')->toString()
-        );
+        self::assertInstanceOf(Uri::class, $uri);
+        self::assertSame($expected, $uri->toString());
     }
 
     public function testCreateWithAbsoluteUriWithoutBaseUri(): void
     {
-        self::assertSame(
-            'scheme://host/sky?q#f',
-            Uri::fromBaseUri('scheme://host/path/../sky?q#f')->toString()
-        );
+        $expected = 'scheme://host/sky?q#f';
+        $uri = Uri::parse('scheme://host/path/../sky?q#f');
+
+        self::assertInstanceOf(Uri::class, $uri);
+        self::assertNotSame($expected, $uri->toString());
+        self::assertSame($expected, $uri->normalize()->toString());
     }
 
     public function testCreateFromComponentsWithNullPath(): void

@@ -136,7 +136,7 @@ final class UriTemplate implements Stringable
     {
         $expanded = $this->templateExpanded($variables);
 
-        return null === $baseUri ? Uri::new($expanded) : Uri::fromBaseUri($expanded, $baseUri);
+        return null === $baseUri ? Uri::new($expanded) : (Uri::parse($expanded, $baseUri) ?? throw new SyntaxError('Unable to expand URI'));
     }
 
     /**
@@ -195,7 +195,7 @@ final class UriTemplate implements Stringable
     {
         $expanded = $this->templateExpandedOrFail($variables);
 
-        return null === $baseUri ? Uri::new($expanded) : Uri::fromBaseUri($expanded, $baseUri);
+        return null === $baseUri ? Uri::new($expanded) : (Uri::parse($expanded, $baseUri) ?? throw new SyntaxError('Unable to expand URI'));
     }
 
     /**

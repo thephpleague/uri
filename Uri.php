@@ -494,36 +494,30 @@ final class Uri implements Conditionable, UriInterface
     public static function parse(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
     {
         try {
-            return null === $baseUri ? self::new($uri) : self::fromBaseUri($uri, $baseUri);
+            if (null === $baseUri) {
+                return self::new($uri);
+            }
+
+            if ($uri instanceof Rfc3986Uri) {
+                $uri = $uri->toRawString();
+            }
+
+            if ($uri instanceof WhatWgUrl) {
+                $uri = $uri->toAsciiString();
+            }
+
+            if ($baseUri instanceof Rfc3986Uri) {
+                $baseUri = $baseUri->toRawString();
+            }
+
+            if ($baseUri instanceof WhatWgUrl) {
+                $baseUri = $baseUri->toAsciiString();
+            }
+
+            return self::new(UriString::resolve($uri, $baseUri));
         } catch (Throwable) {
             return null;
         }
-    }
-
-    /**
-     * Creates a new instance from a URI and a Base URI.
-     *
-     * The returned URI must be absolute.
-     */
-    public static function fromBaseUri(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): self
-    {
-        if ($uri instanceof Rfc3986Uri) {
-            $uri = $uri->toRawString();
-        }
-
-        if ($uri instanceof WhatWgUrl) {
-            $uri = $uri->toAsciiString();
-        }
-
-        if ($baseUri instanceof Rfc3986Uri) {
-            $baseUri = $baseUri->toRawString();
-        }
-
-        if ($baseUri instanceof WhatWgUrl) {
-            $baseUri = $baseUri->toAsciiString();
-        }
-
-        return self::new(UriString::resolve($uri, $baseUri));
     }
 
     /**
@@ -1725,6 +1719,39 @@ final class Uri implements Conditionable, UriInterface
     public function __debugInfo(): array
     {
         return $this->toComponents();
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @deprecated Since version 7.6.0
+     * @codeCoverageIgnore
+     * @see Uri::parse()
+     *
+     * Creates a new instance from a URI and a Base URI.
+     *
+     * The returned URI must be absolute.
+     */
+    #[Deprecated(message:'use League\Uri\Uri::parse() instead', since:'league/uri:7.6.0')]
+    public static function fromBaseUri(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): self
+    {
+        if ($uri instanceof Rfc3986Uri) {
+            $uri = $uri->toRawString();
+        }
+
+        if ($uri instanceof WhatWgUrl) {
+            $uri = $uri->toAsciiString();
+        }
+
+        if ($baseUri instanceof Rfc3986Uri) {
+            $baseUri = $baseUri->toRawString();
+        }
+
+        if ($baseUri instanceof WhatWgUrl) {
+            $baseUri = $baseUri->toAsciiString();
+        }
+
+        return self::new(UriString::resolve($uri, $baseUri));
     }
 
     /**

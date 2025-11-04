@@ -6,6 +6,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
+- `League\Uri\Urn` object to specifically work with URN as defined by RFC8141
 - `Http::tryNew` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Http::new`).
 - `Http::when` conditional method to ease component building logic.
 - `Uri::parse` returns a new `Uri` instance on success or null on failure (ie: a Relax version of `Uri::fromBaseUri` and `Uri::new`) that mimics the behaviour of the upcoming native PHP URI parse method.
@@ -23,13 +24,14 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::isSameOrigin` tells whether two URI share the same origin.
 - `Uri::getOrigin` returns the URI origin as described in the WHATWG URL Living standard specification.
 - `Uri::toDisplayString` returns the human-readable string representation of the URI as an IRI.
-- `Uri::fromMarkdownAnchor` create a new instance from a Markdown code. The first URI found is returned.
-- `Uri::fromHtmlAnchor`  create a new instance from an HTML code. The first URI found is returned.
 - `Uri::toRfc8089` The method will return null if the URI scheme is not the `file` scheme
 - `Uri::resolve` returns a new `Uri` instance resolve against the current instance.
 - `Uri::normalize` returns a new `Uri` instance with a full “normalized-decoded” representation: The URI is normalized (when applicable), and components are percent-decoded. Normalization may contain destructive operation.
 - `Uri::withUsername` returns a new `Uri` instance with the updated username component.
 - `Uri::withPassword` returns a new `Uri` instance with the updated password component.
+- `Uri::toAsciiString` returns the URI string representation as per RFC3986
+- `Uri::toAsciiString` returns the URI string representation as per RFC3987 with the host in unicode form if available
+- `Uri::getUnicodeHost` returns the host in unicode form if available; fallback to its RFC39 86 representation otherwise
 - `UriTemplate` implements the `Stringable` interface
 - `UriTemplate::expandToUri` and `UriTemplate::expandToUriOrFail`
 - `UriTemplate::expandToUrl` and `UriTemplate::expandToUrlOrFail`
@@ -46,6 +48,7 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri` host encoding compliance to RFC3986 is improved by supporting RFC3986 encoded URI properly
 - `Uri` parsing with strings started or ended with empty string are no longer allowed
 - `Uri` space are rawurlencoded.
+- `Uri` validates URN as per RFC8141
 - `Uri::getPath` no longer trim the leading slashes (the `Http` class which is a PSR-7 compliant class still do!)
 
 ### Deprecated

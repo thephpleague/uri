@@ -262,9 +262,9 @@ class UriTest extends TestCase
     {
         $uri = Uri::new('https://a:b@c:442/d?q=r#f');
 
-        /** @var string $uriString */
+        /** @var non-empty-string $uriString */
         $uriString = json_encode((string) $uri);
-        /** @var string $uriJsonString */
+        /** @var non-empty-string $uriJsonString */
         $uriJsonString = json_encode($uri);
 
         self::assertJsonStringEqualsJsonString($uriString, $uriJsonString);
@@ -1025,7 +1025,7 @@ class UriTest extends TestCase
         /** @var Uri $newUri */
         $newUri = unserialize(serialize($uri));
 
-        self::assertTrue($uri->equals($newUri, ComparisonMode::IncludeFragment));
+        self::assertTrue($uri->equals($newUri, UriComparisonMode::IncludeFragment));
     }
 
     #[Test]
@@ -1070,5 +1070,15 @@ class UriTest extends TestCase
             Uri::new('https://user:pass@example.com')->withUserInfo(null, 'pass')->toString(),
             Uri::new('https://:pass@example.com')->toString()
         );
+    }
+
+    public function test_it_can_return_a_unicode_string_for_the_uri(): void
+    {
+        $uri = Uri::new('https://bébé.be');
+
+        self::assertSame('xn--bb-bjab.be', $uri->getHost());
+        self::assertSame('bébé.be', $uri->getUnicodeHost());
+        self::assertSame('https://xn--bb-bjab.be', $uri->toAsciiString());
+        self::assertSame('https://bébé.be', $uri->toUnicodeString());
     }
 }

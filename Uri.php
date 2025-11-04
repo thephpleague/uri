@@ -233,6 +233,7 @@ final class Uri implements Conditionable, UriInterface
         'vnc' => 5900,
         'wais' => 210,
         'xmpp' => null,
+        'urn' => null,
         'acap' => 674,
         'afp' => 548,
         'dict' => 2628,
@@ -266,7 +267,8 @@ final class Uri implements Conditionable, UriInterface
     private readonly string $path;
     private readonly ?string $query;
     private readonly ?string $fragment;
-    private readonly string $uri;
+    private readonly string $uriAsciiString;
+    private readonly string $uriUnicodeString;
     private readonly ?string $origin;
 
     private function __construct(
@@ -289,9 +291,19 @@ final class Uri implements Conditionable, UriInterface
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
         $this->userInfo = null !== $this->pass ? $this->user.':'.$this->pass : $this->user;
         $this->authority = UriString::buildAuthority($this->toComponents());
-        $this->uri = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
+        $this->uriAsciiString = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidState();
         $this->origin = $this->setOrigin();
+        $host = $this->getUnicodeHost();
+        $this->uriUnicodeString = $host === $this->host
+            ? $this->uriAsciiString
+            : UriString::buildUri(
+                $this->scheme,
+                UriString::buildAuthority([...$this->toComponents(), ...['host' => $host]]),
+                $this->path,
+                $this->query,
+                $this->fragment
+            );
     }
 
     /**
@@ -434,7 +446,7 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Create a new instance from a string or a stringable structure or returns null on failure.
      */
-    public static function tryNew(Rfc3986Uri|WhatWgUrl|Stringable|string $uri = ''): ?self
+    public static function tryNew(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri = ''): ?self
     {
         try {
             return self::new($uri);
@@ -446,7 +458,7 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Create a new instance from a string.
      */
-    public static function new(Rfc3986Uri|WhatWgUrl|Stringable|string $uri = ''): self
+    public static function new(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri = ''): self
     {
         if ($uri instanceof Rfc3986Uri) {
             return new self(
@@ -485,7 +497,7 @@ final class Uri implements Conditionable, UriInterface
      *
      * The returned URI must be absolute if a base URI is provided
      */
-    public static function parse(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): ?self
+    public static function parse(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri, Rfc3986Uri|WhatWgUrl|Urn|Stringable|string|null $baseUri = null): ?self
     {
         try {
             if (null === $baseUri) {
@@ -633,7 +645,7 @@ final class Uri implements Conditionable, UriInterface
      *
      * @throws SyntaxError If the parameter syntax is invalid
      */
-    public static function fromData(string $data, string $mimetype = '', string $parameters = ''): self
+    public static function fromData(Stringable|string $data, string $mimetype = '', string $parameters = ''): self
     {
         static $regexpMimetype = ',^\w+/[-.\w]+(?:\+[-.\w]+)?$,';
 
@@ -643,6 +655,7 @@ final class Uri implements Conditionable, UriInterface
             default => throw new SyntaxError('Invalid mimeType, `'.$mimetype.'`.'),
         };
 
+        $data = (string) $data;
         if ('' === $parameters) {
             return self::fromComponents([
                 'scheme' => 'data',
@@ -965,9 +978,10 @@ final class Uri implements Conditionable, UriInterface
             'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
             'http', 'https' => $this->isNonEmptyHostUri(),
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
+            'urn' => null !== Urn::parse($this->uriAsciiString),
             default => true,
         }) {
-            throw new SyntaxError('The uri `'.$this->uri.'` is invalid for the `'.$this->scheme.'` scheme.');
+            throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
         }
     }
 
@@ -1102,7 +1116,27 @@ final class Uri implements Conditionable, UriInterface
      */
     public function toString(): string
     {
-        return $this->uri;
+        return $this->toAsciiString();
+    }
+
+    /**
+     * Returns the string representation as a URI reference.
+     *
+     * @see http://tools.ietf.org/html/rfc3986#section-4.1
+     */
+    public function toAsciiString(): string
+    {
+        return $this->uriAsciiString;
+    }
+
+    /**
+     * Returns the string representation as a URI reference.
+     *
+     * The host is converted to its UNICODE representation if available
+     */
+    public function toUnicodeString(): string
+    {
+        return $this->uriUnicodeString;
     }
 
     /**
@@ -1290,6 +1324,20 @@ final class Uri implements Conditionable, UriInterface
         return $this->host;
     }
 
+    public function getUnicodeHost(): ?string
+    {
+        if (null === $this->host) {
+            return null;
+        }
+
+        $host = IdnaConverter::toUnicode($this->host)->domain();
+        if ($host === $this->host) {
+            return $this->host;
+        }
+
+        return $host;
+    }
+
     public function getPort(): ?int
     {
         return $this->port;
@@ -1464,7 +1512,7 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Tells whether two URI do not share the same origin.
      */
-    public function isCrossOrigin(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
+    public function isCrossOrigin(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri): bool
     {
         if (null === $this->origin) {
             return true;
@@ -1478,7 +1526,7 @@ final class Uri implements Conditionable, UriInterface
         return $this->origin !== $origin;
     }
 
-    public function isSameOrigin(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
+    public function isSameOrigin(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri): bool
     {
         return ! $this->isCrossOrigin($uri);
     }
@@ -1523,12 +1571,12 @@ final class Uri implements Conditionable, UriInterface
     /**
      * Tells whether both URIs refer to the same document.
      */
-    public function isSameDocument(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri): bool
+    public function isSameDocument(Rfc3986Uri|WhatWgUrl|UriInterface|Stringable|Urn|string $uri): bool
     {
         return $this->equals($uri);
     }
 
-    public function equals(UriInterface|Stringable|Rfc3986Uri|WhatWgUrl|string $uri, ComparisonMode $comparisonMode = ComparisonMode::ExcludeFragment): bool
+    public function equals(Rfc3986Uri|WhatWgUrl|UriInterface|Stringable|Urn|string $uri, UriComparisonMode $uriComparisonMode = UriComparisonMode::ExcludeFragment): bool
     {
         if (!$uri instanceof UriInterface && !$uri instanceof Rfc3986Uri && !$uri instanceof WhatWgUrl) {
             $uri = self::tryNew($uri);
@@ -1539,7 +1587,7 @@ final class Uri implements Conditionable, UriInterface
         }
 
         $baseUri = $this;
-        if (ComparisonMode::ExcludeFragment === $comparisonMode) {
+        if (UriComparisonMode::ExcludeFragment === $uriComparisonMode) {
             $uri = $uri->withFragment(null);
             $baseUri = $baseUri->withFragment(null);
         }
@@ -1584,7 +1632,7 @@ final class Uri implements Conditionable, UriInterface
      * This method MUST be transparent when dealing with errors and exceptions.
      * It MUST not alter or silence them apart from validating its own parameters.
      */
-    public function resolve(Rfc3986Uri|WhatWgUrl|Stringable|string $uri): static
+    public function resolve(Rfc3986Uri|WhatWgUrl|UriInterface|Stringable|Urn|string $uri): static
     {
         return self::new(UriString::resolve(
             match (true) {
@@ -1606,7 +1654,7 @@ final class Uri implements Conditionable, UriInterface
      * This method MUST be transparent when dealing with error and exceptions.
      * It MUST not alter of silence them apart from validating its own parameters.
      */
-    public function relativize(Rfc3986Uri|WhatWgUrl|Stringable|string $uri): static
+    public function relativize(Rfc3986Uri|WhatWgUrl|UriInterface|Stringable|Urn|string $uri): static
     {
         $uri = self::new($uri);
 

@@ -113,7 +113,7 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
             default => (string) $urn,
         };
 
-        UriString::containsValidRfc3986Characters($urn) || throw new SyntaxError('The URN is malformed, it contains invalid characters.');
+        UriString::containsRfc3986Chars($urn) || throw new SyntaxError('The URN is malformed, it contains invalid characters.');
         1 === preg_match(self::REGEXP_URN_PARTS, $urn, $matches) || throw new SyntaxError('The URN string is invalid.');
 
         return new self(

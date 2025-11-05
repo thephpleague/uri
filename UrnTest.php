@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function array_map;
 use function parse_url;
 use function serialize;
 use function unserialize;
@@ -498,5 +499,23 @@ final class UrnTest extends TestCase
         self::assertSame('urn', $uri->getScheme());
         self::assertNull($uri->getFragment());
         self::assertTrue($uri->isOpaque());
+    }
+
+    public function test_it_can_compare_rfc2141_urn_examples(): void
+    {
+        /** @var list<Urn> $urns */
+        $urns = array_map(Urn::fromString(...), [
+            'URN:foo:a123,456',
+            'urn:foo:a123,456',
+            'urn:FOO:a123,456',
+            'urn:foo:A123,456',
+            'urn:foo:a123%2C456',
+            'URN:FOO:a123%2c456',
+        ]);
+
+        self::assertTrue($urns[0]->equals($urns[1]));
+        self::assertTrue($urns[0]->equals($urns[2]));
+        self::assertFalse($urns[0]->equals($urns[3]));
+        self::assertTrue($urns[4]->equals($urns[5]));
     }
 }

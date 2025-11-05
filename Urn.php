@@ -477,10 +477,10 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
     {
         $copy = new self(
             nid: strtolower($this->nid),
-            nss: Encoder::encodePath($this->nss),
-            rComponent: null === $this->rComponent ? $this->rComponent : Encoder::encodePath($this->rComponent),
-            qComponent: Encoder::encodeQueryOrFragment($this->qComponent),
-            fComponent: Encoder::encodeQueryOrFragment($this->fComponent),
+            nss: (string) Encoder::normalizePath($this->nss),
+            rComponent: null === $this->rComponent ? $this->rComponent : Encoder::normalizePath($this->rComponent),
+            qComponent: Encoder::normalizeQuery($this->qComponent),
+            fComponent: Encoder::normalizeFragment($this->fComponent),
         );
 
         return $copy->uriString === $this->uriString ? $this : $copy;
@@ -492,7 +492,7 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
             $other = self::parse($other);
         }
 
-        return null === $other ? false : match ($urnComparisonMode) {
+        return (null !== $other) && match ($urnComparisonMode) {
             UrnComparisonMode::ExcludeComponents => $other->normalize()->toRfc2141() === $this->normalize()->toRfc2141(),
             UrnComparisonMode::IncludeComponents => $other->normalize()->toString() === $this->normalize()->toString(),
         };

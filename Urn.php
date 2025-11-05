@@ -189,7 +189,7 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
      */
     private function setUriString(): string
     {
-        $str = 'urn:'.$this->nid.':'.$this->nss;
+        $str = $this->toRfc2141();
         if (null !== $this->rComponent) {
             $str .= '?+'.$this->rComponent;
         }

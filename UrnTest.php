@@ -489,7 +489,14 @@ final class UrnTest extends TestCase
     public function test_it_can_be_converted_into_an_uri_object(): void
     {
         $urnString = 'urn:example:animal:nose?=foo=bar';
-
         $urn = Urn::fromComponents(parse_url($urnString));
+        $uri = $urn->toUri();
+
+        self::assertInstanceOf(Uri::class, $uri);
+        self::assertSame('=foo=bar', $uri->getQuery());
+        self::assertSame('example:animal:nose', $uri->getPath());
+        self::assertSame('urn', $uri->getScheme());
+        self::assertNull($uri->getFragment());
+        self::assertTrue($uri->isOpaque());
     }
 }

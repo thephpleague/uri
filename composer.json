@@ -5,8 +5,12 @@
     "keywords": [
         "url",
         "uri",
+        "urn",
+        "uri-template",
+        "rfc2141",
         "rfc3986",
         "rfc3987",
+        "rfc8141",
         "rfc6570",
         "psr-7",
         "parse_url",
@@ -20,8 +24,7 @@
         "parse_str",
         "query-string",
         "querystring",
-        "hostname",
-        "uri-template"
+        "hostname"
     ],
     "license": "MIT",
     "homepage": "https://uri.thephpleague.com",
@@ -57,18 +60,18 @@
         "league/uri-schemes": "^1.0"
     },
     "suggest": {
-        "ext-dom": "to convert the URI into an HTML anchor tag",
         "ext-bcmath": "to improve IPV4 host parsing",
+        "ext-dom": "to convert the URI into an HTML anchor tag",
         "ext-fileinfo": "to create Data URI from file contennts",
         "ext-gmp": "to improve IPV4 host parsing",
         "ext-intl": "to handle IDN host with the best performance",
+        "ext-uri": "to use the PHP native URI class",
         "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
         "league/uri-components" : "Needed to easily manipulate URI objects components",
         "league/uri-polyfill" : "Needed to backport the PHP URI extension for older versions of PHP",
         "php-64bit": "to improve IPV4 host parsing",
         "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present",
-        "rowbot/url": "to handle WHATWG URL",
-        "bakame/aide-uri": "A polyfill for PHP8.1 until PHP8.4 to add support to PHP Native URI parser"
+        "rowbot/url": "to handle WHATWG URL"
     },
     "extra": {
         "branch-alias": {

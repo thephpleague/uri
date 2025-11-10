@@ -19,6 +19,7 @@ use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\UriTemplate\Template;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
@@ -310,10 +311,23 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
 
     /**
      * Returns the RFC3986 representation of the current URN.
+     *
+     * If a template URI is used the following variables as present
+     * {nid} for the namespace identifier
+     * {nss} for the namespace specific string
+     * {r_component} for the r-component without its delimiter
+     * {q_component} for the q-component without its delimiter
+     * {f_component} for the f-component without its delimiter
      */
-    public function toUri(): UriInterface
+    public function resolve(UriTemplate|Template|string|null $template = null): UriInterface
     {
-        return Uri::new($this->uriString);
+        return null !== $template ? Uri::fromTemplate($template, [
+            'nid' => $this->nid,
+            'nss' => $this->nss,
+            'r_component' => $this->rComponent,
+            'q_component' => $this->qComponent,
+            'f_component' => $this->fComponent,
+        ]) : Uri::new($this->uriString);
     }
 
     public function hasRComponent(): bool

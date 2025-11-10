@@ -491,7 +491,7 @@ final class UrnTest extends TestCase
     {
         $urnString = 'urn:example:animal:nose?=foo=bar';
         $urn = Urn::fromComponents(parse_url($urnString));
-        $uri = $urn->toUri();
+        $uri = $urn->resolve();
 
         self::assertInstanceOf(Uri::class, $uri);
         self::assertSame('=foo=bar', $uri->getQuery());
@@ -517,5 +517,18 @@ final class UrnTest extends TestCase
         self::assertTrue($urns[0]->equals($urns[2]));
         self::assertFalse($urns[0]->equals($urns[3]));
         self::assertTrue($urns[4]->equals($urns[5]));
+    }
+
+    public function test_it_can_resolve_to_uri_using_uri_template(): void
+    {
+        $urn = Urn::new('urn:isbn:9782266178945');
+
+        $uri = $urn->resolve();
+        self::assertInstanceOf(Uri::class, $uri);
+        self::assertSame($urn->toString(), $urn->toString());
+
+        $uri = $urn->resolve('https://openlibrary.org/isbn/{nss}');
+        self::assertInstanceOf(Uri::class, $uri);
+        self::assertSame('https://openlibrary.org/isbn/9782266178945', $uri->toString());
     }
 }

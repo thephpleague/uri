@@ -160,7 +160,7 @@ final class UriTemplate implements Stringable
      */
     public function expandToUrl(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
     {
-        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.WhatWgUrl::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
 
         return new WhatWgUrl($this->templateExpanded($variables), $this->newWhatWgUrl($baseUrl));
     }
@@ -219,7 +219,7 @@ final class UriTemplate implements Stringable
      */
     public function expandToUrlOrFail(iterable $variables = [], Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUrl = null): WhatWgUrl
     {
-        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.Rfc3986Uri::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
+        class_exists(WhatWgUrl::class) || throw new MissingFeature('Support for '.WhatWgUrl::class.' requires PHP8.5+ or a polyfill. Run "composer require league/uri-polyfill" or use you owm polyfill.');
 
         return new WhatWgUrl($this->templateExpandedOrFail($variables), $this->newWhatWgUrl($baseUrl));
     }

@@ -184,63 +184,6 @@ final class Uri implements Conditionable, UriInterface
     private const REGEXP_WINDOW_PATH = ',^(?<root>[a-zA-Z][:|\|]),';
 
     /**
-     * Supported schemes and corresponding default port.
-     * @see https://github.com/python-hyper/hyperlink/blob/master/src/hyperlink/_url.py for the curating list definition
-     * @see https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
-     * @see https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
-     *
-     * @var array<string, int|null>
-     */
-    private const SCHEME_DEFAULT_PORT = [
-        'data' => null,
-        'file' => null,
-        'ftp' => 21,
-        'gopher' => 70,
-        'http' => 80,
-        'https' => 443,
-        'ws' => 80,
-        'wss' => 443,
-        'imap' => 143,
-        'ipp' => 631,
-        'ipps' => 631,
-        'irc' => 194,
-        'ircs' => 6697,
-        'ldap' => 389,
-        'ldaps' => 636,
-        'mms' => 1755,
-        'msrp' => 2855,
-        'msrps' => null,
-        'mtqp' => 1038,
-        'nfs' => 111,
-        'nntp' => 119,
-        'nntps' => 563,
-        'pop' => 110,
-        'prospero' => 1525,
-        'redis' => 6379,
-        'rsync' => 873,
-        'rtsp' => 554,
-        'rtsps' => 322,
-        'rtspu' => 5005,
-        'sftp' => 22,
-        'smb' => 445,
-        'snmp' => 161,
-        'ssh' => 22,
-        'steam' => null,
-        'svn' => 3690,
-        'telnet' => 23,
-        'tn3270' => 23,
-        'ventrilo' => 3784,
-        'vnc' => 5900,
-        'wais' => 210,
-        'xmpp' => null,
-        'urn' => null,
-        'acap' => 674,
-        'afp' => 548,
-        'dict' => 2628,
-        'dns' => 53,
-    ];
-
-    /**
      * Maximum number of cached items.
      *
      * @var int
@@ -323,12 +266,10 @@ final class Uri implements Conditionable, UriInterface
             return $formattedScheme;
         }
 
-        if (
-            !array_key_exists($formattedScheme, self::SCHEME_DEFAULT_PORT)
-            && !UriString::isValidScheme($formattedScheme)
-        ) {
-            throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
-        }
+        null !== UriScheme::tryFrom($formattedScheme)
+        || UriString::isValidScheme($formattedScheme)
+        || throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
+
 
         $cache[$formattedScheme] = 1;
         if (self::MAXIMUM_CACHED_ITEMS < count($cache)) {
@@ -434,7 +375,9 @@ final class Uri implements Conditionable, UriInterface
      */
     private function formatPort(?int $port = null): ?int
     {
-        $defaultPort = self::SCHEME_DEFAULT_PORT[$this->scheme ?? ''] ?? null;
+        $defaultPort = null !== $this->scheme
+            ? UriScheme::tryFrom($this->scheme)?->port()
+            : null;
 
         return match (true) {
             null === $port, $defaultPort === $port => null,
@@ -971,18 +914,19 @@ final class Uri implements Conditionable, UriInterface
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
 
-        if (! match ($this->scheme) {
-            'blob' => $this->isUriWithoutAuthority(),
+        match ($this->scheme) {
             'data', 'about' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
             'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
             'http', 'https' => $this->isNonEmptyHostUri(),
             'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
             'urn' => null !== Urn::parse($this->uriAsciiString),
-            default => true,
-        }) {
-            throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
-        }
+            default => null === ($schemeType = UriScheme::tryFrom($this->scheme ?? '')?->type())
+                || $schemeType->isUnknown()
+                || ($schemeType->isOpaque() && null === $this->authority)
+                || ($schemeType->isHierarchical() && null !== $this->authority),
+        } ||
+        throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
     }
 
     /**
@@ -1037,11 +981,6 @@ final class Uri implements Conditionable, UriInterface
         } catch (UriException) {
             return null;
         }
-    }
-
-    private function isUriWithoutAuthority(): bool
-    {
-        return null === $this->authority;
     }
 
     /**

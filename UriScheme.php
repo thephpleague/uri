@@ -158,13 +158,10 @@ enum UriScheme: string
         };
     }
 
-    public function isSpecial(): bool
+    public function isWhatWgSpecial(): bool
     {
         return match ($this) {
-            self::Data,
-            self::File,
             self::Ftp,
-            self::Gopher,
             self::Http,
             self::Https,
             self::Ws,

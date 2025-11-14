@@ -897,22 +897,7 @@ final class Uri implements Conditionable, UriInterface
      */
     private function assertValidState(): void
     {
-        if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
-            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
-        }
-
-        if (null === $this->authority && str_starts_with($this->path, '//')) {
-            throw new SyntaxError('If there is no authority the path `'.$this->path.'` cannot start with a `//`.');
-        }
-
-        $pos = strpos($this->path, ':');
-        if (null === $this->authority
-            && null === $this->scheme
-            && false !== $pos
-            && !str_contains(substr($this->path, 0, $pos), '/')
-        ) {
-            throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
-        }
+        $this->assertValidRfc3986Uri();
 
         match ($this->scheme) {
             'data', 'about' => $this->isUriWithSchemeAndPathOnly(),
@@ -925,8 +910,27 @@ final class Uri implements Conditionable, UriInterface
                 || $schemeType->isUnknown()
                 || ($schemeType->isOpaque() && null === $this->authority)
                 || ($schemeType->isHierarchical() && null !== $this->authority),
-        } ||
-        throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
+        } || throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
+    }
+
+    private function assertValidRfc3986Uri(): void
+    {
+        if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
+            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
+        }
+
+        if (null === $this->authority && str_starts_with($this->path, '//')) {
+            throw new SyntaxError('If there is no authority the path `' . $this->path . '` cannot start with a `//`.');
+        }
+
+        $pos = strpos($this->path, ':');
+        if (null === $this->authority
+            && null === $this->scheme
+            && false !== $pos
+            && !str_contains(substr($this->path, 0, $pos), '/')
+        ) {
+            throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
+        }
     }
 
     /**

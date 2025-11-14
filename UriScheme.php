@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use ValueError;
+use function in_array;
 
 /*
  *  Supported schemes and corresponding default port.
@@ -154,6 +155,21 @@ enum UriScheme: string
                 null !== $this->port() => SchemeType::Hierarchical,
                 default => SchemeType::Unknown,
             },
+        };
+    }
+
+    public function isSpecial(): bool
+    {
+        return match ($this) {
+            self::Data,
+            self::File,
+            self::Ftp,
+            self::Gopher,
+            self::Http,
+            self::Https,
+            self::Ws,
+            self::Wss => true,
+            default => false,
         };
     }
 

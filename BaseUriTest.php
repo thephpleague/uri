@@ -342,7 +342,7 @@ final class BaseUriTest extends TestCase
                 'expectedOrigin' => null,
             ],
             'blob' => [
-                'uri' => Uri::new('blob:https://mozilla.org:443/'),
+                'uri' => Uri::new('blob:https://mozilla.org:443/1f6a188e-c21b-11f0-8de9-0242ac120002'),
                 'expectedOrigin' => 'https://mozilla.org',
             ],
             'normalized ipv4' => [
@@ -381,7 +381,7 @@ final class BaseUriTest extends TestCase
             'same port with default value (2)' => ['ws://example.com:80/123', 'ws://example.com/', false],
             'same explicit port' => ['wss://example.com:443/123', 'wss://example.com:443/', false],
             'same origin with i18n host' => ['https://xn--bb-bjab.be./path', 'https://Bébé.BE./path', false],
-            'same origin using a blob' => ['blob:https://mozilla.org:443/', 'https://mozilla.org/123', false],
+            'same origin using a blob' => ['blob:https://mozilla.org:443/1f6a188e-c21b-11f0-8de9-0242ac120002', 'https://mozilla.org/123', false],
             'different scheme' => ['https://example.com/123', 'ftp://example.com/', true],
             'different host' => ['ftp://example.com/123', 'ftp://www.example.com/123', true],
             'different port implicit' => ['https://example.com/123', 'https://example.com:81/', true],
@@ -389,7 +389,7 @@ final class BaseUriTest extends TestCase
             'same scheme different port' => ['https://example.com:443/123', 'https://example.com:444/', true],
             'comparing two opaque URI' => ['ldap://ldap.example.net', 'ldap://ldap.example.net', true],
             'comparing a URI with an origin and one with an opaque origin' => ['https://example.com:443/123', 'ldap://ldap.example.net', true],
-            'cross origin using a blob' => ['blob:http://mozilla.org:443/', 'https://mozilla.org/123', true],
+            'cross origin using a blob' => ['blob:http://mozilla.org:443/1f6a188e-c21b-11f0-8de9-0242ac120002', 'https://mozilla.org/123', true],
         ];
     }
 

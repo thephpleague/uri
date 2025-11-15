@@ -44,6 +44,7 @@ use function array_map;
 use function array_pop;
 use function base64_decode;
 use function base64_encode;
+use function basename;
 use function count;
 use function explode;
 use function feof;
@@ -232,6 +233,7 @@ final class Uri implements Conditionable, UriInterface
         $this->userInfo = null !== $this->pass ? $this->user.':'.$this->pass : $this->user;
         $this->authority = UriString::buildAuthority($this->toComponents());
         $this->uriAsciiString = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
+        $this->assertValidRfc3986Uri();
         $this->assertValidState();
         $this->origin = $this->setOrigin();
         $host = $this->getUnicodeHost();
@@ -884,24 +886,25 @@ final class Uri implements Conditionable, UriInterface
     }
 
     /**
-     * assert the URI internal state is valid.
+     * assert the URI scheme is valid
      *
+     * @link https://w3c.github.io/FileAPI/#url
+     * @link https://datatracker.ietf.org/doc/html/rfc2397
      * @link https://tools.ietf.org/html/rfc3986#section-3
      * @link https://tools.ietf.org/html/rfc3986#section-3.3
      *
-     * @throws SyntaxError if the URI is in an invalid state according to RFC3986
-     * @throws SyntaxError if the URI is in an invalid state according to scheme specific rules
+     * @throws SyntaxError if the URI is in an invalid state, according to scheme-specific rules
      */
     private function assertValidState(): void
     {
-        $this->assertValidRfc3986Uri();
-
         match ($this->scheme) {
-            'data', 'about' => $this->isUriWithSchemeAndPathOnly(),
+            'blob' => $this->isValidBlob(),
+            'data', 'about', 'javascript' => $this->isUriWithSchemeAndPathOnly(),
             'file' => $this->isUriWithSchemeHostAndPathOnly(),
             'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
             'http', 'https' => $this->isNonEmptyHostUri(),
-            'ws', 'wss' => $this->isNonEmptyHostUriWithoutFragment(),
+            'ws', 'wss', 'ipp', 'ipps' => $this->isNonEmptyHostUriWithoutFragment(),
+            'ldap', 'ldaps' => null === $this->fragment,
             'urn' => null !== Urn::parse($this->uriAsciiString),
             default => null === ($schemeType = UriScheme::tryFrom($this->scheme ?? '')?->type())
                 || $schemeType->isUnknown()
@@ -910,6 +913,14 @@ final class Uri implements Conditionable, UriInterface
         } || throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
     }
 
+    /**
+     * assert the URI internal state is valid.
+     *
+     * @link https://tools.ietf.org/html/rfc3986#section-3
+     * @link https://tools.ietf.org/html/rfc3986#section-3.3
+     *
+     * @throws SyntaxError if the URI is in an invalid state, according to RFC3986
+     */
     private function assertValidRfc3986Uri(): void
     {
         if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
@@ -928,6 +939,17 @@ final class Uri implements Conditionable, UriInterface
         ) {
             throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
         }
+    }
+
+    private function isValidBlob(): bool
+    {
+        static $regexpUuidRfc4122 = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
+
+        return $this->isUriWithSchemeAndPathOnly() &&
+            '' !== $this->path &&
+            str_contains($this->path, '/') &&
+            !str_ends_with($this->path, '/') &&
+            1 === preg_match($regexpUuidRfc4122, basename($this->path));
     }
 
     /**

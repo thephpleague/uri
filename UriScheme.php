@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use ValueError;
-use function in_array;
 
 /*
  *  Supported schemes and corresponding default port.

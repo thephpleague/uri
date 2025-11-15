@@ -796,7 +796,7 @@ final class Uri implements Conditionable, UriInterface
     {
         return match ($this->scheme) {
             'data' => Encoder::encodePath(self::formatDataPath($path)),
-            'file' => $this->formatFilePath(Encoder::encodePath($path)),
+            'file' => self::formatFilePath(Encoder::encodePath($path)),
             default => Encoder::encodePath($path),
         };
     }
@@ -874,9 +874,9 @@ final class Uri implements Conditionable, UriInterface
     }
 
     /**
-     * Format path component for file scheme.
+     * Format the path component for the URI scheme file.
      */
-    private function formatFilePath(string $path): string
+    private static function formatFilePath(string $path): string
     {
         return (string) preg_replace_callback(
             self::REGEXP_FILE_PATH,

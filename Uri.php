@@ -897,17 +897,47 @@ final class Uri implements Conditionable, UriInterface
      */
     private function assertValidState(): void
     {
-        match ($this->scheme) {
-            'blob' => $this->isValidBlob(),
-            'data', 'about', 'javascript' => $this->isUriWithSchemeAndPathOnly(),
-            'file' => $this->isUriWithSchemeHostAndPathOnly(),
-            'ftp', 'gopher' => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
-            'http', 'https' => $this->isNonEmptyHostUri(),
-            'ws', 'wss', 'ipp', 'ipps' => $this->isNonEmptyHostUriWithoutFragment(),
-            'ldap', 'ldaps' => null === $this->fragment,
-            'urn' => null !== Urn::parse($this->uriAsciiString),
-            default => null === ($schemeType = UriScheme::tryFrom($this->scheme ?? '')?->type())
-                || $schemeType->isUnknown()
+        $scheme = UriScheme::tryFrom((string) $this->scheme);
+        if (null === $scheme) {
+            return;
+        }
+
+        $schemeType = $scheme->type();
+        match ($scheme) {
+            UriScheme::Blob => $this->isValidBlob(),
+            UriScheme::Data,
+            UriScheme::About,
+            UriScheme::Javascript => $this->isUriWithSchemeAndPathOnly(),
+            UriScheme::File => $this->isUriWithSchemeHostAndPathOnly(),
+            UriScheme::Ftp,
+            UriScheme::Gopher,
+            UriScheme::Afp,
+            UriScheme::Dict,
+            UriScheme::Msrps,
+            UriScheme::Msrp,
+            UriScheme::Mtqp,
+            UriScheme::Rsync,
+            UriScheme::Ssh,
+            UriScheme::Svn,
+            UriScheme::Snmp => $this->isNonEmptyHostUriWithoutFragmentAndQuery(),
+            UriScheme::Https,
+            UriScheme::Http => $this->isNonEmptyHostUri(),
+            UriScheme::Ws,
+            UriScheme::Wss,
+            UriScheme::Ipp,
+            UriScheme::Ipps => $this->isNonEmptyHostUriWithoutFragment(),
+            UriScheme::Ldap,
+            UriScheme::Ldaps,
+            UriScheme::Acap,
+            UriScheme::Imaps,
+            UriScheme::Imap,
+            UriScheme::Redis => null === $this->fragment,
+            UriScheme::Prospero => null === $this->fragment && null === $this->query && null === $this->userInfo,
+            UriScheme::Urn => null !== Urn::parse($this->uriAsciiString),
+            UriScheme::Telnet,
+            UriScheme::Tn3270 => null === $this->fragment && null === $this->query && in_array($this->path, ['', '/'], true),
+            UriScheme::Vnc => null !==  $this->authority && null === $this->fragment && '' === $this->path,
+            default => $schemeType->isUnknown()
                 || ($schemeType->isOpaque() && null === $this->authority)
                 || ($schemeType->isHierarchical() && null !== $this->authority),
         } || throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');

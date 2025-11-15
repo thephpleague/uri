@@ -144,12 +144,12 @@ enum UriScheme: string
             self::Javascript,
             self::Magnet,
             self::Mailto,
-            self::News,
             self::Pkcs11,
             self::Sip,
             self::Sips,
             self::Tel => SchemeType::Opaque,
             self::File => SchemeType::Hierarchical,
+            self::News => SchemeType::Unknown,
             default => match (true) {
                 null !== $this->port() => SchemeType::Hierarchical,
                 default => SchemeType::Unknown,

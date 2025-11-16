@@ -383,9 +383,9 @@ final class UrnTest extends TestCase
             'scheme' => 'urn',
             'nid' => 'example',
             'nss' => 'animal:nose',
-            'r-component' => null,
-            'q-component' => 'foo/bar',
-            'f-component' => null,
+            'r_component' => null,
+            'q_component' => 'foo/bar',
+            'f_component' => null,
         ], $urnB->__debugInfo());
         self::assertSame(json_encode($urnB->jsonSerialize()), json_encode($urn));
     }

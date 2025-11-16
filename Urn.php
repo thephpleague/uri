@@ -32,6 +32,14 @@ use function strtolower;
 /**
  * @phpstan-type UrnSerialize array{0: array{urn: non-empty-string}, 1: array{}}
  * @phpstan-import-type InputComponentMap from UriString
+ * @phpstan-type UrnMap array{
+ *      scheme: 'urn',
+ *      nid: string,
+ *      nss: string,
+ *      r_component: ?string,
+ *      q_component: ?string,
+ *      f_component: ?string,
+ *  }
  */
 final class Urn implements Conditionable, Stringable, JsonSerializable
 {
@@ -321,13 +329,7 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
      */
     public function resolve(UriTemplate|Template|string|null $template = null): UriInterface
     {
-        return null !== $template ? Uri::fromTemplate($template, [
-            'nid' => $this->nid,
-            'nss' => $this->nss,
-            'r_component' => $this->rComponent,
-            'q_component' => $this->qComponent,
-            'f_component' => $this->fComponent,
-        ]) : Uri::new($this->uriString);
+        return null !== $template ? Uri::fromTemplate($template, $this->toComponents()) : Uri::new($this->uriString);
     }
 
     public function hasRComponent(): bool
@@ -552,24 +554,25 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
     }
 
     /**
-     * @return array{
-     *     scheme: 'urn',
-     *     nid: string,
-     *     nss: string,
-     *     r-component: ?string,
-     *     q-component: ?string,
-     *     f-component: ?string,
-     * }
+     * @return UrnMap
      */
-    public function __debugInfo(): array
+    public function toComponents(): array
     {
         return [
             'scheme' => 'urn',
             'nid' => $this->nid,
             'nss' => $this->nss,
-            'r-component' => $this->rComponent,
-            'q-component' => $this->qComponent,
-            'f-component' => $this->fComponent,
+            'r_component' => $this->rComponent,
+            'q_component' => $this->qComponent,
+            'f_component' => $this->fComponent,
         ];
+    }
+
+    /**
+     * @return UrnMap
+     */
+    public function __debugInfo(): array
+    {
+        return $this->toComponents();
     }
 }

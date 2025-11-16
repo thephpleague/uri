@@ -768,7 +768,7 @@ class UriTest extends TestCase
                 'expectedOrigin' => 'https://0.192.168.33',
             ],
             'unknown scheme for cross origin' => [
-                'uri' => 'blob:foo://0xc0a821/foo/bar/1f6a188e-c21b-11f0-8de9-0242ac120002',
+                'uri' => 'blob:null/1f6a188e-c21b-11f0-8de9-0242ac120002',
                 'expectedOrigin' => null,
             ],
         ];

@@ -46,6 +46,8 @@ use function base64_decode;
 use function base64_encode;
 use function basename;
 use function count;
+use function dd;
+use function dirname;
 use function explode;
 use function feof;
 use function file_get_contents;
@@ -975,11 +977,30 @@ final class Uri implements Conditionable, UriInterface
     {
         static $regexpUuidRfc4122 = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
-        return $this->isUriWithSchemeAndPathOnly() &&
-            '' !== $this->path &&
-            str_contains($this->path, '/') &&
-            !str_ends_with($this->path, '/') &&
-            1 === preg_match($regexpUuidRfc4122, basename($this->path));
+        if (!$this->isUriWithSchemeAndPathOnly()
+            || '' === $this->path
+            || !str_contains($this->path, '/')
+            || str_ends_with($this->path, '/')
+            || 1 !== preg_match($regexpUuidRfc4122, basename($this->path))
+        ) {
+            return false;
+        }
+
+        $origin = dirname($this->path);
+        if ('null' === $origin) {
+            return true;
+        }
+
+        try {
+            $components = UriString::parse($origin);
+
+            return '' === $components['path']
+                && null === $components['query']
+                && null === $components['fragment']
+                && true === UriScheme::tryFrom((string) $components['scheme'])?->isWhatWgSpecial();
+        } catch (UriException) {
+            return false;
+        }
     }
 
     /**

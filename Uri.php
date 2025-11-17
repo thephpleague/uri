@@ -17,6 +17,7 @@ use Closure;
 use Deprecated;
 use finfo;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\FragmentDirective;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
@@ -1490,6 +1491,10 @@ final class Uri implements Conditionable, UriInterface
 
     public function withFragment(Stringable|string|null $fragment): static
     {
+        if ($fragment instanceof FragmentDirective) {
+            $fragment = ':~:'.$fragment->toString();
+        }
+
         $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
 
         return match ($fragment) {

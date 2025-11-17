@@ -30,8 +30,8 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri::withUsername` returns a new `Uri` instance with the updated username component.
 - `Uri::withPassword` returns a new `Uri` instance with the updated password component.
 - `Uri::toAsciiString` returns the URI string representation as per RFC3986
-- `Uri::toAsciiString` returns the URI string representation as per RFC3987 with the host in unicode form if available
-- `Uri::getUnicodeHost` returns the host in Unicode form if available; fallback to its RFC39 86 representation otherwise
+- `Uri::toAsciiString` returns the URI string representation as per RFC3987 with the host in Unicode form if available
+- `Uri::getUnicodeHost` returns the host in Unicode form if available; fallback to its RFC3986 representation otherwise
 - `UriTemplate` implements the `Stringable` interface
 - `UriTemplate::expandToUri` and `UriTemplate::expandToUriOrFail`
 - `UriTemplate::expandToUrl` and `UriTemplate::expandToUrlOrFail`

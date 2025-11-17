@@ -889,6 +889,34 @@ final class Uri implements Conditionable, UriInterface
     }
 
     /**
+     * assert the URI internal state is valid.
+     *
+     * @link https://tools.ietf.org/html/rfc3986#section-3
+     * @link https://tools.ietf.org/html/rfc3986#section-3.3
+     *
+     * @throws SyntaxError if the URI is in an invalid state, according to RFC3986
+     */
+    private function assertValidRfc3986Uri(): void
+    {
+        if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
+            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
+        }
+
+        if (null === $this->authority && str_starts_with($this->path, '//')) {
+            throw new SyntaxError('If there is no authority the path `' . $this->path . '` cannot start with a `//`.');
+        }
+
+        $pos = strpos($this->path, ':');
+        if (null === $this->authority
+            && null === $this->scheme
+            && false !== $pos
+            && !str_contains(substr($this->path, 0, $pos), '/')
+        ) {
+            throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
+        }
+    }
+
+    /**
      * assert the URI scheme is valid
      *
      * @link https://w3c.github.io/FileAPI/#url
@@ -944,34 +972,6 @@ final class Uri implements Conditionable, UriInterface
                 || ($schemeType->isOpaque() && null === $this->authority)
                 || ($schemeType->isHierarchical() && null !== $this->authority),
         } || throw new SyntaxError('The uri `'.$this->uriAsciiString.'` is invalid for the `'.$this->scheme.'` scheme.');
-    }
-
-    /**
-     * assert the URI internal state is valid.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-3
-     * @link https://tools.ietf.org/html/rfc3986#section-3.3
-     *
-     * @throws SyntaxError if the URI is in an invalid state, according to RFC3986
-     */
-    private function assertValidRfc3986Uri(): void
-    {
-        if (null !== $this->authority && ('' !== $this->path && '/' !== $this->path[0])) {
-            throw new SyntaxError('If an authority is present the path must be empty or start with a `/`.');
-        }
-
-        if (null === $this->authority && str_starts_with($this->path, '//')) {
-            throw new SyntaxError('If there is no authority the path `' . $this->path . '` cannot start with a `//`.');
-        }
-
-        $pos = strpos($this->path, ':');
-        if (null === $this->authority
-            && null === $this->scheme
-            && false !== $pos
-            && !str_contains(substr($this->path, 0, $pos), '/')
-        ) {
-            throw new SyntaxError('In absence of a scheme and an authority the first path segment cannot contain a colon (":") character.');
-        }
     }
 
     private function isValidBlob(): bool

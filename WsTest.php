@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\League\Uri\Uri::class)]
+#[CoversClass(Uri::class)]
 #[Group('ws')]
 #[Group('uri')]
 class WsTest extends TestCase

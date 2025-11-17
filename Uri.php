@@ -47,7 +47,6 @@ use function base64_decode;
 use function base64_encode;
 use function basename;
 use function count;
-use function dd;
 use function dirname;
 use function explode;
 use function feof;
@@ -83,6 +82,7 @@ use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
+use const FILTER_VALIDATE_EMAIL;
 use const FILTER_VALIDATE_IP;
 
 /**
@@ -936,6 +936,7 @@ final class Uri implements Conditionable, UriInterface
         $schemeType = $scheme->type();
         match ($scheme) {
             UriScheme::Blob => $this->isValidBlob(),
+            UriScheme::Mailto => $this->isValidMailto(),
             UriScheme::Data,
             UriScheme::About,
             UriScheme::Javascript => $this->isUriWithSchemeAndPathOnly(),
@@ -1002,6 +1003,53 @@ final class Uri implements Conditionable, UriInterface
         } catch (UriException) {
             return false;
         }
+    }
+
+    private function isValidMailto(): bool
+    {
+        if (null !== $this->authority || null !== $this->fragment || str_contains((string) $this->query, '?')) {
+            return false;
+        }
+
+        static $mailHeaders = [
+            'to', 'cc', 'bcc', 'reply-to', 'from', 'sender',
+            'resent-to', 'resent-cc', 'resent-bcc', 'resent-from', 'resent-sender',
+            'return-path', 'delivery-to', 'site-owner',
+        ];
+
+        static $headerRegexp = '/^[a-zA-Z0-9\'`#$%&*+.^_|~!-]+$/D';
+        $pairs = QueryString::parseFromValue($this->query);
+        $hasTo = false;
+        foreach ($pairs as [$name, $value]) {
+            $headerName = strtolower($name);
+            if (in_array($headerName, $mailHeaders, true)) {
+                if (null === $value || !self::validateEmailList($value)) {
+                    return false;
+                }
+
+                if (!$hasTo && 'to' === $headerName) {
+                    $hasTo = true;
+                }
+                continue;
+            }
+
+            if (1 !== preg_match($headerRegexp, (string) Encoder::decodeAll($name))) {
+                return false;
+            }
+        }
+
+        return '' === $this->path ? $hasTo : self::validateEmailList($this->path);
+    }
+
+    private static function validateEmailList(string $emails): bool
+    {
+        foreach (explode(',', $emails) as $email) {
+            if (false === filter_var((string) Encoder::decodeAll($email), FILTER_VALIDATE_EMAIL)) {
+                return false;
+            }
+        }
+
+        return '' !== $emails;
     }
 
     /**

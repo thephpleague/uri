@@ -1081,4 +1081,54 @@ class UriTest extends TestCase
         self::assertSame('https://xn--bb-bjab.be', $uri->toAsciiString());
         self::assertSame('https://bébé.be', $uri->toUnicodeString());
     }
+
+    #[DataProvider('provideValidMailtoUri')]
+    public function test_it_can_validate_mailto_uri(string $uri): void
+    {
+        self::assertInstanceOf(Uri::class, Uri::parse($uri));
+    }
+
+    public static function provideValidMailtoUri(): iterable
+    {
+        yield 'basic email' => ['uri' => 'mailto:me@thephpleague.com'];
+        yield 'basic email with subject' => ['uri' => 'mailto:me@thephpleague.com?subject=Hello'];
+        yield 'basic email with body' => ['uri' => 'mailto:infobot@example.com?body=send%20current-issue'];
+        yield 'request to subscribe to a mailing list' => ['uri' => 'mailto:majordomo@example.com?body=subscribe%20bamboo-l'];
+        yield 'email including a cc' => ['uri' => 'mailto:joe@example.com?cc=bob@example.com&body=hello'];
+        yield 'email without path but a to query string name' => ['uri' => 'mailto:?to=bob@example.com&body=hello'];
+        yield 'email without path but a to query string name case insensitive' => ['uri' => 'mailto:?To=bob@example.com&body=hello'];
+        yield 'complex email are also supported' => ['uri' => "mailto:%22%5C%5C%5C%22it's%5C%20ugly%5C%5C%5C%22%22@example.org"];
+    }
+
+    #[DataProvider('provideInvalidMailtoUri')]
+    public function test_it_can_not_validate_mailto_uri(string $uri): void
+    {
+        self::assertNull(Uri::parse($uri));
+    }
+
+    public static function provideInvalidMailtoUri(): iterable
+    {
+        yield 'path does not contain a valid email' => ['uri' => 'mailto:joe'];
+        yield 'no path and no to query' => ['uri' => 'mailto:?subject=Hello'];
+        yield 'a valid email is missing with the to parameter' => ['uri' => 'mailto:?to=Hello'];
+        yield 'email query can not contains the "?" character' => ['uri' => 'mailto:joe@example.com?cc=bob@example.com?body=hello'];
+    }
+
+    public function test_it_can_edit_a_mailto_uri(): void
+    {
+        $uri = Uri::new('?Reply-To=me@example.com')
+            ->withPath('you@example.com')
+            ->withScheme('mailto')
+            ->toString();
+
+        self::assertSame('mailto:you@example.com?Reply-To=me@example.com', $uri);
+    }
+
+    public function test_it_fails_to_edit_a_mailto_uri_in_the_wrong_order(): void
+    {
+        $this->expectException(SyntaxError::class);
+
+        Uri::new('?Reply-To=me@example.com')->withScheme('mailto');
+
+    }
 }

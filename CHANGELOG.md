@@ -48,7 +48,9 @@ All Notable changes to `League\Uri` will be documented in this file
 - `Uri` host encoding compliance to RFC3986 is improved by supporting RFC3986 encoded URI properly
 - `Uri` parsing with strings started or ended with empty string are no longer allowed
 - `Uri` space are rawurlencoded.
-- `Uri` validates URN as per RFC8141
+- `Uri` validates `urn` as per [RFC 8141](https://datatracker.ietf.org/doc/html/rfc8141)
+- `Uri` validates `mailto` scheme as per [RFC 6068](https://datatracker.ietf.org/doc/html/rfc6068)
+- `Uri` validates `blob` scheme as per [Blob Definition](https://w3c.github.io/FileAPI/#url)
 - `Uri::getPath` no longer trim the leading slashes (the `Http` class which is a PSR-7 compliant class still do!)
 
 ### Deprecated

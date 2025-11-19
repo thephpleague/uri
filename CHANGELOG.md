@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+### [Next](https://github.com/thephpleague/uri/compare/7.6.0...master) - TBD
+
+### Added 
+
+- None
+
+### Fixed
+
+- Query order not respected in `BaseUri::isSameDocument` method [165](https://github.com/thephpleague/uri-src/issues/165)
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.6.0](https://github.com/thephpleague/uri/compare/7.5.1...7.6.0) - 2025-11-18
 
 ### Added

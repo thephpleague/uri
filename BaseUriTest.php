@@ -240,6 +240,43 @@ final class BaseUriTest extends TestCase
                 'relative_path' => true,
                 'same_document' => false,
             ],
+            'same URI after query sorting' => [
+                'uri' => Uri::new('http://a/p?a=1&q=1&a=2#f'),
+                'base_uri' => Uri::new('http://a/p?a=2&q=1&a=1#f'),
+                'absolute_uri' => true,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => true,
+            ],
+            'same URI after query sorting and different host' => [
+                'uri' => Utils::uriFor('http://bébé.be/p?a=1&q=1&a=2#f'),
+                'base_uri' => Uri::new('http://xn--bb-bjab.be/p?a=2&q=1&a=1#f'),
+                'absolute_uri' => true,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => true,
+            ],
+
+            'same URI after path normalization' => [
+                'uri' => Utils::uriFor('http://bébé.be/'),
+                'base_uri' => Uri::new('http://xn--bb-bjab.be'),
+                'absolute_uri' => true,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => true,
+            ],
+            'same URI after port normalization' => [
+                'uri' => Utils::uriFor('https://bébé.be/'),
+                'base_uri' => Uri::new('HtTps://xn--bb-bjab.be:443'),
+                'absolute_uri' => true,
+                'network_path' => false,
+                'absolute_path' => false,
+                'relative_path' => false,
+                'same_document' => true,
+            ],
         ];
     }
 

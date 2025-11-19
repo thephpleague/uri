@@ -33,6 +33,7 @@ use function implode;
 use function in_array;
 use function preg_match;
 use function rawurldecode;
+use function sort;
 use function str_repeat;
 use function str_replace;
 use function strpos;
@@ -268,16 +269,24 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
 
     private static function normalizedUri(Stringable|string $uri): Uri
     {
-        $uri = ($uri instanceof Uri) ? $uri : Uri::new($uri);
-        $host = $uri->getHost();
-        if (null === $host || Ipv4Converter::fromEnvironment()->isIpv4($host) || IPv6Converter::isIpv6($host)) {
-            return $uri;
+        // 1 - apply RFC3986 normalization algorithm
+        $uri = ($uri instanceof Uri ? $uri : Uri::new($uri))->normalize();
+
+        // 2 - sorting query pairs (non standard comparison step)
+        $query = $uri->getQuery();
+        if (null !== $query) {
+            $pairs = explode('&', $query);
+            sort($pairs);
+            $query = implode('&', $pairs);
         }
 
-        /** @var Uri $uri */
-        $uri = $uri->withHost(IdnaConverter::toUnicode((string) Ipv6Converter::compress($host))->domain());
+        // 3 - normalize path with single absolute path (non-standard comparison step)
+        $path = $uri->getPath();
+        if (null !== $uri->getAuthority() && '' === $path) {
+            $path = '/';
+        }
 
-        return $uri;
+        return $uri->withPath($path)->withQuery($query)->withFragment(null);
     }
 
     /**

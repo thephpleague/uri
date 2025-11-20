@@ -903,7 +903,7 @@ final class Uri implements Conditionable, UriInterface
         }
 
         if (null === $this->authority && str_starts_with($this->path, '//')) {
-            throw new SyntaxError('If there is no authority the path `' . $this->path . '` cannot start with a `//`.');
+            throw new SyntaxError('If there is no authority the path `'.$this->path.'` cannot start with a `//`.');
         }
 
         $pos = strpos($this->path, ':');
@@ -917,7 +917,7 @@ final class Uri implements Conditionable, UriInterface
     }
 
     /**
-     * assert the URI scheme is valid
+     * assert the URI scheme is valid.
      *
      * @link https://w3c.github.io/FileAPI/#url
      * @link https://datatracker.ietf.org/doc/html/rfc2397

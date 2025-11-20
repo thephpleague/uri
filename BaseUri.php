@@ -34,6 +34,7 @@ use function in_array;
 use function preg_match;
 use function rawurldecode;
 use function sort;
+use function str_contains;
 use function str_repeat;
 use function str_replace;
 use function strpos;
@@ -272,17 +273,20 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
         // 1 - apply RFC3986 normalization algorithm
         $uri = ($uri instanceof Uri ? $uri : Uri::new($uri))->normalize();
 
-        // 2 - sorting query pairs (non standard comparison step)
+        // 2 - sorting query pairs
+        // This is a WHATWG URLSearchParams public API method,
+        // but it is NOT USED by the WHATWG URL equivalence algorithm
         $query = $uri->getQuery();
-        if (null !== $query) {
+        if (null !== $query && str_contains($query, '&')) {
             $pairs = explode('&', $query);
             sort($pairs);
             $query = implode('&', $pairs);
         }
 
-        // 3 - normalize path with single absolute path (non-standard comparison step)
+        // 3 - normalize path with single absolute path
+        // This is a WHATWG URL normalization (not a RFC3986 one)
         $path = $uri->getPath();
-        if (null !== $uri->getAuthority() && '' === $path) {
+        if ('' === $path && null !== $uri->getAuthority()) {
             $path = '/';
         }
 

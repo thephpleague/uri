@@ -265,32 +265,32 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function isSameDocument(Stringable|string $uri): bool
     {
-        return self::normalizedUri($this->uri)->isSameDocument(self::normalizedUri($uri));
+        return self::normalizedUri($this->uri)->equals(self::normalizedUri($uri));
     }
 
     private static function normalizedUri(Stringable|string $uri): Uri
     {
-        // 1 - apply RFC3986 normalization algorithm
+        // Normalize the URI according to RFC3986
         $uri = ($uri instanceof Uri ? $uri : Uri::new($uri))->normalize();
 
-        // 2 - sorting query pairs
-        // This is a WHATWG URLSearchParams public API method,
-        // but it is NOT USED by the WHATWG URL equivalence algorithm
-        $query = $uri->getQuery();
-        if (null !== $query && str_contains($query, '&')) {
-            $pairs = explode('&', $query);
-            sort($pairs);
-            $query = implode('&', $pairs);
-        }
+        return $uri
+            //Normalization as per WHATWG URL standard
+            //only meaningful for WHATWG Special URI scheme protocol
+            ->when(
+                condition: '' === $uri->getPath() && null !== $uri->getAuthority(),
+                onSuccess: fn (Uri $uri) => $uri->withPath('/'),
+            )
+            //Sorting as per WHATWG URLSearchParams class
+            //not included on any equivalence algorithm
+            ->when(
+                condition: null !== ($query = $uri->getQuery()) && str_contains($query, '&'),
+                onSuccess: function (Uri $uri) use ($query) {
+                    $pairs = explode('&', (string) $query);
+                    sort($pairs);
 
-        // 3 - normalize path with single absolute path
-        // This is a WHATWG URL normalization (not a RFC3986 one)
-        $path = $uri->getPath();
-        if ('' === $path && null !== $uri->getAuthority()) {
-            $path = '/';
-        }
-
-        return $uri->withPath($path)->withQuery($query)->withFragment(null);
+                    return $uri->withQuery(implode('&', $pairs));
+                }
+            );
     }
 
     /**

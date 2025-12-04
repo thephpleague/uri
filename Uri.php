@@ -49,15 +49,22 @@ use function basename;
 use function count;
 use function dirname;
 use function explode;
+use function fclose;
 use function feof;
 use function file_get_contents;
 use function filter_var;
+use function fopen;
 use function fread;
+use function fwrite;
+use function gettype;
 use function implode;
 use function in_array;
 use function is_bool;
+use function is_object;
+use function is_resource;
 use function is_string;
 use function preg_match;
+use function preg_replace;
 use function preg_replace_callback;
 use function rawurldecode;
 use function rawurlencode;
@@ -493,8 +500,8 @@ final class Uri implements Conditionable, UriInterface
 
         return match ([]) {
             array_filter(explode(';', $parameters), $isInvalidParameter) => self::fromComponents([
-               'scheme' => 'data',
-               'path' => self::formatDataPath($mimetype.';'.$parameters.','.rawurlencode($data)),
+                'scheme' => 'data',
+                'path' => self::formatDataPath($mimetype.';'.$parameters.','.rawurlencode($data)),
             ]),
             default => throw new SyntaxError(sprintf('Invalid mediatype parameters, `%s`.', $parameters))
         };
@@ -1145,10 +1152,10 @@ final class Uri implements Conditionable, UriInterface
         return match (true) {
             'file' !== $this->scheme => null,
             in_array($this->authority, ['', null, 'localhost'], true) => 'file:'.match (true) {
-                '' === $path,
-                '/' === $path[0] => $path,
-                default => '/'.$path,
-            },
+                    '' === $path,
+                        '/' === $path[0] => $path,
+                    default => '/'.$path,
+                },
             default => $this->toString(),
         };
     }
@@ -1532,10 +1539,10 @@ final class Uri implements Conditionable, UriInterface
         }
 
         return $baseUri->normalize()->toString() === match (true) {
-            $uri instanceof Rfc3986Uri => $uri->toString(),
-            $uri instanceof WhatWgUrl => $uri->toAsciiString(),
-            default => $uri->normalize()->toString(),
-        };
+                $uri instanceof Rfc3986Uri => $uri->toString(),
+                $uri instanceof WhatWgUrl => $uri->toAsciiString(),
+                default => $uri->normalize()->toString(),
+            };
     }
 
     /**
@@ -1576,7 +1583,7 @@ final class Uri implements Conditionable, UriInterface
         return self::new(UriString::resolve(
             match (true) {
                 $uri instanceof UriInterface,
-                $uri instanceof Rfc3986Uri => $uri->toString(),
+                    $uri instanceof Rfc3986Uri => $uri->toString(),
                 $uri instanceof WhatWgUrl => $uri->toAsciiString(),
                 default => $uri,
             },
@@ -1666,12 +1673,12 @@ final class Uri implements Conditionable, UriInterface
         return match (true) {
             '' === $path => match (true) {
                 '' === $basePath,
-                '/' === $basePath => $basePath,
+                    '/' === $basePath => $basePath,
                 default => './',
             },
             false === $colonPosition => $path,
             false === $slashPosition,
-            $colonPosition < $slashPosition  =>  "./$path",
+                $colonPosition < $slashPosition  =>  "./$path",
             default => $path,
         };
     }
@@ -1685,7 +1692,7 @@ final class Uri implements Conditionable, UriInterface
     {
         return explode('/', match (true) {
             '' === $path,
-            '/' !== $path[0] => $path,
+                '/' !== $path[0] => $path,
             default => substr($path, 1),
         });
     }

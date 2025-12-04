@@ -6,7 +6,11 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added 
 
-- None
+- `Uri::isIpv4Host`
+- `Uri::isIpv6Host`
+- `Uri::isIpvFutureHost`
+- `Uri::isRegisteredNameHost`
+- `Uri::isDomainHost`
 
 ### Fixed
 

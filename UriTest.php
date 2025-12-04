@@ -1131,6 +1131,57 @@ class UriTest extends TestCase
         $this->expectException(SyntaxError::class);
 
         Uri::new('?Reply-To=me@example.com')->withScheme('mailto');
+    }
 
+    #[DataProvider('provideHostType')]
+    public function test_it_can_tell_its_host_type(?string $host, HostType $hostType): void
+    {
+        $uri = Uri::fromComponents(['host' => $host]);
+
+        self::assertSame(HostType::Ipv4 === $hostType, $uri->isIpv4Host());
+        self::assertSame(HostType::Ipv6 === $hostType, $uri->isIpv6Host());
+        self::assertSame(HostType::IpvFuture === $hostType, $uri->isIpvFutureHost());
+        self::assertSame(HostType::RegisteredName === $hostType, $uri->isRegisteredNameHost());
+    }
+
+    public static function provideHostType(): iterable
+    {
+        yield 'host is IPv4' => [
+            'host' => '192.168.2.1',
+            'hostType' => HostType::Ipv4,
+        ];
+
+        yield 'host is IPv6' => [
+            'host' => '[::1]',
+            'hostType' => HostType::Ipv6,
+        ];
+
+        yield 'host is IPvFuture' => [
+            'host' => '[v8.1.2.3]',
+            'hostType' => HostType::IpvFuture,
+        ];
+
+        yield 'host is registered name' => [
+            'host' => '_afdsaf.dsafsd',
+            'hostType' => HostType::RegisteredName,
+        ];
+
+        yield 'host is a domain name which is a registered name' => [
+            'host' => 'uri.thephpleague.com',
+            'hostType' => HostType::RegisteredName,
+        ];
+    }
+
+    public function test_it_can_tell_the_difference_between_a_registered_name_and_a_domain_name(): void
+    {
+        $uri = Uri::fromComponents(['host' => '_afdsaf.dsafsd']);
+
+        self::assertTrue($uri->isRegisteredNameHost());
+        self::assertFalse($uri->isDomainHost());
+
+        $uri = Uri::fromComponents(['host' => 'uri.thephpleague.com']);
+
+        self::assertTrue($uri->isRegisteredNameHost());
+        self::assertTrue($uri->isDomainHost());
     }
 }

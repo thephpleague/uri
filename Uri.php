@@ -1280,6 +1280,36 @@ final class Uri implements Conditionable, UriInterface
         return $host;
     }
 
+    public function isIpv4Host(): bool
+    {
+        return HostType::Ipv4 === HostRecord::from($this->host)->type;
+    }
+
+    public function isIpv6Host(): bool
+    {
+        return HostType::Ipv6 === HostRecord::from($this->host)->type;
+    }
+
+    public function isIpvFutureHost(): bool
+    {
+        return HostType::IpvFuture === HostRecord::from($this->host)->type;
+    }
+
+    public function isIpHost(): bool
+    {
+        return !$this->isRegisteredNameHost();
+    }
+
+    public function isRegisteredNameHost(): bool
+    {
+        return HostType::RegisteredName === HostRecord::from($this->host)->type;
+    }
+
+    public function isDomainHost(): bool
+    {
+        return HostRecord::from($this->host)->isDomainName();
+    }
+
     public function getPort(): ?int
     {
         return $this->port;

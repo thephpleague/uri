@@ -1152,10 +1152,10 @@ final class Uri implements Conditionable, UriInterface
         return match (true) {
             'file' !== $this->scheme => null,
             in_array($this->authority, ['', null, 'localhost'], true) => 'file:'.match (true) {
-                    '' === $path,
-                        '/' === $path[0] => $path,
-                    default => '/'.$path,
-                },
+                '' === $path,
+                '/' === $path[0] => $path,
+                default => '/'.$path,
+            },
             default => $this->toString(),
         };
     }
@@ -1539,10 +1539,10 @@ final class Uri implements Conditionable, UriInterface
         }
 
         return $baseUri->normalize()->toString() === match (true) {
-                $uri instanceof Rfc3986Uri => $uri->toString(),
-                $uri instanceof WhatWgUrl => $uri->toAsciiString(),
-                default => $uri->normalize()->toString(),
-            };
+            $uri instanceof Rfc3986Uri => $uri->toString(),
+            $uri instanceof WhatWgUrl => $uri->toAsciiString(),
+            default => $uri->normalize()->toString(),
+        };
     }
 
     /**
@@ -1583,7 +1583,7 @@ final class Uri implements Conditionable, UriInterface
         return self::new(UriString::resolve(
             match (true) {
                 $uri instanceof UriInterface,
-                    $uri instanceof Rfc3986Uri => $uri->toString(),
+                $uri instanceof Rfc3986Uri => $uri->toString(),
                 $uri instanceof WhatWgUrl => $uri->toAsciiString(),
                 default => $uri,
             },
@@ -1673,12 +1673,12 @@ final class Uri implements Conditionable, UriInterface
         return match (true) {
             '' === $path => match (true) {
                 '' === $basePath,
-                    '/' === $basePath => $basePath,
+                '/' === $basePath => $basePath,
                 default => './',
             },
             false === $colonPosition => $path,
             false === $slashPosition,
-                $colonPosition < $slashPosition  =>  "./$path",
+            $colonPosition < $slashPosition  =>  "./$path",
             default => $path,
         };
     }
@@ -1692,7 +1692,7 @@ final class Uri implements Conditionable, UriInterface
     {
         return explode('/', match (true) {
             '' === $path,
-                '/' !== $path[0] => $path,
+            '/' !== $path[0] => $path,
             default => substr($path, 1),
         });
     }

@@ -32,6 +32,7 @@ use function stream_context_create;
 use function unlink;
 use function unserialize;
 
+#[CoversClass(HostRecord::class)]
 #[CoversClass(UriString::class)]
 #[CoversClass(Uri::class)]
 #[Group('uri')]

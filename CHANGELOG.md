@@ -11,6 +11,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - Query order not respected in `BaseUri::isSameDocument` method [165](https://github.com/thephpleague/uri-src/issues/165)
+- Fix Host resolution using the new `HostRecord` class, some registered name were wrongly throwing exceptions.
 
 ### Deprecated
 

@@ -21,7 +21,6 @@ use League\Uri\Contracts\FragmentDirective;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
-use League\Uri\Exceptions\ConversionFailed;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Idna\Converter as IdnaConverter;
@@ -43,6 +42,7 @@ use function array_filter;
 use function array_key_last;
 use function array_map;
 use function array_pop;
+use function array_shift;
 use function base64_decode;
 use function base64_encode;
 use function basename;
@@ -55,7 +55,6 @@ use function filter_var;
 use function fread;
 use function implode;
 use function in_array;
-use function inet_pton;
 use function is_bool;
 use function is_string;
 use function preg_match;
@@ -79,7 +78,6 @@ use function trim;
 use const FILEINFO_MIME;
 use const FILEINFO_MIME_TYPE;
 use const FILTER_FLAG_IPV4;
-use const FILTER_FLAG_IPV6;
 use const FILTER_NULL_ON_FAILURE;
 use const FILTER_VALIDATE_BOOLEAN;
 use const FILTER_VALIDATE_EMAIL;
@@ -101,55 +99,11 @@ final class Uri implements Conditionable, UriInterface
     private const REGEXP_INVALID_CHARS = '/[\x00-\x1f\x7f]/';
 
     /**
-     * RFC3986 host identified by a registered name regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
-     *
-     * @var string
-     */
-    private const REGEXP_HOST_REGNAME = '/^(
-        (?<unreserved>[a-z\d_~\-\.])|
-        (?<sub_delims>[!$&\'()*+,;=])|
-        (?<encoded>%[A-F\d]{2})
-    )+$/x';
-
-    /**
-     * RFC3986 delimiters of the generic URI components regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-2.2
-     *
-     * @var string
-     */
-    private const REGEXP_HOST_GEN_DELIMS = '/[:\/?#\[\]@ ]/'; // Also includes space.
-
-    /**
-     * RFC3986 IPvFuture regular expression pattern.
-     *
-     * @link https://tools.ietf.org/html/rfc3986#section-3.2.2
-     *
-     * @var string
-     */
-    private const REGEXP_HOST_IP_FUTURE = '/^
-        v(?<version>[A-F\d])+\.
-        (?:
-            (?<unreserved>[a-z\d_~\-\.])|
-            (?<sub_delims>[!$&\'()*+,;=:])  # also include the : character
-        )+
-    $/ix';
-
-    /**
      * RFC3986 IPvFuture host and port component.
      *
      * @var string
      */
     private const REGEXP_HOST_PORT = ',^(?<host>(\[.*]|[^:])*)(:(?<port>[^/?#]*))?$,x';
-
-    /**
-     * Significant 10 bits of IP to detect Zone ID regular expression pattern.
-     *
-     * @var string
-     */
-    private const HOST_ADDRESS_BLOCK = "\xfe\x80";
 
     /**
      * Regular expression pattern to for file URI.
@@ -286,88 +240,7 @@ final class Uri implements Conditionable, UriInterface
      */
     private function formatHost(?string $host): ?string
     {
-        if (null === $host || '' === $host) {
-            return $host;
-        }
-
-        static $cache = [];
-        if (isset($cache[$host])) {
-            return $cache[$host];
-        }
-
-        $formattedHost = '[' === $host[0] ? $this->formatIp($host) : $this->formatRegisteredName($host);
-        $cache[$host] = $formattedHost;
-        if (self::MAXIMUM_CACHED_ITEMS < count($cache)) {
-            array_shift($cache);
-        }
-
-        return $formattedHost;
-    }
-
-    /**
-     * Validate and format a registered name.
-     *
-     * The host is converted to its ascii representation if needed
-     *
-     * @throws MissingFeature if the submitted host required missing or misconfigured IDN support
-     * @throws SyntaxError if the submitted host is not a valid registered name
-     * @throws ConversionFailed if the submitted IDN host cannot be converted to a valid ascii form
-     */
-    private function formatRegisteredName(string $host): string
-    {
-        $formattedHost = rawurldecode($host);
-        if ($formattedHost === $host) {
-            return match (1) {
-                preg_match(self::REGEXP_HOST_REGNAME, $formattedHost) => $formattedHost,
-                preg_match(self::REGEXP_HOST_GEN_DELIMS, $formattedHost) => throw new SyntaxError('The host `'.$host.'` is invalid : a registered name cannot contain URI delimiters or spaces.'),
-                default => IdnaConverter::toAsciiOrFail($host),
-            };
-        }
-
-        if (IdnaConverter::toAscii($formattedHost)->hasErrors()) {
-            throw new SyntaxError('The host `'.$host.'` is invalid : the registered name contains invalid characters.');
-        }
-
-        return (string) Encoder::normalizeHost($host);
-    }
-
-    /**
-     * Validate and Format the IPv6/IPvfuture host.
-     *
-     * @throws SyntaxError if the submitted host is not a valid IP host
-     */
-    private function formatIp(string $host): string
-    {
-        $ip = substr($host, 1, -1);
-        if (false !== filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            return $host;
-        }
-
-        if (1 === preg_match(self::REGEXP_HOST_IP_FUTURE, $ip, $matches) && !in_array($matches['version'], ['4', '6'], true)) {
-            return $host;
-        }
-
-        $pos = strpos($ip, '%');
-        if (false === $pos) {
-            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
-        }
-
-        if (1 === preg_match(self::REGEXP_HOST_GEN_DELIMS, rawurldecode(substr($ip, $pos)))) {
-            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
-        }
-
-        $ip = substr($ip, 0, $pos);
-        if (false === filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
-        }
-
-        //Only the address block fe80::/10 can have a Zone ID attach to
-        //let's detect the link local significant 10 bits
-        if (str_starts_with((string)inet_pton($ip), self::HOST_ADDRESS_BLOCK)) {
-            return $host;
-        }
-
-        throw new SyntaxError('The host `'.$host.'` is invalid : the IP host is malformed.');
+        return HostRecord::from($host)->toAscii();
     }
 
     /**

@@ -27,6 +27,7 @@ use function base64_encode;
 use function dirname;
 use function file_get_contents;
 use function serialize;
+use function str_repeat;
 use function stream_context_create;
 use function unlink;
 use function unserialize;
@@ -361,8 +362,9 @@ class UriTest extends TestCase
 
     public function testCreateFromComponentsThrowsException7(): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::fromComponents(['host' => str_repeat('A', 255)]);
+        $host = str_repeat('A', 255);
+
+        self::assertSame(strtolower($host), Uri::fromComponents(['host' => $host])->getHost());
     }
 
     public function testCreateFromComponentsWorksWithPunycode(): void

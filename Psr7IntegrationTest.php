@@ -21,4 +21,16 @@ final class Psr7IntegrationTest extends UriIntegrationTest
     {
         return (new HttpFactory())->createUri($uri);
     }
+
+    public function testSpecialCharsInUserInfo(): void
+    {
+        $uri = $this->createUri('http://example.com')->withUserInfo('foo@bar.com', 'pass#word');
+        self::assertSame('foo%40bar.com:pass%23word', $uri->getUserInfo());
+    }
+
+    public function testAlreadyEncodedUserInfo(): void
+    {
+        $uri = $this->createUri('http://example.com')->withUserInfo('foo%40bar.com', 'pass%23word');
+        self::assertSame('foo%40bar.com:pass%23word', $uri->getUserInfo());
+    }
 }

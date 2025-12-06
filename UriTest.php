@@ -207,14 +207,16 @@ class UriTest extends TestCase
 
     public function testWithPathFailedWithInvalidChars(): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::new('http://example.com')->withPath('#24');
+        self::assertSame(
+            'http://example.com/%2324',
+            Uri::new('http://example.com')->withPath('#24')->toString()
+        );
     }
 
     public function testWithPathFailedWithInvalidPathRelativeToTheAuthority(): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::new('http://example.com')->withPath('foo/bar');
+        $uri = Uri::new('http://example.com')->withPath('foo/bar');
+        self::assertSame('http://example.com/foo/bar', $uri->toString());
     }
 
     public function testModificationFailedWithInvalidHost(): void
@@ -237,7 +239,6 @@ class UriTest extends TestCase
     {
         return [
             ['data:go'],
-            ['//data'],
         ];
     }
 
@@ -447,9 +448,13 @@ class UriTest extends TestCase
         self::assertSame('https://example.com///foobar', (string) $modifiedUri);
         self::assertSame('///foobar', $modifiedUri->getPath());
         self::assertSame('//example.com///foobar', (string) $modifiedUri->withScheme(null));
-
-        $this->expectException(SyntaxError::class);
-        $modifiedUri->withScheme(null)->withHost(null);
+        self::assertSame(
+            '/.///foobar',
+            $modifiedUri
+                ->withScheme(null)
+                ->withHost(null)
+                ->toString()
+        );
     }
 
     public function testItPreservesMultipleLeadingSlashesOnMutation(): void

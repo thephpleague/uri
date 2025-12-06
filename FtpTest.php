@@ -75,13 +75,13 @@ final class FtpTest extends TestCase
         ];
     }
 
-    public function testModificationFailedWithEmptyAuthority(): void
+    public function test_modification_handles_multiple_leading_slash_with_empty_authority(): void
     {
-        self::expectException(SyntaxError::class);
-        Uri::new('ftp://example.com/path')
+        $res = Uri::new('ftp://example.com/path')
             ->withScheme(null)
             ->withHost(null)
             ->withPath('//toto');
+        self::assertSame('/.//toto', $res->toString());
     }
 
     #[DataProvider('portProvider')]

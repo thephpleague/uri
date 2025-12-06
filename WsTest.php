@@ -68,15 +68,6 @@ class WsTest extends TestCase
         Uri::new($uri);
     }
 
-    public function testModificationFailedWithEmptyAuthority(): void
-    {
-        self::expectException(SyntaxError::class);
-        Uri::new('wss://example.com/path')
-            ->withScheme(null)
-            ->withHost(null)
-            ->withPath('//toto');
-    }
-
     #[TestWith(['ws://www.example.com:443/', 443])]
     #[TestWith(['ws://www.example.com:80/', null])]
     #[TestWith(['ws://www.example.com', null])]

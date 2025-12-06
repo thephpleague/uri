@@ -177,7 +177,6 @@ final class HttpTest extends TestCase
     }
 
     #[TestWith(['data:go'])]
-    #[TestWith(['//data'])]
     #[TestWith(['to://to'])]
     public function testPathIsInvalid(string $path): void
     {
@@ -206,12 +205,12 @@ final class HttpTest extends TestCase
 
     public function testModificationFailedWithEmptyAuthority(): void
     {
-        self::expectException(SyntaxError::class);
-
-        Http::new('http://example.com/path')
+        $http = Http::new('http://example.com/path')
             ->withScheme('')
             ->withHost('')
             ->withPath('//toto');
+
+        self::assertSame('/.//toto', (string) $http);
     }
 
     public function testItStripMultipleLeadingSlashOnGetPath(): void
@@ -226,10 +225,13 @@ final class HttpTest extends TestCase
         self::assertSame('https://example.com///foobar', (string) $modifiedUri);
         self::assertSame('/foobar', $modifiedUri->getPath());
         self::assertSame('//example.com///foobar', (string) $modifiedUri->withScheme(''));
+        self::assertSame(
+            '/.///foobar',
+            (string) $modifiedUri
+                ->withScheme('')
+                ->withHost('')
+        );
 
-        $this->expectException(SyntaxError::class);
-
-        $modifiedUri->withScheme('')->withHost('');
     }
 
     public function testItPreservesMultipleLeadingSlashesOnMutation(): void

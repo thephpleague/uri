@@ -191,11 +191,17 @@ final class Uri implements Conditionable, UriInterface
         $this->pass = Encoder::encodePassword($pass);
         $this->host = $this->formatHost($host);
         $this->port = $this->formatPort($port);
+        $this->authority = UriString::buildAuthority([
+            'scheme' => $this->scheme,
+            'user' => $this->user,
+            'pass' => $this->pass,
+            'host' => $this->host,
+            'port' => $this->port,
+        ]);
         $this->path = $this->formatPath($path);
         $this->query = Encoder::encodeQueryOrFragment($query);
         $this->fragment = Encoder::encodeQueryOrFragment($fragment);
         $this->userInfo = null !== $this->pass ? $this->user.':'.$this->pass : $this->user;
-        $this->authority = UriString::buildAuthority($this->toComponents());
         $this->uriAsciiString = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidRfc3986Uri();
         $this->assertValidState();
@@ -677,11 +683,37 @@ final class Uri implements Conditionable, UriInterface
      */
     private function formatPath(string $path): string
     {
-        return match ($this->scheme) {
+        $path = match ($this->scheme) {
             'data' => Encoder::encodePath(self::formatDataPath($path)),
             'file' => self::formatFilePath(Encoder::encodePath($path)),
             default => Encoder::encodePath($path),
         };
+
+        if ('' === $path) {
+            return $path;
+        }
+
+        if (null !== $this->authority) {
+            // If there is an authority, the path must start with a `/`
+            return str_starts_with($path, '/') ? $path : '/'.$path;
+        }
+
+        // If there is no authority, the path cannot start with `//`
+        if (str_starts_with($path, '//')) {
+            return '/.'.$path;
+        }
+
+        $colonPos = strpos($path, ':');
+        if (false !== $colonPos && null === $this->scheme) {
+            // In the absence of a scheme and of an authority,
+            // the first path segment cannot contain a colon (":") character.'
+            $slashPos = strpos($path, '/');
+            (false !== $slashPos && $colonPos > $slashPos) || throw new SyntaxError(
+                'In absence of the scheme and authority components, the first path segment cannot contain a colon (":") character.'
+            );
+        }
+
+        return $path;
     }
 
     /**

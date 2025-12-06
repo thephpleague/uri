@@ -48,7 +48,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "league/uri-interfaces": "^7.6",
+        "league/uri-interfaces": "^7.7",
         "psr/http-factory": "^1"
     },
     "autoload": {

@@ -2,7 +2,25 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-### [Next](https://github.com/thephpleague/uri/compare/7.6.0...master) - TBD
+## [Next](https://github.com/thephpleague/uri/compare/7.7.0...master) - TBD
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
+## [7.7.0](https://github.com/thephpleague/uri/compare/7.6.0...7.7.0) - 2025-12-08
 
 ### Added 
 

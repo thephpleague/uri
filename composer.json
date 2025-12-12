@@ -66,12 +66,12 @@
         "ext-gmp": "to improve IPV4 host parsing",
         "ext-intl": "to handle IDN host with the best performance",
         "ext-uri": "to use the PHP native URI class",
-        "jeremykendall/php-domain-parser": "to be used after getting the host (getHost()) to further parse it and to resolve Public Suffix and Top Level Domain",
+        "jeremykendall/php-domain-parser": "to further parse the URI host and resolve its Public Suffix and Top Level Domain",
         "league/uri-components" : "to provide additional tools to manipulate URI objects components",
-        "league/uri-polyfill" : "Needed to backport the PHP URI extension for older versions of PHP",
+        "league/uri-polyfill" : "to backport the PHP URI extension for older versions of PHP",
         "php-64bit": "to improve IPV4 host parsing",
         "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present",
-        "rowbot/url": "to get an alternative way of handling URLs compliant with WHATWG URL Living Standard"
+        "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification"
     },
     "extra": {
         "branch-alias": {

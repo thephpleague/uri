@@ -572,4 +572,18 @@ final class FactoryTest extends TestCase
     {
         self::assertNull(Uri::parse($uri, $baseUri));
     }
+
+    #[Test]
+    public function it_can_create_an_new_instance_with_space_using_from_base_uri_bugfix175(): void
+    {
+        self::assertSame(
+            "http://www.example.com/path%20with%20space/",
+            Uri::fromBaseUri("http://www.example.com/path with space/")->toString()
+        );
+
+        self::assertSame(
+            "http://www.example.com/path%20with%20space/",
+            Uri::fromBaseUri("/path with space/", "http://www.example.com")->toString()
+        );
+    }
 }

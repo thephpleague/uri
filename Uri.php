@@ -1781,23 +1781,16 @@ final class Uri implements Conditionable, UriInterface
     #[Deprecated(message:'use League\Uri\Uri::parse() instead', since:'league/uri:7.6.0')]
     public static function fromBaseUri(WhatWgUrl|Rfc3986Uri|Stringable|string $uri, WhatWgUrl|Rfc3986Uri|Stringable|string|null $baseUri = null): self
     {
-        if ($uri instanceof Rfc3986Uri) {
-            $uri = $uri->toRawString();
-        }
+        $formatter = fn (WhatWgUrl|Rfc3986Uri|Stringable|string $uri): string => match (true) {
+            $uri instanceof Rfc3986Uri => $uri->toRawString(),
+            $uri instanceof WhatWgUrl => $uri->toAsciiString(),
+            default => str_replace(' ', '%20', (string) $uri),
+        };
 
-        if ($uri instanceof WhatWgUrl) {
-            $uri = $uri->toAsciiString();
-        }
-
-        if ($baseUri instanceof Rfc3986Uri) {
-            $baseUri = $baseUri->toRawString();
-        }
-
-        if ($baseUri instanceof WhatWgUrl) {
-            $baseUri = $baseUri->toAsciiString();
-        }
-
-        return self::new(UriString::resolve($uri, $baseUri));
+        return self::new(UriString::resolve(
+            uri: $formatter($uri),
+            baseUri: null !== $baseUri ? $formatter($baseUri) : $baseUri)
+        );
     }
 
     /**

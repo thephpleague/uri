@@ -10,7 +10,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- None
+- Fix regression in deprecated `Uri::frombaseUri` method [175](https://github.com/thephpleague/uri-src/issues/175)
 
 ### Deprecated
 

@@ -1190,4 +1190,13 @@ class UriTest extends TestCase
         self::assertTrue($uri->isRegisteredNameHost());
         self::assertTrue($uri->isDomainHost());
     }
+
+    #[Test]
+    public function test_user_credential_encoding(): void
+    {
+        $uri = Uri::new('mysql://foo:bar%25bar@localhost/baz');
+
+        self::assertSame('foo:bar%25bar', $uri->getUserInfo());
+        self::assertSame('foo:bar%25bar', $uri->normalize()->getUserInfo());
+    }
 }

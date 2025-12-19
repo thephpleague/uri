@@ -1787,9 +1787,11 @@ final class Uri implements Conditionable, UriInterface
             default => str_replace(' ', '%20', (string) $uri),
         };
 
-        return self::new(UriString::resolve(
-            uri: $formatter($uri),
-            baseUri: null !== $baseUri ? $formatter($baseUri) : $baseUri)
+        return self::new(
+            UriString::resolve(
+                uri: $formatter($uri),
+                baseUri: null !== $baseUri ? $formatter($baseUri) : $baseUri
+            )
         );
     }
 

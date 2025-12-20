@@ -6,7 +6,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Added
 
-- None
+- Added the `Builder` class
 
 ### Fixed
 

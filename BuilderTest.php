@@ -113,13 +113,25 @@ final class BuilderTest extends TestCase
 
     public function test_it_can_resolve_the_uri_against_a_base_uri(): void
     {
-        $builder = (new Builder)
+        $builder = (new Builder())
             ->userInfo('user', 'pass')
             ->host('host')
             ->path('./.././toto')
             ->scheme('https');
 
-        self::assertSame( "https://user:pass@host/./.././toto", $builder->build()->toAsciiString());
-        self::assertSame("https://user:pass@host/toto", $builder->build('https://host/toto')->toAsciiString());
+        self::assertSame('https://user:pass@host/./.././toto', $builder->build()->toAsciiString());
+        self::assertSame('https://user:pass@host/toto', $builder->build('https://host/toto')->toAsciiString());
+    }
+
+    public function test_it_can_be_reset(): void
+    {
+        $builder = (new Builder())
+            ->userInfo('user', 'pass')
+            ->host('host')
+            ->path('./.././toto')
+            ->scheme('https');
+
+        self::assertSame('https://user:pass@host/./.././toto', $builder->build()->toAsciiString());
+        self::assertSame('', $builder->reset()->build()->toString());
     }
 }

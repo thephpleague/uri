@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Exceptions\SyntaxError;
 use SensitiveParameter;
@@ -20,10 +21,11 @@ use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
+use function is_bool;
 use function str_replace;
 use function strpos;
 
-final class Builder
+final class Builder implements Conditionable
 {
     public function __construct(
         private ?string $scheme = null,
@@ -60,6 +62,19 @@ final class Builder
         $this->fragment = null;
 
         return $this;
+    }
+
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
+    {
+        if (!is_bool($condition)) {
+            $condition = $condition($this);
+        }
+
+        return match (true) {
+            $condition => $onSuccess($this),
+            null !== $onFail => $onFail($this),
+            default => $this,
+        } ?? $this;
     }
 
     /**

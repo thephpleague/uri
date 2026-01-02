@@ -156,7 +156,8 @@ final class BaseUriTest extends TestCase
     public function testRelativizeAndResolve(
         string $baseUri,
         string $uri,
-        string $expectedRelativize
+        string $expectedRelativize,
+        string $expectedRelative,
     ): void {
         self::assertSame(
             $expectedRelativize,

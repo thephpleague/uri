@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace League\Uri;
 
+use BackedEnum;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Exceptions\SyntaxError;
 use SensitiveParameter;
 use Stringable;
+use Throwable;
+use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
@@ -27,15 +30,24 @@ use function strpos;
 
 final class Builder implements Conditionable
 {
+    private ?string $scheme = null;
+    private ?string $username = null;
+    private ?string $password = null;
+    private ?string $host = null;
+    private ?int $port = null;
+    private ?string $path = null;
+    private ?string $query = null;
+    private ?string $fragment = null;
+
     public function __construct(
-        private ?string $scheme = null,
-        private ?string $username = null,
-        #[SensitiveParameter] private ?string $password = null,
-        private ?string $host = null,
-        private ?int $port = null,
-        private ?string $path = null,
-        private ?string $query = null,
-        private ?string $fragment = null,
+        BackedEnum|Stringable|string|null $scheme = null,
+        BackedEnum|Stringable|string|null $username = null,
+        #[SensitiveParameter] BackedEnum|Stringable|string|null $password = null,
+        BackedEnum|Stringable|string|null $host = null,
+        BackedEnum|int|null $port = null,
+        BackedEnum|Stringable|string|null $path = null,
+        BackedEnum|Stringable|string|null $query = null,
+        BackedEnum|Stringable|string|null $fragment = null,
     ) {
         $this
             ->scheme($scheme)
@@ -45,6 +57,131 @@ final class Builder implements Conditionable
             ->path($path)
             ->query($query)
             ->fragment($fragment);
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function scheme(BackedEnum|Stringable|string|null $scheme): self
+    {
+        $scheme = $this->filterString($scheme);
+        if ($scheme !== $this->scheme) {
+            UriString::isValidScheme($scheme) || throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
+
+            $this->scheme = $scheme;
+        }
+
+        return $this;
+    }
+
+    public function userInfo(
+        BackedEnum|Stringable|string|null $user,
+        #[SensitiveParameter] BackedEnum|Stringable|string|null $password = null
+    ): static {
+        $username = Encoder::encodeUser($this->filterString($user));
+        $password = Encoder::encodePassword($this->filterString($password));
+        if ($username !== $this->username || $password !== $this->password) {
+            $this->username = $username;
+            $this->password = $password;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function host(BackedEnum|Stringable|string|null $host): self
+    {
+        $host = $this->filterString($host);
+        if ($host !== $this->host) {
+            null === $host
+            || HostRecord::isValid($host)
+            || throw new SyntaxError('The host `'.$host.'` is invalid.');
+
+            $this->host = $host;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws TypeError
+     */
+    public function port(BackedEnum|int|null $port): self
+    {
+        if ($port instanceof BackedEnum) {
+            1 === preg_match('/^\d+$/', (string) $port->value) || throw new TypeError('The port must be a valid BackedEnum containing a number.');
+
+            $port = (int) $port->value;
+        }
+
+        if ($port !== $this->port) {
+            null === $port
+            || ($port >= 0 && $port < 65535)
+            || throw new SyntaxError('The port value must be null or an integer between 0 and 65535.');
+
+            $this->port = $port;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function authority(BackedEnum|Stringable|string|null $authority): self
+    {
+        if ($authority instanceof BackedEnum) {
+            $authority = (string) $authority->value;
+        }
+
+        ['user' => $user, 'pass' => $pass, 'host' => $host, 'port' => $port] = UriString::parseAuthority($authority);
+
+        return $this
+            ->userInfo($user, $pass)
+            ->host($host)
+            ->port($port);
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function path(BackedEnum|Stringable|string|null $path): self
+    {
+        $path = $this->filterString($path);
+        if ($path !== $this->path) {
+            $this->path = null !== $path ? Encoder::encodePath($path) : null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function query(BackedEnum|Stringable|string|null $query): self
+    {
+        $query = $this->filterString($query);
+        if ($query !== $this->query) {
+            $this->query = Encoder::encodeQueryOrFragment($query);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws SyntaxError
+     */
+    public function fragment(BackedEnum|Stringable|string|null $fragment): self
+    {
+        $fragment = $this->filterString($fragment);
+        if ($fragment !== $this->fragment) {
+            $this->fragment = Encoder::encodeQueryOrFragment($fragment);
+        }
+
+        return $this;
     }
 
     /**
@@ -64,6 +201,16 @@ final class Builder implements Conditionable
         return $this;
     }
 
+    /**
+     * @param callable(self): void $callback A callback that receives this builder
+     */
+    public function tap(callable $callback): self
+    {
+        $callback($this);
+
+        return $this;
+    }
+
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
     {
         if (!is_bool($condition)) {
@@ -77,102 +224,26 @@ final class Builder implements Conditionable
         } ?? $this;
     }
 
-    /**
-     * @throws SyntaxError
-     */
-    public function scheme(Stringable|string|null $scheme): self
+    public function guard(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): self
     {
-        $scheme = $this->filterString($scheme);
-        if ($scheme !== $this->scheme) {
-            UriString::isValidScheme($scheme) || throw new SyntaxError('The scheme `'.$scheme.'` is invalid.');
+        try {
+            $this->build($baseUri);
 
-            $this->scheme = $scheme;
+            return $this;
+        } catch (Throwable $exception) {
+            throw new SyntaxError('The current builder cannot generate a valid URI.', previous: $exception);
         }
-
-        return $this;
     }
 
-    public function userInfo(
-        Stringable|string|null $user,
-        #[SensitiveParameter] Stringable|string|null $password = null
-    ): static {
-        $username = Encoder::encodeUser($this->filterString($user));
-        $password = Encoder::encodePassword($this->filterString($password));
-        if ($username !== $this->username || $password !== $this->password) {
-            $this->username = $username;
-            $this->password = $password;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @throws SyntaxError
-     */
-    public function host(Stringable|string|null $host): self
+    public function validate(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): bool
     {
-        $host = $this->filterString($host);
-        if ($host !== $this->host) {
-            null === $host
-            || HostRecord::isValid($host)
-            || throw new SyntaxError('The host `'.$host.'` is invalid.');
+        try {
+            $this->build($baseUri);
 
-            $this->host = $host;
+            return true;
+        } catch (Throwable) {
+            return false;
         }
-
-        return $this;
-    }
-
-    /**
-     * @throws SyntaxError
-     */
-    public function port(?int $port): self
-    {
-        if ($port !== $this->port) {
-            null === $port
-            || ($port >= 0 && $port < 65535)
-            || throw new SyntaxError('The port value must be null or an integer between 0 and 65535.');
-
-            $this->port = $port;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @throws SyntaxError
-     */
-    public function path(Stringable|string|null $path): self
-    {
-        if ($path !== $this->path) {
-            $this->path = null !== $path ? Encoder::encodePath($this->filterString($path)) : null;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @throws SyntaxError
-     */
-    public function query(Stringable|string|null $query): self
-    {
-        if ($query !== $this->query) {
-            $this->query = Encoder::encodeQueryOrFragment($this->filterString($query));
-        }
-
-        return $this;
-    }
-
-    /**
-     * @throws SyntaxError
-     */
-    public function fragment(Stringable|string|null $fragment): self
-    {
-        if ($fragment !== $this->fragment) {
-            $this->fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
-        }
-
-        return $this;
     }
 
     public function build(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Uri
@@ -261,8 +332,12 @@ final class Builder implements Conditionable
      *
      * @throws SyntaxError if the submitted data cannot be converted to string
      */
-    private function filterString(Stringable|string|null $str): ?string
+    private function filterString(BackedEnum|Stringable|string|null $str): ?string
     {
+        if ($str instanceof BackedEnum) {
+            $str = (string) $str->value;
+        }
+
         if (null === $str) {
             return null;
         }

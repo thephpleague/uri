@@ -134,4 +134,101 @@ final class BuilderTest extends TestCase
         self::assertSame('https://user:pass@host/./.././toto', $builder->build()->toAsciiString());
         self::assertSame('', $builder->reset()->build()->toString());
     }
+
+    public function test_tap_calls_callback_with_self_and_returns_same_instance(): void
+    {
+        $builder = new Builder();
+
+        $called = false;
+        $callback = function (Builder $b) use (&$called, $builder) {
+            $called = true;
+            self::assertSame($builder, $b);
+        };
+
+        $result = $builder->tap($callback);
+
+        self::assertTrue($called);
+        self::assertSame($builder, $result);
+    }
+
+    public function test_tap_allows_builder_mutation(): void
+    {
+        $builder = (new Builder())->scheme('http');
+        $builder->tap(function (Builder $b) {
+            $b->host('example.com');
+        });
+
+        $uri = $builder->build();
+
+        self::assertSame('example.com', $uri->getHost());
+        self::assertSame('http', $uri->getScheme());
+    }
+
+    public function test_authority_with_host_only(): void
+    {
+        $uri = (new Builder())->authority('example.com')->build();
+
+        self::assertSame('example.com', $uri->getHost());
+        self::assertNull($uri->getPort());
+    }
+
+    public function test_authority_with_host_and_port(): void
+    {
+        $uri = (new Builder())->authority('example.com:8080')->build();
+
+        self::assertSame('example.com:8080', $uri->getAuthority());
+        self::assertSame('example.com', $uri->getHost());
+        self::assertSame(8080, $uri->getPort());
+    }
+
+    public function test_authority_with_host_port_and_user_info(): void
+    {
+        $uri = (new Builder())->authority('john:secret@example.com:8080')->build();
+
+        self::assertSame('john:secret@example.com:8080', $uri->getAuthority());
+        self::assertSame('john', $uri->getUsername());
+        self::assertSame('secret', $uri->getPassword());
+        self::assertSame('example.com', $uri->getHost());
+        self::assertSame(8080, $uri->getPort());
+    }
+
+    public function test_unsetting_authority_clear_host_and_port(): void
+    {
+        $uri = (new Builder())
+            ->host('example.com')
+            ->port(8080)
+            ->authority(null)
+            ->build();
+
+        self::assertNotSame('example.com', $uri->getHost());
+        self::assertNotSame(8080, $uri->getPort());
+    }
+
+    public function test_authority_can_be_overridden(): void
+    {
+        $uri = (new Builder())
+            ->authority('example.com:8080')
+            ->authority('api.example.com:443')
+            ->build();
+
+        self::assertSame('api.example.com:443', $uri->getAuthority());
+        self::assertNotSame('example.com:8080', (string)$uri);
+    }
+
+    public function test_guard_with_valid_builder_returns_same_instance(): void
+    {
+        $builder = (new Builder())
+            ->scheme('https')
+            ->host('example.com');
+
+        self::assertSame($builder, $builder->guard());
+    }
+
+    public function test_guard_with_invalid_builder_throws_exception(): void
+    {
+        $this->expectException(SyntaxError::class);
+        $this->expectExceptionMessage('The current builder cannot generate a valid URI.');
+
+        (new Builder())->scheme('https')->guard();
+    }
 }

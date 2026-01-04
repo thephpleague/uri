@@ -74,6 +74,9 @@ final class Builder implements Conditionable
         return $this;
     }
 
+    /**
+     * @throws SyntaxError
+     */
     public function userInfo(
         BackedEnum|Stringable|string|null $user,
         #[SensitiveParameter] BackedEnum|Stringable|string|null $password = null
@@ -202,7 +205,10 @@ final class Builder implements Conditionable
     }
 
     /**
-     * @param callable(self): void $callback A callback that receives this builder
+     * Executes the given callback with the current instance
+     * and returns the current instance.
+     *
+     * @param callable(self): void $callback
      */
     public function tap(callable $callback): self
     {
@@ -224,7 +230,10 @@ final class Builder implements Conditionable
         } ?? $this;
     }
 
-    public function guard(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): self
+    /**
+     * @throws SyntaxError if the URI can not be build with the current Builder state
+     */
+    public function guard(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUri = null): self
     {
         try {
             $this->build($baseUri);
@@ -235,7 +244,10 @@ final class Builder implements Conditionable
         }
     }
 
-    public function validate(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): bool
+    /**
+     * Tells whether the URI can be built with the current Builder state
+     */
+    public function validate(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUri = null): bool
     {
         try {
             $this->build($baseUri);
@@ -246,7 +258,7 @@ final class Builder implements Conditionable
         }
     }
 
-    public function build(Rfc3986Uri|WhatWgUrl|Stringable|string|null $baseUri = null): Uri
+    public function build(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUri = null): Uri
     {
         $authority = $this->buildAuthority();
         $path = $this->buildPath($authority);
@@ -261,6 +273,7 @@ final class Builder implements Conditionable
         return Uri::new(null === $baseUri ? $uriString : UriString::resolve($uriString, match (true) {
             $baseUri instanceof Rfc3986Uri => $baseUri->toString(),
             $baseUri instanceof WhatWgUrl => $baseUri->toAsciiString(),
+            $baseUri instanceof BackedEnum => $baseUri,
             default => (string) $baseUri,
         }));
     }
@@ -305,23 +318,17 @@ final class Builder implements Conditionable
 
         $path = Encoder::encodePath($this->path);
         if (null !== $authority) {
-            // If there is an authority, the path must start with a `/`
             return str_starts_with($path, '/') ? $path : '/'.$path;
         }
 
-        // If there is no authority, the path cannot start with `//`
         if (str_starts_with($path, '//')) {
             return '/.'.$path;
         }
 
         $colonPos = strpos($path, ':');
         if (false !== $colonPos && null === $this->scheme) {
-            // In the absence of a scheme and of an authority,
-            // the first path segment cannot contain a colon (":") character.'
             $slashPos = strpos($path, '/');
-            (false !== $slashPos && $colonPos > $slashPos) || throw new SyntaxError(
-                'In absence of the scheme and authority components, the first path segment cannot contain a colon (":") character.'
-            );
+            (false !== $slashPos && $colonPos > $slashPos) || throw new SyntaxError('In absence of the scheme and authority components, the first path segment cannot contain a colon (":") character.');
         }
 
         return $path;

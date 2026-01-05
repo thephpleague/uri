@@ -246,6 +246,16 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
         } ?? $this;
     }
 
+    /**
+     * @param callable(self): void $callback A callback that receives this builder
+     */
+    public function tap(callable $callback): self
+    {
+        $callback($this);
+
+        return $this;
+    }
+
     public function withScheme(string $scheme): self
     {
         return $this->newInstance($this->uri->withScheme($this->filterInput($scheme)));

@@ -159,7 +159,7 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
      */
     public static function fromRfc2141(BackedEnum|Stringable|string $nid, BackedEnum|Stringable|string $nss): self
     {
-        if ($nid instanceof BackedEnum ) {
+        if ($nid instanceof BackedEnum) {
             $nid = $nid->value;
         }
 
@@ -546,7 +546,10 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
     }
 
     /**
-     * @param callable(self): void $callback A callback that receives this builder
+     * Executes the given callback with the current instance
+     * and returns the current instance.
+     *
+     * @param callable(self): void $callback
      */
     public function tap(callable $callback): self
     {

@@ -245,7 +245,7 @@ final class Builder implements Conditionable
     }
 
     /**
-     * Tells whether the URI can be built with the current Builder state
+     * Tells whether the URI can be built with the current Builder state.
      */
     public function validate(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUri = null): bool
     {

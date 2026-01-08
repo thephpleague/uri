@@ -1425,6 +1425,7 @@ final class Uri implements Conditionable, UriInterface
     private function filterString(BackedEnum|Stringable|string|null $str): ?string
     {
         $str = match (true) {
+            $str instanceof FragmentDirective => $str->toFragmentValue(),
             $str instanceof UriComponentInterface => $str->value(),
             $str instanceof BackedEnum => (string) $str->value,
             null === $str => null,
@@ -1487,9 +1488,7 @@ final class Uri implements Conditionable, UriInterface
 
     public function withPath(BackedEnum|Stringable|string $path): static
     {
-        $path = $this->formatPath(
-            $this->filterString($path) ?? throw new SyntaxError('The path component cannot be null.')
-        );
+        $path = $this->formatPath($this->filterString($path) ?? throw new SyntaxError('The path component cannot be null.'));
 
         return match ($path) {
             $this->path => $this,
@@ -1509,10 +1508,6 @@ final class Uri implements Conditionable, UriInterface
 
     public function withFragment(BackedEnum|Stringable|string|null $fragment): static
     {
-        if ($fragment instanceof FragmentDirective) {
-            $fragment = ':~:'.$fragment->toString();
-        }
-
         $fragment = Encoder::encodeQueryOrFragment($this->filterString($fragment));
 
         return match ($fragment) {

@@ -137,10 +137,6 @@ final class Builder implements Conditionable
      */
     public function authority(BackedEnum|Stringable|string|null $authority): self
     {
-        if ($authority instanceof BackedEnum) {
-            $authority = (string) $authority->value;
-        }
-
         ['user' => $user, 'pass' => $pass, 'host' => $host, 'port' => $port] = UriString::parseAuthority($authority);
 
         return $this
@@ -180,10 +176,6 @@ final class Builder implements Conditionable
      */
     public function fragment(BackedEnum|Stringable|string|null $fragment): self
     {
-        if ($fragment instanceof FragmentDirective) {
-            $fragment = ':~:'.$fragment->toString();
-        }
-
         $fragment = $this->filterString($fragment);
         if ($fragment !== $this->fragment) {
             $this->fragment = Encoder::encodeQueryOrFragment($fragment);
@@ -346,19 +338,19 @@ final class Builder implements Conditionable
      */
     private function filterString(BackedEnum|Stringable|string|null $str): ?string
     {
-        if ($str instanceof BackedEnum) {
-            $str = (string) $str->value;
-        }
+        $str = match (true) {
+            $str instanceof FragmentDirective => $str->toFragmentValue(),
+            $str instanceof UriComponentInterface => $str->value(),
+            $str instanceof BackedEnum => (string) $str->value,
+            null === $str => null,
+            default => (string) $str,
+        };
 
         if (null === $str) {
             return null;
         }
 
-        if ($str instanceof UriComponentInterface) {
-            return $str->value();
-        }
-
-        $str = str_replace(' ', '%20', (string) $str);
+        $str = str_replace(' ', '%20', $str);
 
         return UriString::containsRfc3987Chars($str)
             ? $str

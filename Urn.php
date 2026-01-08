@@ -546,19 +546,6 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
     }
 
     /**
-     * Executes the given callback with the current instance
-     * and returns the current instance.
-     *
-     * @param callable(self): void $callback
-     */
-    public function tap(callable $callback): self
-    {
-        $callback($this);
-
-        return $this;
-    }
-
-    /**
      * @return UrnSerialize
      */
     public function __serialize(): array

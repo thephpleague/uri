@@ -1407,19 +1407,6 @@ final class Uri implements Conditionable, UriInterface
         } ?? $this;
     }
 
-    /**
-     * Executes the given callback with the current instance
-     * and returns the current instance.
-     *
-     * @param callable(self): void $callback
-     */
-    public function tap(callable $callback): self
-    {
-        $callback($this);
-
-        return $this;
-    }
-
     public function withScheme(BackedEnum|Stringable|string|null $scheme): static
     {
         $scheme = $this->formatScheme($this->filterString($scheme));

@@ -116,7 +116,8 @@ final class Builder implements Conditionable
     public function port(BackedEnum|int|null $port): self
     {
         if ($port instanceof BackedEnum) {
-            1 === preg_match('/^\d+$/', (string) $port->value) || throw new TypeError('The port must be a valid BackedEnum containing a number.');
+            1 === preg_match('/^\d+$/', (string) $port->value)
+            || throw new TypeError('The port must be a valid BackedEnum containing a number.');
 
             $port = (int) $port->value;
         }
@@ -270,8 +271,7 @@ final class Builder implements Conditionable
         return Uri::new(null === $baseUri ? $uriString : UriString::resolve($uriString, match (true) {
             $baseUri instanceof Rfc3986Uri => $baseUri->toString(),
             $baseUri instanceof WhatWgUrl => $baseUri->toAsciiString(),
-            $baseUri instanceof BackedEnum => $baseUri,
-            default => (string) $baseUri,
+            default => $baseUri,
         }));
     }
 

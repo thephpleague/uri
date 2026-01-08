@@ -320,7 +320,7 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
      */
     public function resolve(Stringable|string $uri): static
     {
-        $resolved = UriString::resolve($uri, $this->uri->__toString());
+        $resolved = UriString::resolve($uri, $this->uri);
 
         return new static(match ($this->uriFactory) {
             null => Uri::new($resolved),

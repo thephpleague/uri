@@ -183,7 +183,6 @@ final class UriTemplate implements Stringable
             : UriString::resolve($uriString, match (true) {
                 $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
                 $baseUrl instanceof WhatWgUrl => $baseUrl->toUnicodeString(),
-                $baseUrl instanceof BackedEnum => (string) $baseUrl->value,
                 default => $baseUrl,
             })
         );

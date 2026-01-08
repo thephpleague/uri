@@ -15,6 +15,7 @@ namespace League\Uri;
 
 use BackedEnum;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\FragmentDirective;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Exceptions\SyntaxError;
 use SensitiveParameter;
@@ -179,6 +180,10 @@ final class Builder implements Conditionable
      */
     public function fragment(BackedEnum|Stringable|string|null $fragment): self
     {
+        if ($fragment instanceof FragmentDirective) {
+            $fragment = ':~:'.$fragment->toString();
+        }
+
         $fragment = $this->filterString($fragment);
         if ($fragment !== $this->fragment) {
             $this->fragment = Encoder::encodeQueryOrFragment($fragment);

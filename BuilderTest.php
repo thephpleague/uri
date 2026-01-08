@@ -11,6 +11,7 @@
 
 namespace League\Uri;
 
+use League\Uri\Components\FragmentDirectives\TextDirective;
 use League\Uri\Exceptions\SyntaxError;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -230,5 +231,13 @@ final class BuilderTest extends TestCase
         $this->expectExceptionMessage('The current builder cannot generate a valid URI.');
 
         (new Builder())->scheme('https')->guard();
+    }
+
+    public function test_builder_can_work_with_directives(): void
+    {
+        self::assertSame(
+            '#:~:text=hello,wo%20rld',
+            (new Builder())->fragment(new TextDirective('hello', 'wo rld'))->build()->toString()
+        );
     }
 }

@@ -17,6 +17,7 @@ use BackedEnum;
 use Closure;
 use JsonSerializable;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\Transformable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
@@ -42,7 +43,7 @@ use function strtolower;
  *      f_component: ?string,
  *  }
  */
-final class Urn implements Conditionable, Stringable, JsonSerializable
+final class Urn implements Conditionable, Stringable, JsonSerializable, Transformable
 {
     /**
      * RFC8141 regular expression URN splitter.
@@ -543,6 +544,11 @@ final class Urn implements Conditionable, Stringable, JsonSerializable
             null !== $onFail => $onFail($this),
             default => $this,
         } ?? $this;
+    }
+
+    public function transform(callable $callback): static
+    {
+        return $callback($this);
     }
 
     /**

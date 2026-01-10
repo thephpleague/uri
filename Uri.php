@@ -19,6 +19,7 @@ use Deprecated;
 use finfo;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\FragmentDirective;
+use League\Uri\Contracts\Transformable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
@@ -95,7 +96,7 @@ use const FILTER_VALIDATE_IP;
  * @phpstan-import-type ComponentMap from UriString
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Uri implements Conditionable, UriInterface
+final class Uri implements Conditionable, UriInterface, Transformable
 {
     /**
      * RFC3986 invalid characters.
@@ -1405,6 +1406,11 @@ final class Uri implements Conditionable, UriInterface
             null !== $onFail => $onFail($this),
             default => $this,
         } ?? $this;
+    }
+
+    public function transform(callable $callback): static
+    {
+        return $callback($this);
     }
 
     public function withScheme(BackedEnum|Stringable|string|null $scheme): static

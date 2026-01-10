@@ -8,7 +8,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - Added the `Builder` class
 - Added support for `BackedEnum`
-- Added `tap` method to `Uri` and `Urn`
+- Added `transform` method to `Uri` and `Urn`
 
 ### Fixed
 

@@ -16,6 +16,7 @@ namespace League\Uri;
 use Deprecated;
 use JsonSerializable;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\Transformable;
 use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
@@ -31,7 +32,7 @@ use function ltrim;
 /**
  * @phpstan-import-type InputComponentMap from UriString
  */
-final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Conditionable
+final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Conditionable, Transformable
 {
     private readonly UriInterface $uri;
 
@@ -244,6 +245,11 @@ final class Http implements Stringable, Psr7UriInterface, JsonSerializable, Cond
             null !== $onFail => $onFail($this),
             default => $this,
         } ?? $this;
+    }
+
+    public function transform(callable $callback): static
+    {
+        return $callback($this);
     }
 
     public function withScheme(string $scheme): self

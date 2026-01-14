@@ -16,6 +16,7 @@ namespace League\Uri;
 use BackedEnum;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\Contracts\FragmentDirective;
+use League\Uri\Contracts\Transformable;
 use League\Uri\Contracts\UriComponentInterface;
 use League\Uri\Exceptions\SyntaxError;
 use SensitiveParameter;
@@ -29,7 +30,7 @@ use function is_bool;
 use function str_replace;
 use function strpos;
 
-final class Builder implements Conditionable
+final class Builder implements Conditionable, Transformable
 {
     private ?string $scheme = null;
     private ?string $username = null;
@@ -206,13 +207,11 @@ final class Builder implements Conditionable
      * Executes the given callback with the current instance
      * and returns the current instance.
      *
-     * @param callable(self): void $callback
+     * @param callable(self): self $callback
      */
-    public function tap(callable $callback): self
+    public function transform(callable $callback): static
     {
-        $callback($this);
-
-        return $this;
+        return $callback($this);
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static

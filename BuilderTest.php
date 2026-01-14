@@ -141,28 +141,19 @@ final class BuilderTest extends TestCase
         $builder = new Builder();
 
         $called = false;
-        $callback = function (Builder $b) use (&$called, $builder) {
+        $callback = function (Builder $b) use (&$called, $builder): Builder {
             $called = true;
             self::assertSame($builder, $b);
+
+            return $b->authority('example.com');
         };
 
-        $result = $builder->tap($callback);
+        $result = $builder->transform($callback);
 
         self::assertTrue($called);
         self::assertSame($builder, $result);
-    }
-
-    public function test_tap_allows_builder_mutation(): void
-    {
-        $builder = (new Builder())->scheme('http');
-        $builder->tap(function (Builder $b) {
-            $b->host('example.com');
-        });
-
-        $uri = $builder->build();
-
-        self::assertSame('example.com', $uri->getHost());
-        self::assertSame('http', $uri->getScheme());
+        self::assertSame('example.com', $builder->build()->getHost());
+        self::assertNull($builder->build()->getScheme());
     }
 
     public function test_authority_with_host_only(): void

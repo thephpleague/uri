@@ -10,7 +10,8 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- None
+- Update requirement to use `uri-interfaces` 7.8.1
+- Simplify `VariableBag` implementation
 
 ### Deprecated
 

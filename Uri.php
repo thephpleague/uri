@@ -1065,7 +1065,7 @@ final class Uri implements Conditionable, UriInterface, Transformable
             && null === $this->port
             && null === $this->query
             && null === $this->fragment
-            && !('' != $this->scheme && null === $this->host);
+            && !('' !== $this->scheme && null !== $this->scheme && null === $this->host);
     }
 
     /**

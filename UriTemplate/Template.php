@@ -20,11 +20,9 @@ use Stringable;
 
 use function array_filter;
 use function array_map;
-use function array_reduce;
 use function array_unique;
 use function preg_match_all;
 use function preg_replace;
-use function str_replace;
 use function strpbrk;
 
 use const PREG_SET_ORDER;
@@ -39,19 +37,20 @@ final class Template implements Stringable
      */
     private const REGEXP_EXPRESSION_DETECTOR = '/(?<expression>\{[^}]*})/x';
 
-    /** @var array<Expression> */
-    private readonly array $expressions;
     /** @var array<string> */
     public readonly array $variableNames;
 
-    private function __construct(public readonly string $value, Expression ...$expressions)
+    /** @var list<Expression|Literal>  */
+    private readonly array $parts;
+
+    private function __construct(public readonly string $value, Expression|Literal ...$parts)
     {
-        $this->expressions = $expressions;
+        $this->parts = array_values($parts);
         $this->variableNames = array_unique(
             array_merge(
                 ...array_map(
                     static fn (Expression $expression): array => $expression->variableNames,
-                    $expressions
+                    array_filter($parts, fn (Expression|Literal $p): bool => $p instanceof Expression)
                 )
             )
         );
@@ -72,17 +71,28 @@ final class Template implements Stringable
         $remainder = preg_replace(self::REGEXP_EXPRESSION_DETECTOR, '', $template);
         false === strpbrk($remainder, '{}') || throw new SyntaxError('The template "'.$template.'" contains invalid expressions.');
 
-        preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $founds, PREG_SET_ORDER);
+        preg_match_all(self::REGEXP_EXPRESSION_DETECTOR, $template, $founds, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 
-        return new self($template, ...array_values(
-            array_reduce($founds, function (array $carry, array $found): array {
-                if (!isset($carry[$found['expression']])) {
-                    $carry[$found['expression']] = Expression::new($found['expression']);
-                }
+        $parts = [];
+        $offset = 0;
+        foreach ($founds as $found) {
+            $expression = $found['expression'][0];
+            $position = $found['expression'][1];
 
-                return $carry;
-            }, [])
-        ));
+            if ($position > $offset) {
+                $parts[] = new Literal(substr($template, $offset, $position - $offset));
+            }
+
+            $parts[] = Expression::new($expression);
+
+            $offset = $position + strlen($found[0][0]);
+        }
+
+        if ($offset < strlen($template)) {
+            $parts[] = new Literal(substr($template, $offset));
+        }
+
+        return new self($template, ...$parts);
     }
 
     /**
@@ -116,11 +126,10 @@ final class Template implements Stringable
 
     private function expandAll(VariableBag $variables): string
     {
-        return array_reduce(
-            $this->expressions,
-            fn (string $uri, Expression $expr): string => str_replace($expr->value, $expr->expand($variables), $uri),
-            $this->value
-        );
+        return implode('', array_map(
+            static fn (Literal|Expression $part): string => $part instanceof Literal ? $part->encoded : $part->expand($variables),
+            $this->parts,
+        ));
     }
 
     public function __toString(): string

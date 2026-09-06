@@ -29,6 +29,7 @@ use Uri\InvalidUriException;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\InvalidUrlException;
 use Uri\WhatWg\Url as WhatWgUrl;
+use Uri\WhatWg\UrlValidationError;
 
 use function array_fill_keys;
 use function array_key_exists;
@@ -154,10 +155,12 @@ final class UriTemplate implements Stringable
     }
 
     /**
-     * @throws MissingFeature if no Uri\Whatwg\Url class is found
+     * @param list<UrlValidationError>|null $errors
+     *
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUrlException if the base URI cannot be converted to a Uri\Whatwg\Url instance
      * @throws InvalidUrlException if the resulting expansion cannot be converted to a Uri\Whatwg\Url instance
+     * @throws MissingFeature if no Uri\Whatwg\Url class is found
      */
     public function expandToUrl(iterable $variables = [], Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null, array|null &$errors = []): WhatWgUrl
     {
@@ -213,6 +216,8 @@ final class UriTemplate implements Stringable
     }
 
     /**
+     * @param list<UrlValidationError>|null $errors
+     *
      * @throws MissingFeature if no Uri\Whatwg\Url class is found
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      * @throws InvalidUrlException if the base URI cannot be converted to a Uri\Whatwg\Url instance

@@ -80,7 +80,10 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
         $this->assign($offset, $value); /* @phpstan-ignore-line */
     }
 
-    public function offsetGet(mixed $offset): mixed
+    /**
+     * @return null|string|array<string>
+     */
+    public function offsetGet(mixed $offset): null|string|array
     {
         return $this->fetch($offset);
     }

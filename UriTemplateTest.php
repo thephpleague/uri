@@ -263,9 +263,6 @@ final class UriTemplateTest extends TestCase
 
     public function testPrefixModifierTruncatesByCharacterNotByte(): void
     {
-        // RFC 6570 section 2.4.1: the prefix counts characters, so a multibyte
-        // character must never be split. The euro sign and the G-clef are 3 and 4
-        // bytes but one character each.
         $uriTemplate = new UriTemplate('{?currency:1}{clef:1}');
         $variables = [
             'currency' => "\u{20AC}uro",

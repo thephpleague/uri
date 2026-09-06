@@ -107,7 +107,6 @@ enum Operator: string
             throw new SyntaxError('The expression "'.$expression.'" is invalid.');
         }
 
-        /** @var array{operator:string, variables:string} $parts */
         $parts = $parts + ['operator' => ''];
         if ('' !== $parts['operator'] && str_contains(self::RESERVED_OPERATOR, $parts['operator'])) {
             throw new SyntaxError('The operator used in the expression "'.$expression.'" is reserved.');
@@ -156,8 +155,6 @@ enum Operator: string
         }
 
         if (':' === $varSpec->modifier) {
-            // RFC 6570 section 2.4.1: the prefix length counts characters, not octets,
-            // so truncating has to be multibyte aware.
             $value = mb_substr($value, 0, $varSpec->position, 'UTF-8');
         }
 

@@ -24,6 +24,7 @@ use Throwable;
 
 use const JSON_THROW_ON_ERROR;
 
+#[CoversClass(Literal::class)]
 #[CoversClass(Template::class)]
 final class TemplateTest extends TestCase
 {
@@ -79,7 +80,7 @@ final class TemplateTest extends TestCase
                 $level = $testSuite['level'] ?? null;
                 $variables = $testSuite['variables'];
                 foreach ($testSuite['testcases'] as $offset => [$input, $expected]) {
-                    yield $title.' - '.$level.' # '.($offset + 1) => [
+                    yield $title.' - '.$level.' # '.($offset + 1).' ['.$input.']'  => [
                         'variables' => $variables,
                         'input' => $input,
                         'expected' => $expected,
@@ -185,5 +186,68 @@ final class TemplateTest extends TestCase
     public function it_can_expand_with_expand_or_fail_when_all_variables_are_present(): void
     {
         self::assertSame('barfoo', Template::new('{var}{baz}')->expandOrFail(['var' => 'bar', 'baz' => 'foo']));
+    }
+
+    #[Test]
+    #[DataProvider('providesLiteralEncoding')]
+    public function it_encodes_the_template_literals(string $notation, array $variables, string $expected): void
+    {
+        self::assertSame($expected, Template::new($notation)->expand($variables));
+    }
+
+    /**
+     * @see https://www.rfc-editor.org/rfc/rfc6570#section-3.1
+     *
+     * @return iterable<non-empty-string, array{
+     *     notation: string,
+     *     variables: array<non-empty-string>,
+     *     expected: string,
+     * }>
+     */
+    public static function providesLiteralEncoding(): iterable
+    {
+        $variables = [
+            'var' => 'value',
+            'path' => '/foo/bar',
+            'hello' => 'Hello World!',
+        ];
+
+        return [
+            'a character disallowed in a URI is encoded as its UTF-8 octets' => [
+                'notation' => 'café/{var}',
+                'variables' => $variables,
+                'expected' => 'caf%C3%A9/value',
+            ],
+            'a percent encoded triplet is copied as is' => [
+                'notation' => 'x%20y/{var}',
+                'variables' => $variables,
+                'expected' => 'x%20y/value',
+            ],
+            'a percent encoded triplet is copied as is on both sides of an expression' => [
+                'notation' => 'x%20y{var}z%20w',
+                'variables' => $variables,
+                'expected' => 'x%20yvaluez%20w',
+            ],
+            'a space is encoded' => [
+                'notation' => 'a b/{var}',
+                'variables' => $variables,
+                'expected' => 'a%20b/value',
+            ],
+            'a percent sign which starts no triplet is encoded' => [
+                'notation' => '100%/{var}',
+                'variables' => $variables,
+                'expected' => '100%25/value',
+            ],
+            'reserved characters are copied as is' => [
+                'notation' => "/a[0]:b@c!d\$e&f'g(h)i*j+k,l;m=n?o#{var}",
+                'variables' => $variables,
+                'expected' => "/a[0]:b@c!d\$e&f'g(h)i*j+k,l;m=n?o#value",
+            ],
+            'the expanded expressions are never encoded twice' => [
+                'notation' => 'café{+path}{#hello}',
+                'variables' => $variables,
+                'expected' => 'caf%C3%A9/foo/bar#Hello%20World!',
+            ],
+        ];
     }
 }

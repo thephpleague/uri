@@ -12,6 +12,8 @@ All Notable changes to `League\Uri` will be documented in this file
 
 - Update requirement to use `uri-interfaces` 7.8.1
 - Simplify `VariableBag` implementation
+- Improve template expansion based on [#193](https://github.com/thephpleague/uri-src/pull/193) by [dualfroz](https://github.com/dualfroz)
+- Multibyte characters handling during template expansion [#192](https://github.com/thephpleague/uri-src/pull/192) by [dualfroz](https://github.com/dualfroz)
 
 ### Deprecated
 

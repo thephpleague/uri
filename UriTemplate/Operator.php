@@ -19,10 +19,10 @@ use Stringable;
 
 use function implode;
 use function is_array;
+use function mb_substr;
 use function preg_match;
 use function rawurlencode;
 use function str_contains;
-use function substr;
 
 /**
  * Processing behavior according to the expression type operator.
@@ -156,7 +156,9 @@ enum Operator: string
         }
 
         if (':' === $varSpec->modifier) {
-            $value = substr($value, 0, $varSpec->position);
+            // RFC 6570 section 2.4.1: the prefix length counts characters, not octets,
+            // so truncating has to be multibyte aware.
+            $value = mb_substr($value, 0, $varSpec->position, 'UTF-8');
         }
 
         return [$this->decode($value), $this->isNamed()];

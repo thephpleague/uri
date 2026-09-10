@@ -17,10 +17,19 @@ use League\Uri\Encoder;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 
+use function array_column;
+use function array_map;
+use function array_pad;
+use function array_unique;
+use function count;
+use function explode;
 use function implode;
+use function in_array;
 use function is_array;
 use function mb_substr;
 use function preg_match;
+use function preg_quote;
+use function rawurldecode;
 use function rawurlencode;
 use function str_contains;
 
@@ -85,7 +94,7 @@ enum Operator: string
     /**
      * Removes percent encoding on reserved characters (used with + and # modifiers).
      */
-    public function decode(string $var): string
+    public function encode(string $var): string
     {
         return match ($this) {
             Operator::ReservedChars, Operator::Fragment => (string) Encoder::encodeQueryOrFragment($var),
@@ -158,7 +167,7 @@ enum Operator: string
             $value = mb_substr($value, 0, $varSpec->position, 'UTF-8');
         }
 
-        return [$this->decode($value), $this->isNamed()];
+        return [$this->encode($value), $this->isNamed()];
     }
 
     /**
@@ -188,7 +197,7 @@ enum Operator: string
                 $key = rawurlencode((string) $key);
             }
 
-            $var = $this->decode($var);
+            $var = $this->encode($var);
             if ('*' === $varSpec->modifier) {
                 if (!$isList) {
                     $var = $key.'='.$var;
@@ -220,5 +229,108 @@ enum Operator: string
         }
 
         return [implode(',', $pairs), $useQuery];
+    }
+
+    public function extract(VarSpecifier $varSpecifier, string $value): ExtractionResult
+    {
+        if ('*' === $varSpecifier->modifier) {
+            return $this->extractList($varSpecifier, $value);
+        }
+
+        if ($this->isNamed()) {
+            [$name, $value] = array_pad(explode('=', $value, 2), 2, '');
+            if ($name !== $varSpecifier->name) {
+                return new ExtractionResult();
+            }
+        }
+
+        return new ExtractionResult([$varSpecifier->name => ExtractedValue::fromValue(self::decode($value), $varSpecifier)]);
+    }
+
+    private static function decode(string $value): string
+    {
+        return  rawurldecode($value);
+    }
+
+    private function extractList(VarSpecifier $varSpecifier, string $value): ExtractionResult
+    {
+        return $this->isNamed()
+            ? $this->extractNamedList($varSpecifier, $value)
+            : $this->extractUnnamedList($varSpecifier, $value);
+    }
+
+    private function extractNamedList(
+        VarSpecifier $varSpecifier,
+        string $value,
+    ): ExtractionResult {
+        if ('' === $value) {
+            return new ExtractionResult();
+        }
+
+        /** @var non-empty-string $separator */
+        $separator = $this->separator();
+        $items = explode($separator, $value) + [1 => ''];
+        $pairs = [];
+        foreach ($items as $item) {
+            $pairs[] = str_contains($item, '=') ? explode('=', $item, 2) : [$varSpecifier->name, $item];
+        }
+
+        $names = array_unique(array_column($pairs, 0));
+        if (1 === count($names) && $varSpecifier->name === $names[0]) {
+            return new ExtractionResult([
+                $varSpecifier->name => new ExtractedValue(array_map(static fn (array $pair): string => rawurldecode($pair[1]), $pairs)),
+            ]);
+        }
+
+        ! in_array($varSpecifier->name, $names, true) || throw new SyntaxError('The value '.$value.' is malformed.');
+
+        $result = [];
+        foreach ($pairs as [$pName, $pValue]) {
+            $result[rawurldecode($pName)] = rawurldecode($pValue);
+        }
+
+        return new ExtractionResult([$varSpecifier->name => new ExtractedValue($result)]);
+    }
+
+    private function extractUnnamedList(VarSpecifier $varSpecifier, string $value): ExtractionResult
+    {
+        if ('' === $value) {
+            return new ExtractionResult();
+        }
+
+        /** @var non-empty-string $separator */
+        $separator = $this->separator();
+        $values = explode($separator, $value) + [1 => ''];
+        $hasPairs = false;
+        $hasValues = false;
+        $result = [];
+
+        foreach ($values as $pValue) {
+            if (str_contains($pValue, '=')) {
+                $hasPairs = true;
+                [$key, $qValue] = explode('=', $pValue, 2);
+                $result[self::decode($key)] = self::decode($qValue);
+            } else {
+                $hasValues = true;
+                $result[] = self::decode($pValue);
+            }
+        }
+
+        return ($hasPairs && $hasValues)
+            ? new ExtractionResult()
+            : new ExtractionResult([$varSpecifier->name => new ExtractedValue($result)]);
+    }
+
+    public function extractPattern(VarSpecifier $varSpecifier): ExtractionPattern
+    {
+        $this->isNamed() || throw new VariableCanNotBeExtracted('An extraction pattern is only available for named operators.');
+
+        $separator = preg_quote($this->separator(), '/');
+        $name = preg_quote($varSpecifier->name, '/');
+        $single = $name.'(?:=[^'.$separator.']*)?';
+
+        return '*' === $varSpecifier->modifier
+            ? new ExtractionPattern(single: $single, exploded: '[^'.$separator.'=]+(?:=[^'.$separator.']*)?')
+            : new ExtractionPattern(single: $single);
     }
 }

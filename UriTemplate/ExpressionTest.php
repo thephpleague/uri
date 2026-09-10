@@ -259,4 +259,217 @@ final class ExpressionTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @param array<string, string|array<string>> $expected
+     */
+    #[DataProvider('provideExtractCases')]
+    public function testExtract(
+        Expression $expression,
+        string $value,
+        array $expected,
+    ): void {
+        self::assertSame($expected, $expression->extract($value)->values());
+    }
+
+    /**
+     * @return iterable<string, array{
+     *     expression: Expression,
+     *     value: string,
+     *     expected: array<string, string|array<string>>
+     * }>
+     */
+    public static function provideExtractCases(): iterable
+    {
+        yield 'empty expression value' => [
+            'expression' => Expression::new('{foo}'),
+            'value' => '',
+            'expected' => [],
+        ];
+
+        yield 'single variable' => [
+            'expression' => Expression::new('{foo}'),
+            'value' => 'bar',
+            'expected' => [
+                'foo' => 'bar',
+            ],
+        ];
+
+        yield 'multiple variables' => [
+            'expression' => Expression::new('{foo,bar}'),
+            'value' => 'one,two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'percent encoded value' => [
+            'expression' => Expression::new('{foo,bar}'),
+            'value' => 'one%20value,two%20value',
+            'expected' => [
+                'foo' => 'one value',
+                'bar' => 'two value',
+            ],
+        ];
+
+        yield 'label expression' => [
+            'expression' => Expression::new('{.foo,bar}'),
+            'value' => 'one.two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'path expression' => [
+            'expression' => Expression::new('{/foo,bar}'),
+            'value' => 'one/two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'query expression' => [
+            'expression' => Expression::new('{?foo,bar}'),
+            'value' => 'foo=one&bar=two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'path parameter expression' => [
+            'expression' => Expression::new('{;foo,bar}'),
+            'value' => 'foo=one;bar=two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'query pair expression' => [
+            'expression' => Expression::new('{&foo,bar}'),
+            'value' => 'foo=one&bar=two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'fragment expression' => [
+            'expression' => Expression::new('{#foo,bar}'),
+            'value' => 'one,two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'exploded variable' => [
+            'expression' => Expression::new('{foo*}'),
+            'value' => 'one,two,three',
+            'expected' => [
+                'foo' => ['one', 'two', 'three'],
+            ],
+        ];
+
+        yield 'exploded query variable' => [
+            'expression' => Expression::new('{?foo*}'),
+            'value' => 'foo=one&foo=two&foo=three',
+            'expected' => [
+                'foo' => ['one', 'two', 'three'],
+            ],
+        ];
+
+        yield 'exploded query associative variable' => [
+            'expression' => Expression::new('{?foo*}'),
+            'value' => 'one=a&two=b',
+            'expected' => [
+                'foo' => [
+                    'one' => 'a',
+                    'two' => 'b',
+                ],
+            ],
+        ];
+
+        yield 'positional exploded variable' => [
+            'expression' => Expression::new('{foo*}'),
+            'value' => 'one,two,three',
+            'expected' => ['foo' => ['one', 'two', 'three']],
+        ];
+
+        yield 'positional exploded variable followed by scalar' => [
+            'expression' => Expression::new('{foo*,bar}'),
+            'value' => 'one,two,three',
+            'expected' => ['foo' => ['one', 'two'], 'bar' => 'three'],
+        ];
+
+        yield 'positional scalar followed by exploded variable' => [
+            'expression' => Expression::new('{foo,bar*}'),
+            'value' => 'one,two,three',
+            'expected' => ['foo' => 'one', 'bar' => ['two', 'three']],
+        ];
+
+        yield 'positional scalar variables' => [
+            'expression' => Expression::new('{foo,bar}'),
+            'value' => 'one,two',
+            'expected' => ['foo' => 'one', 'bar' => 'two'],
+        ];
+
+        yield 'named exploded variable followed by scalar' => [
+            'expression' => Expression::new('{?foo*,bar}'),
+            'value' => 'foo=one&foo=two&bar=three',
+            'expected' => ['foo' => ['one', 'two'], 'bar' => 'three'],
+        ];
+
+        yield 'named associative exploded variable followed by scalar' => [
+            'expression' => Expression::new('{?foo*,bar}'),
+            'value' => 'one=a&two=b&bar=three',
+            'expected' => ['foo' => ['one' => 'a', 'two' => 'b'], 'bar' => 'three'],
+        ];
+
+        yield 'named scalar variables' => [
+            'expression' => Expression::new('{?foo,bar}'),
+            'value' => 'foo=one&bar=two',
+            'expected' => ['foo' => 'one', 'bar' => 'two'],
+        ];
+
+        yield 'named exploded list followed by scalar' => [
+            'expression' => Expression::new('{?foo*,bar}'),
+            'value' => 'foo=one&foo=two&bar=three',
+            'expected' => ['foo' => ['one', 'two'], 'bar' => 'three'],
+        ];
+
+        yield 'named exploded associative followed by scalar' => [
+            'expression' => Expression::new('{?foo*,bar}'),
+            'value' => 'one=a&two=b&bar=three',
+            'expected' => ['foo' => ['one' => 'a', 'two' => 'b'], 'bar' => 'three'],
+        ];
+
+        yield 'named scalar followed by exploded list' => [
+            'expression' => Expression::new('{?foo,bar*}'),
+            'value' => 'foo=one&bar=two&bar=three',
+            'expected' => ['foo' => 'one', 'bar' => ['two', 'three']],
+        ];
+
+        yield 'named scalar followed by exploded associative' => [
+            'expression' => Expression::new('{?foo,bar*}'),
+            'value' => 'foo=one&two=a&three=b',
+            'expected' => ['foo' => 'one', 'bar' => ['two' => 'a', 'three' => 'b']],
+        ];
+
+        yield 'named exploded variable as only variable' => [
+            'expression' => Expression::new('{?foo*}'),
+            'value' => 'foo=one&foo=two&foo=three',
+            'expected' => ['foo' => ['one', 'two', 'three']],
+        ];
+
+        yield 'named exploded associative variable as only variable' => [
+            'expression' => Expression::new('{?foo*}'),
+            'value' => 'one=a&two=b&three=c',
+            'expected' => ['foo' => ['one' => 'a', 'two' => 'b', 'three' => 'c']],
+        ];
+    }
 }

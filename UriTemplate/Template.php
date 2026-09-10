@@ -20,11 +20,20 @@ use Stringable;
 
 use function array_filter;
 use function array_map;
+use function array_merge;
 use function array_unique;
+use function array_values;
+use function count;
+use function implode;
 use function preg_match_all;
 use function preg_replace;
+use function str_starts_with;
+use function strlen;
 use function strpbrk;
+use function strpos;
+use function substr;
 
+use const PREG_OFFSET_CAPTURE;
 use const PREG_SET_ORDER;
 
 /**
@@ -95,6 +104,15 @@ final class Template implements Stringable
         return new self($template, ...$parts);
     }
 
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    /**-----------
+     * Expand API
+    ------------*/
+
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      */
@@ -132,9 +150,119 @@ final class Template implements Stringable
         ));
     }
 
-    public function __toString(): string
+    /**-----------
+     * Extract API
+    ------------*/
+
+    public function extract(string $value): ExtractionResult
     {
-        return $this->value;
+        try {
+            return $this->extractAll($value) ?? new ExtractionResult();
+        } catch (SyntaxError $e) {
+            return new ExtractionResult();
+        }
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    public function extractOrFail(string $value): ExtractionResult
+    {
+        return $this->extractAll($value) ?? throw new VariableCanNotBeExtracted('The value "'.$value.'" does not match the template.');
+    }
+
+    public function match(string $value): bool
+    {
+        try {
+            return null !== $this->extractAll($value);
+        } catch (VariableCanNotBeExtracted) {
+            return false;
+        }
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function extractAll(string $value): ?ExtractionResult
+    {
+        return $this->matchParts($value, 0, 0);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchParts(
+        string $value,
+        int $partOffset,
+        int $valueOffset,
+        ExtractionResult $variables = new ExtractionResult(),
+    ): ?ExtractionResult {
+        if ($partOffset === count($this->parts)) {
+            return $valueOffset === strlen($value) ? $variables : null;
+        }
+
+        $part = $this->parts[$partOffset];
+
+        if ($part instanceof Literal) {
+            if (!str_starts_with(substr($value, $valueOffset), $part->encoded)) {
+                return null;
+            }
+
+            return $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($part->encoded), $variables);
+        }
+
+        $expressionOffset = $valueOffset;
+        $prefix = $part->operator->first();
+
+        if ('' !== $prefix && !str_starts_with(substr($value, $expressionOffset), $prefix)) {
+            return null;
+        }
+
+        $expressionOffset += strlen($prefix);
+        $nextLiteral = null;
+
+        for ($offset = $partOffset + 1, $count = count($this->parts); $offset < $count; ++$offset) {
+            if ($this->parts[$offset] instanceof Literal) {
+                $nextLiteral = $this->parts[$offset];
+                break;
+            }
+        }
+
+        if (null === $nextLiteral) {
+            if ($partOffset + 1 !== count($this->parts)) {
+                return null;
+            }
+
+            $partValue = substr($value, $expressionOffset);
+
+            try {
+                $extracted = $part->extract($partValue);
+            } catch (VariableCanNotBeExtracted) {
+                return null;
+            }
+
+            return $variables->reconcile($extracted);
+        }
+
+        $position = strpos($value, $nextLiteral->encoded, $expressionOffset);
+        if (false === $position) {
+            return null;
+        }
+
+        $partValue = substr($value, $expressionOffset, $position - $expressionOffset);
+
+        try {
+            $extracted = $part->extract($partValue);
+        } catch (VariableCanNotBeExtracted) {
+            return null;
+        }
+
+        $merged = $variables->reconcile($extracted);
+        if (null === $merged) {
+            return null;
+        }
+
+        return $this->matchParts($value, $partOffset + 1, $position, $merged);
     }
 
     /**

@@ -19,12 +19,15 @@ use League\Uri\Contracts\UriException;
 use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\MissingFeature;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\UriTemplate\ExtractionResult;
 use League\Uri\UriTemplate\Template;
 use League\Uri\UriTemplate\TemplateCanNotBeExpanded;
 use League\Uri\UriTemplate\VariableBag;
+use League\Uri\UriTemplate\VariableCanNotBeExtracted;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+use Traversable;
 use Uri\InvalidUriException;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\InvalidUrlException;
@@ -62,6 +65,10 @@ final class UriTemplate implements Stringable
 
     private function filterVariables(iterable $variables): VariableBag
     {
+        if ($variables instanceof ExtractionResult) {
+            $variables = $variables->values();
+        }
+
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
         }
@@ -277,6 +284,41 @@ final class UriTemplate implements Stringable
             $uri instanceof WhatWgUrl => new Rfc3986Uri($uri->toAsciiString()),
             $uri instanceof BackedEnum => new Rfc3986Uri((string) $uri->value),
             default => new Rfc3986Uri((string) $uri),
+        };
+    }
+
+    /**
+     * Extracts the variables from a URI using the template.
+     */
+    public function extract(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): ExtractionResult
+    {
+        return $this->template->extract(self::uriString($uri));
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted if the URI cannot be extracted using the template
+     */
+    public function extractOrFail(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): ExtractionResult
+    {
+        return $this->template->extractOrFail(self::uriString($uri));
+    }
+
+    /**
+     * Returns whether the URI matches the template.
+     */
+    public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): bool
+    {
+        return $this->template->match(self::uriString($uri));
+    }
+
+    private static function uriString(
+        Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri,
+    ): string {
+        return match (true) {
+            $uri instanceof Rfc3986Uri => $uri->toRawString(),
+            $uri instanceof WhatWgUrl => $uri->toUnicodeString(),
+            $uri instanceof BackedEnum => (string) $uri->value,
+            default => (string) $uri,
         };
     }
 

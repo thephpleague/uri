@@ -26,6 +26,7 @@ use const JSON_THROW_ON_ERROR;
 
 #[CoversClass(Literal::class)]
 #[CoversClass(Template::class)]
+#[CoversClass(ExtractionResult::class)]
 final class TemplateTest extends TestCase
 {
     private static string $rootPath = __DIR__.'/../../vendor/uri-templates/uritemplate-test';
@@ -195,6 +196,19 @@ final class TemplateTest extends TestCase
         self::assertSame($expected, Template::new($notation)->expand($variables));
     }
 
+    public function test_it_can_match_the_content(): void
+    {
+        self::assertTrue(Template::new('/users/{id}')->match('/users/42'));
+        self::assertFalse(Template::new('/users/{id}')->match('/articles/42'));
+    }
+
+    public function test_it_extract_or_fail_will_throw_on_error(): void
+    {
+        $this->expectException(VariableCanNotBeExtracted::class);
+
+        Template::new('/users/{id}')->extractOrFail('/articles/42');
+    }
+
     /**
      * @see https://www.rfc-editor.org/rfc/rfc6570#section-3.1
      *
@@ -249,5 +263,201 @@ final class TemplateTest extends TestCase
                 'expected' => 'caf%C3%A9/foo/bar#Hello%20World!',
             ],
         ];
+    }
+
+    /**
+     * @param array<string, string|array<string>> $expected
+     */
+    #[DataProvider('provideExtractCases')]
+    public function testExtract(
+        Template $template,
+        string $value,
+        array $expected,
+    ): void {
+        self::assertSame($expected, $template->extract($value)->values());
+    }
+
+    /**
+     * @return iterable<non-empty-string, array{
+     *     template: Template,
+     *     value: string,
+     *     expected: array<string, string|array<string>>
+     * }>
+     */
+    public static function provideExtractCases(): iterable
+    {
+        yield 'literal and expression' => [
+            'template' => Template::new('/users/{id}'),
+            'value' => '/users/42',
+            'expected' => ['id' => '42'],
+        ];
+
+        yield 'expression between literals' => [
+            'template' => Template::new('/users/{id}/profile'),
+            'value' => '/users/42/profile',
+            'expected' => ['id' => '42'],
+        ];
+
+        yield 'multiple expressions' => [
+            'template' => Template::new('/users/{id}/posts/{post}'),
+            'value' => '/users/42/posts/123',
+            'expected' => [
+                'id' => '42',
+                'post' => '123',
+            ],
+        ];
+
+        yield 'same variable repeated with same value' => [
+            'template' => Template::new('/{id}/{id}'),
+            'value' => '/42/42',
+            'expected' => ['id' => '42'],
+        ];
+
+        yield 'same variable repeated with different value' => [
+            'template' => Template::new('/{id}/{id}'),
+            'value' => '/42/43',
+            'expected' => [],
+        ];
+
+        yield 'expression value contains following literal' => [
+            'template' => Template::new('/{value}/end'),
+            'value' => '/foo/end/bar/end',
+            'expected' => [],
+        ];
+
+        yield 'adjacent expressions cannot be extracted' => [
+            'template' => Template::new('/{foo}{bar}'),
+            'value' => '/onetwo',
+            'expected' => [],
+        ];
+
+        yield 'expression with prefix modifier' => [
+            'template' => Template::new('/{id:3}/profile'),
+            'value' => '/123/profile',
+            'expected' => ['id' => '123'],
+        ];
+
+        yield 'exploded expression followed by literal' => [
+            'template' => Template::new('{/tags*}/end'),
+            'value' => '/one/two/three/end',
+            'expected' => ['tags' => ['one', 'two', 'three']],
+        ];
+
+        yield 'path exploded variable' => [
+            'template' => Template::new('{/tags*}/end'),
+            'value' => '/one/two/three/end',
+            'expected' => [
+                'tags' => ['one', 'two', 'three'],
+            ],
+        ];
+
+        yield 'query variables' => [
+            'template' => Template::new('{?foo,bar}'),
+            'value' => '?foo=one&bar=two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
+
+        yield 'path parameter variable' => [
+            'template' => Template::new('{;foo}'),
+            'value' => ';foo=one',
+            'expected' => [
+                'foo' => 'one',
+            ],
+        ];
+
+        yield 'repeated variable with same value' => [
+            'template' => Template::new('/{id}/{id}'),
+            'value' => '/42/42',
+            'expected' => [
+                'id' => '42',
+            ],
+        ];
+
+        yield 'repeated variable with different values' => [
+            'template' => Template::new('/{id}/{id}'),
+            'value' => '/42/43',
+            'expected' => [],
+        ];
+
+        yield 'expression between literals uses first literal occurrence' => [
+            'template' => Template::new('/{value}/end'),
+            'value' => '/foo/end/bar/end',
+            'expected' => [],
+        ];
+
+        yield 'adjacent expressions cannot be arbitrarily partitioned' => [
+            'template' => Template::new('/{foo}{bar}'),
+            'value' => '/onetwo',
+            'expected' => [],
+        ];
+
+        yield 'fragment expression' => [
+            'template' => Template::new('{#fragment}'),
+            'value' => '#section',
+            'expected' => [
+                'fragment' => 'section',
+            ],
+        ];
+
+        yield 'label expression' => [
+            'template' => Template::new('{.name}'),
+            'value' => '.john',
+            'expected' => [
+                'name' => 'john',
+            ],
+        ];
+
+        yield 'semicolon expression' => [
+            'template' => Template::new('{;foo}'),
+            'value' => ';foo=one',
+            'expected' => [
+                'foo' => 'one',
+            ],
+        ];
+
+        yield 'prefix modifier' => [
+            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'value' => '/hotels/Ritz/bookings/42',
+            'expected' => [
+                'hotel' => 'Ritz',
+                'booking' => '42',
+            ],
+        ];
+
+        yield 'prefix modifier with longer value' => [
+            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'value' => '/hotels/Ritz-Carlton/bookings/42',
+            'expected' => [],
+        ];
+
+        yield 'prefix modifier counts decoded characters' => [
+            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'value' => '/hotels/Rest%20%26%20Relax/bookings/42',
+            'expected' => [],
+        ];
+    }
+
+    public function test_it_can_match_an_operator_prefixed_expression(): void
+    {
+        self::assertTrue(
+            Template::new('{/tags*}/end')->match('/one/two/three/end'),
+        );
+    }
+
+    public function test_it_cannot_match_when_a_repeated_variable_differs(): void
+    {
+        self::assertFalse(
+            Template::new('/{id}/{id}')->match('/42/43'),
+        );
+    }
+
+    public function test_extract_or_fail_throws_when_a_repeated_variable_differs(): void
+    {
+        $this->expectException(VariableCanNotBeExtracted::class);
+
+        Template::new('/{id}/{id}')->extractOrFail('/42/43');
     }
 }

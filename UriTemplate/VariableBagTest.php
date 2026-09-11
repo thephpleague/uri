@@ -22,6 +22,7 @@ use stdClass;
 use TypeError;
 
 #[CoversClass(VariableBag::class)]
+#[CoversClass(TemplateCanNotBeExpanded::class)]
 final class VariableBagTest extends TestCase
 {
     /**
@@ -204,5 +205,31 @@ final class VariableBagTest extends TestCase
 
         self::assertFalse($newBag->equals($bag));
         self::assertCount(1, $newBag);
+    }
+
+    public function testItCanBeInstantiatedFromAnExtractionResult(): void
+    {
+        $result = ExtractionResult::success([
+            'foo' => new ExtractedValue('bar'),
+            'baz' => new ExtractedValue('qux'),
+        ]);
+
+        $bag = new VariableBag($result);
+
+        self::assertSame('bar', $bag->fetch('foo'));
+        self::assertSame('qux', $bag->fetch('baz'));
+    }
+
+    public function testItCanBeInstantiatedFromAnExtractionResultWithNullValues(): void
+    {
+        $result = ExtractionResult::success([
+            'foo' => new ExtractedValue('bar'),
+            'baz' => new ExtractedValue(null),
+        ]);
+
+        $bag = new VariableBag($result);
+
+        self::assertTrue(isset($bag['foo']));
+        self::assertFalse(isset($bag['baz']));
     }
 }

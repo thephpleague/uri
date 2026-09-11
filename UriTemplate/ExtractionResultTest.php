@@ -25,7 +25,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_returns_extracted_values(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
             'tags' => new ExtractedValue(['one', 'two']),
         ]);
@@ -33,18 +33,18 @@ final class ExtractionResultTest extends TestCase
         self::assertSame([
             'term' => 'john',
             'tags' => ['one', 'two'],
-        ], $result->values());
+        ], $result->variables());
         self::assertFalse($result->isEmpty());
     }
 
     #[Test]
     public function it_returns_partial_values_without_exposing_the_metadata(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('j', 1),
         ]);
 
-        self::assertSame(['term' => 'j'], $result->values());
+        self::assertSame(['term' => 'j'], $result->variables());
 
         $value = $result->fetch('term');
         self::assertInstanceOf(ExtractedValue::class, $value);
@@ -55,7 +55,7 @@ final class ExtractionResultTest extends TestCase
     public function it_fetches_an_extracted_value(): void
     {
         $value = new ExtractedValue('j', 1);
-        $result = new ExtractionResult(['term' => $value]);
+        $result = ExtractionResult::success(['term' => $value]);
 
         self::assertSame($value, $result->fetch('term'));
         self::assertNull($result->fetch('missing'));
@@ -64,7 +64,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_returns_a_value(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
             'tags' => new ExtractedValue(['one', 'two']),
         ]);
@@ -77,7 +77,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_checks_if_a_variable_exists(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
         ]);
 
@@ -88,7 +88,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_counts_extracted_values(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
             'limit' => new ExtractedValue('10'),
         ]);
@@ -102,7 +102,7 @@ final class ExtractionResultTest extends TestCase
         $term = new ExtractedValue('john');
         $limit = new ExtractedValue('10');
 
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => $term,
             'limit' => $limit,
         ]);
@@ -116,22 +116,21 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_reconciles_results(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('j', 1),
         ]);
 
-        $other = new ExtractionResult([
+        $other = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
             'limit' => new ExtractedValue('10'),
         ]);
 
         $reconciled = $result->reconcile($other);
 
-        self::assertNotNull($reconciled);
         self::assertSame([
             'term' => 'john',
             'limit' => '10',
-        ], $reconciled->values());
+        ], $reconciled->variables());
 
         $value = $reconciled->fetch('term');
         self::assertInstanceOf(ExtractedValue::class, $value);
@@ -141,15 +140,16 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_returns_null_when_results_cannot_be_reconciled(): void
     {
-        $result = new ExtractionResult([
+        $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
         ]);
 
-        $other = new ExtractionResult([
+        $other = ExtractionResult::success([
             'term' => new ExtractedValue('mary'),
         ]);
 
-        self::assertNull($result->reconcile($other));
+        $this->expectException(VariableCanNotBeExtracted::class);
+        $result->reconcile($other);
     }
 
     #[Test]
@@ -159,9 +159,10 @@ final class ExtractionResultTest extends TestCase
             yield 'term' => new ExtractedValue('john');
         })();
 
-        $result = new ExtractionResult($values);
+        $result = ExtractionResult::success($values);
 
-        self::assertSame(['term' => 'john'], $result->values());
+        self::assertSame(['term' => 'john'], $result->variables());
+        self::assertTrue($result->isSuccessful());
     }
 
     #[Test]
@@ -172,7 +173,7 @@ final class ExtractionResultTest extends TestCase
         /** @var iterable<int, ExtractedValue> $values */
         $values = [42 => new ExtractedValue('john')];
 
-        new ExtractionResult($values); /* @phpstan-ignore-line */
+        ExtractionResult::success($values);
     }
 
     #[Test]
@@ -183,6 +184,24 @@ final class ExtractionResultTest extends TestCase
         /** @var iterable<string, mixed> $values */
         $values = ['term' => 'john'];
 
-        new ExtractionResult($values); /* @phpstan-ignore-line */
+        ExtractionResult::success($values);
+    }
+
+    #[Test]
+    public function it_can_be_generated_from_failure(): void
+    {
+        $exception = new VariableCanNotBeExtracted(
+            message: 'this is an exception',
+            reasons: [
+                ExtractionErrorReason::PrefixMismatch,
+                ExtractionErrorReason::UnmatchedContent,
+            ],
+            missingVariables: [],
+        );
+        $result = ExtractionResult::failure($exception);
+
+        self::assertFalse($result->isSuccessful());
+        self::assertCount(2, $result->reasons());
+        self::assertEmpty($result->missingVariables());
     }
 }

@@ -28,13 +28,28 @@ use function is_string;
  */
 final class ExtractionResult implements Countable, IteratorAggregate
 {
-    /** @var array<string, ExtractedValue> */
-    private readonly array $variables;
-
     /**
-     * @param iterable<string, ExtractedValue> $variables
+     * @param array<string, ExtractedValue> $variables
+     * @param list<string> $missingVariables
+     * @param list<ExtractionErrorReason> $reasons
      */
-    public function __construct(iterable $variables = [])
+    private function __construct(
+        private readonly array $variables,
+        private readonly array $missingVariables,
+        private readonly array $reasons,
+    ) {
+    }
+
+    public static function failure(VariableCanNotBeExtracted $exception): self
+    {
+        return new self(
+            [],
+            $exception->getMissingVariables(),
+            $exception->getReasons(),
+        );
+    }
+
+    public static function success(iterable $variables = []): self
     {
         $vars = [];
         foreach ($variables as $name => $variable) {
@@ -43,9 +58,19 @@ final class ExtractionResult implements Countable, IteratorAggregate
             $vars[$name] = $variable;
         }
 
-        $this->variables = $vars;
+        $missingVariables = [];
+        foreach ($vars as $key => $v) {
+            if (null === $v->value) {
+                $missingVariables[] = $key;
+            }
+        }
+
+        return new self($vars, $missingVariables, []);
     }
 
+    /**
+     * Returns the number of found variables.
+     */
     public function count(): int
     {
         return count($this->variables);
@@ -59,49 +84,79 @@ final class ExtractionResult implements Countable, IteratorAggregate
         yield from $this->variables;
     }
 
+    /**
+     * Tells whether some variables are attached to the result.
+     */
     public function isEmpty(): bool
     {
         return [] === $this->variables;
     }
 
-    public function fetch(string $name): ?ExtractedValue
+    /**
+     * Returns true if the extraction is successful.
+     */
+    public function isSuccessful(): bool
     {
-        return $this->variables[$name] ?? null;
+        return [] === $this->reasons;
     }
 
-    public function values(): array
+    public function fetch(string $variableName): ?ExtractedValue
     {
-        return array_map(static fn (ExtractedValue $val): array|string => $val->value, $this->variables);
+        return $this->variables[$variableName] ?? null;
     }
 
-    public function value(string $name): array|string|null
+    /**
+     * @return array<string, array<string>|string|null>
+     */
+    public function variables(): array
     {
-        return $this->fetch($name)?->value;
+        return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
     }
 
-    public function has(string $name): bool
+    /**
+     * @return list<ExtractionErrorReason>
+     */
+    public function reasons(): array
     {
-        return array_key_exists($name, $this->variables);
+        return $this->reasons;
     }
 
-    public function reconcile(self $other): ?self
+    /**
+     * @return list<string>
+     */
+    public function missingVariables(): array
+    {
+        return $this->missingVariables;
+    }
+
+    public function value(string $variableName): array|string|null
+    {
+        return $this->fetch($variableName)?->value;
+    }
+
+    public function has(string $variableName): bool
+    {
+        return array_key_exists($variableName, $this->variables);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    public function reconcile(self $other): self
     {
         $result = $this->variables;
-
         foreach ($other as $name => $otherValue) {
             if (!array_key_exists($name, $result)) {
                 $result[$name] = $otherValue;
                 continue;
             }
 
-            $value = $result[$name]->reconcile($otherValue);
-            if (null === $value) {
-                return null;
-            }
+            $value = $result[$name]->reconcile($otherValue)
+                ?? throw new VariableCanNotBeExtracted('The extracted values for variable "'.$name.'" could not be reconciled.', [ExtractionErrorReason::ReconciliationFailed]);
 
             $result[$name] = $value;
         }
 
-        return new self($result);
+        return self::success($result);
     }
 }

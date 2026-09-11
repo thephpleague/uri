@@ -13,14 +13,15 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
-/**
- * @internal The class is used to allow UriTemplate variable extraction
- */
-final class ExtractionPattern
+enum ExtractionErrorReason
 {
-    public function __construct(
-        public readonly string $single,
-        public readonly ?string $exploded = null,
-    ) {
-    }
+    case PrefixMismatch;
+    case LiteralMismatch;
+    case MalformedValue;
+    case PrefixLengthExceeded;
+    case ReconciliationFailed;
+    case UnmatchedContent;
+    case UndeterminedDelimiter;
+    case UnsupportedOperation;
+    case MissingVariables;
 }

@@ -64,10 +64,6 @@ final class UriTemplate implements Stringable
 
     private function filterVariables(iterable $variables): VariableBag
     {
-        if ($variables instanceof ExtractionResult) {
-            $variables = $variables->values();
-        }
-
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
         }
@@ -310,9 +306,8 @@ final class UriTemplate implements Stringable
         return $this->template->match(self::uriString($uri));
     }
 
-    private static function uriString(
-        Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri,
-    ): string {
+    private static function uriString(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): string
+    {
         return match (true) {
             $uri instanceof Rfc3986Uri => $uri->toRawString(),
             $uri instanceof WhatWgUrl => $uri->toUnicodeString(),

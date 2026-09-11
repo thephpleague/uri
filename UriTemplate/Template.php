@@ -17,10 +17,12 @@ use BackedEnum;
 use Deprecated;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+use ValueError;
 
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
@@ -154,112 +156,329 @@ final class Template implements Stringable
      * Extract API
     ------------*/
 
-    public function extract(string $value): ExtractionResult
-    {
-        try {
-            return $this->extractAll($value) ?? new ExtractionResult();
-        } catch (VariableCanNotBeExtracted) {
-            return new ExtractionResult();
-        }
-    }
-
     /**
-     * @throws VariableCanNotBeExtracted
+     * Tells whether the value matches this URI template.
+     *
+     * This method performs a strict extraction and returns `true` only when the
+     * value can be completely matched and all variables can be extracted.
+     *
+     * @return bool` true`if the value matches the template, `false` otherwise.
      */
-    public function extractOrFail(string $value): ExtractionResult
-    {
-        return $this->extractAll($value) ?? throw new VariableCanNotBeExtracted('The value "'.$value.'" does not match the template.');
-    }
-
     public function match(string $value): bool
     {
         try {
-            return null !== $this->extractAll($value);
+            $this->extractOrFail($value);
+
+            return true;
         } catch (VariableCanNotBeExtracted) {
+
             return false;
         }
     }
 
     /**
-     * @throws VariableCanNotBeExtracted
+     * Extracts the variables from a value.
+     *
+     * Extraction is lenient: variables that are missing from the value are
+     * represented in the result, while extraction failures are represented by
+     * a failed result containing the reasons for the failure.
+     *
+     * @return ExtractionResult The extraction result.
      */
-    private function extractAll(string $value): ?ExtractionResult
+    public function extract(string $value): ExtractionResult
     {
-        return $this->matchParts($value, 0, 0);
+        try {
+            return $this->extractAll($value);
+        } catch (VariableCanNotBeExtracted $exception) {
+            return ExtractionResult::failure($exception);
+        }
+    }
+
+    /**
+     * Extracts the variables from a value.
+     *
+     * Unlike {@see extract()}, this method is strict and reports extraction
+     * failures or missing variables by throwing an exception.
+     *
+     * @throws VariableCanNotBeExtracted If the value cannot be completely matched,
+     *                                   a variable cannot be extracted, or a
+     *                                   variable defined by the template is missing.
+     *
+     * @return ExtractionResult The extracted variables.
+     */
+    public function extractOrFail(string $value): ExtractionResult
+    {
+        $result = $this->extractAll($value);
+
+        return [] === $result->missingVariables()
+            ? $result
+            : throw VariableCanNotBeExtracted::dueToMissingVariables($value, $this, $result);
     }
 
     /**
      * @throws VariableCanNotBeExtracted
      */
-    private function matchParts(
+    private function extractAll(string $value): ExtractionResult
+    {
+        return $this->extractParts(
+            value: $value,
+            partOffset: 0,
+            valueOffset: 0,
+            previousResult: ExtractionResult::success(),
+        );
+    }
+
+    /**
+     * Extracts variables by matching the remaining template parts against the value.
+     *
+     * @param int $partOffset The offset of the next template part to match.
+     * @param int $valueOffset The offset of the next value character to match.
+     * @param ExtractionResult $previousResult The result accumulated from the
+     *                                         previously matched template parts.
+     *
+     * @throws VariableCanNotBeExtracted If the value cannot be matched against
+     *                                   the remaining template parts.
+     */
+    private function extractParts(
         string $value,
         int $partOffset,
         int $valueOffset,
-        ExtractionResult $variables = new ExtractionResult(),
-    ): ?ExtractionResult {
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
         if ($partOffset === count($this->parts)) {
-            return $valueOffset === strlen($value) ? $variables : null;
+            $valueOffset === strlen($value) || throw new VariableCanNotBeExtracted('The value contains unmatched content: "'.substr($value, $valueOffset).'".', [ExtractionErrorReason::UnmatchedContent]);
+
+            return $previousResult;
         }
 
         $part = $this->parts[$partOffset];
 
-        if ($part instanceof Literal) {
-            return str_starts_with(substr($value, $valueOffset), $part->encoded)
-                ? $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($part->encoded), $variables)
-                : null;
+        return $part instanceof Literal
+            ? $this->extractLiteral($value, $partOffset, $valueOffset, $previousResult)
+            : $this->extractExpression($value, $partOffset, $valueOffset, $previousResult);
+    }
+
+    /**
+     * Matches the literal against the value and continues with the remaining template parts.
+     *
+     * @param int $partOffset The offset of the next template part to match.
+     * @param int $valueOffset The offset of the next value character to match.
+     * @param ExtractionResult $previousResult The result accumulated from the
+     *                                         previously matched template parts.
+     *
+     * @throws VariableCanNotBeExtracted If the value cannot be matched against
+     *                                   the remaining template parts.
+     */
+    private function extractLiteral(
+        string $value,
+        int $partOffset,
+        int $valueOffset,
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
+        /** @var Literal $literal */
+        $literal = $this->parts[$partOffset];
+
+        str_starts_with(substr($value, $valueOffset), $literal->encoded) || throw new VariableCanNotBeExtracted('The literal "'.$literal->raw.'" does not match the value at the expected position.', [ExtractionErrorReason::LiteralMismatch]);
+
+        return $this->extractParts($value, $partOffset + 1, $valueOffset + strlen($literal->encoded), $previousResult);
+    }
+
+    /**
+     * Extracts the variables from the expression against the value and continues with the remaining template parts.
+     *
+     * @param int $partOffset The offset of the next template part to match.
+     * @param int $valueOffset The offset of the next value character to match.
+     * @param ExtractionResult $previousResult The result accumulated from the
+     *                                         previously matched template parts.
+     *
+     * @throws VariableCanNotBeExtracted If the value cannot be matched against
+     *                                   the remaining template parts.
+     */
+    private function extractExpression(
+        string $value,
+        int $partOffset,
+        int $valueOffset,
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
+        /** @var Expression $expression */
+        $expression = $this->parts[$partOffset];
+        $expressionOffset = $this->expressionPrefix($expression, $value, $valueOffset);
+        if ($partOffset + 1 === count($this->parts)) {
+            return $this->extractExpressionRemainder($expression, $value, $expressionOffset, $previousResult);
         }
 
-        $expressionOffset = $valueOffset;
-        $prefix = $part->operator->first();
+        $nextPart = $this->parts[$partOffset + 1];
+        $delimiter = $nextPart instanceof Literal
+            ? $nextPart->encoded
+            : $nextPart->operator->first();
 
-        if ('' !== $prefix && !str_starts_with(substr($value, $expressionOffset), $prefix)) {
-            return null;
-        }
+        return $this->extractExpressionCandidates($expression, $value, $partOffset, $expressionOffset, $delimiter, $previousResult);
+    }
 
-        $expressionOffset += strlen($prefix);
-        $nextLiteral = null;
+    /**
+     * Extracts the last variables from the expression and matches the remaining value
+     * against the end of the template.
+     *
+     * @param int $expressionOffset The offset of the expression value to extract.
+     * @param ExtractionResult $previousResult The result accumulated from the
+     *                                         previously matched template parts.
+     *
+     * @throws VariableCanNotBeExtracted If the expression cannot be extracted or
+     *                                   the remaining value cannot be matched.
+     */
+    private function extractExpressionRemainder(
+        Expression $expression,
+        string $value,
+        int $expressionOffset,
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
+        $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
+        $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
+        $merged = $previousResult->reconcile($lastVariables);
 
-        for ($offset = $partOffset + 1, $count = count($this->parts); $offset < $count; ++$offset) {
-            if ($this->parts[$offset] instanceof Literal) {
-                $nextLiteral = $this->parts[$offset];
-                break;
+        return $this->extractParts($value, count($this->parts), $expressionEnd, $merged);
+    }
+
+    /**
+     * Extracts an expression by trying each possible delimiter position and
+     * continues with the remaining template parts until a complete match is found.
+     *
+     * When the expression starts with the delimiter, exploded variables are
+     * matched from the last delimiter position to the first to prefer the
+     * longest possible value.
+     *
+     * @param int $partOffset The offset of the expression in the template parts.
+     * @param int $expressionOffset The offset of the expression value in the input.
+     * @param string $delimiter The delimiter used to identify candidate expression boundaries.
+     * @param ExtractionResult $previousResult The result accumulated from the
+     *                                         previously matched template parts.
+     *
+     * @throws VariableCanNotBeExtracted If no suitable candidate can satisfy the
+     *                                   expression and the remaining template parts.
+     */
+    private function extractExpressionCandidates(
+        Expression $expression,
+        string $value,
+        int $partOffset,
+        int $expressionOffset,
+        string $delimiter,
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
+        '' !== $delimiter || throw new VariableCanNotBeExtracted('Unable to determine the delimiter for the expression "'.$expression->value.'".', [ExtractionErrorReason::UndeterminedDelimiter]);
+
+        $positions = $this->delimiterPositions($value, $expressionOffset, $delimiter);
+
+        if ($expression->operator->first() === $delimiter) {
+            foreach ($expression as $varSpecifier) {
+                if ('*' === $varSpecifier->modifier) {
+                    $positions = array_reverse($positions);
+                    break;
+                }
             }
         }
 
-        if (null === $nextLiteral) {
-            if ($partOffset + 1 !== count($this->parts)) {
-                return null;
-            }
-
-            $partValue = substr($value, $expressionOffset);
-
+        $reasons = [];
+        $missingVariables = [];
+        foreach ($positions as $position) {
             try {
-                $extracted = $part->extract($partValue);
-            } catch (VariableCanNotBeExtracted) {
-                return null;
+                $newVar = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
+
+                return $this->extractParts($value, $partOffset + 1, $position, $previousResult->reconcile($newVar));
+            } catch (VariableCanNotBeExtracted $exception) {
+                foreach ($exception->getReasons() as $reason) {
+                    $reasons[] = $reason;
+                }
+                foreach ($exception->getMissingVariables() as $missingVariable) {
+                    $missingVariables[] = $missingVariable;
+                }
             }
-
-            return $variables->reconcile($extracted);
         }
 
-        $position = strpos($value, $nextLiteral->encoded, $expressionOffset);
-        if (false === $position) {
-            return null;
+        throw new VariableCanNotBeExtracted('No suitable candidate was found to satisfy the complete extraction of "'.$value.'".', $reasons, $missingVariables);
+    }
+
+    /**
+     * Validates and consumes the operator prefix of an expression.
+     *
+     * @param int $valueOffset The offset of the expression value in the input.
+     *
+     *
+     * @throws VariableCanNotBeExtracted If the expression prefix does not match
+     *                                   the value at the expected position.
+     * @return int The offset immediately after the expression prefix.
+     */
+    private function expressionPrefix(
+        Expression $expression,
+        string $value,
+        int $valueOffset,
+    ): int {
+        $prefix = $expression->operator->first();
+        if ('' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
+            throw new VariableCanNotBeExtracted('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".', [ExtractionErrorReason::PrefixMismatch]);
         }
 
-        $partValue = substr($value, $expressionOffset, $position - $expressionOffset);
+        return $valueOffset + strlen($prefix);
+    }
 
-        try {
-            $extracted = $part->extract($partValue);
-        } catch (VariableCanNotBeExtracted) {
-            return null;
+    /**
+     * Finds the end of an expression value according to the URI component
+     * boundaries imposed by its operator.
+     *
+     * Query expressions stop at a fragment delimiter, while expressions in other
+     * components stop at either a query or fragment delimiter. Fragment expressions
+     * have no following component boundary.
+     *
+     * @param int $offset The offset at which the expression value starts.
+     *
+     * @return int The offset of the first component delimiter, or the end of the value
+     *             when no delimiter is found.
+     */
+    private function expressionEnd(
+        Expression $expression,
+        string $value,
+        int $offset,
+    ): int {
+        $delimiters = $expression->operator->nextDelimiter();
+        if (null === $delimiters) {
+            return strlen($value);
         }
 
-        $merged = $variables->reconcile($extracted);
+        $length = strlen($value);
 
-        return null !== $merged
-            ? $this->matchParts($value, $partOffset + 1, $position, $merged)
-            : null;
+        for ($position = $offset; $position < $length; ++$position) {
+            if (str_contains($delimiters, $value[$position])) {
+                return $position;
+            }
+        }
+
+        return $length;
+    }
+
+    /**
+     * Finds all positions of a delimiter at or after the given offset.
+     *
+     * @param int $offset The position from which to search.
+     *
+     *
+     * @throws ValueError If the delimiter is empty.
+     * @return list<int> The positions at which the delimiter occurs.
+     */
+    private function delimiterPositions(
+        string $value,
+        int $offset,
+        string $delimiter,
+    ): array {
+        '' !== $delimiter || throw new ValueError('The delimiter cannot be empty.');
+
+        $positions = [];
+        $position = $offset;
+
+        while (false !== ($position = strpos($value, $delimiter, $position))) {
+            $positions[] = $position;
+            $position += strlen($delimiter);
+        }
+
+        return $positions;
     }
 
     /**

@@ -23,14 +23,40 @@ final class TemplateBench
     {
         $template = 'https://uri.thephpleague.com/{foo}{?query,limit}';
         $uriTemplate = Template::new($template);
-        $data = new VariableBag([
+        $data = [
             'foo' => 'foo',
             'query' => ['foo', 'bar', 'baz'],
             'limit' => 10,
-        ]);
+        ];
 
         for ($i = 0; $i < 100_000; $i++) {
             $uriTemplate->expand($data);
+        }
+    }
+
+    #[Bench\OutputTimeUnit('seconds')]
+    #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
+    public function benchExtractingVariablesFromATypicalUri(): void
+    {
+        $template = '/api/{version}/users/{id}{?fields}';
+        $uri = '/api/v1/users/12345?fields=name,email';
+        $uriTemplate = Template::new($template);
+
+        for ($i = 0; $i < 100_000; $i++) {
+            $uriTemplate->extract($uri);
+        }
+    }
+
+    #[Bench\OutputTimeUnit('seconds')]
+    #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
+    public function benchExtractingVariablesFromAComplexUri(): void
+    {
+        $template = 'https://{env}.acme.com{/ctx*}/{accno}{.format}{?from,to}{#frag}';
+        $uri = 'https://stagingapi.acme.com/v2/retail/checking/12345678.json?to=2026-09-14&from=2026-01-01#statement-view';
+        $uriTemplate = Template::new($template);
+
+        for ($i = 0; $i < 100_000; $i++) {
+            $uriTemplate->extract($uri);
         }
     }
 }

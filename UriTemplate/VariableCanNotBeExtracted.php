@@ -15,7 +15,61 @@ namespace League\Uri\UriTemplate;
 
 use Exception;
 use League\Uri\Contracts\UriException;
+use TypeError;
 
-final class VariableCanNotBeExtracted extends Exception implements UriException
+use function array_values;
+use function get_debug_type;
+use function implode;
+
+class VariableCanNotBeExtracted extends Exception implements UriException
 {
+    /** @var list<string> */
+    protected array $missingVariables = [];
+    /** @var list<ExtractionErrorReason> */
+    protected array $reasons = [];
+
+    public function __construct(string $message, array $reasons = [], array $missingVariables = [])
+    {
+        parent::__construct($message);
+
+        $r = [];
+        foreach ($reasons as $reason) {
+            $reason instanceof ExtractionErrorReason || throw new TypeError('An extraction error value must be an '.ExtractionErrorReason::class.'; '.get_debug_type($reason).' received.');
+            $r[$reason->name] = $reason;
+        }
+
+        $m = [];
+        foreach ($missingVariables as $missingVariable) {
+            is_string($missingVariable) || throw new TypeError('Missing variable name must be a string; '.get_debug_type($missingVariable).' received.');
+            $m[$missingVariable] = $missingVariable;
+        }
+
+        $this->reasons = array_values($r);
+        $this->missingVariables = array_values($m);
+    }
+
+    public static function dueToMissingVariables(string $input, Template $template, ExtractionResult $result): self
+    {
+        return new self(
+            'The value "'.$input.'" does not provide all variables defined by the expression "'.$template->value.'"; Missing: "'.implode('", "', $result->missingVariables()).'".',
+            [ExtractionErrorReason::MissingVariables],
+            $result->missingVariables()
+        );
+    }
+
+    /**
+     * @return list<ExtractionErrorReason>
+     */
+    public function getReasons(): array
+    {
+        return $this->reasons;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getMissingVariables(): array
+    {
+        return $this->missingVariables;
+    }
 }

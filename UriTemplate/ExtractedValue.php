@@ -56,10 +56,11 @@ final class ExtractedValue
         $result = -1 === $this->maxLength || (-1 !== $other->maxLength && $this->maxLength > $other->maxLength) ? $this : $other;
         $prefix = $result === $this ? $other : $this;
 
-        if (!is_string($prefix->value) || !is_string($result->value)) {
-            return null;
-        }
-
-        return str_starts_with($result->value, $prefix->value) ? $result : null;
+        return match (true) {
+            !is_string($prefix->value),
+            !is_string($result->value),
+            !str_starts_with($result->value, $prefix->value) => null,
+            default => $result,
+        };
     }
 }

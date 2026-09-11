@@ -67,21 +67,6 @@ final class Expression
         ));
     }
 
-    /**
-     * DEPRECATION WARNING! This method will be removed in the next major point release.
-     *
-     * @throws SyntaxError if the expression is invalid
-     * @see Expression::new()
-     *
-     * @deprecated Since version 7.0.0
-     * @codeCoverageIgnore
-     */
-    #[Deprecated(message:'use League\Uri\UriTemplate\Exppression::new() instead', since:'league/uri:7.0.0')]
-    public static function createFromString(Stringable|string $expression): self
-    {
-        return self::new($expression);
-    }
-
     public function expand(VariableBag $variables): string
     {
         $expanded = implode(
@@ -254,5 +239,20 @@ final class Expression
         }
 
         (mb_strlen($value->value) <= $varSpecifier->position) || throw new VariableCanNotBeExtracted('The value for variable "'.$varSpecifier->name.'" exceeds the prefix length.');
+    }
+
+    /**
+     * DEPRECATION WARNING! This method will be removed in the next major point release.
+     *
+     * @throws SyntaxError if the expression is invalid
+     * @see Expression::new()
+     *
+     * @deprecated Since version 7.0.0
+     * @codeCoverageIgnore
+     */
+    #[Deprecated(message:'use League\Uri\UriTemplate\Exppression::new() instead', since:'league/uri:7.0.0')]
+    public static function createFromString(Stringable|string $expression): self
+    {
+        return self::new($expression);
     }
 }

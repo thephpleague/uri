@@ -27,7 +27,6 @@ use League\Uri\UriTemplate\VariableCanNotBeExtracted;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
-use Traversable;
 use Uri\InvalidUriException;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\InvalidUrlException;

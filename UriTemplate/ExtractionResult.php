@@ -19,15 +19,16 @@ use IteratorAggregate;
 use TypeError;
 
 use function array_key_exists;
+use function array_map;
+use function count;
+use function is_string;
 
 /**
  * @implements IteratorAggregate<string, ExtractedValue>
  */
 final class ExtractionResult implements Countable, IteratorAggregate
 {
-    /**
-     * @var array<string, ExtractedValue>
-     */
+    /** @var array<string, ExtractedValue> */
     private readonly array $variables;
 
     /**

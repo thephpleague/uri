@@ -158,7 +158,7 @@ final class Template implements Stringable
     {
         try {
             return $this->extractAll($value) ?? new ExtractionResult();
-        } catch (SyntaxError $e) {
+        } catch (VariableCanNotBeExtracted) {
             return new ExtractionResult();
         }
     }
@@ -204,11 +204,9 @@ final class Template implements Stringable
         $part = $this->parts[$partOffset];
 
         if ($part instanceof Literal) {
-            if (!str_starts_with(substr($value, $valueOffset), $part->encoded)) {
-                return null;
-            }
-
-            return $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($part->encoded), $variables);
+            return str_starts_with(substr($value, $valueOffset), $part->encoded)
+                ? $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($part->encoded), $variables)
+                : null;
         }
 
         $expressionOffset = $valueOffset;
@@ -258,11 +256,10 @@ final class Template implements Stringable
         }
 
         $merged = $variables->reconcile($extracted);
-        if (null === $merged) {
-            return null;
-        }
 
-        return $this->matchParts($value, $partOffset + 1, $position, $merged);
+        return null !== $merged
+            ? $this->matchParts($value, $partOffset + 1, $position, $merged)
+            : null;
     }
 
     /**

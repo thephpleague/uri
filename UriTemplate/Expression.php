@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use Deprecated;
+use Iterator;
+use IteratorAggregate;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 
@@ -30,8 +32,9 @@ use function preg_match;
 /**
  * @internal The class exposes the internal representation of an Expression and its usage
  * @link https://www.rfc-editor.org/rfc/rfc6570#section-2.2
+ * @implements IteratorAggregate<VarSpecifier>
  */
-final class Expression
+final class Expression implements IteratorAggregate
 {
     /** @var array<VarSpecifier> */
     private readonly array $varSpecifiers;
@@ -65,6 +68,14 @@ final class Expression
             static fn (string $varSpec): VarSpecifier => VarSpecifier::new($varSpec),
             explode(',', $parts['variables'])
         ));
+    }
+
+    /**
+     * @return Iterator<VarSpecifier>
+     */
+    public function getIterator(): Iterator
+    {
+        yield from $this->varSpecifiers;
     }
 
     public function expand(VariableBag $variables): string

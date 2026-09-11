@@ -17,14 +17,17 @@ use BackedEnum;
 use Deprecated;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+use ValueError;
 
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
 use function implode;
+use function iterator_to_array;
 use function preg_match_all;
 use function preg_replace;
 use function str_starts_with;
@@ -154,10 +157,21 @@ final class Template implements Stringable
      * Extract API
     ------------*/
 
+    public function match(string $value): bool
+    {
+        try {
+            $this->extractOrFail($value);
+
+            return true;
+        } catch (VariableCanNotBeExtracted) {
+            return false;
+        }
+    }
+
     public function extract(string $value): ExtractionResult
     {
         try {
-            return $this->extractAll($value) ?? new ExtractionResult();
+            return $this->extractOrFail($value);
         } catch (VariableCanNotBeExtracted) {
             return new ExtractionResult();
         }
@@ -167,23 +181,6 @@ final class Template implements Stringable
      * @throws VariableCanNotBeExtracted
      */
     public function extractOrFail(string $value): ExtractionResult
-    {
-        return $this->extractAll($value) ?? throw new VariableCanNotBeExtracted('The value "'.$value.'" does not match the template.');
-    }
-
-    public function match(string $value): bool
-    {
-        try {
-            return null !== $this->extractAll($value);
-        } catch (VariableCanNotBeExtracted) {
-            return false;
-        }
-    }
-
-    /**
-     * @throws VariableCanNotBeExtracted
-     */
-    private function extractAll(string $value): ?ExtractionResult
     {
         return $this->matchParts($value, 0, 0);
     }
@@ -196,70 +193,156 @@ final class Template implements Stringable
         int $partOffset,
         int $valueOffset,
         ExtractionResult $variables = new ExtractionResult(),
-    ): ?ExtractionResult {
+    ): ExtractionResult {
         if ($partOffset === count($this->parts)) {
-            return $valueOffset === strlen($value) ? $variables : null;
+            $valueOffset === strlen($value) || throw new VariableCanNotBeExtracted('The value does not match the template.');
+
+            return $variables;
         }
 
         $part = $this->parts[$partOffset];
 
-        if ($part instanceof Literal) {
-            return str_starts_with(substr($value, $valueOffset), $part->encoded)
-                ? $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($part->encoded), $variables)
-                : null;
+        return $part instanceof Literal
+            ? $this->matchLiteral($value, $partOffset, $valueOffset, $variables)
+            : $this->matchExpression($value, $partOffset, $valueOffset, $variables);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchLiteral(
+        string $value,
+        int $partOffset,
+        int $valueOffset,
+        ExtractionResult $variables,
+    ): ExtractionResult {
+        /** @var Literal $literal */
+        $literal = $this->parts[$partOffset];
+
+        str_starts_with(substr($value, $valueOffset), $literal->encoded) || throw new VariableCanNotBeExtracted('The literal "'.$literal->raw.'" is not found at offset '.$valueOffset.'.');
+
+        return $this->matchParts($value, $partOffset + 1, $valueOffset + strlen($literal->encoded), $variables);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchExpression(
+        string $value,
+        int $partOffset,
+        int $valueOffset,
+        ExtractionResult $variables,
+    ): ExtractionResult {
+        /** @var Expression $expression */
+        $expression = $this->parts[$partOffset];
+        $expressionOffset = $this->matchExpressionPrefix($expression, $value, $valueOffset);
+        if ($partOffset + 1 === count($this->parts)) {
+            return $this->matchExpressionRemainder($expression, $value, $expressionOffset, $variables);
         }
 
-        $expressionOffset = $valueOffset;
-        $prefix = $part->operator->first();
+        $nextPart = $this->parts[$partOffset + 1];
+        $delimiter = $nextPart instanceof Literal
+            ? $nextPart->encoded
+            : $nextPart->operator->first();
 
-        if ('' !== $prefix && !str_starts_with(substr($value, $expressionOffset), $prefix)) {
-            return null;
+        return $this->matchExpressionCandidates($expression, $value, $partOffset, $expressionOffset, $delimiter, $variables);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchExpressionPrefix(
+        Expression $expression,
+        string $value,
+        int $valueOffset,
+    ): int {
+        $prefix = $expression->operator->first();
+        if ('' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
+            throw new VariableCanNotBeExtracted('The prefix "'.$prefix.'" is not found at offset '.$valueOffset.'.');
         }
 
-        $expressionOffset += strlen($prefix);
-        $nextLiteral = null;
+        return $valueOffset + strlen($prefix);
+    }
 
-        for ($offset = $partOffset + 1, $count = count($this->parts); $offset < $count; ++$offset) {
-            if ($this->parts[$offset] instanceof Literal) {
-                $nextLiteral = $this->parts[$offset];
-                break;
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchExpressionRemainder(
+        Expression $expression,
+        string $value,
+        int $expressionOffset,
+        ExtractionResult $variables,
+    ): ExtractionResult {
+
+        $merged = $variables->reconcile($expression->extract(substr($value, $expressionOffset)));
+
+        return $merged ?? throw new VariableCanNotBeExtracted('The extracted variables could not be reconciled.');
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function matchExpressionCandidates(
+        Expression $expression,
+        string $value,
+        int $partOffset,
+        int $expressionOffset,
+        string $delimiter,
+        ExtractionResult $variables,
+    ): ExtractionResult {
+        '' !== $delimiter || throw new VariableCanNotBeExtracted('Unable to determine the delimiter for the expression at offset '.$expressionOffset.'.');
+
+        $positions = iterator_to_array($this->delimiterPositions($value, $expressionOffset, $delimiter));
+
+        if ($expression->operator->first() === $delimiter) {
+            foreach ($expression as $varSpecifier) {
+                if ('*' === $varSpecifier->modifier) {
+                    $positions = array_reverse($positions);
+                    break;
+                }
             }
         }
 
-        if (null === $nextLiteral) {
-            if ($partOffset + 1 !== count($this->parts)) {
-                return null;
-            }
-
-            $partValue = substr($value, $expressionOffset);
-
+        $lastException = null;
+        $reconciliationFailed = false;
+        foreach ($positions as $position) {
             try {
-                $extracted = $part->extract($partValue);
-            } catch (VariableCanNotBeExtracted) {
-                return null;
+                $extracted = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
+                $merged = $variables->reconcile($extracted);
+                if (null === $merged) {
+                    $reconciliationFailed = true;
+                    continue;
+                }
+
+                return $this->matchParts($value, $partOffset + 1, $position, $merged);
+            } catch (VariableCanNotBeExtracted $exception) {
+                $lastException = $exception;
             }
-
-            return $variables->reconcile($extracted);
         }
 
-        $position = strpos($value, $nextLiteral->encoded, $expressionOffset);
-        if (false === $position) {
-            return null;
+        throw $lastException ?? new VariableCanNotBeExtracted(
+            $reconciliationFailed
+                ? 'The expression could not reconcile the extracted values.'
+                : 'The expression at offset '.$expressionOffset.' could not be matched.'
+        );
+    }
+
+    /**
+     * @return iterable<int>
+     */
+    private function delimiterPositions(
+        string $value,
+        int $offset,
+        string $delimiter,
+    ): iterable {
+        '' !== $delimiter || throw new ValueError('The delimiter cannot be empty.');
+
+        $position = $offset;
+        while (false !== ($position = strpos($value, $delimiter, $position))) {
+            yield $position;
+
+            $position += strlen($delimiter);
         }
-
-        $partValue = substr($value, $expressionOffset, $position - $expressionOffset);
-
-        try {
-            $extracted = $part->extract($partValue);
-        } catch (VariableCanNotBeExtracted) {
-            return null;
-        }
-
-        $merged = $variables->reconcile($extracted);
-
-        return null !== $merged
-            ? $this->matchParts($value, $partOffset + 1, $position, $merged)
-            : null;
     }
 
     /**

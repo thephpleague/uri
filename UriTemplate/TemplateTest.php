@@ -322,7 +322,9 @@ final class TemplateTest extends TestCase
         yield 'expression value contains following literal' => [
             'template' => Template::new('/{value}/end'),
             'value' => '/foo/end/bar/end',
-            'expected' => [],
+            'expected' => [
+                'value' => 'foo/end/bar',
+            ],
         ];
 
         yield 'adjacent expressions cannot be extracted' => [
@@ -385,7 +387,9 @@ final class TemplateTest extends TestCase
         yield 'expression between literals uses first literal occurrence' => [
             'template' => Template::new('/{value}/end'),
             'value' => '/foo/end/bar/end',
-            'expected' => [],
+            'expected' => [
+                'value' => 'foo/end/bar',
+            ],
         ];
 
         yield 'adjacent expressions cannot be arbitrarily partitioned' => [
@@ -437,6 +441,44 @@ final class TemplateTest extends TestCase
             'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
             'value' => '/hotels/Rest%20%26%20Relax/bookings/42',
             'expected' => [],
+        ];
+
+        yield 'resolves ambiguous expression' => [
+            'template' => Template::new('https://{host}{/segments*}/{file}{.extensions*}'),
+            'value' => 'https://www.host.com/path/to/a/file.x.y',
+            'expected' => [
+                'host' => 'www.host.com',
+                'segments' => ['path', 'to', 'a'],
+                'file' => 'file',
+                'extensions' => ['x', 'y'],
+            ],
+        ];
+
+        yield 'resolves an exploded expression followed by its prefix delimiter' => [
+            'template' => Template::new('{/segments*}/{file}'),
+            'value' => '/path/to/file',
+            'expected' => [
+                'segments' => ['path', 'to'],
+                'file' => 'file',
+            ],
+        ];
+
+        yield 'resolves an expression followed by a prefixed expression' => [
+            'template' => Template::new('/{file}{.extensions*}'),
+            'value' => '/file.tar.gz',
+            'expected' => [
+                'file' => 'file',
+                'extensions' => ['tar', 'gz'],
+            ],
+        ];
+
+        yield 'backtracks when a valid extraction prevents the remaining template from matching' => [
+            'template' => Template::new('{/segments*}/{file}'),
+            'value' => '/path/to/file',
+            'expected' => [
+                'segments' => ['path', 'to'],
+                'file' => 'file',
+            ],
         ];
     }
 

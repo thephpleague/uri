@@ -286,7 +286,31 @@ final class Template implements Stringable
         int $expressionOffset,
         ExtractionResult $variables,
     ): ExtractionResult {
-        return $variables->reconcile($expression->extract(substr($value, $expressionOffset)));
+        $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
+        $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
+
+        $merged = $variables->reconcile($lastVariables);
+
+        return $this->matchParts($value, count($this->parts), $expressionEnd, $merged);
+    }
+
+    private function expressionEnd(
+        Expression $expression,
+        string $value,
+        int $expressionOffset,
+    ): int {
+        $delimiters = $expression->operator->nextDelimiter();
+        $length = strlen($value);
+        if (null === $delimiters) {
+            return $length;
+        }
+
+        $position = $expressionOffset;
+        while ($position < $length && false === strpos($delimiters, $value[$position])) {
+            $position++;
+        }
+
+        return $position;
     }
 
     /**
@@ -313,19 +337,17 @@ final class Template implements Stringable
             }
         }
 
-        $lastException = null;
         foreach ($positions as $position) {
             try {
                 $newVar = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
                 $merged = $variables->reconcile($newVar);
+
                 return $this->matchParts($value, $partOffset + 1, $position, $merged);
-            } catch (VariableCanNotBeExtracted $exception) {
-                $lastException = $exception;
+            } catch (VariableCanNotBeExtracted) {
             }
         }
 
-        throw $lastException
-            ?? new VariableCanNotBeExtracted('The expression "'.$expression->value.'" could not be matched.');
+        throw new VariableCanNotBeExtracted('No suitable candidate was found to satisfy the complete extraction of "'.$value.'".');
     }
 
     /**

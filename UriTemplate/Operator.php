@@ -66,6 +66,17 @@ enum Operator: string
     case QueryPair = '&';
     case Fragment = '#';
 
+    public function nextDelimiter(): ?string
+    {
+        return match ($this) {
+            self::Query,
+            self::QueryPair => '#',
+            self::Path,
+            self::PathParam => '?#',
+            default => null,
+        };
+    }
+
     public function first(): string
     {
         return match ($this) {

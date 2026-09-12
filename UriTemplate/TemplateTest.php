@@ -27,6 +27,9 @@ use const JSON_THROW_ON_ERROR;
 #[CoversClass(Literal::class)]
 #[CoversClass(Template::class)]
 #[CoversClass(ExtractionResult::class)]
+#[CoversClass(ExtractedValue::class)]
+#[CoversClass(Expression::class)]
+#[CoversClass(Operator::class)]
 final class TemplateTest extends TestCase
 {
     private static string $rootPath = __DIR__.'/../../vendor/uri-templates/uritemplate-test';
@@ -478,6 +481,38 @@ final class TemplateTest extends TestCase
             'expected' => [
                 'segments' => ['path', 'to'],
                 'file' => 'file',
+            ],
+        ];
+
+        yield 'does not consume a fragment after a query expression' => [
+            'template' => Template::new('/{term:1}/{term}{?a,b}'),
+            'value' => '/t/thomas?a=0&b=1#fragment',
+            'expected' => [],
+        ];
+
+        yield 'does not consume a query or fragment after a path expression' => [
+            'template' => Template::new('/{segments*}'),
+            'value' => '/path/to/file?foo=bar#fragment',
+            'expected' => [],
+        ];
+
+        yield 'extracts a query expression up to the fragment boundary' => [
+            'template' => Template::new('/{term:1}/{term}{?a,b}'),
+            'value' => '/t/thomas?a=0&b=1',
+            'expected' => [
+                'term' => 'thomas',
+                'a' => '0',
+                'b' => '1',
+            ],
+        ];
+
+        yield 'matches a fragment explicitly following a query expression' => [
+            'template' => Template::new('/{term:1}/{term}{?a,b}#fragment'),
+            'value' => '/t/thomas?a=0&b=1#fragment',
+            'expected' => [
+                'term' => 'thomas',
+                'a' => '0',
+                'b' => '1',
             ],
         ];
     }

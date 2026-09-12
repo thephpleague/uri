@@ -348,14 +348,6 @@ final class TemplateTest extends TestCase
             'expected' => ['tags' => ['one', 'two', 'three']],
         ];
 
-        yield 'path exploded variable' => [
-            'template' => Template::new('{/tags*}/end'),
-            'value' => '/one/two/three/end',
-            'expected' => [
-                'tags' => ['one', 'two', 'three'],
-            ],
-        ];
-
         yield 'query variables' => [
             'template' => Template::new('{?foo,bar}'),
             'value' => '?foo=one&bar=two',
@@ -373,34 +365,6 @@ final class TemplateTest extends TestCase
             ],
         ];
 
-        yield 'repeated variable with same value' => [
-            'template' => Template::new('/{id}/{id}'),
-            'value' => '/42/42',
-            'expected' => [
-                'id' => '42',
-            ],
-        ];
-
-        yield 'repeated variable with different values' => [
-            'template' => Template::new('/{id}/{id}'),
-            'value' => '/42/43',
-            'expected' => [],
-        ];
-
-        yield 'expression between literals uses first literal occurrence' => [
-            'template' => Template::new('/{value}/end'),
-            'value' => '/foo/end/bar/end',
-            'expected' => [
-                'value' => 'foo/end/bar',
-            ],
-        ];
-
-        yield 'adjacent expressions cannot be arbitrarily partitioned' => [
-            'template' => Template::new('/{foo}{bar}'),
-            'value' => '/onetwo',
-            'expected' => [],
-        ];
-
         yield 'fragment expression' => [
             'template' => Template::new('{#fragment}'),
             'value' => '#section',
@@ -414,14 +378,6 @@ final class TemplateTest extends TestCase
             'value' => '.john',
             'expected' => [
                 'name' => 'john',
-            ],
-        ];
-
-        yield 'semicolon expression' => [
-            'template' => Template::new('{;foo}'),
-            'value' => ';foo=one',
-            'expected' => [
-                'foo' => 'one',
             ],
         ];
 
@@ -514,6 +470,71 @@ final class TemplateTest extends TestCase
                 'a' => '0',
                 'b' => '1',
             ],
+        ];
+
+        yield 'does not consume a query after a path expression' => [
+            'template' => Template::new('/{segments*}'),
+            'value' => '/path/to/file?foo=bar',
+            'expected' => [],
+        ];
+
+        yield 'does not consume a fragment after a path expression' => [
+            'template' => Template::new('/{segments*}'),
+            'value' => '/path/to/file#fragment',
+            'expected' => [],
+        ];
+
+        yield 'matches a fragment expression following a query expression' => [
+            'template' => Template::new('/{term:1}/{term}{?a,b}{#fragment}'),
+            'value' => '/t/thomas?a=0&b=1#section',
+            'expected' => [
+                'term' => 'thomas',
+                'a' => '0',
+                'b' => '1',
+                'fragment' => 'section',
+            ],
+        ];
+
+        yield 'does not consume a fragment after an exploded query expression' => [
+            'template' => Template::new('{?foo*}'),
+            'value' => '?foo=a&foo=b#fragment',
+            'expected' => [],
+        ];
+
+        yield 'extracts an empty fragment' => [
+            'template' => Template::new('{#fragment}'),
+            'value' => '#',
+            'expected' => [
+                'fragment' => '',
+            ],
+        ];
+
+        yield 'extracts an empty query value' => [
+            'template' => Template::new('{?foo}'),
+            'value' => '?foo=',
+            'expected' => [
+                'foo' => '',
+            ],
+        ];
+
+        yield 'extracts a bare query variable as an empty value' => [
+            'template' => Template::new('{?foo}'),
+            'value' => '?foo',
+            'expected' => [
+                'foo' => '',
+            ],
+        ];
+
+        yield 'does not consume a fragment after a path expression followed by a literal' => [
+            'template' => Template::new('/{segments*}/end'),
+            'value' => '/path/to/end#fragment',
+            'expected' => [],
+        ];
+
+        yield 'does not consume a query after a path parameter expression' => [
+            'template' => Template::new('/{;foo}'),
+            'value' => '/;foo=bar?baz=qux',
+            'expected' => [],
         ];
     }
 

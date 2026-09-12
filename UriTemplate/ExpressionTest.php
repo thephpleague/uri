@@ -286,7 +286,7 @@ final class ExpressionTest extends TestCase
         yield 'empty expression value' => [
             'expression' => Expression::new('{foo}'),
             'value' => '',
-            'expected' => [],
+            'expected' => ['foo' => ''],
         ];
 
         yield 'single variable' => [

@@ -287,6 +287,7 @@ final class Template implements Stringable
         ExtractionResult $variables,
     ): ExtractionResult {
         $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
+
         $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
 
         $merged = $variables->reconcile($lastVariables);
@@ -297,20 +298,22 @@ final class Template implements Stringable
     private function expressionEnd(
         Expression $expression,
         string $value,
-        int $expressionOffset,
+        int $offset,
     ): int {
         $delimiters = $expression->operator->nextDelimiter();
-        $length = strlen($value);
         if (null === $delimiters) {
-            return $length;
+            return strlen($value);
         }
 
-        $position = $expressionOffset;
-        while ($position < $length && false === strpos($delimiters, $value[$position])) {
-            $position++;
+        $length = strlen($value);
+
+        for ($position = $offset; $position < $length; ++$position) {
+            if (str_contains($delimiters, $value[$position])) {
+                return $position;
+            }
         }
 
-        return $position;
+        return $length;
     }
 
     /**

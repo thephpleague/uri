@@ -113,7 +113,9 @@ final class Expression implements IteratorAggregate
     private function extractPositionalValue(string $value): ExtractionResult
     {
         if ('' === $value) {
-            return new ExtractionResult();
+            return new ExtractionResult([
+                $this->varSpecifiers[0]->name => new ExtractedValue(''),
+            ]);
         }
 
         /** @var non-empty-string $separator */

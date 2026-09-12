@@ -71,9 +71,8 @@ enum Operator: string
         return match ($this) {
             self::Query,
             self::QueryPair => '#',
-            self::Path,
-            self::PathParam => '?#',
-            default => null,
+            self::Fragment => null,
+            default => '?#',
         };
     }
 

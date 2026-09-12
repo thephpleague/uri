@@ -27,7 +27,6 @@ use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
-use function dump;
 use function implode;
 use function iterator_to_array;
 use function preg_match_all;
@@ -209,7 +208,7 @@ final class Template implements Stringable
         ExtractionResult $variables = new ExtractionResult(),
     ): ExtractionResult {
         if ($partOffset === count($this->parts)) {
-            $valueOffset === strlen($value) || throw new VariableCanNotBeExtracted('The value does not match the template.');
+            $valueOffset === strlen($value) || throw new VariableCanNotBeExtracted('The value contains unmatched content: "'.substr($value, $valueOffset).'".');
 
             return $variables;
         }
@@ -272,7 +271,7 @@ final class Template implements Stringable
     ): int {
         $prefix = $expression->operator->first();
         if ('' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
-            throw new VariableCanNotBeExtracted('The prefix "'.$prefix.'" is not found at offset '.$valueOffset.'.');
+            throw new VariableCanNotBeExtracted('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".');
         }
 
         return $valueOffset + strlen($prefix);
@@ -301,7 +300,7 @@ final class Template implements Stringable
         string $delimiter,
         ExtractionResult $variables,
     ): ExtractionResult {
-        '' !== $delimiter || throw new VariableCanNotBeExtracted('Unable to determine the delimiter for the expression at offset '.$expressionOffset.'.');
+        '' !== $delimiter || throw new VariableCanNotBeExtracted('Unable to determine the delimiter for the expression "'.$expression->value.'".');
 
         $positions = iterator_to_array($this->delimiterPositions($value, $expressionOffset, $delimiter));
 
@@ -325,7 +324,8 @@ final class Template implements Stringable
             }
         }
 
-        throw $lastException ?? new VariableCanNotBeExtracted('The expression at offset '.$expressionOffset.' could not be matched.');
+        throw $lastException
+            ?? new VariableCanNotBeExtracted('The expression "'.$expression->value.'" could not be matched.');
     }
 
     /**

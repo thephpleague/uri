@@ -52,7 +52,7 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
     {
         if ($variables instanceof ExtractionResult) {
             $tmp = [];
-            foreach ($variables->variables() as  $name => $value) {
+            foreach ($variables->variables() as $name => $value) {
                 if (null === $value) {
                     continue;
                 }

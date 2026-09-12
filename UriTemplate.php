@@ -34,10 +34,8 @@ use Uri\WhatWg\Url as WhatWgUrl;
 use Uri\WhatWg\UrlValidationError;
 
 use function array_fill_keys;
-use function array_filter;
 use function array_key_exists;
 use function class_exists;
-use function dump;
 
 /**
  * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.

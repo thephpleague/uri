@@ -149,7 +149,12 @@ final class Expression implements IteratorAggregate
     private function extractNamedValue(string $value): ExtractionResult
     {
         if ('' === $value) {
-            return new ExtractionResult();
+            $variables = [];
+            foreach ($this->variableNames as $name) {
+                $variables[$name] = new ExtractedValue(null);
+            }
+
+            return new ExtractionResult($variables);
         }
 
         /** @var non-empty-string $separator */
@@ -157,7 +162,7 @@ final class Expression implements IteratorAggregate
         $components = explode($separator, $value);
         $matched = $this->matchNamedValues($components, 0, 0);
 
-        null !== $matched || throw new VariableCanNotBeExtracted('The value "'.$value.'" cannot be extracted from the expression.');
+        null !== $matched || throw new VariableCanNotBeExtracted('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".');
 
         $variables = [];
         foreach ($this->varSpecifiers as $offset => $varSpecifier) {
@@ -174,7 +179,7 @@ final class Expression implements IteratorAggregate
     /**
      * @param list<string> $components
      *
-     * @return list<string>|null
+     * @return list<string|null>|null
      */
     private function matchNamedValues(
         array $components,
@@ -192,50 +197,60 @@ final class Expression implements IteratorAggregate
         $pattern = $this->operator->extractPattern($varSpecifier);
 
         if (null === $pattern->exploded) {
-            if ($componentOffset >= $componentCount || 1 !== preg_match('/\A'.$pattern->single.'\z/', $components[$componentOffset])) {
-                return null;
+            if ($componentOffset < $componentCount && 1 === preg_match('/\A'.$pattern->single.'\z/', $components[$componentOffset])) {
+                $matched = $this->matchNamedValues($components, $componentOffset + 1, $varSpecifierOffset + 1);
+                if (null !== $matched) {
+                    return [$components[$componentOffset], ...$matched];
+                }
             }
 
-            $matched = $this->matchNamedValues($components, $componentOffset + 1, $varSpecifierOffset + 1);
-            return null === $matched ? null : [$components[$componentOffset], ...$matched];
+            /*
+             * The variable may be absent.
+             */
+            $matched = $this->matchNamedValues($components, $componentOffset, $varSpecifierOffset + 1);
+
+            return null === $matched ? null : [null, ...$matched];
         }
 
-        if ($componentOffset >= $componentCount) {
-            return null;
+        if ($componentOffset < $componentCount) {
+            /*
+             * An exploded variable can be represented either by repeated
+             * occurrences of its own name or by arbitrary name/value pairs.
+             *
+             * The first component determines which representation is being used.
+             */
+            $componentPattern = 1 === preg_match('/\A'.$pattern->single.'\z/', $components[$componentOffset])
+                ? $pattern->single
+                : $pattern->exploded;
+
+            /*
+             * Try progressively larger matches so that following variables
+             * get the opportunity to consume their own components.
+             */
+            $maximum = $componentCount - $componentOffset;
+
+            for ($length = 1; $length <= $maximum; ++$length) {
+                if (1 !== preg_match('/\A'.$componentPattern.'\z/', $components[$componentOffset + $length - 1])) {
+                    break;
+                }
+
+                $matched = $this->matchNamedValues($components, $componentOffset + $length, $varSpecifierOffset + 1);
+
+                if (null !== $matched) {
+                    return [
+                        implode($this->operator->separator(), array_slice($components, $componentOffset, $length)),
+                        ...$matched,
+                    ];
+                }
+            }
         }
 
         /*
-         * An exploded variable can be represented either by repeated
-         * occurrences of its own name or by arbitrary name/value pairs.
-         *
-         * The first component determines which representation is being used.
+         * The exploded variable may be absent.
          */
-        $componentPattern = 1 === preg_match('/\A'.$pattern->single.'\z/', $components[$componentOffset])
-            ? $pattern->single
-            : $pattern->exploded;
+        $matched = $this->matchNamedValues($components, $componentOffset, $varSpecifierOffset + 1);
 
-        /*
-         * Every remaining varspec must consume at least one component.
-         */
-        $remaining = $varSpecifierCount - $varSpecifierOffset - 1;
-        $maximum = $componentCount - $componentOffset - $remaining;
-
-        for ($length = 1; $length <= $maximum; ++$length) {
-            if (1 !== preg_match('/\A'.$componentPattern.'\z/', $components[$componentOffset + $length - 1])) {
-                break;
-            }
-
-            $matched = $this->matchNamedValues($components, $componentOffset + $length, $varSpecifierOffset + 1);
-
-            if (null !== $matched) {
-                return [
-                    implode($this->operator->separator(), array_slice($components, $componentOffset, $length)),
-                    ...$matched,
-                ];
-            }
-        }
-
-        return null;
+        return null === $matched ? null : [null, ...$matched];
     }
 
     private function assertPrefixLength(VarSpecifier $varSpecifier, ExtractionResult $variables): void

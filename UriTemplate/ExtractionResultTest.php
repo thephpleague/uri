@@ -33,7 +33,7 @@ final class ExtractionResultTest extends TestCase
         self::assertSame([
             'term' => 'john',
             'tags' => ['one', 'two'],
-        ], $result->values());
+        ], $result->variables());
         self::assertFalse($result->isEmpty());
     }
 
@@ -44,7 +44,7 @@ final class ExtractionResultTest extends TestCase
             'term' => new ExtractedValue('j', 1),
         ]);
 
-        self::assertSame(['term' => 'j'], $result->values());
+        self::assertSame(['term' => 'j'], $result->variables());
 
         $value = $result->fetch('term');
         self::assertInstanceOf(ExtractedValue::class, $value);
@@ -127,11 +127,10 @@ final class ExtractionResultTest extends TestCase
 
         $reconciled = $result->reconcile($other);
 
-        self::assertNotNull($reconciled);
         self::assertSame([
             'term' => 'john',
             'limit' => '10',
-        ], $reconciled->values());
+        ], $reconciled->variables());
 
         $value = $reconciled->fetch('term');
         self::assertInstanceOf(ExtractedValue::class, $value);
@@ -149,7 +148,8 @@ final class ExtractionResultTest extends TestCase
             'term' => new ExtractedValue('mary'),
         ]);
 
-        self::assertNull($result->reconcile($other));
+        $this->expectException(VariableCanNotBeExtracted::class);
+        $result->reconcile($other);
     }
 
     #[Test]
@@ -161,7 +161,7 @@ final class ExtractionResultTest extends TestCase
 
         $result = new ExtractionResult($values);
 
-        self::assertSame(['term' => 'john'], $result->values());
+        self::assertSame(['term' => 'john'], $result->variables());
     }
 
     #[Test]

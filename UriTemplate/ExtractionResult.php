@@ -30,6 +30,8 @@ final class ExtractionResult implements Countable, IteratorAggregate
 {
     /** @var array<string, ExtractedValue> */
     private readonly array $variables;
+    /** @var array<string> */
+    public readonly array $missingVariables;
 
     /**
      * @param iterable<string, ExtractedValue> $variables
@@ -44,6 +46,14 @@ final class ExtractionResult implements Countable, IteratorAggregate
         }
 
         $this->variables = $vars;
+        $missingVariables = [];
+        foreach ($vars as $key => $v) {
+            if (null === $v->value) {
+                $missingVariables[] = $key;
+            }
+        }
+
+        $this->missingVariables = $missingVariables;
     }
 
     public function count(): int
@@ -64,40 +74,37 @@ final class ExtractionResult implements Countable, IteratorAggregate
         return [] === $this->variables;
     }
 
-    public function fetch(string $name): ?ExtractedValue
+    public function fetch(string $variableName): ?ExtractedValue
     {
-        return $this->variables[$name] ?? null;
+        return $this->variables[$variableName] ?? null;
     }
 
-    public function values(): array
+    public function variables(): array
     {
-        return array_map(static fn (ExtractedValue $val): array|string => $val->value, $this->variables);
+        return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
     }
 
-    public function value(string $name): array|string|null
+    public function value(string $variableName): array|string|null
     {
-        return $this->fetch($name)?->value;
+        return $this->fetch($variableName)?->value;
     }
 
-    public function has(string $name): bool
+    public function has(string $variableName): bool
     {
-        return array_key_exists($name, $this->variables);
+        return array_key_exists($variableName, $this->variables);
     }
 
-    public function reconcile(self $other): ?self
+    public function reconcile(self $other): self
     {
         $result = $this->variables;
-
         foreach ($other as $name => $otherValue) {
             if (!array_key_exists($name, $result)) {
                 $result[$name] = $otherValue;
                 continue;
             }
 
-            $value = $result[$name]->reconcile($otherValue);
-            if (null === $value) {
-                return null;
-            }
+            $value = $result[$name]->reconcile($otherValue)
+                ?? throw new VariableCanNotBeExtracted('The extracted values for variable "'.$name.'" could not be reconciled.');
 
             $result[$name] = $value;
         }

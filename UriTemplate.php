@@ -34,8 +34,10 @@ use Uri\WhatWg\Url as WhatWgUrl;
 use Uri\WhatWg\UrlValidationError;
 
 use function array_fill_keys;
+use function array_filter;
 use function array_key_exists;
 use function class_exists;
+use function dump;
 
 /**
  * Defines the URI Template syntax and the process for expanding a URI Template into a URI reference.
@@ -64,10 +66,6 @@ final class UriTemplate implements Stringable
 
     private function filterVariables(iterable $variables): VariableBag
     {
-        if ($variables instanceof ExtractionResult) {
-            $variables = $variables->values();
-        }
-
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
         }

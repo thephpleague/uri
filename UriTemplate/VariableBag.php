@@ -50,6 +50,17 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
      */
     public function __construct(iterable $variables = [])
     {
+        if ($variables instanceof ExtractionResult) {
+            $tmp = [];
+            foreach ($variables->variables() as  $name => $value) {
+                if (null === $value) {
+                    continue;
+                }
+                $tmp[$name] = $value;
+            }
+            $variables = $tmp;
+        }
+
         foreach ($variables as $name => $value) {
             $this->assign((string) $name, $value);
         }

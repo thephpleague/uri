@@ -261,7 +261,7 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @param array<string, string|array<string>> $expected
+     * @param array<string, string|array<string|null>|null> $expected
      */
     #[DataProvider('provideExtractCases')]
     public function testExtract(
@@ -269,14 +269,14 @@ final class ExpressionTest extends TestCase
         string $value,
         array $expected,
     ): void {
-        self::assertSame($expected, $expression->extract($value)->values());
+        self::assertSame($expected, $expression->extract($value)->variables());
     }
 
     /**
      * @return iterable<string, array{
      *     expression: Expression,
      *     value: string,
-     *     expected: array<string, string|array<string>>
+     *     expected: array<string, string|array<string|null>|null>
      * }>
      */
     public static function provideExtractCases(): iterable
@@ -470,6 +470,51 @@ final class ExpressionTest extends TestCase
             'expression' => Expression::new('{?foo*}'),
             'value' => 'one=a&two=b&three=c',
             'expected' => ['foo' => ['one' => 'a', 'two' => 'b', 'three' => 'c']],
+        ];
+
+        yield 'named variable followed by missing named variable' => [
+            'expression' => Expression::new('{?a,b}'),
+            'value' => 'a=toto',
+            'expected' => ['a' => 'toto', 'b' => null],
+        ];
+
+        yield 'missing named variable followed by named variable' => [
+            'expression' => Expression::new('{?a,b}'),
+            'value' => 'b=toto',
+            'expected' => ['a' => null, 'b' => 'toto'],
+        ];
+
+        yield 'named variable followed by empty named variable' => [
+            'expression' => Expression::new('{?a,b}'),
+            'value' => 'a=toto&b=',
+            'expected' => ['a' => 'toto', 'b' => ''],
+        ];
+
+        yield 'named exploded associative variable followed by missing variable' => [
+            'expression' => Expression::new('{?foo*,bar}'),
+            'value' => 'one=a&two=b',
+            'expected' => [
+                'foo' => ['one' => 'a', 'two' => 'b'],
+                'bar' => null,
+            ],
+        ];
+
+        yield 'missing variable followed by named exploded associative variable' => [
+            'expression' => Expression::new('{?foo,bar*}'),
+            'value' => 'one=a&two=b',
+            'expected' => [
+                'foo' => null,
+                'bar' => ['one' => 'a', 'two' => 'b'],
+            ],
+        ];
+
+        yield 'missing variables' => [
+            'expression' => Expression::new('{?a,b}'),
+            'value' => '',
+            'expected' => [
+                'a' => null,
+                'b' => null,
+            ],
         ];
     }
 }

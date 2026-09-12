@@ -231,8 +231,15 @@ enum Operator: string
         return [implode(',', $pairs), $useQuery];
     }
 
-    public function extract(VarSpecifier $varSpecifier, string $value): ExtractionResult
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    public function extract(VarSpecifier $varSpecifier, string|null $value): ExtractionResult
     {
+        if (null === $value) {
+            return new ExtractionResult([$varSpecifier->name => new ExtractedValue(null)]);
+        }
+
         if ('*' === $varSpecifier->modifier) {
             return $this->extractList($varSpecifier, $value);
         }
@@ -252,6 +259,9 @@ enum Operator: string
         return  rawurldecode($value);
     }
 
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
     private function extractList(VarSpecifier $varSpecifier, string $value): ExtractionResult
     {
         return $this->isNamed()
@@ -278,15 +288,15 @@ enum Operator: string
         $names = array_unique(array_column($pairs, 0));
         if (1 === count($names) && $varSpecifier->name === $names[0]) {
             return new ExtractionResult([
-                $varSpecifier->name => new ExtractedValue(array_map(static fn (array $pair): string => rawurldecode($pair[1]), $pairs)),
+                $varSpecifier->name => new ExtractedValue(array_map(static fn (array $pair): string => self::decode($pair[1]), $pairs)),
             ]);
         }
 
-        ! in_array($varSpecifier->name, $names, true) || throw new SyntaxError('The value '.$value.' is malformed.');
+        ! in_array($varSpecifier->name, $names, true) || throw new VariableCanNotBeExtracted('The value '.$value.' is malformed.');
 
         $result = [];
         foreach ($pairs as [$pName, $pValue]) {
-            $result[rawurldecode($pName)] = rawurldecode($pValue);
+            $result[self::decode($pName)] = self::decode($pValue);
         }
 
         return new ExtractionResult([$varSpecifier->name => new ExtractedValue($result)]);
@@ -321,6 +331,9 @@ enum Operator: string
             : new ExtractionResult([$varSpecifier->name => new ExtractedValue($result)]);
     }
 
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
     public function extractPattern(VarSpecifier $varSpecifier): ExtractionPattern
     {
         $this->isNamed() || throw new VariableCanNotBeExtracted('An extraction pattern is only available for named operators.');

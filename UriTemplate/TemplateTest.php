@@ -274,7 +274,7 @@ final class TemplateTest extends TestCase
         string $value,
         array $expected,
     ): void {
-        self::assertSame($expected, $template->extract($value)->values());
+        self::assertSame($expected, $template->extract($value)->variables());
     }
 
     /**

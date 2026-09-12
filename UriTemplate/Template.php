@@ -15,6 +15,7 @@ namespace League\Uri\UriTemplate;
 
 use BackedEnum;
 use Deprecated;
+use Generator;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 use ValueError;
@@ -26,6 +27,7 @@ use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
+use function dump;
 use function implode;
 use function iterator_to_array;
 use function preg_match_all;
@@ -171,7 +173,7 @@ final class Template implements Stringable
     public function extract(string $value): ExtractionResult
     {
         try {
-            return $this->extractOrFail($value);
+            return $this->extractAll($value);
         } catch (VariableCanNotBeExtracted) {
             return new ExtractionResult();
         }
@@ -181,6 +183,18 @@ final class Template implements Stringable
      * @throws VariableCanNotBeExtracted
      */
     public function extractOrFail(string $value): ExtractionResult
+    {
+        $result = $this->extractAll($value);
+
+        return [] === $result->missingVariables
+            ? $result
+            : throw VariableCanNotBeExtracted::dueToMissingVariables($value, $this, $result);
+    }
+
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function extractAll(string $value): ExtractionResult
     {
         return $this->matchParts($value, 0, 0);
     }
@@ -273,10 +287,7 @@ final class Template implements Stringable
         int $expressionOffset,
         ExtractionResult $variables,
     ): ExtractionResult {
-
-        $merged = $variables->reconcile($expression->extract(substr($value, $expressionOffset)));
-
-        return $merged ?? throw new VariableCanNotBeExtracted('The extracted variables could not be reconciled.');
+        return $variables->reconcile($expression->extract(substr($value, $expressionOffset)));
     }
 
     /**
@@ -304,37 +315,27 @@ final class Template implements Stringable
         }
 
         $lastException = null;
-        $reconciliationFailed = false;
         foreach ($positions as $position) {
             try {
-                $extracted = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
-                $merged = $variables->reconcile($extracted);
-                if (null === $merged) {
-                    $reconciliationFailed = true;
-                    continue;
-                }
-
+                $newVar = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
+                $merged = $variables->reconcile($newVar);
                 return $this->matchParts($value, $partOffset + 1, $position, $merged);
             } catch (VariableCanNotBeExtracted $exception) {
                 $lastException = $exception;
             }
         }
 
-        throw $lastException ?? new VariableCanNotBeExtracted(
-            $reconciliationFailed
-                ? 'The expression could not reconcile the extracted values.'
-                : 'The expression at offset '.$expressionOffset.' could not be matched.'
-        );
+        throw $lastException ?? new VariableCanNotBeExtracted('The expression at offset '.$expressionOffset.' could not be matched.');
     }
 
     /**
-     * @return iterable<int>
+     * @return Generator<int>
      */
     private function delimiterPositions(
         string $value,
         int $offset,
         string $delimiter,
-    ): iterable {
+    ): Generator {
         '' !== $delimiter || throw new ValueError('The delimiter cannot be empty.');
 
         $position = $offset;

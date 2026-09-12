@@ -25,14 +25,14 @@ final class ExtractedValue
      * @throws VariableCanNotBeExtracted
      */
     public function __construct(
-        public readonly string|array $value,
+        public readonly null|string|array $value,
         private readonly int $maxLength = -1,
     ) {
         -1 === $maxLength || (is_string($value) && 0 < $maxLength) || throw new VariableCanNotBeExtracted('A prefix position can only be associated with a string value.');
         $this->isPartial = -1 !== $maxLength;
     }
 
-    public static function fromValue(array|string $value, VarSpecifier $varSpecifier): self
+    public static function fromValue(array|string|null $value, VarSpecifier $varSpecifier): self
     {
         return new self(
             $value,

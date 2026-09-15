@@ -29,7 +29,6 @@ use function explode;
 use function implode;
 use function is_string;
 use function ksort;
-use function preg_match;
 
 /**
  * @internal The class exposes the internal representation of an Expression and its usage

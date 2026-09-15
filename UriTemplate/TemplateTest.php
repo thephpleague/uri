@@ -15,7 +15,6 @@ namespace League\Uri\UriTemplate;
 
 use JsonException;
 use League\Uri\Exceptions\SyntaxError;
-use League\Uri\UriTemplate;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

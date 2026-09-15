@@ -28,7 +28,6 @@ use function in_array;
 use function is_array;
 use function mb_substr;
 use function preg_match;
-use function preg_quote;
 use function rawurldecode;
 use function rawurlencode;
 use function str_contains;

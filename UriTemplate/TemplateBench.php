@@ -36,7 +36,7 @@ final class TemplateBench
 
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
-    public function benchExtractingVariablesFromATypicalUri(): void
+    public function benchExtractingFromATypicalUri(): void
     {
         $template = '/api/{version}/users/{id}{?fields}';
         $uri = '/api/v1/users/12345?fields=name,email';
@@ -49,7 +49,7 @@ final class TemplateBench
 
     #[Bench\OutputTimeUnit('seconds')]
     #[Bench\Assert('mode(variant.mem.peak) < 2097152'), Bench\Assert('mode(variant.time.avg) < 10000000')]
-    public function benchExtractingVariablesFromAComplexUri(): void
+    public function benchExtractingFromAComplexUri(): void
     {
         $template = 'https://{env}.acme.com{/ctx*}/{accno}{.format}{?from,to}{#frag}';
         $uri = 'https://stagingapi.acme.com/v2/retail/checking/12345678.json?to=2026-09-14&from=2026-01-01#statement-view';

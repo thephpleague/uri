@@ -46,7 +46,7 @@ final class VariableBag implements ArrayAccess, Countable, IteratorAggregate
     private array $variables = [];
 
     /**
-     * @param iterable<array-key, InputValue> $variables
+     * @param iterable<array-key, InputValue>|ExtractionResult $variables
      */
     public function __construct(iterable $variables = [])
     {

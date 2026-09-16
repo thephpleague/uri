@@ -31,12 +31,12 @@ final class ExtractionResult implements ArrayAccess, Countable
 {
     /**
      * @param array<string, ExtractedValue> $variables
-     * @param list<string> $missingVariables
+     * @param list<string> $missingNames
      * @param list<ExtractionErrorReason> $reasons
      */
     private function __construct(
         private readonly array $variables,
-        private readonly array $missingVariables,
+        private readonly array $missingNames,
         private readonly array $reasons,
     ) {
     }
@@ -45,7 +45,7 @@ final class ExtractionResult implements ArrayAccess, Countable
     {
         return new self(
             [],
-            $exception->getMissingVariables(),
+            $exception->getMissingNames(),
             $exception->getReasons(),
         );
     }
@@ -70,11 +70,19 @@ final class ExtractionResult implements ArrayAccess, Countable
     }
 
     /**
-     * Returns the number of found variables.
+     * Returns true if the extraction is successful.
      */
-    public function count(): int
+    public function isSuccessful(): bool
     {
-        return count($this->variables);
+        return [] === $this->reasons;
+    }
+
+    /**
+     * @return list<ExtractionErrorReason>
+     */
+    public function reasons(): array
+    {
+        return $this->reasons;
     }
 
     /**
@@ -86,17 +94,17 @@ final class ExtractionResult implements ArrayAccess, Countable
     }
 
     /**
-     * Returns true if the extraction is successful.
+     * Returns the number of found variables.
      */
-    public function isSuccessful(): bool
+    public function count(): int
     {
-        return [] === $this->reasons;
+        return count($this->variables);
     }
 
     /**
      * @return list<string>
      */
-    public function variableNames(): array
+    public function names(): array
     {
         return array_keys($this->variables);
     }
@@ -104,24 +112,9 @@ final class ExtractionResult implements ArrayAccess, Countable
     /**
      * @return list<string>
      */
-    public function missingVariables(): array
+    public function missingNames(): array
     {
-        return $this->missingVariables;
-    }
-
-    public function has(string $variableName): bool
-    {
-        return array_key_exists($variableName, $this->variables);
-    }
-
-    public function fetch(string $variableName): ?ExtractedValue
-    {
-        return $this->variables[$variableName] ?? null;
-    }
-
-    public function value(string $variableName): array|string|null
-    {
-        return $this->fetch($variableName)?->value;
+        return $this->missingNames;
     }
 
     /**
@@ -132,12 +125,9 @@ final class ExtractionResult implements ArrayAccess, Countable
         return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
     }
 
-    /**
-     * @return list<ExtractionErrorReason>
-     */
-    public function reasons(): array
+    public function fetch(string $variableName): ?ExtractedValue
     {
-        return $this->reasons;
+        return $this->variables[$variableName] ?? null;
     }
 
     /**
@@ -152,8 +142,7 @@ final class ExtractionResult implements ArrayAccess, Countable
                 continue;
             }
 
-            $value = $result[$name]->reconcile($otherValue)
-                ?? throw new VariableCanNotBeExtracted('The extracted values for variable "'.$name.'" could not be reconciled.', [ExtractionErrorReason::ReconciliationFailed]);
+            $value = $result[$name]->reconcile($otherValue) ?? throw new VariableCanNotBeExtracted('The extracted values for variable "'.$name.'" could not be reconciled.', [ExtractionErrorReason::ReconciliationFailed]);
 
             $result[$name] = $value;
         }
@@ -161,26 +150,28 @@ final class ExtractionResult implements ArrayAccess, Countable
         return self::success($result);
     }
 
-    public function offsetExists(mixed $offset): bool
-    {
-        return is_string($offset) && $this->has($offset);
-    }
-
-    public function offsetUnset(mixed $offset): never
-    {
-        throw new LogicException(self::class . ' is read-only.');
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): never
-    {
-        throw new LogicException(self::class . ' is read-only.');
-    }
-
     /**
      * @return null|string|array<string|null>
      */
     public function offsetGet(mixed $offset): null|string|array
     {
-        return is_string($offset) ? $this->value($offset) : throw new TypeError('offset must be a string.');
+        return is_string($offset)
+            ? $this->fetch($offset)?->value
+            : throw new TypeError('offset must be a string.');
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return is_string($offset) && array_key_exists($offset, $this->variables);
+    }
+
+    public function offsetUnset(mixed $offset): never
+    {
+        throw new LogicException(self::class.' is read-only.');
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): never
+    {
+        throw new LogicException(self::class.' is read-only.');
     }
 }

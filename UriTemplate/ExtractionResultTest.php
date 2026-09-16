@@ -70,10 +70,6 @@ final class ExtractionResultTest extends TestCase
             'tags' => new ExtractedValue(['one', 'two']),
         ]);
 
-        self::assertSame('john', $result->value('term'));
-        self::assertSame(['one', 'two'], $result->value('tags'));
-        self::assertNull($result->value('missing'));
-
         self::assertSame('john', $result['term']);
         self::assertSame(['one', 'two'], $result['tags']);
         self::assertNull($result['missing']);
@@ -85,9 +81,6 @@ final class ExtractionResultTest extends TestCase
         $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
         ]);
-
-        self::assertTrue($result->has('term'));
-        self::assertFalse($result->has('missing'));
 
         self::assertTrue(isset($result['term']));
         self::assertFalse(isset($result['missing']));
@@ -182,7 +175,7 @@ final class ExtractionResultTest extends TestCase
 
         self::assertFalse($result->isSuccessful());
         self::assertCount(2, $result->reasons());
-        self::assertEmpty($result->missingVariables());
+        self::assertEmpty($result->missingNames());
     }
 
     #[Test]

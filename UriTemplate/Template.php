@@ -210,7 +210,7 @@ final class Template implements Stringable
     {
         $result = $this->extractAll($value);
 
-        return [] === $result->missingVariables()
+        return [] === $result->missingNames()
             ? $result
             : throw VariableCanNotBeExtracted::dueToMissingVariables($value, $this, $result);
     }
@@ -388,7 +388,7 @@ final class Template implements Stringable
                 foreach ($exception->getReasons() as $reason) {
                     $reasons[] = $reason;
                 }
-                foreach ($exception->getMissingVariables() as $missingVariable) {
+                foreach ($exception->getMissingNames() as $missingVariable) {
                     $missingVariables[] = $missingVariable;
                 }
             }

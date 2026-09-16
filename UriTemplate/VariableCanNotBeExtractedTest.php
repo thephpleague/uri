@@ -73,7 +73,7 @@ final class VariableCanNotBeExtractedTest extends TestCase
 
         self::assertSame(
             ['foo', 'bar'],
-            $exception->getMissingVariables(),
+            $exception->getMissingNames(),
         );
     }
 
@@ -114,7 +114,7 @@ final class VariableCanNotBeExtractedTest extends TestCase
         );
         self::assertSame(
             ['bar'],
-            $exception->getMissingVariables(),
+            $exception->getMissingNames(),
         );
     }
 }

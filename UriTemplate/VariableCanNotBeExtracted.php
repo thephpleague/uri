@@ -24,7 +24,7 @@ use function implode;
 class VariableCanNotBeExtracted extends Exception implements UriException
 {
     /** @var list<string> */
-    protected array $missingVariables = [];
+    protected array $missingNames = [];
     /** @var list<ExtractionErrorReason> */
     protected array $reasons = [];
 
@@ -45,15 +45,15 @@ class VariableCanNotBeExtracted extends Exception implements UriException
         }
 
         $this->reasons = array_values($r);
-        $this->missingVariables = array_values($m);
+        $this->missingNames = array_values($m);
     }
 
     public static function dueToMissingVariables(string $input, Template $template, ExtractionResult $result): self
     {
         return new self(
-            'The value "'.$input.'" does not provide all variables defined by the expression "'.$template->value.'"; Missing: "'.implode('", "', $result->missingVariables()).'".',
+            'The value "'.$input.'" does not provide all variables defined by the expression "'.$template->value.'"; Missing: "'.implode('", "', $result->missingNames()).'".',
             [ExtractionErrorReason::MissingVariables],
-            $result->missingVariables()
+            $result->missingNames()
         );
     }
 
@@ -68,8 +68,8 @@ class VariableCanNotBeExtracted extends Exception implements UriException
     /**
      * @return list<string>
      */
-    public function getMissingVariables(): array
+    public function getMissingNames(): array
     {
-        return $this->missingVariables;
+        return $this->missingNames;
     }
 }

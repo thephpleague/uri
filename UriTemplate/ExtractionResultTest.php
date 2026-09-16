@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -72,6 +73,10 @@ final class ExtractionResultTest extends TestCase
         self::assertSame('john', $result->value('term'));
         self::assertSame(['one', 'two'], $result->value('tags'));
         self::assertNull($result->value('missing'));
+
+        self::assertSame('john', $result['term']);
+        self::assertSame(['one', 'two'], $result['tags']);
+        self::assertNull($result['missing']);
     }
 
     #[Test]
@@ -83,6 +88,9 @@ final class ExtractionResultTest extends TestCase
 
         self::assertTrue($result->has('term'));
         self::assertFalse($result->has('missing'));
+
+        self::assertTrue(isset($result['term']));
+        self::assertFalse(isset($result['missing']));
     }
 
     #[Test]
@@ -94,23 +102,6 @@ final class ExtractionResultTest extends TestCase
         ]);
 
         self::assertCount(2, $result);
-    }
-
-    #[Test]
-    public function it_is_iterable(): void
-    {
-        $term = new ExtractedValue('john');
-        $limit = new ExtractedValue('10');
-
-        $result = ExtractionResult::success([
-            'term' => $term,
-            'limit' => $limit,
-        ]);
-
-        self::assertSame([
-            'term' => $term,
-            'limit' => $limit,
-        ], iterator_to_array($result));
     }
 
     #[Test]
@@ -138,7 +129,7 @@ final class ExtractionResultTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_null_when_results_cannot_be_reconciled(): void
+    public function it_throws_when_results_cannot_be_reconciled(): void
     {
         $result = ExtractionResult::success([
             'term' => new ExtractedValue('john'),
@@ -163,17 +154,6 @@ final class ExtractionResultTest extends TestCase
 
         self::assertSame(['term' => 'john'], $result->variables());
         self::assertTrue($result->isSuccessful());
-    }
-
-    #[Test]
-    public function it_rejects_non_string_variable_names(): void
-    {
-        $this->expectException(TypeError::class);
-
-        /** @var iterable<int, ExtractedValue> $values */
-        $values = [42 => new ExtractedValue('john')];
-
-        ExtractionResult::success($values);
     }
 
     #[Test]
@@ -203,5 +183,15 @@ final class ExtractionResultTest extends TestCase
         self::assertFalse($result->isSuccessful());
         self::assertCount(2, $result->reasons());
         self::assertEmpty($result->missingVariables());
+    }
+
+    #[Test]
+    public function it_reject_setting_variables_using_array_notation(): void
+    {
+        $result = ExtractionResult::success(['forty-two' => new ExtractedValue('john')]);
+
+        $this->expectException(LogicException::class);
+
+        $result['foobar'] = 'baz';
     }
 }

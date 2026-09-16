@@ -13,20 +13,21 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use ArrayAccess;
 use Countable;
-use Iterator;
-use IteratorAggregate;
+use LogicException;
 use TypeError;
 
 use function array_key_exists;
+use function array_keys;
 use function array_map;
 use function count;
 use function is_string;
 
 /**
- * @implements IteratorAggregate<string, ExtractedValue>
+ * @implements ArrayAccess<string, null|string|array<string|null>>
  */
-final class ExtractionResult implements Countable, IteratorAggregate
+final class ExtractionResult implements ArrayAccess, Countable
 {
     /**
      * @param array<string, ExtractedValue> $variables
@@ -77,14 +78,6 @@ final class ExtractionResult implements Countable, IteratorAggregate
     }
 
     /**
-     * @return Iterator<string, ExtractedValue>
-     */
-    public function getIterator(): Iterator
-    {
-        yield from $this->variables;
-    }
-
-    /**
      * Tells whether some variables are attached to the result.
      */
     public function isEmpty(): bool
@@ -100,9 +93,35 @@ final class ExtractionResult implements Countable, IteratorAggregate
         return [] === $this->reasons;
     }
 
+    /**
+     * @return list<string>
+     */
+    public function variableNames(): array
+    {
+        return array_keys($this->variables);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function missingVariables(): array
+    {
+        return $this->missingVariables;
+    }
+
+    public function has(string $variableName): bool
+    {
+        return array_key_exists($variableName, $this->variables);
+    }
+
     public function fetch(string $variableName): ?ExtractedValue
     {
         return $this->variables[$variableName] ?? null;
+    }
+
+    public function value(string $variableName): array|string|null
+    {
+        return $this->fetch($variableName)?->value;
     }
 
     /**
@@ -122,30 +141,12 @@ final class ExtractionResult implements Countable, IteratorAggregate
     }
 
     /**
-     * @return list<string>
-     */
-    public function missingVariables(): array
-    {
-        return $this->missingVariables;
-    }
-
-    public function value(string $variableName): array|string|null
-    {
-        return $this->fetch($variableName)?->value;
-    }
-
-    public function has(string $variableName): bool
-    {
-        return array_key_exists($variableName, $this->variables);
-    }
-
-    /**
      * @throws VariableCanNotBeExtracted
      */
     public function reconcile(self $other): self
     {
         $result = $this->variables;
-        foreach ($other as $name => $otherValue) {
+        foreach ($other->variables as $name => $otherValue) {
             if (!array_key_exists($name, $result)) {
                 $result[$name] = $otherValue;
                 continue;
@@ -158,5 +159,28 @@ final class ExtractionResult implements Countable, IteratorAggregate
         }
 
         return self::success($result);
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return is_string($offset) && $this->has($offset);
+    }
+
+    public function offsetUnset(mixed $offset): never
+    {
+        throw new LogicException(self::class . ' is read-only.');
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): never
+    {
+        throw new LogicException(self::class . ' is read-only.');
+    }
+
+    /**
+     * @return null|string|array<string|null>
+     */
+    public function offsetGet(mixed $offset): null|string|array
+    {
+        return is_string($offset) ? $this->value($offset) : throw new TypeError('offset must be a string.');
     }
 }

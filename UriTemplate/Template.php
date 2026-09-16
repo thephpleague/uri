@@ -118,7 +118,7 @@ final class Template implements Stringable
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid
      */
-    public function expand(iterable $variables = []): string
+    public function expand(iterable|ExtractionResult $variables = []): string
     {
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);
@@ -130,7 +130,7 @@ final class Template implements Stringable
     /**
      * @throws TemplateCanNotBeExpanded if the variables are invalid or missing
      */
-    public function expandOrFail(iterable $variables = []): string
+    public function expandOrFail(iterable|ExtractionResult $variables = []): string
     {
         if (!$variables instanceof VariableBag) {
             $variables = new VariableBag($variables);

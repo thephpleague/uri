@@ -134,7 +134,7 @@ final class Expression implements IteratorAggregate
         $components = '' === $value ? [] : explode($separator, $value);
         $matched = $this->matchQueryValues($components);
 
-        null !== $matched || throw new VariableCanNotBeExtracted('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', [ExtractionErrorReason::MalformedValue]);
+        null !== $matched || throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', ExtractionErrorReason::MalformedValue);
 
         $variables = [];
         foreach ($this->varSpecifiers as $offset => $varSpecifier) {
@@ -245,7 +245,7 @@ final class Expression implements IteratorAggregate
         $components = '' === $value ? [] : explode($separator, $value);
         $matched = $this->matchNamedValues($components, 0, 0);
 
-        null !== $matched || throw new VariableCanNotBeExtracted('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', [ExtractionErrorReason::MalformedValue]);
+        null !== $matched || throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', ExtractionErrorReason::MalformedValue);
 
         $variables = [];
         foreach ($this->varSpecifiers as $offset => $varSpecifier) {
@@ -356,7 +356,7 @@ final class Expression implements IteratorAggregate
             return;
         }
 
-        (mb_strlen($value->value) <= $varSpecifier->position) || throw new VariableCanNotBeExtracted('The value for variable "'.$varSpecifier->name.'" exceeds the prefix length.', [ExtractionErrorReason::PrefixLengthExceeded]);
+        (mb_strlen($value->value) <= $varSpecifier->position) || throw VariableCanNotBeExtracted::dueTo('The value for variable "'.$varSpecifier->name.'" exceeds the prefix length.', ExtractionErrorReason::PrefixLengthExceeded);
     }
 
     /**

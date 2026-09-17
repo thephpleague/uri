@@ -19,9 +19,10 @@ use LogicException;
 use TypeError;
 
 use function array_key_exists;
-use function array_keys;
 use function array_map;
+use function array_values;
 use function count;
+use function is_int;
 use function is_string;
 
 /**
@@ -31,20 +32,23 @@ final class ExtractionResult implements ArrayAccess, Countable
 {
     /**
      * @param array<string, ExtractedValue> $variables
+     * @param list<string> $names
      * @param list<string> $missingNames
      * @param list<ExtractionErrorReason> $reasons
      */
     private function __construct(
         private readonly array $variables,
+        private readonly array $names,
         private readonly array $missingNames,
         private readonly array $reasons,
     ) {
     }
 
-    public static function failure(VariableCanNotBeExtracted $exception): self
+    public static function failure(VariableCanNotBeExtracted $exception, Template $template): self
     {
         return new self(
             [],
+            $template->variableNames,
             $exception->getMissingNames(),
             $exception->getReasons(),
         );
@@ -53,20 +57,20 @@ final class ExtractionResult implements ArrayAccess, Countable
     public static function success(iterable $variables = []): self
     {
         $vars = [];
+        $names = [];
+        $missing = [];
         foreach ($variables as $name => $variable) {
-            is_string($name) || throw new TypeError('An extraction variable name must be a string.');
+            is_string($name) || is_int($name) || throw new TypeError('An extraction variable name must be a string.');
             $variable instanceof ExtractedValue || throw new TypeError('An extraction result value must be an '.ExtractedValue::class.'.');
+            $name = (string) $name;
             $vars[$name] = $variable;
-        }
-
-        $missingVariables = [];
-        foreach ($vars as $key => $v) {
-            if (null === $v->value) {
-                $missingVariables[] = $key;
+            $names[$name] = $name;
+            if (null === $variable->value) {
+                $missing[$name] = $name;
             }
         }
 
-        return new self($vars, $missingVariables, []);
+        return new self($vars, array_values($names), array_values($missing), []);
     }
 
     /**
@@ -102,14 +106,18 @@ final class ExtractionResult implements ArrayAccess, Countable
     }
 
     /**
+     * Returns the list of all variable names.
+     *
      * @return list<string>
      */
     public function names(): array
     {
-        return array_keys($this->variables);
+        return $this->names;
     }
 
     /**
+     * Returns the list of variable names missing from the extraction.
+     *
      * @return list<string>
      */
     public function missingNames(): array
@@ -136,15 +144,13 @@ final class ExtractionResult implements ArrayAccess, Countable
     public function reconcile(self $other): self
     {
         $result = $this->variables;
-        foreach ($other->variables as $name => $otherValue) {
-            if (!array_key_exists($name, $result)) {
-                $result[$name] = $otherValue;
-                continue;
-            }
-
-            $value = $result[$name]->reconcile($otherValue) ?? throw new VariableCanNotBeExtracted('The extracted values for variable "'.$name.'" could not be reconciled.', [ExtractionErrorReason::ReconciliationFailed]);
-
-            $result[$name] = $value;
+        foreach ($other->variables as $name => $value) {
+            $result[$name] = !array_key_exists($name, $result)
+                ? $value
+                : $result[$name]->reconcile($value) ?? throw VariableCanNotBeExtracted::dueTo(
+                    'The extracted values for variable "'.$name.'" could not be reconciled.',
+                    ExtractionErrorReason::ReconciliationFailed
+                );
         }
 
         return self::success($result);
@@ -155,14 +161,15 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function offsetGet(mixed $offset): null|string|array
     {
-        return is_string($offset)
-            ? $this->fetch($offset)?->value
+        return is_string($offset) || is_int($offset)
+            ? $this->fetch((string) $offset)?->value
             : throw new TypeError('offset must be a string.');
     }
 
     public function offsetExists(mixed $offset): bool
     {
-        return is_string($offset) && array_key_exists($offset, $this->variables);
+        return (is_string($offset) || is_int($offset))
+            && array_key_exists((string) $offset, $this->variables);
     }
 
     public function offsetUnset(mixed $offset): never

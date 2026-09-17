@@ -163,15 +163,8 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_can_be_generated_from_failure(): void
     {
-        $exception = new VariableCanNotBeExtracted(
-            message: 'this is an exception',
-            reasons: [
-                ExtractionErrorReason::PrefixMismatch,
-                ExtractionErrorReason::UnmatchedContent,
-            ],
-            missingVariables: [],
-        );
-        $result = ExtractionResult::failure($exception);
+        $exception = VariableCanNotBeExtracted::dueTo('this is an exception', ExtractionErrorReason::PrefixMismatch, ExtractionErrorReason::UnmatchedContent);
+        $result = ExtractionResult::failure($exception, Template::new('/foo/bar/{baz}'));
 
         self::assertFalse($result->isSuccessful());
         self::assertCount(2, $result->reasons());

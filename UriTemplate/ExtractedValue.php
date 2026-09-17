@@ -28,7 +28,7 @@ final class ExtractedValue
         public readonly null|string|array $value,
         private readonly int $maxLength = -1,
     ) {
-        -1 === $maxLength || (is_string($value) && 0 < $maxLength) || throw new VariableCanNotBeExtracted('A prefix position can only be associated with a string value.', [ExtractionErrorReason::UnsupportedOperation]);
+        -1 === $maxLength || (is_string($value) && 0 < $maxLength) || throw VariableCanNotBeExtracted::dueTo('A prefix position can only be associated with a string value.', ExtractionErrorReason::UnsupportedOperation);
         $this->isPartial = -1 !== $maxLength;
     }
 

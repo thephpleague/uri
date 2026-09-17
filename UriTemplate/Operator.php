@@ -108,6 +108,14 @@ enum Operator: string
         };
     }
 
+    public function allowEmpty(): bool
+    {
+        return match ($this) {
+            self::None, self::ReservedChars => false,
+            default => true,
+        };
+    }
+
     /**
      * Removes percent encoding on reserved characters (used with + and # modifiers).
      */
@@ -329,7 +337,7 @@ enum Operator: string
             return ExtractionResult::success([$varSpecifier->name => new ExtractedValue(array_map(static fn (array $pair): string => self::decode($pair[1]), $pairs))]);
         }
 
-        !in_array($varSpecifier->name, $names, true) || throw new VariableCanNotBeExtracted('The value "'.$value.'" is malformed.', [ExtractionErrorReason::MalformedValue]);
+        !in_array($varSpecifier->name, $names, true) || throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" is malformed.', ExtractionErrorReason::MalformedValue);
 
         $result = [];
         foreach ($pairs as [$pName, $pValue]) {

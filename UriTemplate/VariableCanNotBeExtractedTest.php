@@ -22,20 +22,18 @@ final class VariableCanNotBeExtractedTest extends TestCase
 {
     public function testItPreservesTheMessage(): void
     {
-        $exception = new VariableCanNotBeExtracted('Extraction failed.');
+        $exception = VariableCanNotBeExtracted::dueTo('Extraction failed.', ExtractionErrorReason::MalformedValue);
 
         self::assertSame('Extraction failed.', $exception->getMessage());
     }
 
     public function testItDeduplicatesReasons(): void
     {
-        $exception = new VariableCanNotBeExtracted(
+        $exception = VariableCanNotBeExtracted::dueTo(
             'Extraction failed.',
-            [
-                ExtractionErrorReason::ReconciliationFailed,
-                ExtractionErrorReason::PrefixLengthExceeded,
-                ExtractionErrorReason::ReconciliationFailed,
-            ],
+            ExtractionErrorReason::ReconciliationFailed,
+            ExtractionErrorReason::PrefixLengthExceeded,
+            ExtractionErrorReason::ReconciliationFailed,
         );
 
         self::assertSame(
@@ -47,47 +45,19 @@ final class VariableCanNotBeExtractedTest extends TestCase
         );
     }
 
-    public function testItRejectsInvalidReasons(): void
-    {
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage(
-            'An extraction error value must be an '.ExtractionErrorReason::class.'; string received.'
-        );
-
-        new VariableCanNotBeExtracted(
-            'Extraction failed.',
-            ['invalid'],
-        );
-    }
-
     public function testItDeduplicatesMissingVariables(): void
     {
-        $exception = new VariableCanNotBeExtracted(
-            'Extraction failed.',
-            missingVariables: [
-                'foo',
-                'bar',
-                'foo',
-            ],
-        );
+        $exception = VariableCanNotBeExtracted::dueToMissingVariables('this/will/not/work', Template::new('{foo}/bar'), ['foo', 'bar', 'foo']);
 
-        self::assertSame(
-            ['foo', 'bar'],
-            $exception->getMissingNames(),
-        );
+        self::assertSame(['foo', 'bar'], $exception->getMissingNames());
     }
 
     public function testItRejectsInvalidMissingVariableNames(): void
     {
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage(
-            'Missing variable name must be a string; int received.'
-        );
+        $this->expectExceptionMessage('Missing variable name must be a string; int received.');
 
-        new VariableCanNotBeExtracted(
-            'Extraction failed.',
-            missingVariables: [123],
-        );
+        VariableCanNotBeExtracted::dueToMissingVariables('this/will/not/work', Template::new('{foo}/bar'), ['foo', 42]);
     }
 
     public function testDueToMissingVariables(): void
@@ -98,23 +68,11 @@ final class VariableCanNotBeExtractedTest extends TestCase
             'bar' => new ExtractedValue(null),
         ]);
 
-        $exception = VariableCanNotBeExtracted::dueToMissingVariables(
-            '/value/',
-            $template,
-            $result,
-        );
+        $exception = VariableCanNotBeExtracted::dueToMissingVariables('/value/', $template, $result);
 
-        self::assertSame(
-            'The value "/value/" does not provide all variables defined by the expression "/{foo}/{bar}"; Missing: "bar".',
-            $exception->getMessage(),
-        );
-        self::assertSame(
-            [ExtractionErrorReason::MissingVariables],
-            $exception->getReasons(),
-        );
-        self::assertSame(
-            ['bar'],
-            $exception->getMissingNames(),
-        );
+        self::assertSame('The value "/value/" does not provide all the variables defined by the template "/{foo}/{bar}"; Missing: "bar".', $exception->getMessage());
+        self::assertSame([ExtractionErrorReason::MissingVariables], $exception->getReasons());
+        self::assertSame(['bar'], $exception->getMissingNames());
+        self::assertSame(['foo', 'bar'], $exception->getNames());
     }
 }

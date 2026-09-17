@@ -15,54 +15,108 @@ namespace League\Uri\UriTemplate;
 
 use Exception;
 use League\Uri\Contracts\UriException;
+use Throwable;
 use TypeError;
 
 use function array_values;
 use function get_debug_type;
 use function implode;
+use function is_string;
 
 class VariableCanNotBeExtracted extends Exception implements UriException
 {
+    /** @var list<string> */
+    protected array $names = [];
     /** @var list<string> */
     protected array $missingNames = [];
     /** @var list<ExtractionErrorReason> */
     protected array $reasons = [];
 
-    public function __construct(string $message, array $reasons = [], array $missingVariables = [])
-    {
-        parent::__construct($message);
+    protected function __construct(
+        string $message,
+        array $reasons,
+        array $names = [],
+        array $missingNames = [],
+        ?Throwable $previous = null,
+    ) {
+        parent::__construct($message, previous: $previous);
 
-        $r = [];
-        foreach ($reasons as $reason) {
-            $reason instanceof ExtractionErrorReason || throw new TypeError('An extraction error value must be an '.ExtractionErrorReason::class.'; '.get_debug_type($reason).' received.');
-            $r[$reason->name] = $reason;
-        }
-
-        $m = [];
-        foreach ($missingVariables as $missingVariable) {
-            is_string($missingVariable) || throw new TypeError('Missing variable name must be a string; '.get_debug_type($missingVariable).' received.');
-            $m[$missingVariable] = $missingVariable;
-        }
-
-        $this->reasons = array_values($r);
-        $this->missingNames = array_values($m);
-    }
-
-    public static function dueToMissingVariables(string $input, Template $template, ExtractionResult $result): self
-    {
-        return new self(
-            'The value "'.$input.'" does not provide all variables defined by the expression "'.$template->value.'"; Missing: "'.implode('", "', $result->missingNames()).'".',
-            [ExtractionErrorReason::MissingVariables],
-            $result->missingNames()
-        );
+        $this->reasons = self::uniqueReasons($reasons);
+        $this->missingNames = self::uniqueNames($missingNames, 'Missing variable name');
+        $this->names = self::uniqueNames($names, 'Expected variable name');
     }
 
     /**
      * @return list<ExtractionErrorReason>
      */
-    public function getReasons(): array
+    private static function uniqueReasons(iterable $reasons): array
     {
-        return $this->reasons;
+        $unique = [];
+        foreach ($reasons as $reason) {
+            $reason instanceof ExtractionErrorReason || throw new TypeError('An extraction error value must be an '.ExtractionErrorReason::class.'; '.get_debug_type($reason).' received.');
+            $unique[$reason->name] = $reason;
+        }
+
+        return array_values($unique);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function uniqueNames(iterable $names, string $message): array
+    {
+        $unique = [];
+        foreach ($names as $name) {
+            is_string($name) || throw new TypeError($message.' must be a string; '.get_debug_type($name).' received.');
+            $unique[$name] = $name;
+        }
+
+        return array_values($unique);
+    }
+
+    public static function dueTo(string $message, ExtractionErrorReason ...$reasons): self
+    {
+        return new self($message, array_values($reasons));
+    }
+
+    public static function dueToMissingVariables(string $input, Template $template, ExtractionResult|iterable $missingNames): self
+    {
+        $missingNames = $missingNames instanceof ExtractionResult ? $missingNames->missingNames() : self::uniqueNames($missingNames, 'Missing variable name');
+
+        return new self(
+            message: 'The value "'.$input.'" does not provide all the variables defined by the template "'.$template->value.'"; Missing: "'.implode('", "', $missingNames).'".',
+            reasons: [ExtractionErrorReason::MissingVariables],
+            names: $template->variableNames,
+            missingNames: $missingNames,
+        );
+    }
+
+    public static function dueToExtractionFailure(string $input, Template $template, self $exception): self
+    {
+        return new self(
+            message: 'The value "'.$input.'" could not be completely extracted using the template "'.$template->value.'".',
+            reasons: $exception->getReasons(),
+            names: $template->variableNames,
+            missingNames: $exception->getMissingNames(),
+            previous: $exception,
+        );
+    }
+
+    public static function dueToSuitableCandidateNotFound(string $input, array $reasons, array $missingNames = []): self
+    {
+        return new self(
+            message: 'No suitable candidate was found to satisfy the complete extraction of "'.$input.'".',
+            reasons: $reasons,
+            missingNames: $missingNames,
+        );
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getNames(): array
+    {
+        return $this->names;
     }
 
     /**
@@ -71,5 +125,13 @@ class VariableCanNotBeExtracted extends Exception implements UriException
     public function getMissingNames(): array
     {
         return $this->missingNames;
+    }
+
+    /**
+     * @return list<ExtractionErrorReason>
+     */
+    public function getReasons(): array
+    {
+        return $this->reasons;
     }
 }

@@ -628,6 +628,35 @@ final class TemplateTest extends TestCase
                 'a' => [''],
             ],
         ];
+
+        yield 'extracts a missing query variable from consecutive expressions' => [
+            'template' => Template::new('/api/{version}/users/{id}{?fields}'),
+            'value' => '/api/v1/users/12345',
+            'expected' => [
+                "version" => "v1",
+                "id" => "12345",
+                "fields" => null,
+            ],
+        ];
+
+        yield 'extracts a missing query variable following a literal' => [
+            'template' => Template::new('/api/{version}/users/{id}/{?fields}'),
+            'value' => '/api/v1/users/12345/',
+            'expected' => [
+                'version' => 'v1',
+                'id' => '12345',
+                'fields' => null,
+            ],
+        ];
+
+        yield 'extracts consecutive path expressions' => [
+            'template' => Template::new('{/foo}{/bar}'),
+            'value' => '/one/two',
+            'expected' => [
+                'foo' => 'one',
+                'bar' => 'two',
+            ],
+        ];
     }
 
     public function test_it_can_match_an_operator_prefixed_expression(): void

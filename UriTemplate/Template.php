@@ -190,7 +190,7 @@ final class Template implements Stringable
         try {
             return $this->extractAll($value);
         } catch (VariableCanNotBeExtracted $exception) {
-            return ExtractionResult::failure($exception);
+            return ExtractionResult::failure($exception, $this);
         }
     }
 
@@ -208,7 +208,11 @@ final class Template implements Stringable
      */
     public function extractOrFail(string $value): ExtractionResult
     {
-        $result = $this->extractAll($value);
+        try {
+            $result = $this->extractAll($value);
+        } catch (VariableCanNotBeExtracted $exception) {
+            throw VariableCanNotBeExtracted::dueToExtractionFailure($value, $this, $exception);
+        }
 
         return [] === $result->missingNames()
             ? $result
@@ -246,7 +250,7 @@ final class Template implements Stringable
         ExtractionResult $previousResult,
     ): ExtractionResult {
         if ($partOffset === count($this->parts)) {
-            $valueOffset === strlen($value) || throw new VariableCanNotBeExtracted('The value contains unmatched content: "'.substr($value, $valueOffset).'".', [ExtractionErrorReason::UnmatchedContent]);
+            $valueOffset === strlen($value) || throw VariableCanNotBeExtracted::dueTo('The value contains unmatched content: "'.substr($value, $valueOffset).'".', ExtractionErrorReason::UnmatchedContent);
 
             return $previousResult;
         }
@@ -278,7 +282,7 @@ final class Template implements Stringable
         /** @var Literal $literal */
         $literal = $this->parts[$partOffset];
 
-        str_starts_with(substr($value, $valueOffset), $literal->encoded) || throw new VariableCanNotBeExtracted('The literal "'.$literal->raw.'" does not match the value at the expected position.', [ExtractionErrorReason::LiteralMismatch]);
+        str_starts_with(substr($value, $valueOffset), $literal->encoded) || throw VariableCanNotBeExtracted::dueTo('The literal "'.$literal->raw.'" does not match the value at the expected position.', ExtractionErrorReason::LiteralMismatch);
 
         return $this->extractParts($value, $partOffset + 1, $valueOffset + strlen($literal->encoded), $previousResult);
     }
@@ -302,6 +306,14 @@ final class Template implements Stringable
     ): ExtractionResult {
         /** @var Expression $expression */
         $expression = $this->parts[$partOffset];
+        $prefix = $expression->operator->first();
+        if ($expression->operator->allowEmpty()
+            && '' !== $prefix
+            && !str_starts_with(substr($value, $valueOffset), $prefix)
+        ) {
+            return $this->extractParts($value, $partOffset + 1, $valueOffset, $previousResult->reconcile($expression->extract('')));
+        }
+
         $expressionOffset = $this->expressionPrefix($expression, $value, $valueOffset);
         if ($partOffset + 1 === count($this->parts)) {
             return $this->extractExpressionRemainder($expression, $value, $expressionOffset, $previousResult);
@@ -343,9 +355,13 @@ final class Template implements Stringable
      * Extracts an expression by trying each possible delimiter position and
      * continues with the remaining template parts until a complete match is found.
      *
-     * When the expression starts with the delimiter, exploded variables are
-     * matched from the last delimiter position to the first to prefer the
-     * longest possible value.
+     * For an exploded expression, candidates are matched from the last delimiter
+     * position to the first to prefer the longest possible value.
+     *
+     * When the next template part is an expression that allows an empty value and
+     * its delimiter is absent, the end of the input is considered as a candidate
+     * boundary for the current expression. This allows consecutive expressions
+     * to be extracted when the following expression is missing.
      *
      * @param int $partOffset The offset of the expression in the template parts.
      * @param int $expressionOffset The offset of the expression value in the input.
@@ -364,9 +380,15 @@ final class Template implements Stringable
         string $delimiter,
         ExtractionResult $previousResult,
     ): ExtractionResult {
-        '' !== $delimiter || throw new VariableCanNotBeExtracted('Unable to determine the delimiter for the expression "'.$expression->value.'".', [ExtractionErrorReason::UndeterminedDelimiter]);
-
+        '' !== $delimiter || throw VariableCanNotBeExtracted::dueTo('Unable to determine the delimiter for the expression "'.$expression->value.'".', ExtractionErrorReason::UndeterminedDelimiter);
         $positions = $this->delimiterPositions($value, $expressionOffset, $delimiter);
+        if ([] === $positions) {
+            $nextPart = $this->parts[$partOffset + 1] ?? null;
+            if (!$nextPart instanceof Expression || !$nextPart->operator->allowEmpty()) {
+                return $this->extractParts($value, $partOffset + 1, $expressionOffset, $previousResult->reconcile($expression->extract('')));
+            }
+            $positions[] = strlen($value);
+        }
 
         if ($expression->operator->first() === $delimiter) {
             foreach ($expression as $varSpecifier) {
@@ -378,23 +400,19 @@ final class Template implements Stringable
         }
 
         $reasons = [];
-        $missingVariables = [];
+        $missingNames = [];
         foreach ($positions as $position) {
             try {
                 $newVar = $expression->extract(substr($value, $expressionOffset, $position - $expressionOffset));
 
                 return $this->extractParts($value, $partOffset + 1, $position, $previousResult->reconcile($newVar));
             } catch (VariableCanNotBeExtracted $exception) {
-                foreach ($exception->getReasons() as $reason) {
-                    $reasons[] = $reason;
-                }
-                foreach ($exception->getMissingNames() as $missingVariable) {
-                    $missingVariables[] = $missingVariable;
-                }
+                $reasons = [...$reasons, ...$exception->getReasons()];
+                $missingNames = [...$missingNames, ...$exception->getMissingNames()];
             }
         }
 
-        throw new VariableCanNotBeExtracted('No suitable candidate was found to satisfy the complete extraction of "'.$value.'".', $reasons, $missingVariables);
+        throw VariableCanNotBeExtracted::dueToSuitableCandidateNotFound($value, $reasons, $missingNames);
     }
 
     /**
@@ -414,7 +432,7 @@ final class Template implements Stringable
     ): int {
         $prefix = $expression->operator->first();
         if ('' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
-            throw new VariableCanNotBeExtracted('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".', [ExtractionErrorReason::PrefixMismatch]);
+            throw VariableCanNotBeExtracted::dueTo('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".', ExtractionErrorReason::PrefixMismatch);
         }
 
         return $valueOffset + strlen($prefix);

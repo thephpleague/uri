@@ -53,9 +53,7 @@ final class VarSpecifier
         if ('' !== $properties['position']) {
             1 === preg_match('/^(?:0|[1-9]\d*)$/', $properties['position']) || throw new SyntaxError('The variable specification "'.$specification.'" is invalid.');
             $properties['position'] = (int) $properties['position'];
-            if (0 === $properties['position']) {
-                throw new SyntaxError('The variable specification "'.$specification.'" is invalid the position modifier must be greater than 0.');
-            }
+            0 !== $properties['position'] || throw new SyntaxError('The variable specification "'.$specification.'" is invalid the position modifier must be greater than 0.');
 
             $properties['modifier'] = ':';
         }
@@ -64,9 +62,7 @@ final class VarSpecifier
             $properties['position'] = 0;
         }
 
-        if (self::MODIFIER_POSITION_MAX_POSITION <= $properties['position']) {
-            throw new SyntaxError('The variable specification "'.$specification.'" is invalid the position modifier must be lower than 10000.');
-        }
+        self::MODIFIER_POSITION_MAX_POSITION > $properties['position'] || throw new SyntaxError('The variable specification "'.$specification.'" is invalid the position modifier must be lower than 10000.');
 
         return new self($properties['name'], $properties['modifier'], $properties['position']);
     }

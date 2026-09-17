@@ -15,7 +15,6 @@ namespace League\Uri\UriTemplate;
 
 enum ExtractionErrorReason
 {
-    case ExtractionFailed;
     case PrefixMismatch;
     case LiteralMismatch;
     case MalformedValue;
@@ -25,4 +24,7 @@ enum ExtractionErrorReason
     case UndeterminedDelimiter;
     case UnsupportedOperation;
     case MissingVariables;
+    case StringMismatch;
+    case TypeMismatch;
+    case ListMismatch;
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -135,16 +136,14 @@ final class ExtractedValueTest extends TestCase
         ExtractedValue $other,
         ?ExtractedValue $expected,
     ): void {
-        $result = $value->reconcile($other);
-
-        if (null === $expected) {
-            self::assertNull($result);
-
-            return;
+        try {
+            $result = $value->reconcile($other);
+            self::assertNotNull($expected);
+            self::assertTrue($expected->equals($result));
+        } catch (Exception $exception) {
+            self::assertNull($expected);
+            self::assertInstanceOf(VariableCanNotBeExtracted::class, $exception);
         }
-
-        self::assertNotNull($result);
-        self::assertTrue($expected->equals($result));
     }
 
     public static function provideReconciliations(): iterable
@@ -224,6 +223,60 @@ final class ExtractedValueTest extends TestCase
         yield 'array and scalar' => [
             new ExtractedValue(['one']),
             new ExtractedValue('one'),
+            null,
+        ];
+
+        yield 'both missing values' => [
+            new ExtractedValue(null),
+            new ExtractedValue(null),
+            new ExtractedValue(null),
+        ];
+
+        yield 'missing and complete value' => [
+            new ExtractedValue(null),
+            new ExtractedValue('john'),
+            null,
+        ];
+
+        yield 'complete and missing value' => [
+            new ExtractedValue('john'),
+            new ExtractedValue(null),
+            null,
+        ];
+
+        yield 'missing and array value' => [
+            new ExtractedValue(null),
+            new ExtractedValue(['one', 'two']),
+            null,
+        ];
+
+        yield 'array and missing value' => [
+            new ExtractedValue(['one', 'two']),
+            new ExtractedValue(null),
+            null,
+        ];
+
+        yield 'same arrays in different order' => [
+            new ExtractedValue(['one', 'two']),
+            new ExtractedValue(['two', 'one']),
+            null,
+        ];
+
+        yield 'array is a subset of another array' => [
+            new ExtractedValue(['one']),
+            new ExtractedValue(['one', 'two']),
+            null,
+        ];
+
+        yield 'array contains an extra value' => [
+            new ExtractedValue(['one', 'two']),
+            new ExtractedValue(['one']),
+            null,
+        ];
+
+        yield 'arrays with different values' => [
+            new ExtractedValue(['one', 'two']),
+            new ExtractedValue(['one', 'three']),
             null,
         ];
     }

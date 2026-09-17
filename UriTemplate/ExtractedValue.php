@@ -20,12 +20,12 @@ final class ExtractedValue
     public readonly bool $isPartial;
 
     /**
-     * @param string|array<string> $value
+     * @param array<string>|string|null $value
      *
      * @throws VariableCanNotBeExtracted
      */
     public function __construct(
-        public readonly null|string|array $value,
+        public readonly array|string|null $value,
         private readonly int $maxLength = -1,
     ) {
         -1 === $maxLength || (is_string($value) && 0 < $maxLength) || throw VariableCanNotBeExtracted::dueTo('A prefix position can only be associated with a string value.', ExtractionErrorReason::UnsupportedOperation);
@@ -47,20 +47,32 @@ final class ExtractedValue
             && $value->value === $this->value;
     }
 
-    public function reconcile(self $other): ?self
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    public function reconcile(self $other): self
     {
-        if ($this->maxLength === $other->maxLength) {
-            return $this->value === $other->value ? $this : null;
+        if ($this->equals($other)) {
+            return $this;
         }
 
-        $result = -1 === $this->maxLength || (-1 !== $other->maxLength && $this->maxLength > $other->maxLength) ? $this : $other;
-        $prefix = $result === $this ? $other : $this;
+        $thisValue = $this->value;
+        $otherValue = $other->value;
+        (!is_array($thisValue) && !is_array($otherValue)) || throw VariableCanNotBeExtracted::dueTo('The extracted lists contain different data.', ExtractionErrorReason::ListMismatch);
+        (is_string($thisValue) && is_string($otherValue)) || throw VariableCanNotBeExtracted::dueTo('The extracted values have different types.', ExtractionErrorReason::TypeMismatch);
+        $this->maxLength !== $other->maxLength || throw VariableCanNotBeExtracted::dueTo('The extracted values are different.', ExtractionErrorReason::StringMismatch);
 
-        return match (true) {
-            !is_string($prefix->value),
-            !is_string($result->value),
-            !str_starts_with($result->value, $prefix->value) => null,
-            default => $result,
-        };
+        $result = $other;
+        $resultValue = $otherValue;
+        $prefixValue = $thisValue;
+        if (-1 === $this->maxLength || (-1 !== $other->maxLength && $this->maxLength > $other->maxLength)) {
+            $result = $this;
+            $resultValue = $thisValue;
+            $prefixValue = $otherValue;
+        }
+
+        return str_starts_with($resultValue, $prefixValue)
+            ? $result
+            : throw VariableCanNotBeExtracted::dueTo('The extracted value does not start with the other extracted value.', ExtractionErrorReason::StringMismatch);
     }
 }

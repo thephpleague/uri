@@ -31,14 +31,14 @@ final class VariableCanNotBeExtractedTest extends TestCase
     {
         $exception = VariableCanNotBeExtracted::dueTo(
             'Extraction failed.',
-            ExtractionErrorReason::ReconciliationFailed,
+            ExtractionErrorReason::StringMismatch,
             ExtractionErrorReason::PrefixLengthExceeded,
-            ExtractionErrorReason::ReconciliationFailed,
+            ExtractionErrorReason::StringMismatch,
         );
 
         self::assertSame(
             [
-                ExtractionErrorReason::ReconciliationFailed,
+                ExtractionErrorReason::StringMismatch,
                 ExtractionErrorReason::PrefixLengthExceeded,
             ],
             $exception->getReasons(),

@@ -633,9 +633,9 @@ final class TemplateTest extends TestCase
             'template' => Template::new('/api/{version}/users/{id}{?fields}'),
             'value' => '/api/v1/users/12345',
             'expected' => [
-                "version" => "v1",
-                "id" => "12345",
-                "fields" => null,
+                'version' => 'v1',
+                'id' => '12345',
+                'fields' => null,
             ],
         ];
 
@@ -656,6 +656,28 @@ final class TemplateTest extends TestCase
                 'foo' => 'one',
                 'bar' => 'two',
             ],
+        ];
+
+        yield 'extracts the same variable from different expression types (1)' => [
+            'template' => Template::new('{count*}|{/count*}|{?count*}|{&count*}'),
+            'value' => 'one,two,three%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three',
+            'expected' => [
+                'count' => ['one', 'two', 'three'],
+            ],
+        ];
+
+        yield 'extracts the same variable from different expression types (2)' => [
+            'template' => Template::new('{count}|{/count}|{?count}|{&count}'),
+            'value' => 'one%2Ctwo%2Cthree%7C/one%2Ctwo%2Cthree%7C?count=one%2Ctwo%2Cthree%7C&count=one%2Ctwo%2Cthree',
+            'expected' => [
+                'count' => 'one,two,three',
+            ],
+        ];
+
+        yield 'unable to reconcile the same variable when list order differs' => [
+            'template' => Template::new('{count*}|{/count*}|{?count*}|{&count*}'),
+            'value' => 'one,three,two%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three',
+            'expected' => [],
         ];
     }
 

@@ -69,7 +69,8 @@ enum Operator: string
     {
         return match ($this) {
             self::Query,
-            self::QueryPair => '#',
+            self::QueryPair,
+            self::ReservedChars => '#',
             self::Fragment => null,
             default => '?#',
         };

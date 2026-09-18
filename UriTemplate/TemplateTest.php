@@ -279,16 +279,16 @@ final class TemplateTest extends TestCase
      */
     #[DataProvider('provideExtractCases')]
     public function testExtract(
-        Template $template,
+        string $template,
         string $value,
         array $expected,
     ): void {
-        self::assertSame($expected, $template->extract($value)->variables());
+        self::assertSame($expected, Template::new($template)->extract($value)->variables());
     }
 
     /**
      * @return iterable<non-empty-string, array{
-     *     template: Template,
+     *     template: string,
      *     value: string,
      *     expected: array<string, string|array<string|null>|null>
      * }>
@@ -296,19 +296,19 @@ final class TemplateTest extends TestCase
     public static function provideExtractCases(): iterable
     {
         yield 'literal and expression' => [
-            'template' => Template::new('/users/{id}'),
+            'template' => '/users/{id}',
             'value' => '/users/42',
             'expected' => ['id' => '42'],
         ];
 
         yield 'expression between literals' => [
-            'template' => Template::new('/users/{id}/profile'),
+            'template' => '/users/{id}/profile',
             'value' => '/users/42/profile',
             'expected' => ['id' => '42'],
         ];
 
         yield 'multiple expressions' => [
-            'template' => Template::new('/users/{id}/posts/{post}'),
+            'template' => '/users/{id}/posts/{post}',
             'value' => '/users/42/posts/123',
             'expected' => [
                 'id' => '42',
@@ -317,19 +317,19 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'same variable repeated with same value' => [
-            'template' => Template::new('/{id}/{id}'),
+            'template' => '/{id}/{id}',
             'value' => '/42/42',
             'expected' => ['id' => '42'],
         ];
 
         yield 'same variable repeated with different value' => [
-            'template' => Template::new('/{id}/{id}'),
+            'template' => '/{id}/{id}',
             'value' => '/42/43',
             'expected' => [],
         ];
 
         yield 'expression value contains following literal' => [
-            'template' => Template::new('/{value}/end'),
+            'template' => '/{value}/end',
             'value' => '/foo/end/bar/end',
             'expected' => [
                 'value' => 'foo/end/bar',
@@ -337,25 +337,25 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'adjacent expressions cannot be extracted' => [
-            'template' => Template::new('/{foo}{bar}'),
+            'template' => '/{foo}{bar}',
             'value' => '/onetwo',
             'expected' => [],
         ];
 
         yield 'expression with prefix modifier' => [
-            'template' => Template::new('/{id:3}/profile'),
+            'template' => '/{id:3}/profile',
             'value' => '/123/profile',
             'expected' => ['id' => '123'],
         ];
 
         yield 'exploded expression followed by literal' => [
-            'template' => Template::new('{/tags*}/end'),
+            'template' => '{/tags*}/end',
             'value' => '/one/two/three/end',
             'expected' => ['tags' => ['one', 'two', 'three']],
         ];
 
         yield 'query variables' => [
-            'template' => Template::new('{?foo,bar}'),
+            'template' => '{?foo,bar}',
             'value' => '?foo=one&bar=two',
             'expected' => [
                 'foo' => 'one',
@@ -364,7 +364,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'path parameter variable' => [
-            'template' => Template::new('{;foo}'),
+            'template' => '{;foo}',
             'value' => ';foo=one',
             'expected' => [
                 'foo' => 'one',
@@ -372,7 +372,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'fragment expression' => [
-            'template' => Template::new('{#fragment}'),
+            'template' => '{#fragment}',
             'value' => '#section',
             'expected' => [
                 'fragment' => 'section',
@@ -380,7 +380,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'label expression' => [
-            'template' => Template::new('{.name}'),
+            'template' => '{.name}',
             'value' => '.john',
             'expected' => [
                 'name' => 'john',
@@ -388,7 +388,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'prefix modifier' => [
-            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'template' => '/hotels/{hotel:4}/bookings/{booking}',
             'value' => '/hotels/Ritz/bookings/42',
             'expected' => [
                 'hotel' => 'Ritz',
@@ -397,19 +397,19 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'prefix modifier with longer value' => [
-            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'template' => '/hotels/{hotel:4}/bookings/{booking}',
             'value' => '/hotels/Ritz-Carlton/bookings/42',
             'expected' => [],
         ];
 
         yield 'prefix modifier counts decoded characters' => [
-            'template' => Template::new('/hotels/{hotel:4}/bookings/{booking}'),
+            'template' => '/hotels/{hotel:4}/bookings/{booking}',
             'value' => '/hotels/Rest%20%26%20Relax/bookings/42',
             'expected' => [],
         ];
 
         yield 'resolves ambiguous expression' => [
-            'template' => Template::new('https://{host}{/segments*}/{file}{.extensions*}'),
+            'template' => 'https://{host}{/segments*}/{file}{.extensions*}',
             'value' => 'https://www.host.com/path/to/a/file.x.y',
             'expected' => [
                 'host' => 'www.host.com',
@@ -420,7 +420,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'resolves an exploded expression followed by its prefix delimiter' => [
-            'template' => Template::new('{/segments*}/{file}'),
+            'template' => '{/segments*}/{file}',
             'value' => '/path/to/file',
             'expected' => [
                 'segments' => ['path', 'to'],
@@ -429,7 +429,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'resolves an expression followed by a prefixed expression' => [
-            'template' => Template::new('/{file}{.extensions*}'),
+            'template' => '/{file}{.extensions*}',
             'value' => '/file.tar.gz',
             'expected' => [
                 'file' => 'file',
@@ -438,7 +438,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'backtracks when a valid extraction prevents the remaining template from matching' => [
-            'template' => Template::new('{/segments*}/{file}'),
+            'template' => '{/segments*}/{file}',
             'value' => '/path/to/file',
             'expected' => [
                 'segments' => ['path', 'to'],
@@ -447,19 +447,19 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'does not consume a fragment after a query expression' => [
-            'template' => Template::new('/{term:1}/{term}{?a,b}'),
+            'template' => '/{term:1}/{term}{?a,b}',
             'value' => '/t/thomas?a=0&b=1#fragment',
             'expected' => [],
         ];
 
         yield 'does not consume a query or fragment after a path expression' => [
-            'template' => Template::new('/{segments*}'),
+            'template' => '/{segments*}',
             'value' => '/path/to/file?foo=bar#fragment',
             'expected' => [],
         ];
 
         yield 'extracts a query expression up to the fragment boundary' => [
-            'template' => Template::new('/{term:1}/{term}{?a,b}'),
+            'template' => '/{term:1}/{term}{?a,b}',
             'value' => '/t/thomas?a=0&b=1',
             'expected' => [
                 'term' => 'thomas',
@@ -469,7 +469,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'matches a fragment explicitly following a query expression' => [
-            'template' => Template::new('/{term:1}/{term}{?a,b}#fragment'),
+            'template' => '/{term:1}/{term}{?a,b}#fragment',
             'value' => '/t/thomas?a=0&b=1#fragment',
             'expected' => [
                 'term' => 'thomas',
@@ -479,19 +479,19 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'does not consume a query after a path expression' => [
-            'template' => Template::new('/{segments*}'),
+            'template' => '/{segments*}',
             'value' => '/path/to/file?foo=bar',
             'expected' => [],
         ];
 
         yield 'does not consume a fragment after a path expression' => [
-            'template' => Template::new('/{segments*}'),
+            'template' => '/{segments*}',
             'value' => '/path/to/file#fragment',
             'expected' => [],
         ];
 
         yield 'matches a fragment expression following a query expression' => [
-            'template' => Template::new('/{term:1}/{term}{?a,b}{#fragment}'),
+            'template' => '/{term:1}/{term}{?a,b}{#fragment}',
             'value' => '/t/thomas?a=0&b=1#section',
             'expected' => [
                 'term' => 'thomas',
@@ -502,13 +502,13 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'does not consume a fragment after an exploded query expression' => [
-            'template' => Template::new('{?foo*}'),
+            'template' => '{?foo*}',
             'value' => '?foo=a&foo=b#fragment',
             'expected' => [],
         ];
 
         yield 'extracts an empty fragment' => [
-            'template' => Template::new('{#fragment}'),
+            'template' => '{#fragment}',
             'value' => '#',
             'expected' => [
                 'fragment' => '',
@@ -516,7 +516,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts an empty query value' => [
-            'template' => Template::new('{?foo}'),
+            'template' => '{?foo}',
             'value' => '?foo=',
             'expected' => [
                 'foo' => '',
@@ -524,7 +524,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts a bare query variable as an empty value' => [
-            'template' => Template::new('{?foo}'),
+            'template' => '{?foo}',
             'value' => '?foo',
             'expected' => [
                 'foo' => '',
@@ -532,19 +532,19 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'does not consume a fragment after a path expression followed by a literal' => [
-            'template' => Template::new('/{segments*}/end'),
+            'template' => '/{segments*}/end',
             'value' => '/path/to/end#fragment',
             'expected' => [],
         ];
 
         yield 'does not consume a query after a path parameter expression' => [
-            'template' => Template::new('/{;foo}'),
+            'template' => '/{;foo}',
             'value' => '/;foo=bar?baz=qux',
             'expected' => [],
         ];
 
         yield 'extracts a single query variable' => [
-            'template' => Template::new('{?a}'),
+            'template' => '{?a}',
             'value' => '?a=1',
             'expected' => [
                 'a' => '1',
@@ -552,7 +552,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts query variables in declared order' => [
-            'template' => Template::new('{?a,b}'),
+            'template' => '{?a,b}',
             'value' => '?a=1&b=2',
             'expected' => [
                 'a' => '1',
@@ -561,7 +561,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts query variables regardless of their order' => [
-            'template' => Template::new('{?a,b}'),
+            'template' => '{?a,b}',
             'value' => '?b=2&a=1',
             'expected' => [
                 'a' => '1',
@@ -570,7 +570,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts a query variable when another is missing' => [
-            'template' => Template::new('{?a,b}'),
+            'template' => '{?a,b}',
             'value' => '?b=2',
             'expected' => [
                 'a' => null,
@@ -579,7 +579,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts an empty query' => [
-            'template' => Template::new('{?a,b}'),
+            'template' => '{?a,b}',
             'value' => '?',
             'expected' => [
                 'a' => null,
@@ -588,7 +588,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts a single exploded query variable' => [
-            'template' => Template::new('{?a*}'),
+            'template' => '{?a*}',
             'value' => '?a=1',
             'expected' => [
                 'a' => ['1'],
@@ -596,7 +596,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts repeated values for an exploded query variable' => [
-            'template' => Template::new('{?a*}'),
+            'template' => '{?a*}',
             'value' => '?a=1&a=2',
             'expected' => [
                 'a' => ['1', '2'],
@@ -604,7 +604,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts exploded variables regardless of their order' => [
-            'template' => Template::new('{?a*,b*}'),
+            'template' => '{?a*,b*}',
             'value' => '?b=0&a=1',
             'expected' => [
                 'a' => ['1'],
@@ -613,7 +613,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts repeated exploded values regardless of their order' => [
-            'template' => Template::new('{?a*,b*}'),
+            'template' => '{?a*,b*}',
             'value' => '?b=0&a=1&b=2',
             'expected' => [
                 'a' => ['1'],
@@ -622,7 +622,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts an empty exploded query value' => [
-            'template' => Template::new('{?a*}'),
+            'template' => '{?a*}',
             'value' => '?a=',
             'expected' => [
                 'a' => [''],
@@ -630,7 +630,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts a missing query variable from consecutive expressions' => [
-            'template' => Template::new('/api/{version}/users/{id}{?fields}'),
+            'template' => '/api/{version}/users/{id}{?fields}',
             'value' => '/api/v1/users/12345',
             'expected' => [
                 'version' => 'v1',
@@ -640,7 +640,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts a missing query variable following a literal' => [
-            'template' => Template::new('/api/{version}/users/{id}/{?fields}'),
+            'template' => '/api/{version}/users/{id}/{?fields}',
             'value' => '/api/v1/users/12345/',
             'expected' => [
                 'version' => 'v1',
@@ -650,7 +650,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts consecutive path expressions' => [
-            'template' => Template::new('{/foo}{/bar}'),
+            'template' => '{/foo}{/bar}',
             'value' => '/one/two',
             'expected' => [
                 'foo' => 'one',
@@ -659,7 +659,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts the same variable from different expression types (1)' => [
-            'template' => Template::new('{count*}|{/count*}|{?count*}|{&count*}'),
+            'template' => '{count*}|{/count*}|{?count*}|{&count*}',
             'value' => 'one,two,three%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three',
             'expected' => [
                 'count' => ['one', 'two', 'three'],
@@ -667,7 +667,7 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'extracts the same variable from different expression types (2)' => [
-            'template' => Template::new('{count}|{/count}|{?count}|{&count}'),
+            'template' => '{count}|{/count}|{?count}|{&count}',
             'value' => 'one%2Ctwo%2Cthree%7C/one%2Ctwo%2Cthree%7C?count=one%2Ctwo%2Cthree%7C&count=one%2Ctwo%2Cthree',
             'expected' => [
                 'count' => 'one,two,three',
@@ -675,9 +675,124 @@ final class TemplateTest extends TestCase
         ];
 
         yield 'unable to reconcile the same variable when list order differs' => [
-            'template' => Template::new('{count*}|{/count*}|{?count*}|{&count*}'),
+            'template' => '{count*}|{/count*}|{?count*}|{&count*}',
             'value' => 'one,three,two%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three',
             'expected' => [],
+        ];
+
+        yield 'decodes a percent-encoded query value' => [
+            'template' => '{?value}',
+            'value' => '?value=foo%20bar',
+            'expected' => ['value' => 'foo bar'],
+        ];
+
+        yield 'decodes a percent-encoded query value containing a query delimiter' => [
+            'template' => '{?value}',
+            'value' => '?value=foo%26bar',
+            'expected' => ['value' => 'foo&bar'],
+        ];
+
+        yield 'decodes a percent-encoded query value containing an equals sign' => [
+            'template' => '{?value}',
+            'value' => '?value=foo%3Dbar',
+            'expected' => ['value' => 'foo=bar'],
+        ];
+
+        yield 'decodes a percent-encoded query value containing a fragment delimiter' => [
+            'template' => '{?value}',
+            'value' => '?value=foo%23bar',
+            'expected' => ['value' => 'foo#bar'],
+        ];
+
+        yield 'decodes a percent-encoded path value' => [
+            'template' => '/{value}',
+            'value' => '/foo%20bar',
+            'expected' => ['value' => 'foo bar'],
+        ];
+
+        yield 'decodes a percent-encoded path value containing a slash' => [
+            'template' => '/{value}',
+            'value' => '/foo%2Fbar',
+            'expected' => ['value' => 'foo/bar'],
+        ];
+
+        yield 'does not treat an encoded slash as a path delimiter' => [
+            'template' => '/{first}/{second}',
+            'value' => '/foo%2Fbar/baz',
+            'expected' => [
+                'first' => 'foo/bar',
+                'second' => 'baz',
+            ],
+        ];
+
+        yield 'decodes a percent-encoded label value' => [
+            'template' => '{.value}',
+            'value' => '.foo%20bar',
+            'expected' => ['value' => 'foo bar'],
+        ];
+
+        yield 'decodes a percent-encoded path parameter value' => [
+            'template' => '{;value}',
+            'value' => ';value=foo%20bar',
+            'expected' => ['value' => 'foo bar'],
+        ];
+
+        yield 'decodes a percent-encoded fragment value' => [
+            'template' => '{#value}',
+            'value' => '#foo%20bar',
+            'expected' => ['value' => 'foo bar'],
+        ];
+
+        yield 'decodes a percent-encoded fragment delimiter' => [
+            'template' => '{#value}',
+            'value' => '#foo%23bar',
+            'expected' => ['value' => 'foo#bar'],
+        ];
+
+        yield 'decodes percent-encoded reserved characters in a simple expression' => [
+            'template' => '{value}',
+            'value' => 'foo%3Fbar%26baz',
+            'expected' => ['value' => 'foo?bar&baz'],
+        ];
+
+        yield 'decodes multiple percent-encoded characters' => [
+            'template' => '/{value}',
+            'value' => '/Rest%20%26%20Relax',
+            'expected' => ['value' => 'Rest & Relax'],
+        ];
+
+        yield 'decodes percent-encoded values in exploded path variables' => [
+            'template' => '{/values*}',
+            'value' => '/foo%20bar/baz%2Fqux',
+            'expected' => [
+                'values' => ['foo bar', 'baz/qux'],
+            ],
+        ];
+
+        yield 'decodes percent-encoded values in exploded query variables' => [
+            'template' => '{?values*}',
+            'value' => '?values=foo%20bar&values=baz%26qux',
+            'expected' => [
+                'values' => ['foo bar', 'baz&qux'],
+            ],
+        ];
+
+        yield 'extracts reserved characters from a reserved expression' => [
+            'template' => '{+value}',
+            'value' => 'foo/bar?baz%23qux',
+            'expected' => ['value' => 'foo/bar?baz#qux'],
+        ];
+
+        yield 'decodes percent-encoded characters from a reserved expression' => [
+            'template' => '{+value}',
+            'value' => 'foo%20bar/baz',
+            'expected' => ['value' => 'foo bar/baz'],
+        ];
+
+        yield 'extracts a reserved expression before a literal' => [
+            'template' => '{+value}/end',
+            'value' => 'foo/bar?baz/end',
+            'expected' => ['value' => 'foo/bar?baz'],
         ];
     }
 
@@ -695,10 +810,30 @@ final class TemplateTest extends TestCase
         );
     }
 
-    public function test_extract_or_fail_throws_when_a_repeated_variable_differs(): void
+    public function test_extract_or_fail_throws_on_extraction_error(): void
     {
         $this->expectException(VariableCanNotBeExtracted::class);
 
         Template::new('/{id}/{id}')->extractOrFail('/42/43');
+    }
+
+    public function test_extract_or_fail_throws_on_missing_variable(): void
+    {
+        try {
+            Template::new('/{foo}/{bar}/{?baz}')->extractOrFail('/42/43/');
+            self::fail('Expected '.VariableCanNotBeExtracted::class.' to be thrown.');
+        } catch (VariableCanNotBeExtracted $exception) {
+            self::assertSame(['baz'], $exception->getMissingNames());
+            self::assertContains(ExtractionErrorReason::MissingVariables, $exception->getReasons());
+        }
+    }
+
+    public function test_extract_result_keeps_the_errors_on_failure(): void
+    {
+        $result = Template::new('/{foo}/{bar}/{?baz}')->extract('/42/43');
+
+        self::assertCount(0, $result->missingNames());
+        self::assertContains(ExtractionErrorReason::LiteralMismatch, $result->reasons());
+        self::assertFalse($result->isSuccessful());
     }
 }

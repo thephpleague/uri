@@ -346,6 +346,7 @@ final class Template implements Stringable
     ): ExtractionResult {
         $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
         $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
+
         $merged = $previousResult->reconcile($lastVariables);
 
         return $this->extractParts($value, count($this->parts), $expressionEnd, $merged);

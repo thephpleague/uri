@@ -326,7 +326,6 @@ final class Expression implements IteratorAggregate
             $remaining = count($this->varSpecifiers) - $index - 1;
             $length = '*' === $varSpecifier->modifier ? count($values) - $offset - $remaining : 1;
             $serialized = implode($separator, array_slice($values, $offset, $length));
-
             $extracted = $this->operator->extract($varSpecifier, $serialized);
             $this->assertPrefixLength($varSpecifier, $extracted);
             foreach ($extracted->names() as $name) {

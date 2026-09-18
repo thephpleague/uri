@@ -293,7 +293,7 @@ enum Operator: string
      */
     private static function decode(string $value): string
     {
-        return  rawurldecode($value);
+        return rawurldecode($value);
     }
 
     /**
@@ -372,10 +372,11 @@ enum Operator: string
                 $hasPairs = true;
                 [$key, $qValue] = explode('=', $pValue, 2);
                 $result[self::decode($key)] = self::decode($qValue);
-            } else {
-                $hasValues = true;
-                $result[] = self::decode($pValue);
+                continue;
             }
+
+            $hasValues = true;
+            $result[] = self::decode($pValue);
         }
 
         return ($hasPairs && $hasValues)

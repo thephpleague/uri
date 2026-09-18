@@ -95,7 +95,6 @@ final class Template implements Stringable
             }
 
             $parts[] = Expression::new($expression);
-
             $offset = $position + strlen($found[0][0]);
         }
 
@@ -136,10 +135,8 @@ final class Template implements Stringable
             $variables = new VariableBag($variables);
         }
 
-        $missing = array_filter($this->variableNames, fn (string $name): bool => !isset($variables[$name]));
-        if ([] !== $missing) {
-            throw TemplateCanNotBeExpanded::dueToMissingVariables(...$missing);
-        }
+        $missing = array_filter($this->variableNames, static fn (string $name): bool => !isset($variables[$name]));
+        [] === $missing || throw TemplateCanNotBeExpanded::dueToMissingVariables(...$missing);
 
         return $this->expandAll($variables);
     }
@@ -346,7 +343,6 @@ final class Template implements Stringable
     ): ExtractionResult {
         $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
         $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
-
         $merged = $previousResult->reconcile($lastVariables);
 
         return $this->extractParts($value, count($this->parts), $expressionEnd, $merged);
@@ -426,17 +422,13 @@ final class Template implements Stringable
      *                                   the value at the expected position.
      * @return int The offset immediately after the expression prefix.
      */
-    private function expressionPrefix(
-        Expression $expression,
-        string $value,
-        int $valueOffset,
-    ): int {
+    private function expressionPrefix(Expression $expression, string $value, int $valueOffset): int
+    {
         $prefix = $expression->operator->first();
-        if ('' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
-            throw VariableCanNotBeExtracted::dueTo('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".', ExtractionErrorReason::PrefixMismatch);
-        }
 
-        return $valueOffset + strlen($prefix);
+        return ('' === $prefix || str_starts_with(substr($value, $valueOffset), $prefix))
+            ? $valueOffset + strlen($prefix)
+            : throw VariableCanNotBeExtracted::dueTo('The prefix "'.$prefix.'" does not match the value for the expression "'.$expression->value.'".', ExtractionErrorReason::PrefixMismatch);
     }
 
     /**
@@ -452,11 +444,8 @@ final class Template implements Stringable
      * @return int The offset of the first component delimiter, or the end of the value
      *             when no delimiter is found.
      */
-    private function expressionEnd(
-        Expression $expression,
-        string $value,
-        int $offset,
-    ): int {
+    private function expressionEnd(Expression $expression, string $value, int $offset): int
+    {
         $delimiters = $expression->operator->nextDelimiter();
         if (null === $delimiters) {
             return strlen($value);
@@ -482,11 +471,8 @@ final class Template implements Stringable
      * @throws ValueError If the delimiter is empty.
      * @return list<int> The positions at which the delimiter occurs.
      */
-    private function delimiterPositions(
-        string $value,
-        int $offset,
-        string $delimiter,
-    ): array {
+    private function delimiterPositions(string $value, int $offset, string $delimiter): array
+    {
         '' !== $delimiter || throw new ValueError('The delimiter cannot be empty.');
 
         $positions = [];

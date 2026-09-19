@@ -14,11 +14,12 @@ declare(strict_types=1);
 namespace League\Uri\UriTemplate;
 
 use ArrayAccess;
-use BackedEnum;
 use Countable;
+use DateInvalidTimeZoneException;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
-use Exception;
+use League\Uri\TypeConverter;
 use LogicException;
 use TypeError;
 use UnitEnum;
@@ -27,19 +28,8 @@ use function array_key_exists;
 use function array_map;
 use function array_values;
 use function count;
-use function date_create_immutable_from_format;
-use function date_get_last_errors;
-use function enum_exists;
-use function filter_var;
 use function is_int;
 use function is_string;
-use function str_contains;
-use function trim;
-
-use const FILTER_NULL_ON_FAILURE;
-use const FILTER_VALIDATE_BOOLEAN;
-use const FILTER_VALIDATE_FLOAT;
-use const FILTER_VALIDATE_INT;
 
 /**
  * @implements ArrayAccess<string, null|string|array<string|null>>
@@ -90,71 +80,6 @@ final class ExtractionResult implements ArrayAccess, Countable
     }
 
     /**
-     * Returns true if the extraction is successful.
-     */
-    public function isSuccessful(): bool
-    {
-        return [] === $this->reasons;
-    }
-
-    /**
-     * @return list<ExtractionErrorReason>
-     */
-    public function reasons(): array
-    {
-        return $this->reasons;
-    }
-
-    /**
-     * Tells whether some variables are attached to the result.
-     */
-    public function isEmpty(): bool
-    {
-        return [] === $this->variables;
-    }
-
-    /**
-     * Returns the number of found variables.
-     */
-    public function count(): int
-    {
-        return count($this->variables);
-    }
-
-    /**
-     * Returns the list of all variable names.
-     *
-     * @return list<string>
-     */
-    public function names(): array
-    {
-        return $this->names;
-    }
-
-    /**
-     * Returns the list of variable names missing from the extraction.
-     *
-     * @return list<string>
-     */
-    public function missingNames(): array
-    {
-        return $this->missingNames;
-    }
-
-    /**
-     * @return array<string, array<string>|string|null>
-     */
-    public function variables(): array
-    {
-        return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
-    }
-
-    public function fetch(string $variableName): ?ExtractedValue
-    {
-        return $this->variables[$variableName] ?? null;
-    }
-
-    /**
      * @throws VariableCanNotBeExtracted
      */
     public function reconcile(self $other): self
@@ -179,90 +104,56 @@ final class ExtractionResult implements ArrayAccess, Countable
         return self::success($result);
     }
 
-    public function string(int|string $name, ?string $default = null): ?string
+    /**
+     * Returns true if the extraction is successful.
+     */
+    public function isSuccessful(): bool
     {
-        $value = $this->fetch((string) $name)?->value;
-
-        return is_string($value) ? $value : $default;
-    }
-
-    public function integer(int|string $name, ?int $default = null): ?int
-    {
-        $value = $this->fetch((string) $name)?->value;
-
-        return (is_string($value) && false !== ($res = filter_var($value, FILTER_VALIDATE_INT))) ? $res : $default;
-    }
-
-    public function float(int|string $name, ?float $default = null): ?float
-    {
-        $value = $this->fetch((string) $name)?->value;
-
-        return (is_string($value) && false !== ($res = filter_var($value, FILTER_VALIDATE_FLOAT))) ? $res : $default;
-    }
-
-    public function boolean(int|string $name, ?bool $default = null): ?bool
-    {
-        $value = $this->fetch((string) $name)?->value;
-        if (!is_string($value)) {
-            return $default;
-        }
-
-        $bool = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-
-        return null !== $bool ? $bool : $default;
+        return [] === $this->reasons;
     }
 
     /**
-     * @param class-string<UnitEnum> $enumClass
+     * @return list<ExtractionErrorReason>
      */
-    public function enum(int|string $name, string $enumClass): ?UnitEnum
+    public function reasons(): array
     {
-        $value = $this->fetch((string) $name)?->value;
-        if (!is_string($value) || !enum_exists($enumClass)) {
-            return null;
-        }
-
-        $intValue = $this->integer($name);
-        foreach ($enumClass::cases() as $case) {
-            if ($case instanceof BackedEnum) {
-                if ($case->value !== $value && $case->value !== $intValue) {
-                    continue;
-                }
-
-                return $case;
-            }
-
-            if ($case->name === $value) {
-                return $case;
-            }
-        }
-
-        return null;
+        return $this->reasons;
     }
 
     /**
-     * @param non-empty-string $format
+     * Returns the list of all variable names.
+     *
+     * @return list<string>
      */
-    public function date(int|string $name, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
+    public function names(): array
     {
-        $value = $this->fetch((string) $name)?->value;
-        if (!is_string($value) || str_contains($value, "\0") || '' === ($format = trim($format))) {
-            return null;
-        }
+        return $this->names;
+    }
 
-        if (!$timezone instanceof DateTimeZone) {
-            try {
-                $timezone = new DateTimeZone($timezone ?? 'UTC');
-            } catch (Exception) {
-                return null;
-            }
-        }
+    /**
+     * Returns the list of variable names missing from the extraction.
+     *
+     * @return list<string>
+     */
+    public function missingNames(): array
+    {
+        return $this->missingNames;
+    }
 
-        $date = date_create_immutable_from_format($format, $value, $timezone);
-        $errors = date_get_last_errors();
+    /**
+     * Tells whether some variables are attached to the result.
+     */
+    public function isEmpty(): bool
+    {
+        return [] === $this->variables;
+    }
 
-        return false !== $date
-            && (false === $errors || (0 === $errors['error_count'] && 0 === $errors['warning_count'])) ? $date : null;
+    /**
+     * Returns the number of found variables.
+     */
+    public function count(): int
+    {
+        return count($this->variables);
     }
 
     /**
@@ -289,5 +180,107 @@ final class ExtractionResult implements ArrayAccess, Countable
     public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new LogicException(self::class.' is read-only.');
+    }
+
+    /**
+     * @return array<string, array<string>|string|null>
+     */
+    public function variables(): array
+    {
+        return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
+    }
+
+    public function fetch(string $variableName): ?ExtractedValue
+    {
+        return $this->variables[$variableName] ?? null;
+    }
+
+    public function string(int|string $name, ?string $default = null): ?string
+    {
+        return TypeConverter::toString($this->fetch((string) $name)?->value) ?? $default;
+    }
+
+    public function strings(int|string $name, ?string $default = null): array
+    {
+        return TypeConverter::toStrings($this->fetch((string) $name)?->value, $default);
+    }
+
+    public function integer(int|string $name, ?int $default = null): ?int
+    {
+        return TypeConverter::toInteger($this->fetch((string) $name)?->value) ?? $default;
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function integers(int|string $name, ?int $default = null): array
+    {
+        return TypeConverter::toIntegers($this->fetch((string) $name)?->value, $default);
+    }
+
+    public function float(int|string $name, ?float $default = null): ?float
+    {
+        return TypeConverter::toFloat($this->fetch((string) $name)?->value) ?? $default;
+    }
+
+    /**
+     * @return array<float>
+     */
+    public function floats(int|string $name, ?float $default = null): array
+    {
+        return TypeConverter::toFloats($this->fetch((string) $name)?->value, $default);
+    }
+
+    public function boolean(int|string $name, ?bool $default = null): ?bool
+    {
+        return TypeConverter::toBoolean($this->fetch((string) $name)?->value) ?? $default;
+    }
+
+    /**
+     * @return array<bool>
+     */
+    public function booleans(int|string $name, ?bool $default = null): array
+    {
+        return TypeConverter::toBooleans($this->fetch((string) $name)?->value, $default);
+    }
+
+    /**
+     * @param class-string<UnitEnum> $enumClass
+     */
+    public function enum(int|string $name, string $enumClass): ?UnitEnum
+    {
+        return TypeConverter::toEnum($this->fetch((string) $name)?->value, $enumClass);
+    }
+
+    /**
+     * @param class-string<UnitEnum> $enumClass
+     *
+     * @return array<UnitEnum>
+     */
+    public function enums(int|string $name, string $enumClass, ?UnitEnum $default = null): array
+    {
+        return TypeConverter::toEnums($this->fetch((string) $name)?->value, $enumClass, $default);
+    }
+
+    /**
+     * @param non-empty-string $format
+     *
+     * @throws DateInvalidTimeZoneException
+     */
+    public function date(int|string $name, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
+    {
+        return TypeConverter::toDateTimeImmutable($this->fetch((string) $name)?->value, $format, $timezone);
+    }
+
+    /**
+     * @param non-empty-string $format
+     *
+     * @throws DateInvalidTimeZoneException
+     *
+     * @return array<DateTimeImmutable>
+     */
+    public function dates(int|string $name, string $format, DateTimeZone|string|null $timezone = null, ?DateTimeInterface $default = null): array
+    {
+        return TypeConverter::toDateTimeImmutables($this->fetch((string) $name)?->value, $format, $timezone, $default);
     }
 }

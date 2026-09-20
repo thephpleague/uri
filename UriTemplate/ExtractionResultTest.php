@@ -180,4 +180,14 @@ final class ExtractionResultTest extends TestCase
 
         $result['foobar'] = 'baz';
     }
+
+    #[Test]
+    public function it_reject_unsetting_variables_using_array_notation(): void
+    {
+        $result = ExtractionResult::success(['forty-two' => new ExtractedValue('john')]);
+
+        $this->expectException(LogicException::class);
+
+        unset($result['forty-two']);
+    }
 }

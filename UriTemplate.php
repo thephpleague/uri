@@ -287,7 +287,7 @@ final class UriTemplate implements Stringable
      */
     public function extract(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): ExtractionResult
     {
-        return $this->template->extract(self::uriString($uri));
+        return $this->template->extract($uri);
     }
 
     /**
@@ -295,7 +295,7 @@ final class UriTemplate implements Stringable
      */
     public function extractOrFail(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): ExtractionResult
     {
-        return $this->template->extractOrFail(self::uriString($uri));
+        return $this->template->extractOrFail($uri);
     }
 
     /**
@@ -303,17 +303,7 @@ final class UriTemplate implements Stringable
      */
     public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): bool
     {
-        return $this->template->match(self::uriString($uri));
-    }
-
-    private static function uriString(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): string
-    {
-        return match (true) {
-            $uri instanceof Rfc3986Uri => $uri->toRawString(),
-            $uri instanceof WhatWgUrl => $uri->toUnicodeString(),
-            $uri instanceof BackedEnum => (string) $uri->value,
-            default => (string) $uri,
-        };
+        return $this->template->match($uri);
     }
 
     /**

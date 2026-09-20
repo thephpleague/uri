@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [next](https://github.com/thephpleague/uri/compare/7.8.1...main) - TBD
+
+### Added
+
+- `UriTemplate` extraction feature
+
+### Fixed
+
+- None
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.8.1](https://github.com/thephpleague/uri/compare/7.8.0...7.8.1) - 2026-03-16
 
 ### Added

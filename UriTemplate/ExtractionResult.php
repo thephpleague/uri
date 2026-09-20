@@ -15,10 +15,10 @@ namespace League\Uri\UriTemplate;
 
 use ArrayAccess;
 use Countable;
-use DateInvalidTimeZoneException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use League\Uri\TypeConverter;
 use LogicException;
 use TypeError;
@@ -162,7 +162,7 @@ final class ExtractionResult implements ArrayAccess, Countable
     public function offsetGet(mixed $offset): null|string|array
     {
         return is_string($offset) || is_int($offset)
-            ? $this->fetch((string) $offset)?->value
+            ? $this->fetch($offset)?->value
             : throw new TypeError('offset must be a string.');
     }
 
@@ -190,24 +190,24 @@ final class ExtractionResult implements ArrayAccess, Countable
         return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
     }
 
-    public function fetch(string $variableName): ?ExtractedValue
+    public function fetch(string|int $variableName): ?ExtractedValue
     {
         return $this->variables[$variableName] ?? null;
     }
 
     public function string(int|string $name, ?string $default = null): ?string
     {
-        return TypeConverter::toString($this->fetch((string) $name)?->value) ?? $default;
+        return TypeConverter::toString($this->fetch($name)?->value) ?? $default;
     }
 
     public function strings(int|string $name, ?string $default = null): array
     {
-        return TypeConverter::toStrings($this->fetch((string) $name)?->value, $default);
+        return TypeConverter::toStrings($this->fetch($name)?->value, $default);
     }
 
     public function integer(int|string $name, ?int $default = null): ?int
     {
-        return TypeConverter::toInteger($this->fetch((string) $name)?->value) ?? $default;
+        return TypeConverter::toInteger($this->fetch($name)?->value) ?? $default;
     }
 
     /**
@@ -215,12 +215,12 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function integers(int|string $name, ?int $default = null): array
     {
-        return TypeConverter::toIntegers($this->fetch((string) $name)?->value, $default);
+        return TypeConverter::toIntegers($this->fetch($name)?->value, $default);
     }
 
     public function float(int|string $name, ?float $default = null): ?float
     {
-        return TypeConverter::toFloat($this->fetch((string) $name)?->value) ?? $default;
+        return TypeConverter::toFloat($this->fetch($name)?->value) ?? $default;
     }
 
     /**
@@ -228,12 +228,12 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function floats(int|string $name, ?float $default = null): array
     {
-        return TypeConverter::toFloats($this->fetch((string) $name)?->value, $default);
+        return TypeConverter::toFloats($this->fetch($name)?->value, $default);
     }
 
     public function boolean(int|string $name, ?bool $default = null): ?bool
     {
-        return TypeConverter::toBoolean($this->fetch((string) $name)?->value) ?? $default;
+        return TypeConverter::toBoolean($this->fetch($name)?->value) ?? $default;
     }
 
     /**
@@ -241,7 +241,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function booleans(int|string $name, ?bool $default = null): array
     {
-        return TypeConverter::toBooleans($this->fetch((string) $name)?->value, $default);
+        return TypeConverter::toBooleans($this->fetch($name)?->value, $default);
     }
 
     /**
@@ -249,7 +249,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function enum(int|string $name, string $enumClass): ?UnitEnum
     {
-        return TypeConverter::toEnum($this->fetch((string) $name)?->value, $enumClass);
+        return TypeConverter::toEnum($this->fetch($name)?->value, $enumClass);
     }
 
     /**
@@ -259,28 +259,28 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function enums(int|string $name, string $enumClass, ?UnitEnum $default = null): array
     {
-        return TypeConverter::toEnums($this->fetch((string) $name)?->value, $enumClass, $default);
+        return TypeConverter::toEnums($this->fetch($name)?->value, $enumClass, $default);
     }
 
     /**
      * @param non-empty-string $format
      *
-     * @throws DateInvalidTimeZoneException
+     * @throws Exception
      */
     public function date(int|string $name, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
     {
-        return TypeConverter::toDateTimeImmutable($this->fetch((string) $name)?->value, $format, $timezone);
+        return TypeConverter::toDateTimeImmutable($this->fetch($name)?->value, $format, $timezone);
     }
 
     /**
      * @param non-empty-string $format
      *
-     * @throws DateInvalidTimeZoneException
+     * @throws Exception
      *
      * @return array<DateTimeImmutable>
      */
     public function dates(int|string $name, string $format, DateTimeZone|string|null $timezone = null, ?DateTimeInterface $default = null): array
     {
-        return TypeConverter::toDateTimeImmutables($this->fetch((string) $name)?->value, $format, $timezone, $default);
+        return TypeConverter::toDateTimeImmutables($this->fetch($name)?->value, $format, $timezone, $default);
     }
 }

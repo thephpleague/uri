@@ -91,14 +91,14 @@ class VariableCanNotBeExtracted extends Exception implements UriException
         );
     }
 
-    public static function dueToExtractionFailure(string $input, Template $template, self $exception): self
+    public static function dueToExtractionFailure(string $input, Template $template, self $previous): self
     {
         return new self(
-            message: 'The value "'.$input.'" could not be completely extracted using the template "'.$template->value.'".',
-            reasons: $exception->getReasons(),
+            message: 'The value "'.$input.'" could not be completely extracted using the template "'.$template->value.'"',
+            reasons: $previous->getReasons(),
             names: $template->variableNames,
-            missingNames: $exception->getMissingNames(),
-            previous: $exception,
+            missingNames: $previous->getMissingNames(),
+            previous: $previous,
         );
     }
 

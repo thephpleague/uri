@@ -185,7 +185,7 @@ final class TemplateTest extends TestCase
         ];
     }
 
-    public function testExpandOrFailIfAtLeastOneVariableIsMissing(): void
+    public function test_expand_or_fail_if_at_least_one_variable_is_missing(): void
     {
         $this->expectException(TemplateCanNotBeExpanded::class);
 
@@ -798,16 +798,12 @@ final class TemplateTest extends TestCase
 
     public function test_it_can_match_an_operator_prefixed_expression(): void
     {
-        self::assertTrue(
-            Template::new('{/tags*}/end')->match('/one/two/three/end'),
-        );
+        self::assertTrue(Template::new('{/tags*}/end')->match('/one/two/three/end'));
     }
 
     public function test_it_cannot_match_when_a_repeated_variable_differs(): void
     {
-        self::assertFalse(
-            Template::new('/{id}/{id}')->match('/42/43'),
-        );
+        self::assertFalse(Template::new('/{id}/{id}')->match('/42/43'));
     }
 
     public function test_extract_or_fail_throws_on_extraction_error(): void

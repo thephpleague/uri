@@ -17,6 +17,8 @@ use BackedEnum;
 use Deprecated;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url as WhatWgUrl;
 use ValueError;
 
 use function array_filter;
@@ -161,7 +163,7 @@ final class Template implements Stringable
      *
      * @return bool` true`if the value matches the template, `false` otherwise.
      */
-    public function match(string $value): bool
+    public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $value): bool
     {
         try {
             $this->extractOrFail($value);
@@ -182,10 +184,10 @@ final class Template implements Stringable
      *
      * @return ExtractionResult The extraction result.
      */
-    public function extract(string $value): ExtractionResult
+    public function extract(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $value): ExtractionResult
     {
         try {
-            return $this->extractAll($value);
+            return $this->extractAll(self::uriString($value));
         } catch (VariableCanNotBeExtracted $exception) {
             return ExtractionResult::failure($exception, $this);
         }
@@ -203,8 +205,9 @@ final class Template implements Stringable
      *
      * @return ExtractionResult The extracted variables.
      */
-    public function extractOrFail(string $value): ExtractionResult
+    public function extractOrFail(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $value): ExtractionResult
     {
+        $value = self::uriString($value);
         try {
             $result = $this->extractAll($value);
         } catch (VariableCanNotBeExtracted $exception) {
@@ -214,6 +217,16 @@ final class Template implements Stringable
         return [] === $result->missingNames()
             ? $result
             : throw VariableCanNotBeExtracted::dueToMissingVariables($value, $this, $result);
+    }
+
+    private static function uriString(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $uri): string
+    {
+        return match (true) {
+            $uri instanceof Rfc3986Uri => $uri->toRawString(),
+            $uri instanceof WhatWgUrl => $uri->toUnicodeString(),
+            $uri instanceof BackedEnum => (string) $uri->value,
+            default => (string) $uri,
+        };
     }
 
     /**
@@ -252,9 +265,7 @@ final class Template implements Stringable
             return $previousResult;
         }
 
-        $part = $this->parts[$partOffset];
-
-        return $part instanceof Literal
+        return $this->parts[$partOffset] instanceof Literal
             ? $this->extractLiteral($value, $partOffset, $valueOffset, $previousResult)
             : $this->extractExpression($value, $partOffset, $valueOffset, $previousResult);
     }
@@ -304,10 +315,7 @@ final class Template implements Stringable
         /** @var Expression $expression */
         $expression = $this->parts[$partOffset];
         $prefix = $expression->operator->first();
-        if ($expression->operator->allowEmpty()
-            && '' !== $prefix
-            && !str_starts_with(substr($value, $valueOffset), $prefix)
-        ) {
+        if ($expression->operator->allowEmpty() && '' !== $prefix && !str_starts_with(substr($value, $valueOffset), $prefix)) {
             return $this->extractParts($value, $partOffset + 1, $valueOffset, $previousResult->reconcile($expression->extract('')));
         }
 
@@ -317,9 +325,7 @@ final class Template implements Stringable
         }
 
         $nextPart = $this->parts[$partOffset + 1];
-        $delimiter = $nextPart instanceof Literal
-            ? $nextPart->encoded
-            : $nextPart->operator->first();
+        $delimiter = $nextPart instanceof Literal ? $nextPart->encoded : $nextPart->operator->first();
 
         return $this->extractExpressionCandidates($expression, $value, $partOffset, $expressionOffset, $delimiter, $previousResult);
     }
@@ -343,9 +349,8 @@ final class Template implements Stringable
     ): ExtractionResult {
         $expressionEnd = $this->expressionEnd($expression, $value, $expressionOffset);
         $lastVariables = $expression->extract(substr($value, $expressionOffset, $expressionEnd - $expressionOffset));
-        $merged = $previousResult->reconcile($lastVariables);
 
-        return $this->extractParts($value, count($this->parts), $expressionEnd, $merged);
+        return $this->extractParts($value, count($this->parts), $expressionEnd, $previousResult->reconcile($lastVariables));
     }
 
     /**

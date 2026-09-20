@@ -47,7 +47,7 @@ final class TypeConverterTest extends TestCase
         yield 'zero' => [0, '0'];
         yield 'float' => [42.5, '42.5'];
         yield 'boolean true' => [true, '1'];
-        yield 'boolean false' => [false, ''];
+        yield 'boolean false' => [false, '0'];
         yield 'stringable' => [
             new class () implements Stringable {
                 public function __toString(): string
@@ -66,7 +66,7 @@ final class TypeConverterTest extends TestCase
     public function testToStringsReturnsConvertedValues(): void
     {
         self::assertSame(
-            ['foo', '42', '42.5', '1', ''],
+            ['foo', '42', '42.5', '1', '0'],
             TypeConverter::toStrings(['foo', 42, 42.5, true, false]),
         );
     }
@@ -121,6 +121,8 @@ final class TypeConverterTest extends TestCase
         yield 'maximum integer' => [(string) PHP_INT_MAX, PHP_INT_MAX];
         yield 'leading whitespace' => [' 42', 42];
         yield 'backed enum' => [TestIntBackedEnum::FortyTwo, 42];
+        yield 'true' => [true, 1];
+        yield 'false' => [false, 0];
 
         yield 'float' => [42.0, null];
         yield 'decimal' => ['42.0', null];
@@ -202,6 +204,8 @@ final class TypeConverterTest extends TestCase
         yield 'scientific notation' => ['4.2e1', 42.0];
         yield 'leading whitespace' => [' 42.5', 42.5];
         yield 'backed enum' => [TestIntBackedEnum::FortyTwo, 42.0];
+        yield 'true' => [true, 1.0];
+        yield 'false' => [false, 0.0];
 
         yield 'non numeric string' => ['foo', null];
         yield 'empty string' => ['', null];
@@ -723,6 +727,22 @@ final class TypeConverterTest extends TestCase
         $this->expectException(ValueError::class);
 
         TypeConverter::toEnums(['foo'], TestBackedEnum::class, TestBasicUnitEnum::Foo);
+    }
+
+    public function test_it_preserves_date_time_immutable_instances(): void
+    {
+        $dt = new DateTimeImmutable('2025-03-08', new DateTimeZone('Africa/Nairobi'));
+
+        self::assertSame($dt, TypeConverter::toDateTimeImmutable($dt, 'Y-m-d', 'Europe/Brussels'));
+    }
+
+    public function test_it_preserves_date_time_instances_property(): void
+    {
+        $dt = new DateTime('2025-03-08', new DateTimeZone('Africa/Nairobi'));
+        $res = TypeConverter::toDateTimeImmutable($dt, 'Y-m-d', 'Europe/Brussels');
+
+        self::assertEquals($dt, $res);
+        self::assertInstanceOf(DateTimeImmutable::class, $res);
     }
 }
 

@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use ReflectionEnum;
 use Stringable;
 use UnitEnum;
 use ValueError;
@@ -50,8 +51,49 @@ final class TypeConverter
         }
 
         return match (true) {
+            is_bool($value) => true === $value ? '1' : '0',
             is_scalar($value),
             $value instanceof Stringable => (string) $value,
+            default => null,
+        };
+    }
+
+    public static function toInteger(mixed $value): ?int
+    {
+        if (!is_int($value) && !is_float($value)) {
+            $value = self::toString($value);
+        }
+
+        return match (true) {
+            is_int($value) => $value,
+            is_string($value) => false !== ($res = filter_var($value, FILTER_VALIDATE_INT)) ? $res : null,
+            default => null,
+        };
+    }
+
+    public static function toFloat(mixed $value): ?float
+    {
+        if (!is_int($value) && !is_float($value)) {
+            $value = self::toString($value);
+        }
+
+        return match (true) {
+            is_float($value),
+            is_int($value) => (float) $value,
+            is_string($value) => false !== ($res = filter_var($value, FILTER_VALIDATE_FLOAT)) ? $res : null,
+            default => null,
+        };
+    }
+
+    public static function toBoolean(mixed $value): ?bool
+    {
+        if (!is_bool($value)) {
+            $value = self::toString($value);
+        }
+
+        return match (true) {
+            is_bool($value) => $value,
+            is_string($value) => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
             default => null,
         };
     }
@@ -78,19 +120,6 @@ final class TypeConverter
         return $arr;
     }
 
-    public static function toInteger(mixed $value): ?int
-    {
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
-        }
-
-        return match (true) {
-            is_int($value) => $value,
-            !is_string($value) => null,
-            default => false !== ($res = filter_var($value, FILTER_VALIDATE_INT)) ? $res : null,
-        };
-    }
-
     /**
      * @return array<int>
      */
@@ -113,20 +142,6 @@ final class TypeConverter
         return $arr;
     }
 
-    public static function toFloat(mixed $value): ?float
-    {
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
-        }
-
-        return match (true) {
-            is_float($value) => $value,
-            is_int($value) => (float) $value,
-            !is_string($value) => null,
-            default => false !== ($res = filter_var($value, FILTER_VALIDATE_FLOAT)) ? $res : null,
-        };
-    }
-
     /**
      * @return array<float>
      */
@@ -147,21 +162,6 @@ final class TypeConverter
         }
 
         return $arr;
-    }
-
-    public static function toBoolean(mixed $value): ?bool
-    {
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
-        }
-
-        return match (true) {
-            is_bool($value) => $value,
-            1 === $value => true,
-            0 === $value => false,
-            !is_string($value) => null,
-            default => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-        };
     }
 
     /**
@@ -191,19 +191,21 @@ final class TypeConverter
      */
     public static function toEnum(mixed $value, string $enumClass): ?UnitEnum
     {
-        return match (true) {
-            !enum_exists($enumClass) => throw new ValueError($enumClass.' does not exist or could not be found.'),
-            $value instanceof $enumClass => $value,
-            !is_string($value) && !is_int($value) => null,
-            default => self::findEnum($value, $enumClass::cases()),
-        };
+        enum_exists($enumClass) || throw new ValueError($enumClass.' does not exist or could not be found.');
+        /** @var array<UnitEnum> $cases */
+        $cases = $enumClass::cases();
+
+        return (new ReflectionEnum($enumClass))->isBacked()
+            ? self::findBackedEnum($value, $enumClass, $cases) /* @phpstan-ignore-line */
+            : self::findEnum($value, $enumClass, $cases);
     }
 
     /**
-     * @param class-string<UnitEnum> $enumClass
+     * @template T of UnitEnum
      *
-     * @return array<UnitEnum>
-     */
+     * @param class-string<T> $enumClass
+     * @param ?T $default
+    */
     public static function toEnums(mixed $values, string $enumClass, ?UnitEnum $default = null): array
     {
         if (!is_iterable($values)) {
@@ -213,10 +215,14 @@ final class TypeConverter
         enum_exists($enumClass) || throw new ValueError($enumClass.' does not exist or could not be found.');
         null === $default || $default instanceof $enumClass || throw new ValueError('The default value must be an instance of '.$enumClass.'; '.get_debug_type($default).' given.');
 
-        $cases = $enumClass::cases();
         $arr = [];
+        $cases = $enumClass::cases();
+        $createItem = ((new ReflectionEnum($enumClass))->isBacked())
+             ? fn ($item) => self::findBackedEnum($item, $enumClass, $cases) /* @phpstan-ignore-line */
+             : fn ($item) => self::findEnum($item, $enumClass, $cases);
+
         foreach ($values as $index => $value) {
-            $item = self::findEnum($value, $cases) ?? $default;
+            $item = $createItem($value) ?? $default;
             if (null === $item) {
                 return [];
             }
@@ -228,25 +234,65 @@ final class TypeConverter
     }
 
     /**
-     * @param array<UnitEnum> $cases
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enumClass
+     * @param array<T> $cases
+     *
+     * @return ?T
      */
-    private static function findEnum(mixed $value, array $cases): ?UnitEnum
+    private static function findBackedEnum(mixed $value, string $enumClass, array $cases): ?UnitEnum
     {
+        if ($value instanceof $enumClass) {
+            return $value;
+        }
+
+        if ($value instanceof UnitEnum || is_float($value) || is_bool($value)) {
+            return null;
+        }
+
         if (!is_string($value) && !is_int($value)) {
+            $value = self::toString($value);
+        }
+
+        if (null === $value) {
             return null;
         }
 
         $intValue = is_int($value) ? $value : self::toInteger($value);
         $value = (string) $value;
-
-        if ($cases[0] instanceof BackedEnum) {
-            foreach ($cases as $case) {
-                /* @phpstan-ignore-next-line */
-                if ($intValue === $case->value || $value === $case->value) {
-                    return $case;
-                }
+        foreach ($cases as $case) {
+            if ($intValue === $case->value || $value === $case->value) {
+                return $case;
             }
+        }
 
+        return null;
+    }
+
+    /**
+     * @template T of UnitEnum
+     *
+     * @param class-string<T> $enumClass
+     * @param array<T> $cases
+     *
+     * @return ?T
+     */
+    private static function findEnum(mixed $value, string $enumClass, array $cases): ?UnitEnum
+    {
+        if ($value instanceof $enumClass) {
+            return $value;
+        }
+
+        if ($value instanceof UnitEnum || (is_scalar($value) && !is_string($value))) {
+            return null;
+        }
+
+        if (!is_string($value)) {
+            $value = self::toString($value);
+        }
+
+        if (null === $value) {
             return null;
         }
 
@@ -267,7 +313,7 @@ final class TypeConverter
     public static function toDateTimeImmutable(mixed $value, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
     {
         $format = trim($format);
-        '' !== $format || throw new ValueError('The format must be a non-empty string.');
+        '' !== $format || throw new ValueError('The date format must be a non-empty string.');
         $timezone = !$timezone instanceof DateTimeZone ? new DateTimeZone($timezone ?? 'UTC') : $timezone;
 
         return self::createDateTimeImmutable($value, $format, $timezone);
@@ -291,12 +337,12 @@ final class TypeConverter
         }
 
         $format = trim($format);
-        '' !== $format || throw new ValueError('The format must be a non-empty string.');
+        '' !== $format || throw new ValueError('The date format must be a non-empty string.');
         if (!$timezone instanceof DateTimeZone) {
             $timezone = new DateTimeZone($timezone ?? 'UTC');
         }
 
-        if (null !== $default) {
+        if (null !== $default && !$default instanceof DateTimeImmutable) {
             $default = DateTimeImmutable::createFromInterface($default);
         }
 
@@ -318,10 +364,19 @@ final class TypeConverter
      */
     private static function createDateTimeImmutable(mixed $value, string $format, DateTimeZone $timezone): ?DateTimeImmutable
     {
-        if ($value instanceof BackedEnum) {
-            $value = $value->value;
+        if ($value instanceof DateTimeImmutable) {
+            return $value;
         }
 
+        if ($value instanceof DateTimeInterface) {
+            return DateTimeImmutable::createFromInterface($value);
+        }
+
+        if (is_scalar($value) && !is_string($value)) {
+            return null;
+        }
+
+        $value = self::toString($value);
         if (!is_string($value) || str_contains($value, "\0")) {
             return null;
         }

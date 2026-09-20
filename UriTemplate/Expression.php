@@ -317,7 +317,6 @@ final class Expression implements IteratorAggregate
         $values = '' === $value ? [''] : explode($separator, $value);
         $variables = [];
         $offset = 0;
-
         foreach ($this->varSpecifiers as $index => $varSpecifier) {
             if (!isset($values[$offset])) {
                 break;

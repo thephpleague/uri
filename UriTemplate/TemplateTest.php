@@ -794,6 +794,12 @@ final class TemplateTest extends TestCase
             'value' => 'foo/bar?baz/end',
             'expected' => ['value' => 'foo/bar?baz'],
         ];
+
+        yield 'reconciles an exploded variable with a scalar variable' => [
+            'template' => '{/id*}{?id}',
+            'value' => '/person?id=person',
+            'expected' => ['id' => 'person'],
+        ];
     }
 
     public function test_it_can_match_an_operator_prefixed_expression(): void

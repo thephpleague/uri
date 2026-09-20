@@ -362,7 +362,7 @@ enum Operator: string
 
         /** @var non-empty-string $separator */
         $separator = $this->separator();
-        $values = explode($separator, $value) + [1 => ''];
+        $values = explode($separator, $value);
         $hasPairs = false;
         $hasValues = false;
         $result = [];
@@ -379,8 +379,16 @@ enum Operator: string
             $result[] = self::decode($pValue);
         }
 
-        return ($hasPairs && $hasValues)
-            ? ExtractionResult::success()
-            : ExtractionResult::success([$varSpecifier->name => new ExtractedValue($result)]);
+        if ($hasPairs && $hasValues) {
+            return ExtractionResult::success();
+        }
+
+        if (!$hasPairs && 1 === count($result)) {
+            $result = $result[0];
+        }
+
+        return ExtractionResult::success([
+            $varSpecifier->name => new ExtractedValue($result),
+        ]);
     }
 }

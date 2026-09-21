@@ -668,15 +668,23 @@ final class TemplateTest extends TestCase
 
         yield 'extracts the same variable from different expression types (2)' => [
             'template' => '{count}|{/count}|{?count}|{&count}',
-            'value' => 'one%2Ctwo%2Cthree%7C/one%2Ctwo%2Cthree%7C?count=one%2Ctwo%2Cthree%7C&count=one%2Ctwo%2Cthree',
+            'value' => 'one,two,three%7C/one,two,three%7C?count=one,two,three%7C&count=one,two,three',
             'expected' => [
-                'count' => 'one,two,three',
+                'count' => ['one', 'two', 'three'],
+            ],
+        ];
+
+        yield 'extracts the same variable from different expression types (3)' => [
+            'template' => '{count*}|{/count*}|{?count*}|{&count*}|{count}|{/count}|{?count}|{&count}',
+            'value' => 'one,two,three%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three%7Cone,two,three%7C/one,two,three%7C?count=one,two,three%7C&count=one,two,three',
+            'expected' => [
+                'count' => ['one', 'two', 'three'],
             ],
         ];
 
         yield 'unable to reconcile the same variable when list order differs' => [
-            'template' => '{count*}|{/count*}|{?count*}|{&count*}',
-            'value' => 'one,three,two%7C/one/two/three%7C?count=one&count=two&count=three%7C&count=one&count=two&count=three',
+            'template' => '{count*}|{/count*}',
+            'value' => 'one,three,two%7C/one/two/three',
             'expected' => [],
         ];
 
@@ -799,6 +807,18 @@ final class TemplateTest extends TestCase
             'template' => '{/id*}{?id}',
             'value' => '/person?id=person',
             'expected' => ['id' => 'person'],
+        ];
+
+        yield 'extracts exploded named values' => [
+            'template' => '{;count*}',
+            'value' => ';count=one;count=two;count=three',
+            'expected' => ['count' => ['one', 'two', 'three']],
+        ];
+
+        yield 'extracts key-value pairs from a path parameter' => [
+            'template' => '{;keys}',
+            'value' => ';keys=semi,%3B,dot,.,comma,%2C',
+            'expected' => ['keys' => ['semi' => ';', 'dot' => '.', 'comma' => ',']],
         ];
     }
 

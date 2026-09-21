@@ -17,6 +17,7 @@ use League\Uri\Encoder;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 
+use function array_chunk;
 use function array_column;
 use function array_map;
 use function array_pad;
@@ -93,18 +94,22 @@ enum Operator: string
         };
     }
 
-    public function isNamed(): bool
+    public function supportsListValue(): bool
     {
         return match ($this) {
-            self::Query, self::PathParam, self::QueryPair => true,
+            self::None,
+            self::Path,
+            self::PathParam,
+            self::Query,
+            self::QueryPair => true,
             default => false,
         };
     }
 
-    public function isQuery(): bool
+    public function isNamed(): bool
     {
         return match ($this) {
-            self::Query, self::QueryPair => true,
+            self::Query, self::PathParam, self::QueryPair => true,
             default => false,
         };
     }
@@ -283,9 +288,28 @@ enum Operator: string
             if ($name !== $varSpecifier->name) {
                 return ExtractionResult::success();
             }
+
+            // Path parameters can represent a list of key/value pairs without using the
+            // explode-modifier. In that form, the value is encoded as alternating names
+            // and values separated by commas. Split the encoded value before decoding so
+            // that percent-encoded commas (%2C) are preserved as data.
+            if (self::PathParam === $this && str_contains($value, ',')) {
+                $parts = [];
+                foreach (array_chunk(array_pad(explode(',', $value), 2, ''), 2) as [$key, $val]) {
+                    $parts[self::decode($key)] = self::decode($val ?? '');
+                }
+
+                return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($parts, $varSpecifier)]);
+            }
         }
 
-        return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue(self::decode($value), $varSpecifier)]);
+        $list = array_map(
+            static fn (string|null $var): ?string => null !== $var ? self::decode($var) : null,
+            '' !== $value && $this->supportsListValue() ? explode(',', $value) : []
+        );
+        $value = self::decode($value);
+
+        return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($value, $varSpecifier, $list)]);
     }
 
     /**

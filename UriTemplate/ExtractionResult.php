@@ -28,6 +28,7 @@ use function array_key_exists;
 use function array_map;
 use function array_values;
 use function count;
+use function is_array;
 use function is_int;
 use function is_string;
 
@@ -85,6 +86,9 @@ final class ExtractionResult implements ArrayAccess, Countable
     public function reconcile(self $other): self
     {
         $result = $this->variables;
+
+        // A variable declared by one expression must not be declared
+        // in the other expression unless it is compatible
         foreach ($other->variables as $name => $value) {
             if (!array_key_exists($name, $result)) {
                 $result[$name] = $value;
@@ -94,10 +98,15 @@ final class ExtractionResult implements ArrayAccess, Countable
             try {
                 $result[$name] = $result[$name]->reconcile($value);
             } catch (VariableCanNotBeExtracted $exception) {
-                throw VariableCanNotBeExtracted::dueTo(
-                    'The extracted values for variable "'.$name.'" could not be reconciled; '.$exception->getMessage(),
-                    ...$exception->getReasons(),
-                );
+                throw VariableCanNotBeExtracted::dueTo('The extracted values for variable "'.$name.'" could not be reconciled; '.$exception->getMessage(), ...$exception->getReasons());
+            }
+        }
+
+        // A variable declared by one expression must not be consumed as part of
+        // an exploded variable from another expression.
+        foreach ([...$this->missingNames, ...$other->missingNames] as $missingName) {
+            foreach ($result as $name => $value) {
+                !$value->hasKey($missingName) || throw VariableCanNotBeExtracted::dueTo('The variable "'.$missingName.'" was extracted as part of "'.$name.'".', ExtractionErrorReason::VariableMismatch);
             }
         }
 
@@ -187,12 +196,27 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function variables(): array
     {
-        return array_map(static fn (ExtractedValue $val): array|string|null => $val->value, $this->variables);
+        return array_map(
+            static fn (ExtractedValue $val): array|string|null => 1 < count($val->asList) ? $val->asList : $val->value,
+            $this->variables
+        );
     }
 
     public function fetch(string|int $variableName): ?ExtractedValue
     {
         return $this->variables[$variableName] ?? null;
+    }
+
+    public function array(int|string $name): array
+    {
+        $variable = $this->fetch($name);
+
+        return match (true) {
+            null === $variable => [],
+            [] !== $variable->asList => $variable->asList,
+            is_array($variable->value) => $variable->value,
+            default => [],
+        };
     }
 
     public function string(int|string $name, ?string $default = null): ?string
@@ -202,7 +226,7 @@ final class ExtractionResult implements ArrayAccess, Countable
 
     public function strings(int|string $name, ?string $default = null): array
     {
-        return TypeConverter::toStrings($this->fetch($name)?->value, $default);
+        return TypeConverter::toStrings($this->array($name), $default);
     }
 
     public function integer(int|string $name, ?int $default = null): ?int
@@ -215,7 +239,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function integers(int|string $name, ?int $default = null): array
     {
-        return TypeConverter::toIntegers($this->fetch($name)?->value, $default);
+        return TypeConverter::toIntegers($this->array($name), $default);
     }
 
     public function float(int|string $name, ?float $default = null): ?float
@@ -228,7 +252,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function floats(int|string $name, ?float $default = null): array
     {
-        return TypeConverter::toFloats($this->fetch($name)?->value, $default);
+        return TypeConverter::toFloats($this->array($name), $default);
     }
 
     public function boolean(int|string $name, ?bool $default = null): ?bool
@@ -241,7 +265,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function booleans(int|string $name, ?bool $default = null): array
     {
-        return TypeConverter::toBooleans($this->fetch($name)?->value, $default);
+        return TypeConverter::toBooleans($this->array($name), $default);
     }
 
     /**
@@ -259,7 +283,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function enums(int|string $name, string $enumClass, ?UnitEnum $default = null): array
     {
-        return TypeConverter::toEnums($this->fetch($name)?->value, $enumClass, $default);
+        return TypeConverter::toEnums($this->array($name), $enumClass, $default);
     }
 
     /**
@@ -281,6 +305,6 @@ final class ExtractionResult implements ArrayAccess, Countable
      */
     public function dates(int|string $name, string $format, DateTimeZone|string|null $timezone = null, ?DateTimeInterface $default = null): array
     {
-        return TypeConverter::toDateTimeImmutables($this->fetch($name)?->value, $format, $timezone, $default);
+        return TypeConverter::toDateTimeImmutables($this->array($name), $format, $timezone, $default);
     }
 }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use function count;
+use function is_array;
 use function is_string;
 
 final class ExtractedValue
@@ -27,16 +29,21 @@ final class ExtractedValue
     public function __construct(
         public readonly array|string|null $value,
         private readonly int $maxLength = -1,
+        public readonly array $asList = [],
     ) {
         -1 === $maxLength || (is_string($value) && 0 < $maxLength) || throw VariableCanNotBeExtracted::dueTo('A prefix position can only be associated with a string value.', ExtractionErrorReason::UnsupportedOperation);
         $this->isPartial = -1 !== $maxLength;
     }
 
-    public static function fromValue(array|string|null $value, VarSpecifier $varSpecifier): self
-    {
+    public static function fromValue(
+        array|string|null $value,
+        VarSpecifier $varSpecifier,
+        array $asList = [],
+    ): self {
         return new self(
             $value,
             0 === $varSpecifier->position ? -1 : $varSpecifier->position,
+            $asList
         );
     }
 
@@ -44,7 +51,13 @@ final class ExtractedValue
     {
         return $value instanceof self
             && $value->maxLength === $this->maxLength
-            && $value->value === $this->value;
+            && $value->value === $this->value
+            && $value->asList === $this->asList;
+    }
+
+    public function hasKey(string|int $name): bool
+    {
+        return is_array($this->value) && array_key_exists($name, $this->value);
     }
 
     /**
@@ -53,14 +66,28 @@ final class ExtractedValue
     public function reconcile(self $other): self
     {
         if ($this->equals($other)) {
-            return $this;
+            return 1 < count($this->asList) ? new self($this->asList) : $this;
         }
 
         $thisValue = $this->value;
         $otherValue = $other->value;
-        (!is_array($thisValue) && !is_array($otherValue)) || throw VariableCanNotBeExtracted::dueTo('The extracted lists contain different data.', ExtractionErrorReason::ListMismatch);
+        if ([] !== $this->asList && is_array($otherValue) && $this->asList === $otherValue) {
+            return $other;
+        }
+
+        if ([] !== $other->asList && is_array($thisValue) && $other->asList === $thisValue) {
+            return $this;
+        }
+
+        (!is_array($thisValue) || !is_array($otherValue)) || throw VariableCanNotBeExtracted::dueTo('The extracted lists contain different data.', ExtractionErrorReason::ListMismatch);
         (is_string($thisValue) && is_string($otherValue)) || throw VariableCanNotBeExtracted::dueTo('The extracted values have different types.', ExtractionErrorReason::TypeMismatch);
-        $this->maxLength !== $other->maxLength || throw VariableCanNotBeExtracted::dueTo('The extracted values are different.', ExtractionErrorReason::StringMismatch);
+        if ($this->maxLength === $other->maxLength) {
+            ($thisValue === $otherValue) || throw VariableCanNotBeExtracted::dueTo('The extracted values are different.', ExtractionErrorReason::StringMismatch);
+
+            $value = [] === $this->asList ? $other : $this;
+
+            return 1 < count($value->asList) ? new self($value->asList) : $value;
+        }
 
         $result = $other;
         $resultValue = $otherValue;

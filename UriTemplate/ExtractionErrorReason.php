@@ -27,4 +27,5 @@ enum ExtractionErrorReason
     case StringMismatch;
     case TypeMismatch;
     case ListMismatch;
+    case VariableMismatch;
 }

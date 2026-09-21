@@ -18,10 +18,11 @@ use Iterator;
 use IteratorAggregate;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
+use ValueError;
 
 use function array_filter;
 use function array_map;
-use function array_slice;
+use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
@@ -29,6 +30,9 @@ use function explode;
 use function implode;
 use function is_string;
 use function ksort;
+use function strlen;
+use function strpos;
+use function substr;
 
 /**
  * @internal The class exposes the internal representation of an Expression and its usage
@@ -110,55 +114,54 @@ final class Expression implements IteratorAggregate
      */
     public function extract(string $value): ExtractionResult
     {
-        return match (true) {
-            $this->operator->isQuery() => $this->extractQueryValues($value),
-            $this->operator->isNamed() => $this->extractNamedValues($value),
-            default => $this->extractPositionalValues($value),
-        };
+        return $this->operator->isNamed()
+            ? $this->extractNamedValues($value)
+            : $this->extractPositionalValues($value);
     }
 
     /**
-     * Extracts variables from a named query expression value.
+     * Extracts variables from a named expression value.
      *
-     * Query parameters are matched by name regardless of their order. Missing
-     * variables are represented by null values, while exploded variables may
-     * consume multiple query parameters.
+     * Named variables are matched by name rather than by position. Non-exploded
+     * variables may consume at most one component, while an exploded variable
+     * may consume multiple components.
      *
-     * @throws VariableCanNotBeExtracted If the query value cannot be matched
-     *                                   to the variable specifiers.
+     * @throws VariableCanNotBeExtracted If the value cannot be matched to the
+     *                                   variable specifiers.
      */
-    private function extractQueryValues(string $value): ExtractionResult
+    private function extractNamedValues(string $value): ExtractionResult
     {
         /** @var non-empty-string $separator */
         $separator = $this->operator->separator();
         $components = '' === $value ? [] : explode($separator, $value);
-        $matched = $this->matchQueryValues($components);
-
+        $matched = $this->matchNamedValues($components);
         null !== $matched || throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', ExtractionErrorReason::MalformedValue);
 
         $variables = [];
         foreach ($this->varSpecifiers as $offset => $varSpecifier) {
-            $variables[$varSpecifier->name] = $this->operator->extract($varSpecifier, $matched[$offset])->fetch($varSpecifier->name);
+            $extracted = $this->operator->extract($varSpecifier, $matched[$offset]);
+            $this->assertPrefixLength($varSpecifier, $extracted);
+
+            foreach ($extracted->names() as $name) {
+                $variables[$name] = $extracted->fetch($name);
+            }
         }
 
         return ExtractionResult::success($variables);
     }
 
     /**
-     * Matches named query components against the variable specifiers.
+     * Matches named components against the variable specifiers.
      *
-     * Query components are matched by variable name rather than by position,
-     * because query parameter order has no semantic significance. Non-exploded
-     * variables may occur at most once, while exploded variables may consume
-     * multiple components.
+     * Components are matched by variable name rather than by position.
+     * Non-exploded variables may occur at most once, while exploded variables
+     * may consume multiple components.
      *
-     * @param list<string> $components The query components to match.
+     * @param list<string> $components
      *
-     * @return list<string|null>|null One matched value per variable specifier,
-     *                                with `null` for an absent variable, or
-     *                                `null` if the components cannot be matched.
+     * @return list<string|null>|null
      */
-    private function matchQueryValues(array $components): ?array
+    private function matchNamedValues(array $components): ?array
     {
         /** @var array<string, list<string>> $componentsByName */
         $componentsByName = [];
@@ -195,109 +198,29 @@ final class Expression implements IteratorAggregate
             unset($componentsByName[$name]);
         }
 
-        if ([] === $componentsByName) {
-            ksort($matched);
-
-            return array_values($matched);
-        }
-
-        /*
-         * Remaining components have names that are not explicitly declared.
-         * They can only be consumed by an exploded variable.
-         */
-        if (1 !== count($explodedSpecifiers)) {
-            return null;
-        }
-
-        $explodedOffset = array_key_first($explodedSpecifiers);
-        $remaining = [];
-        foreach ($componentsByName as $occurrences) {
-            foreach ($occurrences as $component) {
-                $remaining[] = $component;
+        if ([] !== $componentsByName) {
+            /*
+             * Remaining components have names that are not explicitly declared.
+             * They can only be consumed by a single exploded variable.
+             */
+            if (1 !== count($explodedSpecifiers)) {
+                return null;
             }
+
+            $explodedOffset = array_key_first($explodedSpecifiers);
+            $remaining = [];
+            foreach ($componentsByName as $occurrences) {
+                foreach ($occurrences as $component) {
+                    $remaining[] = $component;
+                }
+            }
+
+            $matched[$explodedOffset] = implode($this->operator->separator(), $remaining);
         }
 
-        $matched[$explodedOffset] = implode($this->operator->separator(), $remaining);
         ksort($matched);
 
         return array_values($matched);
-    }
-
-    /**
-     * Extracts variables from a named expression value.
-     *
-     * Each named variable is matched against the components of the value.
-     * Non-exploded variables consume at most one component, while exploded
-     * variables may consume multiple components and are matched with backtracking
-     * to preserve the variables that follow them.
-     *
-     * An empty value represents an expression for which none of the named
-     * variables is present.
-     *
-     * @throws VariableCanNotBeExtracted If the value cannot be matched to the
-     *                                   variable specifiers or a value exceeds
-     *                                   its variable's prefix length.
-     */
-    private function extractNamedValues(string $value): ExtractionResult
-    {
-        /** @var non-empty-string $separator */
-        $separator = $this->operator->separator();
-        $components = '' === $value ? [] : explode($separator, $value);
-        $matched = $this->matchNamedValues($components, 0, 0);
-
-        null !== $matched || throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" cannot be extracted from the expression "'.$this->value.'".', ExtractionErrorReason::MalformedValue);
-
-        $variables = [];
-        foreach ($this->varSpecifiers as $offset => $varSpecifier) {
-            $extracted = $this->operator->extract($varSpecifier, $matched[$offset]);
-            $this->assertPrefixLength($varSpecifier, $extracted);
-            foreach ($extracted->names() as $name) {
-                $variables[$name] = $extracted->fetch($name);
-            }
-        }
-
-        return ExtractionResult::success($variables);
-    }
-
-    /**
-     * Matches named expression components against the variable specifiers.
-     *
-     * Non-exploded variables consume one matching component or may be absent.
-     * Exploded variables consume one or more matching components and backtrack
-     * through progressively larger matches so that subsequent variables can
-     * consume their own components.
-     *
-     * @param list<string> $components The expression components to match.
-     * @param int $componentOffset The offset of the next component to match.
-     * @param int $varSpecifierOffset The offset of the next variable specifier
-     *                                to match.
-     *
-     * @throws VariableCanNotBeExtracted
-     *
-     * @return list<string|null>|null One matched component sequence per variable
-     *                                specifier, with `null` for an absent variable,
-     *                                or `null` if the components cannot be matched
-     *                                completely.
-     */
-    private function matchNamedValues(
-        array $components,
-        int $componentOffset,
-        int $varSpecifierOffset,
-    ): ?array {
-        $varSpecifierCount = count($this->varSpecifiers);
-        $componentCount = count($components);
-
-        if ($varSpecifierOffset === $varSpecifierCount) {
-            return $componentOffset === $componentCount ? [] : null;
-        }
-
-        if ($componentOffset >= $componentCount) {
-            return null;
-        }
-
-        $matched = $this->matchNamedValues($components, $componentOffset + 1, $varSpecifierOffset + 1);
-
-        return null !== $matched ? [$components[$componentOffset], ...$matched] : null;
     }
 
     /**
@@ -312,29 +235,102 @@ final class Expression implements IteratorAggregate
      */
     private function extractPositionalValues(string $value): ExtractionResult
     {
-        /** @var non-empty-string $separator */
-        $separator = $this->operator->separator();
-        $values = '' === $value ? [''] : explode($separator, $value);
-        $variables = [];
-        $offset = 0;
-        foreach ($this->varSpecifiers as $index => $varSpecifier) {
-            if (!isset($values[$offset])) {
-                break;
-            }
+        return $this->extractPositionalCandidates(
+            value: $value,
+            varSpecifierOffset: 0,
+            valueOffset: 0,
+            previousResult: ExtractionResult::success(),
+        );
+    }
 
-            $remaining = count($this->varSpecifiers) - $index - 1;
-            $length = '*' === $varSpecifier->modifier ? count($values) - $offset - $remaining : 1;
-            $serialized = implode($separator, array_slice($values, $offset, $length));
-            $extracted = $this->operator->extract($varSpecifier, $serialized);
+    private function extractPositionalCandidates(
+        string $value,
+        int $varSpecifierOffset,
+        int $valueOffset,
+        ExtractionResult $previousResult,
+    ): ExtractionResult {
+        $varSpecifier = $this->varSpecifiers[$varSpecifierOffset];
+        $lastVarSpecifier = $varSpecifierOffset + 1 === count($this->varSpecifiers);
+
+        if ($lastVarSpecifier) {
+            $extracted = $this->operator->extract(
+                $varSpecifier,
+                substr($value, $valueOffset),
+            );
             $this->assertPrefixLength($varSpecifier, $extracted);
-            foreach ($extracted->names() as $name) {
-                $variables[$name] = $extracted->fetch($name);
-            }
 
-            $offset += $length;
+            return $previousResult->reconcile($extracted);
         }
 
-        return ExtractionResult::success($variables);
+        /** @var non-empty-string $separator */
+        $separator = $this->operator->separator();
+        $separatorLength = strlen($separator);
+        $positions = $this->delimiterPositions($value, $valueOffset, $separator);
+
+        $candidates = [];
+        foreach ($positions as $position) {
+            $candidates[] = [
+                'end' => $position,
+                'next' => $position + $separatorLength,
+            ];
+        }
+
+        if ('*' === $varSpecifier->modifier) {
+            $candidates = array_reverse($candidates);
+        }
+
+        $reasons = [];
+        $missingNames = [];
+
+        foreach ($candidates as ['end' => $end, 'next' => $next]) {
+            try {
+                $extracted = $this->operator->extract(
+                    $varSpecifier,
+                    substr($value, $valueOffset, $end - $valueOffset),
+                );
+                $this->assertPrefixLength($varSpecifier, $extracted);
+
+                return $this->extractPositionalCandidates(
+                    value: $value,
+                    varSpecifierOffset: $varSpecifierOffset + 1,
+                    valueOffset: $next,
+                    previousResult: $previousResult->reconcile($extracted),
+                );
+            } catch (VariableCanNotBeExtracted $exception) {
+                $reasons = [...$reasons, ...$exception->getReasons()];
+                $missingNames = [...$missingNames, ...$exception->getMissingNames()];
+            }
+        }
+
+        throw VariableCanNotBeExtracted::dueToSuitableCandidateNotFound(
+            $value,
+            $reasons,
+            $missingNames,
+        );
+    }
+
+    /**
+     * Finds all positions of a delimiter at or after the given offset.
+     *
+     * @param int $offset The position from which to search.
+     *
+     *
+     * @throws ValueError If the delimiter is empty.
+     * @return list<int> The positions at which the delimiter occurs.
+     */
+    private function delimiterPositions(string $value, int $offset, string $delimiter): array
+    {
+        '' !== $delimiter || throw new ValueError('The delimiter cannot be empty.');
+
+        $positions = [];
+        $position = $offset;
+
+        while (false !== ($position = strpos($value, $delimiter, $position))) {
+            $positions[] = $position;
+            $position += strlen($delimiter);
+        }
+
+        return $positions;
     }
 
     /**

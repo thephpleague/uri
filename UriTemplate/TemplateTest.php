@@ -820,6 +820,12 @@ final class TemplateTest extends TestCase
             'value' => ';keys=semi,%3B,dot,.,comma,%2C',
             'expected' => ['keys' => ['semi' => ';', 'dot' => '.', 'comma' => ',']],
         ];
+
+        yield 'extracts key-value pairs from a fragment parameter' => [
+            'template' => '{#keys}',
+            'value' => '#key1,val1%2F,key2,val2%2F',
+            'expected' => ['keys' => ['key1' => 'val1/', 'key2' => 'val2/']],
+        ];
     }
 
     public function test_it_can_match_an_operator_prefixed_expression(): void

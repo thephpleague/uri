@@ -27,6 +27,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_array;
+use function is_string;
 use function mb_substr;
 use function preg_match;
 use function rawurldecode;
@@ -74,6 +75,15 @@ enum Operator: string
             self::ReservedChars => '#',
             self::Fragment => null,
             default => '?#',
+        };
+    }
+
+    public function supportsNamedListValue(): bool
+    {
+        return match ($this) {
+            self::PathParam,
+            self::Fragment => true,
+            default => false,
         };
     }
 
@@ -267,7 +277,8 @@ enum Operator: string
      *
      * A null value represents an absent variable. Exploded variables are delegated
      * to list extraction, while named non-exploded variables must contain the
-     * expected variable name. Extracted values are percent-decoded before being
+     * expected variable name. Path and fragment operators may represent non-exploded
+     * values as key/value pairs. Extracted values are percent-decoded before being
      * returned.
      *
      * @throws VariableCanNotBeExtracted If the value cannot be extracted according
@@ -288,26 +299,31 @@ enum Operator: string
             if ($name !== $varSpecifier->name) {
                 return ExtractionResult::success();
             }
-
-            // Path parameters can represent a list of key/value pairs without using the
-            // explode-modifier. In that form, the value is encoded as alternating names
-            // and values separated by commas. Split the encoded value before decoding so
-            // that percent-encoded commas (%2C) are preserved as data.
-            if (self::PathParam === $this && str_contains($value, ',')) {
-                $parts = [];
-                foreach (array_chunk(array_pad(explode(',', $value), 2, ''), 2) as [$key, $val]) {
-                    $parts[self::decode($key)] = self::decode($val ?? '');
-                }
-
-                return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($parts, $varSpecifier)]);
-            }
         }
 
-        $list = array_map(
-            static fn (string|null $var): ?string => null !== $var ? self::decode($var) : null,
-            '' !== $value && $this->supportsListValue() ? explode(',', $value) : []
-        );
-        $value = self::decode($value);
+        // Path and Fragment parameters can represent a list of key/value pairs without using
+        // the explode-modifier. In that form, the value is encoded as alternating names
+        // and values separated by commas. Split the encoded value before decoding so
+        // that percent-encoded commas (%2C) are preserved as data.
+        if ($this->supportsNamedListValue() && str_contains($value, ',')) {
+            $parts = explode(',', $value);
+            $parts = 0 === (count($parts) % 2) ? $parts : [...$parts, ''];
+            $result = [];
+            foreach (array_chunk($parts, 2) as [$key, $val]) {
+                $result[self::decode($key)] = self::decode($val);
+            }
+
+            return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($result, $varSpecifier)]);
+        }
+
+        $list = [];
+        if (is_string($value)) {
+            $list = array_map(
+                static fn (string|null $var): ?string => null !== $var ? self::decode($var) : null,
+                '' !== $value && $this->supportsListValue() ? explode(',', $value) : []
+            );
+            $value = self::decode($value);
+        }
 
         return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($value, $varSpecifier, $list)]);
     }

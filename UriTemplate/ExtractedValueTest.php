@@ -23,15 +23,12 @@ final class ExtractedValueTest extends TestCase
 {
     #[DataProvider('provideValues')]
     public function testFromValue(
-        string|array $value,
+        string $value,
         string $specifier,
         string|array $expectedValue,
         bool $expectedPartial,
     ): void {
-        $extracted = ExtractedValue::fromValue(
-            $value,
-            VarSpecifier::new($specifier),
-        );
+        $extracted = ExtractedValue::fromValue($value, VarSpecifier::new($specifier), Operator::None);
 
         self::assertSame($expectedValue, $extracted->value);
         self::assertSame($expectedPartial, $extracted->isPartial);
@@ -58,13 +55,6 @@ final class ExtractedValueTest extends TestCase
             'term:10',
             'john',
             true,
-        ];
-
-        yield 'complete array' => [
-            ['one', 'two'],
-            'tags*',
-            ['one', 'two'],
-            false,
         ];
     }
 

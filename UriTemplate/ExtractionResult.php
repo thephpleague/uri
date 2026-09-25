@@ -61,6 +61,11 @@ final class ExtractionResult implements ArrayAccess, Countable
         );
     }
 
+    public static function empty(): self
+    {
+        return new self([], [], [], []);
+    }
+
     public static function success(iterable $variables = []): self
     {
         $vars = [];

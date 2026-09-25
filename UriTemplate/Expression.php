@@ -26,6 +26,7 @@ use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
+use function dd;
 use function explode;
 use function implode;
 use function is_string;
@@ -239,7 +240,7 @@ final class Expression implements IteratorAggregate
             value: $value,
             varSpecifierOffset: 0,
             valueOffset: 0,
-            previousResult: ExtractionResult::success(),
+            previousResult: ExtractionResult::empty(),
         );
     }
 

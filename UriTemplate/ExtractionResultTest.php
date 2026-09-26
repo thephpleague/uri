@@ -27,8 +27,8 @@ final class ExtractionResultTest extends TestCase
     public function it_returns_extracted_values(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
-            'tags' => new ExtractedValue(['one', 'two']),
+            'term' => ExtractedValue::fromString('john'),
+            'tags' => ExtractedValue::fromArray(['one', 'two']),
         ]);
 
         self::assertSame([
@@ -42,7 +42,7 @@ final class ExtractionResultTest extends TestCase
     public function it_returns_partial_values_without_exposing_the_metadata(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('j', 1),
+            'term' => ExtractedValue::fromString('j', 1),
         ]);
 
         self::assertSame(['term' => 'j'], $result->variables());
@@ -55,7 +55,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_fetches_an_extracted_value(): void
     {
-        $value = new ExtractedValue('j', 1);
+        $value = ExtractedValue::fromString('j', 1);
         $result = ExtractionResult::success(['term' => $value]);
 
         self::assertSame($value, $result->fetch('term'));
@@ -66,8 +66,8 @@ final class ExtractionResultTest extends TestCase
     public function it_returns_a_value(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
-            'tags' => new ExtractedValue(['one', 'two']),
+            'term' => ExtractedValue::fromString('john'),
+            'tags' => ExtractedValue::fromArray(['one', 'two']),
         ]);
 
         self::assertSame('john', $result['term']);
@@ -79,7 +79,7 @@ final class ExtractionResultTest extends TestCase
     public function it_checks_if_a_variable_exists(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
+            'term' => ExtractedValue::fromString('john'),
         ]);
 
         self::assertTrue(isset($result['term']));
@@ -90,8 +90,8 @@ final class ExtractionResultTest extends TestCase
     public function it_counts_extracted_values(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
-            'limit' => new ExtractedValue('10'),
+            'term' => ExtractedValue::fromString('john'),
+            'limit' => ExtractedValue::fromString('10'),
         ]);
 
         self::assertCount(2, $result);
@@ -101,12 +101,12 @@ final class ExtractionResultTest extends TestCase
     public function it_reconciles_results(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('j', 1),
+            'term' => ExtractedValue::fromString('j', 1),
         ]);
 
         $other = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
-            'limit' => new ExtractedValue('10'),
+            'term' => ExtractedValue::fromString('john'),
+            'limit' => ExtractedValue::fromString('10'),
         ]);
 
         $reconciled = $result->reconcile($other);
@@ -125,11 +125,11 @@ final class ExtractionResultTest extends TestCase
     public function it_throws_when_results_cannot_be_reconciled(): void
     {
         $result = ExtractionResult::success([
-            'term' => new ExtractedValue('john'),
+            'term' => ExtractedValue::fromString('john'),
         ]);
 
         $other = ExtractionResult::success([
-            'term' => new ExtractedValue('mary'),
+            'term' => ExtractedValue::fromString('mary'),
         ]);
 
         $this->expectException(VariableCanNotBeExtracted::class);
@@ -140,7 +140,7 @@ final class ExtractionResultTest extends TestCase
     public function it_accepts_any_iterable(): void
     {
         $values = (static function (): iterable {
-            yield 'term' => new ExtractedValue('john');
+            yield 'term' => ExtractedValue::fromString('john');
         })();
 
         $result = ExtractionResult::success($values);
@@ -174,7 +174,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_reject_setting_variables_using_array_notation(): void
     {
-        $result = ExtractionResult::success(['forty-two' => new ExtractedValue('john')]);
+        $result = ExtractionResult::success(['forty-two' => ExtractedValue::fromString('john')]);
 
         $this->expectException(LogicException::class);
 
@@ -184,7 +184,7 @@ final class ExtractionResultTest extends TestCase
     #[Test]
     public function it_reject_unsetting_variables_using_array_notation(): void
     {
-        $result = ExtractionResult::success(['forty-two' => new ExtractedValue('john')]);
+        $result = ExtractionResult::success(['forty-two' => ExtractedValue::fromString('john')]);
 
         $this->expectException(LogicException::class);
 

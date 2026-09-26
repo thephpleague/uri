@@ -64,8 +64,8 @@ final class VariableCanNotBeExtractedTest extends TestCase
     {
         $template = Template::new('/{foo}/{bar}');
         $result = ExtractionResult::success([
-            'foo' => new ExtractedValue('value'),
-            'bar' => new ExtractedValue(null),
+            'foo' => ExtractedValue::fromString('value'),
+            'bar' => ExtractedValue::fromNull(),
         ]);
 
         $exception = VariableCanNotBeExtracted::dueToMissingVariables('/value/', $template, $result);

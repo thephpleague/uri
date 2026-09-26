@@ -58,18 +58,11 @@ final class ExtractedValueTest extends TestCase
         ];
     }
 
-    public function testPrefixPositionCannotBeAssociatedWithArray(): void
-    {
-        $this->expectException(VariableCanNotBeExtracted::class);
-
-        new ExtractedValue(['one', 'two'], 2);
-    }
-
     public function testNegativeMaxLengthOtherThanMinusOneIsRejected(): void
     {
         $this->expectException(VariableCanNotBeExtracted::class);
 
-        new ExtractedValue('john', -2);
+        ExtractedValue::fromString('john', -2);
     }
 
     #[DataProvider('provideEqualValues')]
@@ -84,37 +77,37 @@ final class ExtractedValueTest extends TestCase
     public static function provideEqualValues(): iterable
     {
         yield 'same complete value' => [
-            new ExtractedValue('john'),
-            new ExtractedValue('john'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('john'),
             true,
         ];
 
         yield 'same partial value' => [
-            new ExtractedValue('j', 1),
-            new ExtractedValue('j', 1),
+            ExtractedValue::fromString('j', 1),
+            ExtractedValue::fromString('j', 1),
             true,
         ];
 
         yield 'same value but different maximum length' => [
-            new ExtractedValue('john', 4),
-            new ExtractedValue('john', 5),
+            ExtractedValue::fromString('john', 4),
+            ExtractedValue::fromString('john', 5),
             false,
         ];
 
         yield 'different values' => [
-            new ExtractedValue('john'),
-            new ExtractedValue('jane'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('jane'),
             false,
         ];
 
         yield 'different types' => [
-            new ExtractedValue('john'),
-            new ExtractedValue(['john']),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromArray(['john']),
             false,
         ];
 
         yield 'not an ExtractedValue' => [
-            new ExtractedValue('john'),
+            ExtractedValue::fromString('john'),
             'john',
             false,
         ];
@@ -139,134 +132,134 @@ final class ExtractedValueTest extends TestCase
     public static function provideReconciliations(): iterable
     {
         yield 'same complete values' => [
-            new ExtractedValue('john'),
-            new ExtractedValue('john'),
-            new ExtractedValue('john'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('john'),
         ];
 
         yield 'different complete values' => [
-            new ExtractedValue('john'),
-            new ExtractedValue('jane'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('jane'),
             null,
         ];
 
         yield 'partial and complete compatible' => [
-            new ExtractedValue('j', 1),
-            new ExtractedValue('john'),
-            new ExtractedValue('john'),
+            ExtractedValue::fromString('j', 1),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('john'),
         ];
 
         yield 'complete and partial compatible' => [
-            new ExtractedValue('john'),
-            new ExtractedValue('j', 1),
-            new ExtractedValue('john'),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromString('j', 1),
+            ExtractedValue::fromString('john'),
         ];
 
         yield 'partial and complete incompatible' => [
-            new ExtractedValue('j', 1),
-            new ExtractedValue('mary'),
+            ExtractedValue::fromString('j', 1),
+            ExtractedValue::fromString('mary'),
             null,
         ];
 
         yield 'shorter partial prefix' => [
-            new ExtractedValue('jo', 2),
-            new ExtractedValue('john', 4),
-            new ExtractedValue('john', 4),
+            ExtractedValue::fromString('jo', 2),
+            ExtractedValue::fromString('john', 4),
+            ExtractedValue::fromString('john', 4),
         ];
 
         yield 'longer partial prefix' => [
-            new ExtractedValue('john', 4),
-            new ExtractedValue('jo', 2),
-            new ExtractedValue('john', 4),
+            ExtractedValue::fromString('john', 4),
+            ExtractedValue::fromString('jo', 2),
+            ExtractedValue::fromString('john', 4),
         ];
 
         yield 'same partial values' => [
-            new ExtractedValue('jo', 2),
-            new ExtractedValue('jo', 2),
-            new ExtractedValue('jo', 2),
+            ExtractedValue::fromString('jo', 2),
+            ExtractedValue::fromString('jo', 2),
+            ExtractedValue::fromString('jo', 2),
         ];
 
         yield 'different partial values with same maximum' => [
-            new ExtractedValue('jo', 2),
-            new ExtractedValue('ja', 2),
+            ExtractedValue::fromString('jo', 2),
+            ExtractedValue::fromString('ja', 2),
             null,
         ];
 
         yield 'partial values with incompatible prefixes' => [
-            new ExtractedValue('john', 4),
-            new ExtractedValue('mary', 4),
+            ExtractedValue::fromString('john', 4),
+            ExtractedValue::fromString('mary', 4),
             null,
         ];
 
         yield 'array values can only reconcile with identical complete arrays' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['one', 'two']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['one', 'two']),
         ];
 
         yield 'different arrays' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['one', 'three']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['one', 'three']),
             null,
         ];
 
         yield 'array and scalar' => [
-            new ExtractedValue(['one']),
-            new ExtractedValue('one'),
+            ExtractedValue::fromArray(['one']),
+            ExtractedValue::fromString('one'),
             null,
         ];
 
         yield 'both missing values' => [
-            new ExtractedValue(null),
-            new ExtractedValue(null),
-            new ExtractedValue(null),
+            ExtractedValue::fromNull(),
+            ExtractedValue::fromNull(),
+            ExtractedValue::fromNull(),
         ];
 
         yield 'missing and complete value' => [
-            new ExtractedValue(null),
-            new ExtractedValue('john'),
+            ExtractedValue::fromNull(),
+            ExtractedValue::fromString('john'),
             null,
         ];
 
         yield 'complete and missing value' => [
-            new ExtractedValue('john'),
-            new ExtractedValue(null),
+            ExtractedValue::fromString('john'),
+            ExtractedValue::fromNull(),
             null,
         ];
 
         yield 'missing and array value' => [
-            new ExtractedValue(null),
-            new ExtractedValue(['one', 'two']),
+            ExtractedValue::fromNull(),
+            ExtractedValue::fromArray(['one', 'two']),
             null,
         ];
 
         yield 'array and missing value' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(null),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromNull(),
             null,
         ];
 
         yield 'same arrays in different order' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['two', 'one']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['two', 'one']),
             null,
         ];
 
         yield 'array is a subset of another array' => [
-            new ExtractedValue(['one']),
-            new ExtractedValue(['one', 'two']),
+            ExtractedValue::fromArray(['one']),
+            ExtractedValue::fromArray(['one', 'two']),
             null,
         ];
 
         yield 'array contains an extra value' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['one']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['one']),
             null,
         ];
 
         yield 'arrays with different values' => [
-            new ExtractedValue(['one', 'two']),
-            new ExtractedValue(['one', 'three']),
+            ExtractedValue::fromArray(['one', 'two']),
+            ExtractedValue::fromArray(['one', 'three']),
             null,
         ];
     }

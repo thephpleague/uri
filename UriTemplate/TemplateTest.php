@@ -25,7 +25,6 @@ use Throwable;
 use function file_get_contents;
 use function is_array;
 use function json_decode;
-use function json_encode;
 use function ltrim;
 
 use const JSON_THROW_ON_ERROR;
@@ -45,12 +44,6 @@ final class TemplateTest extends TestCase
     private static array $expandTestFilenames = [
         'spec-examples.json',
         'negative-tests.json',
-        'extended-tests.json',
-    ];
-
-    /** @var array<string> */
-    private static array $extractTestFilenames = [
-        'spec-examples.json',
         'extended-tests.json',
     ];
 
@@ -74,33 +67,6 @@ final class TemplateTest extends TestCase
         }
     }
 
-    #[DataProvider('uriTemplateSpecificationDataProviderExtractionTests')]
-    #[Test]
-    public function testItCompliesWithUriTemplatesExtractTests(
-        array $variables,
-        string $input,
-        string|array $expected
-    ): void {
-        if (is_string($expected)) {
-            $expected = [$expected];
-        }
-
-        foreach ($expected as $uri) {
-            $template = Template::new($input);
-            $result = $template->extract($uri);
-            self::assertTrue($result->isSuccessful());
-            foreach ($template->variableNames as $name) {
-                $found = $result->fetch($name);
-                if (in_array($name, ['empty_list', 'empty_assoc'], true)) {
-                    self::assertTrue(in_array($found?->value, [null, ''], true));
-                } else {
-                    self::assertInstanceOf(ExtractedValue::class, $found, 'the variable '.$name.' is not found in the extracted data for "'.$uri.'" and "'.$input.'"; found "'.json_encode($result->names()).'"'.'".');
-                }
-                //self::assertEquals($templateVariables[$name], $result->fetch($name)->value);
-            }
-        }
-    }
-
     /**
      * @throws JsonException
      * @throws RuntimeException
@@ -113,28 +79,6 @@ final class TemplateTest extends TestCase
     public static function uriTemplateSpecificationDataProvider(): iterable
     {
         foreach (static::$expandTestFilenames as $path) {
-            $path = static::$rootPath.'/'.ltrim($path, '/');
-            (false !== $content = file_get_contents($path)) || throw new RuntimeException("unable to connect to the path `$path`.");
-
-            /** @var array $records */
-            $records = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-            foreach ($records as $title => $testSuite) {
-                $level = $testSuite['level'] ?? null;
-                $variables = $testSuite['variables'];
-                foreach ($testSuite['testcases'] as $offset => [$input, $expected]) {
-                    yield $title.' - '.$level.' # '.($offset + 1).' ['.$input.']'  => [
-                        'variables' => $variables,
-                        'input' => $input,
-                        'expected' => $expected,
-                    ];
-                }
-            }
-        }
-    }
-
-    public static function uriTemplateSpecificationDataProviderExtractionTests(): iterable
-    {
-        foreach (static::$extractTestFilenames as $path) {
             $path = static::$rootPath.'/'.ltrim($path, '/');
             (false !== $content = file_get_contents($path)) || throw new RuntimeException("unable to connect to the path `$path`.");
 

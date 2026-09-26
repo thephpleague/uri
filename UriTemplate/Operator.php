@@ -18,7 +18,6 @@ use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 
 use function array_pad;
-use function dd;
 use function explode;
 use function implode;
 use function is_array;
@@ -291,21 +290,26 @@ enum Operator: string
      */
     public function extract(VarSpecifier $varSpecifier, string|null $value): ExtractionResult
     {
-        if (null === $value) {
-            return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromNull()]);
-        }
+        $content = match (true) {
+            null === $value => ExtractedValue::fromNull(),
+            '*' === $varSpecifier->modifier => ExtractedValue::fromList($value, $varSpecifier, $this),
+            $this->isNamed() => $this->extractNamedValue($varSpecifier, $value),
+            default => ExtractedValue::fromValue($value, $varSpecifier, $this),
+        };
 
-        if ('*' === $varSpecifier->modifier) {
-            return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromList($value, $varSpecifier, $this)]);
-        }
+        return  ExtractionResult::success([$varSpecifier->name => $content]);
+    }
 
-        if ($this->isNamed()) {
-            [$name, $value] = array_pad(explode('=', $value, 2), 2, '');
-            if ($name !== $varSpecifier->name) {
-                return ExtractionResult::empty();
-            }
-        }
+    /**
+     * @throws VariableCanNotBeExtracted
+     */
+    private function extractNamedValue(VarSpecifier $varSpecifier, string $value): ExtractedValue
+    {
+        [$name, $namedValue] = array_pad(explode('=', $value, 2), 2, '');
 
-        return ExtractionResult::success([$varSpecifier->name => ExtractedValue::fromValue($value, $varSpecifier, $this)]);
+        return $name === $varSpecifier->name
+            ? ExtractedValue::fromValue($namedValue, $varSpecifier, $this)
+            : throw VariableCanNotBeExtracted::dueTo('The named variable is invalid', ExtractionErrorReason::VariableMismatch);
+
     }
 }

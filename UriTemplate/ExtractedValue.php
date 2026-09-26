@@ -33,7 +33,7 @@ final class ExtractedValue
      *
      * @throws VariableCanNotBeExtracted
      */
-    public function __construct(
+    private function __construct(
         public readonly array|string|null $value,
         private readonly int $maxLength = -1,
         public readonly array $asList = [],
@@ -44,7 +44,17 @@ final class ExtractedValue
 
     public static function fromNull(): self
     {
-        return new self(null, -1, []);
+        return new self(null);
+    }
+
+    public static function fromString(string $value, int $maxLength = -1): self
+    {
+        return new self($value, $maxLength);
+    }
+
+    public static function fromArray(array $value): self
+    {
+        return new self($value, -1);
     }
 
     /**
@@ -55,9 +65,9 @@ final class ExtractedValue
         VarSpecifier $varSpecifier,
         Operator $operator,
     ): self {
-       return $operator->isNamed()
-            ? self::fromNamedList($value, $varSpecifier, $operator)
-            : self::fromUnnamedList($value, $operator);
+        return $operator->isNamed()
+             ? self::fromNamedList($value, $varSpecifier, $operator)
+             : self::fromUnnamedList($value, $operator);
     }
 
     /**
@@ -81,7 +91,7 @@ final class ExtractedValue
      * Positional exploded values may contain either plain values or name/value
      * pairs, but not both representations at the same time.
      */
-    private static function fromGenericList(string $value, Operator $operator): ExtractedValue
+    public static function fromGenericList(string $value, Operator $operator): ExtractedValue
     {
         /** @var non-empty-string $separator */
         $separator = $operator->separator();
@@ -117,7 +127,7 @@ final class ExtractedValue
         $parts = explode($separator, $value);
         $result = [];
 
-        for ($i = 0, $count = count($parts); $i < $count; ) {
+        for ($i = 0, $count = count($parts); $i < $count;) {
             $key = $parts[$i++];
 
             if ($i >= $count) {
@@ -131,7 +141,7 @@ final class ExtractedValue
 
             if ('' === $part) {
                 if ($i >= $count || '' !== $parts[$i]) {
-                    throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" is malformed.', ExtractionErrorReason::MalformedValue,);
+                    throw VariableCanNotBeExtracted::dueTo('The value "'.$value.'" is malformed.', ExtractionErrorReason::MalformedValue);
                 }
 
                 ++$i;
@@ -200,7 +210,7 @@ final class ExtractedValue
             return new self($result, 0 === $varSpecifier->position ? -1 : $varSpecifier->position, []);
         }
 
-        if ($operator == Operator::ReservedChars || $operator == Operator::Fragment) {
+        if ('*' === $varSpecifier->modifier) {
             return self::fromUnnamedList($value, $operator);
         }
 

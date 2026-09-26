@@ -210,8 +210,8 @@ final class VariableBagTest extends TestCase
     public function testItCanBeInstantiatedFromAnExtractionResult(): void
     {
         $result = ExtractionResult::success([
-            'foo' => new ExtractedValue('bar'),
-            'baz' => new ExtractedValue('qux'),
+            'foo' => ExtractedValue::fromString('bar'),
+            'baz' => ExtractedValue::fromString('qux'),
         ]);
 
         $bag = new VariableBag($result);
@@ -223,8 +223,8 @@ final class VariableBagTest extends TestCase
     public function testItCanBeInstantiatedFromAnExtractionResultWithNullValues(): void
     {
         $result = ExtractionResult::success([
-            'foo' => new ExtractedValue('bar'),
-            'baz' => new ExtractedValue(null),
+            'foo' => ExtractedValue::fromString('bar'),
+            'baz' => ExtractedValue::fromNull(),
         ]);
 
         $bag = new VariableBag($result);

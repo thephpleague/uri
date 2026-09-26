@@ -26,7 +26,6 @@ use function array_reverse;
 use function array_unique;
 use function array_values;
 use function count;
-use function dd;
 use function explode;
 use function implode;
 use function is_string;
@@ -252,7 +251,6 @@ final class Expression implements IteratorAggregate
     ): ExtractionResult {
         $varSpecifier = $this->varSpecifiers[$varSpecifierOffset];
         $lastVarSpecifier = $varSpecifierOffset + 1 === count($this->varSpecifiers);
-
         if ($lastVarSpecifier) {
             $extracted = $this->operator->extract(
                 $varSpecifier,

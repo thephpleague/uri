@@ -16,6 +16,7 @@ namespace League\Uri\UriTemplate;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ExtractedValue::class)]
@@ -262,5 +263,13 @@ final class ExtractedValueTest extends TestCase
             ExtractedValue::fromArray(['one', 'three']),
             null,
         ];
+    }
+
+    #[Test]
+    public function it_can_not_use_nested_array(): void
+    {
+        $this->expectException(VariableCanNotBeExtracted::class);
+
+        ExtractedValue::fromArray(['a' => 'foo', 'b' => 23]);
     }
 }

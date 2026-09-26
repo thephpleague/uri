@@ -71,15 +71,6 @@ enum Operator: string
         };
     }
 
-    public function supportsNamedListValue(): bool
-    {
-        return match ($this) {
-            self::PathParam,
-            self::Fragment => true,
-            default => false,
-        };
-    }
-
     public function first(): string
     {
         return match ($this) {
@@ -226,9 +217,7 @@ enum Operator: string
      */
     private function replaceList(array $value, VarSpecifier $varSpec): array
     {
-        if (':' === $varSpec->modifier) {
-            throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
-        }
+        ':' !== $varSpec->modifier || throw TemplateCanNotBeExpanded::dueToUnableToProcessValueListWithPrefix($varSpec->name);
 
         if ([] === $value) {
             return ['', false];
@@ -294,6 +283,7 @@ enum Operator: string
             null === $value => ExtractedValue::fromNull(),
             '*' === $varSpecifier->modifier => ExtractedValue::fromList($value, $varSpecifier, $this),
             $this->isNamed() => $this->extractNamedValue($varSpecifier, $value),
+            self::Fragment === $this => $this->extractFragmentValue($varSpecifier, $value),
             default => ExtractedValue::fromValue($value, $varSpecifier, $this),
         };
 
@@ -305,11 +295,30 @@ enum Operator: string
      */
     private function extractNamedValue(VarSpecifier $varSpecifier, string $value): ExtractedValue
     {
-        [$name, $namedValue] = array_pad(explode('=', $value, 2), 2, '');
+        [$name, $value] = array_pad(explode('=', $value, 2), 2, '');
+        $name === $varSpecifier->name || throw VariableCanNotBeExtracted::dueTo('The named variable is invalid.', ExtractionErrorReason::VariableMismatch);
 
-        return $name === $varSpecifier->name
-            ? ExtractedValue::fromValue($namedValue, $varSpecifier, $this)
-            : throw VariableCanNotBeExtracted::dueTo('The named variable is invalid', ExtractionErrorReason::VariableMismatch);
+        if (self::PathParam === $this && str_contains($value, ',')) {
+            // Path parameters can encode an associative array as alternating
+            // key/value pairs. Split before decoding so that encoded commas
+            // (%2C) remain part of the value.
+            $parts = explode(',', $value);
+            $parts = 0 === count($parts) % 2 ? $parts : [...$parts, ''];
+            $result = [];
+            foreach (array_chunk($parts, 2) as [$k, $v]) {
+                $result[$this->decode($k)] = $this->decode($v);
+            }
 
+            return ExtractedValue::fromArray($result);
+        }
+
+        return ExtractedValue::fromValue($value, $varSpecifier, $this);
+    }
+
+    private function extractFragmentValue(VarSpecifier $varSpecifier, string $value): ExtractedValue
+    {
+        return str_contains($value, ',')
+            ? ExtractedValue::fromList($value, $varSpecifier, $this)
+            : ExtractedValue::fromValue($value, $varSpecifier, $this);
     }
 }

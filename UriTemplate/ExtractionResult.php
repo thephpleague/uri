@@ -23,6 +23,7 @@ use League\Uri\TypeConverter;
 use LogicException;
 use TypeError;
 use UnitEnum;
+use ValueError;
 
 use function array_key_exists;
 use function array_map;
@@ -51,19 +52,24 @@ final class ExtractionResult implements ArrayAccess, Countable
     ) {
     }
 
-    public static function failure(VariableCanNotBeExtracted $exception, Template $template): self
+    public static function empty(): self
     {
         return new self(
-            [],
-            $template->variableNames,
-            $exception->getMissingNames(),
-            $exception->getReasons(),
+            variables: [],
+            names: [],
+            missingNames: [],
+            reasons: [],
         );
     }
 
-    public static function empty(): self
+    public static function failure(VariableCanNotBeExtracted $exception, Template $template): self
     {
-        return new self([], [], [], []);
+        return new self(
+            variables: [],
+            names: $template->variableNames,
+            missingNames: $exception->getMissingNames(),
+            reasons: $exception->getReasons(),
+        );
     }
 
     public static function success(iterable $variables = []): self
@@ -82,7 +88,12 @@ final class ExtractionResult implements ArrayAccess, Countable
             }
         }
 
-        return new self($vars, array_values($names), array_values($missing), []);
+        return new self(
+            variables: $vars,
+            names: array_values($names),
+            missingNames: array_values($missing),
+            reasons: [],
+        );
     }
 
     /**
@@ -276,9 +287,11 @@ final class ExtractionResult implements ArrayAccess, Countable
     /**
      * @param class-string<UnitEnum> $enumClass
      */
-    public function enum(int|string $name, string $enumClass): ?UnitEnum
+    public function enum(int|string $name, string $enumClass, ?UnitEnum $default = null): ?UnitEnum
     {
-        return TypeConverter::toEnum($this->fetch($name)?->value, $enumClass);
+        null === $default || $default instanceof $enumClass || throw new ValueError('The default value must be an instance of '.$enumClass.'; '.get_debug_type($default).' given.');
+
+        return TypeConverter::toEnum($this->fetch($name)?->value, $enumClass) ?? $default;
     }
 
     /**
@@ -296,9 +309,18 @@ final class ExtractionResult implements ArrayAccess, Countable
      *
      * @throws Exception
      */
-    public function date(int|string $name, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
-    {
-        return TypeConverter::toDateTimeImmutable($this->fetch($name)?->value, $format, $timezone);
+    public function date(
+        int|string $name,
+        string $format,
+        DateTimeZone|string|null $timezone = null,
+        ?DateTimeInterface $default = null
+    ): ?DateTimeImmutable {
+
+        return TypeConverter::toDateTimeImmutable($this->fetch($name)?->value, $format, $timezone) ?? (
+            null !== $default && !$default instanceof DateTimeImmutable
+                ? DateTimeImmutable::createFromInterface($default)
+                : $default
+        );
     }
 
     /**

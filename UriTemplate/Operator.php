@@ -16,9 +16,7 @@ namespace League\Uri\UriTemplate;
 use League\Uri\Exceptions\SyntaxError;
 use Stringable;
 
-use function array_chunk;
 use function array_pad;
-use function count;
 use function explode;
 use function implode;
 use function is_array;
@@ -328,21 +326,9 @@ enum Operator: string
         [$name, $value] = array_pad(explode('=', $value, 2), 2, '');
         $name === $varSpecifier->name || throw VariableCanNotBeExtracted::dueTo('The named variable is invalid.', ExtractionErrorReason::VariableMismatch);
 
-        if (self::PathParam === $this && str_contains($value, ',')) {
-            // Path parameters can encode an associative array as alternating
-            // key/value pairs. Split before decoding so that encoded commas
-            // (%2C) remain part of the value.
-            $parts = explode(',', $value);
-            $parts = 0 === count($parts) % 2 ? $parts : [...$parts, ''];
-            $result = [];
-            foreach (array_chunk($parts, 2) as [$k, $v]) {
-                $result[$this->decode($k)] = $this->decode($v);
-            }
-
-            return ExtractedValue::fromArray($result);
-        }
-
-        return ExtractedValue::fromValue($value, $varSpecifier, $this);
+        return self::PathParam === $this && str_contains($value, ',')
+            ? ExtractedValue::fromNamedValue($value, $this)
+            : ExtractedValue::fromValue($value, $varSpecifier, $this);
     }
 
     private function extractFragmentValue(VarSpecifier $varSpecifier, string $value): ExtractedValue

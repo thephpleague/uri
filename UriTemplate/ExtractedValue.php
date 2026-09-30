@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace League\Uri\UriTemplate;
 
+use function array_chunk;
 use function array_column;
 use function array_key_exists;
 use function array_map;
@@ -90,12 +91,40 @@ final class ExtractedValue
     }
 
     /**
+     * Creates an extracted value from a path parameter containing alternating
+     * key/value pairs.
+     *
+     * The value is split into comma-separated key/value pairs before decoding,
+     * so percent-encoded commas (`%2C`) remain part of the corresponding key or value.
+     *
+     * @param non-empty-string $value
+     *
+     * @throws VariableCanNotBeExtracted if the value is the empty string
+     */
+    public static function fromNamedValue(string $value, Operator $operator): self
+    {
+        '' !== $value || throw VariableCanNotBeExtracted::dueTo('The named value is invalid.', ExtractionErrorReason::MalformedValue);
+
+        // Path parameters can encode an associative array as alternating
+        // key/value pairs. Split before decoding so that encoded commas
+        // (%2C) remain part of the value.
+        $parts = explode(',', $value);
+        $parts = 0 === count($parts) % 2 ? $parts : [...$parts, ''];
+        $result = [];
+        foreach (array_chunk($parts, 2) as [$k, $v]) {
+            $result[$operator->decode($k)] = $operator->decode($v);
+        }
+
+        return ExtractedValue::fromArray($result);
+    }
+
+    /**
      * Extracts an exploded variable from a positional representation.
      *
      * Positional exploded values may contain either plain values or name/value
      * pairs, but not both representations at the same time.
      */
-    public static function fromGenericList(string $value, Operator $operator): ExtractedValue
+    private static function fromGenericList(string $value, Operator $operator): ExtractedValue
     {
         /** @var non-empty-string $separator */
         $separator = $operator->separator();

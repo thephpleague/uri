@@ -15,6 +15,7 @@ namespace League\Uri\UriTemplate;
 
 use function preg_replace_callback;
 use function rawurlencode;
+use function strlen;
 
 /**
  * @internal The class exposes the internal representation of an Literal string
@@ -25,10 +26,12 @@ final class Literal
     private const REGEXP_CHARACTERS_TO_ENCODE = '/[^A-Za-z\d\-._~:\/?#\[\]@!$&\'()*+,;=%]+|%(?![A-Fa-f\d]{2})/';
 
     public readonly string $encoded;
+    public readonly int $length;
 
     public function __construct(public readonly string $raw)
     {
         $this->encoded = self::encode($raw);
+        $this->length = strlen($this->encoded);
     }
 
     private static function encode(string $raw): string
@@ -38,5 +41,10 @@ final class Literal
             static fn (array $matches): string => rawurlencode($matches[0]),
             $raw,
         );
+    }
+
+    public function isPrefixOf(string $value): bool
+    {
+        return str_starts_with($value, $this->encoded);
     }
 }

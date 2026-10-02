@@ -289,10 +289,9 @@ final class Template implements Stringable
     ): ExtractionResult {
         /** @var Literal $literal */
         $literal = $this->parts[$partOffset];
+        $literal->isPrefixOf(substr($value, $valueOffset)) || throw VariableCanNotBeExtracted::dueTo('The literal "'.$literal->encoded.'" does not match the value at the expected position.', ExtractionErrorReason::LiteralMismatch);
 
-        str_starts_with(substr($value, $valueOffset), $literal->encoded) || throw VariableCanNotBeExtracted::dueTo('The literal "'.$literal->raw.'" does not match the value at the expected position.', ExtractionErrorReason::LiteralMismatch);
-
-        return $this->extractParts($value, $partOffset + 1, $valueOffset + strlen($literal->encoded), $previousResult);
+        return $this->extractParts($value, $partOffset + 1, $valueOffset + $literal->length, $previousResult);
     }
 
     /**

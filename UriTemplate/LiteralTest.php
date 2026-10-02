@@ -16,6 +16,7 @@ namespace League\Uri\UriTemplate;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 use function strlen;
 
 final class LiteralTest extends TestCase

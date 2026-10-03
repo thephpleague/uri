@@ -67,8 +67,8 @@ final class ExtractionResult implements ArrayAccess, Countable
         return new self(
             variables: [],
             names: $template->variableNames,
-            missingNames: $exception->getMissingNames(),
-            reasons: $exception->getReasons(),
+            missingNames: $exception->missingNames,
+            reasons: $exception->reasons,
         );
     }
 
@@ -79,7 +79,9 @@ final class ExtractionResult implements ArrayAccess, Countable
         $missing = [];
         foreach ($variables as $name => $variable) {
             is_string($name) || is_int($name) || throw new TypeError('An extraction variable name must be a string.');
+            !array_key_exists($name, $vars) || throw new ValueError('The variable "'.$name.'" is already defined.');
             $variable instanceof ExtractedValue || throw new TypeError('An extraction result value must be an '.ExtractedValue::class.'.');
+
             $name = (string) $name;
             $vars[$name] = $variable;
             $names[$name] = $name;
@@ -114,7 +116,7 @@ final class ExtractionResult implements ArrayAccess, Countable
             try {
                 $result[$name] = $result[$name]->reconcile($value);
             } catch (VariableCanNotBeExtracted $exception) {
-                throw VariableCanNotBeExtracted::dueTo('The extracted values for variable "'.$name.'" could not be reconciled; '.$exception->getMessage(), ...$exception->getReasons());
+                throw VariableCanNotBeExtracted::dueTo('The extracted values for variable "'.$name.'" could not be reconciled; '.$exception->getMessage(), ...$exception->reasons);
             }
         }
 

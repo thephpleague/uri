@@ -26,11 +26,11 @@ use function is_string;
 class VariableCanNotBeExtracted extends Exception implements UriException
 {
     /** @var list<string> */
-    protected array $names = [];
+    public readonly array $names;
     /** @var list<string> */
-    protected array $missingNames = [];
+    public readonly array $missingNames;
     /** @var list<ExtractionErrorReason> */
-    protected array $reasons = [];
+    public readonly array $reasons;
 
     protected function __construct(
         string $message,
@@ -95,9 +95,9 @@ class VariableCanNotBeExtracted extends Exception implements UriException
     {
         return new self(
             message: 'The value "'.$input.'" could not be completely extracted using the template "'.$template->value.'"',
-            reasons: $previous->getReasons(),
+            reasons: $previous->reasons,
             names: $template->variableNames,
-            missingNames: $previous->getMissingNames(),
+            missingNames: $previous->missingNames,
             previous: $previous,
         );
     }
@@ -109,29 +109,5 @@ class VariableCanNotBeExtracted extends Exception implements UriException
             reasons: $reasons,
             missingNames: $missingNames,
         );
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function getNames(): array
-    {
-        return $this->names;
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function getMissingNames(): array
-    {
-        return $this->missingNames;
-    }
-
-    /**
-     * @return list<ExtractionErrorReason>
-     */
-    public function getReasons(): array
-    {
-        return $this->reasons;
     }
 }

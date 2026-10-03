@@ -15,17 +15,22 @@ namespace League\Uri\UriTemplate;
 
 enum ExtractionErrorReason
 {
-    case PrefixMismatch;
+    // Matching
     case LiteralMismatch;
+    case PrefixMismatch;
+    case VariableMismatch;
+    case TypeMismatch;
+    case StringMismatch;
+    case ListMismatch;
+
+    // Extraction
     case MalformedValue;
     case PrefixLengthExceeded;
-    case ReconciliationFailed;
     case UnmatchedContent;
     case UndeterminedDelimiter;
     case UnsupportedOperation;
+
+    // Reconciliation
+    case ReconciliationFailed;
     case MissingVariables;
-    case StringMismatch;
-    case TypeMismatch;
-    case ListMismatch;
-    case VariableMismatch;
 }

@@ -41,7 +41,7 @@ final class VariableCanNotBeExtractedTest extends TestCase
                 ExtractionErrorReason::StringMismatch,
                 ExtractionErrorReason::PrefixLengthExceeded,
             ],
-            $exception->getReasons(),
+            $exception->reasons,
         );
     }
 
@@ -49,7 +49,7 @@ final class VariableCanNotBeExtractedTest extends TestCase
     {
         $exception = VariableCanNotBeExtracted::dueToMissingVariables('this/will/not/work', Template::new('{foo}/bar'), ['foo', 'bar', 'foo']);
 
-        self::assertSame(['foo', 'bar'], $exception->getMissingNames());
+        self::assertSame(['foo', 'bar'], $exception->missingNames);
     }
 
     public function testItRejectsInvalidMissingVariableNames(): void
@@ -71,8 +71,8 @@ final class VariableCanNotBeExtractedTest extends TestCase
         $exception = VariableCanNotBeExtracted::dueToMissingVariables('/value/', $template, $result);
 
         self::assertSame('The value "/value/" does not provide all the variables defined by the template "/{foo}/{bar}"; Missing: "bar".', $exception->getMessage());
-        self::assertSame([ExtractionErrorReason::MissingVariables], $exception->getReasons());
-        self::assertSame(['bar'], $exception->getMissingNames());
-        self::assertSame(['foo', 'bar'], $exception->getNames());
+        self::assertSame([ExtractionErrorReason::MissingVariables], $exception->reasons);
+        self::assertSame(['bar'], $exception->missingNames);
+        self::assertSame(['foo', 'bar'], $exception->names);
     }
 }

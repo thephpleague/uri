@@ -408,8 +408,8 @@ final class Template implements Stringable
 
                 return $this->extractParts($value, $partOffset + 1, $position, $previousResult->reconcile($newVar));
             } catch (VariableCanNotBeExtracted $exception) {
-                $reasons = [...$reasons, ...$exception->getReasons()];
-                $missingNames = [...$missingNames, ...$exception->getMissingNames()];
+                $reasons = [...$reasons, ...$exception->reasons];
+                $missingNames = [...$missingNames, ...$exception->missingNames];
             }
         }
 

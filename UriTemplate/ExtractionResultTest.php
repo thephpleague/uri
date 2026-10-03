@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
+use ValueError;
 
 #[CoversClass(ExtractedValue::class)]
 #[CoversClass(ExtractionResult::class)]
@@ -189,5 +190,37 @@ final class ExtractionResultTest extends TestCase
         $this->expectException(LogicException::class);
 
         unset($result['forty-two']);
+    }
+
+    #[Test]
+    public function it_should_disallow_the_same_name_assignment_during_success_instantiation(): void
+    {
+        /**
+         * @return iterable<non-empty-string, ExtractedValue>
+         */
+        $test = function (): iterable {
+            yield 'toto' => ExtractedValue::fromValue('john', VarSpecifier::new('term'), Operator::None);
+            yield 'toto' => ExtractedValue::fromValue('jane', VarSpecifier::new('term'), Operator::None);
+        };
+
+        $this->expectException(ValueError::class);
+
+        ExtractionResult::success($test())->variables();
+    }
+
+    #[Test]
+    public function it_should_disallow_the_same_name_assignment_wiht_int_and_string_during_success_instantiation(): void
+    {
+        /**
+         * @return iterable<non-empty-string|int, ExtractedValue>
+         */
+        $test = function (): iterable {
+            yield '1' => ExtractedValue::fromValue('john', VarSpecifier::new('term'), Operator::None);
+            yield 1 => ExtractedValue::fromValue('jane', VarSpecifier::new('term'), Operator::None);
+        };
+
+        $this->expectException(ValueError::class);
+
+        ExtractionResult::success($test())->variables();
     }
 }

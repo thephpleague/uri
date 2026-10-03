@@ -180,12 +180,12 @@ final class UriTemplate implements Stringable
         Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
         UriFactoryInterface $uriFactory = new HttpFactory()
     ): Psr7UriInterface {
-        $uriString = $this->templateExpandedOrFail($variables);
+        $expanded = $this->templateExpanded($variables);
 
         return $uriFactory->createUri(
             null === $baseUrl
-            ? $uriString
-            : UriString::resolve($uriString, match (true) {
+            ? $expanded
+            : UriString::resolve($expanded, match (true) {
                 $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
                 $baseUrl instanceof WhatWgUrl => $baseUrl->toUnicodeString(),
                 default => $baseUrl,
@@ -241,12 +241,12 @@ final class UriTemplate implements Stringable
         Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
         UriFactoryInterface $uriFactory = new HttpFactory()
     ): Psr7UriInterface {
-        $uriString = $this->templateExpandedOrFail($variables);
+        $expanded = $this->templateExpandedOrFail($variables);
 
         return $uriFactory->createUri(
             null === $baseUrl
-            ? $uriString
-            : UriString::resolve($uriString, match (true) {
+            ? $expanded
+            : UriString::resolve($expanded, match (true) {
                 $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
                 $baseUrl instanceof WhatWgUrl => $baseUrl->toUnicodeString(),
                 default => $baseUrl,

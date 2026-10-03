@@ -296,8 +296,8 @@ final class Expression implements IteratorAggregate
                     previousResult: $previousResult->reconcile($extracted),
                 );
             } catch (VariableCanNotBeExtracted $exception) {
-                $reasons = [...$reasons, ...$exception->getReasons()];
-                $missingNames = [...$missingNames, ...$exception->getMissingNames()];
+                $reasons = [...$reasons, ...$exception->reasons];
+                $missingNames = [...$missingNames, ...$exception->missingNames];
             }
         }
 

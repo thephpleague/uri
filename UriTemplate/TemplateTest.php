@@ -861,8 +861,8 @@ final class TemplateTest extends TestCase
             Template::new('/{foo}/{bar}/{?baz}')->extractOrFail('/42/43/');
             self::fail('Expected '.VariableCanNotBeExtracted::class.' to be thrown.');
         } catch (VariableCanNotBeExtracted $exception) {
-            self::assertSame(['baz'], $exception->getMissingNames());
-            self::assertContains(ExtractionErrorReason::MissingVariables, $exception->getReasons());
+            self::assertSame(['baz'], $exception->missingNames);
+            self::assertContains(ExtractionErrorReason::MissingVariables, $exception->reasons);
         }
     }
 

@@ -10,7 +10,7 @@ All Notable changes to `League\Uri` will be documented in this file
 
 ### Fixed
 
-- None
+- `UriTemplate::expandToPsr7` method implementation was incorrect
 
 ### Deprecated
 

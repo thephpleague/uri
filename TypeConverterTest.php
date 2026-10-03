@@ -697,10 +697,9 @@ final class TypeConverterTest extends TestCase
         $default = new DateTime('2026-01-01');
 
         $dates = TypeConverter::toDateTimeImmutables(
-            ['2026-09-18', 'invalid', '2026-09-19'],
-            '!Y-m-d',
-            null,
-            $default,
+            values: ['2026-09-18', 'invalid', '2026-09-19'],
+            format: '!Y-m-d',
+            default: $default,
         );
 
         self::assertEquals(

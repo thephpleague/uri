@@ -310,11 +310,11 @@ final class TypeConverter
      *
      * @throws Exception if the provided timezone is invalid
      */
-    public static function toDateTimeImmutable(mixed $value, string $format, DateTimeZone|string|null $timezone = null): ?DateTimeImmutable
+    public static function toDateTimeImmutable(mixed $value, string $format, DateTimeZone|string $timezone = 'UTC'): ?DateTimeImmutable
     {
         $format = trim($format);
         '' !== $format || throw new ValueError('The date format must be a non-empty string.');
-        $timezone = !$timezone instanceof DateTimeZone ? new DateTimeZone($timezone ?? 'UTC') : $timezone;
+        $timezone = !$timezone instanceof DateTimeZone ? new DateTimeZone($timezone) : $timezone;
 
         return self::createDateTimeImmutable($value, $format, $timezone);
     }
@@ -329,7 +329,7 @@ final class TypeConverter
     public static function toDateTimeImmutables(
         mixed $values,
         string $format,
-        DateTimeZone|string|null $timezone = null,
+        DateTimeZone|string $timezone = 'UTC',
         DateTimeInterface|null $default = null,
     ): array {
         if (!is_iterable($values)) {
@@ -338,9 +338,7 @@ final class TypeConverter
 
         $format = trim($format);
         '' !== $format || throw new ValueError('The date format must be a non-empty string.');
-        if (!$timezone instanceof DateTimeZone) {
-            $timezone = new DateTimeZone($timezone ?? 'UTC');
-        }
+        $timezone = !$timezone instanceof DateTimeZone ? new DateTimeZone($timezone) : $timezone;
 
         if (null !== $default && !$default instanceof DateTimeImmutable) {
             $default = DateTimeImmutable::createFromInterface($default);

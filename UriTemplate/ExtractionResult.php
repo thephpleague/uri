@@ -314,7 +314,7 @@ final class ExtractionResult implements ArrayAccess, Countable
     public function date(
         int|string $name,
         string $format,
-        DateTimeZone|string|null $timezone = null,
+        DateTimeZone|string $timezone = 'UTC',
         ?DateTimeInterface $default = null
     ): ?DateTimeImmutable {
 
@@ -332,7 +332,7 @@ final class ExtractionResult implements ArrayAccess, Countable
      *
      * @return array<DateTimeImmutable>
      */
-    public function dates(int|string $name, string $format, DateTimeZone|string|null $timezone = null, ?DateTimeInterface $default = null): array
+    public function dates(int|string $name, string $format, DateTimeZone|string $timezone = 'UTC', ?DateTimeInterface $default = null): array
     {
         return TypeConverter::toDateTimeImmutables($this->array($name), $format, $timezone, $default);
     }

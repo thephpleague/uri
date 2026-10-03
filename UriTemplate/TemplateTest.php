@@ -836,6 +836,24 @@ final class TemplateTest extends TestCase
             'value' => '#key1,,key2,val2',
             'expected' => [],
         ];
+
+        yield 'query associative values with duplicate keys fail reconciliation' => [
+            'template' => '{?dates*}',
+            'value' => '?to=2026-09-14&from=2026-01-14&from=2026-01-15',
+            'expected' => [],
+        ];
+
+        yield 'path associative values with duplicate keys fail reconciliation' => [
+            'template' => '{;keys}',
+            'value' => ';keys=foo,one,foo,two',
+            'expected' => [],
+        ];
+
+        yield 'path associative values with equivalent decoded keys fail reconciliation' => [
+            'template' => '{;keys}',
+            'value' => ';keys=foo,one,%66oo,two',
+            'expected' => [],
+        ];
     }
 
     public function test_it_can_match_an_operator_prefixed_expression(): void

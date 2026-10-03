@@ -112,7 +112,10 @@ final class ExtractedValue
         $parts = 0 === count($parts) % 2 ? $parts : [...$parts, ''];
         $result = [];
         foreach (array_chunk($parts, 2) as [$k, $v]) {
-            $result[$operator->decode($k)] = $operator->decode($v);
+            $key = $operator->decode($k);
+            !array_key_exists($key, $result) || throw VariableCanNotBeExtracted::dueTo('The variable cannot be extracted because the input contains multiple values for "'.$key.'".', ExtractionErrorReason::ReconciliationFailed);
+
+            $result[$key] = $operator->decode($v);
         }
 
         return ExtractedValue::fromArray($result);
@@ -205,7 +208,9 @@ final class ExtractedValue
 
         $result = [];
         foreach ($pairs as [$pName, $pValue]) {
-            $result[$operator->decode($pName)] = $operator->decode($pValue);
+            $key = $operator->decode($pName);
+            !array_key_exists($key, $result) || throw VariableCanNotBeExtracted::dueTo('The variable cannot be extracted because the input contains multiple values for "'.$key.'".', ExtractionErrorReason::ReconciliationFailed);
+            $result[$key] = $operator->decode($pValue);
         }
 
         return new self($result);

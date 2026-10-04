@@ -309,10 +309,10 @@ enum Operator: string
     {
         $content = match (true) {
             null === $value => ExtractedValue::fromNull(),
-            '*' === $varSpecifier->modifier => ExtractedValue::fromList($value, $varSpecifier, $this),
+            '*' === $varSpecifier->modifier => ExtractedValue::fromList($value, $this, $varSpecifier),
             $this->isNamed() => $this->extractNamedValue($varSpecifier, $value),
             self::Fragment === $this => $this->extractFragmentValue($varSpecifier, $value),
-            default => ExtractedValue::fromValue($value, $varSpecifier, $this),
+            default => ExtractedValue::fromValue($value, $this, $varSpecifier),
         };
 
         return  ExtractionResult::success([$varSpecifier->name => $content]);
@@ -328,13 +328,13 @@ enum Operator: string
 
         return self::PathParam === $this && str_contains($value, ',')
             ? ExtractedValue::fromNamedValue($value, $this)
-            : ExtractedValue::fromValue($value, $varSpecifier, $this);
+            : ExtractedValue::fromValue($value, $this, $varSpecifier);
     }
 
     private function extractFragmentValue(VarSpecifier $varSpecifier, string $value): ExtractedValue
     {
         return str_contains($value, ',')
-            ? ExtractedValue::fromList($value, $varSpecifier, $this)
-            : ExtractedValue::fromValue($value, $varSpecifier, $this);
+            ? ExtractedValue::fromList($value, $this, $varSpecifier)
+            : ExtractedValue::fromValue($value, $this, $varSpecifier);
     }
 }

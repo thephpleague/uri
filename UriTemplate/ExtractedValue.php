@@ -29,7 +29,6 @@ final class ExtractedValue
     public readonly bool $isPartial;
 
     /**
-     *
      * @throws VariableCanNotBeExtracted
      */
     private function __construct(
@@ -59,19 +58,16 @@ final class ExtractedValue
 
     public static function fromArray(array $value): self
     {
-        return new self($value, -1);
+        return new self($value);
     }
 
     /**
      * @throws VariableCanNotBeExtracted
      */
-    public static function fromList(
-        string $value,
-        VarSpecifier $varSpecifier,
-        Operator $operator,
-    ): self {
+    public static function fromList(string $value, Operator $operator, VarSpecifier $varSpecifier): self
+    {
         return $operator->isNamed()
-             ? self::fromNamedList($value, $varSpecifier, $operator)
+             ? self::fromNamedList($value, $operator, $varSpecifier)
              : self::fromUnnamedList($value, $operator);
     }
 
@@ -154,10 +150,8 @@ final class ExtractedValue
         return new self($result);
     }
 
-    private static function fromPositionalPairs(
-        string $value,
-        Operator $operator,
-    ): self {
+    private static function fromPositionalPairs(string $value, Operator $operator): self
+    {
         /** @var non-empty-string $separator */
         $separator = $operator->separator();
         $parts = explode($separator, $value);
@@ -186,11 +180,8 @@ final class ExtractedValue
      * returned as a list. Otherwise, the complete name/value mapping is returned,
      * provided the variable's name is not mixed with other names.
      */
-    public static function fromNamedList(
-        string $value,
-        VarSpecifier $varSpecifier,
-        Operator $operator,
-    ): self {
+    public static function fromNamedList(string $value, Operator $operator, VarSpecifier $varSpecifier): self
+    {
         /** @var non-empty-string $separator */
         $separator = $operator->separator();
         $items = explode($separator, $value);
@@ -216,20 +207,15 @@ final class ExtractedValue
         return new self($result);
     }
 
-    public static function fromValue(
-        string $value,
-        VarSpecifier $varSpecifier,
-        Operator $operator,
-    ): self {
-        $list = array_map(
-            static fn (string $value): string => $operator->decode($value),
-            '' !== $value && $operator->supportsListValue() ? explode(',', $value) : []
-        );
-
+    public static function fromValue(string $value, Operator $operator, VarSpecifier $varSpecifier): self
+    {
         return new self(
-            $operator->decode($value),
-            0 === $varSpecifier->position ? -1 : $varSpecifier->position,
-            $list,
+            value: $operator->decode($value),
+            maxLength: 0 === $varSpecifier->position ? -1 : $varSpecifier->position,
+            asList: array_map(
+                static fn (string $value): string => $operator->decode($value),
+                '' !== $value && $operator->supportsListValue() ? explode(',', $value) : []
+            ),
         );
     }
 

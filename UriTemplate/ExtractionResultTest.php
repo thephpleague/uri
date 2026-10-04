@@ -199,8 +199,8 @@ final class ExtractionResultTest extends TestCase
          * @return iterable<non-empty-string, ExtractedValue>
          */
         $test = function (): iterable {
-            yield 'toto' => ExtractedValue::fromValue('john', VarSpecifier::new('term'), Operator::None);
-            yield 'toto' => ExtractedValue::fromValue('jane', VarSpecifier::new('term'), Operator::None);
+            yield 'toto' => ExtractedValue::fromValue('john', Operator::None, VarSpecifier::new('term'));
+            yield 'toto' => ExtractedValue::fromValue('jane', Operator::None, VarSpecifier::new('term'));
         };
 
         $this->expectException(ValueError::class);
@@ -215,8 +215,8 @@ final class ExtractionResultTest extends TestCase
          * @return iterable<non-empty-string|int, ExtractedValue>
          */
         $test = function (): iterable {
-            yield '1' => ExtractedValue::fromValue('john', VarSpecifier::new('term'), Operator::None);
-            yield 1 => ExtractedValue::fromValue('jane', VarSpecifier::new('term'), Operator::None);
+            yield '1' => ExtractedValue::fromValue('john', Operator::None, VarSpecifier::new('term'));
+            yield 1 => ExtractedValue::fromValue('jane', Operator::None, VarSpecifier::new('term'));
         };
 
         $this->expectException(ValueError::class);

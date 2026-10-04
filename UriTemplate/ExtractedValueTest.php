@@ -29,7 +29,7 @@ final class ExtractedValueTest extends TestCase
         string|array $expectedValue,
         bool $expectedPartial,
     ): void {
-        $extracted = ExtractedValue::fromValue($value, VarSpecifier::new($specifier), Operator::None);
+        $extracted = ExtractedValue::fromValue($value, Operator::None, VarSpecifier::new($specifier));
 
         self::assertSame($expectedValue, $extracted->value);
         self::assertSame($expectedPartial, $extracted->isPartial);

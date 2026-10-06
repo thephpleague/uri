@@ -7,6 +7,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `UriTemplate` extraction feature
+- `UrlPattern` extraction feature
 
 ### Fixed
 

@@ -19,6 +19,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use League\Uri\HostRecord;
 use League\Uri\TypeConverter;
 use LogicException;
 use TypeError;
@@ -242,9 +243,22 @@ final class ExtractionResult implements ArrayAccess, Countable
         return TypeConverter::toString($this->fetch($name)?->value) ?? $default;
     }
 
+    public function host(int|string $name, ?string $default = null): ?string
+    {
+        return HostRecord::from($this->string($name))->toUnicode() ?? $default;
+    }
+
     public function strings(int|string $name, ?string $default = null): array
     {
         return TypeConverter::toStrings($this->array($name), $default);
+    }
+
+    public function hosts(int|string $name, ?string $default = null): array
+    {
+        return array_map(
+            static fn (?string $value): ?string => HostRecord::from($value)->toUnicode() ?? $default,
+            $this->strings($name)
+        );
     }
 
     public function integer(int|string $name, ?int $default = null): ?int

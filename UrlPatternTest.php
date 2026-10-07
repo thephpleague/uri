@@ -40,11 +40,19 @@ final class UrlPatternTest extends TestCase
     }
 
     #[Test]
-    public function it_detects_a_regexp_group_for_an_optional_parameter(): void
+    public function it_detects_a_regexp_group_for_regexp_parameter(): void
+    {
+        $pattern = UrlPatternBuilder::from('/book/:id?(\d+)')->build();
+
+        self::assertTrue($pattern->hasRegexpGroup);
+    }
+
+    #[Test]
+    public function it_does_not_detects_a_regexp_group_for_an_optional_parameter(): void
     {
         $pattern = UrlPatternBuilder::from('/book/:id?')->build();
 
-        self::assertTrue($pattern->hasRegexpGroup);
+        self::assertFalse($pattern->hasRegexpGroup);
         self::assertSame('/book/:id?', $pattern->path);
         self::assertSame('*', $pattern->fragment);
     }

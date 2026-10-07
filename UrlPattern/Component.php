@@ -16,6 +16,8 @@ namespace League\Uri\UrlPattern;
 final class Component
 {
     public readonly bool $hasRegexpGroup;
+    public readonly bool $hasVariable;
+
     /**
      * @param list<Part> $parts
      */
@@ -25,14 +27,14 @@ final class Component
         public readonly string $regexp,
     ) {
         $hasRegexpGroup = false;
+        $hasVariable = false;
         foreach ($this->parts as $part) {
-            if ($part->type->hasRegexpGroup()) {
-                $hasRegexpGroup = true;
-                break;
-            }
+            $hasRegexpGroup = $hasRegexpGroup || $part->type->hasRegexpGroup();
+            $hasVariable = $hasVariable || $part->type->hasVariable();
         }
 
         $this->hasRegexpGroup = $hasRegexpGroup;
+        $this->hasVariable = $hasVariable;
     }
 
     public static function fromAsterisk(): self

@@ -20,12 +20,13 @@ enum PartType
     case Regex;
     case Fixed;
 
+    public function hasVariable(): bool
+    {
+        return self::Fixed !== $this;
+    }
+
     public function hasRegexpGroup(): bool
     {
-        return match ($this) {
-            self::FullWildcard,
-            self::Fixed => false,
-            default => true,
-        };
+        return self::Regex === $this;
     }
 }

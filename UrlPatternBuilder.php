@@ -22,7 +22,7 @@ use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
-use function array_map;
+use function array_filter;
 use function is_bool;
 use function strrpos;
 use function substr;
@@ -79,7 +79,7 @@ final class UrlPatternBuilder implements Conditionable
 
     public function build(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): UrlPattern
     {
-        $components = [
+        $components = self::applyBaseUrl([
             'scheme' => $this->scheme ?? null,
             'username' => $this->username ?? null,
             'password' => $this->password ?? null,
@@ -88,18 +88,12 @@ final class UrlPatternBuilder implements Conditionable
             'path' => $this->path ?? null,
             'query' => $this->query ?? null,
             'fragment' => $this->fragment ?? null,
-        ];
+        ], $baseUrl);
 
-        if (null !== $baseUrl) {
-            $components = self::applyBaseUrl($components, $baseUrl);
-        }
-
-        $components = array_map(
-            static fn (?Component $component): Component => $component ?? Component::fromAsterisk(),
-            $components
+        return new UrlPattern(
+            array_filter($components, static fn (?Component $component): bool => $component instanceof Component),
+            $this->matchMode
         );
-
-        return new UrlPattern($components, $this->matchMode);
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
@@ -115,8 +109,12 @@ final class UrlPatternBuilder implements Conditionable
         } ?? $this;
     }
 
-    private static function applyBaseUrl(array $components, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $baseUrl): array
+    private static function applyBaseUrl(array $components, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl): array
     {
+        if (null === $baseUrl) {
+            return $components;
+        }
+
         $baseComponents = UriString::parse(match (true) {
             $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
             $baseUrl instanceof WhatWgUrl => $baseUrl->toAsciiString(),

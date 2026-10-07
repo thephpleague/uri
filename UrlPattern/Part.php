@@ -24,9 +24,4 @@ final class Part
         public readonly Modifier $modifier,
     ) {
     }
-
-    public function hasCustomName(): bool
-    {
-        return '' !== $this->name && ! is_int($this->name);
-    }
 }

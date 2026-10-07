@@ -21,6 +21,7 @@ use League\Uri\UrlPattern\MatchMode;
 use League\Uri\UrlPattern\PartType;
 use League\Uri\UrlPattern\Result;
 use Stringable;
+use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 use ValueError;
@@ -48,6 +49,7 @@ final class UrlPattern
     private readonly array $components;
     public readonly MatchMode $matchMode;
     public readonly bool $hasRegexpGroup;
+    public readonly bool $hasVariable;
 
     /**
      * @param array<'scheme'|'username'|'password'|'host'|'port'|'path'|'query'|'fragment', Component> $patternComponents
@@ -55,23 +57,26 @@ final class UrlPattern
     public function __construct(array $patternComponents, MatchMode $matchMode = MatchMode::CaseSensitive)
     {
         $hasRegexpGroup = false;
+        $hasVariable = false;
         $components = [];
         foreach (self::COMPONENT_NAMES as $name) {
-            if (!array_key_exists($name, $patternComponents)) {
+            if (! array_key_exists($name, $patternComponents)) {
                 $components[$name] = Component::fromAsterisk();
+                continue;
             }
 
             $component = $patternComponents[$name];
-            $component instanceof Component || throw new ValueError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
+            /* @phpstan-ignore-next-line */
+            $component instanceof Component || throw new TypeError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
             $components[$name] = $component;
-            if (!$hasRegexpGroup) {
-                $hasRegexpGroup = $component->hasRegexpGroup;
-            }
+            $hasRegexpGroup = $hasRegexpGroup || $component->hasRegexpGroup;
+            $hasVariable = $hasVariable || $component->hasVariable;
         }
 
         $this->components = $components;
-        $this->hasRegexpGroup = $hasRegexpGroup;
         $this->matchMode = $matchMode;
+        $this->hasRegexpGroup = $hasRegexpGroup;
+        $this->hasVariable = $hasVariable;
     }
 
     public static function from(

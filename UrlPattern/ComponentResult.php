@@ -19,6 +19,8 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use League\Uri\Encoder;
+use League\Uri\HostRecord;
 use League\Uri\TypeConverter;
 use LogicException;
 use TypeError;
@@ -29,6 +31,7 @@ use function array_key_exists;
 use function count;
 use function is_int;
 use function is_string;
+use function preg_match;
 
 /**
  * @implements ArrayAccess<array-key, string|null>
@@ -42,6 +45,38 @@ final class ComponentResult implements ArrayAccess, Countable
         public readonly string $input,
         private readonly array $data
     ) {
+    }
+
+    public static function extract(
+        string $input,
+        Component $component,
+        ComponentName $componentName,
+        MatchMode $matchMode,
+    ): ?self {
+        $modifier = MatchMode::CaseInsensitive === $matchMode ? 'i' : '';
+        $regexp = '~'.$component->regexp.'~'.$modifier;
+        if (1 !== preg_match($regexp, $input, $matches)) {
+            return null;
+        }
+
+        $data = [];
+        $matchIndex = 1;
+        foreach ($component->parts as $part) {
+            if (PartType::Fixed === $part->type) {
+                continue;
+            }
+
+            $content = $matches[$matchIndex++] ?? null;
+            $data[$part->name] = ComponentName::Host === $componentName
+                ? HostRecord::from($content)->toUnicode()
+                : Encoder::decodeAll($content);
+        }
+
+        if ('*' === $component->pattern && [''] === $data) {
+            $data = [];
+        }
+
+        return new self($component->pattern, $data);
     }
 
     public static function empty(): self

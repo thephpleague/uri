@@ -15,7 +15,7 @@ namespace League\Uri\UrlPattern;
 
 final class Result
 {
-    private const COMPONENT_NAMES = ['scheme' => 1, 'username' => 1, 'password' => 1, 'host' => 1, 'port' => 1, 'path' => 1, 'query' => 1, 'fragment' => 1];
+    private readonly bool $isEmpty;
 
     private function __construct(
         public readonly ComponentResult $scheme,
@@ -27,29 +27,46 @@ final class Result
         public readonly ComponentResult $query,
         public readonly ComponentResult $fragment,
     ) {
-
+        $this->isEmpty = $this->scheme->isEmpty()
+            && $this->username->isEmpty()
+            && $this->password->isEmpty()
+            && $this->host->isEmpty()
+            && $this->port->isEmpty()
+            && $this->path->isEmpty()
+            && $this->query->isEmpty()
+            && $this->fragment->isEmpty();
     }
 
     /**
-     * @param array<'scheme'|'username'|'password'|'host'|'port'|'path'|'query'|'fragment', ComponentResult> $extraction
+     * Tells whether the Resul contain any variable
+     */
+    public function isEmpty(): bool
+    {
+        return $this->isEmpty;
+    }
+
+    /**
+     * @param array<non-empty-string, ComponentResult> $extraction
      */
     public static function tryFrom(array $extraction): ?self
     {
         foreach ($extraction as $name => $value) {
-            if (!$value instanceof ComponentResult || !isset(self::COMPONENT_NAMES[$name])) {
+            if (!$value instanceof ComponentResult || null === ComponentName::tryFrom($name)) {
                 return null;
             }
         }
 
+        $empty = ComponentResult::empty();
+
         return new self(
-            scheme: $extraction['scheme'] ?? ComponentResult::empty(),
-            username: $extraction['username'] ?? ComponentResult::empty(),
-            password: $extraction['password'] ?? ComponentResult::empty(),
-            host: $extraction['host'] ?? ComponentResult::empty(),
-            port: $extraction['port'] ?? ComponentResult::empty(),
-            path: $extraction['path'] ?? ComponentResult::empty(),
-            query: $extraction['query'] ?? ComponentResult::empty(),
-            fragment: $extraction['fragment'] ?? ComponentResult::empty(),
+            scheme: $extraction[ComponentName::Scheme->value] ?? $empty,
+            username: $extraction[ComponentName::Username->value] ?? $empty,
+            password: $extraction[ComponentName::Password->value] ?? $empty,
+            host: $extraction[ComponentName::Host->value] ?? $empty,
+            port: $extraction[ComponentName::Port->value] ?? $empty,
+            path: $extraction[ComponentName::Path->value] ?? $empty,
+            query: $extraction[ComponentName::Query->value] ?? $empty,
+            fragment: $extraction[ComponentName::Fragment->value] ?? $empty,
         );
     }
 }

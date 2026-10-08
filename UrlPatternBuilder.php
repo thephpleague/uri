@@ -16,6 +16,7 @@ namespace League\Uri;
 use BackedEnum;
 use League\Uri\Contracts\Conditionable;
 use League\Uri\UrlPattern\Component;
+use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\MatchMode;
 use League\Uri\UrlPattern\Parser;
 use Stringable;
@@ -62,14 +63,14 @@ final class UrlPatternBuilder implements Conditionable
         $components = (new Parser((string) $pattern))->components();
 
         return (new self())
-            ->scheme($components['scheme'] ?? null)
-            ->username($components['username'] ?? null)
-            ->password($components['password'] ?? null)
-            ->host($components['host'] ?? null)
-            ->port($components['port'] ?? null)
-            ->path($components['path'] ?? null)
-            ->query($components['query'] ?? null)
-            ->fragment($components['fragment'] ?? null)
+            ->scheme($components[ComponentName::Scheme->value] ?? null)
+            ->username($components[ComponentName::Username->value] ?? null)
+            ->password($components[ComponentName::Password->value] ?? null)
+            ->host($components[ComponentName::Host->value] ?? null)
+            ->port($components[ComponentName::Port->value] ?? null)
+            ->path($components[ComponentName::Path->value] ?? null)
+            ->query($components[ComponentName::Query->value] ?? null)
+            ->fragment($components[ComponentName::Fragment->value] ?? null)
             ->when(
                 MatchMode::CaseInsensitive == $matchMode,
                 static fn (self $builder): self => $builder->ignoreCase(),
@@ -80,14 +81,14 @@ final class UrlPatternBuilder implements Conditionable
     public function build(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): UrlPattern
     {
         $components = self::applyBaseUrl([
-            'scheme' => $this->scheme ?? null,
-            'username' => $this->username ?? null,
-            'password' => $this->password ?? null,
-            'host' => $this->host ?? null,
-            'port' => $this->port ?? null,
-            'path' => $this->path ?? null,
-            'query' => $this->query ?? null,
-            'fragment' => $this->fragment ?? null,
+            ComponentName::Scheme->value => $this->scheme ?? null,
+            ComponentName::Username->value => $this->username ?? null,
+            ComponentName::Password->value => $this->password ?? null,
+            ComponentName::Host->value => $this->host ?? null,
+            ComponentName::Port->value => $this->port ?? null,
+            ComponentName::Path->value => $this->path ?? null,
+            ComponentName::Query->value => $this->query ?? null,
+            ComponentName::Fragment->value => $this->fragment ?? null,
         ], $baseUrl);
 
         return new UrlPattern(
@@ -109,6 +110,12 @@ final class UrlPatternBuilder implements Conditionable
         } ?? $this;
     }
 
+    /**
+     * @param array $components
+     * @param Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl
+     *
+     * @return array<non-empty-string, Component>
+     */
     private static function applyBaseUrl(array $components, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl): array
     {
         if (null === $baseUrl) {
@@ -120,31 +127,31 @@ final class UrlPatternBuilder implements Conditionable
             $baseUrl instanceof WhatWgUrl => $baseUrl->toAsciiString(),
             default => $baseUrl,
         });
-        $hasScheme = isset($components['scheme']);
-        $hasHost = isset($components['host']);
-        $hasPort = isset($components['port']);
+        $hasScheme = isset($components[ComponentName::Scheme->value]);
+        $hasHost = isset($components[ComponentName::Host->value]);
+        $hasPort = isset($components[ComponentName::Port->value]);
 
         if (! $hasScheme) {
-            $components['scheme'] = null !== $baseComponents['scheme']
-                ? Component::fromPattern($baseComponents['scheme'])
+            $components[ComponentName::Scheme->value] = null !== $baseComponents[ComponentName::Scheme->value]
+                ? Component::fromPattern($baseComponents[ComponentName::Scheme->value])
                 : Component::fromAsterisk();
         }
 
         if (! $hasScheme && ! $hasHost) {
-            $components['host'] = null !== $baseComponents['host']
-                ? Component::fromPattern($baseComponents['host'])
+            $components[ComponentName::Host->value] = null !== $baseComponents[ComponentName::Host->value]
+                ? Component::fromPattern($baseComponents[ComponentName::Host->value])
                 : Component::fromAsterisk();
         }
 
         if (! $hasScheme && ! $hasHost && ! $hasPort) {
-            $components['port'] = null !== $baseComponents['port']
-                ? Component::fromPattern((string) $baseComponents['port'])
+            $components[ComponentName::Port->value] = null !== $baseComponents[ComponentName::Port->value]
+                ? Component::fromPattern((string) $baseComponents[ComponentName::Port->value])
                 : Component::fromAsterisk();
         }
 
-        $components['path'] = match (true) {
-            !isset($components['path']) => null !== $baseComponents['path'] ? Component::fromPattern($baseComponents['path']) : Component::fromAsterisk(),
-            default => self::resolvePathname($components['path'], $baseComponents['path']),
+        $components[ComponentName::Path->value] = match (true) {
+            !isset($components[ComponentName::Path->value]) => null !== $baseComponents[ComponentName::Path->value] ? Component::fromPattern($baseComponents[ComponentName::Path->value]) : Component::fromAsterisk(),
+            default => self::resolvePathname($components[ComponentName::Path->value], $baseComponents[ComponentName::Path->value]),
         };
 
         return $components;

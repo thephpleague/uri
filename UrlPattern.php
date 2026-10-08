@@ -16,12 +16,11 @@ namespace League\Uri;
 use BackedEnum;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UrlPattern\Component;
+use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\ComponentResult;
 use League\Uri\UrlPattern\MatchMode;
-use League\Uri\UrlPattern\PartType;
 use League\Uri\UrlPattern\Result;
 use Stringable;
-use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 use ValueError;
@@ -29,8 +28,6 @@ use ValueError;
 use function array_key_exists;
 use function array_map;
 use function get_debug_type;
-use function in_array;
-use function preg_match;
 
 /**
  * @property-read ?string $scheme
@@ -44,31 +41,30 @@ use function preg_match;
  */
 final class UrlPattern
 {
-    private const COMPONENT_NAMES = ['scheme', 'username', 'password', 'host', 'port', 'path', 'query', 'fragment'];
-    /** @var array<'scheme'|'username'|'password'|'host'|'port'|'path'|'query'|'fragment', Component> $components */
+    /** @var array<non-empty-string, Component> $components */
     private readonly array $components;
     public readonly MatchMode $matchMode;
     public readonly bool $hasRegexpGroup;
     public readonly bool $hasVariable;
 
     /**
-     * @param array<'scheme'|'username'|'password'|'host'|'port'|'path'|'query'|'fragment', Component> $patternComponents
+     * @param array<non-empty-string, Component> $patternComponents
      */
     public function __construct(array $patternComponents, MatchMode $matchMode = MatchMode::CaseSensitive)
     {
         $hasRegexpGroup = false;
         $hasVariable = false;
         $components = [];
-        foreach (self::COMPONENT_NAMES as $name) {
-            if (! array_key_exists($name, $patternComponents)) {
-                $components[$name] = Component::fromAsterisk();
+        foreach (ComponentName::cases() as $name) {
+            if (! array_key_exists($name->value, $patternComponents)) {
+                $components[$name->value] = Component::fromAsterisk();
                 continue;
             }
 
-            $component = $patternComponents[$name];
+            $component = $patternComponents[$name->value];
             /* @phpstan-ignore-next-line */
-            $component instanceof Component || throw new TypeError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
-            $components[$name] = $component;
+            $component instanceof Component || throw new ValueError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
+            $components[$name->value] = $component;
             $hasRegexpGroup = $hasRegexpGroup || $component->hasRegexpGroup;
             $hasVariable = $hasVariable || $component->hasVariable;
         }
@@ -93,11 +89,12 @@ final class UrlPattern
             ->build($baseUrl);
     }
 
-    public function __get(string $name): ?string
+    public function __get(string $name): string
     {
-        in_array($name, self::COMPONENT_NAMES, true) || throw new ValueError('the property named "'.$name.'" does not exist.');
+        $key = ComponentName::tryFrom($name)?->value;
+        null !== $key|| throw new ValueError('the property named "'.$name.'" does not exist.');
 
-        return array_key_exists($name, $this->components) ? $this->components[$name]->pattern : null;
+        return $this->components[$key]->pattern;
     }
 
     public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $input): bool
@@ -117,12 +114,12 @@ final class UrlPattern
         };
 
         $components = array_map(static fn (string|int|null $value): string => (string) $value, UriString::parse($uriString));
-        $components['username'] = $components['user'];
-        $components['password'] = $components['pass'];
+        $components[ComponentName::Username->value] = $components['user'];
+        $components[ComponentName::Password->value] = $components['pass'];
 
         $result = [];
         foreach ($this->components as $name => $component) {
-            $found = $this->extractComponent($component, $components[$name], $name);
+            $found = ComponentResult::extract($components[$name], $component, ComponentName::from($name), $this->matchMode);
             if (null === $found) {
                 return null;
             }
@@ -133,33 +130,8 @@ final class UrlPattern
         return Result::tryFrom($result);
     }
 
-    private function extractComponent(Component $component, string $source, string $name): ?ComponentResult
-    {
-        $matches = [];
-        $modifier = MatchMode::CaseInsensitive === $this->matchMode ? 'i' : '';
-        $regexp = '~'.$component->regexp.'~'.$modifier;
-        if (1 !== preg_match($regexp, $source, $matches)) {
-            return null;
-        }
-
-        $data = [];
-        $matchIndex = 1;
-        foreach ($component->parts as $part) {
-            if (PartType::Fixed === $part->type) {
-                continue;
-            }
-
-            $content = $matches[$matchIndex++] ?? null;
-            $data[$part->name] = 'host' === $name
-                ? HostRecord::from($content)->toUnicode()
-                : Encoder::decodeAll($content);
-        }
-
-        return new ComponentResult($component->pattern, $data);
-    }
-
     /**
-     * @return array<'scheme'|'username'|'password'|'host'|'port'|'path'|'query'|'fragment', string>
+     * @return array<non-empty-string, string>
      */
     public function __debugInfo(): array
     {

@@ -72,16 +72,23 @@ final class UrlPatternTest extends TestCase
 
         self::assertTrue($pattern->match('/book/123'));
         self::assertFalse($pattern->match('/book/456'));
+
+        $result = $pattern->extract('/book/123');
+
+        self::assertInstanceOf(Result::class, $result);
+        self::assertTrue($result->isEmpty());
+        self::assertFalse($pattern->hasVariable);
     }
 
     #[Test]
     public function it_extracts_a_named_path_parameter(): void
     {
         $pattern = UrlPatternBuilder::from('/users/:id')->build();
-
         $result = $pattern->extract('/users/42');
 
-        self::assertNotNull($result);
+        self::assertInstanceOf(Result::class, $result);
+        self::assertFalse($result->isEmpty());
+        self::assertTrue($pattern->hasVariable);
         self::assertSame('42', $result->path['id']);
     }
 

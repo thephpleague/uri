@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace League\Uri;
 
 use BackedEnum;
+use League\Uri\Contracts\UriInterface;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UrlPattern\Component;
 use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\ComponentResult;
 use League\Uri\UrlPattern\MatchMode;
 use League\Uri\UrlPattern\Result;
+use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
@@ -107,16 +109,7 @@ final class UrlPattern
      */
     public function extract(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $input): ?Result
     {
-        $uriString = match (true) {
-            $input instanceof Rfc3986Uri => $input->toRawString(),
-            $input instanceof WhatWgUrl => $input->toAsciiString(),
-            default => $input,
-        };
-
-        $components = array_map(static fn (string|int|null $value): string => (string) $value, UriString::parse($uriString));
-        $components[ComponentName::Username->value] = $components['user'];
-        $components[ComponentName::Password->value] = $components['pass'];
-
+        $components = self::components($input);
         $result = [];
         foreach ($this->components as $name => $component) {
             $found = ComponentResult::extract($components[$name], $component, ComponentName::from($name), $this->matchMode);
@@ -136,5 +129,61 @@ final class UrlPattern
     public function __debugInfo(): array
     {
         return array_map(static fn (Component $component): string => $component->pattern, $this->components);
+    }
+
+    /**
+     * @throws SyntaxError
+     *
+     * @return array{
+     *     scheme: string,
+     *     username: string,
+     *     password: string,
+     *     host: string,
+     *     port: string,
+     *     path: string,
+     *     query: string,
+     *     fragment: string
+     * }.
+     */
+    private static function components(WhatWgUrl|Rfc3986Uri|Stringable|BackedEnum|string $input): array
+    {
+        if ($input instanceof WhatWgUrl || $input instanceof UriInterface || $input instanceof Rfc3986Uri) {
+            return [
+                ComponentName::Scheme->value => (string) $input->getScheme(),
+                ComponentName::Username->value => (string) $input->getUsername(),
+                ComponentName::Password->value => (string) $input->getPassword(),
+                ComponentName::Host->value => (string) ($input instanceof WhatWgUrl ? $input->getAsciiHost() : $input->getHost()),
+                ComponentName::Port->value => (string) $input->getPort(),
+                ComponentName::Path->value => $input->getPath(),
+                ComponentName::Query->value => (string) $input->getQuery(),
+                ComponentName::Fragment->value => (string) $input->getFragment(),
+            ];
+        }
+
+        if ($input instanceof Psr7UriInterface) {
+            $username = '';
+            $password = '';
+            $userInfo = $input->getUserInfo();
+            if ('' !== $userInfo) {
+                [$username, $password] = explode(':', $userInfo, 2) + [1 => ''];
+            }
+
+            return [
+                ComponentName::Scheme->value => $input->getScheme(),
+                ComponentName::Username->value => $username,
+                ComponentName::Password->value => $password,
+                ComponentName::Host->value => $input->getHost(),
+                ComponentName::Port->value => (string) $input->getPort(),
+                ComponentName::Path->value => $input->getPath(),
+                ComponentName::Query->value => $input->getQuery(),
+                ComponentName::Fragment->value => $input->getFragment(),
+            ];
+        }
+
+        $components = array_map(static fn(string|int|null $value): string => (string)$value, UriString::parse($input));
+        $components[ComponentName::Username->value] = $components['user'];
+        $components[ComponentName::Password->value] = $components['pass'];
+
+        return $components;
     }
 }

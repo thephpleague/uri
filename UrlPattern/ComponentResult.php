@@ -39,11 +39,12 @@ use function preg_match;
 final class ComponentResult implements ArrayAccess, Countable
 {
     /**
-     * @param array<array-key, string|null> $data
+     * @param array<array-key, string|null> $groups
      */
-    public function __construct(
+    private function __construct(
         public readonly string $input,
-        private readonly array $data
+        private readonly ?string $implicit,
+        private readonly array $groups
     ) {
     }
 
@@ -72,26 +73,26 @@ final class ComponentResult implements ArrayAccess, Countable
                 : Encoder::decodeAll($content);
         }
 
-        if ('*' === $component->pattern && [''] === $data) {
-            $data = [];
-        }
+        $implicit = '*' === $component->pattern && [''] !== $data
+            ? $data[0]
+            : null;
 
-        return new self($component->pattern, $data);
+        return new self($input, $implicit, $data);
     }
 
     public static function empty(): self
     {
-        return new self('', []);
+        return new self('', null, ['']);
     }
 
     public function count(): int
     {
-        return count($this->data);
+        return count($this->groups);
     }
 
-    public function isEmpty(): bool
+    public function hasValue(): bool
     {
-        return [] === $this->data;
+        return [''] !== $this->groups && [] !== $this->groups;
     }
 
     /**
@@ -99,7 +100,7 @@ final class ComponentResult implements ArrayAccess, Countable
      */
     public function names(): array
     {
-        return array_keys($this->data);
+        return array_keys($this->groups);
     }
 
     /**
@@ -107,25 +108,25 @@ final class ComponentResult implements ArrayAccess, Countable
      */
     public function variables(): array
     {
-        return $this->data;
+        return $this->groups;
     }
 
     public function implicit(): ?string
     {
-        return '*' !== $this->input || [] === $this->data ? null : $this->data[0];
+        return $this->implicit;
     }
 
     public function offsetGet(mixed $offset): null|string
     {
         return is_string($offset) || is_int($offset)
-            ? ($this->data[$offset] ?? null)
+            ? ($this->groups[$offset] ?? null)
             : throw new TypeError('invalid offset type, only string or integer are allowed.');
     }
 
     public function offsetExists(mixed $offset): bool
     {
         return (is_string($offset) || is_int($offset))
-            && array_key_exists($offset, $this->data);
+            && array_key_exists($offset, $this->groups);
     }
 
     public function offsetUnset(mixed $offset): never
@@ -140,22 +141,22 @@ final class ComponentResult implements ArrayAccess, Countable
 
     public function string(int|string $name, ?string $default = null): ?string
     {
-        return TypeConverter::toString($this->data[$name] ?? null) ?? $default;
+        return TypeConverter::toString($this->groups[$name] ?? null) ?? $default;
     }
 
     public function integer(int|string $name, ?int $default = null): ?int
     {
-        return TypeConverter::toInteger($this->data[$name] ?? null) ?? $default;
+        return TypeConverter::toInteger($this->groups[$name] ?? null) ?? $default;
     }
 
     public function float(int|string $name, ?float $default = null): ?float
     {
-        return TypeConverter::toFloat($this->data[$name] ?? null) ?? $default;
+        return TypeConverter::toFloat($this->groups[$name] ?? null) ?? $default;
     }
 
     public function boolean(int|string $name, ?bool $default = null): ?bool
     {
-        return TypeConverter::toBoolean($this->data[$name] ?? null) ?? $default;
+        return TypeConverter::toBoolean($this->groups[$name] ?? null) ?? $default;
     }
 
     /**
@@ -165,7 +166,7 @@ final class ComponentResult implements ArrayAccess, Countable
     {
         null === $default || $default instanceof $enumClass || throw new ValueError('The default value must be an instance of '.$enumClass.'; '.get_debug_type($default).' given.');
 
-        return TypeConverter::toEnum($this->data[$name] ?? null, $enumClass) ?? $default;
+        return TypeConverter::toEnum($this->groups[$name] ?? null, $enumClass) ?? $default;
     }
 
     /**
@@ -180,7 +181,7 @@ final class ComponentResult implements ArrayAccess, Countable
         ?DateTimeInterface $default = null
     ): ?DateTimeImmutable {
 
-        return TypeConverter::toDateTimeImmutable($this->data[$name] ?? null, $format, $timezone) ?? (
+        return TypeConverter::toDateTimeImmutable($this->groups[$name] ?? null, $format, $timezone) ?? (
             null !== $default && !$default instanceof DateTimeImmutable
             ? DateTimeImmutable::createFromInterface($default)
             : $default

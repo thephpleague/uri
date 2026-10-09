@@ -76,7 +76,7 @@ final class UrlPatternTest extends TestCase
         $result = $pattern->extract('/book/123');
 
         self::assertInstanceOf(Result::class, $result);
-        self::assertTrue($result->isEmpty());
+        self::assertFalse($result->hasValue());
         self::assertFalse($pattern->hasVariable);
     }
 
@@ -87,7 +87,7 @@ final class UrlPatternTest extends TestCase
         $result = $pattern->extract('/users/42');
 
         self::assertInstanceOf(Result::class, $result);
-        self::assertFalse($result->isEmpty());
+        self::assertTrue($result->hasValue());
         self::assertTrue($pattern->hasVariable);
         self::assertSame('42', $result->path['id']);
     }
@@ -191,8 +191,16 @@ final class UrlPatternTest extends TestCase
         self::assertInstanceOf(Result::class, $result);
         self::assertSame(4000, $result->port->integer(0, 80));
         self::assertSame('4000', $result->port->implicit());
+
+        self::assertTrue($result->query->hasValue());
         self::assertSame('search=world', $result->query->implicit());
+        self::assertSame('search=world', $result->query->input);
+
+        self::assertFalse($result->fragment->hasValue());
         self::assertNull($result->fragment->implicit());
+        self::assertSame('', $result->fragment->input);
+
+        self::assertSame('/hello/john', $result->path->input);
         self::assertNull($result->path->implicit());
         self::assertSame('john', $result->path->string('name'));
     }

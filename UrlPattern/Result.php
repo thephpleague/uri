@@ -15,7 +15,7 @@ namespace League\Uri\UrlPattern;
 
 final class Result
 {
-    private readonly bool $isEmpty;
+    private readonly bool $hasValue;
 
     private function __construct(
         public readonly ComponentResult $scheme,
@@ -27,22 +27,22 @@ final class Result
         public readonly ComponentResult $query,
         public readonly ComponentResult $fragment,
     ) {
-        $this->isEmpty = $this->scheme->isEmpty()
-            && $this->username->isEmpty()
-            && $this->password->isEmpty()
-            && $this->host->isEmpty()
-            && $this->port->isEmpty()
-            && $this->path->isEmpty()
-            && $this->query->isEmpty()
-            && $this->fragment->isEmpty();
+        $this->hasValue = $this->scheme->hasValue()
+            || $this->username->hasValue()
+            || $this->password->hasValue()
+            || $this->host->hasValue()
+            || $this->port->hasValue()
+            || $this->path->hasValue()
+            || $this->query->hasValue()
+            || $this->fragment->hasValue();
     }
 
     /**
      * Tells whether the Resul contain any variable.
      */
-    public function isEmpty(): bool
+    public function hasValue(): bool
     {
-        return $this->isEmpty;
+        return $this->hasValue;
     }
 
     /**

@@ -92,7 +92,7 @@ final class UrlPattern
     public function __get(string $name): string
     {
         $key = ComponentName::tryFrom($name)?->value;
-        null !== $key|| throw new ValueError('the property named "'.$name.'" does not exist.');
+        null !== $key || throw new ValueError('the property named "'.$name.'" does not exist.');
 
         return $this->components[$key]->pattern;
     }

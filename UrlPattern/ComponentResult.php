@@ -110,6 +110,11 @@ final class ComponentResult implements ArrayAccess, Countable
         return $this->data;
     }
 
+    public function implicit(): ?string
+    {
+        return '*' !== $this->input || [] === $this->data ? null : $this->data[0];
+    }
+
     public function offsetGet(mixed $offset): null|string
     {
         return is_string($offset) || is_int($offset)

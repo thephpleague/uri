@@ -38,7 +38,7 @@ final class Result
     }
 
     /**
-     * Tells whether the Resul contain any variable
+     * Tells whether the Resul contain any variable.
      */
     public function isEmpty(): bool
     {

@@ -177,4 +177,23 @@ final class UrlPatternTest extends TestCase
         yield ['(\\'];
         yield ['()'];
     }
+
+    #[Test]
+    public function it_can_return_implicit_components_value(): void
+    {
+        $pattern = (new UrlPatternBuilder())
+            ->path('/hello/{:name}')
+            ->host('{:subdomain.}?localhost')
+            ->build();
+
+        $result = $pattern->extract('http://api.localhost:4000/hello/john?search=world');
+
+        self::assertInstanceOf(Result::class, $result);
+        self::assertSame(4000, $result->port->integer(0, 80));
+        self::assertSame('4000', $result->port->implicit());
+        self::assertSame('search=world', $result->query->implicit());
+        self::assertNull($result->fragment->implicit());
+        self::assertNull($result->path->implicit());
+        self::assertSame('john', $result->path->string('name'));
+    }
 }

@@ -111,8 +111,6 @@ final class UrlPatternBuilder implements Conditionable
     }
 
     /**
-     * @param array $components
-     * @param Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl
      *
      * @return array<non-empty-string, Component>
      */

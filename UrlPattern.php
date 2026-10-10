@@ -120,7 +120,7 @@ final class UrlPattern
             $result[$name] = $found;
         }
 
-        return Result::tryFrom($result);
+        return Result::tryFrom($result, $input);
     }
 
     /**

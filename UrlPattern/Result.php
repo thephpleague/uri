@@ -13,10 +13,19 @@ declare(strict_types=1);
 
 namespace League\Uri\UrlPattern;
 
-final class Result
+use BackedEnum;
+use Stringable;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url as WhatWgUrl;
+use JsonSerializable;
+
+final class Result implements JsonSerializable
 {
     private readonly bool $hasValue;
 
+    /**
+     * @param list<string> $inputs
+     */
     private function __construct(
         public readonly ComponentResult $scheme,
         public readonly ComponentResult $username,
@@ -26,6 +35,7 @@ final class Result
         public readonly ComponentResult $path,
         public readonly ComponentResult $query,
         public readonly ComponentResult $fragment,
+        public readonly array $inputs,
     ) {
         $this->hasValue = $this->scheme->hasValue()
             || $this->username->hasValue()
@@ -48,7 +58,7 @@ final class Result
     /**
      * @param array<non-empty-string, ComponentResult> $extraction
      */
-    public static function tryFrom(array $extraction): ?self
+    public static function tryFrom(array $extraction, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $input): ?self
     {
         foreach ($extraction as $name => $value) {
             if (!$value instanceof ComponentResult || null === ComponentName::tryFrom($name)) {
@@ -67,6 +77,40 @@ final class Result
             path: $extraction[ComponentName::Path->value] ?? $empty,
             query: $extraction[ComponentName::Query->value] ?? $empty,
             fragment: $extraction[ComponentName::Fragment->value] ?? $empty,
+            inputs: [match (true) {
+                $input instanceof Rfc3986Uri => $input->toString(),
+                $input instanceof WhatWgUrl => $input->toAsciiString(),
+                $input instanceof BackedEnum => (string) $input->value,
+                default => (string) $input,
+            }],
         );
+    }
+
+    /**
+     * @return array{
+     *     protocol: ComponentResult,
+     *     username: ComponentResult,
+     *     password: ComponentResult,
+     *     hostname: ComponentResult,
+     *     port: ComponentResult,
+     *     pathname: ComponentResult,
+     *     search: ComponentResult,
+     *     hash: ComponentResult,
+     *     inputs: list<string>,
+     * }
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'protocol' => $this->scheme,
+            'username' => $this->username,
+            'password' => $this->password,
+            'hostname' => $this->host,
+            'port' => $this->port,
+            'pathname' => $this->path,
+            'search' => $this->query,
+            'hash' => $this->fragment,
+            'inputs' => $this->inputs,
+        ];
     }
 }

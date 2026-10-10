@@ -25,7 +25,7 @@ final class UrlPatternTest extends TestCase
     #[DataProvider('provideOptionalId')]
     public function it_extracts_optional_parameters(string $pattern, string $input, ?string $expected): void
     {
-        $result = UrlPattern::from($pattern)->extract($input);
+        $result = UrlPattern::from($pattern, 'http://example.com')->extract($input);
 
         self::assertInstanceOf(Result::class, $result);
         self::assertSame($expected, $result->path['id']);
@@ -35,8 +35,8 @@ final class UrlPatternTest extends TestCase
 
     public static function provideOptionalId(): iterable
     {
-        yield 'missing' => ['/book/:id?', '/book', null];
-        yield 'present' => ['/book/:id?', '/book/123', '123'];
+        yield 'missing' => ['/book/:id?', 'http://example.com/book', null];
+        yield 'present' => ['/book/:id?', 'http://example.com/book/123', '123'];
     }
 
     #[Test]
@@ -141,11 +141,10 @@ final class UrlPatternTest extends TestCase
     #[Test]
     public function it_extracts_multiple_groups(): void
     {
-        $pattern = UrlPattern::from('/users/:user/books/:book');
+        $pattern = UrlPattern::from('http://example.com/users/:user/books/:book');
+        $result = $pattern->extract('http://example.com/users/42/books/123');
 
-        $result = $pattern->extract('/users/42/books/123');
         self::assertInstanceOf(Result::class, $result);
-
         self::assertSame('42', $result->path['user']);
         self::assertSame('123', $result->path['book']);
     }
@@ -184,6 +183,7 @@ final class UrlPatternTest extends TestCase
         $pattern = (new UrlPatternBuilder())
             ->path('/hello/{:name}')
             ->host('{:subdomain.}?localhost')
+            ->port('*')
             ->build();
 
         $result = $pattern->extract('http://api.localhost:4000/hello/john?search=world');
@@ -203,5 +203,37 @@ final class UrlPatternTest extends TestCase
         self::assertSame('/hello/john', $result->path->input);
         self::assertNull($result->path->implicit());
         self::assertSame('john', $result->path->string('name'));
+    }
+
+    #[Test]
+    public function it_recognizes_an_escaped_protocol_suffix(): void
+    {
+        $pattern = UrlPattern::from('data\\:foo*');
+
+        self::assertSame('data', $pattern->scheme);
+        self::assertSame('foo*', $pattern->path);
+        self::assertSame('*', $pattern->username);
+        self::assertSame('*', $pattern->password);
+        self::assertSame('', $pattern->host);
+        self::assertSame('', $pattern->port);
+        self::assertSame('*', $pattern->query);
+        self::assertSame('*', $pattern->fragment);
+
+        self::assertTrue($pattern->match('data:foobar'));
+    }
+
+    #[Test]
+    public function it_resolves_correctly_the_port(): void
+    {
+        $pattern = UrlPattern::from('/foo/*', 'https://example.com');
+
+        self::assertSame('https', $pattern->scheme);
+        self::assertSame('/foo/*', $pattern->path);
+        self::assertSame('*', $pattern->username);
+        self::assertSame('*', $pattern->password);
+        self::assertSame('example.com', $pattern->host);
+        self::assertSame('', $pattern->port);
+        self::assertSame('*', $pattern->query);
+        self::assertSame('*', $pattern->fragment);
     }
 }

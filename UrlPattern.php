@@ -59,7 +59,14 @@ final class UrlPattern
         $components = [];
         foreach (ComponentName::cases() as $name) {
             if (! array_key_exists($name->value, $patternComponents)) {
-                $components[$name->value] = Component::fromAsterisk();
+                if (ComponentName::Port !== $name) {
+                    $components[$name->value] = Component::fromAsterisk();
+                    continue;
+                }
+
+                $components[$name->value] = array_key_exists(ComponentName::Host->value, $patternComponents)
+                    ? Component::fromPattern('')
+                    : Component::fromAsterisk();
                 continue;
             }
 
@@ -82,13 +89,16 @@ final class UrlPattern
         Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
         MatchMode $matchMode = MatchMode::CaseSensitive
     ): self {
+
         return UrlPatternBuilder::from($pattern)
+            ->baseUrl($baseUrl)
+            ->requireAbsolutePattern()
             ->when(
                 MatchMode::CaseInsensitive === $matchMode,
                 fn (UrlPatternBuilder $builder) => $builder->ignoreCase(),
                 fn (UrlPatternBuilder $builder) => $builder->preserveCase()
             )
-            ->build($baseUrl);
+            ->build();
     }
 
     public function __get(string $name): string
@@ -180,7 +190,7 @@ final class UrlPattern
             ];
         }
 
-        $components = array_map(static fn(string|int|null $value): string => (string)$value, UriString::parse($input));
+        $components = array_map(static fn (string|int|null $value): string => (string)$value, UriString::parse($input));
         $components[ComponentName::Username->value] = $components['user'];
         $components[ComponentName::Password->value] = $components['pass'];
 

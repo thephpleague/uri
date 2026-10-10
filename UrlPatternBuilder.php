@@ -15,10 +15,13 @@ namespace League\Uri;
 
 use BackedEnum;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UrlPattern\Component;
 use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\MatchMode;
 use League\Uri\UrlPattern\Parser;
+use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
@@ -39,6 +42,8 @@ final class UrlPatternBuilder implements Conditionable
     private ?Component $query = null;
     private ?Component $fragment = null;
     private MatchMode $matchMode = MatchMode::CaseSensitive;
+    private Rfc3986Uri|WhatWgUrl|Psr7UriInterface|UriInterface|null $baseUrl = null;
+    private bool $mustBuildAbsolutePattern = false;
 
     public function __construct()
     {
@@ -56,10 +61,13 @@ final class UrlPatternBuilder implements Conditionable
         $this->query = null;
         $this->fragment = null;
         $this->matchMode = MatchMode::CaseSensitive;
+        $this->baseUrl = null;
     }
 
-    public static function from(Stringable|string $pattern, MatchMode $matchMode = MatchMode::CaseSensitive): self
-    {
+    public static function from(
+        Stringable|string $pattern,
+        MatchMode $matchMode = MatchMode::CaseSensitive
+    ): self {
         $components = (new Parser((string) $pattern))->components();
 
         return (new self())
@@ -72,29 +80,69 @@ final class UrlPatternBuilder implements Conditionable
             ->query($components[ComponentName::Query->value] ?? null)
             ->fragment($components[ComponentName::Fragment->value] ?? null)
             ->when(
-                MatchMode::CaseInsensitive == $matchMode,
+                MatchMode::CaseInsensitive === $matchMode,
                 static fn (self $builder): self => $builder->ignoreCase(),
                 static fn (self $builder): self => $builder->preserveCase(),
             );
     }
 
-    public function build(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): UrlPattern
+    public function build(): UrlPattern
     {
-        $components = self::applyBaseUrl([
-            ComponentName::Scheme->value => $this->scheme ?? null,
-            ComponentName::Username->value => $this->username ?? null,
-            ComponentName::Password->value => $this->password ?? null,
-            ComponentName::Host->value => $this->host ?? null,
-            ComponentName::Port->value => $this->port ?? null,
-            ComponentName::Path->value => $this->path ?? null,
-            ComponentName::Query->value => $this->query ?? null,
-            ComponentName::Fragment->value => $this->fragment ?? null,
-        ], $baseUrl);
-
-        return new UrlPattern(
-            array_filter($components, static fn (?Component $component): bool => $component instanceof Component),
-            $this->matchMode
+        $components = array_filter(
+            self::applyBaseUrl([
+                ComponentName::Scheme->value => $this->scheme ?? null,
+                ComponentName::Username->value => $this->username ?? null,
+                ComponentName::Password->value => $this->password ?? null,
+                ComponentName::Host->value => $this->host ?? null,
+                ComponentName::Port->value => $this->port ?? null,
+                ComponentName::Path->value => $this->path ?? null,
+                ComponentName::Query->value => $this->query ?? null,
+                ComponentName::Fragment->value => $this->fragment ?? null,
+            ], $this->baseUrl),
+            static fn (?Component $component): bool => $component instanceof Component
         );
+
+        return !$this->mustBuildAbsolutePattern || isset($components[ComponentName::Scheme->value])
+            ? new UrlPattern($components, $this->matchMode)
+            : throw new SyntaxError('An absolute URL pattern requires a scheme component.');
+    }
+
+    public function requireAbsolutePattern(): self
+    {
+        $this->mustBuildAbsolutePattern = true;
+
+        return $this;
+    }
+
+    public function allowRelativePattern(): self
+    {
+        $this->mustBuildAbsolutePattern = false;
+
+        return $this;
+    }
+
+    public function baseUrl(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): self
+    {
+        if (null === $baseUrl) {
+            $this->baseUrl = null;
+
+            return $this;
+        }
+
+        if (
+            !$baseUrl instanceof Rfc3986Uri &&
+            !$baseUrl instanceof WhatWgUrl &&
+            !$baseUrl instanceof UriInterface &&
+            !$baseUrl instanceof Psr7UriInterface
+        ) {
+            $baseUrl = Uri::new($baseUrl);
+        }
+
+        '' !== (string) $baseUrl->getScheme() ||  throw new SyntaxError('The BaseUrl must be absoute.');
+
+        $this->baseUrl = $baseUrl;
+
+        return $this;
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
@@ -114,42 +162,43 @@ final class UrlPatternBuilder implements Conditionable
      *
      * @return array<non-empty-string, Component>
      */
-    private static function applyBaseUrl(array $components, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl): array
-    {
+    private static function applyBaseUrl(
+        array $components,
+        Rfc3986Uri|WhatWgUrl|UriInterface|Psr7UriInterface|null $baseUrl
+    ): array {
         if (null === $baseUrl) {
             return $components;
         }
 
-        $baseComponents = UriString::parse(match (true) {
-            $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
-            $baseUrl instanceof WhatWgUrl => $baseUrl->toAsciiString(),
-            default => $baseUrl,
-        });
         $hasScheme = isset($components[ComponentName::Scheme->value]);
         $hasHost = isset($components[ComponentName::Host->value]);
         $hasPort = isset($components[ComponentName::Port->value]);
 
         if (! $hasScheme) {
-            $components[ComponentName::Scheme->value] = null !== $baseComponents[ComponentName::Scheme->value]
-                ? Component::fromPattern($baseComponents[ComponentName::Scheme->value])
+            $baseScheme = (string) $baseUrl->getScheme();
+            $components[ComponentName::Scheme->value] = '' !== $baseScheme
+                ? Component::fromPattern($baseScheme)
                 : Component::fromAsterisk();
         }
 
         if (! $hasScheme && ! $hasHost) {
-            $components[ComponentName::Host->value] = null !== $baseComponents[ComponentName::Host->value]
-                ? Component::fromPattern($baseComponents[ComponentName::Host->value])
+            $baseHost = (string) ($baseUrl instanceof WhatWgUrl ? $baseUrl->getAsciiHost() : $baseUrl->getHost());
+            $components[ComponentName::Host->value] = '' !== $baseHost
+                ? Component::fromPattern($baseHost)
                 : Component::fromAsterisk();
         }
 
-        if (! $hasScheme && ! $hasHost && ! $hasPort) {
-            $components[ComponentName::Port->value] = null !== $baseComponents[ComponentName::Port->value]
-                ? Component::fromPattern((string) $baseComponents[ComponentName::Port->value])
-                : Component::fromAsterisk();
+        if (! $hasPort && ! $hasScheme && ! $hasHost) {
+            $basePort = $baseUrl->getPort();
+            $components[ComponentName::Port->value] = null !== $basePort
+                ? Component::fromPattern((string) $basePort)
+                : Component::fromPattern('');
         }
 
+        $basePath = $baseUrl->getPath();
         $components[ComponentName::Path->value] = match (true) {
-            !isset($components[ComponentName::Path->value]) => null !== $baseComponents[ComponentName::Path->value] ? Component::fromPattern($baseComponents[ComponentName::Path->value]) : Component::fromAsterisk(),
-            default => self::resolvePathname($components[ComponentName::Path->value], $baseComponents[ComponentName::Path->value]),
+            !isset($components[ComponentName::Path->value]) => '' !== $basePath ? Component::fromPattern($basePath) : Component::fromAsterisk(),
+            default => self::resolvePathname($components[ComponentName::Path->value], $basePath),
         };
 
         return $components;
@@ -209,7 +258,7 @@ final class UrlPatternBuilder implements Conditionable
 
     public function port(Component|Stringable|string|null $port): self
     {
-        $this->path = self::filter($port);
+        $this->port = self::filter($port);
 
         return $this;
     }

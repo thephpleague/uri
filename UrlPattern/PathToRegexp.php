@@ -52,7 +52,8 @@ final class PathToRegexp
             }
 
             if ('\\' === $char) {
-                $tokens[] = new Token(TokenType::EscapedChar, $input[$i], $i++);
+                $tokens[] = new Token(TokenType::EscapedChar, $input[$i + 1] ?? '', $i++);
+                ++$i;
                 continue;
             }
 

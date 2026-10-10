@@ -20,9 +20,11 @@ use League\Uri\UrlPattern\Component;
 use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\ComponentResult;
 use League\Uri\UrlPattern\MatchMode;
+use League\Uri\UrlPattern\PatternType;
 use League\Uri\UrlPattern\Result;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+use Throwable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 use ValueError;
@@ -58,14 +60,21 @@ final class UrlPattern
         $hasVariable = false;
         $components = [];
         foreach (ComponentName::cases() as $name) {
-            if (! array_key_exists($name->value, $patternComponents)) {
-                $components[$name->value] = Component::fromAsterisk();
+            if (!array_key_exists($name->value, $patternComponents)) {
+                if (ComponentName::Port !== $name) {
+                    $components[$name->value] = Component::fromAsterisk();
+                    continue;
+                }
+
+                $components[$name->value] = array_key_exists(ComponentName::Host->value, $patternComponents)
+                    ? Component::fromPattern('')
+                    : Component::fromAsterisk();
                 continue;
             }
 
             $component = $patternComponents[$name->value];
             /* @phpstan-ignore-next-line */
-            $component instanceof Component || throw new ValueError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
+            $component instanceof Component || throw new ValueError('the component must be a "' . Component::class . '"; ' . get_debug_type($component) . ' given.');
             $components[$name->value] = $component;
             $hasRegexpGroup = $hasRegexpGroup || $component->hasRegexpGroup;
             $hasVariable = $hasVariable || $component->hasVariable;
@@ -77,18 +86,27 @@ final class UrlPattern
         $this->hasVariable = $hasVariable;
     }
 
+    public static function parse(
+        Stringable|string $pattern,
+        Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
+        MatchMode $matchMode = MatchMode::CaseSensitive
+    ): ?self {
+        try {
+            return self::from($pattern, $baseUrl, $matchMode);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
     public static function from(
         Stringable|string $pattern,
         Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
         MatchMode $matchMode = MatchMode::CaseSensitive
     ): self {
+
         return UrlPatternBuilder::from($pattern)
-            ->when(
-                MatchMode::CaseInsensitive === $matchMode,
-                fn (UrlPatternBuilder $builder) => $builder->ignoreCase(),
-                fn (UrlPatternBuilder $builder) => $builder->preserveCase()
-            )
-            ->build($baseUrl);
+            ->baseUrl($baseUrl)
+            ->build(matchMode: $matchMode, type: PatternType::Absolute);
     }
 
     public function __get(string $name): string
@@ -180,7 +198,7 @@ final class UrlPattern
             ];
         }
 
-        $components = array_map(static fn(string|int|null $value): string => (string)$value, UriString::parse($input));
+        $components = array_map(static fn (string|int|null $value): string => (string)$value, UriString::parse($input));
         $components[ComponentName::Username->value] = $components['user'];
         $components[ComponentName::Password->value] = $components['pass'];
 

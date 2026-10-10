@@ -15,10 +15,15 @@ namespace League\Uri;
 
 use BackedEnum;
 use League\Uri\Contracts\Conditionable;
+use League\Uri\Contracts\Transformable;
+use League\Uri\Contracts\UriInterface;
+use League\Uri\Exceptions\SyntaxError;
 use League\Uri\UrlPattern\Component;
 use League\Uri\UrlPattern\ComponentName;
 use League\Uri\UrlPattern\MatchMode;
 use League\Uri\UrlPattern\Parser;
+use League\Uri\UrlPattern\PatternType;
+use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
@@ -28,7 +33,7 @@ use function is_bool;
 use function strrpos;
 use function substr;
 
-final class UrlPatternBuilder implements Conditionable
+final class UrlPatternBuilder implements Conditionable, Transformable
 {
     private ?Component $scheme = null;
     private ?Component $username = null;
@@ -38,63 +43,88 @@ final class UrlPatternBuilder implements Conditionable
     private ?Component $path = null;
     private ?Component $query = null;
     private ?Component $fragment = null;
-    private MatchMode $matchMode = MatchMode::CaseSensitive;
+    private Rfc3986Uri|WhatWgUrl|Psr7UriInterface|UriInterface|null $baseUrl = null;
 
-    public function __construct()
-    {
-        $this->reset();
+    public function __construct(
+        Component|BackedEnum|Stringable|string|null $scheme = null,
+        Component|BackedEnum|Stringable|string|null $username = null,
+        Component|BackedEnum|Stringable|string|null $password = null,
+        Component|BackedEnum|Stringable|string|null $host = null,
+        Component|BackedEnum|Stringable|string|null $port = null,
+        Component|BackedEnum|Stringable|string|null $path = null,
+        Component|BackedEnum|Stringable|string|null $query = null,
+        Component|BackedEnum|Stringable|string|null $fragment = null,
+        Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null
+    ) {
+        $this
+            ->scheme($scheme)
+            ->username($username)
+            ->password($password)
+            ->host($host)
+            ->port($port)
+            ->path($path)
+            ->query($query)
+            ->fragment($fragment)
+            ->baseUrl($baseUrl);
     }
 
-    public function reset(): void
-    {
-        $this->scheme = null;
-        $this->username = null;
-        $this->password = null;
-        $this->host = null;
-        $this->port = null;
-        $this->path = null;
-        $this->query = null;
-        $this->fragment = null;
-        $this->matchMode = MatchMode::CaseSensitive;
-    }
-
-    public static function from(Stringable|string $pattern, MatchMode $matchMode = MatchMode::CaseSensitive): self
+    public static function from(Stringable|string $pattern): self
     {
         $components = (new Parser((string) $pattern))->components();
 
-        return (new self())
-            ->scheme($components[ComponentName::Scheme->value] ?? null)
-            ->username($components[ComponentName::Username->value] ?? null)
-            ->password($components[ComponentName::Password->value] ?? null)
-            ->host($components[ComponentName::Host->value] ?? null)
-            ->port($components[ComponentName::Port->value] ?? null)
-            ->path($components[ComponentName::Path->value] ?? null)
-            ->query($components[ComponentName::Query->value] ?? null)
-            ->fragment($components[ComponentName::Fragment->value] ?? null)
-            ->when(
-                MatchMode::CaseInsensitive == $matchMode,
-                static fn (self $builder): self => $builder->ignoreCase(),
-                static fn (self $builder): self => $builder->preserveCase(),
-            );
+        return new self(
+            scheme: $components[ComponentName::Scheme->value] ?? null,
+            username: $components[ComponentName::Username->value] ?? null,
+            password: $components[ComponentName::Password->value] ?? null,
+            host: $components[ComponentName::Host->value] ?? null,
+            port: $components[ComponentName::Port->value] ?? null,
+            path: $components[ComponentName::Path->value] ?? null,
+            query: $components[ComponentName::Query->value] ?? null,
+            fragment: $components[ComponentName::Fragment->value] ?? null,
+        );
     }
 
-    public function build(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): UrlPattern
-    {
-        $components = self::applyBaseUrl([
-            ComponentName::Scheme->value => $this->scheme ?? null,
-            ComponentName::Username->value => $this->username ?? null,
-            ComponentName::Password->value => $this->password ?? null,
-            ComponentName::Host->value => $this->host ?? null,
-            ComponentName::Port->value => $this->port ?? null,
-            ComponentName::Path->value => $this->path ?? null,
-            ComponentName::Query->value => $this->query ?? null,
-            ComponentName::Fragment->value => $this->fragment ?? null,
-        ], $baseUrl);
+    /**
+     * Tells whether the URLPattern can be built with the current Builder state.
+     */
+    public function validate(
+        MatchMode $matchMode = MatchMode::CaseSensitive,
+        PatternType $type = PatternType::Relative,
+    ): bool {
+        try {
+            $this->build($matchMode, $type);
 
-        return new UrlPattern(
-            array_filter($components, static fn (?Component $component): bool => $component instanceof Component),
-            $this->matchMode
-        );
+            return true;
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * @throws SyntaxError if the URLPattern can not be build with the current Builder state
+     */
+    public function guard(
+        MatchMode $matchMode = MatchMode::CaseSensitive,
+        PatternType $type = PatternType::Relative,
+    ): self {
+        try {
+            $this->build($matchMode, $type);
+
+            return $this;
+        } catch (\Throwable $exception) {
+            throw new SyntaxError('The current builder cannot generate a valid URL Pattern.', previous: $exception);
+        }
+    }
+
+    /**
+     * Executes the given callback with the current instance
+     * and returns the current instance.
+     *
+     * @param callable(self): self $callback
+     */
+    public function transform(callable $callback): static
+    {
+        return $callback($this);
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
@@ -110,46 +140,70 @@ final class UrlPatternBuilder implements Conditionable
         } ?? $this;
     }
 
+    public function build(
+        MatchMode $matchMode = MatchMode::CaseSensitive,
+        PatternType $type = PatternType::Relative
+    ): UrlPattern {
+        $components = array_filter(
+            self::applyBaseUrl([
+                ComponentName::Scheme->value => $this->scheme ?? null,
+                ComponentName::Username->value => $this->username ?? null,
+                ComponentName::Password->value => $this->password ?? null,
+                ComponentName::Host->value => $this->host ?? null,
+                ComponentName::Port->value => $this->port ?? null,
+                ComponentName::Path->value => $this->path ?? null,
+                ComponentName::Query->value => $this->query ?? null,
+                ComponentName::Fragment->value => $this->fragment ?? null,
+            ], $this->baseUrl),
+            static fn (?Component $component): bool => $component instanceof Component
+        );
+
+        return PatternType::Relative === $type || isset($components[ComponentName::Scheme->value])
+            ? new UrlPattern($components, $matchMode)
+            : throw new SyntaxError('An absolute URL pattern requires a scheme component.');
+    }
+
     /**
      *
      * @return array<non-empty-string, Component>
      */
-    private static function applyBaseUrl(array $components, Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl): array
-    {
+    private static function applyBaseUrl(
+        array $components,
+        Rfc3986Uri|WhatWgUrl|UriInterface|Psr7UriInterface|null $baseUrl
+    ): array {
         if (null === $baseUrl) {
             return $components;
         }
 
-        $baseComponents = UriString::parse(match (true) {
-            $baseUrl instanceof Rfc3986Uri => $baseUrl->toRawString(),
-            $baseUrl instanceof WhatWgUrl => $baseUrl->toAsciiString(),
-            default => $baseUrl,
-        });
         $hasScheme = isset($components[ComponentName::Scheme->value]);
         $hasHost = isset($components[ComponentName::Host->value]);
         $hasPort = isset($components[ComponentName::Port->value]);
 
         if (! $hasScheme) {
-            $components[ComponentName::Scheme->value] = null !== $baseComponents[ComponentName::Scheme->value]
-                ? Component::fromPattern($baseComponents[ComponentName::Scheme->value])
+            $baseScheme = (string) $baseUrl->getScheme();
+            $components[ComponentName::Scheme->value] = '' !== $baseScheme
+                ? Component::fromPattern($baseScheme)
                 : Component::fromAsterisk();
         }
 
         if (! $hasScheme && ! $hasHost) {
-            $components[ComponentName::Host->value] = null !== $baseComponents[ComponentName::Host->value]
-                ? Component::fromPattern($baseComponents[ComponentName::Host->value])
+            $baseHost = (string) ($baseUrl instanceof WhatWgUrl ? $baseUrl->getAsciiHost() : $baseUrl->getHost());
+            $components[ComponentName::Host->value] = '' !== $baseHost
+                ? Component::fromPattern($baseHost)
                 : Component::fromAsterisk();
         }
 
-        if (! $hasScheme && ! $hasHost && ! $hasPort) {
-            $components[ComponentName::Port->value] = null !== $baseComponents[ComponentName::Port->value]
-                ? Component::fromPattern((string) $baseComponents[ComponentName::Port->value])
-                : Component::fromAsterisk();
+        if (! $hasPort && ! $hasScheme && ! $hasHost) {
+            $basePort = $baseUrl->getPort();
+            $components[ComponentName::Port->value] = null !== $basePort
+                ? Component::fromPattern((string) $basePort)
+                : Component::fromPattern('');
         }
 
+        $basePath = $baseUrl->getPath();
         $components[ComponentName::Path->value] = match (true) {
-            !isset($components[ComponentName::Path->value]) => null !== $baseComponents[ComponentName::Path->value] ? Component::fromPattern($baseComponents[ComponentName::Path->value]) : Component::fromAsterisk(),
-            default => self::resolvePathname($components[ComponentName::Path->value], $baseComponents[ComponentName::Path->value]),
+            !isset($components[ComponentName::Path->value]) => '' !== $basePath ? Component::fromPattern($basePath) : Component::fromAsterisk(),
+            default => self::resolvePathname($components[ComponentName::Path->value], $basePath),
         };
 
         return $components;
@@ -170,82 +224,105 @@ final class UrlPatternBuilder implements Conditionable
         return Component::fromPattern($pattern);
     }
 
-    private static function filter(Component|Stringable|string|null $component): ?Component
+    private static function filter(Component|BackedEnum|Stringable|string|null $component): ?Component
     {
         return match (true) {
             $component instanceof Component => $component,
             null === $component => null,
+            $component instanceof BackedEnum => Component::fromPattern((string) $component->value),
             default => Component::fromPattern((string) $component),
         };
     }
 
-    public function scheme(Component|Stringable|string|null $scheme): self
+    public function scheme(Component|BackedEnum|Stringable|string|null $scheme): self
     {
         $this->scheme = self::filter($scheme);
 
         return $this;
     }
 
-    public function username(Component|Stringable|string|null $username): self
+    public function username(Component|BackedEnum|Stringable|string|null $username): self
     {
         $this->username = self::filter($username);
 
         return $this;
     }
 
-    public function password(Component|Stringable|string|null $password): self
+    public function password(Component|BackedEnum|Stringable|string|null $password): self
     {
         $this->password = self::filter($password);
 
         return $this;
     }
 
-    public function host(Component|Stringable|string|null $host): self
+    public function host(Component|BackedEnum|Stringable|string|null $host): self
     {
         $this->host = self::filter($host);
 
         return $this;
     }
 
-    public function port(Component|Stringable|string|null $port): self
+    public function port(Component|BackedEnum|Stringable|string|null $port): self
     {
-        $this->path = self::filter($port);
+        $this->port = self::filter($port);
 
         return $this;
     }
 
-    public function path(Component|Stringable|string|null $path): self
+    public function path(Component|BackedEnum|Stringable|string|null $path): self
     {
         $this->path = self::filter($path);
 
         return $this;
     }
 
-    public function query(Component|Stringable|string|null $query): self
+    public function query(Component|BackedEnum|Stringable|string|null $query): self
     {
         $this->query = self::filter($query);
 
         return $this;
     }
 
-    public function fragment(Component|Stringable|string|null $fragment): self
+    public function fragment(Component|BackedEnum|Stringable|string|null $fragment): self
     {
         $this->fragment = self::filter($fragment);
 
         return $this;
     }
 
-    public function ignoreCase(): self
+    public function baseUrl(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null): self
     {
-        $this->matchMode = MatchMode::CaseInsensitive;
+        if (null === $baseUrl) {
+            $this->baseUrl = null;
+
+            return $this;
+        }
+
+        $baseUrl = match (true) {
+            $baseUrl instanceof Rfc3986Uri,
+                $baseUrl instanceof WhatWgUrl,
+                $baseUrl instanceof UriInterface,
+                $baseUrl instanceof Psr7UriInterface => $baseUrl,
+            default => Uri::new($baseUrl),
+        };
+
+        '' !== (string) $baseUrl->getScheme() ||  throw new SyntaxError('The BaseUrl must represent an absolute URI.');
+
+        $this->baseUrl = $baseUrl;
 
         return $this;
     }
 
-    public function preserveCase(): self
+    public function reset(): void
     {
-        $this->matchMode = MatchMode::CaseSensitive;
-
-        return $this;
+        $this->scheme = null;
+        $this->username = null;
+        $this->password = null;
+        $this->host = null;
+        $this->port = null;
+        $this->path = null;
+        $this->query = null;
+        $this->fragment = null;
+        $this->baseUrl = null;
     }
 }

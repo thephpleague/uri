@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace League\Uri\UrlPattern;
 
 use BackedEnum;
+use JsonSerializable;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
-use JsonSerializable;
 
 final class Result implements JsonSerializable
 {

@@ -19,6 +19,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use JsonSerializable;
 use League\Uri\HostRecord;
 use League\Uri\TypeConverter;
 use LogicException;
@@ -37,7 +38,7 @@ use function is_string;
 /**
  * @implements ArrayAccess<string, null|string|array<string|null>>
  */
-final class ExtractionResult implements ArrayAccess, Countable
+final class ExtractionResult implements ArrayAccess, Countable, JsonSerializable
 {
     /**
      * @param array<string, ExtractedValue> $variables
@@ -219,6 +220,14 @@ final class ExtractionResult implements ArrayAccess, Countable
             static fn (ExtractedValue $val): array|string|null => 1 < count($val->asList) ? $val->asList : $val->value,
             $this->variables
         );
+    }
+
+    /**
+     * @return array<string, array<string>|string|null>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->variables();
     }
 
     public function fetch(string|int $variableName): ?ExtractedValue

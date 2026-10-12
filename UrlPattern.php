@@ -45,7 +45,7 @@ use function get_debug_type;
  */
 final class UrlPattern
 {
-    /** @var array<non-empty-string, Component> $components */
+    /** @var array<value-of<ComponentName>, Component> $components */
     private readonly array $components;
     public readonly MatchMode $matchMode;
     public readonly bool $hasRegexpGroup;
@@ -74,7 +74,7 @@ final class UrlPattern
 
             $component = $patternComponents[$name->value];
             /* @phpstan-ignore-next-line */
-            $component instanceof Component || throw new ValueError('the component must be a "' . Component::class . '"; ' . get_debug_type($component) . ' given.');
+            $component instanceof Component || throw new ValueError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
             $components[$name->value] = $component;
             $hasRegexpGroup = $hasRegexpGroup || $component->hasRegexpGroup;
             $hasVariable = $hasVariable || $component->hasVariable;
@@ -142,7 +142,7 @@ final class UrlPattern
     }
 
     /**
-     * @return array<non-empty-string, string>
+     * @return array<value-of<ComponentName>, string>
      */
     public function __debugInfo(): array
     {

@@ -44,7 +44,6 @@ final class ComponentResult implements ArrayAccess, Countable, JsonSerializable
      */
     private function __construct(
         public readonly string $input,
-        private readonly ?string $implicit,
         private readonly array $groups
     ) {
     }
@@ -88,16 +87,12 @@ final class ComponentResult implements ArrayAccess, Countable, JsonSerializable
                 : Encoder::decodeAll($content);
         }
 
-        $implicit = '*' === $component->pattern && [''] !== $data
-            ? $data[0]
-            : null;
-
-        return new self($input, $implicit, $data);
+        return new self($input, $data);
     }
 
     public static function empty(): self
     {
-        return new self('', null, ['']);
+        return new self('', ['']);
     }
 
     public function count(): int
@@ -124,11 +119,6 @@ final class ComponentResult implements ArrayAccess, Countable, JsonSerializable
     public function variables(): array
     {
         return $this->groups;
-    }
-
-    public function implicit(): ?string
-    {
-        return $this->implicit;
     }
 
     public function offsetGet(mixed $offset): null|string

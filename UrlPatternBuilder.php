@@ -25,6 +25,7 @@ use League\Uri\UrlPattern\Parser;
 use League\Uri\UrlPattern\PatternType;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
+use Throwable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
@@ -95,7 +96,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             $this->build($matchMode, $type);
 
             return true;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return false;
         }
     }
@@ -111,7 +112,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             $this->build($matchMode, $type);
 
             return $this;
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new SyntaxError('The current builder cannot generate a valid URL Pattern.', previous: $exception);
         }
     }
@@ -300,9 +301,9 @@ final class UrlPatternBuilder implements Conditionable, Transformable
 
         $baseUrl = match (true) {
             $baseUrl instanceof Rfc3986Uri,
-                $baseUrl instanceof WhatWgUrl,
-                $baseUrl instanceof UriInterface,
-                $baseUrl instanceof Psr7UriInterface => $baseUrl,
+            $baseUrl instanceof WhatWgUrl,
+            $baseUrl instanceof UriInterface,
+            $baseUrl instanceof Psr7UriInterface => $baseUrl,
             default => Uri::new($baseUrl),
         };
 

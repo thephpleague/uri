@@ -191,18 +191,14 @@ final class UrlPatternTest extends TestCase
 
         self::assertInstanceOf(Result::class, $result);
         self::assertSame(4000, $result->port->integer(0, 80));
-        self::assertSame('4000', $result->port->implicit());
 
         self::assertTrue($result->query->hasValue());
-        self::assertSame('search=world', $result->query->implicit());
         self::assertSame('search=world', $result->query->input);
 
         self::assertFalse($result->fragment->hasValue());
-        self::assertNull($result->fragment->implicit());
         self::assertSame('', $result->fragment->input);
 
         self::assertSame('/hello/john', $result->path->input);
-        self::assertNull($result->path->implicit());
         self::assertSame('john', $result->path->string('name'));
     }
 

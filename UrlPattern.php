@@ -52,7 +52,7 @@ final class UrlPattern
     public readonly bool $hasVariable;
 
     /**
-     * @param array<non-empty-string, Component> $patternComponents
+     * @param array<non-empty-string, mixed> $patternComponents
      */
     public function __construct(array $patternComponents, MatchMode $matchMode = MatchMode::CaseSensitive)
     {
@@ -67,13 +67,12 @@ final class UrlPattern
                 }
 
                 $components[$name->value] = array_key_exists(ComponentName::Host->value, $patternComponents)
-                    ? Component::fromPattern('')
+                    ? Component::fromEmpty()
                     : Component::fromAsterisk();
                 continue;
             }
 
             $component = $patternComponents[$name->value];
-            /* @phpstan-ignore-next-line */
             $component instanceof Component || throw new ValueError('the component must be a "'.Component::class.'"; '.get_debug_type($component).' given.');
             $components[$name->value] = $component;
             $hasRegexpGroup = $hasRegexpGroup || $component->hasRegexpGroup;

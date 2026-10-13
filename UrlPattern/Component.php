@@ -39,10 +39,18 @@ final class Component
 
     public static function fromAsterisk(): self
     {
-        static $asterisk;
-        $asterisk ??= self::fromPattern('*');
+        static $instance;
+        $instance ??= self::fromPattern('*');
 
-        return $asterisk;
+        return $instance;
+    }
+
+    public static function fromEmpty(): self
+    {
+        static $instance;
+        $instance ??= self::fromPattern('');
+
+        return $instance;
     }
 
     public static function fromPattern(string $pattern): self

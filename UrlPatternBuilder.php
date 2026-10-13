@@ -202,7 +202,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             $basePort = $baseUrl->getPort();
             $components[ComponentName::Port->value] = null !== $basePort
                 ? Component::fromPattern((string) $basePort)
-                : Component::fromPattern('');
+                : Component::fromEmpty();
         }
 
         $basePath = $baseUrl->getPath();

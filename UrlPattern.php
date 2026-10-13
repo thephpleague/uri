@@ -98,6 +98,9 @@ final class UrlPattern
         }
     }
 
+    /**
+     * @throws SyntaxError
+     */
     public static function from(
         Stringable|string $pattern,
         Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null,
@@ -119,7 +122,11 @@ final class UrlPattern
 
     public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $input): bool
     {
-        return $this->extract($input) instanceof Result;
+        try {
+            return $this->extract($input) instanceof Result;
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**

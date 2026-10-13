@@ -88,12 +88,10 @@ final class UrlPatternBuilder implements Conditionable, Transformable
     /**
      * Tells whether the URLPattern can be built with the current Builder state.
      */
-    public function validate(
-        MatchMode $matchMode = MatchMode::CaseSensitive,
-        PatternType $type = PatternType::Relative,
-    ): bool {
+    public function validate(?PatternType $type = null): bool
+    {
         try {
-            $this->build($matchMode, $type);
+            $this->build(type: $type);
 
             return true;
         } catch (Throwable) {
@@ -104,12 +102,10 @@ final class UrlPatternBuilder implements Conditionable, Transformable
     /**
      * @throws SyntaxError if the URLPattern can not be build with the current Builder state
      */
-    public function guard(
-        MatchMode $matchMode = MatchMode::CaseSensitive,
-        PatternType $type = PatternType::Relative,
-    ): self {
+    public function guard(?PatternType $type = null): self
+    {
         try {
-            $this->build($matchMode, $type);
+            $this->build(type: $type);
 
             return $this;
         } catch (Throwable $exception) {
@@ -141,9 +137,12 @@ final class UrlPatternBuilder implements Conditionable, Transformable
         } ?? $this;
     }
 
+    /**
+     * @throws SyntaxError
+     */
     public function build(
         MatchMode $matchMode = MatchMode::CaseSensitive,
-        PatternType $type = PatternType::Relative
+        ?PatternType $type = null
     ): UrlPattern {
         $components = array_filter(
             self::applyBaseUrl([
@@ -159,13 +158,18 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             static fn (?Component $component): bool => $component instanceof Component
         );
 
-        return PatternType::Relative === $type || isset($components[ComponentName::Scheme->value])
-            ? new UrlPattern($components, $matchMode)
-            : throw new SyntaxError('An absolute URL pattern requires a scheme component.');
+        return match ($type) {
+            null => new UrlPattern($components, $matchMode),
+            PatternType::Relative => isset($components[ComponentName::Scheme->value])
+                ? throw new SyntaxError('An relative URL pattern must not contain a scheme component.')
+                : new UrlPattern($components, $matchMode),
+            default => isset($components[ComponentName::Scheme->value])
+                ? new UrlPattern($components, $matchMode)
+                : throw new SyntaxError('An absolute URL pattern must contain a scheme component.'),
+        };
     }
 
     /**
-     *
      * @return array<non-empty-string, Component>
      */
     private static function applyBaseUrl(

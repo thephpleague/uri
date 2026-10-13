@@ -172,9 +172,9 @@ final class ExtractionResult implements ArrayAccess, Countable, JsonSerializable
     /**
      * Tells whether some variables are attached to the result.
      */
-    public function isEmpty(): bool
+    public function hasValue(): bool
     {
-        return [] === $this->variables;
+        return [] !== $this->variables;
     }
 
     /**

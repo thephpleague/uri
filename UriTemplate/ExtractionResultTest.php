@@ -36,7 +36,7 @@ final class ExtractionResultTest extends TestCase
             'term' => 'john',
             'tags' => ['one', 'two'],
         ], $result->variables());
-        self::assertFalse($result->isEmpty());
+        self::assertTrue($result->hasValue());
     }
 
     #[Test]

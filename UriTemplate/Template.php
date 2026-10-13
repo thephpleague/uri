@@ -161,7 +161,7 @@ final class Template implements Stringable
      * This method performs a strict extraction and returns `true` only when the
      * value can be completely matched and all variables can be extracted.
      *
-     * @return bool` true`if the value matches the template, `false` otherwise.
+     * @return bool true`if the value matches the template, `false` otherwise.
      */
     public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $value): bool
     {

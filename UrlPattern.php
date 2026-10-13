@@ -161,7 +161,7 @@ final class UrlPattern
      *     path: string,
      *     query: string,
      *     fragment: string
-     * }.
+     * }
      */
     private static function components(WhatWgUrl|Rfc3986Uri|Stringable|BackedEnum|string $input): array
     {

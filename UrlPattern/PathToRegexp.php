@@ -517,6 +517,9 @@ final class PathToRegexp
         return $result;
     }
 
+    /**
+     * @param list<array-key>|null $names
+     */
     public static function stringToRegexp(
         string $path,
         ?array &$names = null,

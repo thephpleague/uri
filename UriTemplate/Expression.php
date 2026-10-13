@@ -139,7 +139,7 @@ final class Expression implements IteratorAggregate
 
         $variables = [];
         foreach ($this->varSpecifiers as $offset => $varSpecifier) {
-            $extracted = $this->operator->extract($varSpecifier, $matched[$offset]);
+            $extracted = $this->operator->extract($varSpecifier, $matched[$offset] ?? null);
             $this->assertPrefixLength($varSpecifier, $extracted);
 
             foreach ($extracted->names() as $name) {

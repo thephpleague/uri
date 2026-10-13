@@ -205,7 +205,7 @@ final class ExtractionResultTest extends TestCase
 
         $this->expectException(ValueError::class);
 
-        ExtractionResult::success($test())->variables();
+        ExtractionResult::success($test());
     }
 
     #[Test]
@@ -221,6 +221,6 @@ final class ExtractionResultTest extends TestCase
 
         $this->expectException(ValueError::class);
 
-        ExtractionResult::success($test())->variables();
+        ExtractionResult::success($test());
     }
 }

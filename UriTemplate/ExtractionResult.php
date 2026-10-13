@@ -68,7 +68,7 @@ final class ExtractionResult implements ArrayAccess, Countable, JsonSerializable
     {
         return new self(
             variables: [],
-            names: $template->variableNames,
+            names: array_values($template->variableNames),
             missingNames: $exception->missingNames,
             reasons: $exception->reasons,
         );
@@ -198,7 +198,7 @@ final class ExtractionResult implements ArrayAccess, Countable, JsonSerializable
     public function offsetExists(mixed $offset): bool
     {
         return (is_string($offset) || is_int($offset))
-            && array_key_exists((string) $offset, $this->variables);
+            && array_key_exists($offset, $this->variables);
     }
 
     public function offsetUnset(mixed $offset): never

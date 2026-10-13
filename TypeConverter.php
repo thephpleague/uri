@@ -217,7 +217,10 @@ final class TypeConverter
 
         $arr = [];
         $cases = $enumClass::cases();
-        $createItem = ((new ReflectionEnum($enumClass))->isBacked())
+        /** @var ReflectionEnum<UnitEnum> $reflection */
+        $reflection = new ReflectionEnum($enumClass);
+
+        $createItem = $reflection->isBacked()
              ? fn ($item) => self::findBackedEnum($item, $enumClass, $cases) /* @phpstan-ignore-line */
              : fn ($item) => self::findEnum($item, $enumClass, $cases);
 

@@ -7,11 +7,14 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Added
 
 - `UriTemplate` extraction feature
+- `UriTemplate::hasVariable()` method to tell if the instance contains variable or not
 - `UrlPattern` extraction feature
+- Adding Type converter feature
 
 ### Fixed
 
 - `UriTemplate::expandToPsr7` method implementation was incorrect
+- fix: truncate URI Template prefix modifier by character, not byte (#192)
 
 ### Deprecated
 

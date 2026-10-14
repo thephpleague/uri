@@ -49,7 +49,8 @@ final class UrlPattern
     private readonly array $components;
     public readonly MatchMode $matchMode;
     public readonly bool $hasRegexpGroup;
-    public readonly bool $hasVariable;
+    private readonly bool $hasVariable;
+    public readonly PatternType $type;
 
     /**
      * @param array<non-empty-string, mixed> $patternComponents
@@ -66,7 +67,7 @@ final class UrlPattern
                     continue;
                 }
 
-                $components[$name->value] = array_key_exists(ComponentName::Host->value, $patternComponents)
+                $components[ComponentName::Port->value] = array_key_exists(ComponentName::Host->value, $patternComponents)
                     ? Component::fromEmpty()
                     : Component::fromAsterisk();
                 continue;
@@ -83,6 +84,7 @@ final class UrlPattern
         $this->matchMode = $matchMode;
         $this->hasRegexpGroup = $hasRegexpGroup;
         $this->hasVariable = $hasVariable;
+        $this->type = '*' !== $this->components[ComponentName::Scheme->value]->pattern ? PatternType::Absolute : PatternType::Relative;
     }
 
     public static function parse(
@@ -106,17 +108,8 @@ final class UrlPattern
         MatchMode $matchMode = MatchMode::CaseSensitive
     ): self {
 
-        return UrlPatternBuilder::from($pattern)
-            ->baseUrl($baseUrl)
+        return UrlPatternBuilder::from($pattern, $baseUrl)
             ->build(matchMode: $matchMode, type: PatternType::Absolute);
-    }
-
-    public function __get(string $name): string
-    {
-        $key = ComponentName::tryFrom($name)?->value;
-        null !== $key || throw new ValueError('the property named "'.$name.'" does not exist.');
-
-        return $this->components[$key]->pattern;
     }
 
     public function match(Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string $input): bool
@@ -145,6 +138,19 @@ final class UrlPattern
         }
 
         return Result::tryFrom($result, $input);
+    }
+
+    public function hasVariable(): bool
+    {
+        return $this->hasVariable;
+    }
+
+    public function __get(string $name): string
+    {
+        $key = ComponentName::tryFrom($name)?->value;
+        null !== $key || throw new ValueError('the property named "'.$name.'" does not exist.');
+
+        return $this->components[$key]->pattern;
     }
 
     /**

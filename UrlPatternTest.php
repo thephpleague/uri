@@ -77,7 +77,7 @@ final class UrlPatternTest extends TestCase
 
         self::assertInstanceOf(Result::class, $result);
         self::assertFalse($result->hasValue());
-        self::assertFalse($pattern->hasVariable);
+        self::assertFalse($pattern->hasVariable());
     }
 
     #[Test]
@@ -88,7 +88,7 @@ final class UrlPatternTest extends TestCase
 
         self::assertInstanceOf(Result::class, $result);
         self::assertTrue($result->hasValue());
-        self::assertTrue($pattern->hasVariable);
+        self::assertTrue($pattern->hasVariable());
         self::assertSame('42', $result->path['id']);
     }
 

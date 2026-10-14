@@ -102,6 +102,14 @@ final class UriTemplate implements Stringable
     }
 
     /**
+     * Tells whether the UriTemplate contains variables.
+     */
+    public function hasVariable(): bool
+    {
+        return 0 < count($this->template->variableNames);
+    }
+
+    /**
      * Returns a new instance with the updated default variables.
      *
      * This method MUST retain the state of the current instance, and return

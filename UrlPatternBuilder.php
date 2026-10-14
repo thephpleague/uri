@@ -69,8 +69,10 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             ->baseUrl($baseUrl);
     }
 
-    public static function from(Stringable|string $pattern): self
-    {
+    public static function from(
+        Stringable|string $pattern,
+        Rfc3986Uri|WhatWgUrl|BackedEnum|Stringable|string|null $baseUrl = null
+    ): self {
         $components = (new Parser((string) $pattern))->components();
 
         return new self(
@@ -82,6 +84,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
             path: $components[ComponentName::Path->value] ?? null,
             query: $components[ComponentName::Query->value] ?? null,
             fragment: $components[ComponentName::Fragment->value] ?? null,
+            baseUrl: $baseUrl,
         );
     }
 
@@ -114,30 +117,6 @@ final class UrlPatternBuilder implements Conditionable, Transformable
     }
 
     /**
-     * Executes the given callback with the current instance
-     * and returns the current instance.
-     *
-     * @param callable(self): self $callback
-     */
-    public function transform(callable $callback): static
-    {
-        return $callback($this);
-    }
-
-    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
-    {
-        if (!is_bool($condition)) {
-            $condition = $condition($this);
-        }
-
-        return match (true) {
-            $condition => $onSuccess($this),
-            null !== $onFail => $onFail($this),
-            default => $this,
-        } ?? $this;
-    }
-
-    /**
      * @throws SyntaxError
      */
     public function build(
@@ -145,7 +124,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
         ?PatternType $type = null
     ): UrlPattern {
         $components = array_filter(
-            self::applyBaseUrl([
+            $this->applyBaseUrl([
                 ComponentName::Scheme->value => $this->scheme ?? null,
                 ComponentName::Username->value => $this->username ?? null,
                 ComponentName::Password->value => $this->password ?? null,
@@ -154,7 +133,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
                 ComponentName::Path->value => $this->path ?? null,
                 ComponentName::Query->value => $this->query ?? null,
                 ComponentName::Fragment->value => $this->fragment ?? null,
-            ], $this->baseUrl),
+            ]),
             static fn (?Component $component): bool => $component instanceof Component
         );
 
@@ -172,11 +151,9 @@ final class UrlPatternBuilder implements Conditionable, Transformable
     /**
      * @return array<non-empty-string, Component>
      */
-    private static function applyBaseUrl(
-        array $components,
-        Rfc3986Uri|WhatWgUrl|UriInterface|Psr7UriInterface|null $baseUrl
-    ): array {
-        if (null === $baseUrl) {
+    private function applyBaseUrl(array $components): array
+    {
+        if (null === $this->baseUrl) {
             return $components;
         }
 
@@ -185,27 +162,27 @@ final class UrlPatternBuilder implements Conditionable, Transformable
         $hasPort = isset($components[ComponentName::Port->value]);
 
         if (! $hasScheme) {
-            $baseScheme = (string) $baseUrl->getScheme();
+            $baseScheme = (string) $this->baseUrl->getScheme();
             $components[ComponentName::Scheme->value] = '' !== $baseScheme
                 ? Component::fromPattern($baseScheme)
                 : Component::fromAsterisk();
         }
 
         if (! $hasScheme && ! $hasHost) {
-            $baseHost = (string) ($baseUrl instanceof WhatWgUrl ? $baseUrl->getAsciiHost() : $baseUrl->getHost());
+            $baseHost = (string) ($this->baseUrl instanceof WhatWgUrl ? $this->baseUrl->getAsciiHost() : $this->baseUrl->getHost());
             $components[ComponentName::Host->value] = '' !== $baseHost
                 ? Component::fromPattern($baseHost)
                 : Component::fromAsterisk();
         }
 
         if (! $hasPort && ! $hasScheme && ! $hasHost) {
-            $basePort = $baseUrl->getPort();
+            $basePort = $this->baseUrl->getPort();
             $components[ComponentName::Port->value] = null !== $basePort
                 ? Component::fromPattern((string) $basePort)
                 : Component::fromEmpty();
         }
 
-        $basePath = $baseUrl->getPath();
+        $basePath = $this->baseUrl->getPath();
         $components[ComponentName::Path->value] = match (true) {
             !isset($components[ComponentName::Path->value]) => '' !== $basePath ? Component::fromPattern($basePath) : Component::fromAsterisk(),
             default => self::resolvePathname($components[ComponentName::Path->value], $basePath),
@@ -318,7 +295,7 @@ final class UrlPatternBuilder implements Conditionable, Transformable
         return $this;
     }
 
-    public function reset(): void
+    public function reset(): self
     {
         $this->scheme = null;
         $this->username = null;
@@ -329,5 +306,31 @@ final class UrlPatternBuilder implements Conditionable, Transformable
         $this->query = null;
         $this->fragment = null;
         $this->baseUrl = null;
+
+        return $this;
+    }
+
+    /**
+     * Executes the given callback with the current instance
+     * and returns the current instance.
+     *
+     * @param callable(self): self $callback
+     */
+    public function transform(callable $callback): static
+    {
+        return $callback($this);
+    }
+
+    public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
+    {
+        if (!is_bool($condition)) {
+            $condition = $condition($this);
+        }
+
+        return match (true) {
+            $condition => $onSuccess($this),
+            null !== $onFail => $onFail($this),
+            default => $this,
+        } ?? $this;
     }
 }

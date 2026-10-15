@@ -19,7 +19,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
-use JsonSerializable;
 use League\Uri\Encoder;
 use League\Uri\HostRecord;
 use League\Uri\TypeConverter;
@@ -37,7 +36,7 @@ use function preg_match;
 /**
  * @implements ArrayAccess<array-key, string|null>
  */
-final class ComponentResult implements ArrayAccess, Countable, JsonSerializable
+final class ComponentResult implements ArrayAccess, Countable
 {
     /**
      * @param array<array-key, string|null> $groups
@@ -46,20 +45,6 @@ final class ComponentResult implements ArrayAccess, Countable, JsonSerializable
         public readonly string $input,
         private readonly array $groups
     ) {
-    }
-
-    /**
-     * @return array{
-     *     groups: array<array-key, string|null>,
-     *     input: string,
-     * }
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'groups' => $this->groups,
-            'input' => $this->input,
-        ];
     }
 
     public static function extract(

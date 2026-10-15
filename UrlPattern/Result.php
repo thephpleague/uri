@@ -14,12 +14,11 @@ declare(strict_types=1);
 namespace League\Uri\UrlPattern;
 
 use BackedEnum;
-use JsonSerializable;
 use Stringable;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
 
-final class Result implements JsonSerializable
+final class Result
 {
     private readonly bool $hasValue;
 
@@ -84,33 +83,5 @@ final class Result implements JsonSerializable
                 default => (string) $input,
             }],
         );
-    }
-
-    /**
-     * @return array{
-     *     protocol: ComponentResult,
-     *     username: ComponentResult,
-     *     password: ComponentResult,
-     *     hostname: ComponentResult,
-     *     port: ComponentResult,
-     *     pathname: ComponentResult,
-     *     search: ComponentResult,
-     *     hash: ComponentResult,
-     *     inputs: list<string>,
-     * }
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'protocol' => $this->scheme,
-            'username' => $this->username,
-            'password' => $this->password,
-            'hostname' => $this->host,
-            'port' => $this->port,
-            'pathname' => $this->path,
-            'search' => $this->query,
-            'hash' => $this->fragment,
-            'inputs' => $this->inputs,
-        ];
     }
 }

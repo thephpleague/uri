@@ -223,4 +223,26 @@ final class ExtractionResultTest extends TestCase
 
         ExtractionResult::success($test());
     }
+
+    #[Test]
+    public function it_should_be_able_to_convert_string_using_host_convertion(): void
+    {
+        $result = ExtractionResult::success([
+            'host' => ExtractedValue::fromString('xn--fi8h'),
+            'not-host' => ExtractedValue::fromString('john'),
+            'invalid-host' => ExtractedValue::fromString('xn--xz'),
+        ]);
+
+        self::assertSame('xn--fi8h', $result['host']);
+        self::assertSame('xn--fi8h', $result->string('host'));
+        self::assertSame('🍅', $result->host('host'));
+
+        self::assertSame('john', $result['not-host']);
+        self::assertSame('john', $result->string('not-host'));
+        self::assertSame('john', $result->host('not-host'));
+
+        self::assertSame('xn--xz', $result['invalid-host']);
+        self::assertSame('xn--xz', $result->string('invalid-host'));
+        self::assertSame('xn--xz', $result->host('invalid-host'));
+    }
 }

@@ -245,7 +245,7 @@ final class ExtractionResult implements ArrayAccess, Countable
 
     public function host(int|string $name, ?string $default = null): ?string
     {
-        return HostRecord::from($this->string($name))->toUnicode() ?? $default;
+        return HostRecord::parse($this->string($name))?->toUnicode() ?? $default;
     }
 
     public function strings(int|string $name, ?string $default = null): array

@@ -2,7 +2,7 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
-## [next](https://github.com/thephpleague/uri/compare/7.8.1...main) - TBD
+## [7.9.0](https://github.com/thephpleague/uri/compare/7.8.1...7.9.0) - TBD
 
 ### Added
 
@@ -14,7 +14,6 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - `UriTemplate::expandToPsr7` method implementation was incorrect
-- fix: truncate URI Template prefix modifier by character, not byte (#192)
 
 ### Deprecated
 

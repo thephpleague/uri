@@ -78,7 +78,7 @@ final class TypeConverter
         }
 
         return match (true) {
-            is_float($value),
+            is_float($value) => $value,
             is_int($value) => (float) $value,
             is_string($value) => false !== ($res = filter_var($value, FILTER_VALIDATE_FLOAT)) ? $res : null,
             default => null,
@@ -291,10 +291,7 @@ final class TypeConverter
             return null;
         }
 
-        if (!is_string($value)) {
-            $value = self::toString($value);
-        }
-
+        $value = self::toString($value);
         if (null === $value) {
             return null;
         }

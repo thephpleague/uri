@@ -59,6 +59,14 @@ final class DataTest extends TestCase
                 'uri' => 'data:image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
                 'path' => 'image/gif;charset=binary;base64,R0lGODlhIAAgAIABAP8AAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAgACAAAAI5jI+py+0Po5y02ouzfqD7DwJUSHpjSZ4oqK7m5LJw/Ep0Hd1dG/OuvwKihCVianbbKJfMpvMJjWYKADs=',
             ],
+            'binary data without parameters' => [
+                'uri' => 'data:image/png;base64,Zm9vYmFy',
+                'path' => 'image/png;base64,Zm9vYmFy',
+            ],
+            'binary data without mimetype' => [
+                'uri' => 'data:;base64,Zm9vYmFy',
+                'path' => 'text/plain;base64,Zm9vYmFy',
+            ],
         ];
     }
 

@@ -803,7 +803,7 @@ final class Uri implements Conditionable, UriInterface, Transformable
 
         $res = array_filter(
             array_filter(explode(';', $parameters), self::validateParameter(...)),
-            static fn ($v): bool => null !== $v,
+            static fn (string $v): bool => '' !== $v,
         );
         [] === $res || throw new SyntaxError('The path parameters `'.$parameters.'` is invalid.');
         if (!$isBinary) {

@@ -2,6 +2,24 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [7.9.1](https://github.com/thephpleague/uri/compare/7.9.0...7.9.1) - 2026-10-25
+
+### Added
+
+- None
+
+### Fixed
+
+- Bump `uri-interfaces` requirement.
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.9.0](https://github.com/thephpleague/uri/compare/7.8.1...7.9.0) - 2026-10-16
 
 ### Added

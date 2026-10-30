@@ -11,6 +11,7 @@ All Notable changes to `League\Uri` will be documented in this file
 ### Fixed
 
 - Bump `uri-interfaces` requirement.
+- Improved Host formatting in `Uri` class
 
 ### Deprecated
 

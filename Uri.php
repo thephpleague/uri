@@ -254,7 +254,13 @@ final class Uri implements Conditionable, UriInterface, Transformable
      */
     private function formatHost(?string $host): ?string
     {
-        return HostRecord::from($host)->toAscii();
+        if (null === $host) {
+            return null;
+        }
+
+        $formattedHost = HostRecord::from($host);
+
+        return str_contains($host, '%') ? $formattedHost->percentEncoded() : $formattedHost->toAscii();
     }
 
     /**

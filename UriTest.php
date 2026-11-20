@@ -779,6 +779,63 @@ class UriTest extends TestCase
                 'uri' => 'blob:null/1f6a188e-c21b-11f0-8de9-0242ac120002',
                 'expectedOrigin' => null,
             ],
+            'known host localhost' => [
+                'uri' => 'http://user:pass@localhost:3000/path?query#fragment',
+                'expectedOrigin' => 'http://localhost:3000',
+            ],
+            'known host localhost in uppercase' => [
+                'uri' => 'http://LOCALHOST/path',
+                'expectedOrigin' => 'http://localhost',
+            ],
+            'known host ipv4 loopback' => [
+                'uri' => 'http://127.0.0.1:3000/path',
+                'expectedOrigin' => 'http://127.0.0.1:3000',
+            ],
+            'known host ipv6 loopback' => [
+                'uri' => 'http://[::1]:3000/path',
+                'expectedOrigin' => 'http://[::1]:3000',
+            ],
+            'known host ipv6 loopback in long form' => [
+                'uri' => 'http://[0:0:0:0:0:0:0:1]:3000/path',
+                'expectedOrigin' => 'http://[::1]:3000',
+            ],
+            'known host ipv6 loopback in fully expanded form' => [
+                'uri' => 'http://[0000:0000:0000:0000:0000:0000:0000:0001]:3000/path',
+                'expectedOrigin' => 'http://[::1]:3000',
+            ],
+            'ipv6 loopback in a form not listed as known host' => [
+                'uri' => 'http://[::0:1]:3000/path',
+                'expectedOrigin' => 'http://[::1]:3000',
+            ],
+            'known host in a blob uri' => [
+                'uri' => 'blob:http://localhost:3000/1f6a188e-c21b-11f0-8de9-0242ac120002',
+                'expectedOrigin' => 'http://localhost:3000',
+            ],
+            'known host with a non special scheme' => [
+                'uri' => 'foo://localhost/path',
+                'expectedOrigin' => null,
+            ],
+        ];
+    }
+
+    #[DataProvider('knownHostProvider')]
+    public function testKnownHostsKeepTheirUnicodeRepresentation(string $uri, string $expectedHost): void
+    {
+        $instance = Uri::new($uri);
+
+        self::assertSame($expectedHost, $instance->getHost());
+        self::assertSame($expectedHost, $instance->getUnicodeHost());
+        self::assertSame($instance->toString(), $instance->toUnicodeString());
+    }
+
+    public static function knownHostProvider(): array
+    {
+        return [
+            'localhost' => ['http://localhost:3000/path', 'localhost'],
+            'ipv4 loopback' => ['http://127.0.0.1:3000/path', '127.0.0.1'],
+            'ipv6 loopback' => ['http://[::1]:3000/path', '[::1]'],
+            'ipv6 loopback in long form' => ['http://[0:0:0:0:0:0:0:1]:3000/path', '[0:0:0:0:0:0:0:1]'],
+            'ipv6 loopback in fully expanded form' => ['http://[0000:0000:0000:0000:0000:0000:0000:0001]/', '[0000:0000:0000:0000:0000:0000:0000:0001]'],
         ];
     }
 

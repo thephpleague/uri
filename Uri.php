@@ -157,6 +157,23 @@ final class Uri implements Conditionable, UriInterface, Transformable
     private const MAXIMUM_CACHED_ITEMS = 100;
 
     /**
+     * Frequently used hosts mapped to their origin serialization.
+     *
+     * These hosts are already ASCII, so their unicode form is the host itself,
+     * and their origin form is known without running the IPv4, IPv6 and IDNA
+     * converters.
+     *
+     * @var array<string, string>
+     */
+    private const KNOWN_HOSTS = [
+        'localhost' => 'localhost',
+        '127.0.0.1' => '127.0.0.1',
+        '[::1]' => '[::1]',
+        '[0:0:0:0:0:0:0:1]' => '[::1]',
+        '[0000:0000:0000:0000:0000:0000:0000:0001]' => '[::1]',
+    ];
+
+    /**
      * All ASCII letters sorted by typical frequency of occurrence.
      *
      * @var string
@@ -1024,7 +1041,9 @@ final class Uri implements Conditionable, UriInterface, Transformable
 
                 $host = $this->host;
                 $converted = $host;
-                if (null !== $converted) {
+                if (null !== $host && isset(self::KNOWN_HOSTS[$host])) {
+                    $converted = self::KNOWN_HOSTS[$host];
+                } elseif (null !== $converted) {
                     try {
                         $converted = IPv4Converter::fromEnvironment()->toDecimal($host);
                     } catch (MissingFeature) {
@@ -1344,8 +1363,8 @@ final class Uri implements Conditionable, UriInterface, Transformable
 
     public function getUnicodeHost(): ?string
     {
-        if (null === $this->host) {
-            return null;
+        if (null === $this->host || isset(self::KNOWN_HOSTS[$this->host])) {
+            return $this->host;
         }
 
         $host = IdnaConverter::toUnicode($this->host)->domain();

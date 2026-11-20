@@ -25,6 +25,7 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface as Psr7UriInterface;
 use Stringable;
 
+use function array_key_last;
 use function array_pop;
 use function array_reduce;
 use function count;
@@ -524,7 +525,12 @@ class BaseUri implements Stringable, JsonSerializable, UriAccess
     final protected static function formatPathWithEmptyBaseQuery(string $path): string
     {
         $targetSegments = static::getSegments($path);
-        $basename = $targetSegments[array_key_last($targetSegments)];
+        $lastOffset = array_key_last($targetSegments);
+        if (null === $lastOffset) {
+            return './';
+        }
+
+        $basename = $targetSegments[$lastOffset];
 
         return '' === $basename ? './' : $basename;
     }

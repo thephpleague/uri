@@ -1761,8 +1761,12 @@ final class Uri implements Conditionable, UriInterface, Transformable
     private static function formatPathWithEmptyBaseQuery(string $path): string
     {
         $targetSegments = self::getSegments($path);
-        $basename = $targetSegments[array_key_last($targetSegments)];
+        $lastOffset = array_key_last($targetSegments);
+        if (null === $lastOffset) {
+            return './';
+        }
 
+        $basename = $targetSegments[$lastOffset];
         return '' === $basename ? './' : $basename;
     }
 

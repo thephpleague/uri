@@ -815,6 +815,50 @@ class UriTest extends TestCase
                 'uri' => 'foo://localhost/path',
                 'expectedOrigin' => null,
             ],
+            'unicode host is converted to ascii' => [
+                'uri' => 'http://BÜCHER.example/a',
+                'expectedOrigin' => 'http://xn--bcher-kva.example',
+            ],
+            'non latin unicode host is converted to ascii' => [
+                'uri' => 'https://例え.テスト/',
+                'expectedOrigin' => 'https://xn--r8jz45g.xn--zckzah',
+            ],
+            'host with a trailing dot' => [
+                'uri' => 'http://EXAMPLE.COM./x',
+                'expectedOrigin' => 'http://example.com.',
+            ],
+            'host with a percent encoded unreserved character' => [
+                'uri' => 'http://ex%41mple.com/',
+                'expectedOrigin' => 'http://example.com',
+            ],
+            'host with a percent encoded non ascii character' => [
+                'uri' => 'http://%F0%9F%92%A9.example/',
+                'expectedOrigin' => 'http://%F0%9F%92%A9.example',
+            ],
+            'shortened hexadecimal ipv4 with default port' => [
+                'uri' => 'http://0x7F.1:80/',
+                'expectedOrigin' => 'http://127.0.0.1',
+            ],
+            'uppercase ipv6 with non default port' => [
+                'uri' => 'http://[2001:DB8::0:1]:8080/',
+                'expectedOrigin' => 'http://[2001:db8::1]:8080',
+            ],
+            'ws uri with default port' => [
+                'uri' => 'ws://example.com:80/',
+                'expectedOrigin' => 'ws://example.com',
+            ],
+            'wss uri with default port' => [
+                'uri' => 'wss://example.com:443/s',
+                'expectedOrigin' => 'wss://example.com',
+            ],
+            'ftp uri with user info and default port' => [
+                'uri' => 'ftp://u:p@example.com:21/f',
+                'expectedOrigin' => 'ftp://example.com',
+            ],
+            'uri with empty path, query and fragment' => [
+                'uri' => 'http://example.com:8080?q#f',
+                'expectedOrigin' => 'http://example.com:8080',
+            ],
         ];
     }
 
@@ -837,6 +881,53 @@ class UriTest extends TestCase
             'ipv6 loopback in long form' => ['http://[0:0:0:0:0:0:0:1]:3000/path', '[0:0:0:0:0:0:0:1]'],
             'ipv6 loopback in fully expanded form' => ['http://[0000:0000:0000:0000:0000:0000:0000:0001]/', '[0000:0000:0000:0000:0000:0000:0000:0001]'],
         ];
+    }
+
+    public function testOriginIsComputedForEachDerivedInstance(): void
+    {
+        $uri = Uri::new('https://example.com/path');
+        self::assertSame('https://example.com', $uri->getOrigin());
+
+        $withHost = $uri->withHost('bücher.example');
+        $withPort = $uri->withPort(8443);
+        $withScheme = $uri->withScheme('http');
+        $withPath = $uri->withPath('/other');
+
+        self::assertSame('https://xn--bcher-kva.example', $withHost->getOrigin());
+        self::assertSame('https://example.com:8443', $withPort->getOrigin());
+        self::assertSame('http://example.com', $withScheme->getOrigin());
+        self::assertSame('https://example.com', $withPath->getOrigin());
+        self::assertSame('https://example.com', $uri->getOrigin());
+
+        self::assertTrue($uri->isCrossOrigin($withHost));
+        self::assertTrue($uri->isCrossOrigin($withPort));
+        self::assertTrue($uri->isCrossOrigin($withScheme));
+        self::assertTrue($uri->isSameOrigin($withPath));
+    }
+
+    public function testOriginAccessDoesNotAffectEqualityOrSerialization(): void
+    {
+        $uri = Uri::new('https://example.com/path');
+        $other = Uri::new('https://example.com/path');
+        $expectedSerialization = serialize($other);
+
+        self::assertSame('https://example.com', $uri->getOrigin());
+        self::assertTrue($uri->isSameOrigin($other));
+
+        self::assertEquals($other, $uri);
+        self::assertSame($expectedSerialization, serialize($uri));
+
+        $restored = unserialize(serialize($uri));
+        self::assertInstanceOf(Uri::class, $restored);
+        self::assertEquals($other, $restored);
+        self::assertSame('https://example.com', $restored->getOrigin());
+    }
+
+    public function testCrossOriginCheckDoesNotRequirePriorOriginAccess(): void
+    {
+        self::assertTrue(Uri::new('https://example.com/a')->isSameOrigin('https://EXAMPLE.com:443/b'));
+        self::assertTrue(Uri::new('https://example.com/a')->isCrossOrigin('http://example.com/a'));
+        self::assertTrue(Uri::new('urn:isbn:123')->isCrossOrigin('urn:isbn:123'));
     }
 
     #[DataProvider('getCrossOriginExamples')]

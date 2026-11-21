@@ -38,6 +38,7 @@ use Throwable;
 use TypeError;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
 use Uri\WhatWg\Url as WhatWgUrl;
+use WeakMap;
 
 use function array_filter;
 use function array_key_last;
@@ -180,6 +181,15 @@ final class Uri implements Conditionable, UriInterface, Transformable
      */
     private const ASCII = "\x20\x65\x69\x61\x73\x6E\x74\x72\x6F\x6C\x75\x64\x5D\x5B\x63\x6D\x70\x27\x0A\x67\x7C\x68\x76\x2E\x66\x62\x2C\x3A\x3D\x2D\x71\x31\x30\x43\x32\x2A\x79\x78\x29\x28\x4C\x39\x41\x53\x2F\x50\x22\x45\x6A\x4D\x49\x6B\x33\x3E\x35\x54\x3C\x44\x34\x7D\x42\x7B\x38\x46\x77\x52\x36\x37\x55\x47\x4E\x3B\x4A\x7A\x56\x23\x48\x4F\x57\x5F\x26\x21\x4B\x3F\x58\x51\x25\x59\x5C\x09\x5A\x2B\x7E\x5E\x24\x40\x60\x7F\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F";
 
+    /**
+     * Lazily computed origins, kept outside the instance state so that
+     * loose comparison and serialization do not depend on call history.
+     * A null origin is stored as false.
+     *
+     * @var WeakMap<self, string|false>|null
+     */
+    private static ?WeakMap $origins = null;
+
     private readonly ?string $scheme;
     private readonly ?string $user;
     private readonly ?string $pass;
@@ -192,7 +202,6 @@ final class Uri implements Conditionable, UriInterface, Transformable
     private readonly ?string $fragment;
     private readonly string $uriAsciiString;
     private readonly string $uriUnicodeString;
-    private readonly ?string $origin;
 
     private function __construct(
         ?string $scheme,
@@ -223,7 +232,6 @@ final class Uri implements Conditionable, UriInterface, Transformable
         $this->uriAsciiString = UriString::buildUri($this->scheme, $this->authority, $this->path, $this->query, $this->fragment);
         $this->assertValidRfc3986Uri();
         $this->assertValidState();
-        $this->origin = $this->setOrigin();
         $host = $this->getUnicodeHost();
         $this->uriUnicodeString = $host === $this->host
             ? $this->uriAsciiString
@@ -1060,13 +1068,12 @@ final class Uri implements Conditionable, UriInterface, Transformable
                     }
                 }
 
-                return $this
-                    ->withFragment(null)
-                    ->withQuery(null)
-                    ->withPath('')
-                    ->withUserInfo(null)
-                    ->withHost($converted)
-                    ->toString();
+                $authority = UriString::buildAuthority([
+                    'host' => $this->formatHost($converted),
+                    'port' => $this->port,
+                ]);
+
+                return UriString::buildUri($this->scheme, $authority, '');
             }
 
             $components = UriString::parse($this->path);
@@ -1075,7 +1082,7 @@ final class Uri implements Conditionable, UriInterface, Transformable
                 return null;
             }
 
-            return self::fromComponents($components)->origin;
+            return self::fromComponents($components)->getOrigin();
         } catch (UriException) {
             return null;
         }
@@ -1427,7 +1434,10 @@ final class Uri implements Conditionable, UriInterface, Transformable
 
     public function getOrigin(): ?string
     {
-        return $this->origin;
+        self::$origins ??= new WeakMap();
+        $origin = self::$origins[$this] ??= ($this->setOrigin() ?? false);
+
+        return false === $origin ? null : $origin;
     }
 
     public function when(callable|bool $condition, callable $onSuccess, ?callable $onFail = null): static
@@ -1586,16 +1596,17 @@ final class Uri implements Conditionable, UriInterface, Transformable
      */
     public function isCrossOrigin(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri): bool
     {
-        if (null === $this->origin) {
+        $origin = $this->getOrigin();
+        if (null === $origin) {
             return true;
         }
 
         $uri = self::tryNew($uri);
-        if (null === $uri || null === ($origin = $uri->getOrigin())) {
+        if (null === $uri || null === ($otherOrigin = $uri->getOrigin())) {
             return true;
         }
 
-        return $this->origin !== $origin;
+        return $origin !== $otherOrigin;
     }
 
     public function isSameOrigin(Rfc3986Uri|WhatWgUrl|Urn|Stringable|string $uri): bool

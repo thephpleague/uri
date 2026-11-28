@@ -2,6 +2,26 @@
 
 All Notable changes to `League\Uri` will be documented in this file
 
+## [7.10.1](https://github.com/thephpleague/uri/compare/7.10.0...7.10.1) - 2026-11-28
+
+### Added
+
+- None
+
+### Fixed
+
+- Bump `uri-interfaces` requirement.
+- Add fast path for well-known hosts in Uri [#234](https://github.com/thephpleague/uri-src/pull/234) by [kelunik](https://github.com/kelunik)
+- Compute Uri origin lazily and build it directly [#236](https://github.com/thephpleague/uri-src/pull/236) by [kelunik](https://github.com/kelunik)
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
 ## [7.10.0](https://github.com/thephpleague/uri/compare/7.9.1...7.10.0) - 2026-11-04
 
 ### Added
